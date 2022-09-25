@@ -1,6 +1,6 @@
 import Head from 'next/head'
-import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import supabase from "../utils/supabase"
 
 export default function Home({ posts }) {
   return (
@@ -17,27 +17,20 @@ export default function Home({ posts }) {
         </h1>
         <pre>{JSON.stringify(posts, null, 2)}</pre>
       </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
     </div>
   )
 }
 
-export function getStaticProps() {
+export async function getStaticProps() {
+  const { data: posts, error } = await supabase.from('posts').select('*')
+  
+  if (error) {
+    throw new Error(error)
+  }
+
   return {
     props: {
-      posts: [],
+      posts: posts,
     }
   }
 }
