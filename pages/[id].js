@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import supabase from "../utils/supabase"
-
+import Link from "next/link"
 
 export default function PostPage({ post }) {
   useEffect(() => {
@@ -11,11 +11,22 @@ export default function PostPage({ post }) {
     return () => supabase.removeSubscription(subscription)
   }, [])
   return (
-    <div>
+    <main className="p-8">
+      <Link href="/">
+        <a className="underline text-blue-700">Go Back</a>
+      </Link>
       <h1>{post.headline}</h1>
       <p>{post.content}</p>
+      {post.comments && (
+        post.comments.map(comment => (
+          <div key={comment.id}>
+            <strong className="font-bold">User {comment.user_id}</strong>
+            <p>{comment.content}</p>
+          </div>
+        ))
+      )}
       <pre>{JSON.stringify(post, null, 2)}</pre>
-    </div>
+    </main>
   )
 }
 
