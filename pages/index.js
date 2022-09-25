@@ -3,6 +3,7 @@ import styles from '../styles/Home.module.css'
 import supabase from "../utils/supabase"
 
 export default function Home({ posts }) {
+  console.log(supabase.auth.user())
   return (
     <div className={styles.container}>
       <Head>
