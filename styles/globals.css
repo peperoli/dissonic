@@ -4,5 +4,17 @@ h1, .h1 {
   @apply mb-4 text-2xl font-bold;
 }
 
+h2, .h2 {
+  @apply mb-3 text-xl font-bold;
+}
+
+input[type="text"] {
+  @apply block mb-4 p-2 rounded border border-gray-500;
+}
+
+.btn {
+  @apply inline-flex px-4 py-2 rounded bg-blue-200 text-blue-700;
+}
+
 @tailwind components;
 @tailwind utilities;

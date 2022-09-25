@@ -1,9 +1,26 @@
 import Head from 'next/head'
 import supabase from "../utils/supabase"
 import Link from 'next/link'
+import { useEffect } from 'react'
 
 export default function Home({ posts }) {
-  console.log(supabase.auth.user())
+  
+  async function handleSubmit(event) {
+    event.preventDefault()
+
+    const { data: post, error } = await supabase
+      .from('posts')
+      .insert({
+        headline: event.target.headline.value,
+        content: event.target.content.value
+      }, { returning: 'minimal' })
+      .single()
+    
+    if (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <div>
       <Head>
@@ -16,7 +33,15 @@ export default function Home({ posts }) {
         <h1 className="h1">
           Concert Diary
         </h1>
-        <div>
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="headline">Überschrift</label>
+          <input type="text" id="headline" name="headline" />
+          <label htmlFor="content">Inhalt</label>
+          <input type="text" id="content" name="content" />
+          <button className="btn" type="submit">Konzert hinzufügen</button>
+        </form>
+        <div className="mt-6">
+          <h2>Konzerte</h2>
           {posts.map(post => (
             <Link href={`/${post.id}`} key={post.id}>
               <a className="block underline text-blue-700">
@@ -33,7 +58,7 @@ export default function Home({ posts }) {
 
 export async function getStaticProps() {
   const { data: posts, error } = await supabase.from('posts').select('*')
-  
+
   if (error) {
     throw new Error(error)
   }
