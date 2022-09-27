@@ -1,5 +1,9 @@
 @tailwind base;
 
+html {
+  font-size: clamp(16px, 1.75vw, 20px);
+}
+
 h1, .h1 {
   @apply mb-4 text-2xl font-bold;
 }
@@ -9,11 +13,19 @@ h2, .h2 {
 }
 
 input[type="text"] {
-  @apply block mb-4 p-2 rounded border border-gray-500;
+  @apply block mb-4 p-2 rounded border border-gray-500 bg-slate-700;
+}
+
+input[type="checkbox"] {
+  @apply mr-2;
 }
 
 .btn {
   @apply inline-flex px-4 py-2 rounded bg-blue-200 text-blue-700;
+}
+
+.btn.btn-tag {
+  @apply py-1 rounded-full text-slate-100 bg-blue-700;
 }
 
 @tailwind components;

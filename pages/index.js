@@ -1,24 +1,46 @@
 import Head from 'next/head'
 import supabase from "../utils/supabase"
-import Link from 'next/link'
-import { useEffect } from 'react'
+import ConcertCard from '../components/ConcertCard'
 
-export default function Home({ posts }) {
-  
+export default function Home({ concerts, bands, concertBands }) {
+
   async function handleSubmit(event) {
     event.preventDefault()
 
     const { data: post, error } = await supabase
-      .from('posts')
+      .from('concerts')
       .insert({
         headline: event.target.headline.value,
-        content: event.target.content.value
-      }, { returning: 'minimal' })
+        content: event.target.content.value,
+      })
       .single()
-    
-    if (error) {
-      console.error(error)
-    }
+
+    // let checkedBands = []
+    // bands.forEach(band => {
+    //   const targetId = `band${band.id}`
+    //   if (event.target[targetId].checked) {
+    //     checkedBands.push({ concert_id: 4, band_id: band.id })
+    //   }
+    // })
+
+    // const { data: concertBand, concertBandError } = await supabase
+    //   .from('concert_bands')
+    //   .insert(checkedBands, { returning: 'minimal' })
+
+
+
+    console.log(checkedBands)
+    // if (concertBandError) {
+    //   console.error(concertBandError)
+    // }
+
+    // const { data, error } = await supabase
+    //   .from('concert_bands')
+    //   .insert([
+    //     { some_column: 'someValue' },
+    //     { some_column: 'otherValue' },
+    //   ])
+
   }
 
   return (
@@ -36,28 +58,41 @@ export default function Home({ posts }) {
         <form onSubmit={handleSubmit}>
           <label htmlFor="headline">Überschrift</label>
           <input type="text" id="headline" name="headline" />
+          <fieldset className="mb-4">
+            <legend>Bands</legend>
+            {bands.map(band => (
+              <label key={band.id} className="block">
+                <input type="checkbox" name="bands" value={`band${band.id}`} id={`band${band.id}`} />
+                {band.name}
+              </label>
+            ))}
+          </fieldset>
           <label htmlFor="content">Inhalt</label>
           <input type="text" id="content" name="content" />
           <button className="btn" type="submit">Konzert hinzufügen</button>
         </form>
-        <div className="mt-6">
-          <h2>Konzerte</h2>
-          {posts.map(post => (
-            <Link href={`/${post.id}`} key={post.id}>
-              <a className="block underline text-blue-700">
-                {post.headline}
-              </a>
-            </Link>
+        <div className="grid grid-cols-10 gap-6 mt-6">
+          <div className="col-span-full">
+            <h2>Konzerte</h2>
+          </div>
+          {concerts.map(concert => (
+            <ConcertCard
+              key={concert.id}
+              concert={concert}
+              bands={bands}
+              concertBands={concertBands}
+            />
           ))}
         </div>
-        <pre>{JSON.stringify(posts, null, 2)}</pre>
       </main>
     </div>
   )
 }
 
 export async function getStaticProps() {
-  const { data: posts, error } = await supabase.from('posts').select('*')
+  const { data: concerts, error } = await supabase.from('concerts').select('*')
+  const { data: bands } = await supabase.from('bands').select('*')
+  const { data: concertBands } = await supabase.from('concert_bands').select('*')
 
   if (error) {
     throw new Error(error)
@@ -65,7 +100,9 @@ export async function getStaticProps() {
 
   return {
     props: {
-      posts: posts,
+      concerts,
+      bands,
+      concertBands,
     }
   }
 }
