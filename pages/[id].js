@@ -1,9 +1,8 @@
 import supabase from "../utils/supabase"
 import Link from "next/link"
 import { useState } from "react"
-import { v4 as uuidv4 } from 'uuid';
 
-function Checkbox({ concert, band, concertBands, selectedConcertBands, setSelectedConcertBands }) {
+function Checkbox({ concert, band, selectedConcertBands, setSelectedConcertBands }) {
   const isSelected = selectedConcertBands.some(item => item.band_id === band.id)
 
   function handleChange(bandId) {
@@ -12,7 +11,7 @@ function Checkbox({ concert, band, concertBands, selectedConcertBands, setSelect
     } else {
       setSelectedConcertBands([
         ...selectedConcertBands,
-        { id: concertBands.find(item => item.band_id === bandId)?.id || uuidv4() , gagu: concert.id, band_id: bandId, }
+        { concert_id: concert.id, band_id: bandId, }
       ])
     }
   }
@@ -37,29 +36,37 @@ export default function ConcertPage({ concert, concertBands, bands }) {
   let [selectedConcertBands, setSelectedConcertBands] = useState(concertBands)
 
   const deletedConcertBands = concertBands
-    .filter(concertBand => !selectedConcertBands.find(selectedConcertBand => concertBand.id === selectedConcertBand.id))
-  
-  const deletedConcertBandIds = deletedConcertBands.map(item => (
-    item.id
-  ))
+    .filter(concertBand => !selectedConcertBands.find(selectedConcertBand => (concertBand === selectedConcertBand)))
+
+  let deletedConcertBandConcertIds = []
+  let deletedConcertBandBandIds = []
+
+  deletedConcertBands.map(item => {
+    deletedConcertBandConcertIds.push(item.concert_id)
+    deletedConcertBandBandIds.push(item.band_id)
+  })
 
   async function handleSubmit(event) {
     event.preventDefault()
-    
-    const { data: oldConcertBands, error } = await supabase
-    .from('concert_bands')
-    .upsert(selectedConcertBands)
 
-    const { data: newConcertBands, deleteError} = await supabase
+    const { data: oldConcertBands, error } = await supabase
+      .from('concert_bands')
+      .upsert(selectedConcertBands)
+
+    const { data: newConcertBands, deleteError } = await supabase
       .from('concert_bands')
       .delete()
-      .in('id', deletedConcertBandIds)
+      .in('concert_id', deletedConcertBandConcertIds)
+      .in('band_id', deletedConcertBandBandIds)
 
     if (error) {
       console.error(error);
     }
     if (deleteError) {
-      console.deleteError(error);
+      console.error(deleteError);
+    }
+    if (!error && !deleteError) {
+      window.alert('Success')
     }
   }
   return (
@@ -87,9 +94,9 @@ export default function ConcertPage({ concert, concertBands, bands }) {
               key={band.id}
               concert={concert}
               band={band}
-              concertBands={concertBands}
               selectedConcertBands={selectedConcertBands}
-              setSelectedConcertBands={setSelectedConcertBands} />
+              setSelectedConcertBands={setSelectedConcertBands}
+            />
           ))}
         </fieldset>
         <button type="submit" className="btn">Speichern</button>
@@ -109,7 +116,7 @@ export async function getServerSideProps({ params }) {
   const { data: concertBands, concertBandsError } = await supabase
     .from('concert_bands')
     .select('*')
-    .match({gagu: params.id})
+    .match({ concert_id: params.id })
 
   const { data: bands } = await supabase.from('bands').select('*')
 
