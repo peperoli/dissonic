@@ -9,7 +9,7 @@ export default function AddBand({ countries, bands }) {
   async function handleSubmit(event) {
     event.preventDefault()
 
-    await setNewBands([
+    setNewBands([
       ...newBands,
       {
         name: event.target.name.value,
@@ -19,13 +19,15 @@ export default function AddBand({ countries, bands }) {
     
     const { data: updatedBands, error } = await supabase
     .from('bands')
-    .insert(newBands)
+    .insert({
+      name: event.target.name.value,
+      country: event.target.country.value,
+    })
     
     if (error) {
       console.error(error)
     }
   }
-  console.log(newBands);
   return (
     <main className="p-8">
       <Link href="/">
