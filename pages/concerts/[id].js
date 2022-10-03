@@ -1,6 +1,6 @@
-import supabase from "../utils/supabase"
+import supabase from "../../utils/supabase"
 import Link from "next/link"
-import EditConcertForm from "../components/EditConcertForm"
+import EditConcertForm from "../../components/EditConcertForm"
 
 export default function ConcertPage({ concert, concertBands, bands }) {
   return (

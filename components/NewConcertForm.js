@@ -2,7 +2,7 @@
 import { useState } from "react"
 import { v4 as uuidv4 } from 'uuid'
 import supabase from "../utils/supabase"
-import BandCheckbox from "./ BandCheckbox"
+import BandCheckbox from "./BandCheckbox"
 
 export default function NewConcertForm({ bands }) {
   let [selectedConcertBands, setSelectedConcertBands] = useState([])
