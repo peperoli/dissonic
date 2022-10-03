@@ -67,7 +67,7 @@ export default function NewConcertForm({ bands }) {
           />
         ))}
       </fieldset>
-      <button type="submit" className="btn">Speichern</button>
+      <button type="submit" className="btn btn-primary">Konzert erstellen</button>
     </form>
   )
 }

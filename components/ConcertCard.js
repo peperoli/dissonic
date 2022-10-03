@@ -21,7 +21,7 @@ export default function ConcertCard({ concert, bands, concertBands }) {
       </ul>
       {concert.description && <p>{concert.description}</p>}
       <Link href={`/${concert.id}`} key={concert.id}>
-        <a className="btn"><PencilSquareIcon className="h-text mr-2" />Bearbeiten</a>
+        <a className="btn btn-primary"><PencilSquareIcon className="h-text" />Bearbeiten</a>
       </Link>
     </div>
   )

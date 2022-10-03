@@ -73,7 +73,7 @@ export default function EditConcertForm({ concert, bands, concertBands }) {
           />
         ))}
       </fieldset>
-      <button type="submit" className="btn">Speichern</button>
+      <button type="submit" className="btn btn-primary">Speichern</button>
     </form>
   )
 }

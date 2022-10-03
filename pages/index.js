@@ -2,6 +2,8 @@ import Head from 'next/head'
 import supabase from "../utils/supabase"
 import ConcertCard from '../components/ConcertCard'
 import NewConcertForm from '../components/NewConcertForm'
+import { PlusIcon } from '@heroicons/react/24/solid'
+import Link from 'next/link'
 
 export default function Home({ concerts, bands, concertBands }) {
   return (
@@ -17,6 +19,9 @@ export default function Home({ concerts, bands, concertBands }) {
           Concert Diary
         </h1>
         <NewConcertForm bands={bands} />
+        <Link href="/add-band">
+          <a className="btn btn-link mt-2"><PlusIcon className="h-text" />Band hinzufügen</a>
+        </Link>
         <div className="grid grid-cols-10 gap-6 mt-6">
           <div className="col-span-full">
             <h2>Konzerte</h2>

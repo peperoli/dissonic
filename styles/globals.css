@@ -14,8 +14,9 @@ h2, .h2 {
 
 input[type="text"],
 input[type="date"],
-textarea {
-  @apply block w-64 max-w-full mb-4 p-2 rounded border border-gray-500 bg-slate-700;
+textarea,
+select {
+  @apply block w-64 max-w-full p-2 rounded border border-gray-500 bg-slate-700;
 }
 
 textarea {
@@ -28,11 +29,19 @@ input[type="checkbox"] {
 
 
 .btn {
-  @apply inline-flex items-center px-4 py-2 rounded bg-blue-200 text-blue-700;
+  @apply inline-flex items-center gap-2;
+}
+
+.btn.btn-primary {
+  @apply px-4 py-2 rounded border border-blue-300 text-blue-300
+}
+
+.btn.btn-link {
+  @apply p-2 text-blue-300;
 }
 
 .btn.btn-tag {
-  @apply py-1 rounded-full text-slate-100 bg-blue-700;
+  @apply px-4 py-1 rounded-full text-slate-100 bg-blue-700;
 }
 
 @tailwind components;
