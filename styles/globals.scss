@@ -5,30 +5,16 @@ html {
 }
 
 h1, .h1 {
-  @apply mb-4 text-2xl font-bold;
+  @apply mb-4 text-4xl font-bold;
 }
 
 h2, .h2 {
   @apply mb-3 text-xl font-bold;
 }
 
-input[type="text"],
-input[type="date"],
-textarea,
-select {
-  @apply block w-full max-w-full p-2 rounded border border-slate-500 bg-slate-700;
-}
-
-textarea {
-  @apply h-24;
-}
-
-input[type="checkbox"] {
-  @apply mr-2;
-}
-
 @tailwind components;
 
 @import "buttons";
+@import "forms";
 
 @tailwind utilities;

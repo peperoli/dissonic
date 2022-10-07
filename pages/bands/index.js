@@ -3,9 +3,11 @@ import Navigation from '../../components/navigation'
 import { useState } from "react"
 import Modal from "../../components/Modal"
 import AddBandForm from "../../components/AddBandForm"
+import { PlusIcon } from "@heroicons/react/24/solid"
+import Link from "next/link"
 
 export default function Home({ bands, countries }) {
-	let [isOpen, setIsOpen] = useState(true)
+	let [isOpen, setIsOpen] = useState(false)
 	return (
 		<>
 			<div className="flex">
@@ -14,20 +16,23 @@ export default function Home({ bands, countries }) {
 
 				<main className="p-8 max-w-2xl w-full">
 					<div className="flex justify-between mb-6">
-						<h1 className="h1">
+						<h1 className="mb-0">
 							Bands
 						</h1>
 						<button onClick={() => setIsOpen(true)} className="btn btn-primary">
+							<PlusIcon className="h-text" />
 							Band hinzufügen
 						</button>
 					</div>
-					<ul className="flex flex-wrap gap-2">
+					<div className="flex flex-wrap gap-2">
 						{bands.map((band, index) => (
-							<li key={index} className="btn btn-tag">
-								{band.name} <span>({band.country})</span>
-							</li>
+							<Link key={index} href={`/bands/${band.id}`}>
+								<a className="btn btn-tag">
+									{band.name} <span>({band.country})</span>
+								</a>
+							</Link>
 						))}
-					</ul>
+					</div>
 				</main>
 			</div>
 			<Modal isOpen={isOpen} setIsOpen={setIsOpen}>
@@ -44,7 +49,6 @@ export async function getStaticProps() {
 	.select('local_name,iso2')
 	.neq('local_name', null)
 	.neq('iso2', 'AQ')
-
 
 	if (error) {
 		throw new Error(error)

@@ -1,4 +1,4 @@
-import BandCheckbox from "./ BandCheckbox"
+import BandCheckbox from "./BandCheckbox"
 import { useState } from "react"
 import supabase from "../utils/supabase"
 

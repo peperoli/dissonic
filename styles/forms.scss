@@ -1,0 +1,22 @@
+@layer components {
+  .form-control {
+    label {
+      @apply block;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    textarea,
+    select {
+      @apply block w-full max-w-full p-2 rounded border border-slate-500 bg-slate-700;
+    }
+
+    textarea {
+      @apply h-24;
+    }
+
+    input[type="checkbox"] {
+      @apply mr-2;
+    }
+  }
+}

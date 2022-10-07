@@ -17,13 +17,15 @@ export default function ConcertCard({ concert, bands, concertBands }) {
           <a className="btn btn-link"><PencilSquareIcon className="h-text" />Bearbeiten</a>
         </Link>
       </div>
-      <ul className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2">
         {selectedConcertBands.map(concertBand => (
-          <li key={concertBand.band_id} className="btn btn-tag">
-            {bands.find(band => band.id === concertBand.band_id).name}
-          </li>
+          <Link key={concertBand.band_id} href={`/bands/${bands.find(band => band.id === concertBand.band_id).id}`}>
+            <a className="btn btn-tag">
+              {bands.find(band => band.id === concertBand.band_id).name}
+            </a>
+          </Link>
         ))}
-      </ul>
+      </div>
       {concert.description && <p>{concert.description}</p>}
     </div>
   )

@@ -17,8 +17,8 @@ export default function Home({ concerts, bands, concertBands }) {
       <Navigation />
       
       <main className="max-w-2xl p-8">
-        <div className="flex justify-between mb-6">
-          <h1 className="h1">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="mb-0">
             Konzerte
           </h1>
           
