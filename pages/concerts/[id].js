@@ -1,14 +1,18 @@
 import supabase from "../../utils/supabase"
 import Link from "next/link"
 import EditConcertForm from "../../components/EditConcertForm"
+import { ArrowLeftIcon } from "@heroicons/react/24/solid"
 
 export default function ConcertPage({ concert, concertBands, bands }) {
   return (
-    <main className="p-8">
+    <main className="max-w-2xl p-8">
       <Link href="/">
-        <a className="underline text-blue-400">Go Back</a>
+        <a className="btn btn-link">
+          <ArrowLeftIcon className="h-text" />
+          Go Back
+          </a>
       </Link>
-      <h1>{concert.headline}</h1>
+      <h1>Konzert<span className="ml-2 text-sm text-slate-500">{concert.id}</span></h1>
       <EditConcertForm concert={concert} bands={bands} concertBands={concertBands} />
     </main>
   )

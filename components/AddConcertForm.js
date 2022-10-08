@@ -4,12 +4,12 @@ import { v4 as uuidv4 } from 'uuid'
 import supabase from "../utils/supabase"
 import BandCheckbox from "./BandCheckbox"
 
-export default function NewConcertForm({ bands }) {
+export default function NewConcertForm({ bands, cancelButton }) {
   let [selectedConcertBands, setSelectedConcertBands] = useState([])
-  
+
   async function handleSubmit(event) {
     event.preventDefault()
-    
+
     const concertId = uuidv4()
 
     const newArr =
@@ -18,7 +18,7 @@ export default function NewConcertForm({ bands }) {
           return { ...item, concert_id: concertId }
         }
       })
-  
+
     const { data: insertConcert, insertConcertError } = await supabase
       .from('concerts')
       .insert([{
@@ -41,8 +41,10 @@ export default function NewConcertForm({ bands }) {
   }
   return (
     <form onSubmit={handleSubmit}>
-      <label htmlFor="dateStart">Datum</label>
-      <input type="date" name="dateStart" id="dateStart" />
+      <div className="form-control">
+        <label htmlFor="dateStart">Datum</label>
+        <input type="date" name="dateStart" id="dateStart" />
+      </div>
       <p>Ausgewählte Bands:</p>
       <ul className="flex flex-wrap gap-2">
         {selectedConcertBands?.length > 0 ? selectedConcertBands.map((concertBand, index) => (
@@ -53,8 +55,10 @@ export default function NewConcertForm({ bands }) {
           <p className="text-red-400">Dieses Konzert hat noch keine Bands.</p>
         )}
       </ul>
-      <label htmlFor="description">Beschreibung</label>
-      <textarea name="description" id="description" placeholder="Schreib was Schönes ..." />
+      <div className="form-control">
+        <label htmlFor="description">Beschreibung</label>
+        <textarea name="description" id="description" placeholder="Schreib was Schönes ..." />
+      </div>
       <fieldset className="mb-4">
         <legend>Bands</legend>
         {bands.map(band => (
@@ -67,7 +71,10 @@ export default function NewConcertForm({ bands }) {
           />
         ))}
       </fieldset>
-      <button type="submit" className="btn btn-primary">Konzert erstellen</button>
+      <div className="flex justify-end gap-3">
+        {cancelButton}
+        <button type="submit" className="btn btn-primary">Konzert erstellen</button>
+      </div>
     </form>
   )
 }

@@ -7,15 +7,19 @@ export default function LoginPage() {
     const email = event.target.email.value
 
     await supabase.auth.signIn({ email })
+
+    window.alert('Du hast eine E-Mail mit einem Login-Link erhalten.')
   }
   return (
-    <div>
+    <main className="p-8">
       <h1>Log in</h1>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="email">E-Mail</label>
-        <input type="text" id="email" name="email" />
-        <button type="submit">Log in</button>
+        <div className="form-control">
+          <label htmlFor="email">E-Mail</label>
+          <input type="text" id="email" name="email" />
+        </div>
+        <button type="submit" className="btn btn-primary">Log in</button>
       </form>
-    </div>
+    </main>
   )
 }

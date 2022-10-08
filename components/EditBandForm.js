@@ -1,30 +1,6 @@
 import { useState } from "react"
 import supabase from "../utils/supabase"
-
-function GenreCheckbox({ band, genre, selectedGenres, setSelectedGenres }) {
-  function handleChange(genreName) {
-    if (selectedGenres.some(item => item === genreName)) {
-      setSelectedGenres(selectedGenres.filter(item => item !== genreName))
-    } else {
-      setSelectedGenres([
-        ...selectedGenres,
-        genreName
-      ])
-    }
-  }
-  return (
-    <label>
-      <input
-        type="checkbox"
-        name="genres"
-        value={genre.name}
-        checked={selectedGenres.some(selectedGenre => selectedGenre === genre.name)}
-        onChange={() => handleChange(genre.name)}
-      />
-      {genre.name}
-    </label>
-  )
-}
+import GenreCheckbox from "./GenreCheckbox"
 
 export default function EditBandForm({ band, countries, genres }) {
   let [selectedGenres, setSelectedGenres] = useState(band.genres || [])

@@ -5,15 +5,14 @@ import Modal from "../../components/Modal"
 import AddBandForm from "../../components/AddBandForm"
 import { PlusIcon } from "@heroicons/react/24/solid"
 import Link from "next/link"
+import Button from "../../components/Button"
 
-export default function Home({ bands, countries }) {
+export default function Home({ bands, countries, genres }) {
 	let [isOpen, setIsOpen] = useState(false)
 	return (
 		<>
 			<div className="flex">
-
 				<Navigation />
-
 				<main className="p-8 max-w-2xl w-full">
 					<div className="flex justify-between mb-6">
 						<h1 className="mb-0">
@@ -36,7 +35,11 @@ export default function Home({ bands, countries }) {
 				</main>
 			</div>
 			<Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-				<AddBandForm countries={countries} />
+				<AddBandForm
+					countries={countries}
+					genres={genres}
+					cancelButton={<Button handleClick={() => setIsOpen(false)} label="Abbrechen" />}
+				/>
 			</Modal>
 		</>
 	)
@@ -45,10 +48,11 @@ export default function Home({ bands, countries }) {
 export async function getStaticProps() {
 	const { data: bands, error } = await supabase.from('bands').select('*')
 	const { data: countries, countriesError } = await supabase
-	.from('countries')
-	.select('local_name,iso2')
-	.neq('local_name', null)
-	.neq('iso2', 'AQ')
+		.from('countries')
+		.select('local_name,iso2')
+		.neq('local_name', null)
+		.neq('iso2', 'AQ')
+	const { data: genres } = await supabase.from('genres').select('*')
 
 	if (error) {
 		throw new Error(error)
@@ -58,6 +62,7 @@ export async function getStaticProps() {
 		props: {
 			bands,
 			countries,
+			genres,
 		}
 	}
 }

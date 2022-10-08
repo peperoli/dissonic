@@ -47,8 +47,10 @@ export default function EditConcertForm({ concert, bands, concertBands }) {
   }
   return (
     <form onSubmit={handleSubmit}>
-      <label htmlFor="dateStart">Datum</label>
-      <input type="date" name="dateStart" id="dateStart" defaultValue={concert.date_start} />
+      <div className="form-control">
+        <label htmlFor="dateStart">Datum</label>
+        <input type="date" name="dateStart" id="dateStart" defaultValue={concert.date_start} />
+      </div>
       <p>Ausgewählte Bands:</p>
       <ul className="flex gap-2">
         {selectedConcertBands?.length > 0 ? selectedConcertBands.map((concertBand, index) => (
@@ -59,8 +61,10 @@ export default function EditConcertForm({ concert, bands, concertBands }) {
           <p className="text-red-400">Dieses Konzert hat noch keine Bands.</p>
         )}
       </ul>
-      <label htmlFor="description">Beschreibung</label>
-      <textarea name="description" id="description" defaultValue={concert.description} />
+      <div className="form-control">
+        <label htmlFor="description">Beschreibung</label>
+        <textarea name="description" id="description" defaultValue={concert.description} />
+      </div>
       <fieldset className="mb-4">
         <legend>Bands</legend>
         {bands.map(band => (
