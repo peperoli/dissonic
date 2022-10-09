@@ -1,9 +1,12 @@
+import { useRouter } from "next/router"
 import { useState } from "react"
 import supabase from "../utils/supabase"
 import GenreCheckbox from "./GenreCheckbox"
 
 export default function AddBandForm({ countries, genres, cancelButton }) {
   let [selectedGenres, setSelectedGenres] = useState([])
+
+  const router = useRouter()
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -32,7 +35,7 @@ export default function AddBandForm({ countries, genres, cancelButton }) {
 					<option value={null}>Bitte wählen ...</option>
 					<option value="international">International</option>
 					{countries.map((country, index) => (
-						<option key={index} value={country.iso2}>{country.local_name}</option>
+						<option key={index} value={country.iso2}>{country.name}</option>
 					))}
 				</select>
 			</div>

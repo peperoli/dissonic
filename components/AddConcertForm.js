@@ -59,7 +59,7 @@ export default function NewConcertForm({ bands, cancelButton }) {
         <label htmlFor="description">Beschreibung</label>
         <textarea name="description" id="description" placeholder="Schreib was Schönes ..." />
       </div>
-      <fieldset className="mb-4">
+      <fieldset className="form-control">
         <legend>Bands</legend>
         {bands.map(band => (
           <BandCheckbox

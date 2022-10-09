@@ -1,28 +1,32 @@
 import supabase from "../../utils/supabase"
 import Link from "next/link"
 import { ArrowLeftIcon } from "@heroicons/react/24/solid"
-import Navigation from "../../components/navigation"
 import Modal from "../../components/Modal"
-import { Fragment, useState } from "react"
+import { Fragment, useState, useEffect } from "react"
 import { useRouter } from "next/router"
 import EditBandForm from "../../components/EditBandForm"
+import Button from "../../components/Button"
+import PageWrapper from "../../components/PageWrapper"
+import { toast } from "react-toastify"
 
-export default function BandPage({ band, countries, genres }) {
-  let [deleteIsOpen, setDeleteIsOpen] = useState(false)
-  let [editIsOpen, setEditIsOpen] = useState(false)
+export default function BandPage({ initialBand, countries, genres }) {
+  const [deleteIsOpen, setDeleteIsOpen] = useState(false)
+  const [editIsOpen, setEditIsOpen] = useState(false)
+  const [band, setBand] = useState(initialBand)
 
   const router = useRouter()
+  const notifyUpdate = () => toast.success("Band erfolgreich aktualisiert.")
 
-  function updateBand(event) {
-    const { error } = supabase
-      .from('bands')
-      .update({ name: event.target.name.value, })
+  useEffect(() => {
+    const updateSubscription = supabase.from('bands').on('UPDATE', payload => {
+      setBand(payload.new)
+      setEditIsOpen(false)
+      notifyUpdate()
+    }).subscribe()
 
-    if (error) {
-      console.error(error)
-    }
-  }
-
+    return () => supabase.removeSubscription(updateSubscription)
+  }, [])
+ 
   async function deleteBand() {
     const { error } = await supabase
       .from('bands')
@@ -36,8 +40,7 @@ export default function BandPage({ band, countries, genres }) {
     }
   }
   return (
-    <div className="flex">
-      <Navigation />
+    <PageWrapper>
       <main className="p-8">
         <Link href="/bands">
           <a className="btn btn-link">
@@ -76,17 +79,14 @@ export default function BandPage({ band, countries, genres }) {
         </div>
       </Modal>
       <Modal isOpen={editIsOpen} setIsOpen={setEditIsOpen}>
-        <div>
-          <h2>Band bearbeiten</h2>
-          <div className="flex justify-end gap-3 mt-4">
-            <EditBandForm band={band} countries={countries} genres={genres} />
-            <button onClick={() => setEditIsOpen(false)} className="btn btn-link">
-              Abbrechen
-            </button>
-          </div>
-        </div>
+        <EditBandForm
+          band={band}
+          countries={countries}
+          genres={genres}
+          cancelButton={<Button handleClick={() => setEditIsOpen(false)} label="Abbrechen" />}
+        />
       </Modal>
-    </div>
+    </PageWrapper>
   )
 }
 
@@ -99,11 +99,14 @@ export async function getServerSideProps({ params }) {
 
   const { data: countries } = await supabase
     .from('countries')
-    .select('local_name,iso2')
+    .select('name,iso2')
     .neq('local_name', null)
     .neq('iso2', 'AQ')
 
-  const { data: genres } = await supabase.from('genres').select('*')
+  const { data: genres } = await supabase
+    .from('genres')
+    .select('*')
+    .order('name')
 
   if (error) {
     console.error(error);
@@ -111,7 +114,7 @@ export async function getServerSideProps({ params }) {
 
   return {
     props: {
-      band,
+      initialBand: band,
       countries,
       genres,
     }
