@@ -1,42 +1,27 @@
 // import BandCheckbox from "./ BandCheckbox"
 import { useState } from "react"
-import { v4 as uuidv4 } from 'uuid'
 import supabase from "../utils/supabase"
 import BandCheckbox from "./BandCheckbox"
 
 export default function NewConcertForm({ bands, cancelButton }) {
   let [selectedConcertBands, setSelectedConcertBands] = useState([])
 
+  console.log(selectedConcertBands);
+
   async function handleSubmit(event) {
     event.preventDefault()
-
-    const concertId = uuidv4()
-
-    const newArr =
-      selectedConcertBands.map(item => {
-        if (item.concert_id === null) {
-          return { ...item, concert_id: concertId }
-        }
-      })
 
     const { data: insertConcert, insertConcertError } = await supabase
       .from('concerts')
       .insert([{
-        id: concertId,
         date_start: event.target.dateStart.value,
+        bands: selectedConcertBands,
         description: event.target.description.value
       }])
       .single()
 
-    const { data: insertConcertBands, insertConcertBandsError } = await supabase
-      .from('concert_bands')
-      .insert(newArr)
-
     if (insertConcertError) {
       console.error(insertConcertError)
-    }
-    if (insertConcertBandsError) {
-      console.error(insertConcertBandsError);
     }
   }
   return (
@@ -49,10 +34,10 @@ export default function NewConcertForm({ bands, cancelButton }) {
       <ul className="flex flex-wrap gap-2">
         {selectedConcertBands?.length > 0 ? selectedConcertBands.map((concertBand, index) => (
           <li key={index} className="btn btn-tag">
-            {bands.find(band => band.id === concertBand.band_id).name}
+            {bands.find(band => band.id === concertBand).name}
           </li>
         )) : (
-          <p className="text-red-400">Dieses Konzert hat noch keine Bands.</p>
+          <p className="text-red">Dieses Konzert hat noch keine Bands.</p>
         )}
       </ul>
       <div className="form-control">
@@ -65,7 +50,6 @@ export default function NewConcertForm({ bands, cancelButton }) {
           <BandCheckbox
             key={band.id}
             band={band}
-            concertId={null}
             selectedConcertBands={selectedConcertBands}
             setSelectedConcertBands={setSelectedConcertBands}
           />

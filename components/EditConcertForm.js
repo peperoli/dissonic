@@ -2,47 +2,23 @@ import BandCheckbox from "./BandCheckbox"
 import { useState } from "react"
 import supabase from "../utils/supabase"
 
-export default function EditConcertForm({ concert, bands, concertBands }) {
-  concertBands = concertBands || []
-  let [selectedConcertBands, setSelectedConcertBands] = useState(concertBands)
-
-  const deletedConcertBands = concertBands
-    .filter(concertBand => !selectedConcertBands.find(selectedConcertBand => (concertBand === selectedConcertBand)))
-
-  let deletedConcertBandConcertIds = []
-  let deletedConcertBandBandIds = []
-
-  deletedConcertBands.map(item => {
-    deletedConcertBandConcertIds.push(item.concert_id)
-    deletedConcertBandBandIds.push(item.band_id)
-  })
+export default function EditConcertForm({ concert, bands }) {
+  let [selectedConcertBands, setSelectedConcertBands] = useState(concert.bands || [])
 
   async function handleSubmit(event) {
     event.preventDefault()
 
     const { data: updateConcert, updateConcertError } = await supabase
       .from('concerts')
-      .update({ date_start: event.target.dateStart.value, description: event.target.description.value })
+      .update({ 
+        date_start: event.target.dateStart.value, 
+        description: event.target.description.value,
+        bands: selectedConcertBands,
+      })
       .eq('id', concert.id)
-
-    const { data: upsertConcertBands, upsertConcertBandsError } = await supabase
-      .from('concert_bands')
-      .upsert(selectedConcertBands)
-
-    const { data: deleteConcertBands, deleteConcertBandsError } = await supabase
-      .from('concert_bands')
-      .delete()
-      .in('concert_id', deletedConcertBandConcertIds)
-      .in('band_id', deletedConcertBandBandIds)
 
     if (updateConcertError) {
       console.error(updateConcertError)
-    }
-    if (upsertConcertBandsError) {
-      console.error(upsertConcertBandsError);
-    }
-    if (deleteConcertBandsError) {
-      console.error(deleteConcertBandsError);
     }
   }
   return (
@@ -53,19 +29,19 @@ export default function EditConcertForm({ concert, bands, concertBands }) {
       </div>
       <p>Ausgewählte Bands:</p>
       <ul className="flex gap-2">
-        {selectedConcertBands?.length > 0 ? selectedConcertBands.map((concertBand, index) => (
-          <li key={index} className="btn btn-tag">
-            {bands.find(band => band.id === concertBand.band_id).name}
+        {selectedConcertBands?.length > 0 ? selectedConcertBands.map(concertBand => (
+          <li key={concertBand} className="btn btn-tag">
+            {bands.find(band => band.id === concertBand)?.name}
           </li>
         )) : (
-          <p className="text-red-400">Dieses Konzert hat noch keine Bands.</p>
+          <p className="text-red">Dieses Konzert hat noch keine Bands.</p>
         )}
       </ul>
       <div className="form-control">
         <label htmlFor="description">Beschreibung</label>
         <textarea name="description" id="description" defaultValue={concert.description} />
       </div>
-      <fieldset className="mb-4">
+      <fieldset className="form-control">
         <legend>Bands</legend>
         {bands.map(band => (
           <BandCheckbox

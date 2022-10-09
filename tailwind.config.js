@@ -18,6 +18,7 @@ module.exports = {
         800: '#29363D',
         900: '#181F23',
       },
+      red: '#F78F6E',
       black: '#000',
       transparent: 'transparent',
     },

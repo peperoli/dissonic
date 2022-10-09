@@ -9,7 +9,7 @@ import { PlusIcon } from '@heroicons/react/24/solid'
 import PageWrapper from '../components/PageWrapper'
 import { toast } from 'react-toastify'
 
-export default function Home({ initialConcerts, bands, concertBands }) {
+export default function Home({ initialConcerts, bands, locations }) {
   const [isOpen, setIsOpen] = useState(false)
   const [concerts, setConcerts] = useState(initialConcerts)
 
@@ -51,7 +51,7 @@ export default function Home({ initialConcerts, bands, concertBands }) {
               key={concert.id}
               concert={concert}
               bands={bands}
-              concertBands={concertBands}
+              locations={locations}
             />
           ))}
         </div>
@@ -75,7 +75,7 @@ export async function getStaticProps() {
     .from('bands')
     .select('*')
     .order('name')
-  const { data: concertBands } = await supabase.from('concert_bands').select('*')
+  const { data: locations } = await supabase.from('locations').select('id,name')
 
   if (error) {
     throw new Error(error)
@@ -85,7 +85,7 @@ export async function getStaticProps() {
     props: {
       initialConcerts: concerts,
       bands,
-      concertBands,
+      locations,
     }
   }
 }

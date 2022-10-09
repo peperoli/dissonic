@@ -3,7 +3,7 @@ import Link from "next/link"
 import EditConcertForm from "../../components/EditConcertForm"
 import { ArrowLeftIcon } from "@heroicons/react/24/solid"
 
-export default function ConcertPage({ concert, concertBands, bands }) {
+export default function ConcertPage({ concert, bands }) {
   return (
     <main className="max-w-2xl p-8">
       <Link href="/">
@@ -13,7 +13,7 @@ export default function ConcertPage({ concert, concertBands, bands }) {
           </a>
       </Link>
       <h1>Konzert<span className="ml-2 text-sm text-slate-500">{concert.id}</span></h1>
-      <EditConcertForm concert={concert} bands={bands} concertBands={concertBands} />
+      <EditConcertForm concert={concert} bands={bands} />
     </main>
   )
 }
@@ -26,24 +26,18 @@ export async function getServerSideProps({ params }) {
     .eq('id', params.id)
     .single()
 
-  const { data: concertBands, concertBandsError } = await supabase
-    .from('concert_bands')
-    .select('*')
-    .match({ concert_id: params.id })
-
-  const { data: bands } = await supabase.from('bands').select('*')
+  const { data: bands } = await supabase
+  .from('bands')
+  .select('*')
+  .order('name')
 
   if (error) {
     throw new Error(error.message)
-  }
-  if (concertBandsError) {
-    throw new Error(concertBandsError)
   }
 
   return {
     props: {
       concert,
-      concertBands,
       bands,
     }
   }
