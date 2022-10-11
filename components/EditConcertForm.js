@@ -2,7 +2,7 @@ import BandCheckbox from "./BandCheckbox"
 import { useState } from "react"
 import supabase from "../utils/supabase"
 
-export default function EditConcertForm({ concert, bands }) {
+export default function EditConcertForm({ concert, bands, locations }) {
   let [selectedConcertBands, setSelectedConcertBands] = useState(concert.bands || [])
 
   async function handleSubmit(event) {
@@ -14,6 +14,7 @@ export default function EditConcertForm({ concert, bands }) {
         date_start: event.target.dateStart.value, 
         description: event.target.description.value,
         bands: selectedConcertBands,
+        location: event.target.location.value,
       })
       .eq('id', concert.id)
 
@@ -37,6 +38,15 @@ export default function EditConcertForm({ concert, bands }) {
           <p className="text-red">Dieses Konzert hat noch keine Bands.</p>
         )}
       </ul>
+      <div className="form-control">
+        <label htmlFor="location">Location</label>
+        <select name="location" id="location" defaultValue={concert.location}>
+          <option value={null}>Bitte wählen ...</option>
+          {locations && locations.map(location => (
+            <option key={location.id} value={location.id}>{location.name}</option>
+          ))}
+        </select>
+      </div>
       <div className="form-control">
         <label htmlFor="description">Beschreibung</label>
         <textarea name="description" id="description" defaultValue={concert.description} />

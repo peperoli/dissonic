@@ -8,15 +8,17 @@ import Button from "../../components/Button"
 import { useEffect } from "react"
 import { toast } from "react-toastify"
 import PageWrapper from "../../components/PageWrapper"
+import Table from "../../components/Table"
+import TableRow from "../../components/TableRow"
 
-export default function Home({ initialBands, countries, genres }) {
+export default function PageBands({ initialBands, countries, genres }) {
 	const [isOpen, setIsOpen] = useState(false)
 	const [bands, setBands] = useState(initialBands)
 
 	function compare(a, b) {
 		const bandA = a.name.toUpperCase()
 		const bandB = b.name.toUpperCase()
-	
+
 		let comparison = 0
 		if (bandA > bandB) {
 			comparison = 1
@@ -42,35 +44,33 @@ export default function Home({ initialBands, countries, genres }) {
 	}, [])
 	return (
 		<PageWrapper>
-				<main className="p-8 w-full">
-					<div className="flex justify-between mb-6">
-						<h1 className="mb-0">
-							Bands
-						</h1>
-						<button onClick={() => setIsOpen(true)} className="btn btn-primary">
-							<PlusIcon className="h-text" />
-							Band hinzufügen
-						</button>
-					</div>
-					<div className="grid gap-px p-4 rounded-xl bg-slate-700">
-						{bands.sort(compare).map((band, index) => (
-							<Link key={index} href={`/bands/${band.id}`}>
-								<a className="grid grid-cols-3 px-3 py-2 rounded-md hover:bg-slate-500">
-									<div>{band.name}</div>
-									<div className="text-slate-300">{countries.find(country => country.iso2 === band.country).name}</div>
-									<div className="text-sm text-slate-300 whitespace-nowrap text-ellipsis overflow-hidden">
-										{band.genres.join(' • ')}
-									</div>
-								</a>
-							</Link>
-						))}
-					</div>
-				</main>
+			<main className="p-8 w-full">
+				<div className="flex justify-between mb-6">
+					<h1 className="mb-0">
+						Bands
+					</h1>
+					<button onClick={() => setIsOpen(true)} className="btn btn-primary">
+						<PlusIcon className="h-text" />
+						Band hinzufügen
+					</button>
+				</div>
+				<Table>
+					{bands.sort(compare).map(band => (
+						<TableRow key={band.id} href={`/bands/${band.id}`}>
+							<div>{band.name}</div>
+							<div className="text-slate-300">{countries.find(country => country.iso2 === band.country).name}</div>
+							<div className="text-sm text-slate-300 whitespace-nowrap text-ellipsis overflow-hidden">
+								{band.genres.join(' • ')}
+							</div>
+						</TableRow>
+					))}
+				</Table>
+			</main>
 			<Modal isOpen={isOpen} setIsOpen={setIsOpen}>
 				<AddBandForm
 					countries={countries}
 					genres={genres}
-					cancelButton={<Button handleClick={() => setIsOpen(false)} label="Abbrechen" />}
+					cancelButton={<Button onClick={() => setIsOpen(false)} label="Abbrechen" />}
 				/>
 			</Modal>
 		</PageWrapper>

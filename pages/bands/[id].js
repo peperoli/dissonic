@@ -83,7 +83,7 @@ export default function BandPage({ initialBand, countries, genres }) {
           band={band}
           countries={countries}
           genres={genres}
-          cancelButton={<Button handleClick={() => setEditIsOpen(false)} label="Abbrechen" />}
+          cancelButton={<Button onClick={() => setEditIsOpen(false)} label="Abbrechen" />}
         />
       </Modal>
     </PageWrapper>

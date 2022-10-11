@@ -3,10 +3,8 @@ import { useState } from "react"
 import supabase from "../utils/supabase"
 import BandCheckbox from "./BandCheckbox"
 
-export default function NewConcertForm({ bands, cancelButton }) {
+export default function NewConcertForm({ bands, locations, cancelButton }) {
   let [selectedConcertBands, setSelectedConcertBands] = useState([])
-
-  console.log(selectedConcertBands);
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -16,7 +14,8 @@ export default function NewConcertForm({ bands, cancelButton }) {
       .insert([{
         date_start: event.target.dateStart.value,
         bands: selectedConcertBands,
-        description: event.target.description.value
+        location: event.target.location.value,
+        description: event.target.description.value,
       }])
       .single()
 
@@ -40,6 +39,15 @@ export default function NewConcertForm({ bands, cancelButton }) {
           <p className="text-red">Dieses Konzert hat noch keine Bands.</p>
         )}
       </ul>
+      <div className="form-control">
+        <label htmlFor="location">Location</label>
+        <select name="location" id="location">
+          <option value={null}>Bitte wählen ...</option>
+          {locations && locations.map(location => (
+            <option key={location.id} value={location.id}>{location.name}</option>
+          ))}
+        </select>
+      </div>
       <div className="form-control">
         <label htmlFor="description">Beschreibung</label>
         <textarea name="description" id="description" placeholder="Schreib was Schönes ..." />

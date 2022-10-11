@@ -31,7 +31,7 @@ export default function ConcertCard({ concert, bands, locations }) {
           </Link>
         ))}
       </div>
-      {concert.description && <p>{concert.description}</p>}
+      {concert.description && <p className="text-slate-300">{concert.description}</p>}
     </div>
   )
 }

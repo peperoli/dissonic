@@ -40,7 +40,7 @@ export default function Home({ initialConcerts, bands, locations }) {
             Konzerte
           </h1>
           <Button
-            handleClick={() => setIsOpen(true)}
+            onClick={() => setIsOpen(true)}
             label="Konzert hinzufügen"
             style="primary"
             icon={<PlusIcon className="h-text" />} />
@@ -59,7 +59,8 @@ export default function Home({ initialConcerts, bands, locations }) {
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
         <AddConcertForm
           bands={bands}
-          cancelButton={<Button handleClick={() => setIsOpen(false)} label="Abbrechen" />}
+          locations={locations}
+          cancelButton={<Button onClick={() => setIsOpen(false)} label="Abbrechen" />}
         />
       </Modal>
     </PageWrapper>

@@ -8,7 +8,7 @@ export default function PageWrapper({ children }) {
       <Navigation />
       {children}
       <ToastContainer
-				position="top-right"
+				position="bottom-right"
 				autoClose={3000}
 				closeOnClick
 				pauseOnFocusLoss
