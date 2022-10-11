@@ -36,8 +36,30 @@ export default function ConcertPage({ concert, bands, locations, allBandsSeen })
 
   useEffect(() => {
     const user = supabase.auth.user()
-    setBandsSeen(allBandsSeen.find(bandsSeen => bandsSeen.user_id === user?.id)?.band_ids)
+    setBandsSeen(allBandsSeen.find(bandsSeen => bandsSeen.user_id === user?.id)?.band_ids || [])
   }, [allBandsSeen])
+  
+  async function updateBandsSeen({}) {
+    const user = supabase.auth.user()
+    const { data: updatedBandsSeen, error} = await supabase
+    .from('bands_seen')
+    .upsert({
+      concert_id: concert.id,
+      user_id: user.id,
+      band_ids: bandsSeen,
+    },
+    {
+      onConflict: 'concert_id, user_id'
+    })
+  
+    if (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    updateBandsSeen()
+  })
 
   return (
     <main className="max-w-2xl p-8">
