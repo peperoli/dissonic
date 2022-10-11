@@ -17,5 +17,9 @@
 
 	.btn.btn-tag {
 		@apply px-4 py-1 rounded-full text-slate-50 bg-slate-900;
+
+		&.btn-seen {
+			@apply bg-deepPurple;
+		}
 	}
 }

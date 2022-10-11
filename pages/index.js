@@ -9,24 +9,30 @@ import { PlusIcon } from '@heroicons/react/24/solid'
 import PageWrapper from '../components/PageWrapper'
 import { toast } from 'react-toastify'
 
-export default function Home({ initialConcerts, bands, locations }) {
+export default function Home({ initialConcerts, bands, locations, allBandsSeen }) {
   const [isOpen, setIsOpen] = useState(false)
   const [concerts, setConcerts] = useState(initialConcerts)
+  const [bandsSeen, setBandsSeen] = useState([])
 
   const notifyInsert = () => toast.success("Konzert erfolgreich hinzugefügt!")
 
-	useEffect(() => {
-		const subscriptionInsert = supabase.from('concerts').on('INSERT', payload => {
-			setConcerts([
-				...concerts,
-				payload.new
-			])
-			setIsOpen(false)
-			notifyInsert()
-		}).subscribe()
+  useEffect(() => {
+    const user = supabase.auth.user()
+    setBandsSeen(allBandsSeen.filter(bandsSeen => bandsSeen.user_id === user?.id))
+  }, [allBandsSeen])
 
-		return () => supabase.removeSubscription(subscriptionInsert)
-	}, [])
+  useEffect(() => {
+    const subscriptionInsert = supabase.from('concerts').on('INSERT', payload => {
+      setConcerts([
+        ...concerts,
+        payload.new
+      ])
+      setIsOpen(false)
+      notifyInsert()
+    }).subscribe()
+
+    return () => supabase.removeSubscription(subscriptionInsert)
+  }, [concerts])
   return (
     <PageWrapper>
       <Head>
@@ -51,6 +57,7 @@ export default function Home({ initialConcerts, bands, locations }) {
               key={concert.id}
               concert={concert}
               bands={bands}
+              bandsSeen={bandsSeen.find(row => row.concert_id === concert.id)}
               locations={locations}
             />
           ))}
@@ -76,6 +83,9 @@ export async function getStaticProps() {
     .from('bands')
     .select('*')
     .order('name')
+  const { data: bandsSeen } = await supabase
+    .from('bands_seen')
+    .select('*')
   const { data: locations } = await supabase.from('locations').select('id,name')
 
   if (error) {
@@ -85,6 +95,7 @@ export async function getStaticProps() {
   return {
     props: {
       initialConcerts: concerts,
+      allBandsSeen: bandsSeen,
       bands,
       locations,
     }

@@ -3,7 +3,7 @@ import { PencilSquareIcon, CalendarIcon, MapPinIcon } from "@heroicons/react/24/
 import dayjs from 'dayjs'
 import 'dayjs/locale/de'
 
-export default function ConcertCard({ concert, bands, locations }) {
+export default function ConcertCard({ concert, bands, bandsSeen, locations }) {
   const dateFormat = new Date(concert.date_start).getFullYear() === new Date().getFullYear() ? 'DD. MMM' : 'DD. MMM YYYY'
   return (
     <div className="flex flex-col items-start gap-4 p-6 rounded-lg bg-slate-700 shadow">
@@ -25,7 +25,7 @@ export default function ConcertCard({ concert, bands, locations }) {
       <div className="flex flex-wrap gap-2">
         {concert.bands && concert.bands.map(concertBand => (
           <Link key={concertBand} href={`/bands/${concertBand}`}>
-            <a className="btn btn-tag">
+            <a className={`btn btn-tag${bandsSeen?.band_ids && bandsSeen.band_ids.some(bandSeen => bandSeen === concertBand) ? ' btn-seen' : ''}`}>
               {bands.find(band => band.id === concertBand).name}
             </a>
           </Link>
