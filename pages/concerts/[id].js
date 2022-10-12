@@ -46,7 +46,7 @@ export default function ConcertPage({ initialConcert, bands, locations, allBands
 
   const router = useRouter()
   const dateFormat = new Date(concert.date_start).getFullYear() === new Date().getFullYear() ? 'DD. MMM' : 'DD. MMM YYYY'
-  const concertBands = bands.filter(band => concert.bands.some(bandId => band.id === bandId))
+  const concertBands = bands.filter(band => concert.band_ids.some(bandId => band.id === bandId))
   const location = locations.find(location => concert.location === location.id)
 
   useEffect(() => {

@@ -13,14 +13,14 @@ export default function NewConcertForm({ bands, locations, cancelButton }) {
       .from('concerts')
       .insert([{
         date_start: event.target.dateStart.value,
-        bands: selectedConcertBands,
+        band_ids: selectedConcertBands,
         location: event.target.location.value,
         description: event.target.description.value,
       }])
       .single()
 
     if (insertConcertError) {
-      console.error(insertConcertError)
+      alert(insertConcertError.message)
     }
   }
   return (

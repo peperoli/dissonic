@@ -4,7 +4,7 @@ import supabase from "../utils/supabase"
 import Button from "./Button"
 
 export default function EditConcertForm({ concert, bands, locations, setIsOpen }) {
-  let [selectedConcertBands, setSelectedConcertBands] = useState(concert.bands || [])
+  let [selectedConcertBands, setSelectedConcertBands] = useState(concert.band_ids || [])
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -15,7 +15,7 @@ export default function EditConcertForm({ concert, bands, locations, setIsOpen }
         .update({ 
           date_start: event.target.dateStart.value, 
           description: event.target.description.value,
-          bands: selectedConcertBands,
+          band_ids: selectedConcertBands,
           location: event.target.location.value,
         })
         .eq('id', concert.id)

@@ -23,10 +23,10 @@ export default function ConcertCard({ concert, bands, bandsSeen, locations }) {
         </Link>
       </div>
       <div className="flex flex-wrap gap-2">
-        {concert.bands && concert.bands.map(concertBand => (
+        {concert.band_ids && concert.band_ids.map(concertBand => (
           <Link key={concertBand} href={`/bands/${concertBand}`}>
             <a className={`btn btn-tag${bandsSeen?.band_ids && bandsSeen.band_ids.some(bandSeen => bandSeen === concertBand) ? ' btn-seen' : ''}`}>
-              {bands.find(band => band.id === concertBand).name}
+              {bands.find(band => band.id === concertBand)?.name}
             </a>
           </Link>
         ))}
