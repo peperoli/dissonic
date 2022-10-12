@@ -8,7 +8,7 @@
     input[type="date"],
     textarea,
     select {
-      @apply block w-full max-w-full p-2 rounded border border-slate-500 bg-slate-700 accent-slate-50;
+      @apply block w-full max-w-full p-2 rounded-lg border border-slate-500 bg-slate-600 accent-slate-50;
     }
 
     textarea {
