@@ -1,5 +1,7 @@
 @layer components {
   .form-control {
+    @apply w-full;
+    
     label {
       @apply block;
     }
@@ -9,6 +11,10 @@
     textarea,
     select {
       @apply block w-full max-w-full p-2 rounded-lg border border-slate-500 bg-slate-600 accent-slate-50;
+    
+    &::placeholder {
+      @apply text-slate-300;
+    }
     }
 
     textarea {
@@ -16,7 +22,7 @@
     }
 
     input[type="checkbox"] {
-      @apply mr-2;
+      @apply w-4 h-4 mr-2 accent-venom;
     }
   }
 }

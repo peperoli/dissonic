@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { PencilSquareIcon, CalendarIcon, MapPinIcon } from "@heroicons/react/24/solid"
+import { CalendarIcon, MapPinIcon, ArrowRightIcon } from "@heroicons/react/24/solid"
 import dayjs from 'dayjs'
 import 'dayjs/locale/de'
 
@@ -11,6 +11,7 @@ export default function ConcertCard({ concert, bands, bandsSeen, locations }) {
         <div className="inline-flex items-center">
           <CalendarIcon className="h-text mr-2" />
           {dayjs(concert.date_start).locale('de-ch').format(dateFormat)}
+          {concert.date_end && <span>&nbsp;&ndash; {dayjs(concert.date_end).locale('de-ch').format(dateFormat)}</span>}
         </div>
         {concert.location && (
           <div className="inline-flex items-center">
@@ -19,7 +20,7 @@ export default function ConcertCard({ concert, bands, bandsSeen, locations }) {
           </div>
         )}
         <Link href={`/concerts/${concert.id}`} key={concert.id}>
-          <a className="btn btn-link ml-auto"><PencilSquareIcon className="h-text" />Bearbeiten</a>
+          <a className="btn btn-link ml-auto"><ArrowRightIcon className="h-text" />Mehr anzeigen</a>
         </Link>
       </div>
       <div className="flex flex-wrap gap-2">

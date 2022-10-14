@@ -9,6 +9,7 @@ import Button from "../../components/Button"
 import dayjs from "dayjs"
 import 'dayjs/locale/de'
 import { useRouter } from "next/router"
+import GenreChart from "../../components/GenreChart"
 
 function BandSeenCheckbox({ band, bandsSeen, setBandsSeen }) {
   const isSeen = bandsSeen && bandsSeen.some(item => item === band.id) ? true : false
@@ -106,20 +107,30 @@ export default function ConcertPage({ initialConcert, bands, locations, allBands
             Go Back
           </a>
         </Link>
-        <h1>{concertBands[0]?.name} @ {location?.name}</h1>
-        {concertBands && concertBands.map(band => (
-          <BandSeenCheckbox
-            key={band.id}
-            band={band}
-            bands={concertBands}
-            bandsSeen={bandsSeen}
-            setBandsSeen={setBandsSeen}
-          />
-        ))}
+        {concert.name ? (
+          <>
+            {concert.is_festival && <p>Festival</p>}
+            <h1>{concert.name}</h1>
+          </>
+        ) : (
+          <h1>{concertBands[0]?.name} @ {location?.name}</h1>
+        )}
+        <div className="flex flex-wrap gap-2 mb-4">
+          {concertBands && concertBands.map(band => (
+            <BandSeenCheckbox
+              key={band.id}
+              band={band}
+              bands={concertBands}
+              bandsSeen={bandsSeen}
+              setBandsSeen={setBandsSeen}
+            />
+          ))}
+        </div>
         <div className="flex gap-4 w-full">
           <div className="inline-flex items-center">
             <CalendarIcon className="h-text mr-2" />
             {dayjs(concert.date_start).locale('de-ch').format(dateFormat)}
+            {concert.date_end && <span>&nbsp;&ndash; {dayjs(concert.date_end).locale('de-ch').format(dateFormat)}</span>}
           </div>
           {location && (
             <div className="inline-flex items-center">
@@ -129,6 +140,7 @@ export default function ConcertPage({ initialConcert, bands, locations, allBands
           )}
         </div>
         {concert.description && <p>{concert.description}</p>}
+        <GenreChart bands={concertBands} />
         <div className="flex gap-4 mt-4">
           <Button onClick={() => setEditIsOpen(true)} label="Bearbeiten" />
           <Button onClick={() => setDeleteIsOpen(true)} label="Löschen" />
