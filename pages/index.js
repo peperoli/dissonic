@@ -33,6 +33,16 @@ export default function Home({ initialConcerts, bands, locations, allBandsSeen }
 
     return () => supabase.removeSubscription(subscriptionInsert)
   }, [concerts])
+
+  function compare(a, b) {
+		let comparison = 0
+		if (a.date_start > b.date_start) {
+			comparison = -1
+		} else if (a.date_start < b.date_start) {
+			comparison = 1
+		}
+		return comparison
+	}
   return (
     <PageWrapper>
       <Head>
@@ -52,7 +62,7 @@ export default function Home({ initialConcerts, bands, locations, allBandsSeen }
             icon={<PlusIcon className="h-text" />} />
         </div>
         <div className="grid gap-4">
-          {concerts.map(concert => (
+          {concerts.sort(compare).map(concert => (
             <ConcertCard
               key={concert.id}
               concert={concert}

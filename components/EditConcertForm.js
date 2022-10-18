@@ -2,9 +2,12 @@ import BandCheckbox from "./BandCheckbox"
 import { useState } from "react"
 import supabase from "../utils/supabase"
 import Button from "./Button"
+import MultiSelect from "./MultiSelect"
 
 export default function EditConcertForm({ concert, bands, locations, setIsOpen }) {
-  const [selectedConcertBands, setSelectedConcertBands] = useState(concert.band_ids || [])
+  const [selectedConcertBands, setSelectedConcertBands] = useState(
+    concert.band_ids?.map(bandId => bands.find(band => band.id === bandId)) || []
+  )
   const [isFestival, setIsFestival] = useState(concert.is_festival)
 
   async function handleSubmit(event) {
@@ -13,20 +16,20 @@ export default function EditConcertForm({ concert, bands, locations, setIsOpen }
     try {
       const { data, error } = await supabase
         .from('concerts')
-        .update({ 
-          date_start: event.target.dateStart.value, 
-          date_end: event.target.dateEnd?.value, 
+        .update({
+          date_start: event.target.dateStart.value,
+          date_end: event.target.dateEnd?.value,
           description: event.target.description.value,
-          band_ids: selectedConcertBands,
+          band_ids: selectedConcertBands.map(item => item.id),
           location: event.target.location.value,
           name: event.target.name.value,
           is_festival: isFestival,
         })
         .eq('id', concert.id)
 
-        if (error) {
-          throw error
-        }
+      if (error) {
+        throw error
+      }
     } catch (error) {
       alert(error.message)
     }
@@ -57,6 +60,15 @@ export default function EditConcertForm({ concert, bands, locations, setIsOpen }
         </select>
       </div>
       <div className="form-control">
+        <label htmlFor="bands">Bands</label>
+        <MultiSelect
+          name="bands"
+          options={bands}
+          selectedOptions={selectedConcertBands}
+          setSelectedOptions={setSelectedConcertBands}
+        />
+      </div>
+      <div className="form-control">
         <label>Name (optional)</label>
         <input type="text" name="name" id="name" placeholder="Wacken Open Air" defaultValue={concert.name} />
       </div>
@@ -64,34 +76,8 @@ export default function EditConcertForm({ concert, bands, locations, setIsOpen }
         <label>
           <input type="checkbox" name="isFestival" value="isFestival" checked={isFestival} onChange={() => setIsFestival(!isFestival)} />
           <span>Festival</span>
-        </label>
+        </label> b v
       </div>
-      <div>
-        <p>Ausgewählte Bands:</p>
-        <ul className="flex flex-wrap gap-2">
-          {selectedConcertBands?.length > 0 ? selectedConcertBands.map(concertBand => (
-            <li key={concertBand} className="btn btn-tag">
-              {bands.find(band => band.id === concertBand)?.name}
-            </li>
-          )) : (
-            <p className="text-red">Dieses Konzert hat noch keine Bands.</p>
-          )}
-        </ul>
-      </div>
-      <fieldset className="form-control">
-        <legend>Bands</legend>
-        <div className="max-h-48 overflow-auto px-4 py-2 border border-slate-500 rounded-lg bg-slate-600">
-          {bands.map(band => (
-            <BandCheckbox
-              key={band.id}
-              concertId={concert.id}
-              band={band}
-              selectedConcertBands={selectedConcertBands}
-              setSelectedConcertBands={setSelectedConcertBands}
-            />
-          ))}
-        </div>
-      </fieldset>
       <div className="form-control">
         <label htmlFor="description">Beschreibung</label>
         <textarea name="description" id="description" defaultValue={concert.description} />

@@ -10,6 +10,7 @@ import dayjs from "dayjs"
 import 'dayjs/locale/de'
 import { useRouter } from "next/router"
 import GenreChart from "../../components/GenreChart"
+import MultiSelect from "../../components/MultiSelect"
 
 function BandSeenCheckbox({ band, bandsSeen, setBandsSeen }) {
   const isSeen = bandsSeen && bandsSeen.some(item => item === band.id) ? true : false

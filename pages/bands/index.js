@@ -15,8 +15,6 @@ export default function PageBands({ initialBands, countries, genres }) {
 	const [isOpen, setIsOpen] = useState(false)
 	const [bands, setBands] = useState(initialBands)
 
-	// const highestCount = Math.max(...genres.map(item => item.count))
-
 	function compare(a, b) {
 		const bandA = a.name.toUpperCase()
 		const bandB = b.name.toUpperCase()

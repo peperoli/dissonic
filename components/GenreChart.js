@@ -1,3 +1,5 @@
+import { Fragment } from "react"
+
 export default function GenreChart({ bands }) {
   const genres = []
 
@@ -15,11 +17,11 @@ export default function GenreChart({ bands }) {
     <section>
       <h2>Genres</h2>
       <div className="grid grid-cols-2 items-center gap-x-4 gap-y-2">
-        {genres.map(genre => (
-          <>
+        {genres.map((genre, index) => (
+          <Fragment key={index}>
             <div>{genre.name}</div>
             <div className="h-4 rounded bg-venom" style={{ width: genre.count / highestCount * 100 }} />
-          </>
+          </Fragment>
         ))}
       </div>
     </section>

@@ -1,10 +1,9 @@
-// import BandCheckbox from "./ BandCheckbox"
 import { useState } from "react"
 import supabase from "../utils/supabase"
-import BandCheckbox from "./BandCheckbox"
+import MultiSelect from "./MultiSelect"
 
 export default function NewConcertForm({ bands, locations, cancelButton }) {
-  let [selectedConcertBands, setSelectedConcertBands] = useState([])
+  const [selectedConcertBands, setSelectedConcertBands] = useState([])
   const [isFestival, setIsFestival] = useState(false)
 
   async function handleSubmit(event) {
@@ -15,7 +14,7 @@ export default function NewConcertForm({ bands, locations, cancelButton }) {
       .insert([{
         date_start: event.target.dateStart.value,
         date_end: event.target.dateEnd?.value,
-        band_ids: selectedConcertBands,
+        band_ids: selectedConcertBands.map(item => item.id),
         location: event.target.location.value,
         description: event.target.description.value,
         name: event.target.name.value,
@@ -28,7 +27,18 @@ export default function NewConcertForm({ bands, locations, cancelButton }) {
     }
   }
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="grid gap-4">
+      <h2 className="mb-0">Konzert hinzufügen</h2>
+      <div className="form-control">
+        <label>Name (optional)</label>
+        <input type="text" name="name" id="name" placeholder="Wacken Open Air" />
+      </div>
+      <div className="form-control">
+        <label>
+          <input type="checkbox" name="isFestival" value="isFestival" checked={isFestival} onChange={() => setIsFestival(!isFestival)} />
+          <span>Festival</span>
+        </label>
+      </div>
       <div className="flex gap-4">
         <div className="form-control">
           <label htmlFor="dateStart">Datum</label>
@@ -41,16 +51,15 @@ export default function NewConcertForm({ bands, locations, cancelButton }) {
           </div>
         )}
       </div>
-      <p>Ausgewählte Bands:</p>
-      <ul className="flex flex-wrap gap-2">
-        {selectedConcertBands?.length > 0 ? selectedConcertBands.map((concertBand, index) => (
-          <li key={index} className="btn btn-tag">
-            {bands.find(band => band.id === concertBand).name}
-          </li>
-        )) : (
-          <p className="text-red">Dieses Konzert hat noch keine Bands.</p>
-        )}
-      </ul>
+      <div className="form-control">
+        <label htmlFor="bands">Bands</label>
+        <MultiSelect
+          name="bands"
+          options={bands}
+          selectedOptions={selectedConcertBands}
+          setSelectedOptions={setSelectedConcertBands}
+        />
+      </div>
       <div className="form-control">
         <label htmlFor="location">Location</label>
         <select name="location" id="location">
@@ -61,30 +70,9 @@ export default function NewConcertForm({ bands, locations, cancelButton }) {
         </select>
       </div>
       <div className="form-control">
-        <label>Name (optional)</label>
-        <input type="text" name="name" id="name" placeholder="Wacken Open Air" />
-      </div>
-      <div className="form-control">
-        <label>
-          <input type="checkbox" name="isFestival" value="isFestival" checked={isFestival} onChange={() => setIsFestival(!isFestival)} />
-          <span>Festival</span>
-        </label>
-      </div>
-      <div className="form-control">
         <label htmlFor="description">Beschreibung</label>
         <textarea name="description" id="description" placeholder="Schreib was Schönes ..." />
       </div>
-      <fieldset className="form-control">
-        <legend>Bands</legend>
-        {bands.map(band => (
-          <BandCheckbox
-            key={band.id}
-            band={band}
-            selectedConcertBands={selectedConcertBands}
-            setSelectedConcertBands={setSelectedConcertBands}
-          />
-        ))}
-      </fieldset>
       <div className="flex justify-end gap-3">
         {cancelButton}
         <button type="submit" className="btn btn-primary">Konzert erstellen</button>
