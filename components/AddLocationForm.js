@@ -18,12 +18,12 @@ export default function AddBandForm({ locations, cancelButton }) {
 	return (
 		<form onSubmit={handleSubmit} className="flex flex-col gap-4">
 			<div className="form-control">
+				<input type="text" name="name" id="name" placeholder="Hallenstadion" />
 				<label htmlFor="name">Name</label>
-				<input type="text" name="name" id="name" />
 			</div>
 			<div className="form-control">
+				<input type="text" name="city" id="city" placeholder="Zürich" />
 				<label htmlFor="city">Ort</label>
-				<input type="text" name="city" id="city" />
 			</div>
       <div className="flex justify-end gap-3">
         {cancelButton}

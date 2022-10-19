@@ -1,9 +1,11 @@
 import { useState } from "react"
 import supabase from "../utils/supabase"
-import GenreCheckbox from "./GenreCheckbox"
+import MultiSelect from "./MultiSelect"
 
 export default function EditBandForm({ band, countries, genres, cancelButton }) {
-  const [selectedGenres, setSelectedGenres] = useState(band.genres || [])
+  const [selectedGenres, setSelectedGenres] = useState(
+    genres.filter(genre => band.genres.find(item => item === genre.name)) || []
+  )
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -13,7 +15,7 @@ export default function EditBandForm({ band, countries, genres, cancelButton }) 
       .update({
         name: event.target.name.value,
         country: event.target.country.value,
-        genres: selectedGenres
+        genres: selectedGenres.map(item => item.name)
       })
       .eq('id', band.id)
 
@@ -25,24 +27,24 @@ export default function EditBandForm({ band, countries, genres, cancelButton }) 
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <h2>Band bearbeiten</h2>
       <div className="form-control">
-        <label htmlFor="name">Name</label>
         <input type="text" name="name" id="name" defaultValue={band.name} />
+        <label htmlFor="name">Name</label>
       </div>
       <div className="form-control">
-        <label htmlFor="country">Land</label>
         <select name="country" id="country" defaultValue={band.country}>
           <option value="international">International</option>
           {countries.map((country, index) => (
             <option key={index} value={country.iso2}>{country.name}</option>
           ))}
         </select>
+        <label htmlFor="country">Land</label>
       </div>
-      <fieldset className="form-control">
-        <legend>Genres</legend>
-        {genres.map((genre, index) => (
-          <GenreCheckbox key={index} band={band} genre={genre} selectedGenres={selectedGenres} setSelectedGenres={setSelectedGenres} />
-        ))}
-      </fieldset>
+      <MultiSelect
+        name="genres"
+        options={genres}
+        selectedOptions={selectedGenres}
+        setSelectedOptions={setSelectedGenres}
+      />
       <div className="flex justify-end gap-3">
         {cancelButton}
         <button type="submit" className="btn btn-primary">Speichern</button>

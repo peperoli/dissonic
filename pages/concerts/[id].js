@@ -63,7 +63,7 @@ export default function ConcertPage({ initialConcert, bands, locations, allBands
         .from('bands_seen')
         .upsert({
           concert_id: concert.id,
-          user_id: user.id,
+          user_id: user?.id,
           band_ids: bandsSeen,
         },
           {

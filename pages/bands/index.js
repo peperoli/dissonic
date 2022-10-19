@@ -3,13 +3,13 @@ import { useState } from "react"
 import Modal from "../../components/Modal"
 import AddBandForm from "../../components/AddBandForm"
 import { PlusIcon } from "@heroicons/react/24/solid"
-import Link from "next/link"
 import Button from "../../components/Button"
 import { useEffect } from "react"
 import { toast } from "react-toastify"
 import PageWrapper from "../../components/PageWrapper"
 import Table from "../../components/Table"
 import TableRow from "../../components/TableRow"
+import Search from "../../components/Search"
 
 export default function PageBands({ initialBands, countries, genres }) {
 	const [isOpen, setIsOpen] = useState(false)
@@ -42,6 +42,11 @@ export default function PageBands({ initialBands, countries, genres }) {
 
 		return () => supabase.removeSubscription(subscriptionInsert)
 	}, [])
+
+	const [query, setQuery] = useState('')
+
+	const regExp = new RegExp(query, 'i')
+	const filteredBands = bands.filter(item => item.name.match(regExp))
 	return (
 		<PageWrapper>
 			<main className="p-8 w-full">
@@ -55,7 +60,8 @@ export default function PageBands({ initialBands, countries, genres }) {
 					</button>
 				</div>
 				<Table>
-					{bands.sort(compare).map(band => (
+					<Search name="searchBands" query={query} setQuery={setQuery} />
+					{filteredBands.sort(compare).map(band => (
 						<TableRow key={band.id} href={`/bands/${band.id}`}>
 							<div>{band.name}</div>
 							<div className="text-slate-300">{countries.find(country => country.iso2 === band.country).name}</div>
@@ -68,6 +74,7 @@ export default function PageBands({ initialBands, countries, genres }) {
 			</main>
 			<Modal isOpen={isOpen} setIsOpen={setIsOpen}>
 				<AddBandForm
+					bands={bands}
 					countries={countries}
 					genres={genres}
 					cancelButton={<Button onClick={() => setIsOpen(false)} label="Abbrechen" />}

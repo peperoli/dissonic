@@ -37,50 +37,47 @@ export default function EditConcertForm({ concert, bands, locations, setIsOpen }
     setIsOpen(false)
   }
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit} className="grid gap-6">
+      <div className="form-control">
+        <input type="text" name="name" id="name" placeholder="Wacken Open Air" defaultValue={concert.name} />
+        <label htmlFor="name">Name (optional)</label>
+      </div>
+      <div className="form-control">
+        <label>
+          <input type="checkbox" name="isFestival" value="isFestival" checked={isFestival} onChange={() => setIsFestival(!isFestival)} />
+          <span>Festival</span>
+        </label>
+      </div>
       <div className="flex gap-4">
         <div className="form-control">
-          <label htmlFor="dateStart">{isFestival ? 'Startdatum' : 'Datum'}</label>
           <input type="date" name="dateStart" id="dateStart" defaultValue={concert.date_start} />
+          <label htmlFor="dateStart">{isFestival ? 'Startdatum' : 'Datum'}</label>
         </div>
         {isFestival && (
           <div className="form-control">
-            <label htmlFor="dateEnd">Enddatum</label>
             <input type="date" name="dateEnd" id="dateEnd" defaultValue={concert.date_end} />
+            <label htmlFor="dateEnd">Enddatum</label>
           </div>
         )}
       </div>
       <div className="form-control">
-        <label htmlFor="location">Location</label>
         <select name="location" id="location" defaultValue={concert.location}>
           <option value={null}>Bitte wählen ...</option>
           {locations && locations.map(location => (
             <option key={location.id} value={location.id}>{location.name}</option>
           ))}
         </select>
+        <label htmlFor="location">Location</label>
       </div>
+      <MultiSelect
+        name="bands"
+        options={bands}
+        selectedOptions={selectedConcertBands}
+        setSelectedOptions={setSelectedConcertBands}
+      />
       <div className="form-control">
-        <label htmlFor="bands">Bands</label>
-        <MultiSelect
-          name="bands"
-          options={bands}
-          selectedOptions={selectedConcertBands}
-          setSelectedOptions={setSelectedConcertBands}
-        />
-      </div>
-      <div className="form-control">
-        <label>Name (optional)</label>
-        <input type="text" name="name" id="name" placeholder="Wacken Open Air" defaultValue={concert.name} />
-      </div>
-      <div className="form-control">
-        <label>
-          <input type="checkbox" name="isFestival" value="isFestival" checked={isFestival} onChange={() => setIsFestival(!isFestival)} />
-          <span>Festival</span>
-        </label> b v
-      </div>
-      <div className="form-control">
-        <label htmlFor="description">Beschreibung</label>
         <textarea name="description" id="description" defaultValue={concert.description} />
+        <label htmlFor="description">Beschreibung</label>
       </div>
       <div className="flex justify-end gap-4">
         <Button onClick={() => setIsOpen(false)} label="Abbrechen" />

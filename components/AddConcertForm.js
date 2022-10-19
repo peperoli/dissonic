@@ -1,10 +1,14 @@
 import { useState } from "react"
 import supabase from "../utils/supabase"
 import MultiSelect from "./MultiSelect"
+import dayjs from "dayjs"
 
 export default function NewConcertForm({ bands, locations, cancelButton }) {
   const [selectedConcertBands, setSelectedConcertBands] = useState([])
   const [isFestival, setIsFestival] = useState(false)
+
+  const [today] = dayjs().format().split('T')
+  const [tomorrow] = dayjs().add(1, 'day').format().split('T')
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -27,11 +31,11 @@ export default function NewConcertForm({ bands, locations, cancelButton }) {
     }
   }
   return (
-    <form onSubmit={handleSubmit} className="grid gap-4">
+    <form onSubmit={handleSubmit} className="grid gap-6">
       <h2 className="mb-0">Konzert hinzufügen</h2>
       <div className="form-control">
-        <label>Name (optional)</label>
         <input type="text" name="name" id="name" placeholder="Wacken Open Air" />
+        <label htmlFor="name">Name (optional)</label>
       </div>
       <div className="form-control">
         <label>
@@ -41,37 +45,34 @@ export default function NewConcertForm({ bands, locations, cancelButton }) {
       </div>
       <div className="flex gap-4">
         <div className="form-control">
+          <input type="date" name="dateStart" id="dateStart" defaultValue={today} />
           <label htmlFor="dateStart">Datum</label>
-          <input type="date" name="dateStart" id="dateStart" />
         </div>
         {isFestival && (
           <div className="form-control">
+            <input type="date" name="dateEnd" id="dateEnd" defaultValue={tomorrow} />
             <label htmlFor="dateEnd">Enddatum</label>
-            <input type="date" name="dateEnd" id="dateEnd" />
           </div>
         )}
       </div>
+      <MultiSelect
+        name="bands"
+        options={bands}
+        selectedOptions={selectedConcertBands}
+        setSelectedOptions={setSelectedConcertBands}
+      />
       <div className="form-control">
-        <label htmlFor="bands">Bands</label>
-        <MultiSelect
-          name="bands"
-          options={bands}
-          selectedOptions={selectedConcertBands}
-          setSelectedOptions={setSelectedConcertBands}
-        />
-      </div>
-      <div className="form-control">
-        <label htmlFor="location">Location</label>
-        <select name="location" id="location">
-          <option value={null}>Bitte wählen ...</option>
+        <select name="location" id="location" defaultValue="">
+          <option value="" disabled hidden>Bitte wählen ...</option>
           {locations && locations.map(location => (
             <option key={location.id} value={location.id}>{location.name}</option>
-          ))}
+            ))}
         </select>
+        <label htmlFor="location">Location</label>
       </div>
       <div className="form-control">
-        <label htmlFor="description">Beschreibung</label>
         <textarea name="description" id="description" placeholder="Schreib was Schönes ..." />
+        <label htmlFor="description">Beschreibung</label>
       </div>
       <div className="flex justify-end gap-3">
         {cancelButton}

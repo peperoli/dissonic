@@ -8,6 +8,7 @@ import Modal from "../../components/Modal"
 import Button from "../../components/Button"
 import { useState, useEffect } from "react"
 import { toast } from "react-toastify"
+import Search from "../../components/Search"
 
 export default function PageLocations({ initialLocations }) {
   const [locations, setLocations] = useState(initialLocations)
@@ -27,6 +28,11 @@ export default function PageLocations({ initialLocations }) {
 
     return () => supabase.removeSubscription(subscriptionInsert)
   }, [locations])
+
+  const [query, setQuery] = useState('')
+
+	const regExp = new RegExp(query, 'i')
+	const filteredLocations = locations.filter(item => item.name.match(regExp))
   return (
     <>
       <PageWrapper>
@@ -41,7 +47,8 @@ export default function PageLocations({ initialLocations }) {
             </button>
           </div>
           <Table>
-            {locations && locations.map(location => (
+            <Search name="searchLocations" query={query} setQuery={setQuery} />
+            {filteredLocations && filteredLocations.map(location => (
               <TableRow key={location.id} href={''}>
                 <div>
                   {location.name}
