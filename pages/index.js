@@ -8,10 +8,12 @@ import Button from '../components/Button'
 import { PlusIcon } from '@heroicons/react/24/solid'
 import PageWrapper from '../components/PageWrapper'
 import { toast } from 'react-toastify'
+import MultiSelect from '../components/MultiSelect'
 
 export default function Home({ initialConcerts, bands, locations, allBandsSeen }) {
   const [isOpen, setIsOpen] = useState(false)
   const [concerts, setConcerts] = useState(initialConcerts)
+  const [selectedBands, setSelectedBands] = useState([])
   const [bandsSeen, setBandsSeen] = useState([])
 
   const notifyInsert = () => toast.success("Konzert erfolgreich hinzugefügt!")
@@ -33,6 +35,15 @@ export default function Home({ initialConcerts, bands, locations, allBandsSeen }
 
     return () => supabase.removeSubscription(subscriptionInsert)
   }, [concerts])
+
+  function filterRule(item) {
+    let rule = true
+    const selectedBandIds = selectedBands.map(item => item.id)
+    if (selectedBandIds.length > 0) {
+      rule = item.band_ids.some(bandId => selectedBandIds.includes(bandId))
+    }
+    return rule
+  }
 
   function compare(a, b) {
 		let comparison = 0
@@ -62,7 +73,13 @@ export default function Home({ initialConcerts, bands, locations, allBandsSeen }
             icon={<PlusIcon className="h-text" />} />
         </div>
         <div className="grid gap-4">
-          {concerts.sort(compare).map(concert => (
+          <MultiSelect name="bands" options={bands} selectedOptions={selectedBands} setSelectedOptions={setSelectedBands} />
+          <div className="text-sm text-slate-300">
+            {concerts.length !== concerts.filter(filterRule).length && <>{concerts.filter(filterRule).length}&nbsp;von&nbsp;</>}
+            {concerts.length}
+            &nbsp;Einträge
+          </div>
+          {concerts.filter(filterRule).sort(compare).map(concert => (
             <ConcertCard
               key={concert.id}
               concert={concert}

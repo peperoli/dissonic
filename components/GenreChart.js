@@ -30,7 +30,7 @@ export default function GenreChart({ bands }) {
         {genres.sort(compare).map((genre, index) => (
           <Fragment key={index}>
             <div>{genre.name}</div>
-            <div className="h-4 rounded bg-venom" style={{ width: genre.count / highestCount * 100 }}>
+            <div className="h-4 rounded bg-venom" style={{ width: genre.count / highestCount * 200 }}>
             <span className="flex pl-1 text-xs font-bold text-slate-800">{genre.count}</span>
             </div>
           </Fragment>
