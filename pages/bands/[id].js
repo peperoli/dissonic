@@ -9,7 +9,7 @@ import Button from "../../components/Button"
 import PageWrapper from "../../components/PageWrapper"
 import { toast } from "react-toastify"
 
-export default function BandPage({ initialBand, countries, genres }) {
+export default function BandPage({ initialBand, countries, genres, genresJoin }) {
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
   const [editIsOpen, setEditIsOpen] = useState(false)
   const [band, setBand] = useState(initialBand)
@@ -63,6 +63,8 @@ export default function BandPage({ initialBand, countries, genres }) {
         <button onClick={() => setDeleteIsOpen(true)} className="btn btn-link btn-danger">
           Löschen
         </button>
+        <pre className="text-slate-300">{JSON.stringify(band, null, 2)}</pre>
+        <pre>{JSON.stringify(genres, null, 2)}</pre>
       </main>
       <Modal isOpen={deleteIsOpen} setIsOpen={setDeleteIsOpen}>
         <div>
@@ -93,7 +95,7 @@ export default function BandPage({ initialBand, countries, genres }) {
 export async function getServerSideProps({ params }) {
   const { data: band, error } = await supabase
     .from('bands')
-    .select('*')
+    .select('*, genres_join(*)')
     .eq('id', params.id)
     .single()
 
@@ -105,11 +107,21 @@ export async function getServerSideProps({ params }) {
 
   const { data: genres } = await supabase
     .from('genres')
-    .select('*')
+    .select('*, genres_join(*)')
     .order('name')
+    .limit(12, { foreignTable: 'genres_join' })
+
+  const { data: genresJoin, genresJoinError } = await supabase
+  .from('genres_join')
+  .select('*')
+  .eq('band_id', params.id)
 
   if (error) {
     console.error(error);
+  }
+
+  if (genresJoinError) {
+    window.alert(genresJoinError)
   }
 
   return {
@@ -117,6 +129,7 @@ export async function getServerSideProps({ params }) {
       initialBand: band,
       countries,
       genres,
+      genresJoin,
     }
   }
 }

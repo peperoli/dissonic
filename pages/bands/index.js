@@ -10,10 +10,21 @@ import PageWrapper from "../../components/PageWrapper"
 import Table from "../../components/Table"
 import TableRow from "../../components/TableRow"
 import Search from "../../components/Search"
+import MultiSelect from "../../components/MultiSelect"
 
 export default function PageBands({ initialBands, countries, genres }) {
 	const [isOpen, setIsOpen] = useState(false)
 	const [bands, setBands] = useState(initialBands)
+	const [selectedGenres, setSelectedGenres] = useState([])
+
+	function filterRule(item) {
+		let rule = true
+		const selectedGenreIds = selectedGenres.map(item => item.id)
+		if (selectedGenreIds.length > 0) {
+			rule = item.band_ids.some(bandId => selectedGenreIds.includes(bandId))
+		}
+		return rule
+	}
 
 	function compare(a, b) {
 		const bandA = a.name.toUpperCase()
@@ -60,8 +71,16 @@ export default function PageBands({ initialBands, countries, genres }) {
 					</button>
 				</div>
 				<Table>
-					<Search name="searchBands" query={query} setQuery={setQuery} />
-					{filteredBands.sort(compare).map(band => (
+					<div className="flex items-end gap-4">
+						<Search name="searchBands" query={query} setQuery={setQuery} />
+						<MultiSelect
+							name="genres"
+							options={genres}
+							selectedOptions={selectedGenres}
+							setSelectedOptions={setSelectedGenres}
+						/>
+					</div>
+					{filteredBands.filter(filterRule).sort(compare).map(band => (
 						<TableRow key={band.id} href={`/bands/${band.id}`}>
 							<div>{band.name}</div>
 							<div className="text-slate-300">{countries.find(country => country.iso2 === band.country).name}</div>
