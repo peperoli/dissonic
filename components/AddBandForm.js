@@ -16,16 +16,35 @@ export default function AddBandForm({ bands, countries, genres, cancelButton }) 
   async function handleSubmit(event) {
     event.preventDefault()
 
-    const { data: updatedBands, error } = await supabase
-      .from('bands')
-      .insert({
-        name: event.target.name.value,
-        country: event.target.country.value,
-        genres: selectedGenres.map(item => item.name),
-      })
+    try {
+      const { data: band, error: bandError } = await supabase
+        .from('bands')
+        .insert({
+          name: event.target.name.value,
+          country: event.target.country.value,
+        })
+        .single()
 
-    if (error) {
-      console.error(error)
+      let bandGenres = []
+
+      if (bandError) {
+        throw bandError
+      } else {
+        bandGenres = selectedGenres.map(item => (
+          {band_id: band.id, genre_id: item.id}
+        ))
+      }
+
+      const { error: genresError } = await supabase
+        .from('j_band_genres')
+        .insert(bandGenres)
+
+      if (genresError) {
+        throw genresError
+      }
+    } catch (error) {
+      alert('Band erstellen fehlgeschlagen.')
+      console.log(error)
     }
   }
   return (
@@ -33,20 +52,23 @@ export default function AddBandForm({ bands, countries, genres, cancelButton }) 
       <div className="form-control">
         <input type="text" name="name" id="name" value={name} onChange={(event) => setName(event.target.value)} placeholder="Beatles" />
         <label htmlFor="name">Name</label>
-        {isSimilar ? <div className="text-slate-300">Vorsicht, diese Band könnte schon vorhanden sein:
-          <ul className="list-disc list-inside">
-            {similarBands.map(band => (
-              <li key={band.id}>{band.name}</li>
-            ))}
-          </ul>
-        </div> : (
+        {isSimilar ? (
+          <div>
+            <p className="text-red">Vorsicht, diese Band könnte schon vorhanden sein:</p>
+            <ul className="list-disc list-inside text-slate-300">
+              {similarBands.map(band => (
+                <li key={band.id}>{band.name}</li>
+              ))}
+            </ul>
+          </div>
+        ) : (
           <p className="text-slate-300">Nice. Die scheint es noch nicht zu geben.</p>
         )}
       </div>
       <div className="form-control">
         <select name="country" id="country" defaultValue="">
           <option value="" disabled hidden>Bitte wählen ...</option>
-          <option value="international">International</option>
+          <option value="int">International</option>
           {countries.map((country, index) => (
             <option key={index} value={country.iso2}>{country.name}</option>
           ))}

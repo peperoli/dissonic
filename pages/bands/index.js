@@ -52,7 +52,7 @@ export default function PageBands({ initialBands, countries, genres }) {
 		}).subscribe()
 
 		return () => supabase.removeSubscription(subscriptionInsert)
-	}, [])
+	}, [bands])
 
 	const [query, setQuery] = useState('')
 
@@ -83,9 +83,10 @@ export default function PageBands({ initialBands, countries, genres }) {
 					{filteredBands.filter(filterRule).sort(compare).map(band => (
 						<TableRow key={band.id} href={`/bands/${band.id}`}>
 							<div>{band.name}</div>
-							<div className="text-slate-300">{countries.find(country => country.iso2 === band.country).name}</div>
+							<div className="text-slate-300">{band.country === 'int' ? 'International' : countries.find(country => country.iso2 === band.country)?.name}</div>
 							<div className="text-sm text-slate-300 whitespace-nowrap text-ellipsis overflow-hidden">
-								{band.genres.join(' • ')}
+								{band.genres.join(' • ')}<br />
+								<span className="bg-slate-800">{genres.filter(item => band.j_band_genres.some(item2 => item2.genre_id === item.id)).map(item => item.name).join(', ')}</span>
 							</div>
 						</TableRow>
 					))}
@@ -106,13 +107,15 @@ export default function PageBands({ initialBands, countries, genres }) {
 export async function getStaticProps() {
 	const { data: bands, error } = await supabase
 		.from('bands')
-		.select('*')
+		.select('*, j_band_genres(*)')
 		.order('name')
+
 	const { data: countries, countriesError } = await supabase
 		.from('countries')
 		.select('name,iso2')
 		.neq('local_name', null)
 		.neq('iso2', 'AQ')
+
 	const { data: genres } = await supabase
 		.from('genres')
 		.select('*')

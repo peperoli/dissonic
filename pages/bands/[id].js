@@ -9,7 +9,7 @@ import Button from "../../components/Button"
 import PageWrapper from "../../components/PageWrapper"
 import { toast } from "react-toastify"
 
-export default function BandPage({ initialBand, countries, genres, genresJoin }) {
+export default function BandPage({ initialBand, countries, genres }) {
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
   const [editIsOpen, setEditIsOpen] = useState(false)
   const [band, setBand] = useState(initialBand)
@@ -26,19 +26,34 @@ export default function BandPage({ initialBand, countries, genres, genresJoin })
 
     return () => supabase.removeSubscription(updateSubscription)
   }, [])
- 
-  async function deleteBand() {
-    const { error } = await supabase
-      .from('bands')
-      .delete()
-      .eq('id', band.id)
 
-    if (error) {
-      console.error(error)
-    } else {
+  async function deleteBand() {
+    try {
+      const { error: genresError } = await supabase
+        .from('j_band_genres')
+        .delete()
+        .eq('band_id', band.id)
+
+      if (genresError) {
+        throw uploadError
+      }
+
+      const { error: bandError } = await supabase
+        .from('bands')
+        .delete()
+        .eq('id', band.id)
+
+      if (bandError) {
+        throw bandError
+      }
+    } catch (error) {
+      alert('Löschen fehlgeschlagen. Kontaktiere Oli')
+      console.log(error)
+    } finally {
       router.push('/bands')
     }
   }
+
   return (
     <PageWrapper>
       <main className="p-8">
@@ -95,7 +110,7 @@ export default function BandPage({ initialBand, countries, genres, genresJoin })
 export async function getServerSideProps({ params }) {
   const { data: band, error } = await supabase
     .from('bands')
-    .select('*, genres_join(*)')
+    .select('id, name, country')
     .eq('id', params.id)
     .single()
 
@@ -107,21 +122,11 @@ export async function getServerSideProps({ params }) {
 
   const { data: genres } = await supabase
     .from('genres')
-    .select('*, genres_join(*)')
-    .order('name')
-    .limit(12, { foreignTable: 'genres_join' })
-
-  const { data: genresJoin, genresJoinError } = await supabase
-  .from('genres_join')
-  .select('*')
-  .eq('band_id', params.id)
+    .select('*, j_band_genres!inner(*)')
+    .eq('j_band_genres.band_id', params.id)
 
   if (error) {
     console.error(error);
-  }
-
-  if (genresJoinError) {
-    window.alert(genresJoinError)
   }
 
   return {
@@ -129,7 +134,6 @@ export async function getServerSideProps({ params }) {
       initialBand: band,
       countries,
       genres,
-      genresJoin,
     }
   }
 }
