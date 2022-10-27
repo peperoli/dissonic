@@ -3,25 +3,40 @@ import supabase from "../utils/supabase"
 import MultiSelect from "./MultiSelect"
 
 export default function EditBandForm({ band, countries, genres, cancelButton }) {
-  const [selectedGenres, setSelectedGenres] = useState(
-    genres.filter(genre => band.genres.find(item => item === genre.name)) || []
-  )
+  const [selectedGenres, setSelectedGenres] = useState(band.genres || [])
+
+  const newGenres = selectedGenres.filter(item => !band.genres.find(item2 => item.id === item2.id))
+  const deleteGenres = band.genres.filter(item => !selectedGenres.find(item2 => item.id === item2.id))
 
   async function handleSubmit(event) {
     event.preventDefault()
 
-    const { data: updatedBand, error } = await supabase
+    const { error } = await supabase
       .from('bands')
       .update({
         name: event.target.name.value,
         country: event.target.country.value,
-        genres: selectedGenres.map(item => item.name)
       })
       .eq('id', band.id)
+      
+      if (error) {
+        console.error(error)
+      }
 
-    if (error) {
-      console.error(error)
+    const { error: addGenresError } = await supabase
+      .from('j_band_genres')
+      .insert(newGenres.map(genre => ({ band_id: band.id, genre_id: genre.id })))
+
+    const { error: deleteGenresError } = await supabase
+      .from('j_band_genres')
+      .delete()
+      .eq('band_id', band.id)
+      .in('genre_id', deleteGenres.map(item => item.id))
+
+    if (addGenresError) {
+      console.error(addGenresError);
     }
+
   }
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">

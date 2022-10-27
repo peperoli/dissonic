@@ -44,7 +44,7 @@ export default function AddBandForm({ bands, countries, genres, cancelButton }) 
       }
     } catch (error) {
       alert('Band erstellen fehlgeschlagen.')
-      console.log(error)
+      console.error(error)
     }
   }
   return (

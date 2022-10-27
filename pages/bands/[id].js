@@ -67,7 +67,7 @@ export default function BandPage({ initialBand, countries, genres }) {
         <ul className="flex gap-2">
           {band.genres && band.genres.map((genre, index) => (
             <Fragment key={index}>
-              <li>{genre}</li>
+              <li>{genre.name}</li>
               {index + 1 !== band.genres.length && <span>&bull;</span>}
             </Fragment>
           ))}
@@ -79,7 +79,6 @@ export default function BandPage({ initialBand, countries, genres }) {
           Löschen
         </button>
         <pre className="text-slate-300">{JSON.stringify(band, null, 2)}</pre>
-        <pre>{JSON.stringify(genres, null, 2)}</pre>
       </main>
       <Modal isOpen={deleteIsOpen} setIsOpen={setDeleteIsOpen}>
         <div>
@@ -110,7 +109,7 @@ export default function BandPage({ initialBand, countries, genres }) {
 export async function getServerSideProps({ params }) {
   const { data: band, error } = await supabase
     .from('bands')
-    .select('id, name, country')
+    .select('*, genres(*)')
     .eq('id', params.id)
     .single()
 
@@ -122,8 +121,7 @@ export async function getServerSideProps({ params }) {
 
   const { data: genres } = await supabase
     .from('genres')
-    .select('*, j_band_genres!inner(*)')
-    .eq('j_band_genres.band_id', params.id)
+    .select('*')
 
   if (error) {
     console.error(error);
