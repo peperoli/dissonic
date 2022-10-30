@@ -49,42 +49,41 @@ export default function ConcertPage({ initialConcert, bands, locations, allBands
   const router = useRouter()
   const dateFormat = new Date(concert.date_start).getFullYear() === new Date().getFullYear() ? 'DD. MMM' : 'DD. MMM YYYY'
   const concertBands = bands.filter(band => concert.band_ids.some(bandId => band.id === bandId))
-  const location = locations.find(location => concert.location === location.id)
 
-  useEffect(() => {
-    const user = supabase.auth.user()
-    setBandsSeen(allBandsSeen.find(bandsSeen => bandsSeen.user_id === user?.id)?.band_ids || [])
-  }, [allBandsSeen])
+  // useEffect(() => {
+  //   const user = supabase.auth.user()
+  //   setBandsSeen(allBandsSeen.find(bandsSeen => bandsSeen.user_id === user?.id)?.band_ids || [])
+  // }, [allBandsSeen])
 
-  useEffect(() => {
-    async function updateBandsSeen() {
-      const user = supabase.auth.user()
-      const { data: updatedBandsSeen, error } = await supabase
-        .from('bands_seen')
-        .upsert({
-          concert_id: concert.id,
-          user_id: user?.id,
-          band_ids: bandsSeen,
-        },
-          {
-            onConflict: 'concert_id, user_id'
-          })
+  // useEffect(() => {
+  //   async function updateBandsSeen() {
+  //     const user = supabase.auth.user()
+  //     const { data: updatedBandsSeen, error } = await supabase
+  //       .from('bands_seen')
+  //       .upsert({
+  //         concert_id: concert.id,
+  //         user_id: user?.id,
+  //         band_ids: bandsSeen,
+  //       },
+  //         {
+  //           onConflict: 'concert_id, user_id'
+  //         })
 
-      if (error) {
-        console.error(error);
-      }
-    }
+  //     if (error) {
+  //       console.error(error);
+  //     }
+  //   }
 
-    updateBandsSeen()
-  }, [bandsSeen, concert])
+  //   updateBandsSeen()
+  // }, [bandsSeen, concert])
 
-  useEffect(() => {
-    const updateSubscription = supabase.from('concerts').on('UPDATE', payload => {
-      setConcert(payload.new)
-    }).subscribe()
+  // useEffect(() => {
+  //   const updateSubscription = supabase.from('concerts').on('UPDATE', payload => {
+  //     setConcert(payload.new)
+  //   }).subscribe()
 
-    return () => supabase.removeSubscription(updateSubscription)
-  })
+  //   return () => supabase.removeSubscription(updateSubscription)
+  // })
 
   async function deleteConcert() {
     const { error: deleteBandsSeenError } = await supabase.from('bands_seen').delete().eq('concert_id', concert.id)
@@ -114,10 +113,21 @@ export default function ConcertPage({ initialConcert, bands, locations, allBands
             <h1>{concert.name}</h1>
           </>
         ) : (
-          <h1>{concertBands[0]?.name} @ {location?.name}</h1>
+          <h1>{concert.bands[0]?.name} @ {concert.location?.name}</h1>
         )}
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex flex-wrap gap-2 mb-4 opacity-50">
           {concertBands && concertBands.map(band => (
+            <BandSeenCheckbox
+              key={band.id}
+              band={band}
+              bands={concertBands}
+              bandsSeen={bandsSeen}
+              setBandsSeen={setBandsSeen}
+            />
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-2 mb-4">
+          {concert.bands && concert.bands.map(band => (
             <BandSeenCheckbox
               key={band.id}
               band={band}
@@ -133,19 +143,20 @@ export default function ConcertPage({ initialConcert, bands, locations, allBands
             {dayjs(concert.date_start).locale('de-ch').format(dateFormat)}
             {concert.date_end && <span>&nbsp;&ndash; {dayjs(concert.date_end).locale('de-ch').format(dateFormat)}</span>}
           </div>
-          {location && (
+          {concert.location && (
             <div className="inline-flex items-center">
               <MapPinIcon className="h-text mr-2" />
-              {location.name}
+              {concert.location.name}
             </div>
           )}
         </div>
         {concert.description && <p>{concert.description}</p>}
-        <GenreChart bands={concertBands} />
+        <GenreChart bands={concert.bands} />
         <div className="flex gap-4 mt-4">
           <Button onClick={() => setEditIsOpen(true)} label="Bearbeiten" />
           <Button onClick={() => setDeleteIsOpen(true)} label="Löschen" />
         </div>
+        <pre className="text-slate-300">{JSON.stringify(concert, null, 2)}</pre>
         <Modal
           isOpen={editIsOpen}
           setIsOpen={setEditIsOpen}
@@ -155,20 +166,21 @@ export default function ConcertPage({ initialConcert, bands, locations, allBands
             bands={bands}
             locations={locations}
             setIsOpen={setEditIsOpen}
+            setConcert={setConcert}
           />
         </Modal>
         <Modal isOpen={deleteIsOpen} setIsOpen={setDeleteIsOpen}>
-        <div>
-          <h2>Konzert löschen</h2>
-          Willst du dieses Konzert wirklich löschen?
-          <div className="flex justify-end gap-3 mt-4">
-            <Button onClick={() => setDeleteIsOpen(false)} label="Abbrechen" />
-            <button onClick={deleteConcert} className="btn btn-primary btn-danger">
-              Löschen
-            </button>
+          <div>
+            <h2>Konzert löschen</h2>
+            Willst du dieses Konzert wirklich löschen?
+            <div className="flex justify-end gap-3 mt-4">
+              <Button onClick={() => setDeleteIsOpen(false)} label="Abbrechen" />
+              <button onClick={deleteConcert} className="btn btn-primary btn-danger">
+                Löschen
+              </button>
+            </div>
           </div>
-        </div>
-      </Modal>
+        </Modal>
       </main>
     </PageWrapper>
   )
@@ -178,7 +190,14 @@ export async function getServerSideProps({ params }) {
 
   const { data: concert, error } = await supabase
     .from('concerts')
-    .select('*')
+    .select(`
+      *,
+      location(*),
+      bands(
+        *,
+        genres(*)
+      )
+    `)
     .eq('id', params.id)
     .single()
 
@@ -198,7 +217,7 @@ export async function getServerSideProps({ params }) {
     .order('name')
 
   if (error) {
-    throw new Error(error.message)
+    console.log(error);
   }
 
   if (bandsSeenError) {

@@ -4,31 +4,66 @@ import supabase from "../utils/supabase"
 import Button from "./Button"
 import MultiSelect from "./MultiSelect"
 
-export default function EditConcertForm({ concert, bands, locations, setIsOpen }) {
-  const [selectedConcertBands, setSelectedConcertBands] = useState(
-    concert.band_ids?.map(bandId => bands.find(band => band.id === bandId)) || []
-  )
+export default function EditConcertForm({ concert, bands, locations, setIsOpen, setConcert }) {
+  const [selectedBands, setSelectedBands] = useState(concert.bands || [])
   const [isFestival, setIsFestival] = useState(concert.is_festival)
 
+  const addBands = selectedBands.filter(item => !concert.bands.find(item2 => item.id === item2.id))
+  const deleteBands = concert.bands.filter(item => !selectedBands.find(item2 => item.id === item2.id))
+  console.log(addBands, deleteBands);
   async function handleSubmit(event) {
     event.preventDefault()
 
     try {
-      const { data, error } = await supabase
+      const { error: editConcertError } = await supabase
         .from('concerts')
         .update({
           date_start: event.target.dateStart.value,
           date_end: event.target.dateEnd?.value,
           description: event.target.description.value,
-          band_ids: selectedConcertBands.map(item => item.id),
+          band_ids: selectedBands.map(item => item.id),
           location: event.target.location.value,
           name: event.target.name.value,
           is_festival: isFestival,
         })
         .eq('id', concert.id)
 
-      if (error) {
-        throw error
+      if (editConcertError) {
+        throw editConcertError
+      }
+
+      const { error: addBandsError } = await supabase
+        .from('j_concert_bands')
+        .insert(addBands.map(band => ({ concert_id: concert.id, band_id: band.id })))
+
+      if (addBandsError) {
+        throw addBandsError
+      }
+
+      const { error: deleteBandsError } = await supabase
+        .from('j_concert_bands')
+        .delete()
+        .eq('concert_id', concert.id)
+        .in('band_id', deleteBands.map(item => item.id))
+
+      if (deleteBandsError) {
+        throw deleteBandsError
+      }
+      try {
+        const { data: newConcert, error: newConcertError } = await supabase
+          .from('concerts')
+          .select('*, location(*), bands(*, genres(*))')
+          .eq('id', concert.id)
+          .single()
+
+        if (newConcertError) {
+          throw newConcertError
+        }
+
+        setConcert(newConcert)
+        setIsOpen(false)
+      } catch (error) {
+        alert(error.message)
       }
     } catch (error) {
       alert(error.message)
@@ -61,10 +96,10 @@ export default function EditConcertForm({ concert, bands, locations, setIsOpen }
         )}
       </div>
       <div className="form-control">
-        <select name="location" id="location" defaultValue={concert.location}>
+        <select name="location" id="location" defaultValue={concert.location?.id}>
           <option value={null}>Bitte wählen ...</option>
           {locations && locations.map(location => (
-            <option key={location.id} value={location.id}>{location.name}</option>
+            <option key={location.id} value={location.id}>{location.name}{location.city && ', ' + location.city}</option>
           ))}
         </select>
         <label htmlFor="location">Location</label>
@@ -72,8 +107,8 @@ export default function EditConcertForm({ concert, bands, locations, setIsOpen }
       <MultiSelect
         name="bands"
         options={bands}
-        selectedOptions={selectedConcertBands}
-        setSelectedOptions={setSelectedConcertBands}
+        selectedOptions={selectedBands}
+        setSelectedOptions={setSelectedBands}
       />
       <div className="form-control">
         <textarea name="description" id="description" defaultValue={concert.description} />
