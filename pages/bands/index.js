@@ -21,7 +21,7 @@ export default function PageBands({ initialBands, countries, genres }) {
 		let rule = true
 		const selectedGenreIds = selectedGenres.map(item => item.id)
 		if (selectedGenreIds.length > 0) {
-			rule = item.band_ids.some(bandId => selectedGenreIds.includes(bandId))
+			rule = item.genres.some(genreId => selectedGenreIds.includes(genreId.id))
 		}
 		return rule
 	}
@@ -83,7 +83,7 @@ export default function PageBands({ initialBands, countries, genres }) {
 					{filteredBands.filter(filterRule).sort(compare).map(band => (
 						<TableRow key={band.id} href={`/bands/${band.id}`}>
 							<div>{band.name}</div>
-							<div className="text-slate-300">{band.country === 'int' ? 'International' : countries.find(country => country.iso2 === band.country)?.name}</div>
+							<div className="text-slate-300">{band.country === 'int' ? 'International' : countries.find(country => country.iso2 === band.country)?.name}, {band.da_real_country?.iso2}</div>
 							<div className="text-sm text-slate-300 whitespace-nowrap text-ellipsis overflow-hidden">
 								{band.genres?.map(item => item.name).join(' • ')}<br />
 							</div>
@@ -106,7 +106,7 @@ export default function PageBands({ initialBands, countries, genres }) {
 export async function getStaticProps() {
 	const { data: bands, error } = await supabase
 		.from('bands')
-		.select('*, genres(*)')
+		.select('*, da_real_country(*), genres(*)')
 		.order('name')
 
 	const { data: countries } = await supabase

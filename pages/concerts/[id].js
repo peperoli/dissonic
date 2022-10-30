@@ -184,7 +184,7 @@ export async function getServerSideProps({ params }) {
 
   const { data: bands } = await supabase
     .from('bands')
-    .select('*')
+    .select('*, genres(*)')
     .order('name')
 
   const { data: bandsSeen, bandsSeenError } = await supabase

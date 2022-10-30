@@ -2,10 +2,9 @@ import supabase from "../../utils/supabase"
 import Link from "next/link"
 import { ArrowLeftIcon } from "@heroicons/react/24/solid"
 import Modal from "../../components/Modal"
-import { Fragment, useState, useEffect } from "react"
+import { Fragment, useState } from "react"
 import { useRouter } from "next/router"
 import EditBandForm from "../../components/EditBandForm"
-import Button from "../../components/Button"
 import PageWrapper from "../../components/PageWrapper"
 import { toast } from "react-toastify"
 
@@ -13,19 +12,14 @@ export default function BandPage({ initialBand, countries, genres }) {
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
   const [editIsOpen, setEditIsOpen] = useState(false)
   const [band, setBand] = useState(initialBand)
+  const [isSuccess, setIsSuccess] = useState(false)
 
   const router = useRouter()
   const notifyUpdate = () => toast.success("Band erfolgreich aktualisiert.")
 
-  useEffect(() => {
-    const updateSubscription = supabase.from('bands').on('UPDATE', payload => {
-      setBand(payload.new)
-      setEditIsOpen(false)
-      notifyUpdate()
-    }).subscribe()
-
-    return () => supabase.removeSubscription(updateSubscription)
-  }, [])
+  // if (isSuccess) {
+  //   notifyUpdate()
+  // }
 
   async function deleteBand() {
     try {
@@ -63,7 +57,7 @@ export default function BandPage({ initialBand, countries, genres }) {
             Go Back
           </a>
         </Link>
-        <h1>{band.name} <span>({band.country})</span></h1>
+        <h1>{band.name} <span>({band.da_real_country?.iso2})</span></h1>
         <ul className="flex gap-2">
           {band.genres && band.genres.map((genre, index) => (
             <Fragment key={index}>
@@ -99,7 +93,9 @@ export default function BandPage({ initialBand, countries, genres }) {
           band={band}
           countries={countries}
           genres={genres}
-          cancelButton={<Button onClick={() => setEditIsOpen(false)} label="Abbrechen" />}
+          setIsOpen={setEditIsOpen}
+          setIsSuccess={setIsSuccess}
+          setBand={setBand}
         />
       </Modal>
     </PageWrapper>
@@ -109,13 +105,13 @@ export default function BandPage({ initialBand, countries, genres }) {
 export async function getServerSideProps({ params }) {
   const { data: band, error } = await supabase
     .from('bands')
-    .select('*, genres(*)')
+    .select('*, da_real_country(id, iso2), genres(*)')
     .eq('id', params.id)
     .single()
 
   const { data: countries } = await supabase
     .from('countries')
-    .select('name,iso2')
+    .select('id, name, iso2')
     .neq('local_name', null)
     .neq('iso2', 'AQ')
 
