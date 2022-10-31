@@ -3,9 +3,6 @@ import { useState } from "react"
 import Modal from "../../components/Modal"
 import AddBandForm from "../../components/AddBandForm"
 import { PlusIcon } from "@heroicons/react/24/solid"
-import Button from "../../components/Button"
-import { useEffect } from "react"
-import { toast } from "react-toastify"
 import PageWrapper from "../../components/PageWrapper"
 import Table from "../../components/Table"
 import TableRow from "../../components/TableRow"
@@ -39,21 +36,6 @@ export default function PageBands({ initialBands, countries, genres }) {
 		return comparison
 	}
 
-	const notifyInsert = () => toast.success("Band erfolgreich hinzugefügt!")
-
-	useEffect(() => {
-		const subscriptionInsert = supabase.from('bands').on('INSERT', payload => {
-			setBands([
-				...bands,
-				payload.new
-			])
-			setIsOpen(false)
-			notifyInsert()
-		}).subscribe()
-
-		return () => supabase.removeSubscription(subscriptionInsert)
-	}, [bands])
-
 	const [query, setQuery] = useState('')
 
 	const regExp = new RegExp(query, 'i')
@@ -83,7 +65,7 @@ export default function PageBands({ initialBands, countries, genres }) {
 					{filteredBands.filter(filterRule).sort(compare).map(band => (
 						<TableRow key={band.id} href={`/bands/${band.id}`}>
 							<div>{band.name}</div>
-							<div className="text-slate-300">{band.country === 'int' ? 'International' : countries.find(country => country.iso2 === band.country)?.name}, {band.da_real_country?.iso2}</div>
+							<div className="text-slate-300">{band.country?.name}</div>
 							<div className="text-sm text-slate-300 whitespace-nowrap text-ellipsis overflow-hidden">
 								{band.genres?.map(item => item.name).join(' • ')}<br />
 							</div>
@@ -93,10 +75,11 @@ export default function PageBands({ initialBands, countries, genres }) {
 			</main>
 			<Modal isOpen={isOpen} setIsOpen={setIsOpen}>
 				<AddBandForm
-					bands={bands}
 					countries={countries}
 					genres={genres}
-					cancelButton={<Button onClick={() => setIsOpen(false)} label="Abbrechen" />}
+					bands={bands}
+					setBands={setBands}
+					setIsOpen={setIsOpen}
 				/>
 			</Modal>
 		</PageWrapper>
@@ -106,12 +89,12 @@ export default function PageBands({ initialBands, countries, genres }) {
 export async function getStaticProps() {
 	const { data: bands, error } = await supabase
 		.from('bands')
-		.select('*, da_real_country(*), genres(*)')
+		.select('*, country(*), genres(*)')
 		.order('name')
 
 	const { data: countries } = await supabase
 		.from('countries')
-		.select('name,iso2')
+		.select('id, name')
 		.neq('local_name', null)
 		.neq('iso2', 'AQ')
 

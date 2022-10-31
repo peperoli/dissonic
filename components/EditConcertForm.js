@@ -10,7 +10,6 @@ export default function EditConcertForm({ concert, bands, locations, setIsOpen, 
 
   const addBands = selectedBands.filter(item => !concert.bands.find(item2 => item.id === item2.id))
   const deleteBands = concert.bands.filter(item => !selectedBands.find(item2 => item.id === item2.id))
-  console.log(addBands, deleteBands);
   async function handleSubmit(event) {
     event.preventDefault()
 

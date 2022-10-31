@@ -219,7 +219,7 @@ export async function getServerSideProps({ params }) {
     .order('name')
 
   if (error) {
-    console.log(error);
+    console.error(error);
   }
 
   if (bandsSeenError) {

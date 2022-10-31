@@ -17,7 +17,7 @@ export default function EditBandForm({ band, countries, genres, setIsSuccess, se
         .from('bands')
         .update({
           name: event.target.name.value,
-          da_real_country: event.target.country.value,
+          country: event.target.country.value,
         })
         .eq('id', band.id)
 
@@ -46,7 +46,7 @@ export default function EditBandForm({ band, countries, genres, setIsSuccess, se
       try {
         const { data: newBand, error: newBandError} = await supabase
           .from('bands')
-          .select('*, da_real_country(id, iso2), genres(*)')
+          .select('*, country(id, iso2), genres(*)')
           .eq('id', band.id)
           .single()
 
@@ -72,7 +72,7 @@ export default function EditBandForm({ band, countries, genres, setIsSuccess, se
         <label htmlFor="name">Name</label>
       </div>
       <div className="form-control">
-        <select name="country" id="country" defaultValue={band.da_real_country?.id}>
+        <select name="country" id="country" defaultValue={band.country?.id}>
           <option value="international">International</option>
           {countries.map((country, index) => (
             <option key={index} value={country.id}>{country.name}</option>

@@ -1,8 +1,9 @@
 import { useState } from "react"
 import supabase from "../utils/supabase"
+import Button from "./Button"
 import MultiSelect from "./MultiSelect"
 
-export default function AddBandForm({ bands, countries, genres, cancelButton }) {
+export default function AddBandForm({ countries, genres, bands, setBands, setIsOpen }) {
   const [selectedGenres, setSelectedGenres] = useState([])
   const [name, setName] = useState('')
 
@@ -25,26 +26,39 @@ export default function AddBandForm({ bands, countries, genres, cancelButton }) 
         })
         .single()
 
-      let bandGenres = []
-
       if (bandError) {
         throw bandError
-      } else {
-        bandGenres = selectedGenres.map(item => (
-          {band_id: band.id, genre_id: item.id}
-        ))
       }
 
       const { error: genresError } = await supabase
         .from('j_band_genres')
-        .insert(bandGenres)
+        .insert(selectedGenres.map(genre => ({ band_id: band?.id, genre_id: genre.id })))
 
       if (genresError) {
         throw genresError
       }
+
+      try {
+        const { data: newBand, error: newBandError } = await supabase
+          .from('bands')
+          .select('*, country(*), genres(*)')
+          .eq('id', band.id)
+          .single()
+
+        if (newBandError) {
+          throw newBandError
+        }
+
+        setBands([
+          ...bands,
+          newBand
+        ])
+        setIsOpen(false)
+      } catch (error) {
+        alert(error.message)
+      }
     } catch (error) {
-      alert('Band erstellen fehlgeschlagen.')
-      console.error(error)
+      alert(error.message)
     }
   }
   return (
@@ -68,9 +82,8 @@ export default function AddBandForm({ bands, countries, genres, cancelButton }) 
       <div className="form-control">
         <select name="country" id="country" defaultValue="">
           <option value="" disabled hidden>Bitte wählen ...</option>
-          <option value="int">International</option>
           {countries.map((country, index) => (
-            <option key={index} value={country.iso2}>{country.name}</option>
+            <option key={index} value={country.id}>{country.name}</option>
           ))}
         </select>
         <label htmlFor="country">Land</label>
@@ -82,7 +95,7 @@ export default function AddBandForm({ bands, countries, genres, cancelButton }) 
         setSelectedOptions={setSelectedGenres}
       />
       <div className="flex justify-end gap-3">
-        {cancelButton}
+        <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
         <button type="submit" className="btn btn-primary">Band hinzufügen</button>
       </div>
     </form>

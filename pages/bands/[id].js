@@ -12,14 +12,8 @@ export default function BandPage({ initialBand, countries, genres }) {
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
   const [editIsOpen, setEditIsOpen] = useState(false)
   const [band, setBand] = useState(initialBand)
-  const [isSuccess, setIsSuccess] = useState(false)
 
   const router = useRouter()
-  const notifyUpdate = () => toast.success("Band erfolgreich aktualisiert.")
-
-  // if (isSuccess) {
-  //   notifyUpdate()
-  // }
 
   async function deleteBand() {
     try {
@@ -29,7 +23,7 @@ export default function BandPage({ initialBand, countries, genres }) {
         .eq('band_id', band.id)
 
       if (genresError) {
-        throw uploadError
+        throw genresError
       }
 
       const { error: bandError } = await supabase
@@ -40,11 +34,10 @@ export default function BandPage({ initialBand, countries, genres }) {
       if (bandError) {
         throw bandError
       }
-    } catch (error) {
-      alert('Löschen fehlgeschlagen. Kontaktiere Oli')
-      console.log(error)
-    } finally {
+
       router.push('/bands')
+    } catch (error) {
+      alert(error.message)
     }
   }
 
@@ -57,7 +50,7 @@ export default function BandPage({ initialBand, countries, genres }) {
             Go Back
           </a>
         </Link>
-        <h1>{band.name} <span>({band.da_real_country?.iso2})</span></h1>
+        <h1>{band.name} <span>({band.country?.iso2})</span></h1>
         <ul className="flex gap-2">
           {band.genres && band.genres.map((genre, index) => (
             <Fragment key={index}>
@@ -105,7 +98,7 @@ export default function BandPage({ initialBand, countries, genres }) {
 export async function getServerSideProps({ params }) {
   const { data: band, error } = await supabase
     .from('bands')
-    .select('*, da_real_country(id, iso2), genres(*)')
+    .select('*, country(id, iso2), genres(*)')
     .eq('id', params.id)
     .single()
 

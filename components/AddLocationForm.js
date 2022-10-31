@@ -1,34 +1,46 @@
 import supabase from "../utils/supabase"
+import Button from "./Button"
 
-export default function AddBandForm({ locations, cancelButton }) {
+export default function AddBandForm({ locations, setIsOpen, setLocations }) {
   async function handleSubmit(event) {
     event.preventDefault()
-    
-    const { data: updateLocations, error } = await supabase
-    .from('locations')
-    .insert({
-      name: event.target.name.value,
-      city: event.target.city.value,
-    })
-    
-    if (error) {
-      console.error(error)
+
+    try {
+      const { data: newLocation, error: newLocationError } = await supabase
+        .from('locations')
+        .insert({
+          name: event.target.name.value,
+          city: event.target.city.value,
+        })
+        .single()
+  
+      if (newLocationError) {
+        throw newLocationError
+      }
+
+      setLocations([
+        ...locations,
+        newLocation
+      ])
+      setIsOpen(false)
+    } catch (error) {
+      alert(error.message)
     }
   }
-	return (
-		<form onSubmit={handleSubmit} className="flex flex-col gap-4">
-			<div className="form-control">
-				<input type="text" name="name" id="name" placeholder="Hallenstadion" />
-				<label htmlFor="name">Name</label>
-			</div>
-			<div className="form-control">
-				<input type="text" name="city" id="city" placeholder="Zürich" />
-				<label htmlFor="city">Ort</label>
-			</div>
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <div className="form-control">
+        <input type="text" name="name" id="name" placeholder="Hallenstadion" />
+        <label htmlFor="name">Name</label>
+      </div>
+      <div className="form-control">
+        <input type="text" name="city" id="city" placeholder="Zürich" />
+        <label htmlFor="city">Ort</label>
+      </div>
       <div className="flex justify-end gap-3">
-        {cancelButton}
+        <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
         <button type="submit" className="btn btn-primary">Location hinzufügen</button>
       </div>
-		</form>
-	)
+    </form>
+  )
 }
