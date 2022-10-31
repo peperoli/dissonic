@@ -10,7 +10,6 @@ import dayjs from "dayjs"
 import 'dayjs/locale/de'
 import { useRouter } from "next/router"
 import GenreChart from "../../components/GenreChart"
-import MultiSelect from "../../components/MultiSelect"
 
 function BandSeenCheckbox({ band, bandsSeen, setBandsSeen }) {
   const isSeen = bandsSeen && bandsSeen.some(item => item === band.id) ? true : false
@@ -48,7 +47,6 @@ export default function ConcertPage({ initialConcert, bands, locations, allBands
 
   const router = useRouter()
   const dateFormat = new Date(concert.date_start).getFullYear() === new Date().getFullYear() ? 'DD. MMM' : 'DD. MMM YYYY'
-  const concertBands = bands.filter(band => concert.band_ids.some(bandId => band.id === bandId))
 
   // useEffect(() => {
   //   const user = supabase.auth.user()
@@ -86,16 +84,32 @@ export default function ConcertPage({ initialConcert, bands, locations, allBands
   // })
 
   async function deleteConcert() {
-    const { error: deleteBandsSeenError } = await supabase.from('bands_seen').delete().eq('concert_id', concert.id)
-    const { error } = await supabase
-      .from('concerts')
-      .delete()
-      .eq('id', concert.id)
+    try {
+      const { error: deleteBandsSeenError } = await supabase.from('bands_seen').delete().eq('concert_id', concert.id)
 
-    if (error || deleteBandsSeenError) {
-      console.error(error, deleteBandsSeenError)
-    } else {
-      router.push('/')
+      if (deleteBandsSeenError) {
+        throw deleteBandsSeenError
+      }
+  
+      const { error: deleteBandsError } = await supabase.from('j_concert_bands').delete().eq('concert_id', concert.id)
+
+      if (deleteBandsError) {
+        throw deleteBandsError
+      }
+  
+      const { error: deleteConcertError } = await supabase.from('concerts').delete().eq('id', concert.id)
+
+      if (deleteConcertError) {
+        throw deleteConcertError
+      }
+
+      try {
+        router.push('/')
+      } catch {
+
+      }
+    } catch (error) {
+      alert(error.message)
     }
   }
   return (
@@ -115,23 +129,11 @@ export default function ConcertPage({ initialConcert, bands, locations, allBands
         ) : (
           <h1>{concert.bands[0]?.name} @ {concert.location?.name}</h1>
         )}
-        <div className="flex flex-wrap gap-2 mb-4 opacity-50">
-          {concertBands && concertBands.map(band => (
-            <BandSeenCheckbox
-              key={band.id}
-              band={band}
-              bands={concertBands}
-              bandsSeen={bandsSeen}
-              setBandsSeen={setBandsSeen}
-            />
-          ))}
-        </div>
         <div className="flex flex-wrap gap-2 mb-4">
           {concert.bands && concert.bands.map(band => (
             <BandSeenCheckbox
               key={band.id}
               band={band}
-              bands={concertBands}
               bandsSeen={bandsSeen}
               setBandsSeen={setBandsSeen}
             />

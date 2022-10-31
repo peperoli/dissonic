@@ -3,7 +3,7 @@ import { CalendarIcon, MapPinIcon, ArrowRightIcon } from "@heroicons/react/24/so
 import dayjs from 'dayjs'
 import 'dayjs/locale/de'
 
-export default function ConcertCard({ concert, bands, bandsSeen, locations }) {
+export default function ConcertCard({ concert, bandsSeen }) {
   const dateFormat = new Date(concert.date_start).getFullYear() === new Date().getFullYear() ? 'DD. MMM' : 'DD. MMM YYYY'
   return (
     <div className="p-6 rounded-lg bg-slate-700 shadow">
@@ -17,7 +17,7 @@ export default function ConcertCard({ concert, bands, bandsSeen, locations }) {
         {concert.location && (
           <div className="inline-flex items-center">
             <MapPinIcon className="h-text mr-2" />
-            {locations.find(location => location.id === concert.location)?.name}
+            {concert.location?.name}
           </div>
         )}
         <Link href={`/concerts/${concert.id}`} key={concert.id}>
@@ -25,10 +25,10 @@ export default function ConcertCard({ concert, bands, bandsSeen, locations }) {
         </Link>
       </div>
       <div className="flex flex-wrap gap-2 mb-4">
-        {concert.band_ids && concert.band_ids.map(concertBand => (
-          <Link key={concertBand} href={`/bands/${concertBand}`}>
+        {concert.bands && concert.bands.map(concertBand => (
+          <Link key={concertBand.id} href={`/bands/${concertBand}`}>
             <a className={`btn btn-tag${bandsSeen?.band_ids && bandsSeen.band_ids.some(bandSeen => bandSeen === concertBand) ? ' btn-seen' : ''}`}>
-              {bands.find(band => band.id === concertBand)?.name}
+              {concertBand.name}
             </a>
           </Link>
         ))}

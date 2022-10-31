@@ -23,24 +23,11 @@ export default function Home({ initialConcerts, bands, locations, allBandsSeen }
     setBandsSeen(allBandsSeen.filter(bandsSeen => bandsSeen.user_id === user?.id))
   }, [allBandsSeen])
 
-  useEffect(() => {
-    const subscriptionInsert = supabase.from('concerts').on('INSERT', payload => {
-      setConcerts([
-        ...concerts,
-        payload.new
-      ])
-      setIsOpen(false)
-      notifyInsert()
-    }).subscribe()
-
-    return () => supabase.removeSubscription(subscriptionInsert)
-  }, [concerts])
-
   function filterRule(item) {
     let rule = true
     const selectedBandIds = selectedBands.map(item => item.id)
     if (selectedBandIds.length > 0) {
-      rule = item.band_ids.some(bandId => selectedBandIds.includes(bandId))
+      rule = item.bands.some(band => selectedBandIds.includes(band.id))
     }
     return rule
   }
@@ -83,9 +70,7 @@ export default function Home({ initialConcerts, bands, locations, allBandsSeen }
             <ConcertCard
               key={concert.id}
               concert={concert}
-              bands={bands}
               bandsSeen={bandsSeen.find(row => row.concert_id === concert.id)}
-              locations={locations}
             />
           ))}
         </div>
@@ -94,7 +79,9 @@ export default function Home({ initialConcerts, bands, locations, allBandsSeen }
         <AddConcertForm
           bands={bands}
           locations={locations}
-          cancelButton={<Button onClick={() => setIsOpen(false)} label="Abbrechen" />}
+          setIsOpen={setIsOpen}
+          concerts={concerts}
+          setConcerts={setConcerts}
         />
       </Modal>
     </PageWrapper>
@@ -104,7 +91,7 @@ export default function Home({ initialConcerts, bands, locations, allBandsSeen }
 export async function getStaticProps() {
   const { data: concerts, error } = await supabase
     .from('concerts')
-    .select('*')
+    .select('*, location(*), bands(*)')
     .order('date_start', { ascending: false, })
   const { data: bands } = await supabase
     .from('bands')
