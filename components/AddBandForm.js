@@ -1,8 +1,9 @@
 import { useState } from "react"
 import supabase from "../utils/supabase"
+import Button from "./Button"
 import MultiSelect from "./MultiSelect"
 
-export default function AddBandForm({ bands, countries, genres, cancelButton }) {
+export default function AddBandForm({ countries, genres, bands, setBands, setIsOpen }) {
   const [selectedGenres, setSelectedGenres] = useState([])
   const [name, setName] = useState('')
 
@@ -16,16 +17,48 @@ export default function AddBandForm({ bands, countries, genres, cancelButton }) 
   async function handleSubmit(event) {
     event.preventDefault()
 
-    const { data: updatedBands, error } = await supabase
-      .from('bands')
-      .insert({
-        name: event.target.name.value,
-        country: event.target.country.value,
-        genres: selectedGenres.map(item => item.name),
-      })
+    try {
+      const { data: band, error: bandError } = await supabase
+        .from('bands')
+        .insert({
+          name: event.target.name.value,
+          country: event.target.country.value,
+        })
+        .single()
 
-    if (error) {
-      console.error(error)
+      if (bandError) {
+        throw bandError
+      }
+
+      const { error: genresError } = await supabase
+        .from('j_band_genres')
+        .insert(selectedGenres.map(genre => ({ band_id: band?.id, genre_id: genre.id })))
+
+      if (genresError) {
+        throw genresError
+      }
+
+      try {
+        const { data: newBand, error: newBandError } = await supabase
+          .from('bands')
+          .select('*, country(*), genres(*)')
+          .eq('id', band.id)
+          .single()
+
+        if (newBandError) {
+          throw newBandError
+        }
+
+        setBands([
+          ...bands,
+          newBand
+        ])
+        setIsOpen(false)
+      } catch (error) {
+        alert(error.message)
+      }
+    } catch (error) {
+      alert(error.message)
     }
   }
   return (
@@ -33,22 +66,24 @@ export default function AddBandForm({ bands, countries, genres, cancelButton }) 
       <div className="form-control">
         <input type="text" name="name" id="name" value={name} onChange={(event) => setName(event.target.value)} placeholder="Beatles" />
         <label htmlFor="name">Name</label>
-        {isSimilar ? <div className="text-slate-300">Vorsicht, diese Band könnte schon vorhanden sein:
-          <ul className="list-disc list-inside">
-            {similarBands.map(band => (
-              <li key={band.id}>{band.name}</li>
-            ))}
-          </ul>
-        </div> : (
+        {isSimilar ? (
+          <div>
+            <p className="text-red">Vorsicht, diese Band könnte schon vorhanden sein:</p>
+            <ul className="list-disc list-inside text-slate-300">
+              {similarBands.map(band => (
+                <li key={band.id}>{band.name}</li>
+              ))}
+            </ul>
+          </div>
+        ) : (
           <p className="text-slate-300">Nice. Die scheint es noch nicht zu geben.</p>
         )}
       </div>
       <div className="form-control">
         <select name="country" id="country" defaultValue="">
           <option value="" disabled hidden>Bitte wählen ...</option>
-          <option value="international">International</option>
           {countries.map((country, index) => (
-            <option key={index} value={country.iso2}>{country.name}</option>
+            <option key={index} value={country.id}>{country.name}</option>
           ))}
         </select>
         <label htmlFor="country">Land</label>
@@ -60,7 +95,7 @@ export default function AddBandForm({ bands, countries, genres, cancelButton }) 
         setSelectedOptions={setSelectedGenres}
       />
       <div className="flex justify-end gap-3">
-        {cancelButton}
+        <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
         <button type="submit" className="btn btn-primary">Band hinzufügen</button>
       </div>
     </form>

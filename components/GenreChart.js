@@ -5,10 +5,10 @@ export default function GenreChart({ bands }) {
 
   bands.forEach(band => (
     band.genres.forEach(genre => {
-      if (!genres.find(item => item.name === genre)) {
-        genres.push({ name: genre, count: 1 })
+      if (!genres.find(item => item.id === genre.id)) {
+        genres.push({ id: genre.id, name: genre.name, count: 1 })
       } else {
-        genres.find(item => item.name === genre).count += 1
+        genres.find(item => item.id === genre.id).count += 1
       }
     })
   ))

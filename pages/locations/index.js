@@ -6,29 +6,12 @@ import TableRow from "../../components/TableRow"
 import AddLocationForm from "../../components/AddLocationForm"
 import Modal from "../../components/Modal"
 import Button from "../../components/Button"
-import { useState, useEffect } from "react"
-import { toast } from "react-toastify"
+import { useState } from "react"
 import Search from "../../components/Search"
 
 export default function PageLocations({ initialLocations }) {
   const [locations, setLocations] = useState(initialLocations)
   const [isOpen, setIsOpen] = useState(false)
-
-  const notifyInsert = () => toast.success("Location erfolgreich hinzugefügt!")
-
-  useEffect(() => {
-    const subscriptionInsert = supabase.from('locations').on('INSERT', payload => {
-      setLocations([
-        ...locations,
-        payload.new
-      ])
-      setIsOpen(false)
-      notifyInsert()
-    }).subscribe()
-
-    return () => supabase.removeSubscription(subscriptionInsert)
-  }, [locations])
-
   const [query, setQuery] = useState('')
 
 	const regExp = new RegExp(query, 'i')
@@ -65,7 +48,7 @@ export default function PageLocations({ initialLocations }) {
         isOpen={isOpen}
         setIsOpen={setIsOpen}
       >
-        <AddLocationForm locations={locations} cancelButton={<Button onClick={() => setIsOpen(false)} label="Abbrechen" />} />
+        <AddLocationForm locations={locations} setIsOpen={setIsOpen} setLocations={setLocations} />
       </Modal>
     </>
   )

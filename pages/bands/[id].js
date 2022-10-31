@@ -2,10 +2,9 @@ import supabase from "../../utils/supabase"
 import Link from "next/link"
 import { ArrowLeftIcon } from "@heroicons/react/24/solid"
 import Modal from "../../components/Modal"
-import { Fragment, useState, useEffect } from "react"
+import { Fragment, useState } from "react"
 import { useRouter } from "next/router"
 import EditBandForm from "../../components/EditBandForm"
-import Button from "../../components/Button"
 import PageWrapper from "../../components/PageWrapper"
 import { toast } from "react-toastify"
 
@@ -15,30 +14,33 @@ export default function BandPage({ initialBand, countries, genres }) {
   const [band, setBand] = useState(initialBand)
 
   const router = useRouter()
-  const notifyUpdate = () => toast.success("Band erfolgreich aktualisiert.")
 
-  useEffect(() => {
-    const updateSubscription = supabase.from('bands').on('UPDATE', payload => {
-      setBand(payload.new)
-      setEditIsOpen(false)
-      notifyUpdate()
-    }).subscribe()
-
-    return () => supabase.removeSubscription(updateSubscription)
-  }, [])
- 
   async function deleteBand() {
-    const { error } = await supabase
-      .from('bands')
-      .delete()
-      .eq('id', band.id)
+    try {
+      const { error: genresError } = await supabase
+        .from('j_band_genres')
+        .delete()
+        .eq('band_id', band.id)
 
-    if (error) {
-      console.error(error)
-    } else {
+      if (genresError) {
+        throw genresError
+      }
+
+      const { error: bandError } = await supabase
+        .from('bands')
+        .delete()
+        .eq('id', band.id)
+
+      if (bandError) {
+        throw bandError
+      }
+
       router.push('/bands')
+    } catch (error) {
+      alert(error.message)
     }
   }
+
   return (
     <PageWrapper>
       <main className="p-8">
@@ -48,11 +50,11 @@ export default function BandPage({ initialBand, countries, genres }) {
             Go Back
           </a>
         </Link>
-        <h1>{band.name} <span>({band.country})</span></h1>
+        <h1>{band.name} <span>({band.country?.iso2})</span></h1>
         <ul className="flex gap-2">
           {band.genres && band.genres.map((genre, index) => (
             <Fragment key={index}>
-              <li>{genre}</li>
+              <li>{genre.name}</li>
               {index + 1 !== band.genres.length && <span>&bull;</span>}
             </Fragment>
           ))}
@@ -63,6 +65,7 @@ export default function BandPage({ initialBand, countries, genres }) {
         <button onClick={() => setDeleteIsOpen(true)} className="btn btn-link btn-danger">
           Löschen
         </button>
+        <pre className="text-slate-300">{JSON.stringify(band, null, 2)}</pre>
       </main>
       <Modal isOpen={deleteIsOpen} setIsOpen={setDeleteIsOpen}>
         <div>
@@ -83,7 +86,9 @@ export default function BandPage({ initialBand, countries, genres }) {
           band={band}
           countries={countries}
           genres={genres}
-          cancelButton={<Button onClick={() => setEditIsOpen(false)} label="Abbrechen" />}
+          setIsOpen={setEditIsOpen}
+          setIsSuccess={setIsSuccess}
+          setBand={setBand}
         />
       </Modal>
     </PageWrapper>
@@ -93,20 +98,19 @@ export default function BandPage({ initialBand, countries, genres }) {
 export async function getServerSideProps({ params }) {
   const { data: band, error } = await supabase
     .from('bands')
-    .select('*')
+    .select('*, country(id, iso2), genres(*)')
     .eq('id', params.id)
     .single()
 
   const { data: countries } = await supabase
     .from('countries')
-    .select('name,iso2')
+    .select('id, name, iso2')
     .neq('local_name', null)
     .neq('iso2', 'AQ')
 
   const { data: genres } = await supabase
     .from('genres')
     .select('*')
-    .order('name')
 
   if (error) {
     console.error(error);
