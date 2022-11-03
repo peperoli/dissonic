@@ -35,7 +35,7 @@ module.exports = {
     },
     extend: {
       height: {
-        'text': '1em',
+        'icon': '1.33em',
       },
     },
   },

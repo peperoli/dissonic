@@ -8,7 +8,7 @@ import Button from '../components/Button'
 import { PlusIcon } from '@heroicons/react/24/solid'
 import PageWrapper from '../components/PageWrapper'
 import { toast } from 'react-toastify'
-import MultiSelect from '../components/MultiSelect'
+import FilterButton from '../components/FilterButton'
 
 export default function Home({ initialConcerts, bands, locations, allBandsSeen }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -17,6 +17,7 @@ export default function Home({ initialConcerts, bands, locations, allBandsSeen }
   const [bandsSeen, setBandsSeen] = useState([])
 
   const notifyInsert = () => toast.success("Konzert erfolgreich hinzugefügt!")
+  const filteredLength = concerts.filter(filterRule).length !== concerts.length ? concerts.filter(filterRule).length : null
 
   useEffect(() => {
     const user = supabase.auth.user()
@@ -33,14 +34,14 @@ export default function Home({ initialConcerts, bands, locations, allBandsSeen }
   }
 
   function compare(a, b) {
-		let comparison = 0
-		if (a.date_start > b.date_start) {
-			comparison = -1
-		} else if (a.date_start < b.date_start) {
-			comparison = 1
-		}
-		return comparison
-	}
+    let comparison = 0
+    if (a.date_start > b.date_start) {
+      comparison = -1
+    } else if (a.date_start < b.date_start) {
+      comparison = 1
+    }
+    return comparison
+  }
   return (
     <PageWrapper>
       <Head>
@@ -48,7 +49,7 @@ export default function Home({ initialConcerts, bands, locations, allBandsSeen }
         <meta name="description" content="Keep track of your past concerts." />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="max-w-2xl p-8">
+      <main className="w-full max-w-2xl p-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="mb-0">
             Konzerte
@@ -57,22 +58,32 @@ export default function Home({ initialConcerts, bands, locations, allBandsSeen }
             onClick={() => setIsOpen(true)}
             label="Konzert hinzufügen"
             style="primary"
-            icon={<PlusIcon className="h-text" />} />
+            icon={<PlusIcon className="h-icon" />}
+          />
         </div>
         <div className="grid gap-4">
-          <MultiSelect name="bands" options={bands} selectedOptions={selectedBands} setSelectedOptions={setSelectedBands} />
-          <div className="text-sm text-slate-300">
-            {concerts.length !== concerts.filter(filterRule).length && <>{concerts.filter(filterRule).length}&nbsp;von&nbsp;</>}
-            {concerts.length}
-            &nbsp;Einträge
-          </div>
-          {concerts.filter(filterRule).sort(compare).map(concert => (
-            <ConcertCard
-              key={concert.id}
-              concert={concert}
-              bandsSeen={bandsSeen.find(row => row.concert_id === concert.id)}
+          <div className="grid gap-4">
+            <FilterButton
+              name="bands"
+              options={bands}
+              selectedOptions={selectedBands}
+              setSelectedOptions={setSelectedBands}
             />
-          ))}
+          </div>
+          <div className="text-sm text-slate-300">
+            {filteredLength && <>{filteredLength}&nbsp;von&nbsp;</>}{concerts.length}&nbsp;Einträge
+          </div>
+          {filteredLength && filteredLength === 0 ? (
+            <div>Blyat! Keine Einträge gefunden.</div>
+          ) : (
+            concerts.filter(filterRule).sort(compare).map(concert => (
+              <ConcertCard
+                key={concert.id}
+                concert={concert}
+                bandsSeen={bandsSeen.find(row => row.concert_id === concert.id)}
+              />
+            ))
+          )}
         </div>
       </main>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>

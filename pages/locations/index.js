@@ -16,6 +16,7 @@ export default function PageLocations({ initialLocations }) {
 
 	const regExp = new RegExp(query, 'i')
 	const filteredLocations = locations.filter(item => item.name.match(regExp))
+  const filteredLength = filteredLocations.length !== locations.length ? filteredLocations.length : null
   return (
     <>
       <PageWrapper>
@@ -25,13 +26,19 @@ export default function PageLocations({ initialLocations }) {
               Locations
             </h1>
             <button onClick={() => setIsOpen(true)} className="btn btn-primary">
-              <PlusIcon className="h-text" />
+              <PlusIcon className="h-icon" />
               Location hinzufügen
             </button>
           </div>
           <Table>
-            <Search name="searchLocations" query={query} setQuery={setQuery} />
-            {filteredLocations && filteredLocations.map(location => (
+            <Search name="searchLocations" placeholder="Locations" query={query} setQuery={setQuery} />
+            <div className="my-4 text-sm text-slate-300">
+						{typeof filteredLength === 'number' && <span>{filteredLength}&nbsp;von&nbsp;</span>}{locations.length}&nbsp;Einträge
+					</div>
+					{typeof filteredLength === 'number' && filteredLength === 0 ? (
+						<div>Blyat! Keine Einträge gefunden.</div>
+					) : (
+            filteredLocations && filteredLocations.map(location => (
               <TableRow key={location.id} href={''}>
                 <div>
                   {location.name}
@@ -40,7 +47,8 @@ export default function PageLocations({ initialLocations }) {
                   {location.city}
                 </div>
               </TableRow>
-            ))}
+            ))
+					)}
           </Table>
         </main>
       </PageWrapper>

@@ -13,7 +13,7 @@ export default function TableRow({ children, href }) {
   }
   return (
     <Link href={href}>
-      <a className={`grid items-center px-3 py-2 rounded-md hover:bg-slate-500 ${gridCols}`}>
+      <a className={`grid items-center px-3 py-2 rounded-md hover:bg-slate-700 ${gridCols}`}>
         {children}
       </a>
     </Link>

@@ -117,7 +117,7 @@ export default function ConcertPage({ initialConcert, bands, locations, allBands
       <main className="max-w-2xl p-8">
         <Link href="/">
           <a className="btn btn-link">
-            <ArrowLeftIcon className="h-text" />
+            <ArrowLeftIcon className="h-icon" />
             Go Back
           </a>
         </Link>
@@ -141,13 +141,13 @@ export default function ConcertPage({ initialConcert, bands, locations, allBands
         </div>
         <div className="flex gap-4 w-full">
           <div className="inline-flex items-center">
-            <CalendarIcon className="h-text mr-2" />
+            <CalendarIcon className="h-icon mr-2" />
             {dayjs(concert.date_start).locale('de-ch').format(dateFormat)}
             {concert.date_end && <span>&nbsp;&ndash; {dayjs(concert.date_end).locale('de-ch').format(dateFormat)}</span>}
           </div>
           {concert.location && (
             <div className="inline-flex items-center">
-              <MapPinIcon className="h-text mr-2" />
+              <MapPinIcon className="h-icon mr-2" />
               {concert.location.name}
             </div>
           )}

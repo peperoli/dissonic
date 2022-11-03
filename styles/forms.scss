@@ -4,15 +4,14 @@
 
     input[type="text"],
     input[type="date"],
-    input[type="search"],
     textarea,
     select {
       @apply block w-full px-4 pt-5 pb-1 rounded-lg border border-slate-500 bg-slate-700 accent-slate-50;
-    
+      
       &::placeholder {
         @apply text-slate-300;
       }
-
+      
       & + label {
         @apply order-first absolute ml-4 mt-0.5 py-0.5 rounded text-xs text-slate-300 z-10;
       }
@@ -27,7 +26,7 @@
 
       &:focus {
         @apply outline-none ring-2 ring-venom;
-
+        
         &::placeholder {
           opacity: 1;
         }
@@ -36,6 +35,10 @@
           @apply text-venom translate-y-0 scale-100;
         }
       }
+    }
+
+    input[type="search"] {
+      @apply block w-full px-4 py-2 rounded-lg border border-slate-500 bg-slate-700 focus:outline-none focus:ring-2 focus:ring-venom;
     }
 
     textarea {

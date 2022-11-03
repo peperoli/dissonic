@@ -1,22 +1,30 @@
 @layer components {
 	.btn {
-		@apply inline-flex justify-center items-center gap-2 rounded-lg hover:bg-slate-500;
+		@apply inline-flex justify-center items-center gap-2 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed;
+
+		&:not(.btn-icon) {
+			@apply px-4 py-2;
+		}
 
 		&.btn-icon {
-			@apply w-8 h-8;
+			@apply w-10 h-10;
+		}
+
+		&.btn-primary {
+			@apply font-bold text-slate-850 bg-venom shadow-shine shadow-venom/50;
 		}
 
 		&.btn-secondary {
-			@apply px-4 py-2 font-bold text-slate-50 bg-slate-700;
+			@apply font-bold text-slate-50 bg-slate-700;
+		}
+
+		&.btn-filter {
+			@apply justify-between;
 		}
 	}
 
-	.btn.btn-primary {
-		@apply px-4 py-2 font-bold text-slate-850 bg-venom shadow-shine shadow-venom/50;
-	}
-
 	.btn.btn-link {
-		@apply p-2 text-venom;
+		@apply p-2 text-venom hover:bg-slate-500;
 	}
 
 	.btn.btn-tag {

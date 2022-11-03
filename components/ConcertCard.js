@@ -3,6 +3,7 @@ import { ChatBubbleBottomCenterTextIcon, MapPinIcon } from "@heroicons/react/24/
 import dayjs from 'dayjs'
 import 'dayjs/locale/de'
 import { useRouter } from "next/router"
+import { Fragment } from "react"
 
 function ConcertDate({ date }) {
   return (
@@ -31,27 +32,27 @@ export default function ConcertCard({ concert, bandsSeen }) {
         {concert.name && <div className="btn btn-tag !bg-deepPurple mb-2">{concert.name}</div>}
         <div className="flex flex-wrap items-center gap-2 mb-2">
           {concert.bands && concert.bands.map((band, index) => (
-            <>
+            <Fragment key={band.id}>
               {index !== 0 ? <span className="text-slate-300">&bull;</span> : null}
-              <Link key={band.id} href={`/bands/${band.id}`}>
+              <Link href={`/bands/${band.id}`}>
                 <a className={`first:text-xl font-bold${bandsSeen?.band_ids && bandsSeen.band_ids.some(bandSeen => bandSeen === band) ? ' btn-seen' : ''}`}>
                   {band.name}
                 </a>
               </Link>
-            </>
+            </Fragment>
           ))}
         </div>
         <div className="flex gap-4 w-full mb-2">
           {concert.location && (
             <div className="inline-flex items-center text-sm">
-              <MapPinIcon className="h-text mr-2 text-slate-300" />
+              <MapPinIcon className="h-icon mr-2 text-slate-300" />
               {concert.location?.name}
             </div>
           )}
         </div>
         {concert.description && (
           <div className="flex text-sm">
-            <ChatBubbleBottomCenterTextIcon className="flex-none h-text mr-2 self-center text-slate-300" />
+            <ChatBubbleBottomCenterTextIcon className="flex-none h-icon mr-2 self-center text-slate-300" />
             <p className="italic text-slate-300">{concert.description}</p>
           </div>
         )}

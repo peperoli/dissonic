@@ -7,20 +7,30 @@ import PageWrapper from "../../components/PageWrapper"
 import Table from "../../components/Table"
 import TableRow from "../../components/TableRow"
 import Search from "../../components/Search"
-import MultiSelect from "../../components/MultiSelect"
+import FilterButton from "../../components/FilterButton"
 
 export default function PageBands({ initialBands, countries, genres }) {
 	const [isOpen, setIsOpen] = useState(false)
 	const [bands, setBands] = useState(initialBands)
 	const [selectedGenres, setSelectedGenres] = useState([])
+	const [selectedCountries, setSelectedCountries] = useState([])
+	const [query, setQuery] = useState('')
+
+	const regExp = new RegExp(query, 'i')
+	const filteredBands = bands.filter(item => item.name.match(regExp))
+	const filteredLength = filteredBands.filter(filterRule).length !== bands.length ? filteredBands.filter(filterRule).length : null
 
 	function filterRule(item) {
-		let rule = true
+		let [genreFilter, countryFilter] = [true, true]
 		const selectedGenreIds = selectedGenres.map(item => item.id)
+		const selectedCountryIds = selectedCountries.map(item => item.id)
 		if (selectedGenreIds.length > 0) {
-			rule = item.genres.some(genreId => selectedGenreIds.includes(genreId.id))
+			genreFilter = item.genres.some(genreId => selectedGenreIds.includes(genreId.id))
 		}
-		return rule
+		if (selectedCountryIds.length > 0) {
+			countryFilter = selectedCountryIds.includes(item.country?.id)
+		}
+		return genreFilter && countryFilter
 	}
 
 	function compare(a, b) {
@@ -35,11 +45,6 @@ export default function PageBands({ initialBands, countries, genres }) {
 		}
 		return comparison
 	}
-
-	const [query, setQuery] = useState('')
-
-	const regExp = new RegExp(query, 'i')
-	const filteredBands = bands.filter(item => item.name.match(regExp))
 	return (
 		<PageWrapper>
 			<main className="p-8 w-full">
@@ -48,29 +53,42 @@ export default function PageBands({ initialBands, countries, genres }) {
 						Bands
 					</h1>
 					<button onClick={() => setIsOpen(true)} className="btn btn-primary">
-						<PlusIcon className="h-text" />
+						<PlusIcon className="h-icon" />
 						Band hinzufügen
 					</button>
 				</div>
 				<Table>
-					<div className="flex items-end gap-4">
-						<Search name="searchBands" query={query} setQuery={setQuery} />
-						<MultiSelect
+					<div className="grid grid-cols-3 gap-4">
+						<Search name="searchBands" placeholder="Bands" query={query} setQuery={setQuery} />
+						<FilterButton
+							name="countries"
+							options={countries}
+							selectedOptions={selectedCountries}
+							setSelectedOptions={setSelectedCountries}
+						/>
+						<FilterButton
 							name="genres"
 							options={genres}
 							selectedOptions={selectedGenres}
 							setSelectedOptions={setSelectedGenres}
 						/>
 					</div>
-					{filteredBands.filter(filterRule).sort(compare).map(band => (
-						<TableRow key={band.id} href={`/bands/${band.id}`}>
-							<div>{band.name}</div>
-							<div className="text-slate-300">{band.country?.name}</div>
-							<div className="text-sm text-slate-300 whitespace-nowrap text-ellipsis overflow-hidden">
-								{band.genres?.map(item => item.name).join(' • ')}<br />
-							</div>
-						</TableRow>
-					))}
+					<div className="my-4 text-sm text-slate-300">
+						{typeof filteredLength === 'number' && <span>{filteredLength}&nbsp;von&nbsp;</span>}{bands.length}&nbsp;Einträge
+					</div>
+					{typeof filteredLength === 'number' && filteredLength === 0 ? (
+						<div>Blyat! Keine Einträge gefunden.</div>
+					) : (
+						filteredBands.filter(filterRule).sort(compare).map(band => (
+							<TableRow key={band.id} href={`/bands/${band.id}`}>
+								<div>{band.name}</div>
+								<div className="text-slate-300">{band.country?.name}</div>
+								<div className="text-sm text-slate-300 whitespace-nowrap text-ellipsis overflow-hidden">
+									{band.genres?.map(item => item.name).join(' • ')}<br />
+								</div>
+							</TableRow>
+						))
+					)}
 				</Table>
 			</main>
 			<Modal isOpen={isOpen} setIsOpen={setIsOpen}>

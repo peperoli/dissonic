@@ -46,7 +46,7 @@ export default function BandPage({ initialBand, countries, genres }) {
       <main className="p-8">
         <Link href="/bands">
           <a className="btn btn-link">
-            <ArrowLeftIcon className="h-text" />
+            <ArrowLeftIcon className="h-icon" />
             Go Back
           </a>
         </Link>
