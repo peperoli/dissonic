@@ -5,10 +5,14 @@
 		&.btn-icon {
 			@apply w-8 h-8;
 		}
+
+		&.btn-secondary {
+			@apply px-4 py-2 font-bold text-slate-50 bg-slate-700;
+		}
 	}
 
 	.btn.btn-primary {
-		@apply px-4 py-2 font-bold text-slate-900 bg-venom shadow-md shadow-venom/50;
+		@apply px-4 py-2 font-bold text-slate-850 bg-venom shadow-shine shadow-venom/50;
 	}
 
 	.btn.btn-link {
@@ -16,7 +20,7 @@
 	}
 
 	.btn.btn-tag {
-		@apply px-4 py-1 rounded-full text-slate-50 bg-slate-900;
+		@apply px-4 py-1 rounded-full text-slate-50 bg-slate-850;
 
 		&.btn-seen {
 			@apply bg-deepPurple;

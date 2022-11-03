@@ -1,9 +1,12 @@
 import Navigation from "./navigation"
 import { ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
+import NavBar from "./NavBar";
 
 export default function PageWrapper({ children }) {
   return (
+    <>
+    <NavBar />
     <div className="flex">
       <Navigation />
       {children}
@@ -17,5 +20,6 @@ export default function PageWrapper({ children }) {
         theme="dark"
 			/>
     </div>
+    </>
   )
 }
