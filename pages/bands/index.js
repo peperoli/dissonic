@@ -2,7 +2,7 @@ import supabase from "../../utils/supabase"
 import { useState } from "react"
 import Modal from "../../components/Modal"
 import AddBandForm from "../../components/AddBandForm"
-import { PlusIcon } from "@heroicons/react/24/solid"
+import { ArrowUturnLeftIcon, PlusIcon } from "@heroicons/react/24/solid"
 import PageWrapper from "../../components/PageWrapper"
 import Table from "../../components/Table"
 import TableRow from "../../components/TableRow"
@@ -45,6 +45,12 @@ export default function PageBands({ initialBands, countries, genres }) {
 		}
 		return comparison
 	}
+
+	function resetAll() {
+		setQuery('')
+		setSelectedCountries([])
+		setSelectedGenres([])
+	}
 	return (
 		<PageWrapper>
 			<main className="p-8 w-full">
@@ -73,8 +79,16 @@ export default function PageBands({ initialBands, countries, genres }) {
 							setSelectedOptions={setSelectedGenres}
 						/>
 					</div>
-					<div className="my-4 text-sm text-slate-300">
-						{typeof filteredLength === 'number' && <span>{filteredLength}&nbsp;von&nbsp;</span>}{bands.length}&nbsp;Einträge
+					<div className="flex gap-4 items-center">
+						<div className="my-4 text-sm text-slate-300">
+							{typeof filteredLength === 'number' && <span>{filteredLength}&nbsp;von&nbsp;</span>}{bands.length}&nbsp;Einträge
+						</div>
+						{typeof filteredLength === 'number' && (
+              <button onClick={resetAll} className="flex gap-2 px-2 py-1 rounded-md text-sm hover:bg-slate-700">
+                <ArrowUturnLeftIcon className="h-icon text-slate-300" />
+                Zurücksetzen
+              </button>
+            )}
 					</div>
 					{typeof filteredLength === 'number' && filteredLength === 0 ? (
 						<div>Blyat! Keine Einträge gefunden.</div>

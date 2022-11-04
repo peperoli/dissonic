@@ -5,7 +5,7 @@ import Modal from '../components/Modal'
 import AddConcertForm from "../components/AddConcertForm"
 import { useState, useEffect } from 'react'
 import Button from '../components/Button'
-import { PlusIcon } from '@heroicons/react/24/solid'
+import { ArrowUturnLeftIcon, ChevronDownIcon, PlusIcon } from '@heroicons/react/24/solid'
 import PageWrapper from '../components/PageWrapper'
 import { toast } from 'react-toastify'
 import FilterButton from '../components/FilterButton'
@@ -14,7 +14,9 @@ export default function Home({ initialConcerts, bands, locations, allBandsSeen }
   const [isOpen, setIsOpen] = useState(false)
   const [concerts, setConcerts] = useState(initialConcerts)
   const [selectedBands, setSelectedBands] = useState([])
+  const [selectedLocations, setSelectedLocations] = useState([])
   const [bandsSeen, setBandsSeen] = useState([])
+  const [sort, setSort] = useState('dateAsc')
 
   const notifyInsert = () => toast.success("Konzert erfolgreich hinzugefügt!")
   const filteredLength = concerts.filter(filterRule).length !== concerts.length ? concerts.filter(filterRule).length : null
@@ -25,22 +27,39 @@ export default function Home({ initialConcerts, bands, locations, allBandsSeen }
   }, [allBandsSeen])
 
   function filterRule(item) {
-    let rule = true
+    let [bandFilter, locationFilter] = [true, true]
     const selectedBandIds = selectedBands.map(item => item.id)
+    const selectedLocationIds = selectedLocations.map(item => item.id)
     if (selectedBandIds.length > 0) {
-      rule = item.bands.some(band => selectedBandIds.includes(band.id))
+      bandFilter = item.bands.some(band => selectedBandIds.includes(band.id))
     }
-    return rule
+    if (selectedLocationIds.length > 0) {
+      locationFilter = selectedLocationIds.includes(item.location?.id)
+    }
+    return bandFilter && locationFilter
   }
 
   function compare(a, b) {
     let comparison = 0
     if (a.date_start > b.date_start) {
-      comparison = -1
+      if (sort === 'dateAsc') {
+        comparison = -1
+      } else if (sort === 'dateDsc') {
+        comparison = 1
+      }
     } else if (a.date_start < b.date_start) {
-      comparison = 1
+      if (sort === 'dateAsc') {
+        comparison = 1
+      } else if (sort === 'dateDsc') {
+        comparison = -1
+      }
     }
     return comparison
+  }
+
+  function resetAll() {
+    setSelectedBands([])
+    setSelectedLocations([])
   }
   return (
     <PageWrapper>
@@ -62,18 +81,44 @@ export default function Home({ initialConcerts, bands, locations, allBandsSeen }
           />
         </div>
         <div className="grid gap-4">
-          <div className="grid gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <FilterButton
               name="bands"
               options={bands}
               selectedOptions={selectedBands}
               setSelectedOptions={setSelectedBands}
             />
+            <FilterButton
+              name="locations"
+              options={locations}
+              selectedOptions={selectedLocations}
+              setSelectedOptions={setSelectedLocations}
+            />
           </div>
-          <div className="text-sm text-slate-300">
-            {filteredLength && <>{filteredLength}&nbsp;von&nbsp;</>}{concerts.length}&nbsp;Einträge
+          <div className="flex items-center gap-4">
+            <div className="text-sm text-slate-300">
+              {typeof filteredLength === 'number' && <>{filteredLength}&nbsp;von&nbsp;</>}{concerts.length}&nbsp;Einträge
+            </div>
+            {typeof filteredLength === 'number' && (
+              <button onClick={resetAll} className="flex gap-2 px-2 py-1 rounded-md text-sm hover:bg-slate-800">
+                <ArrowUturnLeftIcon className="h-icon text-slate-300" />
+                Zurücksetzen
+              </button>
+            )}
+            <div className="flex items-center ml-auto text-sm">
+              <label htmlFor="sortBy" className="mr-1 text-slate-300">
+                Sortieren nach:
+              </label>
+              <div className="relative flex items-center">
+                <select onChange={(e) => setSort(e.target.value)} className="pl-2 pr-8 py-1 rounded-md hover:bg-slate-800 bg-transparent appearance-none">
+                  <option value="dateAsc">Neuste</option>
+                  <option value="dateDsc">Älteste</option>
+                </select>
+                <ChevronDownIcon className="absolute right-2 text-xs h-icon pointer-events-none" />
+              </div>
+            </div>
           </div>
-          {filteredLength && filteredLength === 0 ? (
+          {typeof filteredLength === 'number' && filteredLength === 0 ? (
             <div>Blyat! Keine Einträge gefunden.</div>
           ) : (
             concerts.filter(filterRule).sort(compare).map(concert => (

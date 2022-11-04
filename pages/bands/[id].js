@@ -87,7 +87,6 @@ export default function BandPage({ initialBand, countries, genres }) {
           countries={countries}
           genres={genres}
           setIsOpen={setEditIsOpen}
-          setIsSuccess={setIsSuccess}
           setBand={setBand}
         />
       </Modal>

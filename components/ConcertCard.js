@@ -30,12 +30,12 @@ export default function ConcertCard({ concert, bandsSeen }) {
       </div>
       <div>
         {concert.name && <div className="btn btn-tag !bg-deepPurple mb-2">{concert.name}</div>}
-        <div className="flex flex-wrap items-center gap-2 mb-2">
+        <div className="flex flex-wrap items-center -ml-2 mb-2">
           {concert.bands && concert.bands.map((band, index) => (
             <Fragment key={band.id}>
               {index !== 0 ? <span className="text-slate-300">&bull;</span> : null}
               <Link href={`/bands/${band.id}`}>
-                <a className={`first:text-xl font-bold${bandsSeen?.band_ids && bandsSeen.band_ids.some(bandSeen => bandSeen === band) ? ' btn-seen' : ''}`}>
+                <a className={`px-2 py-1 rounded-md first:text-xl font-bold hover:bg-slate-700${bandsSeen?.band_ids && bandsSeen.band_ids.some(bandSeen => bandSeen === band) ? ' btn-seen' : ''}`}>
                   {band.name}
                 </a>
               </Link>
