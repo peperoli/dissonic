@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ChatBubbleBottomCenterTextIcon, MapPinIcon } from "@heroicons/react/24/solid"
+import { ChatBubbleBottomCenterTextIcon, MapPinIcon } from "@heroicons/react/20/solid"
 import dayjs from 'dayjs'
 import 'dayjs/locale/de'
 import { useRouter } from "next/router"

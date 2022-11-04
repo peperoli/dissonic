@@ -1,4 +1,4 @@
-import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/solid"
+import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/20/solid"
 import { React, useState, useRef } from "react"
 
 function SelectedOption({ selectedOption, selectedOptions, setSelectedOptions }) {

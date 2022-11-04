@@ -57,11 +57,11 @@ export default function EditBandForm({ band, countries, genres, setIsSuccess, se
         setBand(newBand)
         setIsOpen(false)
         setIsSuccess(true)
-      } catch {
-        alert('gagu')
+      } catch (error) {
+        alert(error.message)
       }
     } catch (error) {
-      alert(error)
+      alert(error.message)
     }
   }
   return (

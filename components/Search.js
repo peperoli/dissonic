@@ -1,4 +1,4 @@
-import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/solid"
+import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/20/solid"
 
 export default function Search({ name, placeholder, query, setQuery }) {
   function handleChange(event) {

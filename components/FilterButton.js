@@ -1,4 +1,4 @@
-import { ArrowUturnLeftIcon, CheckIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
+import { ArrowUturnLeftIcon, CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import { useState, useEffect, useRef } from "react";
 import Button from "./Button";
 import MultiSelect from "./MultiSelect";

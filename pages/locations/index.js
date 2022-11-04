@@ -1,6 +1,6 @@
 import PageWrapper from "../../components/PageWrapper"
 import supabase from "../../utils/supabase"
-import { PlusIcon } from "@heroicons/react/24/solid"
+import { PlusIcon } from "@heroicons/react/20/solid"
 import Table from "../../components/Table"
 import TableRow from "../../components/TableRow"
 import AddLocationForm from "../../components/AddLocationForm"

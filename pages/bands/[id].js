@@ -1,6 +1,6 @@
 import supabase from "../../utils/supabase"
 import Link from "next/link"
-import { ArrowLeftIcon } from "@heroicons/react/24/solid"
+import { ArrowLeftIcon } from "@heroicons/react/20/solid"
 import Modal from "../../components/Modal"
 import { Fragment, useState } from "react"
 import { useRouter } from "next/router"

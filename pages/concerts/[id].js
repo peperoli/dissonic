@@ -1,7 +1,7 @@
 import supabase from "../../utils/supabase"
 import Link from "next/link"
 import EditConcertForm from "../../components/EditConcertForm"
-import { ArrowLeftIcon, CalendarIcon, MapPinIcon } from "@heroicons/react/24/solid"
+import { ArrowLeftIcon, CalendarIcon, MapPinIcon } from "@heroicons/react/20/solid"
 import { useEffect, useState } from "react"
 import PageWrapper from "../../components/PageWrapper"
 import Modal from "../../components/Modal"

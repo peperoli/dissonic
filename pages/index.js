@@ -5,7 +5,7 @@ import Modal from '../components/Modal'
 import AddConcertForm from "../components/AddConcertForm"
 import { useState, useEffect } from 'react'
 import Button from '../components/Button'
-import { ArrowUturnLeftIcon, ChevronDownIcon, PlusIcon } from '@heroicons/react/24/solid'
+import { ArrowUturnLeftIcon, ChevronDownIcon, PlusIcon } from '@heroicons/react/20/solid'
 import PageWrapper from '../components/PageWrapper'
 import { toast } from 'react-toastify'
 import FilterButton from '../components/FilterButton'
@@ -106,11 +106,11 @@ export default function Home({ initialConcerts, bands, locations, allBandsSeen }
               </button>
             )}
             <div className="flex items-center ml-auto text-sm">
-              <label htmlFor="sortBy" className="mr-1 text-slate-300">
+              <label htmlFor="sortBy" className="text-slate-300">
                 Sortieren nach:
               </label>
               <div className="relative flex items-center">
-                <select onChange={(e) => setSort(e.target.value)} className="pl-2 pr-8 py-1 rounded-md hover:bg-slate-800 bg-transparent appearance-none">
+                <select onChange={(e) => setSort(e.target.value)} name="sortBy" id="sortBy" className="pl-2 pr-7 py-1 rounded-md hover:bg-slate-800 bg-transparent appearance-none">
                   <option value="dateAsc">Neuste</option>
                   <option value="dateDsc">Älteste</option>
                 </select>
