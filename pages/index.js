@@ -17,14 +17,11 @@ export default function Home({ initialConcerts, bands, locations, allBandsSeen }
   const [selectedLocations, setSelectedLocations] = useState([])
   const [bandsSeen, setBandsSeen] = useState([])
   const [sort, setSort] = useState('dateAsc')
-
+  
   const notifyInsert = () => toast.success("Konzert erfolgreich hinzugefügt!")
   const filteredLength = concerts.filter(filterRule).length !== concerts.length ? concerts.filter(filterRule).length : null
 
-  useEffect(() => {
-    const user = supabase.auth.user()
-    setBandsSeen(allBandsSeen.filter(bandsSeen => bandsSeen.user_id === user?.id))
-  }, [allBandsSeen])
+
 
   function filterRule(item) {
     let [bandFilter, locationFilter] = [true, true]
@@ -145,7 +142,7 @@ export default function Home({ initialConcerts, bands, locations, allBandsSeen }
 }
 
 export async function getStaticProps() {
-  const { data: concerts, error } = await supabase
+  const { data: concerts } = await supabase
     .from('concerts')
     .select('*, location(*), bands(*)')
     .order('date_start', { ascending: false, })
@@ -158,10 +155,6 @@ export async function getStaticProps() {
     .select('*')
   const { data: locations } = await supabase.from('locations').select('id,name')
 
-  if (error) {
-    throw new Error(error)
-  }
-
   return {
     props: {
       initialConcerts: concerts,
@@ -170,4 +163,5 @@ export async function getStaticProps() {
       locations,
     }
   }
+
 }
