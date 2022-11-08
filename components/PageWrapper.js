@@ -12,17 +12,17 @@ export default function PageWrapper({ children }) {
   const [loading, setLoading] = useState(false)
   const [profile, setProfile] = useState(null)
 
-  const session = supabase.auth.session()
-
   useEffect(() => {
     getProfile()
-  }, [session])
+  }, [])
 
   async function getProfile() {
     try {
       setLoading(true)
 
-      const user = supabase.auth.user()
+      const { data: { session } } = await supabase.auth.getSession()
+
+      const user = session ? session.user : null
 
       if (user) {
         const { data: profile, error: profileError, status } = await supabase

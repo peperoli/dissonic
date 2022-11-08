@@ -25,6 +25,7 @@ export default function AddBandForm({ countries, genres, bands, setBands, setIsO
           country: event.target.country.value,
         })
         .single()
+        .select()
 
       if (bandError) {
         throw bandError

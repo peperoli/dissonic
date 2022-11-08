@@ -9,7 +9,7 @@ export default function LoginPage() {
     event.preventDefault()
 
     try {
-      const { error: loginError } = await supabase.auth.signIn({
+      const { error: loginError } = await supabase.auth.signInWithPassword({
         email: event.target.email.value,
         password: event.target.password.value,
       })

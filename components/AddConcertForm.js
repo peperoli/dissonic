@@ -26,6 +26,7 @@ export default function NewConcertForm({ bands, locations, setIsOpen, concerts, 
           is_festival: event.target.isFestival.checked,
         }])
         .single()
+        .select()
 
       if (insertConcertError) {
         throw insertConcertError
