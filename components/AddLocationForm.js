@@ -13,6 +13,7 @@ export default function AddBandForm({ locations, setIsOpen, setLocations }) {
           city: event.target.city.value,
         })
         .single()
+        .select()
   
       if (newLocationError) {
         throw newLocationError
