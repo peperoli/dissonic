@@ -10,9 +10,9 @@ import PageWrapper from '../components/PageWrapper'
 import { toast } from 'react-toastify'
 import FilterButton from '../components/FilterButton'
 
-export default function Home({ initialConcerts, bands, locations, allBandsSeen }) {
+export default function Home({ initialConcerts, bands, locations }) {
   const [isOpen, setIsOpen] = useState(false)
-  const [concerts, setConcerts] = useState(initialConcerts)
+  const [concerts, setConcerts] = useState(initialConcerts || [])
   const [selectedBands, setSelectedBands] = useState([])
   const [selectedLocations, setSelectedLocations] = useState([])
   const [bandsSeen, setBandsSeen] = useState([])
@@ -142,23 +142,25 @@ export default function Home({ initialConcerts, bands, locations, allBandsSeen }
 }
 
 export async function getStaticProps() {
-  const { data: concerts } = await supabase
+  const { data: concerts, error: concertsError } = await supabase
     .from('concerts')
-    .select('*, location(*), bands(*)')
+    .select('*, location(*), bands!j_concert_bands(*)')
     .order('date_start', { ascending: false, })
+
   const { data: bands } = await supabase
     .from('bands')
     .select('*')
     .order('name')
-  const { data: bandsSeen } = await supabase
-    .from('bands_seen')
-    .select('*')
+
   const { data: locations } = await supabase.from('locations').select('id,name')
+
+  if (concertsError) {
+    console.error(concertsError);
+  }
 
   return {
     props: {
       initialConcerts: concerts,
-      allBandsSeen: bandsSeen,
       bands,
       locations,
     }

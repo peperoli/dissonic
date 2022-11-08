@@ -11,16 +11,20 @@ import 'dayjs/locale/de'
 import { useRouter } from "next/router"
 import GenreChart from "../../components/GenreChart"
 
-function BandSeenCheckbox({ band, bandsSeen, setBandsSeen }) {
-  const isSeen = bandsSeen && bandsSeen.some(item => item === band.id) ? true : false
+function BandSeenCheckbox({ concert, band, bandsSeen, setBandsSeen }) {
+  const isSeen = bandsSeen && bandsSeen.some(item => item.band_id === band.id) ? true : false
 
   function handleChange() {
     if (isSeen) {
-      setBandsSeen(bandsSeen.filter(item => item !== band.id))
+      setBandsSeen(bandsSeen.filter(item => item.band_id !== band.id))
     } else {
       setBandsSeen([
         ...bandsSeen,
-        band.id
+        {
+          concert_id: concert.id,
+          user_id: user.current.id,
+          band_id: band.id,
+        }
       ])
     }
   }
@@ -39,7 +43,7 @@ function BandSeenCheckbox({ band, bandsSeen, setBandsSeen }) {
   )
 }
 
-export default function ConcertPage({ initialConcert, bands, locations }) {
+export default function ConcertPage({ initialConcert, bands, locations, user }) {
   const [concert, setConcert] = useState(initialConcert)
   const [bandsSeen, setBandsSeen] = useState([])
   const [editIsOpen, setEditIsOpen] = useState(false)
@@ -48,36 +52,34 @@ export default function ConcertPage({ initialConcert, bands, locations }) {
   const router = useRouter()
   const dateFormat = new Date(concert.date_start).getFullYear() === new Date().getFullYear() ? 'DD. MMM' : 'DD. MMM YYYY'
 
-  // useEffect(() => {
-  //   getBandsSeen()
-  // })
+  useEffect(() => {
+    getBandsSeen()
+  }, [])
 
-  // async function getBandsSeen() {
-  //   try {
-  //     const { data: { session } } = await supabase.auth.getSession()
+  async function getBandsSeen() {
+    try {
+      if (user) {
+        const { data: initBandsSeen, error: bandsSeenError } = await supabase
+          .from('j_bands_seen')
+          .select('*')
+          .eq('concert_id', concert.id)
+          .eq('user_id', user.current.id)
 
-  //     const user = session ? session.user : null
+          console.log('blyat');
 
-  //     if (user) {
-  //       const { data: initBandsSeen, error: bandsSeenError } = await supabase
-  //         .from('j_bands_seen')
-  //         .select('*')
-  //         .eq('concert_id', concert.id)
-  //         .single()
-
-  //       if (bandsSeenError) {
-  //         throw bandsSeenError
-  //       }
-
-  //       if (initBandsSeen) {
-  //         setBandsSeen(initBandsSeen)
-  //       }
-  //     }
-  //   } catch (error) {
-  //     alert(error.message)
-  //   }
-  // }
-
+          if (bandsSeenError) {
+            throw bandsSeenError
+          }
+          
+          if (initBandsSeen) {
+            setBandsSeen(initBandsSeen)
+          }
+        }
+      } catch (error) {
+        alert(error.message)
+      }
+    }
+    
   // useEffect(() => {
   //   const user = supabase.auth.user()
   //   setBandsSeen(allBandsSeen.find(bandsSeen => bandsSeen.user_id === user?.id)?.band_ids || [])
@@ -163,6 +165,7 @@ export default function ConcertPage({ initialConcert, bands, locations }) {
           {concert.bands && concert.bands.map(band => (
             <BandSeenCheckbox
               key={band.id}
+              concert={concert}
               band={band}
               bandsSeen={bandsSeen}
               setBandsSeen={setBandsSeen}
@@ -219,13 +222,12 @@ export default function ConcertPage({ initialConcert, bands, locations }) {
 }
 
 export async function getServerSideProps({ params }) {
-
   const { data: concert, error } = await supabase
     .from('concerts')
     .select(`
       *,
       location(*),
-      bands(
+      bands!j_concert_bands(
         *,
         genres(*)
       )
