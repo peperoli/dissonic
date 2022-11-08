@@ -4,7 +4,7 @@ import supabase from "../../utils/supabase";
 import Button from "../../components/Button";
 import Modal from "../../components/Modal";
 import EditPasswordForm from "../../components/EditPasswordForm";
-import EditUsernameForm from "../../components/EditUsernameForm";
+import EditProfileForm from "../../components/EditProfileForm";
 
 export default function Profile({ initProfile, profiles }) {
   const [loading, setLoading] = useState(false)
@@ -63,7 +63,7 @@ export default function Profile({ initProfile, profiles }) {
           )}
         </main>
         <Modal isOpen={editUsernameIsOpen} setIsOpen={setEditUsernameIsOpen}>
-          <EditUsernameForm
+          <EditProfileForm
             username={username}
             setUsername={setUsername}
             usernames={profiles.map(item => item.username)}

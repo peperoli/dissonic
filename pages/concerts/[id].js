@@ -39,7 +39,7 @@ function BandSeenCheckbox({ band, bandsSeen, setBandsSeen }) {
   )
 }
 
-export default function ConcertPage({ initialConcert, bands, locations, allBandsSeen }) {
+export default function ConcertPage({ initialConcert, bands, locations }) {
   const [concert, setConcert] = useState(initialConcert)
   const [bandsSeen, setBandsSeen] = useState([])
   const [editIsOpen, setEditIsOpen] = useState(false)
@@ -47,6 +47,36 @@ export default function ConcertPage({ initialConcert, bands, locations, allBands
 
   const router = useRouter()
   const dateFormat = new Date(concert.date_start).getFullYear() === new Date().getFullYear() ? 'DD. MMM' : 'DD. MMM YYYY'
+
+  // useEffect(() => {
+  //   getBandsSeen()
+  // })
+
+  // async function getBandsSeen() {
+  //   try {
+  //     const { data: { session } } = await supabase.auth.getSession()
+
+  //     const user = session ? session.user : null
+
+  //     if (user) {
+  //       const { data: initBandsSeen, error: bandsSeenError } = await supabase
+  //         .from('j_bands_seen')
+  //         .select('*')
+  //         .eq('concert_id', concert.id)
+  //         .single()
+
+  //       if (bandsSeenError) {
+  //         throw bandsSeenError
+  //       }
+
+  //       if (initBandsSeen) {
+  //         setBandsSeen(initBandsSeen)
+  //       }
+  //     }
+  //   } catch (error) {
+  //     alert(error.message)
+  //   }
+  // }
 
   // useEffect(() => {
   //   const user = supabase.auth.user()
@@ -208,11 +238,6 @@ export async function getServerSideProps({ params }) {
     .select('*, genres(*)')
     .order('name')
 
-  const { data: bandsSeen, bandsSeenError } = await supabase
-    .from('bands_seen')
-    .select('*')
-    .eq('concert_id', params.id)
-
   const { data: locations } = await supabase
     .from('locations')
     .select('*')
@@ -221,17 +246,11 @@ export async function getServerSideProps({ params }) {
   if (error) {
     console.error(error);
   }
-
-  if (bandsSeenError) {
-    throw new Error(bandsSeenError)
-  }
-
   return {
     props: {
       initialConcert: concert,
       bands,
       locations,
-      allBandsSeen: bandsSeen,
     }
   }
 }

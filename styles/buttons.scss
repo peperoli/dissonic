@@ -28,7 +28,7 @@
 	}
 
 	.btn.btn-tag {
-		@apply px-4 py-1 rounded-full text-slate-50 bg-slate-850;
+		@apply px-2 py-1 rounded-md text-slate-50 bg-slate-800 hover:bg-slate-700;
 
 		&.btn-seen {
 			@apply bg-deepPurple;
