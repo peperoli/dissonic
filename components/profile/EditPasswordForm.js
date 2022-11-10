@@ -6,7 +6,7 @@ export default function EditPasswordForm({ setIsOpen }) {
     event.preventDefault()
 
     try {
-      const { error: updateError } = await supabase.auth.update({ password: event.target.password.value })
+      const { error: updateError } = await supabase.auth.updateUser({ password: event.target.password.value })
 
       if (updateError) {
         throw updateError

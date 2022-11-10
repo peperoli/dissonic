@@ -118,7 +118,7 @@ export default function PageBands({ initialBands, countries, genres }) {
 	)
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
 	const { data: bands, error } = await supabase
 		.from('bands')
 		.select('*, country(*), genres(*)')

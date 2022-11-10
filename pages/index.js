@@ -174,7 +174,7 @@ export default function Home({ initialConcerts, bands, locations }) {
   )
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const { data: concerts, error: concertsError } = await supabase
     .from('concerts')
     .select('*, location(*), bands!j_concert_bands(*)')
