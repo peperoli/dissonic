@@ -1,5 +1,5 @@
-import supabase from "../utils/supabase"
-import Button from "./Button"
+import supabase from "../../utils/supabase"
+import Button from "../Button"
 import { useState } from "react"
 import { useRouter } from "next/router"
 

@@ -1,12 +1,12 @@
 import Head from 'next/head'
 import supabase from "../utils/supabase"
-import ConcertCard from '../components/ConcertCard'
+import ConcertCard from '../components/concerts/ConcertCard'
 import Modal from '../components/Modal'
-import AddConcertForm from "../components/AddConcertForm"
+import AddConcertForm from "../components/concerts/AddConcertForm"
 import { useState, useEffect } from 'react'
 import Button from '../components/Button'
 import { ArrowUturnLeftIcon, ChevronDownIcon, PlusIcon } from '@heroicons/react/20/solid'
-import PageWrapper from '../components/PageWrapper'
+import PageWrapper from '../components/layout/PageWrapper'
 import { toast } from 'react-toastify'
 import FilterButton from '../components/FilterButton'
 
@@ -17,11 +17,10 @@ export default function Home({ initialConcerts, bands, locations }) {
   const [selectedLocations, setSelectedLocations] = useState([])
   const [bandsSeen, setBandsSeen] = useState([])
   const [sort, setSort] = useState('dateAsc')
+  const [user, setUser] = useState(null)
   
   const notifyInsert = () => toast.success("Konzert erfolgreich hinzugefügt!")
   const filteredLength = concerts.filter(filterRule).length !== concerts.length ? concerts.filter(filterRule).length : null
-
-
 
   function filterRule(item) {
     let [bandFilter, locationFilter] = [true, true]
@@ -58,6 +57,40 @@ export default function Home({ initialConcerts, bands, locations }) {
     setSelectedBands([])
     setSelectedLocations([])
   }
+
+  useEffect(() => {
+    getUser()
+  }, [])
+
+  async function getUser() {
+    const { data: { user: initUser } } = await supabase.auth.getUser()
+    setUser(initUser)
+  }
+
+  useEffect(() => {
+    async function getBandsSeen() {
+      try {
+        const { data: initBandsSeen, error: selectedBandsSeenError } = await supabase
+          .from('j_bands_seen')
+          .select('*')
+          .eq('user_id', user.id)
+
+        if (selectedBandsSeenError) {
+          throw selectedBandsSeenError
+        }
+
+        if (initBandsSeen) {
+          setBandsSeen(initBandsSeen)
+        }
+      } catch (error) {
+        alert(error.message)
+      }
+    }
+
+    if (user) {
+      getBandsSeen()
+    }
+  }, [user])
   return (
     <PageWrapper>
       <Head>
@@ -122,7 +155,7 @@ export default function Home({ initialConcerts, bands, locations }) {
               <ConcertCard
                 key={concert.id}
                 concert={concert}
-                bandsSeen={bandsSeen.find(row => row.concert_id === concert.id)}
+                bandsSeen={bandsSeen.filter(row => row.concert_id === concert.id)}
               />
             ))
           )}

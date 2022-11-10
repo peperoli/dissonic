@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Logo from "./Logo";
-import supabase from "../utils/supabase";
+import supabase from "../../utils/supabase";
 import { Menu } from '@headlessui/react'
 import { useRouter } from "next/router";
 import { ArrowRightOnRectangleIcon, UserIcon } from "@heroicons/react/20/solid"

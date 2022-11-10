@@ -1,31 +1,36 @@
 import supabase from "../../utils/supabase"
 import Link from "next/link"
-import EditConcertForm from "../../components/EditConcertForm"
+import EditConcertForm from "../../components/concerts/EditConcertForm"
 import { ArrowLeftIcon, CalendarIcon, MapPinIcon } from "@heroicons/react/20/solid"
-import { useEffect, useState } from "react"
-import PageWrapper from "../../components/PageWrapper"
+import { useEffect, useState, useRef } from "react"
+import PageWrapper from "../../components/layout/PageWrapper"
 import Modal from "../../components/Modal"
 import Button from "../../components/Button"
 import dayjs from "dayjs"
 import 'dayjs/locale/de'
 import { useRouter } from "next/router"
-import GenreChart from "../../components/GenreChart"
+import GenreChart from "../../components/concerts/GenreChart"
 
-function BandSeenCheckbox({ concert, band, bandsSeen, setBandsSeen }) {
-  const isSeen = bandsSeen && bandsSeen.some(item => item.band_id === band.id) ? true : false
+function BandSeenCheckbox({ concert, band, selectedBandsSeen, setSelectedBandsSeen, user }) {
+  const router = useRouter()
+  const isSeen = selectedBandsSeen && selectedBandsSeen.some(item => item.band_id === band.id) ? true : false
 
   function handleChange() {
-    if (isSeen) {
-      setBandsSeen(bandsSeen.filter(item => item.band_id !== band.id))
+    if (user) {
+      if (isSeen) {
+        setSelectedBandsSeen(selectedBandsSeen.filter(item => item.band_id !== band.id))
+      } else {
+        setSelectedBandsSeen([
+          ...selectedBandsSeen,
+          {
+            concert_id: concert.id,
+            user_id: user.id,
+            band_id: band.id,
+          }
+        ])
+      }
     } else {
-      setBandsSeen([
-        ...bandsSeen,
-        {
-          concert_id: concert.id,
-          user_id: user.current.id,
-          band_id: band.id,
-        }
-      ])
+      router.push('/login')
     }
   }
   return (
@@ -43,92 +48,101 @@ function BandSeenCheckbox({ concert, band, bandsSeen, setBandsSeen }) {
   )
 }
 
-export default function ConcertPage({ initialConcert, bands, locations, user }) {
+export default function ConcertPage({ initialConcert, bands, locations }) {
   const [concert, setConcert] = useState(initialConcert)
-  const [bandsSeen, setBandsSeen] = useState([])
+  const [selectedBandsSeen, setSelectedBandsSeen] = useState([])
   const [editIsOpen, setEditIsOpen] = useState(false)
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
+  const [user, setUser] = useState(null)
+  const [bandsSeen, setBandsSeen] = useState(null)
+  const [loading, setLoading] = useState(false)
 
+  const addBandsSeen = selectedBandsSeen.filter(item => !bandsSeen?.find(item2 => item.band_id === item2.band_id))
+  const deleteBandsSeen = bandsSeen?.filter(item => !selectedBandsSeen.find(item2 => item.band_id === item2.band_id))
   const router = useRouter()
   const dateFormat = new Date(concert.date_start).getFullYear() === new Date().getFullYear() ? 'DD. MMM' : 'DD. MMM YYYY'
 
   useEffect(() => {
-    getBandsSeen()
+    getUser()
   }, [])
 
-  async function getBandsSeen() {
-    try {
-      if (user) {
-        const { data: initBandsSeen, error: bandsSeenError } = await supabase
+  async function getUser() {
+    const { data: { user: initUser } } = await supabase.auth.getUser()
+    setUser(initUser)
+  }
+
+  useEffect(() => {
+    async function getBandsSeen() {
+      try {
+        const { data: initBandsSeen, error: selectedBandsSeenError } = await supabase
           .from('j_bands_seen')
           .select('*')
           .eq('concert_id', concert.id)
-          .eq('user_id', user.current.id)
+          .eq('user_id', user.id)
 
-          console.log('blyat');
+        if (selectedBandsSeenError) {
+          throw selectedBandsSeenError
+        }
 
-          if (bandsSeenError) {
-            throw bandsSeenError
-          }
-          
-          if (initBandsSeen) {
-            setBandsSeen(initBandsSeen)
-          }
+        if (initBandsSeen) {
+          setSelectedBandsSeen(initBandsSeen)
+          setBandsSeen(initBandsSeen)
         }
       } catch (error) {
         alert(error.message)
       }
     }
-    
-  // useEffect(() => {
-  //   const user = supabase.auth.user()
-  //   setBandsSeen(allBandsSeen.find(bandsSeen => bandsSeen.user_id === user?.id)?.band_ids || [])
-  // }, [allBandsSeen])
 
-  // useEffect(() => {
-  //   async function updateBandsSeen() {
-  //     const user = supabase.auth.user()
-  //     const { data: updatedBandsSeen, error } = await supabase
-  //       .from('bands_seen')
-  //       .upsert({
-  //         concert_id: concert.id,
-  //         user_id: user?.id,
-  //         band_ids: bandsSeen,
-  //       },
-  //         {
-  //           onConflict: 'concert_id, user_id'
-  //         })
+    if (user) {
+      getBandsSeen()
+    }
+  }, [user, concert.id])
 
-  //     if (error) {
-  //       console.error(error);
-  //     }
-  //   }
-
-  //   updateBandsSeen()
-  // }, [bandsSeen, concert])
-
-  // useEffect(() => {
-  //   const updateSubscription = supabase.from('concerts').on('UPDATE', payload => {
-  //     setConcert(payload.new)
-  //   }).subscribe()
-
-  //   return () => supabase.removeSubscription(updateSubscription)
-  // })
-
-  async function deleteConcert() {
+  async function updateBandsSeen() {
     try {
-      const { error: deleteBandsSeenError } = await supabase.from('bands_seen').delete().eq('concert_id', concert.id)
+      setLoading(true)
+
+      const { error: addBandsSeenError } = await supabase
+        .from('j_bands_seen')
+        .insert(addBandsSeen)
+
+      if (addBandsSeenError) {
+        throw addBandsSeenError
+      }
+
+      const { error: deleteBandsSeenError } = await supabase
+        .from('j_bands_seen')
+        .delete()
+        .eq('concert_id', concert.id)
+        .eq('user_id', user.id)
+        .in('band_id', deleteBandsSeen.map(item => item.band_id))
 
       if (deleteBandsSeenError) {
         throw deleteBandsSeenError
       }
-  
+
+      setBandsSeen(selectedBandsSeen)
+    } catch (error) {
+      alert(error.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function deleteConcert() {
+    try {
+      const { error: deleteBandsSeenError } = await supabase.from('j_bands_seen').delete().eq('concert_id', concert.id)
+
+      if (deleteBandsSeenError) {
+        throw deleteBandsSeenError
+      }
+
       const { error: deleteBandsError } = await supabase.from('j_concert_bands').delete().eq('concert_id', concert.id)
 
       if (deleteBandsError) {
         throw deleteBandsError
       }
-  
+
       const { error: deleteConcertError } = await supabase.from('concerts').delete().eq('id', concert.id)
 
       if (deleteConcertError) {
@@ -165,13 +179,23 @@ export default function ConcertPage({ initialConcert, bands, locations, user }) 
           {concert.bands && concert.bands.map(band => (
             <BandSeenCheckbox
               key={band.id}
+              user={user}
               concert={concert}
               band={band}
-              bandsSeen={bandsSeen}
-              setBandsSeen={setBandsSeen}
+              selectedBandsSeen={selectedBandsSeen}
+              setSelectedBandsSeen={setSelectedBandsSeen}
             />
           ))}
         </div>
+        {user && (
+          <Button
+            onClick={updateBandsSeen}
+            label="Speichern"
+            style="primary"
+            loading={loading}
+            disabled={addBandsSeen?.length === 0 && deleteBandsSeen?.length === 0}
+          />
+        )}
         <div className="flex gap-4 w-full">
           <div className="inline-flex items-center">
             <CalendarIcon className="h-icon mr-2" />

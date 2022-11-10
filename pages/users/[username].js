@@ -1,10 +1,10 @@
-import PageWrapper from "../../components/PageWrapper";
+import PageWrapper from "../../components/layout/PageWrapper";
 import { useState, useEffect } from "react"
 import supabase from "../../utils/supabase";
 import Button from "../../components/Button";
 import Modal from "../../components/Modal";
 import EditPasswordForm from "../../components/EditPasswordForm";
-import EditProfileForm from "../../components/EditProfileForm";
+import EditProfileForm from "../../components/profile/EditProfileForm";
 
 export default function Profile({ initProfile, profiles }) {
   const [loading, setLoading] = useState(false)

@@ -1,8 +1,7 @@
-import BandCheckbox from "./BandCheckbox"
 import { useState } from "react"
-import supabase from "../utils/supabase"
-import Button from "./Button"
-import MultiSelect from "./MultiSelect"
+import supabase from "../../utils/supabase"
+import Button from "../Button"
+import MultiSelect from "../MultiSelect"
 
 export default function EditConcertForm({ concert, bands, locations, setIsOpen, setConcert }) {
   const [selectedBands, setSelectedBands] = useState(concert.bands || [])
@@ -50,7 +49,7 @@ export default function EditConcertForm({ concert, bands, locations, setIsOpen, 
       try {
         const { data: newConcert, error: newConcertError } = await supabase
           .from('concerts')
-          .select('*, location(*), bands(*, genres(*))')
+          .select('*, location(*), bands!j_concert_bands(*, genres(*))')
           .eq('id', concert.id)
           .single()
 

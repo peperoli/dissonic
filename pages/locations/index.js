@@ -1,11 +1,10 @@
-import PageWrapper from "../../components/PageWrapper"
+import PageWrapper from "../../components/layout/PageWrapper"
 import supabase from "../../utils/supabase"
 import { PlusIcon } from "@heroicons/react/20/solid"
 import Table from "../../components/Table"
 import TableRow from "../../components/TableRow"
-import AddLocationForm from "../../components/AddLocationForm"
+import AddLocationForm from "../../components/locations/AddLocationForm"
 import Modal from "../../components/Modal"
-import Button from "../../components/Button"
 import { useState } from "react"
 import Search from "../../components/Search"
 

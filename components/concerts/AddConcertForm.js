@@ -1,8 +1,8 @@
 import { useState } from "react"
-import supabase from "../utils/supabase"
-import MultiSelect from "./MultiSelect"
+import supabase from "../../utils/supabase"
+import MultiSelect from "../MultiSelect"
 import dayjs from "dayjs"
-import Button from "./Button"
+import Button from "../Button"
 
 export default function NewConcertForm({ bands, locations, setIsOpen, concerts, setConcerts }) {
   const [selectedBands, setSelectedBands] = useState([])
@@ -43,7 +43,7 @@ export default function NewConcertForm({ bands, locations, setIsOpen, concerts, 
       try {
         const { data: newConcert, error: newConcertError } = await supabase
           .from('concerts')
-          .select('*, location(*), bands(*)')
+          .select('*, location(*), bands!j_concert_bands(*)')
           .eq('id', concert.id)
           .single()
 

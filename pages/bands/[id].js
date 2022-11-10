@@ -4,9 +4,8 @@ import { ArrowLeftIcon } from "@heroicons/react/20/solid"
 import Modal from "../../components/Modal"
 import { Fragment, useState } from "react"
 import { useRouter } from "next/router"
-import EditBandForm from "../../components/EditBandForm"
-import PageWrapper from "../../components/PageWrapper"
-import { toast } from "react-toastify"
+import EditBandForm from "../../components/bands/EditBandForm"
+import PageWrapper from "../../components/layout/PageWrapper"
 
 export default function BandPage({ initialBand, countries, genres }) {
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)

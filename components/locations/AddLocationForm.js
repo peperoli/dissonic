@@ -1,5 +1,5 @@
-import supabase from "../utils/supabase"
-import Button from "./Button"
+import supabase from "../../utils/supabase"
+import Button from "../Button"
 
 export default function AddBandForm({ locations, setIsOpen, setLocations }) {
   async function handleSubmit(event) {

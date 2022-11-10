@@ -1,9 +1,9 @@
-import Navigation from "./navigation"
+import Navigation from "./Navigation"
 import { ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
 import NavBar from "./NavBar";
 import { useState, useEffect, useRef } from 'react'
-import supabase from "../utils/supabase";
+import supabase from "../../utils/supabase";
 import { createContext } from "react";
 
 export const ProfileContext = createContext()
@@ -12,7 +12,6 @@ export const UserContext = createContext()
 export default function PageWrapper({ children }) {
   const [loading, setLoading] = useState(false)
   const [profile, setProfile] = useState(null)
-  const user = useRef(null)
 
   useEffect(() => {
     getProfile()
@@ -22,15 +21,13 @@ export default function PageWrapper({ children }) {
     try {
       setLoading(true)
 
-      const { data: { session } } = await supabase.auth.getSession()
-
-      user.current = session ? session.user : null
+      const { data: { user } } = await supabase.auth.getUser()
 
       if (user) {
         const { data: profile, error: profileError, status } = await supabase
           .from('profiles')
           .select('*')
-          .eq('id', user.current.id)
+          .eq('id', user.id)
           .single()
 
         if (profileError) {
@@ -50,23 +47,19 @@ export default function PageWrapper({ children }) {
   return (
     <>
       <NavBar profile={profile} setProfile={setProfile} />
-      <UserContext.Provider value={user}>
-        <ProfileContext.Provider value={profile}>
-          <div className="flex">
-            <Navigation />
-            {children}
-            <ToastContainer
-              position="bottom-right"
-              autoClose={3000}
-              closeOnClick
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="dark"
-            />
-          </div>
-        </ProfileContext.Provider>
-      </UserContext.Provider>
+      <div className="flex">
+        <Navigation />
+        {children}
+        <ToastContainer
+          position="bottom-right"
+          autoClose={3000}
+          closeOnClick
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+        />
+      </div>
     </>
   )
 }
