@@ -1,5 +1,5 @@
 import { useRouter } from "next/router"
-import PageWrapper from "../components/PageWrapper"
+import PageWrapper from "../components/layout/PageWrapper"
 import supabase from "../utils/supabase"
 
 export default function LoginPage() {
