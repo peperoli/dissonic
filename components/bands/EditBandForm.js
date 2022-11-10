@@ -3,7 +3,7 @@ import supabase from "../../utils/supabase"
 import MultiSelect from "../MultiSelect"
 import Button from "../Button"
 
-export default function EditBandForm({ band, countries, genres, setIsSuccess, setIsOpen, setBand }) {
+export default function EditBandForm({ band, countries, genres, setIsOpen, setBand }) {
   const [selectedGenres, setSelectedGenres] = useState(band.genres || [])
 
   const newGenres = selectedGenres.filter(item => !band.genres.find(item2 => item.id === item2.id))
@@ -56,7 +56,6 @@ export default function EditBandForm({ band, countries, genres, setIsSuccess, se
 
         setBand(newBand)
         setIsOpen(false)
-        setIsSuccess(true)
       } catch (error) {
         alert(error.message)
       }

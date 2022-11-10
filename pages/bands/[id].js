@@ -64,7 +64,6 @@ export default function BandPage({ initialBand, countries, genres }) {
         <button onClick={() => setDeleteIsOpen(true)} className="btn btn-link btn-danger">
           Löschen
         </button>
-        <pre className="text-slate-300">{JSON.stringify(band, null, 2)}</pre>
       </main>
       <Modal isOpen={deleteIsOpen} setIsOpen={setDeleteIsOpen}>
         <div>

@@ -215,7 +215,6 @@ export default function ConcertPage({ initialConcert, bands, locations }) {
           <Button onClick={() => setEditIsOpen(true)} label="Bearbeiten" />
           <Button onClick={() => setDeleteIsOpen(true)} label="Löschen" />
         </div>
-        <pre className="text-slate-300">{JSON.stringify(concert, null, 2)}</pre>
         <Modal
           isOpen={editIsOpen}
           setIsOpen={setEditIsOpen}
