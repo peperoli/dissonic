@@ -3,7 +3,7 @@ import { useState, useEffect } from "react"
 import supabase from "../../utils/supabase";
 import Button from "../../components/Button";
 import Modal from "../../components/Modal";
-import EditPasswordForm from "../../components/EditPasswordForm";
+import EditPasswordForm from "../../components/profile/EditPasswordForm";
 import EditProfileForm from "../../components/profile/EditProfileForm";
 
 export default function Profile({ initProfile, profiles }) {
