@@ -30,8 +30,9 @@ module.exports = {
       transparent: 'transparent',
     },
     boxShadow: {
-      'md': '0 2px 8px rgba(0, 0, 0, 0.1)',
-      'lg': '0 4px 16px rgba(0, 0, 0, 0.1)',
+      'md': '0 2px 8px rgba(0, 0, 0, 0.2)',
+      'lg': '0 4px 16px rgba(0, 0, 0, 0.2)',
+      'xl': '0 8px 32px rgba(0, 0, 0, 0.2)',
       'shine': '0 0 16px',
     },
     extend: {

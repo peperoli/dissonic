@@ -5,7 +5,7 @@ import Modal from '../components/Modal'
 import AddConcertForm from "../components/concerts/AddConcertForm"
 import { useState, useEffect } from 'react'
 import Button from '../components/Button'
-import { ArrowUturnLeftIcon, ChevronDownIcon, PlusIcon } from '@heroicons/react/20/solid'
+import { ArrowUturnLeftIcon, ChevronDownIcon, GlobeAltIcon, PlusIcon, UserIcon } from '@heroicons/react/20/solid'
 import PageWrapper from '../components/layout/PageWrapper'
 import { toast } from 'react-toastify'
 import FilterButton from '../components/FilterButton'
@@ -18,12 +18,13 @@ export default function Home({ initialConcerts, bands, locations }) {
   const [bandsSeen, setBandsSeen] = useState([])
   const [sort, setSort] = useState('dateAsc')
   const [user, setUser] = useState(null)
-  
+  const [view, setView] = useState('global')
+
   const notifyInsert = () => toast.success("Konzert erfolgreich hinzugefügt!")
   const filteredLength = concerts.filter(filterRule).length !== concerts.length ? concerts.filter(filterRule).length : null
 
   function filterRule(item) {
-    let [bandFilter, locationFilter] = [true, true]
+    let [bandFilter, locationFilter, viewFilter] = [true, true, true]
     const selectedBandIds = selectedBands.map(item => item.id)
     const selectedLocationIds = selectedLocations.map(item => item.id)
     if (selectedBandIds.length > 0) {
@@ -32,7 +33,10 @@ export default function Home({ initialConcerts, bands, locations }) {
     if (selectedLocationIds.length > 0) {
       locationFilter = selectedLocationIds.includes(item.location?.id)
     }
-    return bandFilter && locationFilter
+    if (view === 'user') {
+      viewFilter = item.bands.some(band => bandsSeen.some(bandSeen => bandSeen.concert_id === item.id && bandSeen.band_id === band.id))
+    }
+    return bandFilter && locationFilter && viewFilter
   }
 
   function compare(a, b) {
@@ -89,8 +93,13 @@ export default function Home({ initialConcerts, bands, locations }) {
 
     if (user) {
       getBandsSeen()
+      setView('user')
     }
   }, [user])
+
+  function changeView(event) {
+    setView(event.target.value)
+  }
   return (
     <PageWrapper>
       <Head>
@@ -135,7 +144,35 @@ export default function Home({ initialConcerts, bands, locations }) {
                 Zurücksetzen
               </button>
             )}
-            <div className="flex items-center ml-auto text-sm">
+            {user && (
+              <fieldset className="flex ml-auto p-1 rounded-md bg-slate-800">
+                <label className={`flex justify-center items-center w-6 h-6 rounded${view === 'global' ? ' text-venom bg-slate-700' : ''}`}>
+                  <GlobeAltIcon className="text-sm h-icon" />
+                  <span className="sr-only">Alle Konzerte anzeigen</span>
+                  <input
+                    type="radio"
+                    name="view"
+                    value="global"
+                    onChange={changeView}
+                    checked={view === 'global'}
+                    className="sr-only"
+                  />
+                </label>
+                <label className={`flex justify-center items-center w-6 h-6 rounded${view === 'user' ? ' text-venom bg-slate-700' : ''}`}>
+                  <UserIcon className="text-sm h-icon" />
+                  <span className="sr-only">Nur gesehene Konzerte anzeigen</span>
+                  <input
+                    type="radio"
+                    name="view"
+                    value="user"
+                    onChange={changeView}
+                    checked={view === 'user'}
+                    className="sr-only"
+                  />
+                </label>
+              </fieldset>
+            )}
+            <div className="flex items-center text-sm">
               <label htmlFor="sortBy" className="text-slate-300">
                 Sortieren nach:
               </label>

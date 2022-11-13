@@ -33,7 +33,7 @@ function MultiSelectOption({ option, selectedOptions, setSelectedOptions, setQue
   }
 
   return (
-    <label className="flex gap-2 w-full px-2 py-1.5 rounded hover:bg-slate-500">
+    <label className="flex gap-2 w-full px-2 py-1.5 rounded hover:bg-slate-600">
       <input
         type="checkbox"
         checked={isSelected}
@@ -93,7 +93,7 @@ export default function MultiSelect({ name, options, selectedOptions, setSelecte
         <label htmlFor={name} className="sr-only">{name}</label>
       </div>
       {(query || alwaysOpen) && (
-        <div className={`form-control w-full max-h-72 mt-1 p-2 rounded-lg bg-slate-600 overflow-auto z-20${alwaysOpen ? '' : ' absolute shadow-lg'}`}>
+        <div className={`form-control w-full max-h-72 mt-1 p-2 rounded-lg bg-slate-700 overflow-auto z-20${alwaysOpen ? '' : ' absolute shadow-lg'}`}>
           {filteredOptions.length > 0 ? filteredOptions.map(option => (
             <MultiSelectOption
               key={option.id}
