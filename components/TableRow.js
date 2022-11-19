@@ -1,14 +1,14 @@
 import Link from "next/link"
 
 export default function TableRow({ children, href }) {
-  let gridCols = 'grid-cols-1'
+  let gridCols = 'md:grid-cols-1'
 
   switch (children.length) {
     case 2:
-      gridCols = 'grid-cols-2'
+      gridCols = 'md:grid-cols-2'
       break
     case 3:
-      gridCols = 'grid-cols-3'
+      gridCols = 'md:grid-cols-3'
       break
   }
   return (

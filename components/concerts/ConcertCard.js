@@ -18,24 +18,24 @@ function ConcertDate({ date }) {
 export default function ConcertCard({ concert, bandsSeen }) {
   const router = useRouter()
   return (
-    <div onClick={() => router.push(`/concerts/${concert.id}`)} className="flex gap-4 p-6 rounded-2xl bg-slate-800 hover:cursor-pointer">
-      <div className="flex flex-col items-center">
+    <div onClick={() => router.push(`/concerts/${concert.id}`)} className="flex flex-col md:flex-row gap-4 p-6 rounded-2xl bg-slate-800 hover:cursor-pointer">
+      <div className="flex md:flex-col items-center">
         <ConcertDate date={new Date(concert.date_start)} />
         {concert.date_end && concert.date_end !== concert.date_start && (
           <>
-            <div className="h-4 border-l border-slate-700" />
+            <div className="w-4 md:w-auto md:h-4 border-t md:border-l border-slate-700" />
             <ConcertDate date={new Date(concert.date_end)} />
           </>
         )}
       </div>
       <div>
-        {concert.name && <div className="btn btn-tag !text-slate-850 !bg-blue-300 mb-2">{concert.name}</div>}
+        {concert.name && <div className="btn btn-tag !bg-deepPurple mb-2">{concert.name}</div>}
         <div className="flex flex-wrap items-center -ml-2 mb-2">
           {concert.bands && concert.bands.map((band, index) => (
             <Fragment key={band.id}>
               {index !== 0 ? <span className="text-slate-300">&bull;</span> : null}
               <Link href={`/bands/${band.id}`}>
-                <a className={`btn btn-tag${bandsSeen.some(bandSeen => bandSeen.band_id === band.id) ? ' !text-purple' : ''}`}>
+                <a className={`btn btn-tag${bandsSeen.some(bandSeen => bandSeen.band_id === band.id) ? ' !text-venom' : ''}`}>
                   {band.name}
                 </a>
               </Link>

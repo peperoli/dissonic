@@ -8,6 +8,8 @@ import Table from "../../components/Table"
 import TableRow from "../../components/TableRow"
 import Search from "../../components/Search"
 import FilterButton from "../../components/FilterButton"
+import Button from "../../components/Button"
+import useMediaQuery from "../../hooks/useMediaQuery"
 
 export default function PageBands({ initialBands, countries, genres }) {
 	const [isOpen, setIsOpen] = useState(false)
@@ -51,20 +53,26 @@ export default function PageBands({ initialBands, countries, genres }) {
 		setSelectedCountries([])
 		setSelectedGenres([])
 	}
+
+	const isDesktop = useMediaQuery('(min-width: 768px)')
 	return (
 		<PageWrapper>
-			<main className="p-8 w-full">
-				<div className="flex justify-between mb-6">
+			<main className="p-4 md:p-8 w-full">
+				<div className="sr-only md:not-sr-only flex justify-between md:mb-6">
 					<h1 className="mb-0">
 						Bands
 					</h1>
-					<button onClick={() => setIsOpen(true)} className="btn btn-primary">
-						<PlusIcon className="h-icon" />
-						Band hinzufügen
-					</button>
+					{isDesktop && (
+            <Button
+              onClick={() => setIsOpen(true)}
+              label="Band hinzufügen"
+              style="primary"
+              icon={<PlusIcon className="h-icon" />}
+            />
+          )}
 				</div>
 				<Table>
-					<div className="grid grid-cols-3 gap-4">
+					<div className="grid md:grid-cols-3 gap-4">
 						<Search name="searchBands" placeholder="Bands" query={query} setQuery={setQuery} />
 						<FilterButton
 							name="countries"
@@ -95,9 +103,9 @@ export default function PageBands({ initialBands, countries, genres }) {
 					) : (
 						filteredBands.filter(filterRule).sort(compare).map(band => (
 							<TableRow key={band.id} href={`/bands/${band.id}`}>
-								<div>{band.name}</div>
+								<div className="font-bold">{band.name}</div>
 								<div className="text-slate-300">{band.country?.name}</div>
-								<div className="text-sm text-slate-300 whitespace-nowrap text-ellipsis overflow-hidden">
+								<div className="text-slate-300 whitespace-nowrap text-ellipsis overflow-hidden">
 									{band.genres?.map(item => item.name).join(' • ')}<br />
 								</div>
 							</TableRow>

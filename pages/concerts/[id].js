@@ -175,7 +175,7 @@ export default function ConcertPage({ initialConcert, bands, locations }) {
         ) : (
           <h1>{concert.bands[0]?.name} @ {concert.location?.name}</h1>
         )}
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex flex-wrap gap-2 mb-2">
           {concert.bands && concert.bands.map(band => (
             <BandSeenCheckbox
               key={band.id}
@@ -196,7 +196,7 @@ export default function ConcertPage({ initialConcert, bands, locations }) {
             disabled={addBandsSeen?.length === 0 && deleteBandsSeen?.length === 0}
           />
         )}
-        <div className="flex gap-4 w-full">
+        <div className="flex gap-4 w-full mt-4">
           <div className="inline-flex items-center">
             <CalendarIcon className="h-icon mr-2" />
             {dayjs(concert.date_start).locale('de-ch').format(dateFormat)}

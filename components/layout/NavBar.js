@@ -23,7 +23,7 @@ export default function NavBar({ profile, setProfile }) {
     }
   }
   return (
-    <nav className="flex justify-between items-center px-12 py-8">
+    <nav className="flex justify-between items-center p-4 md:px-12 md:py-8">
       <Link href="/">
         <a><Logo /></a>
       </Link>

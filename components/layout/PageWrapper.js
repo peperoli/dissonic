@@ -47,7 +47,7 @@ export default function PageWrapper({ children }) {
   return (
     <>
       <NavBar profile={profile} setProfile={setProfile} />
-      <div className="flex">
+      <div className="md:flex">
         <Navigation />
         {children}
         <ToastContainer

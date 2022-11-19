@@ -108,9 +108,9 @@ export default function NewConcertForm({ bands, locations, setIsOpen, concerts, 
         <textarea name="description" id="description" placeholder="Schreib was Schönes ..." />
         <label htmlFor="description">Beschreibung</label>
       </div>
-      <div className="flex justify-end gap-3">
+      <div className="sticky bottom-0 flex md:justify-end gap-4 py-4 bg-slate-800 z-10">
         <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
-        <button type="submit" className="btn btn-primary">Konzert erstellen</button>
+        <button type="submit" className="btn btn-primary flex-1">Erstellen</button>
       </div>
     </form>
   )

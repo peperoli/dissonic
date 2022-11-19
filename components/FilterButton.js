@@ -27,7 +27,7 @@ export default function FilterButton({ name, options, selectedOptions, setSelect
           <Button
             onClick={() => setSelectedOptions([])}
             icon={<ArrowUturnLeftIcon className="h-icon" />}
-            type="icon"
+            contentType="icon"
             style="secondary"
             disabled={selectedOptions.length === 0}
           />

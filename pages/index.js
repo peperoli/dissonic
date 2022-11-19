@@ -5,10 +5,11 @@ import Modal from '../components/Modal'
 import AddConcertForm from "../components/concerts/AddConcertForm"
 import { useState, useEffect } from 'react'
 import Button from '../components/Button'
-import { ArrowUturnLeftIcon, ChevronDownIcon, GlobeAltIcon, PlusIcon, UserIcon } from '@heroicons/react/20/solid'
+import { ArrowUturnLeftIcon, ChevronDownIcon, EyeIcon, GlobeAltIcon, PlusIcon } from '@heroicons/react/20/solid'
 import PageWrapper from '../components/layout/PageWrapper'
 import { toast } from 'react-toastify'
 import FilterButton from '../components/FilterButton'
+import useMediaQuery from '../hooks/useMediaQuery'
 
 export default function Home({ initialConcerts, bands, locations }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -100,6 +101,8 @@ export default function Home({ initialConcerts, bands, locations }) {
   function changeView(event) {
     setView(event.target.value)
   }
+
+  const isDesktop = useMediaQuery('(min-width: 768px)')
   return (
     <PageWrapper>
       <Head>
@@ -107,20 +110,42 @@ export default function Home({ initialConcerts, bands, locations }) {
         <meta name="description" content="Keep track of your past concerts." />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="w-full max-w-2xl p-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="mb-0">
-            Konzerte
-          </h1>
-          <Button
-            onClick={() => setIsOpen(true)}
-            label="Konzert hinzufügen"
-            style="primary"
-            icon={<PlusIcon className="h-icon" />}
-          />
+      <main className="w-full max-w-2xl p-4 md:p-8">
+        {!isDesktop && (
+          <div className="fixed bottom-0 right-0 m-4">
+            <Button
+              onClick={() => setIsOpen(true)}
+              label="Location hinzufügen"
+              style="primary"
+              contentType="icon"
+              icon={<PlusIcon className="h-icon" />}
+            />
+          </div>
+        )}
+        <div className="sr-only md:not-sr-only flex justify-between items-center mb-6">
+          <h1>Konzerte</h1>
+          {isDesktop && (
+            <Button
+              onClick={() => setIsOpen(true)}
+              label="Konzert hinzufügen"
+              style="primary"
+              icon={<PlusIcon className="h-icon" />}
+            />
+          )}
         </div>
         <div className="grid gap-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="flex items-center gap-4">
+            <div className="text-sm text-slate-300">
+              {typeof filteredLength === 'number' && <>{filteredLength}&nbsp;von&nbsp;</>}{concerts.length}&nbsp;Einträge
+            </div>
+            {typeof filteredLength === 'number' && (
+              <button onClick={resetAll} className="flex gap-2 px-2 py-1 rounded-md text-sm hover:bg-slate-800">
+                <ArrowUturnLeftIcon className="h-icon text-slate-300" />
+                Zurücksetzen
+              </button>
+            )}
+          </div>
+          <div className="grid md:grid-cols-2 gap-4">
             <FilterButton
               name="bands"
               options={bands}
@@ -135,17 +160,8 @@ export default function Home({ initialConcerts, bands, locations }) {
             />
           </div>
           <div className="flex items-center gap-4">
-            <div className="text-sm text-slate-300">
-              {typeof filteredLength === 'number' && <>{filteredLength}&nbsp;von&nbsp;</>}{concerts.length}&nbsp;Einträge
-            </div>
-            {typeof filteredLength === 'number' && (
-              <button onClick={resetAll} className="flex gap-2 px-2 py-1 rounded-md text-sm hover:bg-slate-800">
-                <ArrowUturnLeftIcon className="h-icon text-slate-300" />
-                Zurücksetzen
-              </button>
-            )}
             {user && (
-              <fieldset className="flex ml-auto p-1 rounded-md bg-slate-800">
+              <fieldset className="flex p-1 rounded-md bg-slate-800">
                 <label className={`flex justify-center items-center w-6 h-6 rounded${view === 'global' ? ' text-venom bg-slate-700' : ''}`}>
                   <GlobeAltIcon className="text-sm h-icon" />
                   <span className="sr-only">Alle Konzerte anzeigen</span>
@@ -159,7 +175,7 @@ export default function Home({ initialConcerts, bands, locations }) {
                   />
                 </label>
                 <label className={`flex justify-center items-center w-6 h-6 rounded${view === 'user' ? ' text-venom bg-slate-700' : ''}`}>
-                  <UserIcon className="text-sm h-icon" />
+                  <EyeIcon className="text-sm h-icon" />
                   <span className="sr-only">Nur gesehene Konzerte anzeigen</span>
                   <input
                     type="radio"
@@ -172,8 +188,8 @@ export default function Home({ initialConcerts, bands, locations }) {
                 </label>
               </fieldset>
             )}
-            <div className="flex items-center text-sm">
-              <label htmlFor="sortBy" className="text-slate-300">
+            <div className="flex items-center ml-auto text-sm">
+              <label htmlFor="sortBy" className="sr-only md:not-sr-only text-slate-300">
                 Sortieren nach:
               </label>
               <div className="relative flex items-center">
