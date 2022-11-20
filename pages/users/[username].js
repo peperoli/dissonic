@@ -1,5 +1,5 @@
 import PageWrapper from "../../components/layout/PageWrapper";
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import supabase from "../../utils/supabase";
 import Button from "../../components/Button";
 import Modal from "../../components/Modal";
@@ -7,58 +7,14 @@ import EditPasswordForm from "../../components/profile/EditPasswordForm";
 import EditProfileForm from "../../components/profile/EditProfileForm";
 import GenreChart from "../../components/concerts/GenreChart";
 
-export default function Profile({ initProfile, profiles }) {
-  const [user, setUser] = useState(false)
-  const [profile, setProfile] = useState(initProfile)
-  const [username, setUsername] = useState(initProfile.username)
+export default function Profile({ profile, profiles, bandsSeen }) {
+  const [username, setUsername] = useState(profile.username)
   const [editPassIsOpen, setEditPassIsOpen] = useState(false)
   const [editUsernameIsOpen, setEditUsernameIsOpen] = useState(false)
-  const [bandsSeen, setBandsSeen] = useState([])
 
   const uniqueBandsSeen = new Set(bandsSeen.map(item => item.band))
   const concertsSeen = new Set(bandsSeen.map(item => item.concert_id))
   const festivalsSeen = new Set(bandsSeen.filter(item => item.concert.is_festival).map(item => item.concert_id))
-
-  useEffect(() => {
-    getUser()
-  }, [])
-
-  async function getUser() {
-    try {
-      const { data: { user: initUser }, error } = await supabase.auth.getUser()
-  
-      if (error) throw error
-
-      setUser(initUser)
-    } catch (error) {
-      alert(error.message)
-    }
-  }
-
-  useEffect(() => {
-    async function getStats() {
-      try {
-        const { data: initBandsSeen, error: bandsSeenError } = await supabase
-          .from('j_bands_seen')
-          .select('*, concert:concerts(is_festival), band:bands(*, genres(*))')
-          .eq('user_id', user.id)
-
-        if (bandsSeenError) {
-          throw bandsSeenError
-        }
-
-        if (initBandsSeen) {
-          setBandsSeen(initBandsSeen)
-        }
-      } catch (error) {
-        alert(error.message)
-      }
-    }
-
-    if (user) {
-      getStats()
-    }
-  }, [user])
   return (
     <PageWrapper>
       <>
@@ -86,7 +42,7 @@ export default function Profile({ initProfile, profiles }) {
                   <h2 className="text-base font-normal mb-0">Festivals besucht</h2>
                 </div>
                 <div className="col-span-full p-6 rounded-lg bg-slate-800">
-                  {user && <GenreChart bands={uniqueBandsSeen} />}
+                  <GenreChart bands={uniqueBandsSeen} />
                 </div>
               </div>
               <div className="flex gap-3">
@@ -123,17 +79,19 @@ export async function getServerSideProps({ params }) {
     .eq('username', params.username)
     .single()
 
-  const { data: profiles, error } = await supabase
+  const { data: profiles } = await supabase
     .from('profiles')
     .select('username')
 
-  if (error) {
-    console.error(error);
-  }
+  const { data: bandsSeen } = await supabase
+    .from('j_bands_seen')
+    .select('*, concert:concerts(is_festival), band:bands(*, genres(*))')
+    .eq('user_id', profile.id)
 
   return {
     props: {
-      initProfile: profile,
+      profile,
+      bandsSeen,
       profiles
     }
   }
