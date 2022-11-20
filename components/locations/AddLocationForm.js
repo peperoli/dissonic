@@ -30,6 +30,7 @@ export default function AddBandForm({ locations, setIsOpen, setLocations }) {
   }
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <h2>Location erstellen</h2>
       <div className="form-control">
         <input type="text" name="name" id="name" placeholder="Hallenstadion" />
         <label htmlFor="name">Name</label>
@@ -38,9 +39,9 @@ export default function AddBandForm({ locations, setIsOpen, setLocations }) {
         <input type="text" name="city" id="city" placeholder="Zürich" />
         <label htmlFor="city">Ort</label>
       </div>
-      <div className="flex justify-end gap-3">
+      <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 bg-slate-800 z-10">
         <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
-        <button type="submit" className="btn btn-primary">Location hinzufügen</button>
+        <button type="submit" className="btn btn-primary">Erstellen</button>
       </div>
     </form>
   )

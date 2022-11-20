@@ -70,6 +70,7 @@ export default function EditConcertForm({ concert, bands, locations, setIsOpen, 
   }
   return (
     <form onSubmit={handleSubmit} className="grid gap-6">
+      <h2>Konzert bearbeiten</h2>
       <div className="form-control">
         <input type="text" name="name" id="name" placeholder="Wacken Open Air" defaultValue={concert.name} />
         <label htmlFor="name">Name (optional)</label>
@@ -108,10 +109,10 @@ export default function EditConcertForm({ concert, bands, locations, setIsOpen, 
         setSelectedOptions={setSelectedBands}
       />
       <div className="form-control">
-        <textarea name="description" id="description" defaultValue={concert.description} />
+        <textarea name="description" id="description" defaultValue={concert.description} placeholder="Schreib was Schönes ..." />
         <label htmlFor="description">Beschreibung</label>
       </div>
-      <div className="flex justify-end gap-4">
+      <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10">
         <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
         <button type="submit" className="btn btn-primary">Speichern</button>
       </div>

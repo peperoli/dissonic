@@ -54,7 +54,7 @@ export default function EditProfileForm({ setIsOpen, username, usernames }) {
             <div className="mt-1 text-sm text-red">Dieser Benutzername ist bereits vergeben, sei mal kreativ.</div>
           )}
         </div>
-        <div className="flex justify-end gap-3">
+        <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10">
           <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
           <button type="submit" disabled={usernames && value !== username && usernames.includes(value)} className="btn btn-primary">Speichern</button>
         </div>

@@ -5,54 +5,90 @@ import Button from "../../components/Button";
 import Modal from "../../components/Modal";
 import EditPasswordForm from "../../components/profile/EditPasswordForm";
 import EditProfileForm from "../../components/profile/EditProfileForm";
+import GenreChart from "../../components/concerts/GenreChart";
 
 export default function Profile({ initProfile, profiles }) {
-  const [loading, setLoading] = useState(false)
+  const [user, setUser] = useState(false)
   const [profile, setProfile] = useState(initProfile)
   const [username, setUsername] = useState(initProfile.username)
   const [editPassIsOpen, setEditPassIsOpen] = useState(false)
   const [editUsernameIsOpen, setEditUsernameIsOpen] = useState(false)
+  const [bandsSeen, setBandsSeen] = useState([])
+
+  const uniqueBandsSeen = new Set(bandsSeen.map(item => item.band))
+  const concertsSeen = new Set(bandsSeen.map(item => item.concert_id))
+  const festivalsSeen = new Set(bandsSeen.filter(item => item.concert.is_festival).map(item => item.concert_id))
 
   useEffect(() => {
-    getProfile()
-  })
+    getUser()
+  }, [])
 
-  async function getProfile() {
+  async function getUser() {
     try {
-      setLoading(true)
+      const { data: { user: initUser }, error } = await supabase.auth.getUser()
+  
+      if (error) throw error
 
-      const { data: { session } } = await supabase.auth.getSession()
-
-      const user = session ? session.user : null
-
-      if (user) {
-        const { data: profile, error: profileError, status } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single()
-
-        if (profileError) {
-          throw profileError
-        }
-
-        if (profile && status !== 406) {
-          setProfile(profile)
-        }
-      }
+      setUser(initUser)
     } catch (error) {
       alert(error.message)
-    } finally {
-      setLoading(false)
     }
   }
+
+  useEffect(() => {
+    async function getStats() {
+      try {
+        const { data: initBandsSeen, error: bandsSeenError } = await supabase
+          .from('j_bands_seen')
+          .select('*, concert:concerts(is_festival), band:bands(*, genres(*))')
+          .eq('user_id', user.id)
+
+        if (bandsSeenError) {
+          throw bandsSeenError
+        }
+
+        if (initBandsSeen) {
+          setBandsSeen(initBandsSeen)
+        }
+      } catch (error) {
+        alert(error.message)
+      }
+    }
+
+    if (user) {
+      getStats()
+    }
+  }, [user])
   return (
     <PageWrapper>
       <>
-        <main className="p-8">
+        <main className="p-4 md:p-8 w-full max-w-2xl">
           {profile ? (
             <div>
-              {username && <h1>{username}</h1>}
+              <h1>{username}</h1>
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="p-6 rounded-lg bg-slate-800">
+                  <p className="h2 mb-0 text-venom">
+                    {uniqueBandsSeen?.size}
+                  </p>
+                  <h2 className="text-base font-normal mb-0">Bands live erlebt</h2>
+                </div>
+                <div className="p-6 rounded-lg bg-slate-800">
+                  <p className="h2 mb-0 text-venom">
+                    {concertsSeen?.size}
+                  </p>
+                  <h2 className="text-base font-normal mb-0">Konzerte besucht</h2>
+                </div>
+                <div className="p-6 rounded-lg bg-slate-800">
+                  <p className="h2 mb-0 text-venom">
+                    {festivalsSeen?.size}
+                  </p>
+                  <h2 className="text-base font-normal mb-0">Festivals besucht</h2>
+                </div>
+                <div className="col-span-full p-6 rounded-lg bg-slate-800">
+                  {user && <GenreChart bands={uniqueBandsSeen} />}
+                </div>
+              </div>
               <div className="flex gap-3">
                 <Button label="Benutzername ändern" onClick={() => setEditUsernameIsOpen(true)} />
                 <Button label="Passwort ändern" onClick={() => setEditPassIsOpen(true)} />

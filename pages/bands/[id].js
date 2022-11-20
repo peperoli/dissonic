@@ -6,6 +6,7 @@ import { Fragment, useState } from "react"
 import { useRouter } from "next/router"
 import EditBandForm from "../../components/bands/EditBandForm"
 import PageWrapper from "../../components/layout/PageWrapper"
+import Button from "../../components/Button"
 
 export default function BandPage({ initialBand, countries, genres }) {
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
@@ -69,13 +70,16 @@ export default function BandPage({ initialBand, countries, genres }) {
         <div>
           <h2>Band löschen</h2>
           Willst du die Band wirklich löschen?
-          <div className="flex justify-end gap-3 mt-4">
-            <button onClick={() => setDeleteIsOpen(false)} className="btn btn-link">
-              Abbrechen
-            </button>
-            <button onClick={deleteBand} className="btn btn-primary btn-danger">
-              Löschen
-            </button>
+          <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 bg-slate-800 z-10">
+            <Button
+              label="Abbrechen"
+              onClick={() => setDeleteIsOpen(false)}
+            />
+            <Button 
+              label="Löschen"
+              onClick={deleteBand}
+              style="primary"
+            />
           </div>
         </div>
       </Modal>

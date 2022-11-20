@@ -58,18 +58,29 @@ export default function PageBands({ initialBands, countries, genres }) {
 	return (
 		<PageWrapper>
 			<main className="p-4 md:p-8 w-full">
+				{!isDesktop && (
+					<div className="fixed bottom-0 right-0 m-4">
+						<Button
+							onClick={() => setIsOpen(true)}
+							label="Band hinzufügen"
+							style="primary"
+							contentType="icon"
+							icon={<PlusIcon className="h-icon" />}
+						/>
+					</div>
+				)}
 				<div className="sr-only md:not-sr-only flex justify-between md:mb-6">
 					<h1 className="mb-0">
 						Bands
 					</h1>
 					{isDesktop && (
-            <Button
-              onClick={() => setIsOpen(true)}
-              label="Band hinzufügen"
-              style="primary"
-              icon={<PlusIcon className="h-icon" />}
-            />
-          )}
+						<Button
+							onClick={() => setIsOpen(true)}
+							label="Band hinzufügen"
+							style="primary"
+							icon={<PlusIcon className="h-icon" />}
+						/>
+					)}
 				</div>
 				<Table>
 					<div className="grid md:grid-cols-3 gap-4">
@@ -92,11 +103,11 @@ export default function PageBands({ initialBands, countries, genres }) {
 							{typeof filteredLength === 'number' && <span>{filteredLength}&nbsp;von&nbsp;</span>}{bands.length}&nbsp;Einträge
 						</div>
 						{typeof filteredLength === 'number' && (
-              <button onClick={resetAll} className="flex gap-2 px-2 py-1 rounded-md text-sm hover:bg-slate-700">
-                <ArrowUturnLeftIcon className="h-icon text-slate-300" />
-                Zurücksetzen
-              </button>
-            )}
+							<button onClick={resetAll} className="flex gap-2 px-2 py-1 rounded-md text-sm hover:bg-slate-700">
+								<ArrowUturnLeftIcon className="h-icon text-slate-300" />
+								Zurücksetzen
+							</button>
+						)}
 					</div>
 					{typeof filteredLength === 'number' && filteredLength === 0 ? (
 						<div>Blyat! Keine Einträge gefunden.</div>

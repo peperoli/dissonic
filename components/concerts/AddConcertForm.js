@@ -66,7 +66,7 @@ export default function NewConcertForm({ bands, locations, setIsOpen, concerts, 
   }
   return (
     <form onSubmit={handleSubmit} className="grid gap-6">
-      <h2 className="mb-0">Konzert hinzufügen</h2>
+      <h2>Konzert hinzufügen</h2>
       <div className="form-control">
         <input type="text" name="name" id="name" placeholder="Wacken Open Air" />
         <label htmlFor="name">Name (optional)</label>
@@ -108,9 +108,9 @@ export default function NewConcertForm({ bands, locations, setIsOpen, concerts, 
         <textarea name="description" id="description" placeholder="Schreib was Schönes ..." />
         <label htmlFor="description">Beschreibung</label>
       </div>
-      <div className="sticky bottom-0 flex md:justify-end gap-4 py-4 bg-slate-800 z-10">
+      <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10">
         <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
-        <button type="submit" className="btn btn-primary flex-1">Erstellen</button>
+        <button type="submit" className="btn btn-primary">Erstellen</button>
       </div>
     </form>
   )

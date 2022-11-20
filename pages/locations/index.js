@@ -23,6 +23,17 @@ export default function PageLocations({ initialLocations }) {
     <>
       <PageWrapper>
         <main className="p-4 md:p-8 w-full">
+          {!isDesktop && (
+            <div className="fixed bottom-0 right-0 m-4">
+              <Button
+                onClick={() => setIsOpen(true)}
+                label="Location hinzufügen"
+                style="primary"
+                contentType="icon"
+                icon={<PlusIcon className="h-icon" />}
+              />
+            </div>
+          )}
           <div className="sr-only md:not-sr-only flex justify-between md:mb-6">
             <h1 className="mb-0">
               Locations

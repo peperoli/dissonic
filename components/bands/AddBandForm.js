@@ -64,11 +64,12 @@ export default function AddBandForm({ countries, genres, bands, setBands, setIsO
   }
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <h2>Band erstellen</h2>
       <div className="form-control">
         <input type="text" name="name" id="name" value={name} onChange={(event) => setName(event.target.value)} placeholder="Beatles" />
         <label htmlFor="name">Name</label>
         {isSimilar ? (
-          <div>
+          <div className="mt-2">
             <p className="text-red">Vorsicht, diese Band könnte schon vorhanden sein:</p>
             <ul className="list-disc list-inside text-slate-300">
               {similarBands.map(band => (
@@ -77,7 +78,7 @@ export default function AddBandForm({ countries, genres, bands, setBands, setIsO
             </ul>
           </div>
         ) : (
-          <p className="text-slate-300">Nice. Die scheint es noch nicht zu geben.</p>
+          <p className="mt-2 text-slate-300">Nice. Die scheint es noch nicht zu geben.</p>
         )}
       </div>
       <div className="form-control">
@@ -95,9 +96,9 @@ export default function AddBandForm({ countries, genres, bands, setBands, setIsO
         selectedOptions={selectedGenres}
         setSelectedOptions={setSelectedGenres}
       />
-      <div className="flex justify-end gap-3">
+      <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10">
         <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
-        <button type="submit" className="btn btn-primary">Band hinzufügen</button>
+        <button type="submit" className="btn btn-primary">Erstellen</button>
       </div>
     </form>
   )

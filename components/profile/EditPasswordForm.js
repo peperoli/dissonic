@@ -25,7 +25,7 @@ export default function EditPasswordForm({ setIsOpen }) {
           <input type="password" id="password" name="password" placeholder="" />
           <label htmlFor="password">Passwort</label>
         </div>
-        <div className="flex justify-end gap-3">
+        <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10">
           <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
           <button type="submit" className="btn btn-primary">Speichern</button>
         </div>

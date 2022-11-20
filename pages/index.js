@@ -115,7 +115,7 @@ export default function Home({ initialConcerts, bands, locations }) {
           <div className="fixed bottom-0 right-0 m-4">
             <Button
               onClick={() => setIsOpen(true)}
-              label="Location hinzufügen"
+              label="Konzert hinzufügen"
               style="primary"
               contentType="icon"
               icon={<PlusIcon className="h-icon" />}
