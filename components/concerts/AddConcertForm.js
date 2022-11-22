@@ -3,18 +3,22 @@ import supabase from "../../utils/supabase"
 import MultiSelect from "../MultiSelect"
 import dayjs from "dayjs"
 import Button from "../Button"
+import { useRouter } from "next/router"
 
 export default function NewConcertForm({ bands, locations, setIsOpen, concerts, setConcerts }) {
   const [selectedBands, setSelectedBands] = useState([])
   const [isFestival, setIsFestival] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const [today] = dayjs().format().split('T')
   const [tomorrow] = dayjs().add(1, 'day').format().split('T')
+  const router = useRouter()
 
   async function handleSubmit(event) {
     event.preventDefault()
 
     try {
+      setLoading(true)
       const { data: concert, error: insertConcertError } = await supabase
         .from('concerts')
         .insert([{
@@ -55,13 +59,14 @@ export default function NewConcertForm({ bands, locations, setIsOpen, concerts, 
           ...concerts,
           newConcert
         ])
-        setIsOpen(false)
+        router.push(`/concerts/${concert.id}`)
       } catch (error) {
         alert(error.message)
       }
-
     } catch (error) {
       alert(error.message)
+    } finally {
+      setLoading(false)
     }
   }
   return (
@@ -110,7 +115,7 @@ export default function NewConcertForm({ bands, locations, setIsOpen, concerts, 
       </div>
       <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10">
         <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
-        <button type="submit" className="btn btn-primary">Erstellen</button>
+        <Button type="submit" label="Erstellen" style="primary" loading={loading} />
       </div>
     </form>
   )

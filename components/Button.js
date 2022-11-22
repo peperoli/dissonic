@@ -1,7 +1,7 @@
-export default function Button({ onClick, label, style, contentType, icon, disabled, loading }) {
+export default function Button({ onClick, type, label, style, contentType, icon, disabled, loading }) {
 	return (
 		<button
-			type="button"
+			type={type || 'button'}
 			onClick={onClick}
 			disabled={disabled}
 			className={`btn${style === 'primary' ? ' btn-primary' : ' btn-secondary'}${contentType === 'icon' ? ' btn-icon' : ''}`}>
