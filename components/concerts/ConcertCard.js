@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ChatBubbleBottomCenterTextIcon, MapPinIcon } from "@heroicons/react/20/solid"
+import { MapPinIcon, UsersIcon } from "@heroicons/react/20/solid"
 import dayjs from 'dayjs'
 import 'dayjs/locale/de'
 import { useRouter } from "next/router"
@@ -15,8 +15,13 @@ function ConcertDate({ date }) {
   )
 }
 
-export default function ConcertCard({ concert, bandsSeen }) {
+export default function ConcertCard({ concert, bandsSeen, user, profiles }) {
   const router = useRouter()
+  let fanProfiles
+  if (bandsSeen.length > 0) {
+    const fanIds = new Set(bandsSeen.map(item => item.user_id))
+    fanProfiles = [...fanIds].map(item => profiles.find(profile => profile.id === item))
+  }
   return (
     <div onClick={() => router.push(`/concerts/${concert.id}`)} className="flex flex-col md:flex-row gap-4 p-6 rounded-2xl bg-slate-800 hover:cursor-pointer">
       <div className="flex md:flex-col items-center">
@@ -35,7 +40,7 @@ export default function ConcertCard({ concert, bandsSeen }) {
             <Fragment key={band.id}>
               {index !== 0 ? <span className="text-slate-300">&bull;</span> : null}
               <Link href={`/bands/${band.id}`}>
-                <a className={`btn btn-tag${bandsSeen.some(bandSeen => bandSeen.band_id === band.id) ? ' !text-venom' : ''}`}>
+                <a className={`btn btn-tag${bandsSeen.some(bandSeen => bandSeen.band_id === band.id && bandSeen.user_id === user.id) ? ' !text-venom' : ''}`}>
                   {band.name}
                 </a>
               </Link>
@@ -50,10 +55,18 @@ export default function ConcertCard({ concert, bandsSeen }) {
             </div>
           )}
         </div>
-        {concert.description && (
+        {fanProfiles && (
           <div className="flex text-sm">
-            <ChatBubbleBottomCenterTextIcon className="flex-none h-icon mr-2 self-center text-slate-300" />
-            <p className="italic text-slate-300">{concert.description}</p>
+            <UsersIcon className="flex-none h-icon mr-2 self-center text-slate-300" />
+            <div className="-ml-2">
+              {fanProfiles.map(item => (
+                <Link key={item.id} href={`/users/${item.username}`}>
+                  <a className="btn btn-tag">
+                    {item.username}
+                  </a>
+                </Link>
+              ))}
+            </div>
           </div>
         )}
       </div>

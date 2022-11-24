@@ -28,10 +28,10 @@
 	}
 
 	.btn.btn-tag {
-		@apply px-2 py-1 rounded-md text-slate-50 bg-slate-800 hover:bg-slate-700;
+		@apply px-2 py-1 border-2 border-transparent rounded-md text-slate-50 bg-slate-800 hover:bg-slate-700;
 
 		&.btn-seen {
-			@apply text-slate-850 bg-venom;
+			@apply border-venom text-venom;
 		}
 	}
 }

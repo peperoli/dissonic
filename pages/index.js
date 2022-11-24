@@ -20,6 +20,7 @@ export default function Home({ initialConcerts, bands, locations }) {
   const [sort, setSort] = useState('dateAsc')
   const [user, setUser] = useState(null)
   const [view, setView] = useState('global')
+  const [profiles, setProfiles] = useState([])
 
   const notifyInsert = () => toast.success("Konzert erfolgreich hinzugefügt!")
   const filteredLength = concerts.filter(filterRule).length !== concerts.length ? concerts.filter(filterRule).length : null
@@ -65,11 +66,28 @@ export default function Home({ initialConcerts, bands, locations }) {
 
   useEffect(() => {
     getUser()
+    fetchProfiles()
   }, [])
 
   async function getUser() {
     const { data: { user: initUser } } = await supabase.auth.getUser()
     setUser(initUser)
+  }
+
+  async function fetchProfiles() {
+    try {
+      const {data: profilesData, error: profilesError} = await supabase
+      .from('profiles')
+      .select('*')
+
+      if (profilesError) {
+        throw profilesError
+      }
+
+      setProfiles(profilesData)
+    } catch (error) {
+      alert(error.message)
+    }
   }
 
   useEffect(() => {
@@ -78,7 +96,6 @@ export default function Home({ initialConcerts, bands, locations }) {
         const { data: initBandsSeen, error: selectedBandsSeenError } = await supabase
           .from('j_bands_seen')
           .select('*')
-          .eq('user_id', user.id)
 
         if (selectedBandsSeenError) {
           throw selectedBandsSeenError
@@ -209,6 +226,8 @@ export default function Home({ initialConcerts, bands, locations }) {
                 key={concert.id}
                 concert={concert}
                 bandsSeen={bandsSeen.filter(row => row.concert_id === concert.id)}
+                user={user}
+                profiles={profiles}
               />
             ))
           )}
@@ -230,7 +249,7 @@ export default function Home({ initialConcerts, bands, locations }) {
 export async function getServerSideProps() {
   const { data: concerts, error: concertsError } = await supabase
     .from('concerts')
-    .select('*, location(*), bands!j_concert_bands(*)')
+    .select('*, location(*), bands!j_concert_bands(*), bandsSeen:bands!j_bands_seen(*)')
     .order('date_start', { ascending: false, })
 
   const { data: bands } = await supabase

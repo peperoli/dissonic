@@ -1,8 +1,8 @@
 import supabase from "../../utils/supabase"
 import Link from "next/link"
 import EditConcertForm from "../../components/concerts/EditConcertForm"
-import { ArrowLeftIcon, CalendarIcon, MapPinIcon } from "@heroicons/react/20/solid"
-import { useEffect, useState, useRef } from "react"
+import { ArrowLeftIcon, CalendarIcon, MapPinIcon, UsersIcon } from "@heroicons/react/20/solid"
+import { useEffect, useState } from "react"
 import PageWrapper from "../../components/layout/PageWrapper"
 import Modal from "../../components/Modal"
 import Button from "../../components/Button"
@@ -13,7 +13,7 @@ import GenreChart from "../../components/concerts/GenreChart"
 
 function BandSeenCheckbox({ concert, band, selectedBandsSeen, setSelectedBandsSeen, user }) {
   const router = useRouter()
-  const isSeen = selectedBandsSeen && selectedBandsSeen.some(item => item.band_id === band.id) ? true : false
+  const isSeen = selectedBandsSeen && selectedBandsSeen.some(item => item.band_id === band.id && item.user_id === user.id) ? true : false
 
   function handleChange() {
     if (user) {
@@ -54,21 +54,45 @@ export default function ConcertPage({ initialConcert, bands, locations }) {
   const [editIsOpen, setEditIsOpen] = useState(false)
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
   const [user, setUser] = useState(null)
-  const [bandsSeen, setBandsSeen] = useState(null)
+  const [bandsSeen, setBandsSeen] = useState([])
+  const [allBandsSeen, setAllBandsSeen] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [profiles, setProfiles] = useState([])
 
   const addBandsSeen = selectedBandsSeen.filter(item => !bandsSeen?.find(item2 => item.band_id === item2.band_id))
   const deleteBandsSeen = bandsSeen?.filter(item => !selectedBandsSeen.find(item2 => item.band_id === item2.band_id))
   const router = useRouter()
   const dateFormat = new Date(concert.date_start).getFullYear() === new Date().getFullYear() ? 'DD. MMM' : 'DD. MMM YYYY'
+  let fanProfiles
+  if (allBandsSeen?.length > 0) {
+    const fanIds = new Set(allBandsSeen.map(item => item.user_id))
+    fanProfiles = [...fanIds].map(item => profiles.find(profile => profile.id === item))
+  }
 
   useEffect(() => {
     getUser()
+    fetchProfiles()
   }, [])
 
   async function getUser() {
     const { data: { user: initUser } } = await supabase.auth.getUser()
     setUser(initUser)
+  }
+
+  async function fetchProfiles() {
+    try {
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('*')
+
+      if (profilesError) {
+        throw profilesError
+      }
+
+      setProfiles(profilesData)
+    } catch (error) {
+      alert(error.message)
+    }
   }
 
   useEffect(() => {
@@ -78,15 +102,15 @@ export default function ConcertPage({ initialConcert, bands, locations }) {
           .from('j_bands_seen')
           .select('*')
           .eq('concert_id', concert.id)
-          .eq('user_id', user.id)
 
         if (selectedBandsSeenError) {
           throw selectedBandsSeenError
         }
 
         if (initBandsSeen) {
-          setSelectedBandsSeen(initBandsSeen)
-          setBandsSeen(initBandsSeen)
+          setSelectedBandsSeen(initBandsSeen.filter(item => item.user_id === user.id))
+          setBandsSeen(initBandsSeen.filter(item => item.user_id === user.id))
+          setAllBandsSeen(initBandsSeen)
         }
       } catch (error) {
         alert(error.message)
@@ -160,57 +184,81 @@ export default function ConcertPage({ initialConcert, bands, locations }) {
   }
   return (
     <PageWrapper>
-      <main className="max-w-2xl p-8">
-        <Link href="/">
-          <a className="btn btn-link">
-            <ArrowLeftIcon className="h-icon" />
-            Go Back
-          </a>
-        </Link>
-        {concert.name ? (
-          <>
-            {concert.is_festival && <p>Festival</p>}
-            <h1>{concert.name}</h1>
-          </>
-        ) : (
-          <h1>{concert.bands[0]?.name} @ {concert.location?.name}</h1>
-        )}
-        <div className="flex flex-wrap gap-2 mb-2">
-          {concert.bands && concert.bands.map(band => (
-            <BandSeenCheckbox
-              key={band.id}
-              user={user}
-              concert={concert}
-              band={band}
-              selectedBandsSeen={selectedBandsSeen}
-              setSelectedBandsSeen={setSelectedBandsSeen}
-            />
-          ))}
+      <main className="grid gap-4 w-full max-w-2xl p-8">
+        <div>
+          <Link href="/">
+            <a className="btn btn-link">
+              <ArrowLeftIcon className="h-icon" />
+              Go Back
+            </a>
+          </Link>
         </div>
-        {user && (
-          <Button
-            onClick={updateBandsSeen}
-            label="Speichern"
-            style="primary"
-            loading={loading}
-            disabled={addBandsSeen?.length === 0 && deleteBandsSeen?.length === 0}
-          />
-        )}
-        <div className="flex gap-4 w-full mt-4">
-          <div className="inline-flex items-center">
-            <CalendarIcon className="h-icon mr-2" />
-            {dayjs(concert.date_start).locale('de-ch').format(dateFormat)}
-            {concert.date_end && <span>&nbsp;&ndash; {dayjs(concert.date_end).locale('de-ch').format(dateFormat)}</span>}
+        <div className="grid gap-4 p-6 rounded-lg bg-slate-800">
+          {concert.name ? (
+            <>
+              {concert.is_festival && <p>Festival</p>}
+              <h1>{concert.name}</h1>
+            </>
+          ) : (
+            <h1>{concert.bands[0]?.name} @ {concert.location?.name}</h1>
+          )}
+          <div className="flex flex-wrap gap-2 mb-2">
+            {concert.bands && concert.bands.map(band => (
+              <BandSeenCheckbox
+                key={band.id}
+                user={user}
+                concert={concert}
+                band={band}
+                selectedBandsSeen={selectedBandsSeen}
+                setSelectedBandsSeen={setSelectedBandsSeen}
+              />
+            ))}
           </div>
-          {concert.location && (
+          {user && (
+            <div>
+              <Button
+                onClick={updateBandsSeen}
+                label="Speichern"
+                style="primary"
+                loading={loading}
+                disabled={addBandsSeen?.length === 0 && deleteBandsSeen?.length === 0}
+              />
+            </div>
+          )}
+          <div className="flex gap-4 w-full mt-4">
             <div className="inline-flex items-center">
-              <MapPinIcon className="h-icon mr-2" />
-              {concert.location.name}
+              <CalendarIcon className="h-icon mr-2" />
+              {dayjs(concert.date_start).locale('de-ch').format(dateFormat)}
+              {concert.date_end && <span>&nbsp;&ndash; {dayjs(concert.date_end).locale('de-ch').format(dateFormat)}</span>}
+            </div>
+            {concert.location && (
+              <div className="inline-flex items-center">
+                <MapPinIcon className="h-icon mr-2" />
+                {concert.location.name}
+              </div>
+            )}
+          </div>
+          {fanProfiles && (
+            <div className="flex text-sm">
+              <UsersIcon className="flex-none h-icon mr-2 self-center text-slate-300" />
+              <div className="-ml-2">
+                {fanProfiles.map(item => (
+                  <Link key={item.id} href={`/users/${item.username}`}>
+                    <a className="btn btn-tag">
+                      {item.username}
+                    </a>
+                  </Link>
+                ))}
+              </div>
             </div>
           )}
         </div>
-        {concert.description && <p>{concert.description}</p>}
-        <GenreChart bands={concert.bands} />
+        <div className="p-6 rounded-lg bg-slate-800">
+          {concert.description && <p>{concert.description}</p>}
+        </div>
+        <div className="p-6 rounded-lg bg-slate-800">
+          <GenreChart bands={concert.bands} />
+        </div>
         <div className="flex gap-4 mt-4">
           <Button onClick={() => setEditIsOpen(true)} label="Bearbeiten" />
           <Button onClick={() => setDeleteIsOpen(true)} label="Löschen" />
