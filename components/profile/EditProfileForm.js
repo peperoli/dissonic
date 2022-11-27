@@ -1,12 +1,33 @@
 import supabase from "../../utils/supabase"
 import Button from "../Button"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/router"
 
-export default function EditProfileForm({ setIsOpen, username, usernames }) {
+export default function EditProfileForm({ setIsOpen, username }) {
   const [value, setValue] = useState(username)
+  const [usernames, setUsernames] = useState([])
 
   const router = useRouter()
+
+  useEffect(() => {
+    fetchProfiles()
+  }, [])
+
+  async function fetchProfiles() {
+    try {
+      const { data: profiles, error} = await supabase
+        .from('profiles')
+        .select('username')
+
+      if (error) {
+        throw error
+      }
+
+      setUsernames(profiles.map(item => item.username))
+    } catch (error) {
+      alert(error.message)
+    }
+  }
 
   async function updateUsername(event) {
     event.preventDefault()
@@ -25,16 +46,21 @@ export default function EditProfileForm({ setIsOpen, username, usernames }) {
           upsert: false
         })
 
-      const { data: newUsername, error: updateError } = await supabase
+      const { data: newProfile, error: updateProfileError } = await supabase
         .from('profiles')
         .update({ username: value })
         .eq('username', username)
+        .single()
+        .select()
 
-      if (updateError) {
-        throw updateError
+      if (updateProfileError) {
+        throw updateProfileError
       }
 
-      // router.push(`/`)
+      if (newProfile) {
+        router.push(`/users/${newProfile.username}`)
+        setIsOpen(false)
+      }
     } catch (error) {
       alert(error.message)
     }
