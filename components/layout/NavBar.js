@@ -35,7 +35,7 @@ export default function NavBar({ profile, setProfile }) {
               <UserIcon className="h-icon text-slate-850" />
             </div>
           </Menu.Button>
-          <Menu.Items className="absolute w-40 right-0 mt-1 p-2 rounded-lg bg-slate-600 shadow-lg z-20">
+          <Menu.Items className="absolute w-40 right-0 mt-1 p-2 rounded-lg bg-slate-600 shadow-lg z-30">
             <Menu.Item>
               {({ active }) => (
                 <button onClick={() => router.push(`/users/${profile.username}`)} className={`flex gap-2 w-full px-2 py-1 rounded${active ? ' bg-slate-500' : ''}`}>

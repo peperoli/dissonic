@@ -27,19 +27,19 @@ export default function Profile({ profile, profiles, bandsSeen }) {
                   <p className="h2 mb-0 text-venom">
                     {uniqueBandsSeen?.size}
                   </p>
-                  <h2 className="text-base font-normal mb-0">Bands live erlebt</h2>
+                  <h2 className="text-sm font-normal mb-0">Bands live erlebt</h2>
                 </div>
                 <div className="p-6 rounded-lg bg-slate-800">
                   <p className="h2 mb-0 text-venom">
                     {concertsSeen?.size}
                   </p>
-                  <h2 className="text-base font-normal mb-0">Konzerte besucht</h2>
+                  <h2 className="text-sm font-normal mb-0">Konzerte besucht</h2>
                 </div>
                 <div className="p-6 rounded-lg bg-slate-800">
                   <p className="h2 mb-0 text-venom">
                     {festivalsSeen?.size}
                   </p>
-                  <h2 className="text-base font-normal mb-0">Festivals besucht</h2>
+                  <h2 className="text-sm font-normal mb-0">Festivals besucht</h2>
                 </div>
                 <div className="col-span-full p-6 rounded-lg bg-slate-800">
                   <GenreChart bands={uniqueBandsSeen} />
