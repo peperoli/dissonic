@@ -4,10 +4,18 @@
 
 		&:not(.btn-icon) {
 			@apply px-4 py-2;
+
+			&.btn-small {
+				@apply px-3 py-1.5 text-sm;
+			}
 		}
 
 		&.btn-icon {
 			@apply w-10 h-10;
+
+			&.btn-small {
+				@apply w-8 h-8 text-sm;
+			}
 		}
 
 		&.btn-primary {
@@ -16,6 +24,10 @@
 
 		&.btn-secondary {
 			@apply font-bold text-slate-50 bg-slate-700;
+
+			&.btn-danger {
+				@apply text-red;
+			}
 		}
 
 		&.btn-filter {
