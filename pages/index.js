@@ -36,7 +36,14 @@ export default function Home({ initialConcerts, bands, locations }) {
       locationFilter = selectedLocationIds.includes(item.location?.id)
     }
     if (view === 'user') {
-      viewFilter = item.bands.some(band => bandsSeen.some(bandSeen => bandSeen.concert_id === item.id && bandSeen.band_id === band.id))
+      viewFilter = item.bands.some(band =>
+        bandsSeen.some(
+          bandSeen =>
+            bandSeen.concert_id === item.id &&
+            bandSeen.band_id === band.id &&
+            bandSeen.user_id === user.id
+        )
+      )
     }
     return bandFilter && locationFilter && viewFilter
   }
