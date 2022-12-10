@@ -20,6 +20,10 @@
 
 		&.btn-primary {
 			@apply font-bold text-slate-850 bg-venom shadow-shine shadow-venom/50;
+
+			&.btn-danger {
+				@apply bg-red shadow-red/50;
+			}
 		}
 
 		&.btn-secondary {
