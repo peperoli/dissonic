@@ -10,6 +10,7 @@ import dayjs from "dayjs"
 import 'dayjs/locale/de'
 import { useRouter } from "next/router"
 import GenreChart from "../../components/concerts/GenreChart"
+import Comments from "../../components/concerts/Comments"
 
 function BandSeenCheckbox({ concert, band, selectedBandsSeen, setSelectedBandsSeen, user }) {
   const router = useRouter()
@@ -254,10 +255,14 @@ export default function ConcertPage({ initialConcert, bands, locations }) {
           )}
         </div>
         <div className="p-6 rounded-lg bg-slate-800">
-          {concert.description && <p>{concert.description}</p>}
+          <GenreChart bands={concert.bands} />
         </div>
         <div className="p-6 rounded-lg bg-slate-800">
-          <GenreChart bands={concert.bands} />
+          <Comments 
+            concert={concert} 
+            user={user} 
+            profiles={profiles} 
+          />
         </div>
         <div className="flex gap-4 mt-4">
           <Button onClick={() => setEditIsOpen(true)} label="Bearbeiten" />
