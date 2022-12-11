@@ -6,31 +6,67 @@ import Modal from "../../components/Modal";
 import EditPasswordForm from "../../components/profile/EditPasswordForm";
 import EditProfileForm from "../../components/profile/EditProfileForm";
 import GenreChart from "../../components/concerts/GenreChart";
+import Image from "next/image";
+import { UserIcon } from "@heroicons/react/20/solid";
 
 export default function Profile({ profile, bandsSeen }) {
   const [editPassIsOpen, setEditPassIsOpen] = useState(false)
   const [editUsernameIsOpen, setEditUsernameIsOpen] = useState(false)
   const [user, setUser] = useState(null)
+  const [avatarUrl, setAvatarUrl] = useState(null)
 
   const uniqueBandsSeen = new Set(bandsSeen.map(item => item.band))
   const concertsSeen = new Set(bandsSeen.map(item => item.concert_id))
   const festivalsSeen = new Set(bandsSeen.filter(item => item.concert.is_festival).map(item => item.concert_id))
   
   useEffect(() => {
-    getUser()
-  }, [])
+    async function getUser() {
+      const { data: { user: initUser } } = await supabase.auth.getUser()
+      setUser(initUser)
+    }
 
-  async function getUser() {
-    const { data: { user: initUser } } = await supabase.auth.getUser()
-    setUser(initUser)
-  }
+    async function downloadAvatar() {
+      try {
+        const {data, error} = await supabase.storage.from('avatars').download(profile.avatar_path)
+    
+        if (error) {
+          throw error
+        }
+        const url = URL.createObjectURL(data)
+        setAvatarUrl(url)
+      } catch (error) {
+        console.error(error.message)
+      }
+    }
+
+    getUser()
+
+    if (profile.avatar_path) {
+      downloadAvatar()
+    }
+  }, [profile])
   return (
     <PageWrapper>
       <>
         <main className="p-4 md:p-8 w-full max-w-2xl">
           {profile ? (
             <div>
-              <h1>{profile.username}</h1>
+              <div className="flex items-center gap-4 mb-6">
+                <div className="relative flex justify-center items-center w-16 h-16 rounded-full text-lg text-slate-850 bg-blue-300">
+                  {avatarUrl ? (
+                    <Image
+                      src={avatarUrl}
+                      alt="Profile picture"
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-full"
+                    />
+                  ) : (
+                    <UserIcon className="h-icon" />
+                  )}
+                </div>
+                <h1 className="mb-0">{profile.username}</h1>
+              </div>
               <div className="grid grid-cols-3 gap-4 mb-6">
                 <div className="p-6 rounded-lg bg-slate-800">
                   <p className="h2 mb-0 text-venom">
@@ -56,7 +92,7 @@ export default function Profile({ profile, bandsSeen }) {
               </div>
               {user && user?.id === profile.id && (
                 <div className="flex gap-3">
-                  <Button label="Benutzername ändern" onClick={() => setEditUsernameIsOpen(true)} />
+                  <Button label="Profil bearbeiten" onClick={() => setEditUsernameIsOpen(true)} />
                   <Button label="Passwort ändern" onClick={() => setEditPassIsOpen(true)} />
                 </div>
               )}
@@ -68,6 +104,8 @@ export default function Profile({ profile, bandsSeen }) {
         <Modal isOpen={editUsernameIsOpen} setIsOpen={setEditUsernameIsOpen}>
           <EditProfileForm
             username={profile.username}
+            avatarUrl={avatarUrl}
+            setAvatarUrl={setAvatarUrl}
             setIsOpen={setEditUsernameIsOpen}
           />
         </Modal>
