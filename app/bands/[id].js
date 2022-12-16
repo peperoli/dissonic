@@ -3,7 +3,7 @@ import Link from "next/link"
 import { ArrowLeftIcon } from "@heroicons/react/20/solid"
 import Modal from "../../components/Modal"
 import { Fragment, useState } from "react"
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 import EditBandForm from "../../components/bands/EditBandForm"
 import PageWrapper from "../../components/layout/PageWrapper"
 import Button from "../../components/Button"
@@ -44,11 +44,9 @@ export default function BandPage({ initialBand, countries, genres }) {
   return (
     <PageWrapper>
       <main className="p-8">
-        <Link href="/bands">
-          <a className="btn btn-link">
-            <ArrowLeftIcon className="h-icon" />
-            Go Back
-          </a>
+        <Link href="/bands" className="btn btn-link">
+          <ArrowLeftIcon className="h-icon" />
+          Go Back
         </Link>
         <h1>{band.name} <span>({band.country?.iso2})</span></h1>
         <ul className="flex gap-2">

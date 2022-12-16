@@ -2,7 +2,7 @@ import Link from "next/link";
 import Logo from "./Logo";
 import supabase from "../../utils/supabase";
 import { Menu } from '@headlessui/react'
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { ArrowRightOnRectangleIcon, UserIcon } from "@heroicons/react/20/solid"
 import Image from "next/image";
 
@@ -26,9 +26,7 @@ export default function NavBar({ profile, setProfile, avatarUrl }) {
   return (
     <nav className="flex justify-between items-center p-4 md:px-12 md:py-8">
       <Link href="/">
-        <a>
-          <Logo />
-        </a>
+        <Logo />
       </Link>
       {profile ? (
         <Menu as="div" className="relative">
@@ -39,9 +37,8 @@ export default function NavBar({ profile, setProfile, avatarUrl }) {
                 <Image
                   src={avatarUrl}
                   alt="Profile picture"
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-full"
+                  fill={true}
+                  className="rounded-full object-cover"
                 />
               ) : (
                 <UserIcon className="h-icon text-slate-850" />
@@ -76,9 +73,7 @@ export default function NavBar({ profile, setProfile, avatarUrl }) {
           </Menu.Items>
         </Menu>
       ) : (
-        <Link href="/login">
-          <a className="btn btn-secondary">Anmelden</a>
-        </Link>
+        <Link href="/login" className="btn btn-secondary">Anmelden</Link>
       )}
     </nav>
   )

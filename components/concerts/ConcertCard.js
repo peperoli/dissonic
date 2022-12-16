@@ -2,7 +2,7 @@ import Link from "next/link"
 import { MapPinIcon, UsersIcon } from "@heroicons/react/20/solid"
 import dayjs from 'dayjs'
 import 'dayjs/locale/de'
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 import { Fragment } from "react"
 
 function ConcertDate({ date }) {
@@ -39,10 +39,8 @@ export default function ConcertCard({ concert, bandsSeen, user, profiles }) {
           {concert.bands && concert.bands.map((band, index) => (
             <Fragment key={band.id}>
               {index !== 0 ? <span className="text-slate-300">&bull;</span> : null}
-              <Link href={`/bands/${band.id}`}>
-                <a className={`btn btn-tag${bandsSeen.some(bandSeen => bandSeen.band_id === band.id && bandSeen.user_id === user.id) ? ' !text-venom' : ''}`}>
-                  {band.name}
-                </a>
+              <Link href={`/bands/${band.id}`} className={`btn btn-tag${bandsSeen.some(bandSeen => bandSeen.band_id === band.id && bandSeen.user_id === user.id) ? ' !text-venom' : ''}`}>
+                {band.name}
               </Link>
             </Fragment>
           ))}
@@ -60,10 +58,8 @@ export default function ConcertCard({ concert, bandsSeen, user, profiles }) {
             <UsersIcon className="flex-none h-icon mr-2 self-center text-slate-300" />
             <div className="-ml-2">
               {fanProfiles.map(item => (
-                <Link key={item.id} href={`/users/${item.username}`}>
-                  <a className="btn btn-tag">
-                    {item.username}
-                  </a>
+                <Link key={item.id} href={`/users/${item.username}`} className="btn btn-tag">
+                  {item.username}
                 </Link>
               ))}
             </div>

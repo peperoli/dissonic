@@ -1,6 +1,6 @@
-import { useRouter } from "next/router"
-import PageWrapper from "../components/layout/PageWrapper"
-import supabase from "../utils/supabase"
+import { useRouter } from "next/navigation"
+import PageWrapper from "../../components/layout/PageWrapper"
+import supabase from "../../utils/supabase"
 
 export default function LoginPage() {
   const router = useRouter()
