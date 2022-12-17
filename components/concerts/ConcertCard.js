@@ -23,7 +23,10 @@ export default function ConcertCard({ concert, bandsSeen, user, profiles }) {
     fanProfiles = [...fanIds].map(item => profiles.find(profile => profile.id === item))
   }
   return (
-    <div onClick={() => router.push(`/concerts/${concert.id}`)} className="flex flex-col md:flex-row gap-4 p-6 rounded-2xl bg-slate-800 hover:cursor-pointer">
+    <div
+      onClick={() => router.push(`/concerts/${concert.id}`)}
+      className="flex flex-col md:flex-row gap-4 p-6 rounded-2xl bg-slate-800 hover:cursor-pointer"
+    >
       <div className="flex md:flex-col items-center">
         <ConcertDate date={new Date(concert.date_start)} />
         {concert.date_end && concert.date_end !== concert.date_start && (
@@ -36,14 +39,25 @@ export default function ConcertCard({ concert, bandsSeen, user, profiles }) {
       <div>
         {concert.name && <div className="btn btn-tag !bg-deepPurple mb-2">{concert.name}</div>}
         <div className="flex flex-wrap items-center -ml-2 mb-2">
-          {concert.bands && concert.bands.map((band, index) => (
-            <Fragment key={band.id}>
-              {index !== 0 ? <span className="text-slate-300">&bull;</span> : null}
-              <Link href={`/bands/${band.id}`} className={`btn btn-tag${bandsSeen.some(bandSeen => bandSeen.band_id === band.id && bandSeen.user_id === user.id) ? ' !text-venom' : ''}`}>
-                {band.name}
-              </Link>
-            </Fragment>
-          ))}
+          {concert.bands &&
+            concert.bands.map((band, index) => (
+              <Fragment key={band.id}>
+                {index !== 0 ? <span className="text-slate-300">&bull;</span> : null}
+                <Link
+                  href={`/bands/${band.id}`}
+                  onClick={event => event.stopPropagation()}
+                  className={`btn btn-tag${
+                    bandsSeen.some(
+                      bandSeen => bandSeen.band_id === band.id && bandSeen.user_id === user.id
+                    )
+                      ? ' !text-venom'
+                      : ''
+                  }`}
+                >
+                  {band.name}
+                </Link>
+              </Fragment>
+            ))}
         </div>
         <div className="flex gap-4 w-full mb-2">
           {concert.location && (
@@ -58,7 +72,12 @@ export default function ConcertCard({ concert, bandsSeen, user, profiles }) {
             <UsersIcon className="flex-none h-icon mr-2 self-center text-slate-300" />
             <div className="-ml-2">
               {fanProfiles.map(item => (
-                <Link key={item.id} href={`/users/${item.username}`} className="btn btn-tag">
+                <Link
+                  key={item.id}
+                  href={`/users/${item.username}`}
+                  onClick={event => event.stopPropagation()}
+                  className="btn btn-tag"
+                >
                   {item.username}
                 </Link>
               ))}

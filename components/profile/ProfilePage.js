@@ -59,9 +59,8 @@ export default function ProfilePage({ profile, bandsSeen }) {
                     <Image
                       src={avatarUrl}
                       alt="Profile picture"
-                      layout="fill"
-                      objectFit="cover"
-                      className="rounded-full"
+                      fill={true}
+                      className="object-cover rounded-full"
                     />
                   ) : (
                     <UserIcon className="h-icon" />

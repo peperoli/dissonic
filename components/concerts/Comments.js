@@ -4,6 +4,7 @@ import supabase from '../../utils/supabase'
 import dayjs from 'dayjs'
 import { PencilIcon, TrashIcon, UserIcon } from '@heroicons/react/20/solid'
 import DeleteCommentDialog from './DeleteCommentDialog'
+import Image from 'next/image'
 const relativeTime = require('dayjs/plugin/relativeTime')
 dayjs.extend(relativeTime)
 
@@ -11,8 +12,10 @@ function Comment({ comment, comments, setComments, profiles, user }) {
   const [edit, setEdit] = useState(false)
   const [content, setContent] = useState(comment.content)
   const [isOpen, setIsOpen] = useState(false)
+  const [avatarUrl, setAvatarUrl] = useState(null)
 
   const createdAt = new Date(comment.created_at)
+  const profile = profiles?.find(profile => profile.id === comment.user_id)
 
   async function updateComment(event) {
     event.preventDefault()
@@ -31,6 +34,26 @@ function Comment({ comment, comments, setComments, profiles, user }) {
     }
   }
 
+  useEffect(() => {
+    async function downloadAvatar() {
+      try {
+        const {data, error} = await supabase.storage.from('avatars').download(profile.avatar_path)
+    
+        if (error) {
+          throw error
+        }
+        const url = URL.createObjectURL(data)
+        setAvatarUrl(url)
+      } catch (error) {
+        console.error(error.message)
+      }
+    }
+    
+    if (profile?.avatar_path) {
+      downloadAvatar()
+    }
+  }, [profile])
+
   function cancelEdit() {
     setEdit(false)
     setContent(comment.content)
@@ -38,8 +61,17 @@ function Comment({ comment, comments, setComments, profiles, user }) {
   return (
     <>
       <div className="flex gap-4">
-        <div className="flex-shrink-0 flex justify-center items-center w-8 h-8 rounded-full text-slate-850 bg-blue-300">
-          <UserIcon className="h-icon" />
+        <div className="relative flex-shrink-0 flex justify-center items-center w-8 h-8 rounded-full text-slate-850 bg-blue-300">
+          {avatarUrl ? (
+            <Image
+              src={avatarUrl}
+              alt="Profile picture"
+              fill={true}
+              className="object-cover rounded-full"
+            />
+          ) : (
+            <UserIcon className="h-icon" />
+          )}
         </div>
         <div className={`mt-1.5${edit ? ' w-full' : ''}`}>
           <div className="mb-1 text-sm">
