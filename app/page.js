@@ -1,6 +1,8 @@
 import HomePage from '../components/concerts/HomePage'
 import supabase from '../utils/supabase'
 
+export const revalidate = 0
+
 async function fetchData() {
   const { data: concerts } = await supabase
     .from('concerts')

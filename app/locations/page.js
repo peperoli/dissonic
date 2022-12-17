@@ -1,6 +1,8 @@
 import LocationsPage from '../../components/locations/LocationsPage'
 import supabase from '../../utils/supabase'
 
+export const revalidate = 0
+
 async function fetchData() {
   const { data: locations, error } = await supabase.from('locations').select('*').order('name')
 

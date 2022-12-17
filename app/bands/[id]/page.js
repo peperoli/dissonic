@@ -1,6 +1,8 @@
 import BandPage from '../../../components/bands/BandPage'
 import supabase from '../../../utils/supabase'
 
+export const revalidate = 0
+
 async function fetchData(params) {
   const { data: band, error } = await supabase
     .from('bands')

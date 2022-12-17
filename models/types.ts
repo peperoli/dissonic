@@ -14,6 +14,6 @@ export interface IButton {
 export interface IPagination {
   entriesCount: number,
   currentPage: number,
-  setCurrentPage: any,
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>,
   perPage: number,
 }

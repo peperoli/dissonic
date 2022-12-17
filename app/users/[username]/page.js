@@ -1,6 +1,8 @@
 import ProfilePage from '../../../components/profile/ProfilePage'
 import supabase from '../../../utils/supabase'
 
+export const revalidate = 0
+
 async function fetchData(params) {
   const { data: profile } = await supabase
     .from('profiles')

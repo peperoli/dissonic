@@ -30,6 +30,11 @@ function Comment({ comment, comments, setComments, profiles, user }) {
       alert(error.message)
     }
   }
+
+  function cancelEdit() {
+    setEdit(false)
+    setContent(comment.content)
+  }
   return (
     <>
       <div className="flex gap-4">
@@ -59,7 +64,7 @@ function Comment({ comment, comments, setComments, profiles, user }) {
                   <label htmlFor="comment">Neuer Kommentar</label>
                 </div>
                 <div className="flex justify-end gap-4">
-                  <Button label="Abbrechen" size="small" onClick={() => setEdit(false)} />
+                  <Button label="Abbrechen" size="small" onClick={cancelEdit} />
                   <Button
                     type="submit"
                     label="Speichern"
