@@ -11,12 +11,10 @@ async function fetchData() {
 
   const { data: locations } = await supabase.from('locations').select('id,name')
 
-  const data = { concerts, bands, locations }
-
-  return data
+  return { concerts, bands, locations }
 }
 
 export default async function Page() {
-  const data = await fetchData()
-  return <HomePage initialConcerts={data.concerts} bands={data.bands} locations={data.locations} />
+  const { concerts, bands, locations } = await fetchData()
+  return <HomePage initialConcerts={concerts} bands={bands} locations={locations} />
 }

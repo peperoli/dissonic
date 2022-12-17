@@ -4,7 +4,7 @@ import supabase from "../../utils/supabase"
 import ConcertCard from './ConcertCard'
 import Modal from '../Modal'
 import AddConcertForm from "./AddConcertForm"
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Button from '../Button'
 import { ArrowUturnLeftIcon, ChevronDownIcon, EyeIcon, GlobeAltIcon, PlusIcon } from '@heroicons/react/20/solid'
 import PageWrapper from '../layout/PageWrapper'
@@ -72,56 +72,56 @@ export default function HomePage({ initialConcerts, bands, locations }) {
     setSelectedLocations([])
   }
 
-  // useEffect(() => {
-  //   getUser()
-  //   fetchProfiles()
-  // }, [])
+  useEffect(() => {
+    getUser()
+    fetchProfiles()
+  }, [])
 
-  // async function getUser() {
-  //   const { data: { user: initUser } } = await supabase.auth.getUser()
-  //   setUser(initUser)
-  // }
+  async function getUser() {
+    const { data: { user: initUser } } = await supabase.auth.getUser()
+    setUser(initUser)
+  }
 
-  // async function fetchProfiles() {
-  //   try {
-  //     const {data: profilesData, error: profilesError} = await supabase
-  //     .from('profiles')
-  //     .select('*')
+  async function fetchProfiles() {
+    try {
+      const {data: profilesData, error: profilesError} = await supabase
+      .from('profiles')
+      .select('*')
 
-  //     if (profilesError) {
-  //       throw profilesError
-  //     }
+      if (profilesError) {
+        throw profilesError
+      }
 
-  //     setProfiles(profilesData)
-  //   } catch (error) {
-  //     alert(error.message)
-  //   }
-  // }
+      setProfiles(profilesData)
+    } catch (error) {
+      alert(error.message)
+    }
+  }
 
-  // useEffect(() => {
-  //   async function getBandsSeen() {
-  //     try {
-  //       const { data: initBandsSeen, error: selectedBandsSeenError } = await supabase
-  //         .from('j_bands_seen')
-  //         .select('*')
+  useEffect(() => {
+    async function getBandsSeen() {
+      try {
+        const { data: initBandsSeen, error: selectedBandsSeenError } = await supabase
+          .from('j_bands_seen')
+          .select('*')
 
-  //       if (selectedBandsSeenError) {
-  //         throw selectedBandsSeenError
-  //       }
+        if (selectedBandsSeenError) {
+          throw selectedBandsSeenError
+        }
 
-  //       if (initBandsSeen) {
-  //         setBandsSeen(initBandsSeen)
-  //       }
-  //     } catch (error) {
-  //       alert(error.message)
-  //     }
-  //   }
+        if (initBandsSeen) {
+          setBandsSeen(initBandsSeen)
+        }
+      } catch (error) {
+        alert(error.message)
+      }
+    }
 
-  //   if (user) {
-  //     getBandsSeen()
-  //     setView('user')
-  //   }
-  // }, [user])
+    if (user) {
+      getBandsSeen()
+      setView('user')
+    }
+  }, [user])
 
   function changeView(event) {
     setView(event.target.value)

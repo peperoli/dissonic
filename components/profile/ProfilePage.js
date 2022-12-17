@@ -1,15 +1,17 @@
-import PageWrapper from "../../components/layout/PageWrapper";
+"use client"
+
+import PageWrapper from "../layout/PageWrapper";
 import { useState, useEffect } from "react"
-import supabase from "../../utils/supabase";
-import Button from "../../components/Button";
-import Modal from "../../components/Modal";
-import EditPasswordForm from "../../components/profile/EditPasswordForm";
-import EditProfileForm from "../../components/profile/EditProfileForm";
-import GenreChart from "../../components/concerts/GenreChart";
+import supabase from "../../utils/supabase"
+import Button from "../Button";
+import Modal from "../Modal";
+import EditPasswordForm from "./EditPasswordForm";
+import EditProfileForm from "./EditProfileForm";
+import GenreChart from "../concerts/GenreChart";
 import Image from "next/image";
 import { UserIcon } from "@heroicons/react/20/solid";
 
-export default function Profile({ profile, bandsSeen }) {
+export default function ProfilePage({ profile, bandsSeen }) {
   const [editPassIsOpen, setEditPassIsOpen] = useState(false)
   const [editUsernameIsOpen, setEditUsernameIsOpen] = useState(false)
   const [user, setUser] = useState(null)
@@ -117,24 +119,4 @@ export default function Profile({ profile, bandsSeen }) {
       </>
     </PageWrapper>
   )
-}
-
-export async function getServerSideProps({ params }) {
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('username', params.username)
-    .single()
-
-  const { data: bandsSeen } = await supabase
-    .from('j_bands_seen')
-    .select('*, concert:concerts(is_festival), band:bands(*, genres(*))')
-    .eq('user_id', profile.id)
-
-  return {
-    props: {
-      profile,
-      bandsSeen,
-    }
-  }
 }
