@@ -1,17 +1,18 @@
-import supabase from "../../utils/supabase"
+"use client"
+
 import { useState } from "react"
-import Modal from "../../components/Modal"
-import AddBandForm from "../../components/bands/AddBandForm"
+import Modal from "../Modal"
+import AddBandForm from "./AddBandForm"
 import { ArrowUturnLeftIcon, PlusIcon } from "@heroicons/react/20/solid"
-import PageWrapper from "../../components/layout/PageWrapper"
-import Table from "../../components/Table"
-import TableRow from "../../components/TableRow"
-import Search from "../../components/Search"
-import FilterButton from "../../components/FilterButton"
-import Button from "../../components/Button"
+import PageWrapper from "../layout/PageWrapper"
+import Table from "../Table"
+import TableRow from "../TableRow"
+import Search from "../Search"
+import FilterButton from "../FilterButton"
+import Button from "../Button"
 import useMediaQuery from "../../hooks/useMediaQuery"
 
-export default function PageBands({ initialBands, countries, genres }) {
+export default function BandsPage({ initialBands, countries, genres }) {
 	const [isOpen, setIsOpen] = useState(false)
 	const [bands, setBands] = useState(initialBands)
 	const [selectedGenres, setSelectedGenres] = useState([])
@@ -135,34 +136,4 @@ export default function PageBands({ initialBands, countries, genres }) {
 			</Modal>
 		</PageWrapper>
 	)
-}
-
-export async function getServerSideProps() {
-	const { data: bands, error } = await supabase
-		.from('bands')
-		.select('*, country(*), genres(*)')
-		.order('name')
-
-	const { data: countries } = await supabase
-		.from('countries')
-		.select('id, name')
-		.neq('local_name', null)
-		.neq('iso2', 'AQ')
-
-	const { data: genres } = await supabase
-		.from('genres')
-		.select('*')
-		.order('name')
-
-	if (error) {
-		throw new Error(error)
-	}
-
-	return {
-		props: {
-			initialBands: bands,
-			countries,
-			genres,
-		}
-	}
 }
