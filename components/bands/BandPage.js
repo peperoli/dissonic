@@ -1,12 +1,14 @@
+"use client"
+
 import supabase from "../../utils/supabase"
 import Link from "next/link"
 import { ArrowLeftIcon } from "@heroicons/react/20/solid"
-import Modal from "../../components/Modal"
+import Modal from "../Modal"
 import { Fragment, useState } from "react"
-import { useRouter } from "next/router"
-import EditBandForm from "../../components/bands/EditBandForm"
-import PageWrapper from "../../components/layout/PageWrapper"
-import Button from "../../components/Button"
+import { useRouter } from "next/navigation"
+import EditBandForm from "./EditBandForm"
+import PageWrapper from "../layout/PageWrapper"
+import Button from "../Button"
 
 export default function BandPage({ initialBand, countries, genres }) {
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
@@ -44,11 +46,9 @@ export default function BandPage({ initialBand, countries, genres }) {
   return (
     <PageWrapper>
       <main className="p-8">
-        <Link href="/bands">
-          <a className="btn btn-link">
-            <ArrowLeftIcon className="h-icon" />
-            Go Back
-          </a>
+        <Link href="/bands" className="btn btn-link">
+          <ArrowLeftIcon className="h-icon" />
+          Go Back
         </Link>
         <h1>{band.name} <span>({band.country?.iso2})</span></h1>
         <ul className="flex gap-2">
@@ -94,34 +94,4 @@ export default function BandPage({ initialBand, countries, genres }) {
       </Modal>
     </PageWrapper>
   )
-}
-
-export async function getServerSideProps({ params }) {
-  const { data: band, error } = await supabase
-    .from('bands')
-    .select('*, country(id, iso2), genres(*)')
-    .eq('id', params.id)
-    .single()
-
-  const { data: countries } = await supabase
-    .from('countries')
-    .select('id, name, iso2')
-    .neq('local_name', null)
-    .neq('iso2', 'AQ')
-
-  const { data: genres } = await supabase
-    .from('genres')
-    .select('*')
-
-  if (error) {
-    console.error(error);
-  }
-
-  return {
-    props: {
-      initialBand: band,
-      countries,
-      genres,
-    }
-  }
 }

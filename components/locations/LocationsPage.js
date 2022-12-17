@@ -1,16 +1,17 @@
-import PageWrapper from "../../components/layout/PageWrapper"
-import supabase from "../../utils/supabase"
+"use client"
+
+import PageWrapper from "../layout/PageWrapper"
 import { PlusIcon } from "@heroicons/react/20/solid"
-import Table from "../../components/Table"
-import TableRow from "../../components/TableRow"
-import AddLocationForm from "../../components/locations/AddLocationForm"
-import Modal from "../../components/Modal"
+import Table from "../Table"
+import TableRow from "../TableRow"
+import AddLocationForm from "./AddLocationForm"
+import Modal from "../Modal"
 import { useState } from "react"
-import Search from "../../components/Search"
-import Button from "../../components/Button"
+import Search from "../Search"
+import Button from "../Button"
 import useMediaQuery from "../../hooks/useMediaQuery"
 
-export default function PageLocations({ initialLocations }) {
+export default function LocationsPage({ initialLocations }) {
   const [locations, setLocations] = useState(initialLocations)
   const [isOpen, setIsOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -77,21 +78,4 @@ export default function PageLocations({ initialLocations }) {
       </Modal>
     </>
   )
-}
-
-export async function getServerSideProps({ params }) {
-  const { data: locations, error } = await supabase
-    .from('locations')
-    .select('*')
-    .order('name')
-
-  if (error) {
-    console.error(error)
-  }
-
-  return {
-    props: {
-      initialLocations: locations,
-    }
-  }
 }

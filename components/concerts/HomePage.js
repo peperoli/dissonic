@@ -1,17 +1,18 @@
-import Head from 'next/head'
-import supabase from "../utils/supabase"
-import ConcertCard from '../components/concerts/ConcertCard'
-import Modal from '../components/Modal'
-import AddConcertForm from "../components/concerts/AddConcertForm"
-import { useState, useEffect } from 'react'
-import Button from '../components/Button'
-import { ArrowUturnLeftIcon, ChevronDownIcon, EyeIcon, GlobeAltIcon, PlusIcon } from '@heroicons/react/20/solid'
-import PageWrapper from '../components/layout/PageWrapper'
-import { toast } from 'react-toastify'
-import FilterButton from '../components/FilterButton'
-import useMediaQuery from '../hooks/useMediaQuery'
+"use client"
 
-export default function Home({ initialConcerts, bands, locations }) {
+import supabase from "../../utils/supabase"
+import ConcertCard from './ConcertCard'
+import Modal from '../Modal'
+import AddConcertForm from "./AddConcertForm"
+import { useState, useEffect } from 'react'
+import Button from '../Button'
+import { ArrowUturnLeftIcon, ChevronDownIcon, EyeIcon, GlobeAltIcon, PlusIcon } from '@heroicons/react/20/solid'
+import PageWrapper from '../layout/PageWrapper'
+import { toast } from 'react-toastify'
+import FilterButton from '../FilterButton'
+import useMediaQuery from '../../hooks/useMediaQuery'
+
+export default function HomePage({ initialConcerts, bands, locations }) {
   const [isOpen, setIsOpen] = useState(false)
   const [concerts, setConcerts] = useState(initialConcerts || [])
   const [selectedBands, setSelectedBands] = useState([])
@@ -129,11 +130,6 @@ export default function Home({ initialConcerts, bands, locations }) {
   const isDesktop = useMediaQuery('(min-width: 768px)')
   return (
     <PageWrapper>
-      <Head>
-        <title>Concert Diary</title>
-        <meta name="description" content="Keep track of your past concerts." />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <main className="w-full max-w-2xl p-4 md:p-8">
         {!isDesktop && (
           <div className="fixed bottom-0 right-0 m-4">
@@ -251,31 +247,4 @@ export default function Home({ initialConcerts, bands, locations }) {
       </Modal>
     </PageWrapper>
   )
-}
-
-export async function getServerSideProps() {
-  const { data: concerts, error: concertsError } = await supabase
-    .from('concerts')
-    .select('*, location(*), bands!j_concert_bands(*), bandsSeen:bands!j_bands_seen(*)')
-    .order('date_start', { ascending: false, })
-
-  const { data: bands } = await supabase
-    .from('bands')
-    .select('*')
-    .order('name')
-
-  const { data: locations } = await supabase.from('locations').select('id,name')
-
-  if (concertsError) {
-    console.error(concertsError);
-  }
-
-  return {
-    props: {
-      initialConcerts: concerts,
-      bands,
-      locations,
-    }
-  }
-
 }

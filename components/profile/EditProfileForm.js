@@ -1,7 +1,7 @@
 import supabase from '../../utils/supabase'
 import Button from '../Button'
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { ArrowUpTrayIcon } from '@heroicons/react/20/solid'
 
 function FileInput({ file, setFile}) {

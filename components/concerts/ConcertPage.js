@@ -1,16 +1,18 @@
+"use client"
+
 import supabase from "../../utils/supabase"
 import Link from "next/link"
-import EditConcertForm from "../../components/concerts/EditConcertForm"
+import EditConcertForm from "./EditConcertForm"
 import { ArrowLeftIcon, CalendarIcon, MapPinIcon, UsersIcon } from "@heroicons/react/20/solid"
 import { useEffect, useState } from "react"
-import PageWrapper from "../../components/layout/PageWrapper"
-import Modal from "../../components/Modal"
-import Button from "../../components/Button"
+import PageWrapper from "../layout/PageWrapper"
+import Modal from "../Modal"
+import Button from "../Button"
 import dayjs from "dayjs"
 import 'dayjs/locale/de'
-import { useRouter } from "next/router"
-import GenreChart from "../../components/concerts/GenreChart"
-import Comments from "../../components/concerts/Comments"
+import { useRouter } from "next/navigation"
+import GenreChart from "./GenreChart"
+import Comments from "./Comments"
 
 function BandSeenCheckbox({ concert, band, selectedBandsSeen, setSelectedBandsSeen, user }) {
   const router = useRouter()
@@ -187,11 +189,9 @@ export default function ConcertPage({ initialConcert, bands, locations }) {
     <PageWrapper>
       <main className="grid gap-4 w-full max-w-2xl p-8">
         <div>
-          <Link href="/">
-            <a className="btn btn-link">
-              <ArrowLeftIcon className="h-icon" />
-              Go Back
-            </a>
+          <Link href="/" className="btn btn-link">
+            <ArrowLeftIcon className="h-icon" />
+            Go Back
           </Link>
         </div>
         <div className="grid gap-4 p-6 rounded-lg bg-slate-800">
@@ -244,10 +244,8 @@ export default function ConcertPage({ initialConcert, bands, locations }) {
               <UsersIcon className="flex-none h-icon mr-2 self-center text-slate-300" />
               <div className="-ml-2">
                 {fanProfiles.map(item => (
-                  <Link key={item.id} href={`/users/${item.username}`}>
-                    <a className="btn btn-tag">
-                      {item.username}
-                    </a>
+                  <Link key={item.id} href={`/users/${item.username}`} className="btn btn-tag">
+                    {item.username}
                   </Link>
                 ))}
               </div>
@@ -295,40 +293,4 @@ export default function ConcertPage({ initialConcert, bands, locations }) {
       </main>
     </PageWrapper>
   )
-}
-
-export async function getServerSideProps({ params }) {
-  const { data: concert, error } = await supabase
-    .from('concerts')
-    .select(`
-      *,
-      location(*),
-      bands!j_concert_bands(
-        *,
-        genres(*)
-      )
-    `)
-    .eq('id', params.id)
-    .single()
-
-  const { data: bands } = await supabase
-    .from('bands')
-    .select('*, genres(*)')
-    .order('name')
-
-  const { data: locations } = await supabase
-    .from('locations')
-    .select('*')
-    .order('name')
-
-  if (error) {
-    console.error(error);
-  }
-  return {
-    props: {
-      initialConcert: concert,
-      bands,
-      locations,
-    }
-  }
 }
