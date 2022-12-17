@@ -7,7 +7,7 @@ import { ArrowLeftIcon, CalendarIcon, MapPinIcon, UsersIcon } from "@heroicons/r
 import { useEffect, useState } from "react"
 import PageWrapper from "../layout/PageWrapper"
 import Modal from "../Modal"
-import Button from "../Button"
+import { Button } from "../Button"
 import dayjs from "dayjs"
 import 'dayjs/locale/de'
 import { useRouter } from "next/navigation"

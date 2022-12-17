@@ -8,7 +8,7 @@ import { Fragment, useState } from "react"
 import { useRouter } from "next/navigation"
 import EditBandForm from "./EditBandForm"
 import PageWrapper from "../layout/PageWrapper"
-import Button from "../Button"
+import { Button } from "../Button"
 
 export default function BandPage({ initialBand, countries, genres }) {
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)

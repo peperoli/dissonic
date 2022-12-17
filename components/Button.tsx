@@ -1,4 +1,7 @@
-export default function Button({
+import { FC } from "react"
+import { IButton } from "../models/types"
+
+export const Button: FC<IButton> = ({
   onClick,
   type,
   label,
@@ -9,7 +12,7 @@ export default function Button({
   loading,
   size,
   danger,
-}) {
+}) => {
   return (
     <button
       type={type || 'button'}
@@ -33,8 +36,10 @@ export default function Button({
         </svg>
       )}
       <span className={`flex gap-2 items-center${loading ? ' opacity-0' : ''}`}>
-        {icon}
-        <span className={`${contentType === 'icon' ? ' sr-only ' : ''}`}>{label}</span>
+        <>
+          {icon}
+          <span className={`${contentType === 'icon' ? ' sr-only ' : ''}`}>{label}</span>
+        </>
       </span>
     </button>
   )

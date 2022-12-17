@@ -1,4 +1,4 @@
-import Button from '../Button'
+import { Button } from '../Button'
 import { useState, useEffect } from 'react'
 import supabase from '../../utils/supabase'
 import dayjs from 'dayjs'

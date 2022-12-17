@@ -1,5 +1,5 @@
 import supabase from "../../utils/supabase"
-import Button from "../Button"
+import { Button } from "../Button"
 import Modal from "../Modal"
 
 export default function DeleteCommentDialog({isOpen, setIsOpen, comment, comments, setComments}) {

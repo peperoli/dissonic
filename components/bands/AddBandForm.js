@@ -1,6 +1,6 @@
 import { useState } from "react"
 import supabase from "../../utils/supabase"
-import Button from "../Button"
+import { Button } from "../Button"
 import MultiSelect from "../MultiSelect"
 
 export default function AddBandForm({ countries, genres, bands, setBands, setIsOpen }) {

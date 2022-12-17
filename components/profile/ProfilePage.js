@@ -3,7 +3,7 @@
 import PageWrapper from "../layout/PageWrapper";
 import { useState, useEffect } from "react"
 import supabase from "../../utils/supabase"
-import Button from "../Button";
+import { Button } from "../Button";
 import Modal from "../Modal";
 import EditPasswordForm from "./EditPasswordForm";
 import EditProfileForm from "./EditProfileForm";

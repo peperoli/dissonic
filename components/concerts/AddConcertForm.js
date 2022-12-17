@@ -2,7 +2,7 @@ import { useState } from "react"
 import supabase from "../../utils/supabase"
 import MultiSelect from "../MultiSelect"
 import dayjs from "dayjs"
-import Button from "../Button"
+import { Button } from "../Button"
 import { useRouter } from "next/navigation"
 
 export default function NewConcertForm({ bands, locations, setIsOpen, concerts, setConcerts }) {

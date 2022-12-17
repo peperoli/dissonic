@@ -8,7 +8,7 @@ import AddLocationForm from "./AddLocationForm"
 import Modal from "../Modal"
 import { useState } from "react"
 import Search from "../Search"
-import Button from "../Button"
+import { Button } from "../Button"
 import useMediaQuery from "../../hooks/useMediaQuery"
 
 export default function LocationsPage({ initialLocations }) {
