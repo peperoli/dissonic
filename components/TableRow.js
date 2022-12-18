@@ -2,6 +2,7 @@ import Link from "next/link"
 
 export default function TableRow({ children, href }) {
   let gridCols = 'md:grid-cols-1'
+  const WrapperTag = href ? Link : 'div'
 
   switch (children.length) {
     case 2:
@@ -12,8 +13,8 @@ export default function TableRow({ children, href }) {
       break
   }
   return (
-    <Link href={href} className={`grid items-center px-3 py-2 rounded-md hover:bg-slate-700 ${gridCols}`}>
+    <WrapperTag href={href} className={`grid items-center px-3 py-2 rounded-md hover:bg-slate-700 ${gridCols}`}>
       {children}
-    </Link>
+    </WrapperTag>
   )
 }

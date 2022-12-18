@@ -33,6 +33,9 @@ module.exports = {
       'shine': '0 0 16px',
     },
     extend: {
+      width: {
+        22: '5.5rem',
+      },
       height: {
         'icon': '1.33em',
       },

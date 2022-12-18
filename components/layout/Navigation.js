@@ -1,9 +1,9 @@
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 
 function NavLink({ link, name }) {
-	const router = useRouter()
-	const isCurrent = router.pathname === link
+	const pathname = usePathname()
+	const isCurrent = pathname === link
 	return (
 		<Link href={link} className={`relative p-4 md:py-2 rounded-lg font-bold${isCurrent ? ' text-venom' : ' text-slate-300 hover:text-slate-50 hover:bg-slate-800'}`}>
 			{name}

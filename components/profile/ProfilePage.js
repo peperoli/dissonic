@@ -10,6 +10,7 @@ import EditProfileForm from "./EditProfileForm";
 import GenreChart from "../concerts/GenreChart";
 import Image from "next/image";
 import { UserIcon } from "@heroicons/react/20/solid";
+import { TopBands } from './TopBands'
 
 export default function ProfilePage({ profile, bandsSeen }) {
   const [editPassIsOpen, setEditPassIsOpen] = useState(false)
@@ -70,22 +71,25 @@ export default function ProfilePage({ profile, bandsSeen }) {
               </div>
               <div className="grid grid-cols-3 gap-4 mb-6">
                 <div className="p-6 rounded-lg bg-slate-800">
-                  <p className="h2 mb-0 text-venom">
+                  <p className="mb-0 text-2xl text-venom">
                     {uniqueBandsSeen?.size}
                   </p>
                   <h2 className="text-sm font-normal mb-0">Bands live erlebt</h2>
                 </div>
                 <div className="p-6 rounded-lg bg-slate-800">
-                  <p className="h2 mb-0 text-venom">
+                  <p className="mb-0 text-2xl text-venom">
                     {concertsSeen?.size}
                   </p>
                   <h2 className="text-sm font-normal mb-0">Konzerte besucht</h2>
                 </div>
                 <div className="p-6 rounded-lg bg-slate-800">
-                  <p className="h2 mb-0 text-venom">
+                  <p className="mb-0 text-2xl text-venom">
                     {festivalsSeen?.size}
                   </p>
                   <h2 className="text-sm font-normal mb-0">Festivals besucht</h2>
+                </div>
+                <div className="col-span-full p-6 rounded-lg bg-slate-800">
+                  <TopBands bands={bandsSeen.map(item => item.band)} />
                 </div>
                 <div className="col-span-full p-6 rounded-lg bg-slate-800">
                   <GenreChart bands={uniqueBandsSeen} />
