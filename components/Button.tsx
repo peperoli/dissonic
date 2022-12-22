@@ -3,14 +3,14 @@ import { IButton } from "../models/types"
 
 export const Button: FC<IButton> = ({
   onClick,
-  type,
+  type = 'button',
   label,
   style,
-  contentType,
+  contentType = 'text',
   icon,
   disabled,
   loading,
-  size,
+  size = 'medium',
   danger,
 }) => {
   return (

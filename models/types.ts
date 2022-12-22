@@ -2,12 +2,12 @@ export interface IButton {
   onClick: () => void
   type?: 'button' | 'submit' | 'reset' | undefined
   label: string
-  style?: string
-  contentType?: string
+  style?: 'primary' | 'secondary'
+  contentType?: 'text' | 'icon'
   icon?: JSX.Element
   disabled?: boolean
   loading?: boolean
-  size?: string
+  size?: 'small' | 'medium'
   danger?: boolean
 }
 
@@ -18,6 +18,12 @@ export interface IPagination {
   perPage: number
 }
 
+type Band = {
+  readonly id: string,
+  name: string,
+  country?: string,
+}
+
 export interface ITopBands {
-  bands: any[]
+  bands: Band[]
 }

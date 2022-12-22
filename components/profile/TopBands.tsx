@@ -1,20 +1,26 @@
 import { FC } from 'react'
 import { ITopBands } from '../../models/types'
 
-export const TopBands: FC<ITopBands> = ({ bands }) => {
-  const topBands: { id: string; name: string; count: number }[] = []
+export const TopBands: FC<ITopBands> = ({ bands = [] }) => {
+  type TopBand = {
+    id: string
+    name: string
+    count: number
+  }
+  const topBands: TopBand[] = []
 
   bands.forEach(band => {
-    if (!topBands.find(item => item.id === band.id)) {
+    let topBand = topBands.find(item => item.id === band.id)
+    if (!topBand) {
       topBands.push({ id: band.id, name: band.name, count: 1 })
-    } else {
-      topBands.find(item => item.id === band.id).count += 1
+    } else if (topBand?.count) {
+      topBand.count += 1
     }
   })
 
   const highestCount = Math.max(...topBands.map(item => item.count))
 
-  function compare(a: { count: number }, b: { count: number }) {
+  function compare(a: { count: number }, b: { count: number }): number {
     let comparison = 0
     if (a.count > b.count) {
       comparison = -1

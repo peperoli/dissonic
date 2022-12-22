@@ -12,7 +12,7 @@ import Image from "next/image";
 import { UserIcon } from "@heroicons/react/20/solid";
 import { TopBands } from './TopBands'
 
-export default function ProfilePage({ profile, bandsSeen }) {
+export default function ProfilePage({ profile, bandsSeen = [] }) {
   const [editPassIsOpen, setEditPassIsOpen] = useState(false)
   const [editUsernameIsOpen, setEditUsernameIsOpen] = useState(false)
   const [user, setUser] = useState(null)
