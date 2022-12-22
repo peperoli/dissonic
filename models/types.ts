@@ -19,11 +19,21 @@ export interface IPagination {
 }
 
 type Band = {
-  readonly id: string,
-  name: string,
-  country?: string,
+  readonly id: string
+  name: string
+  country?: string
+}
+
+type Location = {
+  readonly id: string
+  name: string
+  city: string
 }
 
 export interface ITopBands {
   bands: Band[]
+}
+
+export interface ITopLocations {
+  locations: Location[]
 }

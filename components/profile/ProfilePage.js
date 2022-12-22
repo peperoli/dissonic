@@ -11,6 +11,7 @@ import GenreChart from "../concerts/GenreChart";
 import Image from "next/image";
 import { UserIcon } from "@heroicons/react/20/solid";
 import { TopBands } from './TopBands'
+import { TopLocations } from "./TopLocations";
 
 export default function ProfilePage({ profile, bandsSeen = [] }) {
   const [editPassIsOpen, setEditPassIsOpen] = useState(false)
@@ -18,9 +19,14 @@ export default function ProfilePage({ profile, bandsSeen = [] }) {
   const [user, setUser] = useState(null)
   const [avatarUrl, setAvatarUrl] = useState(null)
 
-  const uniqueBandsSeen = new Set(bandsSeen.map(item => item.band))
-  const concertsSeen = new Set(bandsSeen.map(item => item.concert_id))
-  const festivalsSeen = new Set(bandsSeen.filter(item => item.concert.is_festival).map(item => item.concert_id))
+  function unique(array) {
+    const mapOfObjects = new Map(array.map(item => [item.id, item]))
+    return [...mapOfObjects.values()]
+  }
+
+  const uniqueBandsSeen = unique(bandsSeen.map(item => item.band))
+  const concertsSeen = unique(bandsSeen.map(item => item.concert))
+  const festivalsSeen = unique(bandsSeen.filter(item => item.concert.is_festival).map(item => item.concert))
   
   useEffect(() => {
     async function getUser() {
@@ -72,19 +78,19 @@ export default function ProfilePage({ profile, bandsSeen = [] }) {
               <div className="grid grid-cols-3 gap-4 mb-6">
                 <div className="p-6 rounded-lg bg-slate-800">
                   <p className="mb-0 text-2xl text-venom">
-                    {uniqueBandsSeen?.size}
+                    {uniqueBandsSeen?.length}
                   </p>
                   <h2 className="text-sm font-normal mb-0">Bands live erlebt</h2>
                 </div>
                 <div className="p-6 rounded-lg bg-slate-800">
                   <p className="mb-0 text-2xl text-venom">
-                    {concertsSeen?.size}
+                    {concertsSeen?.length}
                   </p>
                   <h2 className="text-sm font-normal mb-0">Konzerte besucht</h2>
                 </div>
                 <div className="p-6 rounded-lg bg-slate-800">
                   <p className="mb-0 text-2xl text-venom">
-                    {festivalsSeen?.size}
+                    {festivalsSeen?.length}
                   </p>
                   <h2 className="text-sm font-normal mb-0">Festivals besucht</h2>
                 </div>
@@ -93,6 +99,9 @@ export default function ProfilePage({ profile, bandsSeen = [] }) {
                 </div>
                 <div className="col-span-full p-6 rounded-lg bg-slate-800">
                   <GenreChart bands={uniqueBandsSeen} />
+                </div>
+                <div className="col-span-full p-6 rounded-lg bg-slate-800">
+                  <TopLocations locations={concertsSeen.map(item => item.location)} />
                 </div>
               </div>
               {user && user?.id === profile.id && (

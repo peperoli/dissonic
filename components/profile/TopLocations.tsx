@@ -1,24 +1,25 @@
+import React from 'react'
 import { FC } from 'react'
-import { ITopBands } from '../../models/types'
+import { ITopLocations } from '../../models/types'
 
-export const TopBands: FC<ITopBands> = ({ bands = [] }) => {
-  type TopBand = {
+export const TopLocations: FC<ITopLocations> = ({ locations = [] }) => {
+  type TopLocation = {
     id: string
     name: string
     count: number
   }
-  const topBands: TopBand[] = []
+  const topLocations: TopLocation[] = []
 
-  bands.forEach(band => {
-    let topBand = topBands.find(item => item.id === band.id)
-    if (!topBand) {
-      topBands.push({ id: band.id, name: band.name, count: 1 })
-    } else if (topBand?.count) {
-      topBand.count += 1
+  locations.forEach(location => {
+    let TopLocation = topLocations.find(item => item.id === location.id)
+    if (!TopLocation) {
+      topLocations.push({ id: location.id, name: location.name, count: 1 })
+    } else if (TopLocation?.count) {
+      TopLocation.count += 1
     }
   })
 
-  const highestCount = Math.max(...topBands.map(item => item.count))
+  const highestCount = Math.max(...topLocations.map(item => item.count))
 
   function compare(a: { count: number }, b: { count: number }): number {
     let comparison = 0
@@ -31,9 +32,9 @@ export const TopBands: FC<ITopBands> = ({ bands = [] }) => {
   }
   return (
     <div>
-      <h2>Top Bands</h2>
+      <h2>Top Locations</h2>
       <div className="flex gap-4 overflow-auto">
-        {topBands
+        {topLocations
           .filter(item => item.count > 1)
           .sort(compare)
           .map(item => (
