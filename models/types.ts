@@ -37,3 +37,7 @@ export interface ITopBands {
 export interface ITopLocations {
   locations: Location[]
 }
+
+export interface IConcertsChart {
+  
+}
