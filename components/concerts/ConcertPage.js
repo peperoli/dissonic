@@ -11,7 +11,7 @@ import { Button } from "../Button"
 import dayjs from "dayjs"
 import 'dayjs/locale/de'
 import { useRouter } from "next/navigation"
-import GenreChart from "./GenreChart"
+import { GenreChart } from "./GenreChart"
 import Comments from "./Comments"
 
 function BandSeenCheckbox({ concert, band, selectedBandsSeen, setSelectedBandsSeen, user }) {

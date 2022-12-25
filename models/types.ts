@@ -18,16 +18,41 @@ export interface IPagination {
   perPage: number
 }
 
+type Concert = {
+  readonly id: string
+  date_start: string
+  date_end?: string
+  is_festival: boolean
+  name?: string
+  location: Location
+}
+
 type Band = {
   readonly id: string
   name: string
   country?: string
 }
 
+type Genre = {
+  readonly id: string
+  readonly name: string
+}
+
+type BandWithGenres = {
+  readonly id: string
+  name: string
+  country?: string
+  genres: Genre[]
+}
+
 type Location = {
   readonly id: string
   name: string
   city: string
+}
+
+export interface IGenreChart {
+  bands: BandWithGenres[]
 }
 
 export interface ITopBands {
@@ -39,5 +64,5 @@ export interface ITopLocations {
 }
 
 export interface IConcertsChart {
-  
+  concerts: any[]
 }

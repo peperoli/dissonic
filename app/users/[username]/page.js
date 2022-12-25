@@ -12,7 +12,11 @@ async function fetchData(params) {
 
   const { data: bandsSeen } = await supabase
     .from('j_bands_seen')
-    .select('*, concert:concerts(id, location(*), is_festival), band:bands(*, genres(*))')
+    .select(`
+      *, 
+      concert:concerts(id, date_start, location(*), is_festival),
+      band:bands(*, genres(*))
+    `)
     .eq('user_id', profile.id)
 
   return { profile, bandsSeen }

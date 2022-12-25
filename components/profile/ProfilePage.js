@@ -7,11 +7,12 @@ import { Button } from "../Button";
 import Modal from "../Modal";
 import EditPasswordForm from "./EditPasswordForm";
 import EditProfileForm from "./EditProfileForm";
-import GenreChart from "../concerts/GenreChart";
+import { GenreChart } from "../concerts/GenreChart";
 import Image from "next/image";
 import { UserIcon } from "@heroicons/react/20/solid";
 import { TopBands } from './TopBands'
 import { TopLocations } from "./TopLocations";
+import { ConcertsChart } from "./ConcertsChart";
 
 export default function ProfilePage({ profile, bandsSeen = [] }) {
   const [editPassIsOpen, setEditPassIsOpen] = useState(false)
@@ -99,6 +100,9 @@ export default function ProfilePage({ profile, bandsSeen = [] }) {
                 </div>
                 <div className="col-span-full p-6 rounded-lg bg-slate-800">
                   <GenreChart bands={uniqueBandsSeen} />
+                </div>
+                <div className="col-span-full p-6 rounded-lg bg-slate-800">
+                  <ConcertsChart concerts={concertsSeen} />
                 </div>
                 <div className="col-span-full p-6 rounded-lg bg-slate-800">
                   <TopLocations locations={concertsSeen.map(item => item.location)} />

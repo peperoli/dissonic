@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import { useRef } from 'react'
+import React, { useEffect, useState, useRef, FC } from 'react'
+import { IGenreChart } from '../../models/types'
 import { Button } from '../Button'
 
-export default function GenreChart({ bands }) {
+export const GenreChart: FC<IGenreChart> = ({ bands }) => {
   type TopGenre = {
     id: string
     name: string
@@ -23,7 +23,7 @@ export default function GenreChart({ bands }) {
 
   const highestCount = Math.max(...genres.map(item => item.count))
 
-  function compare(a, b) {
+  function compare(a: { count: number }, b: { count: number }) {
     let comparison = 0
     if (a.count > b.count) {
       comparison = -1
@@ -45,7 +45,10 @@ export default function GenreChart({ bands }) {
   return (
     <section>
       <h2>Genres</h2>
-      <div style={{ maxHeight: height !== 0 ? (isCollapsed ? 400 : height) : 400 }} className="mb-4 overflow-hidden transition-all duration-300">
+      <div
+        style={{ maxHeight: height !== 0 ? (isCollapsed ? 400 : height) : 400 }}
+        className="mb-4 overflow-hidden transition-all duration-300"
+      >
         <div ref={ref} className="grid gap-2">
           {genres.sort(compare).map((genre, index) => (
             <div key={index} className="grid md:grid-cols-2 items-center">
