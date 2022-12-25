@@ -191,7 +191,7 @@ export default function ConcertPage({ initialConcert, bands, locations }) {
         <div>
           <Link href="/" className="btn btn-link">
             <ArrowLeftIcon className="h-icon" />
-            Go Back
+            Zurück
           </Link>
         </div>
         <div className="grid gap-4 p-6 rounded-lg bg-slate-800">
@@ -251,6 +251,10 @@ export default function ConcertPage({ initialConcert, bands, locations }) {
               </div>
             </div>
           )}
+          <div className="flex gap-4">
+            <Button onClick={() => setEditIsOpen(true)} label="Bearbeiten" />
+            <Button onClick={() => setDeleteIsOpen(true)} label="Löschen" danger />
+          </div>
         </div>
         <div className="p-6 rounded-lg bg-slate-800">
           <GenreChart bands={concert.bands} />
@@ -261,10 +265,6 @@ export default function ConcertPage({ initialConcert, bands, locations }) {
             user={user} 
             profiles={profiles} 
           />
-        </div>
-        <div className="flex gap-4 mt-4">
-          <Button onClick={() => setEditIsOpen(true)} label="Bearbeiten" />
-          <Button onClick={() => setDeleteIsOpen(true)} label="Löschen" />
         </div>
         <Modal
           isOpen={editIsOpen}

@@ -18,7 +18,6 @@ export default function EditConcertForm({ concert, bands, locations, setIsOpen, 
         .update({
           date_start: event.target.dateStart.value,
           date_end: event.target.dateEnd?.value,
-          description: event.target.description.value,
           location: event.target.location.value,
           name: event.target.name.value,
           is_festival: isFestival,
@@ -108,10 +107,6 @@ export default function EditConcertForm({ concert, bands, locations, setIsOpen, 
         selectedOptions={selectedBands}
         setSelectedOptions={setSelectedBands}
       />
-      <div className="form-control">
-        <textarea name="description" id="description" defaultValue={concert.description} placeholder="Schreib was Schönes ..." />
-        <label htmlFor="description">Beschreibung (veraltet)</label>
-      </div>
       <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10">
         <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
         <button type="submit" className="btn btn-primary">Speichern</button>

@@ -1,7 +1,7 @@
 "use client"
 
 import supabase from "../../utils/supabase"
-import ConcertCard from './ConcertCard'
+import { ConcertCard} from './ConcertCard'
 import Modal from '../Modal'
 import AddConcertForm from "./AddConcertForm"
 import { useState, useEffect } from 'react'

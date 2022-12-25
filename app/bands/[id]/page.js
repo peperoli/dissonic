@@ -1,4 +1,4 @@
-import BandPage from '../../../components/bands/BandPage'
+import { BandPage } from '../../../components/bands/BandPage'
 import supabase from '../../../utils/supabase'
 
 export const revalidate = 0
@@ -6,7 +6,7 @@ export const revalidate = 0
 async function fetchData(params) {
   const { data: band, error } = await supabase
     .from('bands')
-    .select('*, country(id, iso2), genres(*)')
+    .select('*, country(id, iso2, name), genres(*)')
     .eq('id', params.id)
     .single()
 
@@ -18,14 +18,23 @@ async function fetchData(params) {
 
   const { data: genres } = await supabase.from('genres').select('*')
 
+  const { data: concerts, error: concertsError } = await supabase
+    .from('concerts')
+    .select('*, bands!j_concert_bands!inner(*), location(name)')
+    .eq('bands.id', params.id)
+
   if (error) {
     console.error(error)
   }
 
-  return { band, countries, genres }
+  if (concertsError) {
+    console.log(concertsError)
+  }
+
+  return { band, countries, genres, concerts }
 }
 
 export default async function Page({ params }) {
-  const { band, countries, genres } = await fetchData(params)
-  return <BandPage initialBand={band} countries={countries} genres={genres} />
+  const { band, countries, genres, concerts } = await fetchData(params)
+  return <BandPage initialBand={band} countries={countries} genres={genres} concerts={concerts} />
 }

@@ -30,7 +30,19 @@ type Concert = {
 type Band = {
   readonly id: string
   name: string
-  country?: string
+  country: Country
+}
+
+type WithBands = {
+  bands: Band[]
+}
+
+type ConcertWithBands = Concert & WithBands
+
+type BandSeen = {
+  readonly band_id: string
+  readonly concert_id: string
+  readonly user_id: string
 }
 
 type Genre = {
@@ -38,17 +50,48 @@ type Genre = {
   readonly name: string
 }
 
-type BandWithGenres = {
-  readonly id: string
-  name: string
-  country?: string
+type WithGenres = {
   genres: Genre[]
 }
+
+type BandWithGenres = Band & WithGenres
 
 type Location = {
   readonly id: string
   name: string
   city: string
+}
+
+type Country = {
+  readonly id: string
+  readonly name: string
+  readonly iso2: string
+}
+
+type User = {
+  readonly id: string
+  email: string
+}
+
+type Profile = {
+  readonly id: string
+  username: string
+  created_at: string
+  avatar_path: string
+}
+
+export interface IConcertCard {
+  concert: ConcertWithBands
+  bandsSeen?: BandSeen[]
+  user?: User
+  profiles?: Profile[]
+}
+
+export interface IBandPage {
+  initialBand: BandWithGenres
+  countries: Country[]
+  genres: Genre[]
+  concerts: ConcertWithBands[]
 }
 
 export interface IGenreChart {

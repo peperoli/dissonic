@@ -25,7 +25,6 @@ export default function NewConcertForm({ bands, locations, setIsOpen, concerts, 
           date_start: event.target.dateStart.value,
           date_end: event.target.dateEnd?.value,
           location: event.target.location.value,
-          description: event.target.description.value,
           name: event.target.name.value,
           is_festival: event.target.isFestival.checked,
         }])
@@ -108,10 +107,6 @@ export default function NewConcertForm({ bands, locations, setIsOpen, concerts, 
             ))}
         </select>
         <label htmlFor="location">Location</label>
-      </div>
-      <div className="form-control">
-        <textarea name="description" id="description" placeholder="Schreib was Schönes ..." />
-        <label htmlFor="description">Beschreibung (veraltet)</label>
       </div>
       <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10">
         <Button onClick={() => setIsOpen(false)} label="Abbrechen" />

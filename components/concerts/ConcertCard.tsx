@@ -3,9 +3,10 @@ import { MapPinIcon, UsersIcon } from "@heroicons/react/20/solid"
 import dayjs from 'dayjs'
 import 'dayjs/locale/de'
 import { useRouter } from "next/navigation"
-import { Fragment } from "react"
+import React, { FC, Fragment } from "react"
+import { IConcertCard } from "../../models/types"
 
-function ConcertDate({ date }) {
+function ConcertDate({ date }: {date: Date}) {
   return (
     <div className="relative flex-none flex flex-col justify-center items-center w-20 h-20 border border-slate-700 rounded-lg first:bg-slate-700 shadow-md">
       {date && <span className="text-3xl font-bold">{date.getDate()}</span>}
@@ -15,12 +16,12 @@ function ConcertDate({ date }) {
   )
 }
 
-export default function ConcertCard({ concert, bandsSeen, user, profiles }) {
+export const ConcertCard: FC<IConcertCard> = ({ concert, bandsSeen, user, profiles }) => {
   const router = useRouter()
   let fanProfiles
-  if (bandsSeen.length > 0) {
+  if (bandsSeen && bandsSeen?.length > 0) {
     const fanIds = new Set(bandsSeen.map(item => item.user_id))
-    fanProfiles = [...fanIds].map(item => profiles.find(profile => profile.id === item))
+    fanProfiles = [...fanIds].map(item => profiles?.find(profile => profile.id === item))
   }
   return (
     <div
@@ -47,8 +48,8 @@ export default function ConcertCard({ concert, bandsSeen, user, profiles }) {
                   href={`/bands/${band.id}`}
                   onClick={event => event.stopPropagation()}
                   className={`btn btn-tag${
-                    bandsSeen.some(
-                      bandSeen => bandSeen.band_id === band.id && bandSeen.user_id === user.id
+                    bandsSeen?.some(
+                      bandSeen => bandSeen.band_id === band.id && bandSeen.user_id === user?.id
                     )
                       ? ' !text-venom'
                       : ''
@@ -73,12 +74,12 @@ export default function ConcertCard({ concert, bandsSeen, user, profiles }) {
             <div className="-ml-2">
               {fanProfiles.map(item => (
                 <Link
-                  key={item.id}
-                  href={`/users/${item.username}`}
+                  key={item?.id}
+                  href={`/users/${item?.username}`}
                   onClick={event => event.stopPropagation()}
                   className="btn btn-tag"
                 >
-                  {item.username}
+                  {item?.username}
                 </Link>
               ))}
             </div>
