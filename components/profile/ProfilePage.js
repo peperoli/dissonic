@@ -1,18 +1,18 @@
-"use client"
+'use client'
 
-import PageWrapper from "../layout/PageWrapper";
-import { useState, useEffect } from "react"
-import supabase from "../../utils/supabase"
-import { Button } from "../Button";
-import Modal from "../Modal";
-import EditPasswordForm from "./EditPasswordForm";
-import EditProfileForm from "./EditProfileForm";
-import { GenreChart } from "../concerts/GenreChart";
-import Image from "next/image";
-import { UserIcon } from "@heroicons/react/20/solid";
+import { PageWrapper } from '../layout/PageWrapper'
+import { useState, useEffect } from 'react'
+import supabase from '../../utils/supabase'
+import { Button } from '../Button'
+import Modal from '../Modal'
+import EditPasswordForm from './EditPasswordForm'
+import EditProfileForm from './EditProfileForm'
+import { GenreChart } from '../concerts/GenreChart'
+import Image from 'next/image'
+import { UserIcon, UserPlusIcon } from '@heroicons/react/20/solid'
 import { TopBands } from './TopBands'
-import { TopLocations } from "./TopLocations";
-import { ConcertsChart } from "./ConcertsChart";
+import { TopLocations } from './TopLocations'
+import { ConcertsChart } from './ConcertsChart'
 
 export default function ProfilePage({ profile, bandsSeen = [] }) {
   const [editPassIsOpen, setEditPassIsOpen] = useState(false)
@@ -27,18 +27,22 @@ export default function ProfilePage({ profile, bandsSeen = [] }) {
 
   const uniqueBandsSeen = unique(bandsSeen.map(item => item.band))
   const concertsSeen = unique(bandsSeen.map(item => item.concert))
-  const festivalsSeen = unique(bandsSeen.filter(item => item.concert.is_festival).map(item => item.concert))
-  
+  const festivalsSeen = unique(
+    bandsSeen.filter(item => item.concert.is_festival).map(item => item.concert)
+  )
+
   useEffect(() => {
     async function getUser() {
-      const { data: { user: initUser } } = await supabase.auth.getUser()
+      const {
+        data: { user: initUser },
+      } = await supabase.auth.getUser()
       setUser(initUser)
     }
 
     async function downloadAvatar() {
       try {
-        const {data, error} = await supabase.storage.from('avatars').download(profile.avatar_path)
-    
+        const { data, error } = await supabase.storage.from('avatars').download(profile.avatar_path)
+
         if (error) {
           throw error
         }
@@ -55,6 +59,20 @@ export default function ProfilePage({ profile, bandsSeen = [] }) {
       downloadAvatar()
     }
   }, [profile])
+
+  async function addFriend() {
+    try {
+      const { error } = await supabase
+        .from('friend_invites')
+        .insert({ sender_id: user.id, receiver_id: profile.id })
+
+        if (error) {
+          throw error
+        }
+    } catch (error) {
+      alert(error.message)
+    }
+  }
   return (
     <PageWrapper>
       <>
@@ -75,24 +93,26 @@ export default function ProfilePage({ profile, bandsSeen = [] }) {
                   )}
                 </div>
                 <h1 className="mb-0">{profile.username}</h1>
+                {user?.id !== profile.id && (
+                  <Button
+                    onClick={addFriend}
+                    label="Freund hinzufügen"
+                    contentType="icon"
+                    icon={<UserPlusIcon className="h-icon" />}
+                  />
+                )}
               </div>
               <div className="grid grid-cols-3 gap-4 mb-6">
                 <div className="p-6 rounded-lg bg-slate-800">
-                  <p className="mb-0 text-2xl text-venom">
-                    {uniqueBandsSeen?.length}
-                  </p>
+                  <p className="mb-0 text-2xl text-venom">{uniqueBandsSeen?.length}</p>
                   <h2 className="text-sm font-normal mb-0">Bands live erlebt</h2>
                 </div>
                 <div className="p-6 rounded-lg bg-slate-800">
-                  <p className="mb-0 text-2xl text-venom">
-                    {concertsSeen?.length}
-                  </p>
+                  <p className="mb-0 text-2xl text-venom">{concertsSeen?.length}</p>
                   <h2 className="text-sm font-normal mb-0">Konzerte besucht</h2>
                 </div>
                 <div className="p-6 rounded-lg bg-slate-800">
-                  <p className="mb-0 text-2xl text-venom">
-                    {festivalsSeen?.length}
-                  </p>
+                  <p className="mb-0 text-2xl text-venom">{festivalsSeen?.length}</p>
                   <h2 className="text-sm font-normal mb-0">Festivals besucht</h2>
                 </div>
                 <div className="col-span-full p-6 rounded-lg bg-slate-800">
@@ -128,9 +148,7 @@ export default function ProfilePage({ profile, bandsSeen = [] }) {
           />
         </Modal>
         <Modal isOpen={editPassIsOpen} setIsOpen={setEditPassIsOpen}>
-          <EditPasswordForm
-            setIsOpen={setEditPassIsOpen}
-          />
+          <EditPasswordForm setIsOpen={setEditPassIsOpen} />
         </Modal>
       </>
     </PageWrapper>

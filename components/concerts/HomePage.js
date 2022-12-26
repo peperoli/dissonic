@@ -7,7 +7,7 @@ import AddConcertForm from "./AddConcertForm"
 import { useState, useEffect } from 'react'
 import { Button } from '../Button'
 import { ArrowUturnLeftIcon, ChevronDownIcon, EyeIcon, GlobeAltIcon, PlusIcon } from '@heroicons/react/20/solid'
-import PageWrapper from '../layout/PageWrapper'
+import { PageWrapper } from '../layout/PageWrapper'
 import { toast } from 'react-toastify'
 import FilterButton from '../FilterButton'
 import useMediaQuery from '../../hooks/useMediaQuery'

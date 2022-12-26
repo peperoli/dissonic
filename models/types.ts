@@ -68,16 +68,28 @@ type Country = {
   readonly iso2: string
 }
 
-type User = {
+export type User = {
   readonly id: string
   email: string
 }
 
-type Profile = {
+export type Profile = {
   readonly id: string
   username: string
   created_at: string
   avatar_path: string
+}
+
+export type Invite = {
+  readonly sender: Profile
+  readonly receiver: Profile
+  readonly created_at: string
+}
+
+export type Friend = {
+  readonly user1: Profile
+  readonly user2: Profile
+  readonly created_at: string
 }
 
 export interface IConcertCard {
@@ -94,6 +106,13 @@ export interface IBandPage {
   concerts: ConcertWithBands[]
 }
 
+export interface IFriendsPage {
+  profile: Profile
+  sentInvites: Invite[]
+  receivedInvites: Invite[]
+  friends: Friend[]
+}
+
 export interface IGenreChart {
   bands: BandWithGenres[]
 }
@@ -107,5 +126,5 @@ export interface ITopLocations {
 }
 
 export interface IConcertsChart {
-  concerts: any[]
+  concerts: ConcertWithBands[]
 }

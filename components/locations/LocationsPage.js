@@ -1,6 +1,6 @@
 "use client"
 
-import PageWrapper from "../layout/PageWrapper"
+import { PageWrapper } from "../layout/PageWrapper"
 import { PlusIcon } from "@heroicons/react/20/solid"
 import Table from "../Table"
 import TableRow from "../TableRow"

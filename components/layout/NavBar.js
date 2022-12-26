@@ -1,13 +1,67 @@
+"use client"
+
 import Link from "next/link";
 import Logo from "./Logo";
 import supabase from "../../utils/supabase";
 import { Menu } from '@headlessui/react'
 import { useRouter } from "next/navigation";
-import { ArrowRightOnRectangleIcon, UserIcon } from "@heroicons/react/20/solid"
+import { ArrowRightOnRectangleIcon, UserGroupIcon, UserIcon } from "@heroicons/react/20/solid"
 import Image from "next/image";
+import { useState, useEffect } from "react";
 
-export default function NavBar({ profile, setProfile, avatarUrl }) {
+export default function NavBar() {
   const router = useRouter()
+
+  const [profile, setProfile] = useState(null)
+  const [avatarUrl, setAvatarUrl] = useState(null)
+
+  useEffect(() => {
+    async function getProfile() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+  
+        if (user) {
+          const { data: profile, error: profileError, status } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single()
+  
+          if (profileError) {
+            throw profileError
+          }
+  
+          if (profile && status !== 406) {
+            setProfile(profile)
+          }
+        }
+      } catch (error) {
+        alert(error.message)
+      }
+    }
+
+    getProfile()
+  }, [])
+
+  useEffect(() => {
+    async function downloadAvatar() {
+      try {
+        const {data, error} = await supabase.storage.from('avatars').download(profile.avatar_path)
+    
+        if (error) {
+          throw error
+        }
+        const url = URL.createObjectURL(data)
+        setAvatarUrl(url)
+      } catch (error) {
+        console.error(error.message)
+      }
+    }
+
+    if (profile?.avatar_path) {
+      downloadAvatar()
+    }
+  }, [profile])
 
   async function signOut() {
     try {
@@ -54,6 +108,17 @@ export default function NavBar({ profile, setProfile, avatarUrl }) {
                 >
                   <UserIcon className="h-icon text-slate-300" />
                   Profil
+                </button>
+              )}
+            </Menu.Item>
+            <Menu.Item>
+              {({ active }) => (
+                <button
+                  onClick={() => router.push(`/users/${profile.username}/friends`)}
+                  className={`flex gap-2 w-full px-2 py-1 rounded${active ? ' bg-slate-500' : ''}`}
+                >
+                  <UserGroupIcon className="h-icon text-slate-300" />
+                  Freunde
                 </button>
               )}
             </Menu.Item>
