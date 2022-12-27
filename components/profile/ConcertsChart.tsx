@@ -31,12 +31,12 @@ export const ConcertsChart: FC<IConcertsChart> = ({ concerts }) => {
           <div key={item.year} className="flex-1 overflow-hidden">
             <div className="relative flex justify-center items-end h-24 mb-2">
               <div
-                className="w-full rounded bg-venom"
+                className="w-8 rounded bg-venom"
                 style={{ height: (item.count / highestCount) * 100 + '%' }}
               />
               <p className="absolute w-full pb-1 text-center mix-blend-difference">{item.count}</p>
             </div>
-            <h3 className="text-center text-ellipsis overflow-hidden">{item.year}</h3>
+            <p className="text-center text-ellipsis overflow-hidden">{item.year}</p>
           </div>
         ))}
       </div>

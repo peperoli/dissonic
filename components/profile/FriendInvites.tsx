@@ -44,7 +44,7 @@ const InviteItem = ({ inviteData, type }: { inviteData: Invite; type: 'sent' | '
   async function cancelInvite() {
     try {
       const { error } = await supabase
-        .from('friend_invites')
+        .from('friends')
         .delete()
         .eq('sender_id', invite?.sender.id)
         .eq('receiver_id', invite?.receiver.id)
@@ -65,22 +65,14 @@ const InviteItem = ({ inviteData, type }: { inviteData: Invite; type: 'sent' | '
 
   async function confirmInvite() {
     try {
-      const { error: insertError } = await supabase
+      const { error } = await supabase
         .from('friends')
-        .insert({ user1_id: invite?.sender.id, user2_id: invite?.receiver.id })
-
-      if (insertError) {
-        throw insertError
-      }
-
-      const { error: deleteError } = await supabase
-        .from('friend_invites')
-        .delete()
+        .update({ pending: false, accepted_at: new Date() })
         .eq('sender_id', invite?.sender.id)
         .eq('receiver_id', invite?.receiver.id)
 
-      if (deleteError) {
-        throw deleteError
+      if (error) {
+        throw error
       }
 
       setInvite(null)
@@ -130,17 +122,18 @@ const InviteItem = ({ inviteData, type }: { inviteData: Invite; type: 'sent' | '
 
 interface IFriendInvites {
   profile: Profile
-  sentInvites: Invite[]
-  receivedInvites: Invite[]
+  friends: Friend[]
 }
 
 export const FriendInvites: FC<IFriendInvites> = ({
   profile,
-  sentInvites,
-  receivedInvites,
+  friends
 }) => {
   const [user, setUser] = useState<any | null>(null)
 
+  const sentInvites = friends.filter(item => item.pending && item.sender.id === profile.id)
+  const receivedInvites = friends.filter(item => item.pending && item.receiver.id === profile.id)
+  
   useEffect(() => {
     async function getUser() {
       const {

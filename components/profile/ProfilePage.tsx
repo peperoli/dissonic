@@ -1,7 +1,7 @@
 'use client'
 
 import { PageWrapper } from '../layout/PageWrapper'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect, FC } from 'react'
 import supabase from '../../utils/supabase'
 import { Button } from '../Button'
 import Modal from '../Modal'
@@ -9,22 +9,31 @@ import EditPasswordForm from './EditPasswordForm'
 import EditProfileForm from './EditProfileForm'
 import { GenreChart } from '../concerts/GenreChart'
 import Image from 'next/image'
-import { UserIcon, UserPlusIcon } from '@heroicons/react/20/solid'
+import { CheckCircleIcon, UserIcon, UserPlusIcon } from '@heroicons/react/20/solid'
 import { TopBands } from './TopBands'
 import { TopLocations } from './TopLocations'
 import { ConcertsChart } from './ConcertsChart'
+import { IProfilePage } from '../../models/types'
 
-export default function ProfilePage({ profile, bandsSeen = [] }) {
+export const ProfilePage: FC<IProfilePage> = ({ profile, bandsSeen, friends }) => {
   const [editPassIsOpen, setEditPassIsOpen] = useState(false)
   const [editUsernameIsOpen, setEditUsernameIsOpen] = useState(false)
-  const [user, setUser] = useState(null)
-  const [avatarUrl, setAvatarUrl] = useState(null)
+  const [user, setUser] = useState<any | null>(null)
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
 
-  function unique(array) {
+  function unique(array: { id: string }[]): any[] {
     const mapOfObjects = new Map(array.map(item => [item.id, item]))
     return [...mapOfObjects.values()]
   }
 
+  const isFriend =
+    friends.find(
+      item => !item.pending && (item.sender.id === user?.id || item.receiver.id === user?.id)
+    ) != undefined
+  const isPending =
+    friends.find(
+      item => item.pending && (item.sender.id === user?.id || item.receiver.id === user?.id)
+    ) != undefined
   const uniqueBandsSeen = unique(bandsSeen.map(item => item.band))
   const concertsSeen = unique(bandsSeen.map(item => item.concert))
   const festivalsSeen = unique(
@@ -49,7 +58,11 @@ export default function ProfilePage({ profile, bandsSeen = [] }) {
         const url = URL.createObjectURL(data)
         setAvatarUrl(url)
       } catch (error) {
-        console.error(error.message)
+        if (error instanceof Error) {
+          console.log(error.message)
+        } else {
+          console.log('Unexpected error', error)
+        }
       }
     }
 
@@ -63,14 +76,18 @@ export default function ProfilePage({ profile, bandsSeen = [] }) {
   async function addFriend() {
     try {
       const { error } = await supabase
-        .from('friend_invites')
+        .from('friends')
         .insert({ sender_id: user.id, receiver_id: profile.id })
 
-        if (error) {
-          throw error
-        }
+      if (error) {
+        throw error
+      }
     } catch (error) {
-      alert(error.message)
+      if (error instanceof Error) {
+        console.log(error.message)
+      } else {
+        console.log('Unexpected error', error)
+      }
     }
   }
   return (
@@ -93,12 +110,19 @@ export default function ProfilePage({ profile, bandsSeen = [] }) {
                   )}
                 </div>
                 <h1 className="mb-0">{profile.username}</h1>
-                {user?.id !== profile.id && (
+                {isFriend && (
+                  <p className="flex gap-2 text-slate-300">
+                    <CheckCircleIcon className="h-icon" />
+                    Freund
+                  </p>
+                )}
+                {!isFriend && user?.id !== profile.id && (
                   <Button
                     onClick={addFriend}
                     label="Freund hinzufügen"
                     contentType="icon"
                     icon={<UserPlusIcon className="h-icon" />}
+                    disabled={isPending}
                   />
                 )}
               </div>
@@ -115,18 +139,14 @@ export default function ProfilePage({ profile, bandsSeen = [] }) {
                   <p className="mb-0 text-2xl text-venom">{festivalsSeen?.length}</p>
                   <h2 className="text-sm font-normal mb-0">Festivals besucht</h2>
                 </div>
-                <div className="col-span-full p-6 rounded-lg bg-slate-800">
-                  <TopBands bands={bandsSeen.map(item => item.band)} />
-                </div>
+                <TopBands bands={bandsSeen.map(item => item.band)} />
                 <div className="col-span-full p-6 rounded-lg bg-slate-800">
                   <GenreChart bands={uniqueBandsSeen} />
                 </div>
                 <div className="col-span-full p-6 rounded-lg bg-slate-800">
                   <ConcertsChart concerts={concertsSeen} />
                 </div>
-                <div className="col-span-full p-6 rounded-lg bg-slate-800">
-                  <TopLocations locations={concertsSeen.map(item => item.location)} />
-                </div>
+                <TopLocations locations={concertsSeen.map(item => item.location)} />
               </div>
               {user && user?.id === profile.id && (
                 <div className="flex gap-3">

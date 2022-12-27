@@ -18,7 +18,7 @@ export interface IPagination {
   perPage: number
 }
 
-type Concert = {
+export type Concert = {
   readonly id: string
   date_start: string
   date_end?: string
@@ -27,7 +27,7 @@ type Concert = {
   location: Location
 }
 
-type Band = {
+export type Band = {
   readonly id: string
   name: string
   country: Country
@@ -43,6 +43,8 @@ type BandSeen = {
   readonly band_id: string
   readonly concert_id: string
   readonly user_id: string
+  band: Band
+  concert: Concert
 }
 
 type Genre = {
@@ -87,9 +89,11 @@ export type Invite = {
 }
 
 export type Friend = {
-  readonly user1: Profile
-  readonly user2: Profile
+  readonly sender: Profile
+  readonly receiver: Profile
   readonly created_at: string
+  pending: boolean
+  accepted_at: Date
 }
 
 export interface IConcertCard {
@@ -106,10 +110,14 @@ export interface IBandPage {
   concerts: ConcertWithBands[]
 }
 
+export interface IProfilePage {
+  profile: Profile
+  bandsSeen: BandSeen[]
+  friends: Friend[]
+}
+
 export interface IFriendsPage {
   profile: Profile
-  sentInvites: Invite[]
-  receivedInvites: Invite[]
   friends: Friend[]
 }
 

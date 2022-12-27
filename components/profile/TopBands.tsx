@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { ITopBands } from '../../models/types'
 
-export const TopBands: FC<ITopBands> = ({ bands = [] }) => {
+export const TopBands: FC<ITopBands> = ({ bands }) => {
   type TopBand = {
     id: string
     name: string
@@ -29,28 +29,33 @@ export const TopBands: FC<ITopBands> = ({ bands = [] }) => {
     }
     return comparison
   }
-  return (
-    <div>
-      <h2>Top Bands</h2>
-      <div className="flex gap-4 overflow-auto">
-        {topBands
-          .filter(item => item.count > 1)
-          .sort(compare)
-          .map(item => (
-            <div key={item.id} className="flex-shrink-0 w-22 overflow-hidden">
-              <div className="relative flex justify-center items-end h-24 mb-2">
-                <div
-                  className="w-8 rounded bg-venom"
-                  style={{ height: (item.count / highestCount) * 100 + '%' }}
-                />
-                <p className="absolute w-full pb-1 text-center mix-blend-difference">
-                  {item.count}
-                </p>
+
+  if (topBands.filter(item => item.count > 1).length > 0) {
+    return (
+      <div className="col-span-full p-6 rounded-lg bg-slate-800">
+        <h2>Top Bands</h2>
+        <div className="flex gap-4 overflow-auto">
+          {topBands
+            .filter(item => item.count > 1)
+            .sort(compare)
+            .map(item => (
+              <div key={item.id} className="flex-shrink-0 w-22 overflow-hidden">
+                <div className="relative flex justify-center items-end h-24 mb-2">
+                  <div
+                    className="w-8 rounded bg-venom"
+                    style={{ height: (item.count / highestCount) * 100 + '%' }}
+                  />
+                  <p className="absolute w-full pb-1 text-center mix-blend-difference">
+                    {item.count}
+                  </p>
+                </div>
+                <p className="text-center text-ellipsis overflow-hidden">{item.name}</p>
               </div>
-              <h3 className="text-center text-ellipsis overflow-hidden">{item.name}</h3>
-            </div>
-          ))}
+            ))}
+        </div>
       </div>
-    </div>
-  )
+    )
+  }
+
+  return null
 }

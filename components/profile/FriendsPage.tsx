@@ -6,8 +6,6 @@ import { FriendItem } from './FriendItem'
 
 export const FriendsPage: FC<IFriendsPage> = ({
   profile,
-  sentInvites,
-  receivedInvites,
   friends,
 }) => {
   return (
@@ -17,13 +15,12 @@ export const FriendsPage: FC<IFriendsPage> = ({
         <div className="grid grid-cols-2 gap-4">
           <FriendInvites
             profile={profile}
-            sentInvites={sentInvites || []}
-            receivedInvites={receivedInvites || []}
+            friends={friends}
           />
-          {friends.map(item => (
+          {friends.filter(item => !item.pending).map(item => (
             <FriendItem
-              key={item.user1.id + item.user2.id}
-              friend={item.user1.id === profile.id ? item.user2 : item.user1}
+              key={item.sender.id + item.receiver.id}
+              friend={item.sender.id === profile.id ? item.receiver : item.sender}
             />
           ))}
         </div>
