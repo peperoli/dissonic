@@ -145,7 +145,7 @@ export const FriendInvites: FC<IFriendInvites> = ({
     }
 
     getUser()
-  }, [profile])
+  }, [])
 
   if (user?.id === profile.id) {
     return (

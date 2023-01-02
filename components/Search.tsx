@@ -1,7 +1,15 @@
-import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/20/solid"
+import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/20/solid'
+import React, { FC } from 'react'
 
-export default function Search({ name, placeholder, query, setQuery }) {
-  function handleChange(event) {
+interface ISearch {
+  name: string
+  placeholder: string
+  query: string
+  setQuery: React.Dispatch<React.SetStateAction<string>>
+}
+
+export const Search: FC<ISearch> = ({ name, placeholder, query, setQuery }) => {
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     setQuery(event.target.value)
   }
   return (
@@ -14,7 +22,7 @@ export default function Search({ name, placeholder, query, setQuery }) {
         placeholder={placeholder}
         value={query}
         onChange={handleChange}
-        className="!pl-10"
+        className="min-w-48 !pl-10"
       />
       {query && (
         <button onClick={() => setQuery('')} className="btn btn-icon absolute right-0">
@@ -22,7 +30,9 @@ export default function Search({ name, placeholder, query, setQuery }) {
           <XMarkIcon className="h-icon" />
         </button>
       )}
-      <label htmlFor={name} className="sr-only">Suchen</label>
+      <label htmlFor={name} className="sr-only">
+        Suchen
+      </label>
     </div>
   )
 }

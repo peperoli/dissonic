@@ -170,6 +170,15 @@ export default function ConcertPage({ initialConcert, bands, locations }) {
         throw deleteBandsError
       }
 
+      const { error: deleteCommentsError } = await supabase
+        .from('comments')
+        .delete()
+        .eq('concert_id', concert.id)
+
+      if (deleteCommentsError) {
+        throw deleteCommentsError
+      }
+
       const { error: deleteConcertError } = await supabase.from('concerts').delete().eq('id', concert.id)
 
       if (deleteConcertError) {

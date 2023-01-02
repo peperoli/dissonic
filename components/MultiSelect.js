@@ -44,7 +44,7 @@ function MultiSelectOption({ option, selectedOptions, setSelectedOptions, setQue
   )
 }
 
-export default function MultiSelect({ name, options, selectedOptions, setSelectedOptions, alwaysOpen}) {
+export default function MultiSelect({ name, options, selectedOptions, setSelectedOptions, alwaysOpen, fullHeight}) {
   const [query, setQuery] = useState('')
 
   function handleChange(event) {
@@ -65,7 +65,7 @@ export default function MultiSelect({ name, options, selectedOptions, setSelecte
     return newArr
   }
   return (
-    <div className="relative w-full">
+    <div className={`w-full h-full${alwaysOpen && fullHeight ? ' absolute md:relative flex flex-col' : ' relative'}`}>
       {selectedOptions.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-2">
           {selectedOptions.map(selectedOption => (
@@ -93,7 +93,7 @@ export default function MultiSelect({ name, options, selectedOptions, setSelecte
         <label htmlFor={name} className="sr-only">{name}</label>
       </div>
       {(query || alwaysOpen) && (
-        <div className={`form-control w-full max-h-72 mt-1 p-2 rounded-lg bg-slate-700 overflow-auto z-20${alwaysOpen ? '' : ' absolute shadow-lg'}`}>
+        <div className={`form-control w-full mt-1 p-2 rounded-lg bg-slate-700 overflow-auto${alwaysOpen ? '' : ' absolute shadow-lg z-20'}${fullHeight ? ' max-h-full md:max-h-72' : ' max-h-72'}`}>
           {filteredOptions.length > 0 ? filteredOptions.map(option => (
             <MultiSelectOption
               key={option.id}

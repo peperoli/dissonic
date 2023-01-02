@@ -20,7 +20,7 @@ export const FriendsPage: FC<IFriendsPage> = ({
           {friends.filter(item => !item.pending).map(item => (
             <FriendItem
               key={item.sender.id + item.receiver.id}
-              friend={item.sender.id === profile.id ? item.receiver : item.sender}
+              friendData={item.sender.id === profile.id ? item.receiver : item.sender}
             />
           ))}
         </div>

@@ -27,6 +27,15 @@ export type Concert = {
   location: Location
 }
 
+export type Comment = {
+  readonly id: string
+  created_at: Date
+  concert_id: string
+  user_id: string
+  content: string
+  edited_at: Date
+}
+
 export type Band = {
   readonly id: string
   name: string

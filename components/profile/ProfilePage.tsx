@@ -14,10 +14,12 @@ import { TopBands } from './TopBands'
 import { TopLocations } from './TopLocations'
 import { ConcertsChart } from './ConcertsChart'
 import { IProfilePage } from '../../models/types'
+import { AddFriendModal } from './AddFriendModal'
 
 export const ProfilePage: FC<IProfilePage> = ({ profile, bandsSeen, friends }) => {
   const [editPassIsOpen, setEditPassIsOpen] = useState(false)
   const [editUsernameIsOpen, setEditUsernameIsOpen] = useState(false)
+  const [addFriendIsOpen, setAddFriendIsOpen] = useState(false)
   const [user, setUser] = useState<any | null>(null)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
 
@@ -26,9 +28,12 @@ export const ProfilePage: FC<IProfilePage> = ({ profile, bandsSeen, friends }) =
     return [...mapOfObjects.values()]
   }
 
+  const isOwnProfile = user && user.id === profile.id
   const isFriend =
+    isOwnProfile === false &&
     friends.find(
-      item => !item.pending && (item.sender.id === user?.id || item.receiver.id === user?.id)
+      item =>
+        item.pending === false && (item.sender.id === user?.id || item.receiver.id === user?.id)
     ) != undefined
   const isPending =
     friends.find(
@@ -72,24 +77,6 @@ export const ProfilePage: FC<IProfilePage> = ({ profile, bandsSeen, friends }) =
       downloadAvatar()
     }
   }, [profile])
-
-  async function addFriend() {
-    try {
-      const { error } = await supabase
-        .from('friends')
-        .insert({ sender_id: user.id, receiver_id: profile.id })
-
-      if (error) {
-        throw error
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        console.log(error.message)
-      } else {
-        console.log('Unexpected error', error)
-      }
-    }
-  }
   return (
     <PageWrapper>
       <>
@@ -118,7 +105,7 @@ export const ProfilePage: FC<IProfilePage> = ({ profile, bandsSeen, friends }) =
                 )}
                 {!isFriend && user?.id !== profile.id && (
                   <Button
-                    onClick={addFriend}
+                    onClick={() => setAddFriendIsOpen(true)}
                     label="Freund hinzufügen"
                     contentType="icon"
                     icon={<UserPlusIcon className="h-icon" />}
@@ -148,7 +135,7 @@ export const ProfilePage: FC<IProfilePage> = ({ profile, bandsSeen, friends }) =
                 </div>
                 <TopLocations locations={concertsSeen.map(item => item.location)} />
               </div>
-              {user && user?.id === profile.id && (
+              {isOwnProfile && (
                 <div className="flex gap-3">
                   <Button label="Profil bearbeiten" onClick={() => setEditUsernameIsOpen(true)} />
                   <Button label="Passwort ändern" onClick={() => setEditPassIsOpen(true)} />
@@ -170,6 +157,12 @@ export const ProfilePage: FC<IProfilePage> = ({ profile, bandsSeen, friends }) =
         <Modal isOpen={editPassIsOpen} setIsOpen={setEditPassIsOpen}>
           <EditPasswordForm setIsOpen={setEditPassIsOpen} />
         </Modal>
+        <AddFriendModal
+          isOpen={addFriendIsOpen}
+          setIsOpen={setAddFriendIsOpen}
+          user={user}
+          profile={profile}
+        />
       </>
     </PageWrapper>
   )
