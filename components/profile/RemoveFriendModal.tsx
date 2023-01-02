@@ -1,32 +1,19 @@
 import supabase from '../../utils/supabase'
 import { Button } from '../Button'
 import Modal from '../Modal'
-import React, { FC, useEffect, useState } from 'react'
-import { Profile } from '../../models/types'
+import React, { FC, useState } from 'react'
+import { Profile, User } from '../../models/types'
 
 interface IRemoveFriendModal {
   isOpen: boolean
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
   friend: Profile
   setFriend: React.Dispatch<React.SetStateAction<Profile | null>>
+  user: User
 }
 
-export const RemoveFriendModal: FC<IRemoveFriendModal> = ({ isOpen, setIsOpen, friend, setFriend }) => {
+export const RemoveFriendModal: FC<IRemoveFriendModal> = ({ isOpen, setIsOpen, friend, setFriend, user }) => {
   const [loading, setLoading] = useState(false)
-  const [user, setUser] = useState<any | null>(null)
-
-  useEffect(() => {
-    async function getUser() {
-      const {
-        data: { user: userData },
-      } = await supabase.auth.getUser()
-      if (userData) {
-        setUser(userData)
-      }
-    }
-
-    getUser()
-  }, [])
   
   async function removeFriend() {
     try {

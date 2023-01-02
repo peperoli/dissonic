@@ -21,6 +21,7 @@ export const FriendsPage: FC<IFriendsPage> = ({
             <FriendItem
               key={item.sender.id + item.receiver.id}
               friendData={item.sender.id === profile.id ? item.receiver : item.sender}
+              profile={profile}
             />
           ))}
         </div>

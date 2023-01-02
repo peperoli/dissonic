@@ -2,18 +2,23 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, FC } from 'react'
 import { UserIcon, UserMinusIcon } from '@heroicons/react/20/solid'
 import { Profile } from '../../models/types'
 import supabase from '../../utils/supabase'
 import { Button } from '../Button'
 import { RemoveFriendModal } from './RemoveFriendModal'
 
-export const FriendItem = ({ friendData }: { friendData: Profile }) => {
+interface IFriendItem {
+  friendData: Profile
+  profile: Profile
+}
+
+export const FriendItem: FC<IFriendItem> = ({ friendData, profile }) => {
   const [friend, setFriend] = useState<Profile | null>(friendData)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [isOpen, setIsOpen] = useState(false)
-  
+
   const avatarPath = friend ? friend.avatar_path : null
 
   useEffect(() => {
@@ -21,7 +26,7 @@ export const FriendItem = ({ friendData }: { friendData: Profile }) => {
       if (avatarPath) {
         try {
           const { data, error } = await supabase.storage.from('avatars').download(avatarPath)
-  
+
           if (error) {
             throw error
           }
@@ -42,6 +47,21 @@ export const FriendItem = ({ friendData }: { friendData: Profile }) => {
     }
   }, [avatarPath])
 
+  const [user, setUser] = useState<any | null>(null)
+
+  useEffect(() => {
+    async function getUser() {
+      const {
+        data: { user: userData },
+      } = await supabase.auth.getUser()
+      if (userData) {
+        setUser(userData)
+      }
+    }
+
+    getUser()
+  }, [])
+
   if (friend) {
     return (
       <>
@@ -61,16 +81,26 @@ export const FriendItem = ({ friendData }: { friendData: Profile }) => {
             </div>
             {friend.username}
           </Link>
-          <Button
-            label="Freund entfernen"
-            onClick={() => setIsOpen(true)}
-            contentType="icon"
-            icon={<UserMinusIcon className="h-icon" />}
-            size="small"
-            danger
-          />
+          {user?.id === profile.id && (
+            <Button
+              label="Freund entfernen"
+              onClick={() => setIsOpen(true)}
+              contentType="icon"
+              icon={<UserMinusIcon className="h-icon" />}
+              size="small"
+              danger
+            />
+          )}
         </div>
-        {isOpen && <RemoveFriendModal isOpen={isOpen} setIsOpen={setIsOpen} friend={friend} setFriend={setFriend} />}
+        {isOpen && (
+          <RemoveFriendModal
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            friend={friend}
+            setFriend={setFriend}
+            user={user}
+          />
+        )}
       </>
     )
   }

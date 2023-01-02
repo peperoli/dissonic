@@ -88,7 +88,7 @@ export default function BandsPage({ initialBands, countries, genres }) {
           )}
         </div>
         <Table entriesCount={filteredBands.filter(filterRule).length}>
-          <div className="flex md:grid md:grid-cols-3 gap-2 md:gap-4 -mx-4 px-4 overflow-x-auto md:overflow-visible">
+          <div className="flex md:grid md:grid-cols-3 gap-2 md:gap-4 -mx-4 px-4 overflow-x-auto md:overflow-visible scrollbar-hidden">
             <Search name="searchBands" placeholder="Bands" query={query} setQuery={setQuery} />
             <FilterButton
               name="countries"

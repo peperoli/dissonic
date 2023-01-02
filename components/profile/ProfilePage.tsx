@@ -83,8 +83,8 @@ export const ProfilePage: FC<IProfilePage> = ({ profile, bandsSeen, friends }) =
         <main className="p-4 md:p-8 w-full max-w-2xl">
           {profile ? (
             <div>
-              <div className="flex items-center gap-4 mb-6">
-                <div className="relative flex justify-center items-center w-16 h-16 rounded-full text-lg text-slate-850 bg-blue-300">
+              <div className="flex flex-wrap items-center gap-4 mb-6">
+                <div className="relative flex-shrink-0 flex justify-center items-center w-16 h-16 rounded-full text-lg text-slate-850 bg-blue-300">
                   {avatarUrl ? (
                     <Image
                       src={avatarUrl}

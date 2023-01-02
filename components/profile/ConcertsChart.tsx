@@ -26,17 +26,17 @@ export const ConcertsChart: FC<IConcertsChart> = ({ concerts }) => {
   return (
     <div>
       <h2>Besuchte Konzerte</h2>
-      <div className="flex gap-4">
+      <div className="flex gap-4 -mx-6 px-6 overflow-auto scrollbar-hidden">
         {years.sort(compare).map(item => (
-          <div key={item.year} className="flex-1 overflow-hidden">
+          <div key={item.year} className="flex-1 flex flex-col items-center">
             <div className="relative flex justify-center items-end h-24 mb-2">
               <div
-                className="w-8 rounded bg-venom"
+                className="w-6 md:w-8 rounded bg-venom"
                 style={{ height: (item.count / highestCount) * 100 + '%' }}
               />
               <p className="absolute w-full pb-1 text-center mix-blend-difference">{item.count}</p>
             </div>
-            <p className="text-center text-ellipsis overflow-hidden">{item.year}</p>
+            <p className="text-vertical text-center text-sm">{item.year}</p>
           </div>
         ))}
       </div>

@@ -171,7 +171,7 @@ export default function HomePage({ initialConcerts, bands, locations }) {
               </button>
             )}
           </div>
-          <div className="flex md:grid md:grid-cols-2 gap-2 md:gap-4 -mx-4 px-4 overflow-x-auto md:overflow-visible">
+          <div className="flex md:grid md:grid-cols-2 gap-2 md:gap-4 -mx-4 px-4 overflow-x-auto md:overflow-visible scrollbar-hidden">
             <FilterButton
               name="bands"
               options={bands}
