@@ -87,8 +87,8 @@ const InviteItem = ({ inviteData, type }: { inviteData: Invite; type: 'sent' | '
 
   if (invite && profile) {
     return (
-      <div className="flex items-center gap-4">
-        <Link href={`/users/${profile.username}`} className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2 md:gap-4">
+        <Link href={`/users/${profile.username}`} className="flex items-center gap-2 basis-full md:basis-auto">
           <div className="relative flex-shrink-0 flex justify-center items-center w-8 h-8 rounded-full bg-blue-300">
             {avatarUrl ? (
               <Image
@@ -103,7 +103,7 @@ const InviteItem = ({ inviteData, type }: { inviteData: Invite; type: 'sent' | '
           </div>
           {profile.username}
         </Link>
-        <div className="flex gap-2 ml-auto">
+        <div className="flex gap-2 md:ml-auto">
           {type === 'sent' ? (
             <Button onClick={cancelInvite} label="Anfrage zurückziehen" size="small" />
           ) : (
@@ -151,7 +151,7 @@ export const FriendInvites: FC<IFriendInvites> = ({
     return (
       <div className="col-span-full p-6 rounded-lg bg-slate-800">
         <h2 className="sr-only">Freundschaftsanfragen</h2>
-        <div className="grid gap-2 mb-4">
+        <div className="grid gap-4 mb-6">
           <h3 className="text-slate-300">Empfangene Anfragen</h3>
           {receivedInvites.length > 0 ? (
             receivedInvites.map(item => (
@@ -161,7 +161,7 @@ export const FriendInvites: FC<IFriendInvites> = ({
             <p className="text-sm text-slate-300">Du hast keine ausstehende Anfragen.</p>
           )}
         </div>
-        <div className="grid gap-2">
+        <div className="grid gap-4">
           <h3 className="text-slate-300">Gesendete Anfragen</h3>
           {sentInvites.length > 0 ? (
             sentInvites.map(item => (

@@ -6,7 +6,7 @@ import Modal from '../Modal'
 import AddConcertForm from "./AddConcertForm"
 import { useState, useEffect } from 'react'
 import { Button } from '../Button'
-import { ArrowUturnLeftIcon, ChevronDownIcon, EyeIcon, GlobeAltIcon, PlusIcon } from '@heroicons/react/20/solid'
+import { ArrowUturnLeftIcon, ChevronDownIcon, EyeIcon, GlobeAltIcon, PlusIcon, UserIcon } from '@heroicons/react/20/solid'
 import { PageWrapper } from '../layout/PageWrapper'
 import { toast } from 'react-toastify'
 import FilterButton from '../FilterButton'
@@ -188,7 +188,8 @@ export default function HomePage({ initialConcerts, bands, locations }) {
           <div className="flex items-center gap-4">
             {user && (
               <fieldset className="flex rounded-md bg-slate-800">
-                <label className={`px-2 py-1 rounded-md${view === 'global' ? ' text-venom bg-slate-700' : ''}`}>
+                <label className={`flex items-center gap-2 px-2 py-1 rounded-md${view === 'global' ? ' text-venom bg-slate-700 shadow-lg' : ''}`}>
+                  <GlobeAltIcon className="h-icon" />
                   <span>Alle</span>
                   <input
                     type="radio"
@@ -199,7 +200,8 @@ export default function HomePage({ initialConcerts, bands, locations }) {
                     className="sr-only"
                   />
                 </label>
-                <label className={`px-2 py-1 rounded-md${view === 'user' ? ' text-venom bg-slate-700' : ''}`}>
+                <label className={`flex items-center gap-2 px-2 py-1 rounded-md${view === 'user' ? ' text-venom bg-slate-700 shadow-lg' : ''}`}>
+                  <UserIcon className="h-icon" />
                   <span>Gesehene</span>
                   <input
                     type="radio"
