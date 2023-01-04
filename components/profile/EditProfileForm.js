@@ -40,7 +40,7 @@ function FileInput({ file, setFile}) {
   )
 }
 
-export default function EditProfileForm({ setIsOpen, setAvatarUrl, username }) {
+export default function EditProfileForm({ setIsOpen, avatarUrl, setAvatarUrl, username }) {
   const [file, setFile] = useState(null)
   const [value, setValue] = useState(username)
   const [usernames, setUsernames] = useState([])

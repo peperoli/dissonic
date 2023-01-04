@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import PageWrapper from "./layout/PageWrapper"
+import { PageWrapper } from "./layout/PageWrapper"
 import supabase from "../utils/supabase"
 
 export default function LoginPage() {

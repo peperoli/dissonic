@@ -11,7 +11,7 @@ async function fetchData() {
 
   const { data: bands } = await supabase.from('bands').select('*').order('name')
 
-  const { data: locations } = await supabase.from('locations').select('id,name')
+  const { data: locations } = await supabase.from('locations').select('id, name').order('name')
 
   return { concerts, bands, locations }
 }

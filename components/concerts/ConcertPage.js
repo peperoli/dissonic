@@ -5,7 +5,7 @@ import Link from "next/link"
 import EditConcertForm from "./EditConcertForm"
 import { ArrowLeftIcon, CalendarIcon, MapPinIcon, UsersIcon } from "@heroicons/react/20/solid"
 import { useEffect, useState } from "react"
-import PageWrapper from "../layout/PageWrapper"
+import { PageWrapper } from "../layout/PageWrapper"
 import Modal from "../Modal"
 import { Button } from "../Button"
 import dayjs from "dayjs"
@@ -168,6 +168,15 @@ export default function ConcertPage({ initialConcert, bands, locations }) {
 
       if (deleteBandsError) {
         throw deleteBandsError
+      }
+
+      const { error: deleteCommentsError } = await supabase
+        .from('comments')
+        .delete()
+        .eq('concert_id', concert.id)
+
+      if (deleteCommentsError) {
+        throw deleteCommentsError
       }
 
       const { error: deleteConcertError } = await supabase.from('concerts').delete().eq('id', concert.id)

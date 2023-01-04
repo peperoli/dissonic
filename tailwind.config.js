@@ -36,6 +36,9 @@ module.exports = {
       width: {
         22: '5.5rem',
       },
+      minWidth: {
+        48: '12rem',
+      },
       height: {
         'icon': '1.33em',
       },

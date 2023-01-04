@@ -1,13 +1,92 @@
-import Link from "next/link";
-import Logo from "./Logo";
-import supabase from "../../utils/supabase";
-import { Menu } from '@headlessui/react'
-import { useRouter } from "next/navigation";
-import { ArrowRightOnRectangleIcon, UserIcon } from "@heroicons/react/20/solid"
-import Image from "next/image";
+'use client'
 
-export default function NavBar({ profile, setProfile, avatarUrl }) {
+import Link from 'next/link'
+import Logo from './Logo'
+import supabase from '../../utils/supabase'
+import { Menu } from '@headlessui/react'
+import { useRouter } from 'next/navigation'
+import { ArrowRightOnRectangleIcon, UserGroupIcon, UserIcon } from '@heroicons/react/20/solid'
+import Image from 'next/image'
+import { useState, useEffect } from 'react'
+
+export default function NavBar() {
+  const [profile, setProfile] = useState(null)
+  const [avatarUrl, setAvatarUrl] = useState(null)
+  const [receivedInvitesCount, setReceivedInvitesCount] = useState(0)
+
   const router = useRouter()
+
+  useEffect(() => {
+    async function getProfile() {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+
+        if (user) {
+          const {
+            data: profile,
+            error: profileError,
+            status,
+          } = await supabase.from('profiles').select('*').eq('id', user.id).single()
+
+          if (profileError) {
+            throw profileError
+          }
+
+          if (profile && status !== 406) {
+            setProfile(profile)
+          }
+        }
+      } catch (error) {
+        alert(error.message)
+      }
+    }
+
+    getProfile()
+  }, [])
+
+  useEffect(() => {
+    async function downloadAvatar() {
+      try {
+        const { data, error } = await supabase.storage.from('avatars').download(profile.avatar_path)
+
+        if (error) {
+          throw error
+        }
+        const url = URL.createObjectURL(data)
+        setAvatarUrl(url)
+      } catch (error) {
+        console.error(error.message)
+      }
+    }
+
+    if (profile?.avatar_path) {
+      downloadAvatar()
+    }
+
+    async function getReceivedInvites() {
+      try {
+        const { count, error } = await supabase
+          .from('friends')
+          .select('*', { count: 'exact', head: true })
+          .eq('receiver_id', profile.id)
+          .eq('pending', true)
+
+        if (error) {
+          throw error
+        }
+
+        setReceivedInvitesCount(count)
+      } catch (error) {
+        console.error(error.message)
+      }
+    }
+
+    if (profile) {
+      getReceivedInvites()
+    }
+  }, [profile])
 
   async function signOut() {
     try {
@@ -50,7 +129,9 @@ export default function NavBar({ profile, setProfile, avatarUrl }) {
               {({ active }) => (
                 <button
                   onClick={() => router.push(`/users/${profile.username}`)}
-                  className={`flex gap-2 w-full px-2 py-1 rounded${active ? ' bg-slate-500' : ''}`}
+                  className={`flex items-center gap-2 w-full px-2 py-1 rounded${
+                    active ? ' bg-slate-500' : ''
+                  }`}
                 >
                   <UserIcon className="h-icon text-slate-300" />
                   Profil
@@ -60,7 +141,25 @@ export default function NavBar({ profile, setProfile, avatarUrl }) {
             <Menu.Item>
               {({ active }) => (
                 <button
-                  className={`flex gap-2 w-full px-2 py-1 rounded text-left${
+                  onClick={() => router.push(`/users/${profile.username}/friends`)}
+                  className={`flex items-center gap-2 w-full px-2 py-1 rounded${
+                    active ? ' bg-slate-500' : ''
+                  }`}
+                >
+                  <UserGroupIcon className="h-icon text-slate-300" />
+                  Freunde
+                  {receivedInvitesCount > 0 && (
+                    <div className="flex justify-center items-center px-2 py-0.5 rounded font-bold text-[0.625rem] text-slate-850 bg-venom  shadow-shine shadow-venom/50">
+                      {receivedInvitesCount}
+                    </div>
+                  )}
+                </button>
+              )}
+            </Menu.Item>
+            <Menu.Item>
+              {({ active }) => (
+                <button
+                  className={`flex items-center gap-2 w-full px-2 py-1 rounded text-left${
                     active ? ' bg-slate-500' : ''
                   }`}
                   onClick={signOut}
@@ -73,7 +172,9 @@ export default function NavBar({ profile, setProfile, avatarUrl }) {
           </Menu.Items>
         </Menu>
       ) : (
-        <Link href="/login" className="btn btn-secondary">Anmelden</Link>
+        <Link href="/login" className="btn btn-secondary">
+          Anmelden
+        </Link>
       )}
     </nav>
   )

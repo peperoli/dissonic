@@ -1,13 +1,13 @@
 "use client"
 
-import PageWrapper from "../layout/PageWrapper"
+import { PageWrapper } from "../layout/PageWrapper"
 import { PlusIcon } from "@heroicons/react/20/solid"
 import Table from "../Table"
 import TableRow from "../TableRow"
 import AddLocationForm from "./AddLocationForm"
 import Modal from "../Modal"
 import { useState } from "react"
-import Search from "../Search"
+import { Search } from "../Search"
 import { Button } from "../Button"
 import useMediaQuery from "../../hooks/useMediaQuery"
 

@@ -6,8 +6,8 @@ import Modal from '../Modal'
 import AddConcertForm from "./AddConcertForm"
 import { useState, useEffect } from 'react'
 import { Button } from '../Button'
-import { ArrowUturnLeftIcon, ChevronDownIcon, EyeIcon, GlobeAltIcon, PlusIcon } from '@heroicons/react/20/solid'
-import PageWrapper from '../layout/PageWrapper'
+import { ArrowUturnLeftIcon, ChevronDownIcon, EyeIcon, GlobeAltIcon, PlusIcon, UserIcon } from '@heroicons/react/20/solid'
+import { PageWrapper } from '../layout/PageWrapper'
 import { toast } from 'react-toastify'
 import FilterButton from '../FilterButton'
 import useMediaQuery from '../../hooks/useMediaQuery'
@@ -24,10 +24,23 @@ export default function HomePage({ initialConcerts, bands, locations }) {
   const [profiles, setProfiles] = useState([])
 
   const notifyInsert = () => toast.success("Konzert erfolgreich hinzugefügt!")
-  const filteredLength = concerts.filter(filterRule).length !== concerts.length ? concerts.filter(filterRule).length : null
+
+  function viewFilter(item) {
+    if (view === 'user') {
+      return item.bands.some(band =>
+          bandsSeen.some(
+            bandSeen =>
+              bandSeen.concert_id === item.id &&
+              bandSeen.band_id === band.id &&
+              bandSeen.user_id === user.id
+          )
+        )
+    }
+    return true
+  }
 
   function filterRule(item) {
-    let [bandFilter, locationFilter, viewFilter] = [true, true, true]
+    let [bandFilter, locationFilter] = [true, true]
     const selectedBandIds = selectedBands.map(item => item.id)
     const selectedLocationIds = selectedLocations.map(item => item.id)
     if (selectedBandIds.length > 0) {
@@ -36,18 +49,11 @@ export default function HomePage({ initialConcerts, bands, locations }) {
     if (selectedLocationIds.length > 0) {
       locationFilter = selectedLocationIds.includes(item.location?.id)
     }
-    if (view === 'user') {
-      viewFilter = item.bands.some(band =>
-        bandsSeen.some(
-          bandSeen =>
-            bandSeen.concert_id === item.id &&
-            bandSeen.band_id === band.id &&
-            bandSeen.user_id === user.id
-        )
-      )
-    }
-    return bandFilter && locationFilter && viewFilter
+
+    return bandFilter && locationFilter
   }
+
+  const filteredLength = concerts.filter(filterRule && viewFilter).length !== concerts.length ? concerts.filter(filterRule && viewFilter).length : null
 
   function compare(a, b) {
     let comparison = 0
@@ -158,14 +164,14 @@ export default function HomePage({ initialConcerts, bands, locations }) {
             <div className="text-sm text-slate-300">
               {typeof filteredLength === 'number' && <>{filteredLength}&nbsp;von&nbsp;</>}{concerts.length}&nbsp;Einträge
             </div>
-            {typeof filteredLength === 'number' && (
-              <button onClick={resetAll} className="flex gap-2 px-2 py-1 rounded-md text-sm hover:bg-slate-800">
+            {concerts.filter(filterRule).length !== concerts.length && (
+              <button onClick={resetAll} className="btn btn-secondary btn-small">
                 <ArrowUturnLeftIcon className="h-icon text-slate-300" />
                 Zurücksetzen
               </button>
             )}
           </div>
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="flex md:grid md:grid-cols-2 gap-2 md:gap-4 -mx-4 px-4 overflow-x-auto md:overflow-visible scrollbar-hidden">
             <FilterButton
               name="bands"
               options={bands}
@@ -181,10 +187,10 @@ export default function HomePage({ initialConcerts, bands, locations }) {
           </div>
           <div className="flex items-center gap-4">
             {user && (
-              <fieldset className="flex p-1 rounded-md bg-slate-800">
-                <label className={`flex justify-center items-center w-6 h-6 rounded${view === 'global' ? ' text-venom bg-slate-700' : ''}`}>
-                  <GlobeAltIcon className="text-sm h-icon" />
-                  <span className="sr-only">Alle Konzerte anzeigen</span>
+              <fieldset className="flex rounded-md bg-slate-800">
+                <label className={`flex items-center gap-2 px-2 py-1 rounded-md${view === 'global' ? ' text-venom bg-slate-700 shadow-lg' : ''}`}>
+                  <GlobeAltIcon className="h-icon" />
+                  <span>Alle</span>
                   <input
                     type="radio"
                     name="view"
@@ -194,9 +200,9 @@ export default function HomePage({ initialConcerts, bands, locations }) {
                     className="sr-only"
                   />
                 </label>
-                <label className={`flex justify-center items-center w-6 h-6 rounded${view === 'user' ? ' text-venom bg-slate-700' : ''}`}>
-                  <EyeIcon className="text-sm h-icon" />
-                  <span className="sr-only">Nur gesehene Konzerte anzeigen</span>
+                <label className={`flex items-center gap-2 px-2 py-1 rounded-md${view === 'user' ? ' text-venom bg-slate-700 shadow-lg' : ''}`}>
+                  <UserIcon className="h-icon" />
+                  <span>Gesehene</span>
                   <input
                     type="radio"
                     name="view"
@@ -224,7 +230,7 @@ export default function HomePage({ initialConcerts, bands, locations }) {
           {typeof filteredLength === 'number' && filteredLength === 0 ? (
             <div>Blyat! Keine Einträge gefunden.</div>
           ) : (
-            concerts.filter(filterRule).sort(compare).map(concert => (
+            concerts.filter(filterRule && viewFilter).sort(compare).map(concert => (
               <ConcertCard
                 key={concert.id}
                 concert={concert}

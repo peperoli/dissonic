@@ -4,10 +4,10 @@ import { useState } from 'react'
 import Modal from '../Modal'
 import AddBandForm from './AddBandForm'
 import { ArrowUturnLeftIcon, PlusIcon } from '@heroicons/react/20/solid'
-import PageWrapper from '../layout/PageWrapper'
+import { PageWrapper } from '../layout/PageWrapper'
 import Table from '../Table'
 import TableRow from '../TableRow'
-import Search from '../Search'
+import { Search } from '../Search'
 import FilterButton from '../FilterButton'
 import { Button } from '../Button'
 import useMediaQuery from '../../hooks/useMediaQuery'
@@ -88,7 +88,7 @@ export default function BandsPage({ initialBands, countries, genres }) {
           )}
         </div>
         <Table entriesCount={filteredBands.filter(filterRule).length}>
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="flex md:grid md:grid-cols-3 gap-2 md:gap-4 -mx-4 px-4 overflow-x-auto md:overflow-visible scrollbar-hidden">
             <Search name="searchBands" placeholder="Bands" query={query} setQuery={setQuery} />
             <FilterButton
               name="countries"

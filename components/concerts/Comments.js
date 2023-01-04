@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import supabase from '../../utils/supabase'
 import dayjs from 'dayjs'
 import { PencilIcon, TrashIcon, UserIcon } from '@heroicons/react/20/solid'
-import DeleteCommentDialog from './DeleteCommentDialog'
+import { DeleteCommentModal } from './DeleteCommentModal'
 import Image from 'next/image'
 const relativeTime = require('dayjs/plugin/relativeTime')
 dayjs.extend(relativeTime)
@@ -136,7 +136,7 @@ function Comment({ comment, comments, setComments, profiles, user }) {
           </div>
         </div>
       </div>
-      <DeleteCommentDialog
+      <DeleteCommentModal
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         comment={comment}
