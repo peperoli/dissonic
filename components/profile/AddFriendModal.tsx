@@ -27,9 +27,9 @@ export const AddFriendModal: FC<IAddFriendModal> = ({ isOpen, setIsOpen, user, p
       setIsOpen(false)
     } catch (error) {
       if (error instanceof Error) {
-        console.log(error.message)
+        console.error(error.message)
       } else {
-        console.log('Unexpected error', error)
+        console.error('Unexpected error', error)
       }
     } finally {
       setLoading(false)

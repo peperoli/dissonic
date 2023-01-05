@@ -32,9 +32,9 @@ export const RemoveFriendModal: FC<IRemoveFriendModal> = ({ isOpen, setIsOpen, f
       setIsOpen(false)
     } catch (error) {
       if (error instanceof Error) {
-        console.log(error.message)
+        console.error(error.message)
       } else {
-        console.log('Unexpected error', error)
+        console.error('Unexpected error', error)
       }
     } finally {
       setLoading(false)

@@ -2,8 +2,7 @@
 
 import supabase from "../../utils/supabase"
 import { ConcertCard} from './ConcertCard'
-import Modal from '../Modal'
-import AddConcertForm from "./AddConcertForm"
+import { AddConcertForm } from "./AddConcertForm"
 import { useState, useEffect } from 'react'
 import { Button } from '../Button'
 import { ArrowUturnLeftIcon, ChevronDownIcon, EyeIcon, GlobeAltIcon, PlusIcon, UserIcon } from '@heroicons/react/20/solid'
@@ -242,15 +241,14 @@ export default function HomePage({ initialConcerts, bands, locations }) {
           )}
         </div>
       </main>
-      <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-        <AddConcertForm
-          bands={bands}
-          locations={locations}
-          setIsOpen={setIsOpen}
-          concerts={concerts}
-          setConcerts={setConcerts}
-        />
-      </Modal>
+      <AddConcertForm
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        bands={bands}
+        locations={locations}
+        concerts={concerts}
+        setConcerts={setConcerts}
+      />
     </PageWrapper>
   )
 }

@@ -28,7 +28,7 @@ async function fetchData(params) {
   }
 
   if (concertsError) {
-    console.log(concertsError)
+    console.error(concertsError)
   }
 
   return { band, countries, genres, concerts }

@@ -23,7 +23,7 @@ export const ProfilePage: FC<IProfilePage> = ({ profile, bandsSeen, friends }) =
   const [user, setUser] = useState<any | null>(null)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
 
-  function unique(array: { id: string }[]): any[] {
+  function unique(array: { id: string | number }[]): any[] {
     const mapOfObjects = new Map(array.map(item => [item.id, item]))
     return [...mapOfObjects.values()]
   }
@@ -64,9 +64,9 @@ export const ProfilePage: FC<IProfilePage> = ({ profile, bandsSeen, friends }) =
         setAvatarUrl(url)
       } catch (error) {
         if (error instanceof Error) {
-          console.log(error.message)
+          console.error(error.message)
         } else {
-          console.log('Unexpected error', error)
+          console.error('Unexpected error', error)
         }
       }
     }

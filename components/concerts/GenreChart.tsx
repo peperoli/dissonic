@@ -4,7 +4,7 @@ import { Button } from '../Button'
 
 export const GenreChart: FC<IGenreChart> = ({ bands }) => {
   type TopGenre = {
-    id: string
+    readonly id: number
     name: string
     count: number
   }

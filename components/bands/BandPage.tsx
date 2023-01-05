@@ -39,9 +39,9 @@ export const BandPage: FC<IBandPage> = ({ initialBand, countries, genres, concer
       router.push('/bands')
     } catch (error) {
       if (error instanceof Error) {
-        console.log(error.message)
+        console.error(error.message)
       } else {
-        console.log('Unexpected error', error)
+        console.error('Unexpected error', error)
       }
     }
   }

@@ -3,7 +3,7 @@ import { ITopBands } from '../../models/types'
 
 export const TopBands: FC<ITopBands> = ({ bands }) => {
   type TopBand = {
-    id: string
+    readonly id: number
     name: string
     count: number
   }

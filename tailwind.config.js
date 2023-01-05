@@ -23,6 +23,7 @@ module.exports = {
         850: '#1F282E',
       },
       red: '#F78F6E',
+      yellow: '#EEF162',
       black: '#000',
       transparent: 'transparent',
     },

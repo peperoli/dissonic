@@ -1,5 +1,5 @@
 export interface IButton {
-  onClick: () => void
+  onClick?: () => void
   type?: 'button' | 'submit' | 'reset' | undefined
   label: string
   style?: 'primary' | 'secondary'
@@ -28,7 +28,7 @@ export type Concert = {
 }
 
 export type Comment = {
-  readonly id: string
+  readonly id: number
   created_at: Date
   concert_id: string
   user_id: string
@@ -37,7 +37,7 @@ export type Comment = {
 }
 
 export type Band = {
-  readonly id: string
+  readonly id: number
   name: string
   country: Country
 }
@@ -46,18 +46,18 @@ type WithBands = {
   bands: Band[]
 }
 
-type ConcertWithBands = Concert & WithBands
+export type ConcertWithBands = Concert & WithBands
 
 type BandSeen = {
-  readonly band_id: string
+  readonly band_id: number
   readonly concert_id: string
   readonly user_id: string
   band: Band
   concert: Concert
 }
 
-type Genre = {
-  readonly id: string
+export type Genre = {
+  readonly id: number
   readonly name: string
 }
 
@@ -67,14 +67,14 @@ type WithGenres = {
 
 type BandWithGenres = Band & WithGenres
 
-type Location = {
-  readonly id: string
+export type Location = {
+  readonly id: number
   name: string
   city: string
 }
 
-type Country = {
-  readonly id: string
+export type Country = {
+  readonly id: number
   readonly name: string
   readonly iso2: string
 }
@@ -104,6 +104,8 @@ export type Friend = {
   pending: boolean
   accepted_at: Date
 }
+
+export type Option = Band | Genre
 
 export interface IConcertCard {
   concert: ConcertWithBands

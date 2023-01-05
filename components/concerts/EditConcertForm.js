@@ -1,7 +1,7 @@
 import { useState } from "react"
 import supabase from "../../utils/supabase"
 import { Button } from "../Button"
-import MultiSelect from "../MultiSelect"
+import { MultiSelect } from "../MultiSelect"
 
 export default function EditConcertForm({ concert, bands, locations, setIsOpen, setConcert }) {
   const [selectedBands, setSelectedBands] = useState(concert.bands || [])

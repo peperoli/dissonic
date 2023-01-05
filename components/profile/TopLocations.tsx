@@ -4,7 +4,7 @@ import { ITopLocations } from '../../models/types'
 
 export const TopLocations: FC<ITopLocations> = ({ locations = [] }) => {
   type TopLocation = {
-    id: string
+    readonly id: number
     name: string
     count: number
   }

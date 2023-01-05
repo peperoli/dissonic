@@ -1,6 +1,6 @@
 import { ArrowUturnLeftIcon, ChevronDownIcon, XMarkIcon } from '@heroicons/react/20/solid'
 import { Button } from './Button'
-import MultiSelect from './MultiSelect'
+import { MultiSelect } from './MultiSelect'
 import { Popover } from '@headlessui/react'
 
 export default function FilterButton({ name, options, selectedOptions, setSelectedOptions }) {
