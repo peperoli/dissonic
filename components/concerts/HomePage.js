@@ -53,7 +53,7 @@ export default function HomePage({ initialConcerts, bands, locations }) {
     return bandFilter && locationFilter
   }
 
-  const filteredLength = concerts.filter(filterRule && viewFilter).length !== concerts.length ? concerts.filter(filterRule && viewFilter).length : null
+  const filteredLength = concerts.filter(filterRule).filter(viewFilter).length
 
   function compare(a, b) {
     let comparison = 0
@@ -162,7 +162,7 @@ export default function HomePage({ initialConcerts, bands, locations }) {
         <div className="grid gap-4">
           <div className="flex items-center gap-4">
             <div className="text-sm text-slate-300">
-              {typeof filteredLength === 'number' && <>{filteredLength}&nbsp;von&nbsp;</>}{concerts.length}&nbsp;Einträge
+              {filteredLength !== concerts.length && `${filteredLength} von `}{concerts.length}&nbsp;Einträge
             </div>
             {concerts.filter(filterRule).length !== concerts.length && (
               <button onClick={resetAll} className="btn btn-secondary btn-small">
@@ -230,7 +230,7 @@ export default function HomePage({ initialConcerts, bands, locations }) {
           {typeof filteredLength === 'number' && filteredLength === 0 ? (
             <div>Blyat! Keine Einträge gefunden.</div>
           ) : (
-            concerts.filter(filterRule && viewFilter).sort(compare).map(concert => (
+            concerts.filter(filterRule).filter(viewFilter).sort(compare).map(concert => (
               <ConcertCard
                 key={concert.id}
                 concert={concert}
