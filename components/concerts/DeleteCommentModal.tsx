@@ -40,7 +40,7 @@ export const DeleteCommentModal: FC<IDeleteCommentModal> = ({
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
       <h2>Kommentar löschen</h2>
-      <p>Willst du diesen Kommentar wirklich unwiderruflich löschen?</p>
+      <p>Willst du diesen Kommentar wirklich löschen?</p>
       <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 bg-slate-800 z-10">
         <Button label="Abbrechen" onClick={() => setIsOpen(false)} />
         <Button label="Löschen" onClick={deleteComment} style="primary" danger />

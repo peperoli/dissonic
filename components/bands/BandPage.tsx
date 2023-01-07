@@ -47,7 +47,7 @@ export const BandPage: FC<IBandPage> = ({ initialBand, countries, genres, concer
   }
   return (
     <PageWrapper>
-      <main className="grid gap-4 w-full max-w-2xl p-8">
+      <main className="grid gap-4 w-full max-w-2xl p-4 md:p-8">
         <div>
           <Link href="/bands" className="btn btn-link">
             <ArrowLeftIcon className="h-icon" />

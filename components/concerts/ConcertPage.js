@@ -13,6 +13,7 @@ import 'dayjs/locale/de'
 import { useRouter } from "next/navigation"
 import { GenreChart } from "./GenreChart"
 import Comments from "./Comments"
+import { DeleteConcertModal } from './DeleteConcertModal'
 
 function BandSeenCheckbox({ concert, band, selectedBandsSeen, setSelectedBandsSeen, user }) {
   const router = useRouter()
@@ -155,48 +156,9 @@ export default function ConcertPage({ initialConcert, bands, locations }) {
       setLoading(false)
     }
   }
-
-  async function deleteConcert() {
-    try {
-      const { error: deleteBandsSeenError } = await supabase.from('j_bands_seen').delete().eq('concert_id', concert.id)
-
-      if (deleteBandsSeenError) {
-        throw deleteBandsSeenError
-      }
-
-      const { error: deleteBandsError } = await supabase.from('j_concert_bands').delete().eq('concert_id', concert.id)
-
-      if (deleteBandsError) {
-        throw deleteBandsError
-      }
-
-      const { error: deleteCommentsError } = await supabase
-        .from('comments')
-        .delete()
-        .eq('concert_id', concert.id)
-
-      if (deleteCommentsError) {
-        throw deleteCommentsError
-      }
-
-      const { error: deleteConcertError } = await supabase.from('concerts').delete().eq('id', concert.id)
-
-      if (deleteConcertError) {
-        throw deleteConcertError
-      }
-
-      try {
-        router.push('/')
-      } catch {
-
-      }
-    } catch (error) {
-      alert(error.message)
-    }
-  }
   return (
     <PageWrapper>
-      <main className="grid gap-4 w-full max-w-2xl p-8">
+      <main className="grid gap-4 w-full max-w-2xl p-4 md:p-8">
         <div>
           <Link href="/" className="btn btn-link">
             <ArrowLeftIcon className="h-icon" />
@@ -235,15 +197,15 @@ export default function ConcertPage({ initialConcert, bands, locations }) {
               />
             </div>
           )}
-          <div className="flex gap-4 w-full mt-4">
+          <div className="flex flex-col md:flex-row gap-4 w-full mt-4">
             <div className="inline-flex items-center">
-              <CalendarIcon className="h-icon mr-2" />
+              <CalendarIcon className="h-icon mr-2 text-slate-300" />
               {dayjs(concert.date_start).locale('de-ch').format(dateFormat)}
               {concert.date_end && <span>&nbsp;&ndash; {dayjs(concert.date_end).locale('de-ch').format(dateFormat)}</span>}
             </div>
             {concert.location && (
               <div className="inline-flex items-center">
-                <MapPinIcon className="h-icon mr-2" />
+                <MapPinIcon className="h-icon mr-2 text-slate-300" />
                 {concert.location.name}
               </div>
             )}
@@ -287,18 +249,7 @@ export default function ConcertPage({ initialConcert, bands, locations }) {
             setConcert={setConcert}
           />
         </Modal>
-        <Modal isOpen={deleteIsOpen} setIsOpen={setDeleteIsOpen}>
-          <div>
-            <h2>Konzert löschen</h2>
-            Willst du dieses Konzert wirklich löschen?
-            <div className="flex justify-end gap-3 mt-4">
-              <Button onClick={() => setDeleteIsOpen(false)} label="Abbrechen" />
-              <button onClick={deleteConcert} className="btn btn-primary btn-danger">
-                Löschen
-              </button>
-            </div>
-          </div>
-        </Modal>
+        <DeleteConcertModal isOpen={deleteIsOpen} setIsOpen={setDeleteIsOpen} concert={concert} />
       </main>
     </PageWrapper>
   )

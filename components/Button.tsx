@@ -17,7 +17,7 @@ export const Button: FC<IButton> = ({
     <button
       type={type || 'button'}
       onClick={onClick}
-      disabled={disabled}
+      disabled={disabled || loading}
       className={`btn${style === 'primary' ? ' btn-primary' : ' btn-secondary'}${
         contentType === 'icon' ? ' btn-icon' : ''
       }${size === 'small' ? ' btn-small' : ''}${danger ? ' btn-danger' : ''}`}
