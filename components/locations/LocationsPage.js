@@ -5,7 +5,6 @@ import { PlusIcon } from "@heroicons/react/20/solid"
 import Table from "../Table"
 import TableRow from "../TableRow"
 import AddLocationForm from "./AddLocationForm"
-import Modal from "../Modal"
 import { useState } from "react"
 import { Search } from "../Search"
 import { Button } from "../Button"
@@ -36,9 +35,7 @@ export default function LocationsPage({ initialLocations }) {
             </div>
           )}
           <div className="sr-only md:not-sr-only flex justify-between md:mb-6">
-            <h1 className="mb-0">
-              Locations
-            </h1>
+            <h1 className="mb-0">Locations</h1>
             {isDesktop && (
               <Button
                 onClick={() => setIsOpen(true)}
@@ -49,33 +46,36 @@ export default function LocationsPage({ initialLocations }) {
             )}
           </div>
           <Table>
-            <Search name="searchLocations" placeholder="Locations" query={query} setQuery={setQuery} />
+            <Search
+              name="searchLocations"
+              placeholder="Locations"
+              query={query}
+              setQuery={setQuery}
+            />
             <div className="my-4 text-sm text-slate-300">
-              {typeof filteredLength === 'number' && <span>{filteredLength}&nbsp;von&nbsp;</span>}{locations.length}&nbsp;Einträge
+              {typeof filteredLength === 'number' && <span>{filteredLength}&nbsp;von&nbsp;</span>}
+              {locations.length}&nbsp;Einträge
             </div>
             {typeof filteredLength === 'number' && filteredLength === 0 ? (
               <div>Blyat! Keine Einträge gefunden.</div>
             ) : (
-              filteredLocations && filteredLocations.map(location => (
+              filteredLocations &&
+              filteredLocations.map(location => (
                 <TableRow key={location.id} href={''}>
-                  <div className="font-bold">
-                    {location.name}
-                  </div>
-                  <div className="text-slate-300">
-                    {location.city}
-                  </div>
+                  <div className="font-bold">{location.name}</div>
+                  <div className="text-slate-300">{location.city}</div>
                 </TableRow>
               ))
             )}
           </Table>
         </main>
       </PageWrapper>
-      <Modal
+      <AddLocationForm
+        locations={locations}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
-      >
-        <AddLocationForm locations={locations} setIsOpen={setIsOpen} setLocations={setLocations} />
-      </Modal>
+        setLocations={setLocations}
+      />
     </>
   )
 }

@@ -15,7 +15,7 @@ const InviteItem = ({ inviteData, type }: { inviteData: Invite; type: 'sent' | '
 
   useEffect(() => {
     async function downloadAvatar() {
-      if (profile) {
+      if (profile?.avatar_path) {
         try {
           const { data, error } = await supabase.storage
             .from('avatars')
@@ -36,10 +36,8 @@ const InviteItem = ({ inviteData, type }: { inviteData: Invite; type: 'sent' | '
       }
     }
 
-    if (profile?.avatar_path) {
-      downloadAvatar()
-    }
-  }, [profile])
+    downloadAvatar()
+  }, [profile?.avatar_path])
 
   async function cancelInvite() {
     try {

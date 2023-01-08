@@ -32,5 +32,5 @@ async function fetchData(username: string) {
 
 export default async function Page({ params }: { params: { username: string } }) {
   const { profile, bandsSeen, friends } = await fetchData(params.username)
-  return <ProfilePage profile={profile} bandsSeen={bandsSeen || []} friends={friends || []} />
+  return <ProfilePage profileData={profile} bandsSeen={bandsSeen || []} friends={friends || []} />
 }

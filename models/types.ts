@@ -48,7 +48,7 @@ type WithBands = {
 
 export type ConcertWithBands = Concert & WithBands
 
-type BandSeen = {
+export type BandSeen = {
   readonly band_id: number
   readonly concert_id: string
   readonly user_id: string
@@ -88,7 +88,7 @@ export type Profile = {
   readonly id: string
   username: string
   created_at: string
-  avatar_path: string
+  avatar_path: string | null
 }
 
 export type Invite = {
@@ -119,12 +119,6 @@ export interface IBandPage {
   countries: Country[]
   genres: Genre[]
   concerts: ConcertWithBands[]
-}
-
-export interface IProfilePage {
-  profile: Profile
-  bandsSeen: BandSeen[]
-  friends: Friend[]
 }
 
 export interface IFriendsPage {

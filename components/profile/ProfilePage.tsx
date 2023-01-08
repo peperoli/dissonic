@@ -4,19 +4,25 @@ import { PageWrapper } from '../layout/PageWrapper'
 import React, { useState, useEffect, FC } from 'react'
 import supabase from '../../utils/supabase'
 import { Button } from '../Button'
-import Modal from '../Modal'
-import EditPasswordForm from './EditPasswordForm'
-import EditProfileForm from './EditProfileForm'
+import { EditPasswordForm } from './EditPasswordForm'
+import { EditProfileForm } from './EditProfileForm'
 import { GenreChart } from '../concerts/GenreChart'
 import Image from 'next/image'
 import { CheckCircleIcon, UserIcon, UserPlusIcon } from '@heroicons/react/20/solid'
 import { TopBands } from './TopBands'
 import { TopLocations } from './TopLocations'
 import { ConcertsChart } from './ConcertsChart'
-import { IProfilePage } from '../../models/types'
 import { AddFriendModal } from './AddFriendModal'
+import { BandSeen, Friend, Profile } from '../../models/types'
 
-export const ProfilePage: FC<IProfilePage> = ({ profile, bandsSeen, friends }) => {
+interface IProfilePage {
+  profileData: Profile
+  bandsSeen: BandSeen[]
+  friends: Friend[]
+}
+
+export const ProfilePage: FC<IProfilePage> = ({ profileData, bandsSeen, friends }) => {
+  const [profile, setProfile] = useState(profileData)
   const [editPassIsOpen, setEditPassIsOpen] = useState(false)
   const [editUsernameIsOpen, setEditUsernameIsOpen] = useState(false)
   const [addFriendIsOpen, setAddFriendIsOpen] = useState(false)
@@ -54,29 +60,30 @@ export const ProfilePage: FC<IProfilePage> = ({ profile, bandsSeen, friends }) =
     }
 
     async function downloadAvatar() {
-      try {
-        const { data, error } = await supabase.storage.from('avatars').download(profile.avatar_path)
+      if (profile.avatar_path) {
+        try {
+          const { data, error } = await supabase.storage
+            .from('avatars')
+            .download(profile.avatar_path)
 
-        if (error) {
-          throw error
-        }
-        const url = URL.createObjectURL(data)
-        setAvatarUrl(url)
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error(error.message)
-        } else {
-          console.error('Unexpected error', error)
+          if (error) {
+            throw error
+          }
+          const url = URL.createObjectURL(data)
+          setAvatarUrl(url)
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error(error.message)
+          } else {
+            console.error('Unexpected error', error)
+          }
         }
       }
     }
 
     getUser()
-
-    if (profile.avatar_path) {
-      downloadAvatar()
-    }
-  }, [profile])
+    downloadAvatar()
+  }, [profile.username, profile.avatar_path])
   return (
     <PageWrapper>
       <>
@@ -146,17 +153,13 @@ export const ProfilePage: FC<IProfilePage> = ({ profile, bandsSeen, friends }) =
             <div>Bitte melde dich an.</div>
           )}
         </main>
-        <Modal isOpen={editUsernameIsOpen} setIsOpen={setEditUsernameIsOpen}>
-          <EditProfileForm
-            username={profile.username}
-            avatarUrl={avatarUrl}
-            setAvatarUrl={setAvatarUrl}
-            setIsOpen={setEditUsernameIsOpen}
-          />
-        </Modal>
-        <Modal isOpen={editPassIsOpen} setIsOpen={setEditPassIsOpen}>
-          <EditPasswordForm setIsOpen={setEditPassIsOpen} />
-        </Modal>
+        <EditProfileForm
+          isOpen={editUsernameIsOpen}
+          setIsOpen={setEditUsernameIsOpen}
+          profile={profile}
+          setProfile={setProfile}
+        />
+        <EditPasswordForm isOpen={editPassIsOpen} setIsOpen={setEditPassIsOpen} />
         <AddFriendModal
           isOpen={addFriendIsOpen}
           setIsOpen={setAddFriendIsOpen}
