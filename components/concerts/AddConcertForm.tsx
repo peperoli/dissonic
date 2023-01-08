@@ -5,7 +5,7 @@ import dayjs from 'dayjs'
 import { Button } from '../Button'
 import { useRouter } from 'next/navigation'
 import Modal from '../Modal'
-import { Band, Concert, ConcertWithBands, Location } from '../../models/types'
+import { Band, ConcertWithBands, Location } from '../../models/types'
 import Link from 'next/link'
 
 interface AddConcertFormProps {
@@ -14,7 +14,6 @@ interface AddConcertFormProps {
   bands: Band[]
   locations: Location[]
   concerts: ConcertWithBands[]
-  setConcerts: Dispatch<SetStateAction<Concert[]>>
 }
 
 export const AddConcertForm: FC<AddConcertFormProps> = ({
@@ -23,7 +22,6 @@ export const AddConcertForm: FC<AddConcertFormProps> = ({
   bands,
   locations,
   concerts,
-  setConcerts,
 }) => {
   const [selectedBands, setSelectedBands] = useState<Band[]>([])
   const [isFestival, setIsFestival] = useState(false)

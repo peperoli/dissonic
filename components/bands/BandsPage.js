@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import Modal from '../Modal'
-import AddBandForm from './AddBandForm'
+import { AddBandForm } from './AddBandForm'
 import { ArrowUturnLeftIcon, PlusIcon } from '@heroicons/react/20/solid'
 import { PageWrapper } from '../layout/PageWrapper'
 import Table from '../Table'
@@ -143,15 +142,14 @@ export default function BandsPage({ initialBands, countries, genres }) {
           />
         </Table>
       </main>
-      <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-        <AddBandForm
-          countries={countries}
-          genres={genres}
-          bands={bands}
-          setBands={setBands}
-          setIsOpen={setIsOpen}
-        />
-      </Modal>
+      <AddBandForm
+        countries={countries}
+        genres={genres}
+        bands={bands}
+        setBands={setBands}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
     </PageWrapper>
   )
 }

@@ -1,11 +1,11 @@
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/20/solid"
 import React, { useState, useRef, FC, Dispatch, RefObject, SetStateAction } from "react"
-import { Band } from "../models/types"
+import { Option } from "../models/types"
 
 interface SelectedOptionProps {
-  selectedOption: Band
-  selectedOptions: Band[]
-  setSelectedOptions: Dispatch<SetStateAction<Band[]>>
+  selectedOption: Option
+  selectedOptions: Option[]
+  setSelectedOptions: Dispatch<SetStateAction<any[]>>
 }
 
 const SelectedOption: FC<SelectedOptionProps> = ({
@@ -25,9 +25,9 @@ const SelectedOption: FC<SelectedOptionProps> = ({
 }
 
 interface MultiSelectOptionProps {
-  option: Band
-  selectedOptions: Band[]
-  setSelectedOptions: Dispatch<SetStateAction<Band[]>>
+  option: Option
+  selectedOptions: Option[]
+  setSelectedOptions: Dispatch<SetStateAction<any[]>>
   setQuery: Dispatch<SetStateAction<string>>
   searchRef: RefObject<HTMLInputElement>
 }
@@ -61,9 +61,9 @@ const MultiSelectOption: FC<MultiSelectOptionProps> = ({
 
 interface MultiSelectProps {
   name: string
-  options: Band[]
-  selectedOptions: Band[]
-  setSelectedOptions: Dispatch<SetStateAction<Band[]>>
+  options: Option[]
+  selectedOptions: Option[]
+  setSelectedOptions: Dispatch<SetStateAction<any[]>>
   alwaysOpen?: boolean
   fullHeight?: boolean
 }

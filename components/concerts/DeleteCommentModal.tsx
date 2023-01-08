@@ -1,7 +1,7 @@
 import supabase from '../../utils/supabase'
 import { Button } from '../Button'
 import Modal from '../Modal'
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { Comment } from '../../models/types'
 
 interface IDeleteCommentModal {
@@ -19,8 +19,11 @@ export const DeleteCommentModal: FC<IDeleteCommentModal> = ({
   comments,
   setComments,
 }) => {
+  const [loading, setLoading] = useState(false)
+
   async function deleteComment() {
     try {
+      setLoading(true)
       const { error } = await supabase.from('comments').delete().eq('id', comment.id)
 
       if (error) {
@@ -35,6 +38,8 @@ export const DeleteCommentModal: FC<IDeleteCommentModal> = ({
         alert('Oops')
         console.error(error)
       }
+    } finally {
+      setLoading(false)
     }
   }
   return (
@@ -43,7 +48,7 @@ export const DeleteCommentModal: FC<IDeleteCommentModal> = ({
       <p>Willst du diesen Kommentar wirklich löschen?</p>
       <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 bg-slate-800 z-10">
         <Button label="Abbrechen" onClick={() => setIsOpen(false)} />
-        <Button label="Löschen" onClick={deleteComment} style="primary" danger />
+        <Button label="Löschen" onClick={deleteComment} style="primary" danger loading={loading} />
       </div>
     </Modal>
   )

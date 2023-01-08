@@ -247,7 +247,6 @@ export default function HomePage({ initialConcerts, bands, locations }) {
         bands={bands}
         locations={locations}
         concerts={concerts}
-        setConcerts={setConcerts}
       />
     </PageWrapper>
   )

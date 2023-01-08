@@ -1,7 +1,7 @@
 import supabase from '../../utils/supabase'
 import { Button } from '../Button'
 import Modal from '../Modal'
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ConcertWithBands } from '../../models/types'
 
@@ -12,10 +12,13 @@ interface DeleteConcertModalProps {
 }
 
 export const DeleteConcertModal: FC<DeleteConcertModalProps> = ({ isOpen, setIsOpen, concert }) => {
+  const [loading, setLoading] = useState(false)
+  
   const router = useRouter()
 
   async function deleteConcert() {
     try {
+      setLoading(true)
       const { error: deleteBandsSeenError } = await supabase
         .from('j_bands_seen')
         .delete()
@@ -60,6 +63,8 @@ export const DeleteConcertModal: FC<DeleteConcertModalProps> = ({ isOpen, setIsO
         alert('Oops')
         console.error(error)
       }
+    } finally {
+      setLoading(false)
     }
   }
   return (
@@ -68,7 +73,7 @@ export const DeleteConcertModal: FC<DeleteConcertModalProps> = ({ isOpen, setIsO
       <p>Willst du dieses Konzert wirklich löschen?</p>
       <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 bg-slate-800 z-10">
         <Button label="Abbrechen" onClick={() => setIsOpen(false)} />
-        <Button label="Löschen" onClick={deleteConcert} style="primary" danger />
+        <Button label="Löschen" onClick={deleteConcert} style="primary" danger loading={loading} />
       </div>
     </Modal>
   )

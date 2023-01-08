@@ -65,7 +65,7 @@ type WithGenres = {
   genres: Genre[]
 }
 
-type BandWithGenres = Band & WithGenres
+export type BandWithGenres = Band & WithGenres
 
 export type Location = {
   readonly id: number
