@@ -1,7 +1,11 @@
 import { FC } from 'react'
-import { ITopBands } from '../../models/types'
+import { Band } from '../../models/types'
 
-export const TopBands: FC<ITopBands> = ({ bands }) => {
+export interface TopBandsProps {
+  bands: Band[]
+}
+
+export const TopBands: FC<TopBandsProps> = ({ bands }) => {
   type TopBand = {
     readonly id: number
     name: string

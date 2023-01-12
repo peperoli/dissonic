@@ -1,12 +1,12 @@
 import { useRouter } from "next/navigation"
 import { Dispatch, FC, SetStateAction, useState } from "react"
-import { BandWithGenres } from "../../models/types"
+import { Band } from "../../models/types"
 import supabase from "../../utils/supabase"
 import { Button } from "../Button"
 import Modal from "../Modal"
 
 interface DeleteBandModalProps {
-  band: BandWithGenres
+  band: Band
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
 }

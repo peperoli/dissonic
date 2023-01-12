@@ -3,7 +3,7 @@ import supabase from '../../../../utils/supabase'
 
 export const revalidate = 0
 
-async function fetchData(username: string) {
+async function fetchData(username) {
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
@@ -22,7 +22,7 @@ async function fetchData(username: string) {
   return { profile, friends }
 }
 
-export default async function Page({ params }: { params: { username: string } }) {
+export default async function Page({ params }) {
   const { profile, friends } = await fetchData(params.username)
   return <FriendsPage profile={profile} friends={friends || []} />
 }

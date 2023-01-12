@@ -5,7 +5,7 @@ import dayjs from 'dayjs'
 import { Button } from '../Button'
 import { useRouter } from 'next/navigation'
 import Modal from '../Modal'
-import { Band, ConcertWithBands, Location } from '../../models/types'
+import { Band, Concert, Location } from '../../models/types'
 import Link from 'next/link'
 
 interface AddConcertFormProps {
@@ -13,7 +13,7 @@ interface AddConcertFormProps {
   setIsOpen: Dispatch<SetStateAction<boolean>>
   bands: Band[]
   locations: Location[]
-  concerts: ConcertWithBands[]
+  concerts: Concert[]
 }
 
 export const AddConcertForm: FC<AddConcertFormProps> = ({
@@ -38,9 +38,9 @@ export const AddConcertForm: FC<AddConcertFormProps> = ({
   const similarConcerts = concerts
     .filter(item => item.date_start === dateStart)
     .filter(item =>
-      item.bands.find(band => selectedBands.find(selectedBand => band.id === selectedBand.id))
+      item.bands?.find(band => selectedBands.find(selectedBand => band.id === selectedBand.id))
     )
-    .filter(item => item.location.id === Number(location))
+    .filter(item => item.location?.id === Number(location))
   const isSimilar = similarConcerts.length > 0
 
   async function handleSubmit(event: SyntheticEvent) {
@@ -48,9 +48,9 @@ export const AddConcertForm: FC<AddConcertFormProps> = ({
     const target = event.target as typeof event.target & {
       name: { value: string }
       isFestival: { checked: boolean }
-      dateStart: { value: Date }
-      dateEnd: { value: Date }
-      location: { value: string }
+      dateStart: { value: string }
+      dateEnd: { value: string }
+      location: { value: number }
     }
 
     try {
@@ -61,7 +61,7 @@ export const AddConcertForm: FC<AddConcertFormProps> = ({
           {
             date_start: target.dateStart.value,
             date_end: target.dateEnd?.value,
-            location: target.location.value,
+            location_id: target.location.value,
             name: target.name.value,
             is_festival: target.isFestival.checked,
           },
@@ -170,11 +170,11 @@ export const AddConcertForm: FC<AddConcertFormProps> = ({
                   <div>{item.date_start}</div>
                   <div className="font-bold">
                     {item.bands
-                      .slice(0, 10)
+                      ?.slice(0, 10)
                       .map(band => band.name)
                       .join(', ')}
                   </div>
-                  <div>@ {item.location.name}</div>
+                  <div>@ {item.location?.name}</div>
                 </Link>
               ))}
             </div>

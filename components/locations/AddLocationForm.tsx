@@ -4,14 +4,14 @@ import supabase from '../../utils/supabase'
 import { Button } from '../Button'
 import Modal from '../Modal'
 
-interface AddBandFormProps {
+interface AddLocationFormProps {
   locations: Location[]
   setLocations: Dispatch<SetStateAction<Location[]>>
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
 }
 
-export const AddBandForm: FC<AddBandFormProps> = ({
+export const AddLocationForm: FC<AddLocationFormProps> = ({
   locations,
   setLocations,
   isOpen,

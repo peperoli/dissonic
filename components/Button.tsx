@@ -1,7 +1,19 @@
 import { FC } from "react"
-import { IButton } from "../models/types"
 
-export const Button: FC<IButton> = ({
+interface ButtonProps {
+  onClick?: () => void
+  type?: 'button' | 'submit' | 'reset' | undefined
+  label: string
+  style?: 'primary' | 'secondary'
+  contentType?: 'text' | 'icon'
+  icon?: JSX.Element
+  disabled?: boolean
+  loading?: boolean
+  size?: 'small' | 'medium'
+  danger?: boolean
+}
+
+export const Button: FC<ButtonProps> = ({
   onClick,
   type = 'button',
   label,

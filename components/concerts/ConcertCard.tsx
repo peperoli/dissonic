@@ -4,9 +4,10 @@ import dayjs from 'dayjs'
 import 'dayjs/locale/de'
 import { useRouter } from "next/navigation"
 import React, { FC, Fragment } from "react"
-import { IConcertCard } from "../../models/types"
+import { BandSeen, Concert, Profile } from "../../models/types"
+import { User } from "@supabase/supabase-js"
 
-function ConcertDate({ date }: {date: Date}) {
+const ConcertDate = ({ date }: {date: Date}) => {
   return (
     <div className="relative flex-none flex flex-col justify-center items-center w-20 h-20 border border-slate-700 rounded-lg first:bg-slate-700 shadow-md">
       {date && <span className="text-3xl font-bold">{date.getDate()}</span>}
@@ -16,7 +17,14 @@ function ConcertDate({ date }: {date: Date}) {
   )
 }
 
-export const ConcertCard: FC<IConcertCard> = ({ concert, bandsSeen, user, profiles }) => {
+export interface ConcertCardProps {
+  concert: Concert
+  bandsSeen?: BandSeen[]
+  user?: User
+  profiles?: Profile[]
+}
+
+export const ConcertCard: FC<ConcertCardProps> = ({ concert, bandsSeen, user, profiles }) => {
   const router = useRouter()
   let fanProfiles
   if (bandsSeen && bandsSeen?.length > 0) {

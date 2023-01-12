@@ -4,13 +4,13 @@ import { UserIcon } from '@heroicons/react/20/solid'
 import Image from 'next/image'
 import Link from 'next/link'
 import { FC, useEffect, useState } from 'react'
-import { Friend, Invite, Profile } from '../../models/types'
+import { Friend, Profile } from '../../models/types'
 import supabase from '../../utils/supabase'
 import { Button } from '../Button'
 
-const InviteItem = ({ inviteData, type }: { inviteData: Invite; type: 'sent' | 'received' }) => {
+const InviteItem = ({ inviteData, type }: { inviteData: Friend; type: 'sent' | 'received' }) => {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
-  const [invite, setInvite] = useState<Invite | null>(inviteData)
+  const [invite, setInvite] = useState<Friend | null>(inviteData)
   const profile = type === 'sent' ? invite?.receiver : invite?.sender
 
   useEffect(() => {

@@ -1,7 +1,11 @@
 import React, { FC } from 'react'
-import { IConcertsChart } from '../../models/types'
+import { Concert } from '../../models/types'
 
-export const ConcertsChart: FC<IConcertsChart> = ({ concerts }) => {
+export interface ConcertsChartProps {
+  concerts: Concert[]
+}
+
+export const ConcertsChart: FC<ConcertsChartProps> = ({ concerts }) => {
   const years: { year: number; count: number }[] = []
 
   concerts.forEach(concert => {

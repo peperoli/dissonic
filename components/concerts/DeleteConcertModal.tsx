@@ -3,12 +3,12 @@ import { Button } from '../Button'
 import Modal from '../Modal'
 import React, { FC, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ConcertWithBands } from '../../models/types'
+import { Concert } from '../../models/types'
 
 interface DeleteConcertModalProps {
   isOpen: boolean
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
-  concert: ConcertWithBands
+  concert: Concert
 }
 
 export const DeleteConcertModal: FC<DeleteConcertModalProps> = ({ isOpen, setIsOpen, concert }) => {

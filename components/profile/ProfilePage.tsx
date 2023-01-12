@@ -13,11 +13,11 @@ import { TopBands } from './TopBands'
 import { TopLocations } from './TopLocations'
 import { ConcertsChart } from './ConcertsChart'
 import { AddFriendModal } from './AddFriendModal'
-import { BandSeen, Friend, Profile } from '../../models/types'
+import { BandSeenFull, Friend, Profile } from '../../models/types'
 
 interface IProfilePage {
   profileData: Profile
-  bandsSeen: BandSeen[]
+  bandsSeen: BandSeenFull[]
   friends: Friend[]
 }
 

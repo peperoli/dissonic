@@ -6,7 +6,7 @@ export const revalidate = 0
 async function fetchData(params) {
   const { data: band, error } = await supabase
     .from('bands')
-    .select('*, country(id, iso2, name), genres(*)')
+    .select('*, country:countries(id, iso2, name), genres(*)')
     .eq('id', params.id)
     .single()
 
@@ -20,7 +20,7 @@ async function fetchData(params) {
 
   const { data: concerts, error: concertsError } = await supabase
     .from('concerts')
-    .select('*, bands!j_concert_bands!inner(*), location(name)')
+    .select('*, bands!j_concert_bands!inner(*), location:locations(name)')
     .eq('bands.id', params.id)
 
   if (error) {

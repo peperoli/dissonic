@@ -4,7 +4,7 @@ import supabase from '../../../utils/supabase'
 
 export const revalidate = 0
 
-async function fetchData(username: string) {
+async function fetchData(username) {
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
@@ -16,7 +16,7 @@ async function fetchData(username: string) {
     .select(
       `
         *, 
-        concert:concerts(id, date_start, location(*), is_festival),
+        concert:concerts(id, date_start, location:locations(*), is_festival),
         band:bands(*, genres(*))
       `
     )
@@ -30,7 +30,7 @@ async function fetchData(username: string) {
   return { profile, bandsSeen, friends }
 }
 
-export default async function Page({ params }: { params: { username: string } }) {
+export default async function Page({ params }) {
   const { profile, bandsSeen, friends } = await fetchData(params.username)
   return <ProfilePage profileData={profile} bandsSeen={bandsSeen || []} friends={friends || []} />
 }

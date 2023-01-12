@@ -1,5 +1,6 @@
 import { Dispatch, FC, SetStateAction, SyntheticEvent, useState } from "react"
-import { BandWithGenres, Country, Genre } from "../../models/types"
+import { Band, Country, Genre } from "../../models/types"
+import { Database } from "../../types/supabase"
 import supabase from "../../utils/supabase"
 import { Button } from "../Button"
 import Modal from "../Modal"
@@ -8,8 +9,8 @@ import { MultiSelect } from "../MultiSelect"
 interface AddBandFormProps {
   countries: Country[]
   genres: Genre[]
-  bands: BandWithGenres[]
-  setBands: Dispatch<SetStateAction<BandWithGenres[]>>
+  bands: Band[]
+  setBands: Dispatch<SetStateAction<Band[]>>
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
 }
@@ -27,7 +28,7 @@ export const AddBandForm: FC<AddBandFormProps> = ({ countries, genres, bands, se
     event.preventDefault()
     const target = event.target as typeof event.target & {
       name: { value: string }
-      country: { value: string }
+      country: { value: number }
     }
 
     try {
@@ -36,7 +37,7 @@ export const AddBandForm: FC<AddBandFormProps> = ({ countries, genres, bands, se
         .from('bands')
         .insert({
           name: target.name.value,
-          country: target.country.value,
+          country_id: target.country.value,
         })
         .select()
         .single()
@@ -55,14 +56,13 @@ export const AddBandForm: FC<AddBandFormProps> = ({ countries, genres, bands, se
 
       const { data: newBand, error: newBandError } = await supabase
         .from('bands')
-        .select('*, country(*), genres(*)')
+        .select('*, country:countries(*), genres(*)')
         .eq('id', band.id)
         .single()
 
       if (newBandError) {
         throw newBandError
       }
-
       setBands([...bands, newBand])
       setIsOpen(false)
     } catch (error) {

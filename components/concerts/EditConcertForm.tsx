@@ -1,17 +1,17 @@
 import { Dispatch, FC, SetStateAction, SyntheticEvent, useState } from 'react'
-import { Band, ConcertWithBands, Location } from '../../models/types'
+import { Band, Concert, Location } from '../../models/types'
 import supabase from '../../utils/supabase'
 import { Button } from '../Button'
 import Modal from '../Modal'
 import { MultiSelect } from '../MultiSelect'
 
 interface EditConcertFormProps {
-  concert: ConcertWithBands
+  concert: Concert
   bands: Band[]
   locations: Location[]
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
-  setConcert: Dispatch<SetStateAction<ConcertWithBands>>
+  setConcert: Dispatch<SetStateAction<Concert>>
 }
 
 export const EditConcertForm: FC<EditConcertFormProps> = ({
@@ -26,8 +26,8 @@ export const EditConcertForm: FC<EditConcertFormProps> = ({
   const [isFestival, setIsFestival] = useState(concert.is_festival)
   const [loading, setLoading] = useState(false)
 
-  const addBands = selectedBands.filter(item => !concert.bands.find(item2 => item.id === item2.id))
-  const deleteBands = concert.bands.filter(
+  const addBands = selectedBands.filter(item => !concert.bands?.find(item2 => item.id === item2.id))
+  const deleteBands = concert.bands?.filter(
     item => !selectedBands.find(item2 => item.id === item2.id)
   )
   async function handleSubmit(event: SyntheticEvent) {
@@ -35,9 +35,9 @@ export const EditConcertForm: FC<EditConcertFormProps> = ({
     const target = event.target as typeof event.target & {
       name: { value: string }
       isFestival: { checked: boolean }
-      dateStart: { value: Date }
-      dateEnd: { value: Date }
-      location: { value: string }
+      dateStart: { value: string }
+      dateEnd: { value: string }
+      location: { value: number }
     }
 
     try {
@@ -49,7 +49,7 @@ export const EditConcertForm: FC<EditConcertFormProps> = ({
           is_festival: isFestival,
           date_start: target.dateStart.value,
           date_end: target.dateEnd?.value,
-          location: target.location.value,
+          location_id: target.location.value,
         })
         .eq('id', concert.id)
 
@@ -65,22 +65,24 @@ export const EditConcertForm: FC<EditConcertFormProps> = ({
         throw addBandsError
       }
 
-      const { error: deleteBandsError } = await supabase
-        .from('j_concert_bands')
-        .delete()
-        .eq('concert_id', concert.id)
-        .in(
-          'band_id',
-          deleteBands.map(item => item.id)
-        )
-
-      if (deleteBandsError) {
-        throw deleteBandsError
+      if (deleteBands) {
+        const { error: deleteBandsError } = await supabase
+          .from('j_concert_bands')
+          .delete()
+          .eq('concert_id', concert.id)
+          .in(
+            'band_id',
+            deleteBands.map(item => item.id)
+          )
+  
+        if (deleteBandsError) {
+          throw deleteBandsError
+        }
       }
 
       const { data: newConcert, error: newConcertError } = await supabase
         .from('concerts')
-        .select('*, location(*), bands!j_concert_bands(*, genres(*))')
+        .select('*, location:locations(*), bands!j_concert_bands(*, genres(*))')
         .eq('id', concert.id)
         .single()
 
@@ -111,7 +113,7 @@ export const EditConcertForm: FC<EditConcertFormProps> = ({
             name="name"
             id="name"
             placeholder="Wacken Open Air"
-            defaultValue={concert.name}
+            defaultValue={concert.name || ''}
           />
           <label htmlFor="name">Name (optional)</label>
         </div>
@@ -134,7 +136,12 @@ export const EditConcertForm: FC<EditConcertFormProps> = ({
           </div>
           {isFestival && (
             <div className="form-control">
-              <input type="date" name="dateEnd" id="dateEnd" defaultValue={concert.date_end} />
+              <input
+                type="date"
+                name="dateEnd"
+                id="dateEnd"
+                defaultValue={concert.date_end || ''}
+              />
               <label htmlFor="dateEnd">Enddatum</label>
             </div>
           )}

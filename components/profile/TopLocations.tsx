@@ -1,8 +1,12 @@
 import React from 'react'
 import { FC } from 'react'
-import { ITopLocations } from '../../models/types'
+import { Location } from '../../models/types'
 
-export const TopLocations: FC<ITopLocations> = ({ locations = [] }) => {
+export interface TopLocationsProps {
+  locations: Location[]
+}
+
+export const TopLocations: FC<TopLocationsProps> = ({ locations = [] }) => {
   type TopLocation = {
     readonly id: number
     name: string

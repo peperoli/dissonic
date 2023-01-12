@@ -1,10 +1,16 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 import React, { useEffect } from 'react'
 import { FC } from 'react'
-import { IPagination } from '../../models/types'
 import { Button } from '../Button'
 
-export const Pagination: FC<IPagination> = ({
+interface PaginationProps {
+  entriesCount: number
+  currentPage: number
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>
+  perPage: number
+}
+
+export const Pagination: FC<PaginationProps> = ({
   entriesCount,
   currentPage,
   setCurrentPage,

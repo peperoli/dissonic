@@ -7,10 +7,17 @@ import { EditBandForm } from './EditBandForm'
 import { PageWrapper } from '../layout/PageWrapper'
 import { Button } from '../Button'
 import { ConcertCard } from '../concerts/ConcertCard'
-import { IBandPage } from '../../models/types'
+import { Band, Concert, Country, Genre } from '../../models/types'
 import { DeleteBandModal } from './DeleteBandModal'
 
-export const BandPage: FC<IBandPage> = ({ initialBand, countries, genres, concerts }) => {
+export interface BandPageProps {
+  initialBand: Band
+  countries: Country[]
+  genres: Genre[]
+  concerts: Concert[]
+}
+
+export const BandPage: FC<BandPageProps> = ({ initialBand, countries, genres, concerts }) => {
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
   const [editIsOpen, setEditIsOpen] = useState(false)
   const [band, setBand] = useState(initialBand)
@@ -27,7 +34,7 @@ export const BandPage: FC<IBandPage> = ({ initialBand, countries, genres, concer
           <h1>{band.name}</h1>
           <div className="flex gap-2 items-center">
             <MapPinIcon className="h-icon text-slate-300" />
-            {band.country.name}
+            {band.country?.name}
           </div>
           <ul className="flex gap-2">
             <MusicalNoteIcon className="h-icon text-slate-300" />
@@ -35,7 +42,7 @@ export const BandPage: FC<IBandPage> = ({ initialBand, countries, genres, concer
               band.genres.map((genre, index) => (
                 <Fragment key={index}>
                   <li>{genre.name}</li>
-                  {index + 1 !== band.genres.length && <span>&bull;</span>}
+                  {index + 1 !== band.genres?.length && <span>&bull;</span>}
                 </Fragment>
               ))}
           </ul>

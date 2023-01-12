@@ -6,7 +6,7 @@ export const revalidate = 0
 async function fetchData() {
   const { data: concerts } = await supabase
     .from('concerts')
-    .select('*, location(*), bands!j_concert_bands(*), bandsSeen:bands!j_bands_seen(*)')
+    .select('*, location:locations(*), bands!j_concert_bands(*), bandsSeen:bands!j_bands_seen(*)')
     .order('date_start', { ascending: false })
 
   const { data: bands } = await supabase.from('bands').select('*').order('name')

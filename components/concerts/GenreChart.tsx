@@ -1,8 +1,12 @@
 import React, { useEffect, useState, useRef, FC } from 'react'
-import { IGenreChart } from '../../models/types'
+import { Band } from '../../models/types'
 import { Button } from '../Button'
 
-export const GenreChart: FC<IGenreChart> = ({ bands }) => {
+export interface GenreChartProps {
+  bands: Band[]
+}
+
+export const GenreChart: FC<GenreChartProps> = ({ bands }) => {
   type TopGenre = {
     readonly id: number
     name: string
@@ -11,7 +15,7 @@ export const GenreChart: FC<IGenreChart> = ({ bands }) => {
   const genres: TopGenre[] = []
 
   bands.forEach(band =>
-    band.genres.forEach(genre => {
+    band.genres?.forEach(genre => {
       const topGenre = genres.find(item => item.id === genre.id)
       if (!topGenre) {
         genres.push({ id: genre.id, name: genre.name, count: 1 })

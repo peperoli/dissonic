@@ -3,15 +3,15 @@ import supabase from '../../utils/supabase'
 import { MultiSelect } from '../MultiSelect'
 import { Button } from '../Button'
 import Modal from '../Modal'
-import { BandWithGenres, Country, Genre } from '../../models/types'
+import { Band, Country, Genre } from '../../models/types'
 
 interface EditBandFormProps {
-  band: BandWithGenres
+  band: Band
   countries: Country[]
   genres: Genre[]
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
-  setBand: Dispatch<SetStateAction<BandWithGenres>>
+  setBand: Dispatch<SetStateAction<Band>>
 }
 
 export const EditBandForm: FC<EditBandFormProps> = ({
@@ -25,8 +25,8 @@ export const EditBandForm: FC<EditBandFormProps> = ({
   const [selectedGenres, setSelectedGenres] = useState(band.genres || [])
   const [loading, setLoading] = useState(false)
 
-  const newGenres = selectedGenres.filter(item => !band.genres.find(item2 => item.id === item2.id))
-  const deleteGenres = band.genres.filter(
+  const newGenres = selectedGenres.filter(item => !band.genres?.find(item2 => item.id === item2.id))
+  const deleteGenres = band.genres?.filter(
     item => !selectedGenres.find(item2 => item.id === item2.id)
   )
 
@@ -34,7 +34,7 @@ export const EditBandForm: FC<EditBandFormProps> = ({
     event.preventDefault()
     const target = event.target as typeof event.target & {
       name: { value: string }
-      country: { value: string }
+      country: { value: number }
     }
 
     try {
@@ -43,7 +43,7 @@ export const EditBandForm: FC<EditBandFormProps> = ({
         .from('bands')
         .update({
           name: target.name.value,
-          country: target.country.value,
+          country_id: target.country.value,
         })
         .eq('id', band.id)
 
@@ -55,26 +55,28 @@ export const EditBandForm: FC<EditBandFormProps> = ({
         .from('j_band_genres')
         .insert(newGenres.map(genre => ({ band_id: band.id, genre_id: genre.id })))
 
-      const { error: deleteGenresError } = await supabase
-        .from('j_band_genres')
-        .delete()
-        .eq('band_id', band.id)
-        .in(
-          'genre_id',
-          deleteGenres.map(item => item.id)
-        )
-
       if (addGenresError) {
         throw addGenresError
       }
+      
+      if (deleteGenres) {
+        const { error: deleteGenresError } = await supabase
+          .from('j_band_genres')
+          .delete()
+          .eq('band_id', band.id)
+          .in(
+            'genre_id',
+            deleteGenres.map(item => item.id)
+          )
 
-      if (deleteGenresError) {
-        throw deleteGenresError
+        if (deleteGenresError) {
+          throw deleteGenresError
+        }
       }
 
       const { data: newBand, error: newBandError } = await supabase
         .from('bands')
-        .select('*, country(id, iso2), genres(*)')
+        .select('*, country:countries(id, iso2), genres(*)')
         .eq('id', band.id)
         .single()
 
