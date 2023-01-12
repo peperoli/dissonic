@@ -1,7 +1,7 @@
 'use client'
 
 import React, { FC, useEffect, useState } from 'react'
-import { Friend, Profile } from '../../models/types'
+import { Friend, Profile } from '../../types/types'
 import supabase from '../../utils/supabase'
 import { PageWrapper } from '../layout/PageWrapper'
 import { FriendInvites } from './FriendInvites'

@@ -1,5 +1,5 @@
 import { User } from '@supabase/supabase-js'
-import { Database } from '../types/supabase'
+import { Database } from './supabase'
 
 type WithLocation = {
   location: Location | null

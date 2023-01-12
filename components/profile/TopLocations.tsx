@@ -1,6 +1,6 @@
 import React from 'react'
 import { FC } from 'react'
-import { Location } from '../../models/types'
+import { Location } from '../../types/types'
 
 export interface TopLocationsProps {
   locations: Location[]

@@ -7,7 +7,7 @@ import { EditBandForm } from './EditBandForm'
 import { PageWrapper } from '../layout/PageWrapper'
 import { Button } from '../Button'
 import { ConcertCard } from '../concerts/ConcertCard'
-import { Band, Concert, Country, Genre } from '../../models/types'
+import { Band, Concert, Country, Genre } from '../../types/types'
 import { DeleteBandModal } from './DeleteBandModal'
 
 export interface BandPageProps {

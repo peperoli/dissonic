@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Concert } from '../../models/types'
+import { Concert } from '../../types/types'
 
 export interface ConcertsChartProps {
   concerts: Concert[]

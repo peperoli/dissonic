@@ -1,5 +1,5 @@
 import { Dispatch, FC, SetStateAction, SyntheticEvent, useState } from 'react'
-import { Band, Concert, Location } from '../../models/types'
+import { Band, Concert, Location } from '../../types/types'
 import supabase from '../../utils/supabase'
 import { Button } from '../Button'
 import Modal from '../Modal'

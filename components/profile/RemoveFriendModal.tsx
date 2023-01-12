@@ -2,7 +2,7 @@ import supabase from '../../utils/supabase'
 import { Button } from '../Button'
 import Modal from '../Modal'
 import React, { FC, useState } from 'react'
-import { Profile } from '../../models/types'
+import { Profile } from '../../types/types'
 import { User } from '@supabase/supabase-js'
 
 interface IRemoveFriendModal {

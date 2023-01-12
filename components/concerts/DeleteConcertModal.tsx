@@ -3,7 +3,7 @@ import { Button } from '../Button'
 import Modal from '../Modal'
 import React, { FC, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Concert } from '../../models/types'
+import { Concert } from '../../types/types'
 
 interface DeleteConcertModalProps {
   isOpen: boolean

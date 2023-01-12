@@ -1,5 +1,5 @@
 import { Dispatch, FC, SetStateAction, SyntheticEvent, useState } from "react"
-import { Band, Country, Genre } from "../../models/types"
+import { Band, Country, Genre } from "../../types/types"
 import { Database } from "../../types/supabase"
 import supabase from "../../utils/supabase"
 import { Button } from "../Button"

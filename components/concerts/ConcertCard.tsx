@@ -4,7 +4,7 @@ import dayjs from 'dayjs'
 import 'dayjs/locale/de'
 import { useRouter } from "next/navigation"
 import React, { FC, Fragment } from "react"
-import { BandSeen, Concert, Profile } from "../../models/types"
+import { BandSeen, Concert, Profile } from "../../types/types"
 import { User } from "@supabase/supabase-js"
 
 const ConcertDate = ({ date }: {date: Date}) => {

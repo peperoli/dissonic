@@ -4,7 +4,7 @@ import { UserIcon } from '@heroicons/react/20/solid'
 import Image from 'next/image'
 import Link from 'next/link'
 import { FC, useEffect, useState } from 'react'
-import { Friend, Profile } from '../../models/types'
+import { Friend, Profile } from '../../types/types'
 import supabase from '../../utils/supabase'
 import { Button } from '../Button'
 

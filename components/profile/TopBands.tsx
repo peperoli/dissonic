@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Band } from '../../models/types'
+import { Band } from '../../types/types'
 
 export interface TopBandsProps {
   bands: Band[]

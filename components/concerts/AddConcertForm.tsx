@@ -5,7 +5,7 @@ import dayjs from 'dayjs'
 import { Button } from '../Button'
 import { useRouter } from 'next/navigation'
 import Modal from '../Modal'
-import { Band, Concert, Location } from '../../models/types'
+import { Band, Concert, Location } from '../../types/types'
 import Link from 'next/link'
 
 interface AddConcertFormProps {

@@ -1,6 +1,6 @@
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/20/solid"
 import React, { useState, useRef, FC, Dispatch, RefObject, SetStateAction } from "react"
-import { Option } from "../models/types"
+import { Option } from "../types/types"
 
 interface SelectedOptionProps {
   selectedOption: Option

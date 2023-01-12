@@ -3,7 +3,7 @@ import { Button } from '../Button'
 import { useState, useEffect, Dispatch, SetStateAction, FC, SyntheticEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import Modal from '../Modal'
-import { Profile } from '../../models/types'
+import { Profile } from '../../types/types'
 import { FileInput } from '../FileInput'
 
 interface EditProfileFormProps {

@@ -3,7 +3,7 @@ import supabase from '../../utils/supabase'
 import { MultiSelect } from '../MultiSelect'
 import { Button } from '../Button'
 import Modal from '../Modal'
-import { Band, Country, Genre } from '../../models/types'
+import { Band, Country, Genre } from '../../types/types'
 
 interface EditBandFormProps {
   band: Band
@@ -76,7 +76,7 @@ export const EditBandForm: FC<EditBandFormProps> = ({
 
       const { data: newBand, error: newBandError } = await supabase
         .from('bands')
-        .select('*, country:countries(id, iso2), genres(*)')
+        .select('*, country:countries(*), genres(*)')
         .eq('id', band.id)
         .single()
 

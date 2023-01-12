@@ -2,7 +2,7 @@ import supabase from '../../utils/supabase'
 import { Button } from '../Button'
 import Modal from '../Modal'
 import React, { FC, useState } from 'react'
-import { Comment } from '../../models/types'
+import { Comment } from '../../types/types'
 
 interface IDeleteCommentModal {
   isOpen: boolean

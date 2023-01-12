@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, FC } from 'react'
-import { Band } from '../../models/types'
+import { Band } from '../../types/types'
 import { Button } from '../Button'
 
 export interface GenreChartProps {
