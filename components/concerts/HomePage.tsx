@@ -1,60 +1,82 @@
-"use client"
+'use client'
 
-import supabase from "../../utils/supabase"
-import { ConcertCard} from './ConcertCard'
-import { AddConcertForm } from "./AddConcertForm"
-import { useState, useEffect } from 'react'
+import supabase from '../../utils/supabase'
+import { ConcertCard } from './ConcertCard'
+import { AddConcertForm } from './AddConcertForm'
+import React, { useState, useEffect, FC } from 'react'
 import { Button } from '../Button'
-import { ArrowUturnLeftIcon, ChevronDownIcon, EyeIcon, GlobeAltIcon, PlusIcon, UserIcon } from '@heroicons/react/20/solid'
+import {
+  ArrowUturnLeftIcon,
+  ChevronDownIcon,
+  GlobeAltIcon,
+  PlusIcon,
+  UserIcon,
+} from '@heroicons/react/20/solid'
 import { PageWrapper } from '../layout/PageWrapper'
-import { toast } from 'react-toastify'
-import FilterButton from '../FilterButton'
+import { MultiSelectFilter } from '../MultiSelectFilter'
 import useMediaQuery from '../../hooks/useMediaQuery'
+import { RangeFilter } from '../RangeFilter'
+import { Band, BandSeen, Concert, Location, Profile } from '../../types/types'
+import { User } from '@supabase/supabase-js'
 
-export default function HomePage({ initialConcerts, bands, locations }) {
+interface HomePageProps {
+  concerts: Concert[]
+  bands: Band[]
+  locations: Location[]
+  profiles: Profile[]
+}
+
+export const HomePage: FC<HomePageProps> = ({ concerts, bands, locations, profiles }) => {
   const [isOpen, setIsOpen] = useState(false)
-  const [concerts, setConcerts] = useState(initialConcerts || [])
-  const [selectedBands, setSelectedBands] = useState([])
-  const [selectedLocations, setSelectedLocations] = useState([])
-  const [bandsSeen, setBandsSeen] = useState([])
+  const [selectedBands, setSelectedBands] = useState<Band[]>([])
+  const [selectedLocations, setSelectedLocations] = useState<Location[]>([])
+  const [bandsSeen, setBandsSeen] = useState<BandSeen[]>([])
   const [sort, setSort] = useState('dateAsc')
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState<User | null>(null)
   const [view, setView] = useState('global')
-  const [profiles, setProfiles] = useState([])
+  const initialYears: number[] = concerts
+    .map(item => new Date(item.date_start).getFullYear())
+    .sort((a, b) => a - b)
+  const uniqueYears = [...new Set(initialYears)]
+  const [selectedYears, setSelectedYears] = useState<number[]>([])
 
-  const notifyInsert = () => toast.success("Konzert erfolgreich hinzugefügt!")
-
-  function viewFilter(item) {
+  function viewFilter(item: Concert) {
     if (view === 'user') {
-      return item.bands.some(band =>
-          bandsSeen.some(
-            bandSeen =>
-              bandSeen.concert_id === item.id &&
-              bandSeen.band_id === band.id &&
-              bandSeen.user_id === user.id
-          )
+      return item.bands?.some(band =>
+        bandsSeen.some(
+          bandSeen =>
+            bandSeen.concert_id === item.id &&
+            bandSeen.band_id === band.id &&
+            bandSeen.user_id === user?.id
         )
+      )
     }
     return true
   }
 
-  function filterRule(item) {
-    let [bandFilter, locationFilter] = [true, true]
+  function filterRule(item: Concert) {
+    let [bandFilter, locationFilter, yearsFilter] = [true, true, true]
     const selectedBandIds = selectedBands.map(item => item.id)
     const selectedLocationIds = selectedLocations.map(item => item.id)
+
     if (selectedBandIds.length > 0) {
-      bandFilter = item.bands.some(band => selectedBandIds.includes(band.id))
-    }
-    if (selectedLocationIds.length > 0) {
-      locationFilter = selectedLocationIds.includes(item.location?.id)
+      bandFilter = item.bands ? item.bands.some(band => selectedBandIds.includes(band.id)) : false
     }
 
-    return bandFilter && locationFilter
+    if (selectedLocationIds.length > 0) {
+      locationFilter = item.location ? selectedLocationIds.includes(item.location.id) : false
+    }
+
+    if (selectedYears.length > 0) {
+      yearsFilter = selectedYears.includes(new Date(item.date_start).getFullYear())
+    }
+
+    return bandFilter && locationFilter && yearsFilter
   }
 
   const filteredLength = concerts.filter(filterRule).filter(viewFilter).length
 
-  function compare(a, b) {
+  function compare(a: Concert, b: Concert) {
     let comparison = 0
     if (a.date_start > b.date_start) {
       if (sort === 'dateAsc') {
@@ -75,50 +97,34 @@ export default function HomePage({ initialConcerts, bands, locations }) {
   function resetAll() {
     setSelectedBands([])
     setSelectedLocations([])
+    setSelectedYears([])
   }
 
   useEffect(() => {
-    getUser()
-    fetchProfiles()
-  }, [])
-
-  async function getUser() {
-    const { data: { user: initUser } } = await supabase.auth.getUser()
-    setUser(initUser)
-  }
-
-  async function fetchProfiles() {
-    try {
-      const {data: profilesData, error: profilesError} = await supabase
-      .from('profiles')
-      .select('*')
-
-      if (profilesError) {
-        throw profilesError
-      }
-
-      setProfiles(profilesData)
-    } catch (error) {
-      alert(error.message)
+    async function getUser() {
+      const {
+        data: { user: initUser },
+      } = await supabase.auth.getUser()
+      setUser(initUser)
     }
-  }
+
+    getUser()
+  }, [])
 
   useEffect(() => {
     async function getBandsSeen() {
       try {
-        const { data: initBandsSeen, error: selectedBandsSeenError } = await supabase
+        const { data: initBandsSeen, error } = await supabase
           .from('j_bands_seen')
           .select('*')
 
-        if (selectedBandsSeenError) {
-          throw selectedBandsSeenError
+        if (error) {
+          throw error
         }
 
-        if (initBandsSeen) {
-          setBandsSeen(initBandsSeen)
-        }
+        setBandsSeen(initBandsSeen)
       } catch (error) {
-        alert(error.message)
+        console.error(error)
       }
     }
 
@@ -127,10 +133,6 @@ export default function HomePage({ initialConcerts, bands, locations }) {
       setView('user')
     }
   }, [user])
-
-  function changeView(event) {
-    setView(event.target.value)
-  }
 
   const isDesktop = useMediaQuery('(min-width: 768px)')
   return (
@@ -161,7 +163,8 @@ export default function HomePage({ initialConcerts, bands, locations }) {
         <div className="grid gap-4">
           <div className="flex items-center gap-4">
             <div className="text-sm text-slate-300">
-              {filteredLength !== concerts.length && `${filteredLength} von `}{concerts.length}&nbsp;Einträge
+              {filteredLength !== concerts.length && `${filteredLength} von `}
+              {concerts.length}&nbsp;Einträge
             </div>
             {concerts.filter(filterRule).length !== concerts.length && (
               <button onClick={resetAll} className="btn btn-secondary btn-small">
@@ -171,42 +174,56 @@ export default function HomePage({ initialConcerts, bands, locations }) {
             )}
           </div>
           <div className="flex md:grid md:grid-cols-2 gap-2 md:gap-4 -mx-4 px-4 overflow-x-auto md:overflow-visible scrollbar-hidden">
-            <FilterButton
+            <MultiSelectFilter
               name="bands"
               options={bands}
               selectedOptions={selectedBands}
               setSelectedOptions={setSelectedBands}
             />
-            <FilterButton
+            <MultiSelectFilter
               name="locations"
               options={locations}
               selectedOptions={selectedLocations}
               setSelectedOptions={setSelectedLocations}
             />
+            <RangeFilter
+              name="Jahre"
+              options={uniqueYears}
+              selectedOptions={selectedYears}
+              setSelectedOptions={setSelectedYears}
+            />
           </div>
           <div className="flex items-center gap-4">
             {user && (
               <fieldset className="flex rounded-md bg-slate-800">
-                <label className={`flex items-center gap-2 px-2 py-1 rounded-md${view === 'global' ? ' text-venom bg-slate-700 shadow-lg' : ''}`}>
+                <label
+                  className={`flex items-center gap-2 px-2 py-1 rounded-md${
+                    view === 'global' ? ' text-venom bg-slate-700 shadow-lg' : ''
+                  }`}
+                >
                   <GlobeAltIcon className="h-icon" />
                   <span>Alle</span>
                   <input
                     type="radio"
                     name="view"
                     value="global"
-                    onChange={changeView}
+                    onChange={event => setView(event.target.value)}
                     checked={view === 'global'}
                     className="sr-only"
                   />
                 </label>
-                <label className={`flex items-center gap-2 px-2 py-1 rounded-md${view === 'user' ? ' text-venom bg-slate-700 shadow-lg' : ''}`}>
+                <label
+                  className={`flex items-center gap-2 px-2 py-1 rounded-md${
+                    view === 'user' ? ' text-venom bg-slate-700 shadow-lg' : ''
+                  }`}
+                >
                   <UserIcon className="h-icon" />
                   <span>Gesehene</span>
                   <input
                     type="radio"
                     name="view"
                     value="user"
-                    onChange={changeView}
+                    onChange={event => setView(event.target.value)}
                     checked={view === 'user'}
                     className="sr-only"
                   />
@@ -218,7 +235,12 @@ export default function HomePage({ initialConcerts, bands, locations }) {
                 Sortieren nach:
               </label>
               <div className="relative flex items-center">
-                <select onChange={(e) => setSort(e.target.value)} name="sortBy" id="sortBy" className="pl-2 pr-7 py-1 rounded-md hover:bg-slate-800 bg-transparent appearance-none">
+                <select
+                  onChange={e => setSort(e.target.value)}
+                  name="sortBy"
+                  id="sortBy"
+                  className="pl-2 pr-7 py-1 rounded-md hover:bg-slate-800 bg-transparent appearance-none"
+                >
                   <option value="dateAsc">Neuste</option>
                   <option value="dateDsc">Älteste</option>
                 </select>
@@ -229,15 +251,19 @@ export default function HomePage({ initialConcerts, bands, locations }) {
           {typeof filteredLength === 'number' && filteredLength === 0 ? (
             <div>Blyat! Keine Einträge gefunden.</div>
           ) : (
-            concerts.filter(filterRule).filter(viewFilter).sort(compare).map(concert => (
-              <ConcertCard
-                key={concert.id}
-                concert={concert}
-                bandsSeen={bandsSeen.filter(row => row.concert_id === concert.id)}
-                user={user}
-                profiles={profiles}
-              />
-            ))
+            concerts
+              .filter(filterRule)
+              .filter(viewFilter)
+              .sort(compare)
+              .map(concert => (
+                <ConcertCard
+                  key={concert.id}
+                  concert={concert}
+                  bandsSeen={bandsSeen.filter(row => row.concert_id === concert.id)}
+                  user={user}
+                  profiles={profiles}
+                />
+              ))
           )}
         </div>
       </main>

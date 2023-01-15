@@ -1,7 +1,7 @@
 import { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
 import React, { Dispatch, FC, SetStateAction } from 'react'
-import { Band, BandSeen, Concert } from '../../models/types'
+import { Band, BandSeen, Concert } from '../../types/types'
 
 interface BandSeenToggleProps {
   concert: Concert

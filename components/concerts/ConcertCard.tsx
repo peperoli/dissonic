@@ -20,7 +20,7 @@ const ConcertDate = ({ date }: {date: Date}) => {
 export interface ConcertCardProps {
   concert: Concert
   bandsSeen?: BandSeen[]
-  user?: User
+  user: User | null
   profiles?: Profile[]
 }
 

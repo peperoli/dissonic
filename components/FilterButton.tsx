@@ -1,22 +1,38 @@
 import { ArrowUturnLeftIcon, ChevronDownIcon, XMarkIcon } from '@heroicons/react/20/solid'
 import { Button } from './Button'
-import { MultiSelect } from './MultiSelect'
 import { Popover } from '@headlessui/react'
+import { Option } from '../types/types'
+import React, { Dispatch, FC, ReactNode, SetStateAction } from 'react'
 
-export default function FilterButton({ name, options, selectedOptions, setSelectedOptions }) {
-  const filter =
-    selectedOptions.length > 0
-      ? selectedOptions.length > 1
-        ? selectedOptions.length
-        : selectedOptions[0].name
-      : 'Alle'
+interface FilterButtonProps {
+  name: string
+  selectedOptions: Option[] | number[]
+  setSelectedOptions: Dispatch<SetStateAction<any[]>>
+  children: ReactNode
+}
+
+export const FilterButton: FC<FilterButtonProps> = ({
+  name,
+  selectedOptions,
+  setSelectedOptions,
+  children,
+}) => {
   return (
     <Popover className="relative">
       {({ open, close }) => (
         <>
           <Popover.Button className="btn btn-filter btn-secondary w-full h-full">
-            <span className="capitalize whitespace-nowrap overflow-hidden text-ellipsis">
-              {name}: {filter}
+            <span className="whitespace-nowrap overflow-hidden text-ellipsis">
+              {selectedOptions.length > 0 ? (
+                <>
+                  <span className='capitalize'>{name}: </span>
+                  <span className="px-1 py-0.5 rounded-md bg-slate-800">
+                    {selectedOptions.length} ausgewählt
+                  </span>
+                </>
+              ) : (
+                <span className='capitalize'>{name}</span>
+              )}
             </span>
             <ChevronDownIcon className={`h-icon flex-none${open ? ' transform rotate-180' : ''}`} />
           </Popover.Button>
@@ -30,19 +46,11 @@ export default function FilterButton({ name, options, selectedOptions, setSelect
                 icon={<XMarkIcon className="h-icon" />}
               />
             </div>
-            <div className='relative h-full'>
-              <MultiSelect
-                name={name}
-                options={options}
-                selectedOptions={selectedOptions}
-                setSelectedOptions={setSelectedOptions}
-                alwaysOpen
-                fullHeight
-              />
-            </div>
+            {children}
             <div className="relative flex justify-end gap-2 w-full pt-4 bg-slate-700 z-10">
               <Button
                 onClick={() => setSelectedOptions([])}
+                label="Filter zurücksetzen"
                 icon={<ArrowUturnLeftIcon className="h-icon" />}
                 contentType="icon"
                 style="secondary"

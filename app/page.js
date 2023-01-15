@@ -1,4 +1,4 @@
-import HomePage from '../components/concerts/HomePage'
+import { HomePage } from '../components/concerts/HomePage'
 import supabase from '../utils/supabase'
 
 export const revalidate = 0
@@ -13,10 +13,12 @@ async function fetchData() {
 
   const { data: locations } = await supabase.from('locations').select('id, name').order('name')
 
-  return { concerts, bands, locations }
+  const { data: profiles } = await supabase.from('profiles').select('*')
+
+  return { concerts, bands, locations, profiles }
 }
 
 export default async function Page() {
-  const { concerts, bands, locations } = await fetchData()
-  return <HomePage initialConcerts={concerts} bands={bands} locations={locations} />
+  const { concerts, bands, locations, profiles } = await fetchData()
+  return <HomePage concerts={concerts} bands={bands} locations={locations} profiles={profiles} />
 }

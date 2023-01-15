@@ -53,7 +53,7 @@ export const BandPage: FC<BandPageProps> = ({ initialBand, countries, genres, co
         </div>
         <div className="grid gap-4 p-6">
           {concerts.map(item => (
-            <ConcertCard key={item.id} concert={item} />
+            <ConcertCard key={item.id} concert={item} user={null} />
           ))}
         </div>
       </main>

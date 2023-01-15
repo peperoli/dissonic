@@ -12,7 +12,7 @@ import 'dayjs/locale/de'
 import { GenreChart } from './GenreChart'
 import Comments from './Comments'
 import { DeleteConcertModal } from './DeleteConcertModal'
-import { Band, BandSeen, Concert, Location, Profile } from '../../models/types'
+import { Band, BandSeen, Concert, Location, Profile } from '../../types/types'
 import { User } from '@supabase/supabase-js'
 import { BandSeenToggle } from './BandSeenToggle'
 
