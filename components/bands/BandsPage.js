@@ -11,6 +11,7 @@ import { FilterButton } from '../FilterButton'
 import { Button } from '../Button'
 import useMediaQuery from '../../hooks/useMediaQuery'
 import { Pagination } from '../layout/Pagination'
+import { MultiSelectFilter } from '../MultiSelectFilter'
 
 export default function BandsPage({ initialBands, countries, genres }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -89,13 +90,13 @@ export default function BandsPage({ initialBands, countries, genres }) {
         <Table entriesCount={filteredBands.filter(filterRule).length}>
           <div className="flex md:grid md:grid-cols-3 gap-2 md:gap-4 -mx-4 px-4 overflow-x-auto md:overflow-visible scrollbar-hidden">
             <Search name="searchBands" placeholder="Bands" query={query} setQuery={setQuery} />
-            <FilterButton
+            <MultiSelectFilter
               name="countries"
               options={countries}
               selectedOptions={selectedCountries}
               setSelectedOptions={setSelectedCountries}
             />
-            <FilterButton
+            <MultiSelectFilter
               name="genres"
               options={genres}
               selectedOptions={selectedGenres}

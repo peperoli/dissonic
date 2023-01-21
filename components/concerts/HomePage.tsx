@@ -30,6 +30,8 @@ export const HomePage: FC<HomePageProps> = ({ concerts, bands, locations, profil
   const [isOpen, setIsOpen] = useState(false)
   const [selectedBands, setSelectedBands] = useState<Band[]>([])
   const [selectedLocations, setSelectedLocations] = useState<Location[]>([])
+  const [selectedYears, setSelectedYears] = useState<number[]>([])
+  const [selectedBandsPerConcert, setSelectedBandsPerConcert] = useState<number[]>([])
   const [bandsSeen, setBandsSeen] = useState<BandSeen[]>([])
   const [sort, setSort] = useState('dateAsc')
   const [user, setUser] = useState<User | null>(null)
@@ -37,8 +39,10 @@ export const HomePage: FC<HomePageProps> = ({ concerts, bands, locations, profil
   const initialYears: number[] = concerts
     .map(item => new Date(item.date_start).getFullYear())
     .sort((a, b) => a - b)
-  const uniqueYears = [...new Set(initialYears)]
-  const [selectedYears, setSelectedYears] = useState<number[]>([])
+  const bandsPerConcert: number[] = concerts
+    .map(item => item.bands?.length || 0)
+    .sort((a, b) => a - b)
+    
 
   function viewFilter(item: Concert) {
     if (view === 'user') {
@@ -55,7 +59,10 @@ export const HomePage: FC<HomePageProps> = ({ concerts, bands, locations, profil
   }
 
   function filterRule(item: Concert) {
-    let [bandFilter, locationFilter, yearsFilter] = [true, true, true]
+    let bandFilter = true
+    let locationFilter = true
+    let yearsFilter = true
+    let bandsPerConcertFilter = true
     const selectedBandIds = selectedBands.map(item => item.id)
     const selectedLocationIds = selectedLocations.map(item => item.id)
 
@@ -71,7 +78,11 @@ export const HomePage: FC<HomePageProps> = ({ concerts, bands, locations, profil
       yearsFilter = selectedYears.includes(new Date(item.date_start).getFullYear())
     }
 
-    return bandFilter && locationFilter && yearsFilter
+    if (selectedBandsPerConcert.length > 0) {
+      bandsPerConcertFilter = selectedBandsPerConcert.includes(item.bands?.length || 0)
+    }
+
+    return bandFilter && locationFilter && yearsFilter && bandsPerConcertFilter
   }
 
   const filteredLength = concerts.filter(filterRule).filter(viewFilter).length
@@ -98,6 +109,7 @@ export const HomePage: FC<HomePageProps> = ({ concerts, bands, locations, profil
     setSelectedBands([])
     setSelectedLocations([])
     setSelectedYears([])
+    setSelectedBandsPerConcert([])
   }
 
   useEffect(() => {
@@ -188,9 +200,17 @@ export const HomePage: FC<HomePageProps> = ({ concerts, bands, locations, profil
             />
             <RangeFilter
               name="Jahre"
-              options={uniqueYears}
+              unit='Jahr'
+              options={initialYears}
               selectedOptions={selectedYears}
               setSelectedOptions={setSelectedYears}
+            />
+            <RangeFilter
+              name="Bands pro Konzert"
+              unit='Bands'
+              options={bandsPerConcert}
+              selectedOptions={selectedBandsPerConcert}
+              setSelectedOptions={setSelectedBandsPerConcert}
             />
           </div>
           <div className="flex items-center gap-4">
