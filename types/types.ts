@@ -17,7 +17,14 @@ type WithGenres = {
   genres: Genre[] | null
 }
 
-export type Concert = Database['public']['Tables']['concerts']['Row'] & WithLocation & WithBands
+type WithBandsSeen = {
+  bandsSeen: BandSeen[] | null
+}
+
+export type Concert = Database['public']['Tables']['concerts']['Row'] &
+  WithLocation &
+  WithBands &
+  WithBandsSeen
 
 export type Comment = Database['public']['Tables']['comments']['Row']
 

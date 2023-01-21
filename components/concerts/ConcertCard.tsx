@@ -1,18 +1,21 @@
-import Link from "next/link"
-import { MapPinIcon, UsersIcon } from "@heroicons/react/20/solid"
+import Link from 'next/link'
+import { MapPinIcon, UsersIcon } from '@heroicons/react/20/solid'
 import dayjs from 'dayjs'
 import 'dayjs/locale/de'
-import { useRouter } from "next/navigation"
-import React, { FC, Fragment } from "react"
-import { BandSeen, Concert, Profile } from "../../types/types"
-import { User } from "@supabase/supabase-js"
+import { useRouter } from 'next/navigation'
+import React, { FC, Fragment } from 'react'
+import { BandSeen, Concert, Profile } from '../../types/types'
 
-const ConcertDate = ({ date }: {date: Date}) => {
+const ConcertDate = ({ date }: { date: Date }) => {
   return (
     <div className="relative flex-none flex flex-col justify-center items-center w-20 h-20 border border-slate-700 rounded-lg first:bg-slate-700 shadow-md">
       {date && <span className="text-3xl font-bold">{date.getDate()}</span>}
       {date && <span className="text-sm">{dayjs(date).locale('de-ch').format('MMM')}</span>}
-      {date?.getFullYear() !== new Date().getFullYear() && <span className="absolute -bottom-3 px-2 py-1 rounded-full text-xs font-bold text-slate-850 bg-blue-300">{date.getFullYear()}</span>}
+      {date?.getFullYear() !== new Date().getFullYear() && (
+        <span className="absolute -bottom-3 px-2 py-1 rounded-full text-xs font-bold text-slate-850 bg-blue-300">
+          {date.getFullYear()}
+        </span>
+      )}
     </div>
   )
 }
@@ -20,15 +23,14 @@ const ConcertDate = ({ date }: {date: Date}) => {
 export interface ConcertCardProps {
   concert: Concert
   bandsSeen?: BandSeen[]
-  user: User | null
   profiles?: Profile[]
 }
 
-export const ConcertCard: FC<ConcertCardProps> = ({ concert, bandsSeen, user, profiles }) => {
+export const ConcertCard: FC<ConcertCardProps> = ({ concert, bandsSeen, profiles }) => {
   const router = useRouter()
   let fanProfiles
-  if (bandsSeen && bandsSeen?.length > 0) {
-    const fanIds = new Set(bandsSeen.map(item => item.user_id))
+  if (concert.bandsSeen && concert.bandsSeen?.length > 0) {
+    const fanIds = new Set(concert.bandsSeen.map(item => item.user_id))
     fanProfiles = [...fanIds].map(item => profiles?.find(profile => profile.id === item))
   }
   return (
@@ -56,11 +58,7 @@ export const ConcertCard: FC<ConcertCardProps> = ({ concert, bandsSeen, user, pr
                   href={`/bands/${band.id}`}
                   onClick={event => event.stopPropagation()}
                   className={`btn btn-tag${
-                    bandsSeen?.some(
-                      bandSeen => bandSeen.band_id === band.id && bandSeen.user_id === user?.id
-                    )
-                      ? ' !text-venom'
-                      : ''
+                    bandsSeen?.find(bandSeen => bandSeen.band_id === band.id) ? ' !text-venom' : ''
                   }`}
                 >
                   {band.name}

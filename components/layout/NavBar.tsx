@@ -8,13 +8,20 @@ import { useRouter } from 'next/navigation'
 import { ArrowRightOnRectangleIcon, UserGroupIcon, UserIcon } from '@heroicons/react/20/solid'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
+import { useLogOut } from '../../hooks/useLogOut'
+import { Profile } from '../../types/types'
 
-export default function NavBar() {
-  const [profile, setProfile] = useState(null)
-  const [avatarUrl, setAvatarUrl] = useState(null)
+export const NavBar = () => {
+  const [profile, setProfile] = useState<Profile | null>(null)
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [receivedInvitesCount, setReceivedInvitesCount] = useState(0)
 
+  const logOutMutation = useLogOut()
   const router = useRouter()
+
+  if (logOutMutation.isSuccess) {
+    router.push('/login')
+  }
 
   useEffect(() => {
     async function getProfile() {
@@ -39,7 +46,12 @@ export default function NavBar() {
           }
         }
       } catch (error) {
-        alert(error.message)
+        if (error instanceof Error) {
+          alert(error.message)
+        } else {
+          alert('An unexpected error has occurred')
+          console.error(error)
+        }
       }
     }
 
@@ -49,37 +61,51 @@ export default function NavBar() {
   useEffect(() => {
     async function downloadAvatar() {
       try {
-        const { data, error } = await supabase.storage.from('avatars').download(profile.avatar_path)
+        if (profile?.avatar_path) {
+          const { data, error } = await supabase.storage
+            .from('avatars')
+            .download(profile.avatar_path)
 
-        if (error) {
-          throw error
+          if (error) {
+            throw error
+          }
+          const url = URL.createObjectURL(data)
+          setAvatarUrl(url)
         }
-        const url = URL.createObjectURL(data)
-        setAvatarUrl(url)
       } catch (error) {
-        console.error(error.message)
+        if (error instanceof Error) {
+          alert(error.message)
+        } else {
+          alert('An unexpected error has occurred')
+          console.error(error)
+        }
       }
     }
 
-    if (profile?.avatar_path) {
-      downloadAvatar()
-    }
+    downloadAvatar()
 
     async function getReceivedInvites() {
       try {
         const { count, error } = await supabase
           .from('friends')
           .select('*', { count: 'exact', head: true })
-          .eq('receiver_id', profile.id)
+          .eq('receiver_id', profile?.id)
           .eq('pending', true)
 
         if (error) {
           throw error
         }
 
-        setReceivedInvitesCount(count)
+        if (count) {
+          setReceivedInvitesCount(count)
+        }
       } catch (error) {
-        console.error(error.message)
+        if (error instanceof Error) {
+          alert(error.message)
+        } else {
+          alert('An unexpected error has occurred')
+          console.error(error)
+        }
       }
     }
 
@@ -87,21 +113,6 @@ export default function NavBar() {
       getReceivedInvites()
     }
   }, [profile])
-
-  async function signOut() {
-    try {
-      const { error: signOutError } = await supabase.auth.signOut()
-
-      if (signOutError) {
-        throw signOutError
-      }
-
-      setProfile(null)
-      router.push('/')
-    } catch (error) {
-      alert(error.message)
-    }
-  }
   return (
     <nav className="flex justify-between items-center p-4 md:px-12 md:py-8">
       <Link href="/">
@@ -162,7 +173,7 @@ export default function NavBar() {
                   className={`flex items-center gap-2 w-full px-2 py-1 rounded text-left${
                     active ? ' bg-slate-500' : ''
                   }`}
-                  onClick={signOut}
+                  onClick={() => logOutMutation.mutate()}
                 >
                   <ArrowRightOnRectangleIcon className="h-icon text-slate-300" />
                   Abmelden

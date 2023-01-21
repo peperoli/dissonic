@@ -7,22 +7,19 @@ import { useRouter } from 'next/navigation'
 import Modal from '../Modal'
 import { Band, Concert, Location } from '../../types/types'
 import Link from 'next/link'
+import { useBands } from '../../hooks/useBands'
+import { useLocations } from '../../hooks/useLocations'
 
 interface AddConcertFormProps {
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
-  bands: Band[]
-  locations: Location[]
   concerts: Concert[]
 }
 
-export const AddConcertForm: FC<AddConcertFormProps> = ({
-  isOpen,
-  setIsOpen,
-  bands,
-  locations,
-  concerts,
-}) => {
+export const AddConcertForm: FC<AddConcertFormProps> = ({ isOpen, setIsOpen, concerts }) => {
+  const { data: bands, isLoading } = useBands()
+  const { data: locations } = useLocations()
+
   const [selectedBands, setSelectedBands] = useState<Band[]>([])
   const [isFestival, setIsFestival] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -92,6 +89,15 @@ export const AddConcertForm: FC<AddConcertFormProps> = ({
       setLoading(false)
     }
   }
+
+  if (isLoading) {
+    return (
+      <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+        Loading...
+      </Modal>
+    )
+  }
+
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
       <form onSubmit={handleSubmit} className="grid gap-6">
@@ -130,31 +136,35 @@ export const AddConcertForm: FC<AddConcertFormProps> = ({
             </div>
           )}
         </div>
-        <MultiSelect
-          name="bands"
-          options={bands}
-          selectedOptions={selectedBands}
-          setSelectedOptions={setSelectedBands}
-        />
-        <div className="form-control">
-          <select
-            name="location"
-            id="location"
-            value={location}
-            onChange={event => setLocation(event.target.value)}
-          >
-            <option value="" disabled hidden>
-              Bitte wählen ...
-            </option>
-            {locations &&
-              locations.map(location => (
-                <option key={location.id} value={location.id}>
-                  {location.name}
-                </option>
-              ))}
-          </select>
-          <label htmlFor="location">Location</label>
-        </div>
+        {bands && (
+          <MultiSelect
+            name="bands"
+            options={bands}
+            selectedOptions={selectedBands}
+            setSelectedOptions={setSelectedBands}
+          />
+        )}
+        {locations && (
+          <div className="form-control">
+            <select
+              name="location"
+              id="location"
+              value={location}
+              onChange={event => setLocation(event.target.value)}
+            >
+              <option value="" disabled hidden>
+                Bitte wählen ...
+              </option>
+              {locations &&
+                locations.map(location => (
+                  <option key={location.id} value={location.id}>
+                    {location.name}
+                  </option>
+                ))}
+            </select>
+            <label htmlFor="location">Location</label>
+          </div>
+        )}
         {isSimilar && (
           <div className="p-4 rounded-lg bg-yellow/10">
             <div className="text-yellow">

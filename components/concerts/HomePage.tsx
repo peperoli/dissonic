@@ -1,9 +1,8 @@
 'use client'
 
-import supabase from '../../utils/supabase'
 import { ConcertCard } from './ConcertCard'
 import { AddConcertForm } from './AddConcertForm'
-import React, { useState, useEffect, FC } from 'react'
+import React, { useState, FC } from 'react'
 import { Button } from '../Button'
 import {
   ArrowUturnLeftIcon,
@@ -16,25 +15,29 @@ import { PageWrapper } from '../layout/PageWrapper'
 import { MultiSelectFilter } from '../MultiSelectFilter'
 import useMediaQuery from '../../hooks/useMediaQuery'
 import { RangeFilter } from '../RangeFilter'
-import { Band, BandSeen, Concert, Location, Profile } from '../../types/types'
-import { User } from '@supabase/supabase-js'
+import { Band, Concert, Location, Profile } from '../../types/types'
+import { useBands } from '../../hooks/useBands'
+import { useLocations } from '../../hooks/useLocations'
+import { useUser } from '../../hooks/useUser'
+import { useBandsSeen } from '../../hooks/useBandsSeen'
 
 interface HomePageProps {
   concerts: Concert[]
-  bands: Band[]
-  locations: Location[]
   profiles: Profile[]
 }
 
-export const HomePage: FC<HomePageProps> = ({ concerts, bands, locations, profiles }) => {
+export const HomePage: FC<HomePageProps> = ({ concerts, profiles }) => {
+  const { data: bands } = useBands()
+  const { data: locations } = useLocations()
+  const { data: bandsSeen } = useBandsSeen()
+  const { data: user } = useUser()
+
   const [isOpen, setIsOpen] = useState(false)
   const [selectedBands, setSelectedBands] = useState<Band[]>([])
   const [selectedLocations, setSelectedLocations] = useState<Location[]>([])
   const [selectedYears, setSelectedYears] = useState<number[]>([])
   const [selectedBandsPerConcert, setSelectedBandsPerConcert] = useState<number[]>([])
-  const [bandsSeen, setBandsSeen] = useState<BandSeen[]>([])
   const [sort, setSort] = useState('dateAsc')
-  const [user, setUser] = useState<User | null>(null)
   const [view, setView] = useState('global')
   const initialYears: number[] = concerts
     .map(item => new Date(item.date_start).getFullYear())
@@ -42,17 +45,13 @@ export const HomePage: FC<HomePageProps> = ({ concerts, bands, locations, profil
   const bandsPerConcert: number[] = concerts
     .map(item => item.bands?.length || 0)
     .sort((a, b) => a - b)
-    
+  const isDesktop = useMediaQuery('(min-width: 768px)')   
 
   function viewFilter(item: Concert) {
+    const concertBandsSeen = bandsSeen?.filter(bandSeen => bandSeen.concert_id === item.id)
     if (view === 'user') {
       return item.bands?.some(band =>
-        bandsSeen.some(
-          bandSeen =>
-            bandSeen.concert_id === item.id &&
-            bandSeen.band_id === band.id &&
-            bandSeen.user_id === user?.id
-        )
+        concertBandsSeen?.some(bandSeen => bandSeen.band_id === band.id)
       )
     }
     return true
@@ -112,41 +111,6 @@ export const HomePage: FC<HomePageProps> = ({ concerts, bands, locations, profil
     setSelectedBandsPerConcert([])
   }
 
-  useEffect(() => {
-    async function getUser() {
-      const {
-        data: { user: initUser },
-      } = await supabase.auth.getUser()
-      setUser(initUser)
-    }
-
-    getUser()
-  }, [])
-
-  useEffect(() => {
-    async function getBandsSeen() {
-      try {
-        const { data: initBandsSeen, error } = await supabase
-          .from('j_bands_seen')
-          .select('*')
-
-        if (error) {
-          throw error
-        }
-
-        setBandsSeen(initBandsSeen)
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
-    if (user) {
-      getBandsSeen()
-      setView('user')
-    }
-  }, [user])
-
-  const isDesktop = useMediaQuery('(min-width: 768px)')
   return (
     <PageWrapper>
       <main className="w-full max-w-2xl p-4 md:p-8">
@@ -186,28 +150,32 @@ export const HomePage: FC<HomePageProps> = ({ concerts, bands, locations, profil
             )}
           </div>
           <div className="flex md:grid md:grid-cols-2 gap-2 md:gap-4 -mx-4 px-4 overflow-x-auto md:overflow-visible scrollbar-hidden">
-            <MultiSelectFilter
-              name="bands"
-              options={bands}
-              selectedOptions={selectedBands}
-              setSelectedOptions={setSelectedBands}
-            />
-            <MultiSelectFilter
-              name="locations"
-              options={locations}
-              selectedOptions={selectedLocations}
-              setSelectedOptions={setSelectedLocations}
-            />
+            {bands && (
+              <MultiSelectFilter
+                name="bands"
+                options={bands}
+                selectedOptions={selectedBands}
+                setSelectedOptions={setSelectedBands}
+              />
+            )}
+            {locations && (
+              <MultiSelectFilter
+                name="locations"
+                options={locations}
+                selectedOptions={selectedLocations}
+                setSelectedOptions={setSelectedLocations}
+              />
+            )}
             <RangeFilter
               name="Jahre"
-              unit='Jahr'
+              unit="Jahr"
               options={initialYears}
               selectedOptions={selectedYears}
               setSelectedOptions={setSelectedYears}
             />
             <RangeFilter
               name="Bands pro Konzert"
-              unit='Bands'
+              unit="Bands"
               options={bandsPerConcert}
               selectedOptions={selectedBandsPerConcert}
               setSelectedOptions={setSelectedBandsPerConcert}
@@ -279,21 +247,14 @@ export const HomePage: FC<HomePageProps> = ({ concerts, bands, locations, profil
                 <ConcertCard
                   key={concert.id}
                   concert={concert}
-                  bandsSeen={bandsSeen.filter(row => row.concert_id === concert.id)}
-                  user={user}
+                  bandsSeen={bandsSeen?.filter(item => item.concert_id === concert.id)}
                   profiles={profiles}
                 />
               ))
           )}
         </div>
       </main>
-      <AddConcertForm
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        bands={bands}
-        locations={locations}
-        concerts={concerts}
-      />
+      {isOpen && <AddConcertForm isOpen={isOpen} setIsOpen={setIsOpen} concerts={concerts} />}
     </PageWrapper>
   )
 }

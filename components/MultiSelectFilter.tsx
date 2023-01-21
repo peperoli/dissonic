@@ -1,4 +1,5 @@
 import { Dispatch, FC, SetStateAction } from 'react'
+import { useQuery } from 'react-query'
 import { Option } from '../types/types'
 import { FilterButton } from './FilterButton'
 import { MultiSelect } from './MultiSelect'
