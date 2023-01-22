@@ -1,109 +1,84 @@
-import React, { Dispatch, FC, SetStateAction, SyntheticEvent, useState } from 'react'
-import supabase from '../../utils/supabase'
+import React, {
+  ChangeEvent,
+  Dispatch,
+  FC,
+  FormEvent,
+  SetStateAction,
+  useReducer,
+  useState,
+} from 'react'
 import { MultiSelect } from '../MultiSelect'
-import dayjs from 'dayjs'
 import { Button } from '../Button'
 import { useRouter } from 'next/navigation'
 import Modal from '../Modal'
-import { Band, Concert, Location } from '../../types/types'
+import { AddConcert, Band } from '../../types/types'
 import Link from 'next/link'
 import { useBands } from '../../hooks/useBands'
 import { useLocations } from '../../hooks/useLocations'
+import { useConcerts } from '../../hooks/useConcerts'
+import { useAddConcert } from '../../hooks/useAddConcert'
+import { ActionType, addConcertReducer } from '../../reducers/addConcertReducer'
 
 interface AddConcertFormProps {
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
-  concerts: Concert[]
 }
 
-export const AddConcertForm: FC<AddConcertFormProps> = ({ isOpen, setIsOpen, concerts }) => {
-  const { data: bands, isLoading } = useBands()
+export const AddConcertForm: FC<AddConcertFormProps> = ({ isOpen, setIsOpen }) => {
+  const { data: bands } = useBands()
   const { data: locations } = useLocations()
+  const { data: concerts } = useConcerts()
 
+  const [today] = new Date().toISOString().split('T')
+  const INITIAL_STATE: AddConcert = {
+    name: '',
+    is_festival: false,
+    date_start: today,
+    date_end: null,
+    location_id: null,
+  }
+
+  const [formState, formDispatch] = useReducer(addConcertReducer, INITIAL_STATE)
   const [selectedBands, setSelectedBands] = useState<Band[]>([])
-  const [isFestival, setIsFestival] = useState(false)
-  const [loading, setLoading] = useState(false)
 
-  const [today] = dayjs().format().split('T')
-  const [tomorrow] = dayjs().add(1, 'day').format().split('T')
-
-  const [dateStart, setDateStart] = useState(today)
-  const [location, setLocation] = useState('')
-
+  const addConcert = useAddConcert(formState, selectedBands)
   const router = useRouter()
 
   const similarConcerts = concerts
-    .filter(item => item.date_start === dateStart)
+    ?.filter(item => item.date_start === formState.date_start)
     .filter(item =>
       item.bands?.find(band => selectedBands.find(selectedBand => band.id === selectedBand.id))
     )
-    .filter(item => item.location?.id === Number(location))
-  const isSimilar = similarConcerts.length > 0
+    .filter(item => item.location?.id === Number(formState.location_id))
+  const isSimilar = similarConcerts && similarConcerts.length > 0
 
-  async function handleSubmit(event: SyntheticEvent) {
-    event.preventDefault()
-    const target = event.target as typeof event.target & {
-      name: { value: string }
-      isFestival: { checked: boolean }
-      dateStart: { value: string }
-      dateEnd: { value: string }
-      location: { value: number }
-    }
-
-    try {
-      setLoading(true)
-      const { data: concert, error: insertConcertError } = await supabase
-        .from('concerts')
-        .insert([
-          {
-            date_start: target.dateStart.value,
-            date_end: target.dateEnd?.value,
-            location_id: target.location.value,
-            name: target.name.value,
-            is_festival: target.isFestival.checked,
-          },
-        ])
-        .select()
-        .single()
-
-      if (insertConcertError) {
-        throw insertConcertError
-      }
-
-      const { error: addBandsError } = await supabase
-        .from('j_concert_bands')
-        .insert(selectedBands.map(band => ({ concert_id: concert?.id, band_id: band.id })))
-
-      if (addBandsError) {
-        throw addBandsError
-      }
-
-      router.push(`/concerts/${concert.id}`)
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message)
-      } else {
-        console.error('Unexpected error', error)
-      }
-    } finally {
-      setLoading(false)
-    }
+  function handleChange(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    formDispatch({
+      type: ActionType.CHANGE_INPUT,
+      payload: { name: event.target.name, value: event.target.value },
+    })
   }
 
-  if (isLoading) {
-    return (
-      <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-        Loading...
-      </Modal>
-    )
+  if (addConcert.isError) {
+    const error = addConcert.error as Error
+    alert(error.message)
   }
 
+  if (addConcert.isSuccess) {
+    router.push(`/concerts/${addConcert.data.id}`)
+  }
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-      <form onSubmit={handleSubmit} className="grid gap-6">
+      <form className="grid gap-6">
         <h2>Konzert hinzufügen</h2>
         <div className="form-control">
-          <input type="text" name="name" id="name" placeholder="Wacken Open Air" />
+          <input
+            type="text"
+            name="name"
+            id="name"
+            placeholder="Wacken Open Air"
+            onChange={handleChange}
+          />
           <label htmlFor="name">Name (optional)</label>
         </div>
         <div className="form-control">
@@ -112,8 +87,7 @@ export const AddConcertForm: FC<AddConcertFormProps> = ({ isOpen, setIsOpen, con
               type="checkbox"
               name="isFestival"
               value="isFestival"
-              checked={isFestival}
-              onChange={() => setIsFestival(!isFestival)}
+              onChange={() => formDispatch({ type: ActionType.TOGGLE_FESTIVAL })}
             />
             <span>Festival</span>
           </label>
@@ -122,16 +96,16 @@ export const AddConcertForm: FC<AddConcertFormProps> = ({ isOpen, setIsOpen, con
           <div className="form-control">
             <input
               type="date"
-              name="dateStart"
+              name="date_start"
               id="dateStart"
-              value={dateStart}
-              onChange={event => setDateStart(event.target.value)}
+              defaultValue={today}
+              onChange={handleChange}
             />
             <label htmlFor="dateStart">Datum</label>
           </div>
-          {isFestival && (
+          {formState.is_festival && (
             <div className="form-control">
-              <input type="date" name="dateEnd" id="dateEnd" defaultValue={tomorrow} />
+              <input type="date" name="date_end" id="dateEnd" onChange={handleChange} />
               <label htmlFor="dateEnd">Enddatum</label>
             </div>
           )}
@@ -146,13 +120,8 @@ export const AddConcertForm: FC<AddConcertFormProps> = ({ isOpen, setIsOpen, con
         )}
         {locations && (
           <div className="form-control">
-            <select
-              name="location"
-              id="location"
-              value={location}
-              onChange={event => setLocation(event.target.value)}
-            >
-              <option value="" disabled hidden>
+            <select name="location_id" id="locationId" defaultValue="" onChange={handleChange}>
+              <option value="" hidden disabled>
                 Bitte wählen ...
               </option>
               {locations &&
@@ -162,7 +131,7 @@ export const AddConcertForm: FC<AddConcertFormProps> = ({ isOpen, setIsOpen, con
                   </option>
                 ))}
             </select>
-            <label htmlFor="location">Location</label>
+            <label htmlFor="locationId">Location</label>
           </div>
         )}
         {isSimilar && (
@@ -192,7 +161,7 @@ export const AddConcertForm: FC<AddConcertFormProps> = ({ isOpen, setIsOpen, con
         )}
         <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10">
           <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
-          <Button type="submit" label="Erstellen" style="primary" loading={loading} />
+          <Button onClick={() => addConcert.mutate()} label="Erstellen" style="primary" loading={addConcert.isLoading} />
         </div>
       </form>
     </Modal>

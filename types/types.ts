@@ -26,6 +26,8 @@ export type Concert = Database['public']['Tables']['concerts']['Row'] &
   WithBands &
   WithBandsSeen
 
+export type AddConcert = Database['public']['Tables']['concerts']['Insert']
+
 export type Comment = Database['public']['Tables']['comments']['Row']
 
 export type Band = Database['public']['Tables']['bands']['Row'] & WithCountry & WithGenres

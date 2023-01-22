@@ -2,7 +2,7 @@
 
 import { ConcertCard } from './ConcertCard'
 import { AddConcertForm } from './AddConcertForm'
-import React, { useState, FC } from 'react'
+import React, { useState } from 'react'
 import { Button } from '../Button'
 import {
   ArrowUturnLeftIcon,
@@ -15,20 +15,19 @@ import { PageWrapper } from '../layout/PageWrapper'
 import { MultiSelectFilter } from '../MultiSelectFilter'
 import useMediaQuery from '../../hooks/useMediaQuery'
 import { RangeFilter } from '../RangeFilter'
-import { Band, Concert, Location, Profile } from '../../types/types'
+import { Band, Concert, Location } from '../../types/types'
 import { useBands } from '../../hooks/useBands'
 import { useLocations } from '../../hooks/useLocations'
 import { useUser } from '../../hooks/useUser'
 import { useBandsSeen } from '../../hooks/useBandsSeen'
+import { useConcerts } from '../../hooks/useConcerts'
+import { useProfiles } from '../../hooks/useProfiles'
 
-interface HomePageProps {
-  concerts: Concert[]
-  profiles: Profile[]
-}
-
-export const HomePage: FC<HomePageProps> = ({ concerts, profiles }) => {
+export const HomePage = () => {
+  const { data: concerts } = useConcerts()
   const { data: bands } = useBands()
   const { data: locations } = useLocations()
+  const { data: profiles } = useProfiles()
   const { data: bandsSeen } = useBandsSeen()
   const { data: user } = useUser()
 
@@ -39,11 +38,11 @@ export const HomePage: FC<HomePageProps> = ({ concerts, profiles }) => {
   const [selectedBandsPerConcert, setSelectedBandsPerConcert] = useState<number[]>([])
   const [sort, setSort] = useState('dateAsc')
   const [view, setView] = useState('global')
-  const initialYears: number[] = concerts
-    .map(item => new Date(item.date_start).getFullYear())
+  const initialYears: number[] | undefined = concerts
+    ?.map(item => new Date(item.date_start).getFullYear())
     .sort((a, b) => a - b)
-  const bandsPerConcert: number[] = concerts
-    .map(item => item.bands?.length || 0)
+  const bandsPerConcert: number[] | undefined = concerts
+    ?.map(item => item.bands?.length || 0)
     .sort((a, b) => a - b)
   const isDesktop = useMediaQuery('(min-width: 768px)')   
 
@@ -84,7 +83,7 @@ export const HomePage: FC<HomePageProps> = ({ concerts, profiles }) => {
     return bandFilter && locationFilter && yearsFilter && bandsPerConcertFilter
   }
 
-  const filteredLength = concerts.filter(filterRule).filter(viewFilter).length
+  const filteredLength = concerts?.filter(filterRule).filter(viewFilter).length
 
   function compare(a: Concert, b: Concert) {
     let comparison = 0
@@ -139,10 +138,10 @@ export const HomePage: FC<HomePageProps> = ({ concerts, profiles }) => {
         <div className="grid gap-4">
           <div className="flex items-center gap-4">
             <div className="text-sm text-slate-300">
-              {filteredLength !== concerts.length && `${filteredLength} von `}
-              {concerts.length}&nbsp;Einträge
+              {filteredLength !== concerts?.length && `${filteredLength} von `}
+              {concerts?.length}&nbsp;Einträge
             </div>
-            {concerts.filter(filterRule).length !== concerts.length && (
+            {concerts?.filter(filterRule).length !== concerts?.length && (
               <button onClick={resetAll} className="btn btn-secondary btn-small">
                 <ArrowUturnLeftIcon className="h-icon text-slate-300" />
                 Zurücksetzen
@@ -166,20 +165,24 @@ export const HomePage: FC<HomePageProps> = ({ concerts, profiles }) => {
                 setSelectedOptions={setSelectedLocations}
               />
             )}
-            <RangeFilter
-              name="Jahre"
-              unit="Jahr"
-              options={initialYears}
-              selectedOptions={selectedYears}
-              setSelectedOptions={setSelectedYears}
-            />
-            <RangeFilter
-              name="Bands pro Konzert"
-              unit="Bands"
-              options={bandsPerConcert}
-              selectedOptions={selectedBandsPerConcert}
-              setSelectedOptions={setSelectedBandsPerConcert}
-            />
+            {initialYears && (
+              <RangeFilter
+                name="Jahre"
+                unit="Jahr"
+                options={initialYears}
+                selectedOptions={selectedYears}
+                setSelectedOptions={setSelectedYears}
+              />
+            )}
+            {bandsPerConcert && (
+              <RangeFilter
+                name="Bands pro Konzert"
+                unit="Bands"
+                options={bandsPerConcert}
+                selectedOptions={selectedBandsPerConcert}
+                setSelectedOptions={setSelectedBandsPerConcert}
+              />
+            )}
           </div>
           <div className="flex items-center gap-4">
             {user && (
@@ -240,7 +243,7 @@ export const HomePage: FC<HomePageProps> = ({ concerts, profiles }) => {
             <div>Blyat! Keine Einträge gefunden.</div>
           ) : (
             concerts
-              .filter(filterRule)
+              ?.filter(filterRule)
               .filter(viewFilter)
               .sort(compare)
               .map(concert => (
@@ -254,7 +257,7 @@ export const HomePage: FC<HomePageProps> = ({ concerts, profiles }) => {
           )}
         </div>
       </main>
-      {isOpen && <AddConcertForm isOpen={isOpen} setIsOpen={setIsOpen} concerts={concerts} />}
+      {isOpen && <AddConcertForm isOpen={isOpen} setIsOpen={setIsOpen} />}
     </PageWrapper>
   )
 }
