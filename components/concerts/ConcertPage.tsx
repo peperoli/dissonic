@@ -12,31 +12,32 @@ import 'dayjs/locale/de'
 import { GenreChart } from './GenreChart'
 import Comments from './Comments'
 import { DeleteConcertModal } from './DeleteConcertModal'
-import { Band, BandSeen, Concert, Location, Profile } from '../../types/types'
-import { User } from '@supabase/supabase-js'
+import { BandSeen } from '../../types/types'
 import { BandSeenToggle } from './BandSeenToggle'
+import { useProfiles } from '../../hooks/useProfiles'
+import { useConcert } from '../../hooks/useConcert'
+import { useUser } from '../../hooks/useUser'
 
 interface ConcertPageProps {
-  initialConcert: Concert
-  bands: Band[]
-  locations: Location[]
-  profiles: Profile[]
+  concertId: string
 }
 
-export const ConcertPage: FC<ConcertPageProps> = ({
-  initialConcert,
-  bands,
-  locations,
-  profiles,
-}) => {
-  const [concert, setConcert] = useState(initialConcert)
-  const [selectedBandsSeen, setSelectedBandsSeen] = useState<BandSeen[]>([])
+export const ConcertPage: FC<ConcertPageProps> = ({ concertId }) => {
+  const { data: profiles } = useProfiles()
+  const { data: concert } = useConcert(concertId)
+  const { data: user } = useUser()
+
   const [editIsOpen, setEditIsOpen] = useState(false)
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
-  const [user, setUser] = useState<User | null>(null)
   const [bandsSeen, setBandsSeen] = useState<BandSeen[]>([])
-  const [allBandsSeen, setAllBandsSeen] = useState<BandSeen[] | null>(null)
+  const [selectedBandsSeen, setSelectedBandsSeen] = useState<BandSeen[]>([])
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    const concertBandsSeen = concert?.bandsSeen?.filter(item => item.user_id === user?.id)
+    setBandsSeen(concertBandsSeen || [])
+    setSelectedBandsSeen(concertBandsSeen || [])
+  }, [concert?.bandsSeen?.length, user])
 
   const addBandsSeen = selectedBandsSeen.filter(
     item => !bandsSeen?.find(item2 => item.band_id === item2.band_id)
@@ -45,54 +46,11 @@ export const ConcertPage: FC<ConcertPageProps> = ({
     item => !selectedBandsSeen.find(item2 => item.band_id === item2.band_id)
   )
   const dateFormat =
-    new Date(concert.date_start).getFullYear() === new Date().getFullYear()
+    concert && new Date(concert.date_start).getFullYear() === new Date().getFullYear()
       ? 'DD. MMM'
       : 'DD. MMM YYYY'
-  const fanIds = new Set(allBandsSeen?.map(item => item.user_id))
-  const fanProfiles = [...fanIds].map(item => profiles.find(profile => profile.id === item))
-
-  useEffect(() => {
-    getUser()
-  }, [])
-
-  async function getUser() {
-    const {
-      data: { user: initUser },
-    } = await supabase.auth.getUser()
-    setUser(initUser)
-  }
-
-  useEffect(() => {
-    async function getBandsSeen() {
-      try {
-        const { data: initBandsSeen, error: selectedBandsSeenError } = await supabase
-          .from('j_bands_seen')
-          .select('*')
-          .eq('concert_id', concert.id)
-
-        if (selectedBandsSeenError) {
-          throw selectedBandsSeenError
-        }
-
-        if (initBandsSeen) {
-          setSelectedBandsSeen(initBandsSeen.filter(item => item.user_id === user?.id))
-          setBandsSeen(initBandsSeen.filter(item => item.user_id === user?.id))
-          setAllBandsSeen(initBandsSeen)
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          alert(error.message)
-        } else {
-          alert('Unexpected error. See browser console for more information.')
-          console.error(error)
-        }
-      }
-    }
-
-    if (user) {
-      getBandsSeen()
-    }
-  }, [user, concert.id])
+  const fanIds = new Set(concert?.bandsSeen?.map(item => item.user_id))
+  const fanProfiles = [...fanIds].map(item => profiles?.find(profile => profile.id === item))
 
   async function updateBandsSeen() {
     try {
@@ -107,7 +65,7 @@ export const ConcertPage: FC<ConcertPageProps> = ({
       const { error: deleteBandsSeenError } = await supabase
         .from('j_bands_seen')
         .delete()
-        .eq('concert_id', concert.id)
+        .eq('concert_id', concert?.id)
         .eq('user_id', user?.id)
         .in(
           'band_id',
@@ -129,6 +87,10 @@ export const ConcertPage: FC<ConcertPageProps> = ({
     } finally {
       setLoading(false)
     }
+  }
+
+  if (!concert) {
+    return <h1>Konzert nicht gefunden</h1>
   }
   return (
     <PageWrapper>
@@ -155,7 +117,7 @@ export const ConcertPage: FC<ConcertPageProps> = ({
               concert.bands.map(band => (
                 <BandSeenToggle
                   key={band.id}
-                  user={user}
+                  user={user || null}
                   concert={concert}
                   band={band}
                   selectedBandsSeen={selectedBandsSeen}
@@ -216,14 +178,7 @@ export const ConcertPage: FC<ConcertPageProps> = ({
         <div className="p-6 rounded-lg bg-slate-800">
           <Comments concert={concert} user={user} profiles={profiles} />
         </div>
-        <EditConcertForm
-          concert={concert}
-          bands={bands}
-          locations={locations}
-          isOpen={editIsOpen}
-          setIsOpen={setEditIsOpen}
-          setConcert={setConcert}
-        />
+        <EditConcertForm concert={concert} isOpen={editIsOpen} setIsOpen={setEditIsOpen} />
         <DeleteConcertModal isOpen={deleteIsOpen} setIsOpen={setDeleteIsOpen} concert={concert} />
       </main>
     </PageWrapper>

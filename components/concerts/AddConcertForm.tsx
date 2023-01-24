@@ -101,7 +101,7 @@ export const AddConcertForm: FC<AddConcertFormProps> = ({ isOpen, setIsOpen }) =
               defaultValue={today}
               onChange={handleChange}
             />
-            <label htmlFor="dateStart">Datum</label>
+            <label htmlFor="dateStart">{formState.is_festival ? 'Startdatum' : 'Datum'}</label>
           </div>
           {formState.is_festival && (
             <div className="form-control">
@@ -124,12 +124,11 @@ export const AddConcertForm: FC<AddConcertFormProps> = ({ isOpen, setIsOpen }) =
               <option value="" hidden disabled>
                 Bitte wählen ...
               </option>
-              {locations &&
-                locations.map(location => (
-                  <option key={location.id} value={location.id}>
-                    {location.name}
-                  </option>
-                ))}
+              {locations.map(location => (
+                <option key={location.id} value={location.id}>
+                  {location.name}
+                </option>
+              ))}
             </select>
             <label htmlFor="locationId">Location</label>
           </div>
@@ -161,7 +160,12 @@ export const AddConcertForm: FC<AddConcertFormProps> = ({ isOpen, setIsOpen }) =
         )}
         <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10">
           <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
-          <Button onClick={() => addConcert.mutate()} label="Erstellen" style="primary" loading={addConcert.isLoading} />
+          <Button
+            onClick={() => addConcert.mutate()}
+            label="Erstellen"
+            style="primary"
+            loading={addConcert.isLoading}
+          />
         </div>
       </form>
     </Modal>

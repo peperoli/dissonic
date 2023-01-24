@@ -22,5 +22,5 @@ const fetchBandsSeen = async (): Promise<BandSeen[]> => {
 }
 
 export const useBandsSeen = () => {
-  return useQuery('bandsSeen', () => fetchBandsSeen())
+  return useQuery('bandsSeen', fetchBandsSeen)
 }

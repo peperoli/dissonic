@@ -28,11 +28,8 @@ export interface ConcertCardProps {
 
 export const ConcertCard: FC<ConcertCardProps> = ({ concert, bandsSeen, profiles }) => {
   const router = useRouter()
-  let fanProfiles
-  if (concert.bandsSeen && concert.bandsSeen?.length > 0) {
-    const fanIds = new Set(concert.bandsSeen.map(item => item.user_id))
-    fanProfiles = [...fanIds].map(item => profiles?.find(profile => profile.id === item))
-  }
+  const fanIds = new Set(concert?.bandsSeen?.map(item => item.user_id))
+  const fanProfiles = [...fanIds].map(item => profiles?.find(profile => profile.id === item))
   return (
     <div
       onClick={() => router.push(`/concerts/${concert.id}`)}
