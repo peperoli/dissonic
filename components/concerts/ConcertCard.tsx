@@ -4,11 +4,11 @@ import dayjs from 'dayjs'
 import 'dayjs/locale/de'
 import { useRouter } from 'next/navigation'
 import React, { FC, Fragment } from 'react'
-import { BandSeen, Concert, Profile } from '../../types/types'
+import { Concert, Profile } from '../../types/types'
 
 const ConcertDate = ({ date }: { date: Date }) => {
   return (
-    <div className="relative flex-none flex flex-col justify-center items-center w-20 h-20 border border-slate-700 rounded-lg first:bg-slate-700 shadow-md">
+    <div className="relative flex-none flex flex-col justify-center items-center w-20 h-20 border border-slate-700 rounded-lg first:bg-slate-700 first:group-hover:bg-slate-600 shadow-md transition duration-200">
       {date && <span className="text-3xl font-bold">{date.getDate()}</span>}
       {date && <span className="text-sm">{dayjs(date).locale('de-ch').format('MMM')}</span>}
       {date?.getFullYear() !== new Date().getFullYear() && (
@@ -22,18 +22,17 @@ const ConcertDate = ({ date }: { date: Date }) => {
 
 export interface ConcertCardProps {
   concert: Concert
-  bandsSeen?: BandSeen[]
   profiles?: Profile[]
 }
 
-export const ConcertCard: FC<ConcertCardProps> = ({ concert, bandsSeen, profiles }) => {
+export const ConcertCard: FC<ConcertCardProps> = ({ concert, profiles }) => {
   const router = useRouter()
   const fanIds = new Set(concert?.bandsSeen?.map(item => item.user_id))
   const fanProfiles = [...fanIds].map(item => profiles?.find(profile => profile.id === item))
   return (
     <div
       onClick={() => router.push(`/concerts/${concert.id}`)}
-      className="flex flex-col md:flex-row gap-4 p-6 rounded-2xl bg-slate-800 hover:cursor-pointer"
+      className="flex flex-col md:flex-row group gap-4 p-6 rounded-2xl bg-slate-800 hover:cursor-pointer"
     >
       <div className="flex md:flex-col items-center">
         <ConcertDate date={new Date(concert.date_start)} />
@@ -55,7 +54,7 @@ export const ConcertCard: FC<ConcertCardProps> = ({ concert, bandsSeen, profiles
                   href={`/bands/${band.id}`}
                   onClick={event => event.stopPropagation()}
                   className={`btn btn-tag${
-                    bandsSeen?.find(bandSeen => bandSeen.band_id === band.id) ? ' !text-venom' : ''
+                    concert.bandsSeen?.find(item => item.band_id === band.id) ? ' !text-venom' : ''
                   }`}
                 >
                   {band.name}

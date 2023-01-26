@@ -1,6 +1,5 @@
 'use client'
 
-import { ConcertCard } from './ConcertCard'
 import { AddConcertForm } from './AddConcertForm'
 import React, { useState } from 'react'
 import { Button } from '../Button'
@@ -13,7 +12,6 @@ import {
 } from '@heroicons/react/20/solid'
 import { PageWrapper } from '../layout/PageWrapper'
 import { MultiSelectFilter } from '../MultiSelectFilter'
-import useMediaQuery from '../../hooks/useMediaQuery'
 import { RangeFilter } from '../RangeFilter'
 import { Band, Concert, Location } from '../../types/types'
 import { useBands } from '../../hooks/useBands'
@@ -21,13 +19,12 @@ import { useLocations } from '../../hooks/useLocations'
 import { useUser } from '../../hooks/useUser'
 import { useBandsSeen } from '../../hooks/useBandsSeen'
 import { useConcerts } from '../../hooks/useConcerts'
-import { useProfiles } from '../../hooks/useProfiles'
+import { ConcertsGrid } from './ConcertsGrid'
 
 export const HomePage = () => {
-  const { data: concerts } = useConcerts()
+  const { data: concerts, isLoading: concertsIsLoading } = useConcerts()
   const { data: bands } = useBands()
   const { data: locations } = useLocations()
-  const { data: profiles } = useProfiles()
   const { data: bandsSeen } = useBandsSeen()
   const { data: user } = useUser()
 
@@ -44,7 +41,6 @@ export const HomePage = () => {
   const bandsPerConcert: number[] | undefined = concerts
     ?.map(item => item.bands?.length || 0)
     .sort((a, b) => a - b)
-  const isDesktop = useMediaQuery('(min-width: 768px)')   
 
   function viewFilter(item: Concert) {
     const concertBandsSeen = bandsSeen?.filter(bandSeen => bandSeen.concert_id === item.id)
@@ -83,7 +79,7 @@ export const HomePage = () => {
     return bandFilter && locationFilter && yearsFilter && bandsPerConcertFilter
   }
 
-  const filteredLength = concerts?.filter(filterRule).filter(viewFilter).length
+  const filteredConcerts = concerts?.filter(filterRule).filter(viewFilter)
 
   function compare(a: Concert, b: Concert) {
     let comparison = 0
@@ -113,8 +109,7 @@ export const HomePage = () => {
   return (
     <PageWrapper>
       <main className="w-full max-w-2xl p-4 md:p-8">
-        {!isDesktop && (
-          <div className="fixed bottom-0 right-0 m-4">
+          <div className="md:hidden fixed bottom-0 right-0 m-4">
             <Button
               onClick={() => setIsOpen(true)}
               label="Konzert hinzufügen"
@@ -123,22 +118,20 @@ export const HomePage = () => {
               icon={<PlusIcon className="h-icon" />}
             />
           </div>
-        )}
         <div className="sr-only md:not-sr-only flex justify-between items-center mb-6">
           <h1>Konzerte</h1>
-          {isDesktop && (
             <Button
               onClick={() => setIsOpen(true)}
               label="Konzert hinzufügen"
               style="primary"
               icon={<PlusIcon className="h-icon" />}
+              className="hidden md:block"
             />
-          )}
         </div>
         <div className="grid gap-4">
           <div className="flex items-center gap-4">
             <div className="text-sm text-slate-300">
-              {filteredLength !== concerts?.length && `${filteredLength} von `}
+              {filteredConcerts?.length !== concerts?.length && `${filteredConcerts?.length} von `}
               {concerts?.length}&nbsp;Einträge
             </div>
             {concerts?.filter(filterRule).length !== concerts?.length && (
@@ -149,40 +142,32 @@ export const HomePage = () => {
             )}
           </div>
           <div className="flex md:grid md:grid-cols-2 gap-2 md:gap-4 -mx-4 px-4 overflow-x-auto md:overflow-visible scrollbar-hidden">
-            {bands && (
-              <MultiSelectFilter
-                name="bands"
-                options={bands}
-                selectedOptions={selectedBands}
-                setSelectedOptions={setSelectedBands}
-              />
-            )}
-            {locations && (
-              <MultiSelectFilter
-                name="locations"
-                options={locations}
-                selectedOptions={selectedLocations}
-                setSelectedOptions={setSelectedLocations}
-              />
-            )}
-            {initialYears && (
-              <RangeFilter
-                name="Jahre"
-                unit="Jahr"
-                options={initialYears}
-                selectedOptions={selectedYears}
-                setSelectedOptions={setSelectedYears}
-              />
-            )}
-            {bandsPerConcert && (
-              <RangeFilter
-                name="Bands pro Konzert"
-                unit="Bands"
-                options={bandsPerConcert}
-                selectedOptions={selectedBandsPerConcert}
-                setSelectedOptions={setSelectedBandsPerConcert}
-              />
-            )}
+            <MultiSelectFilter
+              name="bands"
+              options={bands}
+              selectedOptions={selectedBands}
+              setSelectedOptions={setSelectedBands}
+            />
+            <MultiSelectFilter
+              name="locations"
+              options={locations}
+              selectedOptions={selectedLocations}
+              setSelectedOptions={setSelectedLocations}
+            />
+            <RangeFilter
+              name="Jahre"
+              unit="Jahr"
+              options={initialYears}
+              selectedOptions={selectedYears}
+              setSelectedOptions={setSelectedYears}
+            />
+            <RangeFilter
+              name="Bands pro Konzert"
+              unit="Bands"
+              options={bandsPerConcert}
+              selectedOptions={selectedBandsPerConcert}
+              setSelectedOptions={setSelectedBandsPerConcert}
+            />
           </div>
           <div className="flex items-center gap-4">
             {user && (
@@ -239,22 +224,7 @@ export const HomePage = () => {
               </div>
             </div>
           </div>
-          {typeof filteredLength === 'number' && filteredLength === 0 ? (
-            <div>Blyat! Keine Einträge gefunden.</div>
-          ) : (
-            concerts
-              ?.filter(filterRule)
-              .filter(viewFilter)
-              .sort(compare)
-              .map(concert => (
-                <ConcertCard
-                  key={concert.id}
-                  concert={concert}
-                  bandsSeen={bandsSeen?.filter(item => item.concert_id === concert.id)}
-                  profiles={profiles}
-                />
-              ))
-          )}
+          <ConcertsGrid concerts={filteredConcerts?.sort(compare)} concertsIsLoading={concertsIsLoading} />
         </div>
       </main>
       {isOpen && <AddConcertForm isOpen={isOpen} setIsOpen={setIsOpen} />}

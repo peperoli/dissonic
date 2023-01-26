@@ -34,16 +34,18 @@ export const FilterButton: FC<FilterButtonProps> = ({
               <span className="whitespace-nowrap overflow-hidden text-ellipsis">
                 {selectedOptions.length > 0 ? (
                   <>
-                    <span className='capitalize'>{name}: </span>
+                    <span className="capitalize">{name}: </span>
                     <span className="px-1 py-0.5 rounded-md bg-slate-800">
                       {selectedOptions.length} ausgewählt
                     </span>
                   </>
                 ) : (
-                  <span className='capitalize'>{name}</span>
+                  <span className="capitalize">{name}</span>
                 )}
               </span>
-              <ChevronDownIcon className={`h-icon flex-none${open ? ' transform rotate-180' : ''}`} />
+              <ChevronDownIcon
+                className={`h-icon flex-none${open ? ' transform rotate-180' : ''}`}
+              />
             </Popover.Button>
             <Popover.Panel className="fixed md:absolute flex flex-col overflow-hidden inset-0 md:inset-auto min-w-full md:mt-1 p-4 rounded-lg bg-slate-700 shadow-xl z-20">
               <div className="flex md:hidden justify-between items-center gap-4 mb-4">

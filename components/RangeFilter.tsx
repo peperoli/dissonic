@@ -26,7 +26,7 @@ const Chart: FC<ChartProps> = ({ options, initialMin, initialMax, minValue, maxV
     optionCounts.push({ id: i, count: 0 })
   }
 
-  options.forEach(option => {
+  options?.forEach(option => {
     const optionCount = optionCounts.find(item => item.id === option)
     if (optionCount) {
       optionCount.count += 1
@@ -94,7 +94,7 @@ const RangeSliderHandle: FC<RangeSliderHandleProps> = ({
       setValue(currentValue)
     }
   }
-  
+
   function dragMouseUp() {
     document.removeEventListener('mousemove', dragMouseMove)
     setDrag(false)
@@ -172,32 +172,20 @@ const RangeSlider: FC<RangeSliderProps> = ({
   )
 }
 
-interface RangeFilterProps {
-  name: string
+interface RangeSliderWrapperProps {
   unit: string
   options: number[]
-  selectedOptions: number[]
-  setSelectedOptions: Dispatch<SetStateAction<number[]>>
+  initialMin: number
+  initialMax: number
+  minValue: number
+  setMinValue: Dispatch<SetStateAction<number>>
+  maxValue: number
+  setMaxValue: Dispatch<SetStateAction<number>>
 }
 
-export const RangeFilter: FC<RangeFilterProps> = ({
-  name,
-  unit,
-  options,
-  selectedOptions,
-  setSelectedOptions,
-}) => {
-  const initialMin = Math.min(...options)
-  const initialMax = Math.max(...options)
-  const [minValue, setMinValue] = useState(initialMin)
-  const [maxValue, setMaxValue] = useState(initialMax)
+const RangeSliderWrapper: FC<RangeSliderWrapperProps> = ({ options, unit, initialMin, initialMax, minValue, setMinValue, maxValue, setMaxValue }) => {
   const [minPosition, setMinPosition] = useState(initialMin)
   const [maxPosition, setMaxPosition] = useState(initialMax)
-  const uniqueOptions = [...new Set(options)]
-
-  function submitSelectedOptions(min: number, max: number) {
-      setSelectedOptions(uniqueOptions.filter(item => item >= min && item <= max))
-  }
 
   function handleMinBlur(event: FocusEvent<HTMLInputElement>) {
     const value = Number(event.target.value)
@@ -238,18 +226,12 @@ export const RangeFilter: FC<RangeFilterProps> = ({
   useEffect(() => {
     setMinValue(minPosition)
   }, [minPosition])
-  
+
   useEffect(() => {
     setMaxValue(maxPosition)
   }, [maxPosition])
-
   return (
-    <FilterButton
-      name={name}
-      selectedOptions={selectedOptions}
-      setSelectedOptions={setSelectedOptions}
-      handleSubmit={() => submitSelectedOptions(minValue, maxValue)}
-    >
+    <>
       <Chart
         options={options}
         initialMin={initialMin}
@@ -285,6 +267,60 @@ export const RangeFilter: FC<RangeFilterProps> = ({
           onBlur={handleMaxBlur}
         />
       </div>
+    </>
+  )
+}
+
+interface RangeFilterProps {
+  name: string
+  unit: string
+  options: number[] | undefined
+  selectedOptions: number[]
+  setSelectedOptions: Dispatch<SetStateAction<number[]>>
+}
+
+export const RangeFilter: FC<RangeFilterProps> = ({
+  name,
+  unit,
+  options,
+  selectedOptions,
+  setSelectedOptions,
+}) => {
+  const [initialMin, setInitialMin] = useState(0)
+  const [initialMax, setInitialMax] = useState(0)
+  const [minValue, setMinValue] = useState(initialMin)
+  const [maxValue, setMaxValue] = useState(initialMax)
+  const uniqueOptions = [...new Set(options)]
+
+  useEffect(() => {
+    if (options) {
+      setInitialMin(Math.min(...options))
+      setInitialMax(Math.max(...options))
+    }
+  }, [options?.length])
+
+  function submitSelectedOptions(min: number, max: number) {
+    setSelectedOptions(uniqueOptions.filter(item => item >= min && item <= max))
+  }
+  return (
+    <FilterButton
+      name={name}
+      selectedOptions={selectedOptions}
+      setSelectedOptions={setSelectedOptions}
+      handleSubmit={() => submitSelectedOptions(minValue, maxValue)}
+    >
+      {options && (
+        <RangeSliderWrapper
+          unit={unit}
+          options={options}
+          minValue={minValue}
+          setMinValue={setMinValue}
+          maxValue={maxValue}
+          setMaxValue={setMaxValue}
+          initialMin={initialMin}
+          initialMax={initialMax}
+        />
+      )}
     </FilterButton>
   )
 }

@@ -11,6 +11,7 @@ interface ButtonProps {
   loading?: boolean
   size?: 'small' | 'medium'
   danger?: boolean
+  className?: string
 }
 
 export const Button: FC<ButtonProps> = ({
@@ -24,6 +25,7 @@ export const Button: FC<ButtonProps> = ({
   loading,
   size = 'medium',
   danger,
+  className
 }) => {
   return (
     <button
@@ -32,7 +34,7 @@ export const Button: FC<ButtonProps> = ({
       disabled={disabled || loading}
       className={`btn${style === 'primary' ? ' btn-primary' : ' btn-secondary'}${
         contentType === 'icon' ? ' btn-icon' : ''
-      }${size === 'small' ? ' btn-small' : ''}${danger ? ' btn-danger' : ''}`}
+      }${size === 'small' ? ' btn-small' : ''}${danger ? ' btn-danger' : ''}${className ? ` ${className}` : ''}`}
     >
       {loading && (
         <svg
