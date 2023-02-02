@@ -5,6 +5,7 @@ import 'dayjs/locale/de'
 import { useRouter } from 'next/navigation'
 import React, { FC, Fragment } from 'react'
 import { Concert, Profile } from '../../types/types'
+import { User } from '@supabase/supabase-js'
 
 const ConcertDate = ({ date }: { date: Date }) => {
   return (
@@ -23,12 +24,13 @@ const ConcertDate = ({ date }: { date: Date }) => {
 export interface ConcertCardProps {
   concert: Concert
   profiles?: Profile[]
+  user?: User | null
 }
 
-export const ConcertCard: FC<ConcertCardProps> = ({ concert, profiles }) => {
+export const ConcertCard: FC<ConcertCardProps> = ({ concert, profiles, user }) => {
   const router = useRouter()
-  const fanIds = new Set(concert?.bandsSeen?.map(item => item.user_id))
-  const fanProfiles = [...fanIds].map(item => profiles?.find(profile => profile.id === item))
+  const fanIds = new Set(concert?.bands_seen?.map(item => item.user_id))
+  const fanProfiles = profiles?.filter(profile => fanIds.has(profile.id))
   return (
     <div
       onClick={() => router.push(`/concerts/${concert.id}`)}
@@ -54,7 +56,7 @@ export const ConcertCard: FC<ConcertCardProps> = ({ concert, profiles }) => {
                   href={`/bands/${band.id}`}
                   onClick={event => event.stopPropagation()}
                   className={`btn btn-tag${
-                    concert.bandsSeen?.find(item => item.band_id === band.id) ? ' !text-venom' : ''
+                    concert.bands_seen?.find(item => item.band_id === band.id && item.user_id === user?.id) ? ' !text-venom' : ''
                   }`}
                 >
                   {band.name}

@@ -224,7 +224,7 @@ export const HomePage = () => {
               </div>
             </div>
           </div>
-          <ConcertsGrid concerts={filteredConcerts?.sort(compare)} concertsIsLoading={concertsIsLoading} />
+          <ConcertsGrid concerts={filteredConcerts?.sort(compare)} concertsIsLoading={concertsIsLoading} user={user} />
         </div>
       </main>
       {isOpen && <AddConcertForm isOpen={isOpen} setIsOpen={setIsOpen} />}

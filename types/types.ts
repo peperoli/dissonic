@@ -18,7 +18,7 @@ type WithGenres = {
 }
 
 type WithBandsSeen = {
-  bandsSeen: BandSeen[] | null
+  bands_seen: BandSeen[] | null
 }
 
 export type Concert = Database['public']['Tables']['concerts']['Row'] &

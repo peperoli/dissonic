@@ -36,10 +36,10 @@ export const ConcertPage: FC<ConcertPageProps> = ({ concertId }) => {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    const concertBandsSeen = concert?.bandsSeen?.filter(item => item.user_id === user?.id)
+    const concertBandsSeen = concert?.bands_seen?.filter(item => item.user_id === user?.id)
     setBandsSeen(concertBandsSeen || [])
     setSelectedBandsSeen(concertBandsSeen || [])
-  }, [concert?.bandsSeen?.length, user])
+  }, [concert?.bands_seen?.length, user])
 
   const addBandsSeen = selectedBandsSeen.filter(
     item => !bandsSeen?.find(item2 => item.band_id === item2.band_id)
@@ -51,7 +51,7 @@ export const ConcertPage: FC<ConcertPageProps> = ({ concertId }) => {
     concert && new Date(concert.date_start).getFullYear() === new Date().getFullYear()
       ? 'DD. MMM'
       : 'DD. MMM YYYY'
-  const fanIds = concert?.bandsSeen && new Set(concert.bandsSeen.map(item => item.user_id))
+  const fanIds = concert?.bands_seen && new Set(concert.bands_seen.map(item => item.user_id))
   const fanProfiles = profiles?.filter(profile => fanIds?.has(profile.id))
 
   async function updateBandsSeen() {

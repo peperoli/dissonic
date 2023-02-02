@@ -1,3 +1,4 @@
+import { User } from '@supabase/supabase-js'
 import React, { FC } from 'react'
 import { useProfiles } from '../../hooks/useProfiles'
 import { Concert } from '../../types/types'
@@ -6,9 +7,10 @@ import { ConcertCard } from './ConcertCard'
 interface ConcertsGridProps {
   concerts: Concert[] | undefined
   concertsIsLoading: boolean
+  user?: User | null
 }
 
-export const ConcertsGrid: FC<ConcertsGridProps> = ({ concerts, concertsIsLoading }) => {
+export const ConcertsGrid: FC<ConcertsGridProps> = ({ concerts, concertsIsLoading, user }) => {
   const { data: profiles } = useProfiles()
 
   if (concertsIsLoading) {
@@ -45,7 +47,7 @@ export const ConcertsGrid: FC<ConcertsGridProps> = ({ concerts, concertsIsLoadin
   return (
     <div className="grid gap-4">
       {concerts?.map(concert => (
-        <ConcertCard key={concert.id} concert={concert} profiles={profiles} />
+        <ConcertCard key={concert.id} concert={concert} profiles={profiles} user={user} />
       ))}
     </div>
   )
