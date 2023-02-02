@@ -17,6 +17,7 @@ import { BandSeenToggle } from './BandSeenToggle'
 import { useProfiles } from '../../hooks/useProfiles'
 import { useConcert } from '../../hooks/useConcert'
 import { useUser } from '../../hooks/useUser'
+import { useQueryClient } from 'react-query'
 
 interface ConcertPageProps {
   concertId: string
@@ -26,6 +27,7 @@ export const ConcertPage: FC<ConcertPageProps> = ({ concertId }) => {
   const { data: profiles } = useProfiles()
   const { data: concert, isLoading: concertIsLoading } = useConcert(concertId)
   const { data: user } = useUser()
+  const queryClient = useQueryClient()
 
   const [editIsOpen, setEditIsOpen] = useState(false)
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
@@ -49,8 +51,8 @@ export const ConcertPage: FC<ConcertPageProps> = ({ concertId }) => {
     concert && new Date(concert.date_start).getFullYear() === new Date().getFullYear()
       ? 'DD. MMM'
       : 'DD. MMM YYYY'
-  const fanIds = new Set(concert?.bandsSeen?.map(item => item.user_id))
-  const fanProfiles = [...fanIds].map(item => profiles?.find(profile => profile.id === item))
+  const fanIds = concert?.bandsSeen && new Set(concert.bandsSeen.map(item => item.user_id))
+  const fanProfiles = profiles?.filter(profile => fanIds?.has(profile.id))
 
   async function updateBandsSeen() {
     try {
@@ -77,6 +79,7 @@ export const ConcertPage: FC<ConcertPageProps> = ({ concertId }) => {
       }
 
       setBandsSeen(selectedBandsSeen)
+      queryClient.invalidateQueries('concert')
     } catch (error) {
       if (error instanceof Error) {
         alert(error.message)
@@ -186,8 +189,8 @@ export const ConcertPage: FC<ConcertPageProps> = ({ concertId }) => {
             <div className="flex text-sm">
               <UsersIcon className="flex-none h-icon mr-2 self-center text-slate-300" />
               <div className="-ml-2">
-                {fanProfiles?.map(item => (
-                  <Link key={item?.id} href={`/users/${item?.username}`} className="btn btn-tag">
+                {fanProfiles.map(item => (
+                  <Link key={item.id} href={`/users/${item.username}`} className="btn btn-tag">
                     {item?.username}
                   </Link>
                 ))}
@@ -207,7 +210,9 @@ export const ConcertPage: FC<ConcertPageProps> = ({ concertId }) => {
         <div className="p-6 rounded-lg bg-slate-800">
           <Comments concert={concert} user={user} profiles={profiles} />
         </div>
-        <EditConcertForm concert={concert} isOpen={editIsOpen} setIsOpen={setEditIsOpen} />
+        {editIsOpen && (
+          <EditConcertForm concert={concert} isOpen={editIsOpen} setIsOpen={setEditIsOpen} />
+        )}
         <DeleteConcertModal isOpen={deleteIsOpen} setIsOpen={setDeleteIsOpen} concert={concert} />
       </main>
     </PageWrapper>

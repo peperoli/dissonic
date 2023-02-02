@@ -2,19 +2,19 @@ import { useMutation } from 'react-query'
 import { EditConcert, Band } from '../types/types'
 import supabase from '../utils/supabase'
 
-const editConcert = async (concert: EditConcert, addBands: Band[], deleteBands: Band[]) => {
-  const { error: addConcertError } = await supabase
+const editConcert = async (concertId: string, concert: EditConcert, addBands: Band[], deleteBands: Band[]) => {
+  const { error: editConcertError } = await supabase
     .from('concerts')
     .update(concert)
-    .eq('id', concert.id)
+    .eq('id', concertId)
 
-  if (addConcertError) {
-    throw addConcertError
+  if (editConcertError) {
+    throw editConcertError
   }
 
   const { error: addBandsError } = await supabase
     .from('j_concert_bands')
-    .insert(addBands.map(item => ({ concert_id: concert.id, band_id: item.id })))
+    .insert(addBands.map(item => ({ concert_id: concertId, band_id: item.id })))
 
   if (addBandsError) {
     throw addBandsError
@@ -23,7 +23,7 @@ const editConcert = async (concert: EditConcert, addBands: Band[], deleteBands: 
   const { error: deleteBandsError } = await supabase
     .from('j_concert_bands')
     .delete()
-    .eq('concert_id', concert.id)
+    .eq('concert_id', concertId)
     .in(
       'band_id',
       deleteBands.map(item => item.id)
@@ -34,6 +34,6 @@ const editConcert = async (concert: EditConcert, addBands: Band[], deleteBands: 
   }
 }
 
-export const useEditConcert = (concert: EditConcert, addBands: Band[], deleteBands: Band[]) => {
-  return useMutation(() => editConcert(concert, addBands, deleteBands))
+export const useEditConcert = (concertId: string, concert: EditConcert, addBands: Band[], deleteBands: Band[]) => {
+  return useMutation(() => editConcert(concertId, concert, addBands, deleteBands))
 }

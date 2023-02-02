@@ -7,7 +7,7 @@ import { Button } from '../Button'
 import Modal from '../Modal'
 import { MultiSelect } from '../MultiSelect'
 import { useEditConcert } from '../../hooks/useEditConcert'
-import { useRouter } from 'next/navigation'
+import { useQueryClient } from 'react-query'
 
 interface EditConcertFormProps {
   concert: Concert
@@ -18,6 +18,7 @@ interface EditConcertFormProps {
 export const EditConcertForm: FC<EditConcertFormProps> = ({ concert, isOpen, setIsOpen }) => {
   const { data: bands } = useBands()
   const { data: locations } = useLocations()
+  const queryClient = useQueryClient()
 
   const INITIAL_STATE: EditConcert = {
     name: concert.name,
@@ -33,9 +34,8 @@ export const EditConcertForm: FC<EditConcertFormProps> = ({ concert, isOpen, set
   const deleteBands = concert.bands?.filter(
     item => !selectedBands.find(item2 => item.id === item2.id)
   ) || []
-
-  const editConcert = useEditConcert(concert, addBands, deleteBands)
-  const router = useRouter()
+    
+  const editConcert = useEditConcert(concert.id, formState, addBands, deleteBands)
 
   function handleChange(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     formDispatch({
@@ -50,7 +50,8 @@ export const EditConcertForm: FC<EditConcertFormProps> = ({ concert, isOpen, set
   }
 
   if (editConcert.isSuccess) {
-    router.refresh()
+    queryClient.invalidateQueries('concert')
+    setIsOpen(false)
   }
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>

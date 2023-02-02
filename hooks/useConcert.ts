@@ -5,7 +5,7 @@ import supabase from "../utils/supabase"
 const fetchConcert = async (concertId: string): Promise<Concert> => {
   const { data, error } = await supabase
     .from('concerts')
-    .select('*, location:locations(*), bands!j_concert_bands(*), bandsSeen:j_bands_seen(band_id, user_id)')
+    .select('*, location:locations(*), bands!j_concert_bands(*, genres(*)), bandsSeen:j_bands_seen(band_id, user_id)')
     .eq('id', concertId)
     .single()
 
