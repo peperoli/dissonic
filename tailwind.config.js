@@ -43,6 +43,9 @@ module.exports = {
       height: {
         'icon': '1.33em',
       },
+      minHeight: {
+        96: '24rem',
+      },
     },
   },
   plugins: [],

@@ -1,111 +1,61 @@
-import { Dispatch, FC, SetStateAction, SyntheticEvent, useState } from 'react'
-import { Band, Concert, Location } from '../../types/types'
-import supabase from '../../utils/supabase'
+import { ChangeEvent, Dispatch, FC, SetStateAction, useReducer, useState } from 'react'
+import { useBands } from '../../hooks/useBands'
+import { useLocations } from '../../hooks/useLocations'
+import { ActionType, editConcertReducer } from '../../reducers/editConcertReducer'
+import { Concert, EditConcert } from '../../types/types'
 import { Button } from '../Button'
 import Modal from '../Modal'
 import { MultiSelect } from '../MultiSelect'
+import { useEditConcert } from '../../hooks/useEditConcert'
+import { useQueryClient } from 'react-query'
 
 interface EditConcertFormProps {
   concert: Concert
-  bands: Band[]
-  locations: Location[]
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
-  setConcert: Dispatch<SetStateAction<Concert>>
 }
 
-export const EditConcertForm: FC<EditConcertFormProps> = ({
-  concert,
-  bands,
-  locations,
-  isOpen,
-  setIsOpen,
-  setConcert,
-}) => {
+export const EditConcertForm: FC<EditConcertFormProps> = ({ concert, isOpen, setIsOpen }) => {
+  const { data: bands } = useBands()
+  const { data: locations } = useLocations()
+  const queryClient = useQueryClient()
+
+  const INITIAL_STATE: EditConcert = {
+    name: concert.name,
+    is_festival: concert.is_festival,
+    date_start: concert.date_start,
+    date_end: concert.date_end,
+    location_id: concert.location?.id,
+  }
+  const [formState, formDispatch] = useReducer(editConcertReducer, INITIAL_STATE)
   const [selectedBands, setSelectedBands] = useState(concert.bands || [])
-  const [isFestival, setIsFestival] = useState(concert.is_festival)
-  const [loading, setLoading] = useState(false)
 
   const addBands = selectedBands.filter(item => !concert.bands?.find(item2 => item.id === item2.id))
   const deleteBands = concert.bands?.filter(
     item => !selectedBands.find(item2 => item.id === item2.id)
-  )
-  async function handleSubmit(event: SyntheticEvent) {
-    event.preventDefault()
-    const target = event.target as typeof event.target & {
-      name: { value: string }
-      isFestival: { checked: boolean }
-      dateStart: { value: string }
-      dateEnd: { value: string }
-      location: { value: number }
-    }
+  ) || []
+    
+  const editConcert = useEditConcert(concert.id, formState, addBands, deleteBands)
 
-    try {
-      setLoading(true)
-      const { error: editConcertError } = await supabase
-        .from('concerts')
-        .update({
-          name: target.name.value,
-          is_festival: isFestival,
-          date_start: target.dateStart.value,
-          date_end: target.dateEnd?.value,
-          location_id: target.location.value,
-        })
-        .eq('id', concert.id)
+  function handleChange(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    formDispatch({
+      type: ActionType.CHANGE_INPUT,
+      payload: { name: event.target.name, value: event.target.value },
+    })
+  }
 
-      if (editConcertError) {
-        throw editConcertError
-      }
+  if (editConcert.isError) {
+    const error = editConcert.error as Error
+    alert(error.message)
+  }
 
-      const { error: addBandsError } = await supabase
-        .from('j_concert_bands')
-        .insert(addBands.map(band => ({ concert_id: concert.id, band_id: band.id })))
-
-      if (addBandsError) {
-        throw addBandsError
-      }
-
-      if (deleteBands) {
-        const { error: deleteBandsError } = await supabase
-          .from('j_concert_bands')
-          .delete()
-          .eq('concert_id', concert.id)
-          .in(
-            'band_id',
-            deleteBands.map(item => item.id)
-          )
-  
-        if (deleteBandsError) {
-          throw deleteBandsError
-        }
-      }
-
-      const { data: newConcert, error: newConcertError } = await supabase
-        .from('concerts')
-        .select('*, location:locations(*), bands!j_concert_bands(*, genres(*))')
-        .eq('id', concert.id)
-        .single()
-
-      if (newConcertError) {
-        throw newConcertError
-      }
-
-      setConcert(newConcert)
-      setIsOpen(false)
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message)
-      } else {
-        alert('Oops')
-        console.error(error)
-      }
-    } finally {
-      setLoading(false)
-    }
+  if (editConcert.isSuccess) {
+    queryClient.invalidateQueries('concert')
+    setIsOpen(false)
   }
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-      <form onSubmit={handleSubmit} className="grid gap-6">
+      <form className="grid gap-6">
         <h2>Konzert bearbeiten</h2>
         <div className="form-control">
           <input
@@ -113,7 +63,8 @@ export const EditConcertForm: FC<EditConcertFormProps> = ({
             name="name"
             id="name"
             placeholder="Wacken Open Air"
-            defaultValue={concert.name || ''}
+            value={formState.name || ''}
+            onChange={handleChange}
           />
           <label htmlFor="name">Name (optional)</label>
         </div>
@@ -121,53 +72,73 @@ export const EditConcertForm: FC<EditConcertFormProps> = ({
           <label>
             <input
               type="checkbox"
-              name="isFestival"
+              name="is_festival"
               value="isFestival"
-              checked={isFestival}
-              onChange={() => setIsFestival(!isFestival)}
+              checked={formState.is_festival}
+              onChange={() => formDispatch({ type: ActionType.TOGGLE_FESTIVAL })}
             />
             <span>Festival</span>
           </label>
         </div>
         <div className="flex gap-4">
           <div className="form-control">
-            <input type="date" name="dateStart" id="dateStart" defaultValue={concert.date_start} />
-            <label htmlFor="dateStart">{isFestival ? 'Startdatum' : 'Datum'}</label>
+            <input
+              type="date"
+              name="date_start"
+              id="dateStart"
+              value={formState.date_start}
+              onChange={handleChange}
+            />
+            <label htmlFor="dateStart">{formState.is_festival ? 'Startdatum' : 'Datum'}</label>
           </div>
-          {isFestival && (
+          {formState.is_festival && (
             <div className="form-control">
               <input
                 type="date"
-                name="dateEnd"
+                name="date_end"
                 id="dateEnd"
-                defaultValue={concert.date_end || ''}
+                value={formState.date_end || ''}
+                onChange={handleChange}
               />
               <label htmlFor="dateEnd">Enddatum</label>
             </div>
           )}
         </div>
-        <div className="form-control">
-          <select name="location" id="location" defaultValue={concert.location?.id}>
-            <option value="">Bitte wählen ...</option>
-            {locations &&
-              locations.map(location => (
+        {locations && (
+          <div className="form-control">
+            <select
+              name="location_id"
+              id="location"
+              value={formState.location_id || ''}
+              onChange={handleChange}
+            >
+              <option value="">Bitte wählen ...</option>
+              {locations.map(location => (
                 <option key={location.id} value={location.id}>
                   {location.name}
                   {location.city && ', ' + location.city}
                 </option>
               ))}
-          </select>
-          <label htmlFor="location">Location</label>
-        </div>
-        <MultiSelect
-          name="bands"
-          options={bands}
-          selectedOptions={selectedBands}
-          setSelectedOptions={setSelectedBands}
-        />
+            </select>
+            <label htmlFor="location">Location</label>
+          </div>
+        )}
+        {bands && (
+          <MultiSelect
+            name="bands"
+            options={bands}
+            selectedOptions={selectedBands}
+            setSelectedOptions={setSelectedBands}
+          />
+        )}
         <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10">
           <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
-          <Button type="submit" label="Speichern" style="primary" loading={loading} />
+          <Button
+            onClick={() => editConcert.mutate()}
+            label="Speichern"
+            style="primary"
+            loading={editConcert.isLoading}
+          />
         </div>
       </form>
     </Modal>

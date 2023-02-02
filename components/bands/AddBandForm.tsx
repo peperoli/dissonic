@@ -1,6 +1,6 @@
+import { useRouter } from "next/navigation"
 import { Dispatch, FC, SetStateAction, SyntheticEvent, useState } from "react"
 import { Band, Country, Genre } from "../../types/types"
-import { Database } from "../../types/supabase"
 import supabase from "../../utils/supabase"
 import { Button } from "../Button"
 import Modal from "../Modal"
@@ -21,8 +21,9 @@ export const AddBandForm: FC<AddBandFormProps> = ({ countries, genres, bands, se
   const [loading, setLoading] = useState(false)
 
   const regExp = new RegExp(name, 'i')
-  const similarBands = name.length >= 3 ? bands.filter(item => item.name.match(regExp)) : []
-  const isSimilar = similarBands.length > 0
+  const similarBands = bands.filter(item => item.name.match(regExp))
+  const isSimilar = name.length >= 3 && similarBands.length > 0
+  const router = useRouter()
 
   async function handleSubmit(event: SyntheticEvent) {
     event.preventDefault()
@@ -64,7 +65,10 @@ export const AddBandForm: FC<AddBandFormProps> = ({ countries, genres, bands, se
         throw newBandError
       }
       setBands([...bands, newBand])
+      setName('')
+      setSelectedGenres([])
       setIsOpen(false)
+      router.refresh()
     } catch (error) {
       if (error instanceof Error) {
         alert(error.message)
@@ -83,7 +87,7 @@ export const AddBandForm: FC<AddBandFormProps> = ({ countries, genres, bands, se
         <div className="form-control">
           <input type="text" name="name" id="name" value={name} onChange={(event) => setName(event.target.value)} placeholder="Beatles" />
           <label htmlFor="name">Name</label>
-          {isSimilar ? (
+          {isSimilar && (
             <div className="mt-2">
               <p className="text-red">Vorsicht, diese Band könnte schon vorhanden sein:</p>
               <ul className="list-disc list-inside text-slate-300">
@@ -92,8 +96,6 @@ export const AddBandForm: FC<AddBandFormProps> = ({ countries, genres, bands, se
                 ))}
               </ul>
             </div>
-          ) : (
-            <p className="mt-2 text-slate-300">Nice. Die scheint es noch nicht zu geben.</p>
           )}
         </div>
         <div className="form-control">

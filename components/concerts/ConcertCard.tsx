@@ -1,40 +1,38 @@
-import Link from "next/link"
-import { MapPinIcon, UsersIcon } from "@heroicons/react/20/solid"
+import Link from 'next/link'
+import { MapPinIcon, UsersIcon } from '@heroicons/react/20/solid'
 import dayjs from 'dayjs'
 import 'dayjs/locale/de'
-import { useRouter } from "next/navigation"
-import React, { FC, Fragment } from "react"
-import { BandSeen, Concert, Profile } from "../../types/types"
-import { User } from "@supabase/supabase-js"
+import { useRouter } from 'next/navigation'
+import React, { FC, Fragment } from 'react'
+import { Concert, Profile } from '../../types/types'
 
-const ConcertDate = ({ date }: {date: Date}) => {
+const ConcertDate = ({ date }: { date: Date }) => {
   return (
-    <div className="relative flex-none flex flex-col justify-center items-center w-20 h-20 border border-slate-700 rounded-lg first:bg-slate-700 shadow-md">
+    <div className="relative flex-none flex flex-col justify-center items-center w-20 h-20 border border-slate-700 rounded-lg first:bg-slate-700 first:group-hover:bg-slate-600 shadow-md transition duration-200">
       {date && <span className="text-3xl font-bold">{date.getDate()}</span>}
       {date && <span className="text-sm">{dayjs(date).locale('de-ch').format('MMM')}</span>}
-      {date?.getFullYear() !== new Date().getFullYear() && <span className="absolute -bottom-3 px-2 py-1 rounded-full text-xs font-bold text-slate-850 bg-blue-300">{date.getFullYear()}</span>}
+      {date?.getFullYear() !== new Date().getFullYear() && (
+        <span className="absolute -bottom-3 px-2 py-1 rounded-full text-xs font-bold text-slate-850 bg-blue-300">
+          {date.getFullYear()}
+        </span>
+      )}
     </div>
   )
 }
 
 export interface ConcertCardProps {
   concert: Concert
-  bandsSeen?: BandSeen[]
-  user: User | null
   profiles?: Profile[]
 }
 
-export const ConcertCard: FC<ConcertCardProps> = ({ concert, bandsSeen, user, profiles }) => {
+export const ConcertCard: FC<ConcertCardProps> = ({ concert, profiles }) => {
   const router = useRouter()
-  let fanProfiles
-  if (bandsSeen && bandsSeen?.length > 0) {
-    const fanIds = new Set(bandsSeen.map(item => item.user_id))
-    fanProfiles = [...fanIds].map(item => profiles?.find(profile => profile.id === item))
-  }
+  const fanIds = new Set(concert?.bandsSeen?.map(item => item.user_id))
+  const fanProfiles = [...fanIds].map(item => profiles?.find(profile => profile.id === item))
   return (
     <div
       onClick={() => router.push(`/concerts/${concert.id}`)}
-      className="flex flex-col md:flex-row gap-4 p-6 rounded-2xl bg-slate-800 hover:cursor-pointer"
+      className="flex flex-col md:flex-row group gap-4 p-6 rounded-2xl bg-slate-800 hover:cursor-pointer"
     >
       <div className="flex md:flex-col items-center">
         <ConcertDate date={new Date(concert.date_start)} />
@@ -56,11 +54,7 @@ export const ConcertCard: FC<ConcertCardProps> = ({ concert, bandsSeen, user, pr
                   href={`/bands/${band.id}`}
                   onClick={event => event.stopPropagation()}
                   className={`btn btn-tag${
-                    bandsSeen?.some(
-                      bandSeen => bandSeen.band_id === band.id && bandSeen.user_id === user?.id
-                    )
-                      ? ' !text-venom'
-                      : ''
+                    concert.bandsSeen?.find(item => item.band_id === band.id) ? ' !text-venom' : ''
                   }`}
                 >
                   {band.name}
