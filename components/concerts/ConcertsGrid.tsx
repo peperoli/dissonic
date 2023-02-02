@@ -21,7 +21,7 @@ export const ConcertsGrid: FC<ConcertsGridProps> = ({ concerts, concertsIsLoadin
           >
             <div className="flex-shrink-0 w-20 h-20 rounded-lg bg-slate-700" />
             <div className="flex-1 flex flex-col gap-4">
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <div className="w-32 h-6 rounded bg-slate-700" />
                 <div className="w-32 h-6 rounded bg-slate-700" />
                 <div className="w-32 h-6 rounded bg-slate-700" />

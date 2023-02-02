@@ -24,7 +24,7 @@ interface ConcertPageProps {
 
 export const ConcertPage: FC<ConcertPageProps> = ({ concertId }) => {
   const { data: profiles } = useProfiles()
-  const { data: concert } = useConcert(concertId)
+  const { data: concert, isLoading: concertIsLoading } = useConcert(concertId)
   const { data: user } = useUser()
 
   const [editIsOpen, setEditIsOpen] = useState(false)
@@ -89,9 +89,38 @@ export const ConcertPage: FC<ConcertPageProps> = ({ concertId }) => {
     }
   }
 
-  if (!concert) {
-    return <h1>Konzert nicht gefunden</h1>
+  if (concertIsLoading) {
+    return (
+      <PageWrapper>
+        <main className="grid gap-4 w-full max-w-2xl p-4 md:p-8 animate-pulse">
+          <div>
+            <Link href="/" className="btn btn-link">
+              <ArrowLeftIcon className="h-icon" />
+              Zurück
+            </Link>
+          </div>
+          <div className='grid gap-4 min-h-96 p-6 rounded-lg bg-slate-800'>
+            <div className="w-64 max-w-full h-10 mb-6 rounded bg-slate-700" />
+            <div className='flex flex-wrap gap-2 mb-2'>
+              <div className="w-32 h-6 rounded bg-slate-700" />
+              <div className="w-32 h-6 rounded bg-slate-700" />
+              <div className="w-32 h-6 rounded bg-slate-700" />
+            </div>
+            <div className="w-1/3 h-5 rounded bg-slate-700" />
+            <div className="flex gap-2">
+              <div className="w-24 h-5 rounded bg-slate-700" />
+              <div className="w-24 h-5 rounded bg-slate-700" />
+            </div>
+          </div>
+        </main>
+      </PageWrapper>
+    )
   }
+
+  if (!concert) {
+    return <PageWrapper><h1>Konzert nicht gefunden</h1></PageWrapper>
+  }
+
   return (
     <PageWrapper>
       <main className="grid gap-4 w-full max-w-2xl p-4 md:p-8">
