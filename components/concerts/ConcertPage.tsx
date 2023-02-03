@@ -12,7 +12,7 @@ import 'dayjs/locale/de'
 import { GenreChart } from './GenreChart'
 import Comments from './Comments'
 import { DeleteConcertModal } from './DeleteConcertModal'
-import { BandSeen } from '../../types/types'
+import { BandSeen, Concert } from '../../types/types'
 import { BandSeenToggle } from './BandSeenToggle'
 import { useProfiles } from '../../hooks/useProfiles'
 import { useConcert } from '../../hooks/useConcert'
@@ -20,12 +20,12 @@ import { useUser } from '../../hooks/useUser'
 import { useQueryClient } from 'react-query'
 
 interface ConcertPageProps {
-  concertId: string
+  initialConcert: Concert
 }
 
-export const ConcertPage: FC<ConcertPageProps> = ({ concertId }) => {
+export const ConcertPage: FC<ConcertPageProps> = ({ initialConcert }) => {
   const { data: profiles } = useProfiles()
-  const { data: concert, isLoading: concertIsLoading } = useConcert(concertId)
+  const { data: concert, isLoading: concertIsLoading } = useConcert(initialConcert)
   const { data: user } = useUser()
   const queryClient = useQueryClient()
 
@@ -185,7 +185,7 @@ export const ConcertPage: FC<ConcertPageProps> = ({ concertId }) => {
               </div>
             )}
           </div>
-          {fanProfiles && (
+          {fanProfiles && fanProfiles.length > 0 ? (
             <div className="flex text-sm">
               <UsersIcon className="flex-none h-icon mr-2 self-center text-slate-300" />
               <div className="-ml-2">
@@ -195,6 +195,11 @@ export const ConcertPage: FC<ConcertPageProps> = ({ concertId }) => {
                   </Link>
                 ))}
               </div>
+            </div>
+          ) : (
+            <div className='flex text-sm'>
+              <UsersIcon className="flex-none h-icon mr-2 self-center text-slate-300" />
+              <div className="py-1 text-slate-300">Niemand da :/</div>
             </div>
           )}
           <div className="flex gap-4">

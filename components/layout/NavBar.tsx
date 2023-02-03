@@ -9,11 +9,15 @@ import { ArrowRightOnRectangleIcon, UserGroupIcon, UserIcon } from '@heroicons/r
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { useLogOut } from '../../hooks/useLogOut'
-import { Profile } from '../../types/types'
+import { useUser } from '../../hooks/useUser'
+import { useProfile } from '../../hooks/useProfile'
+import { useAvatar } from '../../hooks/useAvatar'
 
 export const NavBar = () => {
-  const [profile, setProfile] = useState<Profile | null>(null)
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+  const { data: user } = useUser()
+  const { data: profile } = useProfile(user?.id)
+  const { data: avatarUrl} = useAvatar(profile?.avatar_path)
+
   const [receivedInvitesCount, setReceivedInvitesCount] = useState(0)
 
   const logOutMutation = useLogOut()
@@ -24,66 +28,6 @@ export const NavBar = () => {
   }
 
   useEffect(() => {
-    async function getProfile() {
-      try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser()
-
-        if (user) {
-          const {
-            data: profile,
-            error: profileError,
-            status,
-          } = await supabase.from('profiles').select('*').eq('id', user.id).single()
-
-          if (profileError) {
-            throw profileError
-          }
-
-          if (profile && status !== 406) {
-            setProfile(profile)
-          }
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          alert(error.message)
-        } else {
-          alert('An unexpected error has occurred')
-          console.error(error)
-        }
-      }
-    }
-
-    getProfile()
-  }, [])
-
-  useEffect(() => {
-    async function downloadAvatar() {
-      try {
-        if (profile?.avatar_path) {
-          const { data, error } = await supabase.storage
-            .from('avatars')
-            .download(profile.avatar_path)
-
-          if (error) {
-            throw error
-          }
-          const url = URL.createObjectURL(data)
-          setAvatarUrl(url)
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          alert(error.message)
-        } else {
-          alert('An unexpected error has occurred')
-          console.error(error)
-        }
-      }
-    }
-
-    downloadAvatar()
-
     async function getReceivedInvites() {
       try {
         const { count, error } = await supabase

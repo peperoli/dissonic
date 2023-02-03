@@ -1,11 +1,13 @@
-import { useQuery } from "react-query"
-import { Concert } from "../types/types"
-import supabase from "../utils/supabase"
+import { useQuery } from 'react-query'
+import { Concert } from '../types/types'
+import supabase from '../utils/supabase'
 
 const fetchConcert = async (concertId: string): Promise<Concert> => {
   const { data, error } = await supabase
     .from('concerts')
-    .select('*, location:locations(*), bands!j_concert_bands(*, genres(*)), bands_seen:j_bands_seen(band_id, user_id)')
+    .select(
+      '*, location:locations(*), bands!j_concert_bands(*, genres(*)), bands_seen:j_bands_seen(band_id, user_id)'
+    )
     .eq('id', concertId)
     .single()
 
@@ -16,6 +18,6 @@ const fetchConcert = async (concertId: string): Promise<Concert> => {
   return data
 }
 
-export const useConcert = (concertId: string) => {
-  return useQuery('concert', () => fetchConcert(concertId))
+export const useConcert = (concert: Concert) => {
+  return useQuery(['concert', concert.id], () => fetchConcert(concert.id), { initialData: concert })
 }
