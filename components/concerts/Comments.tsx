@@ -1,23 +1,35 @@
 import { Button } from '../Button'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, FC, ChangeEvent, FormEvent, Dispatch, SetStateAction } from 'react'
 import supabase from '../../utils/supabase'
 import dayjs from 'dayjs'
 import { PencilIcon, TrashIcon, UserIcon } from '@heroicons/react/20/solid'
 import { DeleteCommentModal } from './DeleteCommentModal'
 import Image from 'next/image'
-const relativeTime = require('dayjs/plugin/relativeTime')
+import { Comment, Concert, Profile } from '../../types/types'
+import { User } from '@supabase/supabase-js'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import { useAvatar } from '../../hooks/useAvatar'
 dayjs.extend(relativeTime)
 
-function Comment({ comment, comments, setComments, profiles, user }) {
+interface CommentProps {
+  comment: Comment
+  comments: Comment[]
+  setComments: Dispatch<SetStateAction<Comment[]>>
+  profiles: Profile[]
+  user: User
+}
+
+const Comment: FC<CommentProps> = ({ comment, comments, setComments, profiles, user }) => {
   const [edit, setEdit] = useState(false)
   const [content, setContent] = useState(comment.content)
   const [isOpen, setIsOpen] = useState(false)
-  const [avatarUrl, setAvatarUrl] = useState(null)
-
-  const createdAt = new Date(comment.created_at)
+  
+  const createdAt = comment.created_at && new Date(comment.created_at)
   const profile = profiles?.find(profile => profile.id === comment.user_id)
+  
+  const { data: avatarUrl } = useAvatar(profile?.avatar_path)
 
-  async function updateComment(event) {
+  async function updateComment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     try {
       const { error } = await supabase
@@ -30,29 +42,13 @@ function Comment({ comment, comments, setComments, profiles, user }) {
       }
       setEdit(false)
     } catch (error) {
-      alert(error.message)
-    }
-  }
-
-  useEffect(() => {
-    async function downloadAvatar() {
-      try {
-        const {data, error} = await supabase.storage.from('avatars').download(profile.avatar_path)
-    
-        if (error) {
-          throw error
-        }
-        const url = URL.createObjectURL(data)
-        setAvatarUrl(url)
-      } catch (error) {
-        console.error(error.message)
+      if (error instanceof Error) {
+        alert(error.message)
+      } else {
+        alert('Unerwarter Fehler, für Details Browser-Konsole prüfen.')
       }
     }
-    
-    if (profile?.avatar_path) {
-      downloadAvatar()
-    }
-  }, [profile])
+  }
 
   function cancelEdit() {
     setEdit(false)
@@ -76,7 +72,7 @@ function Comment({ comment, comments, setComments, profiles, user }) {
         <div className={`mt-1.5${edit ? ' w-full' : ''}`}>
           <div className="mb-1 text-sm">
             {profiles?.length > 0 &&
-              profiles.find(profile => profile.id === comment.user_id).username}
+              profiles.find(profile => profile.id === comment.user_id)?.username}
             <span className="text-slate-300">
               {' • '}
               {dayjs(createdAt).fromNow()}
@@ -89,7 +85,7 @@ function Comment({ comment, comments, setComments, profiles, user }) {
                   <textarea
                     id="comment"
                     placeholder="Was ist dir von diesem Konzert in Erinnerung geblieben?"
-                    value={content}
+                    value={String(content)}
                     onChange={event => setContent(event.target.value)}
                     className="text-sm"
                   />
@@ -108,10 +104,12 @@ function Comment({ comment, comments, setComments, profiles, user }) {
               </form>
             ) : (
               <p className="text-sm whitespace-pre-line">
-                {content}
-                {comment.edited_at ? (
-                  <span className="block text-slate-300">(bearbeitet)</span>
-                ) : null}
+                <>
+                  {content}
+                  {comment.edited_at ? (
+                    <span className="block text-slate-300">(bearbeitet)</span>
+                  ) : null}
+                </>
               </p>
             )}
             {comment.user_id === user?.id && !edit && (
@@ -147,11 +145,17 @@ function Comment({ comment, comments, setComments, profiles, user }) {
   )
 }
 
-export default function Comments({ concert, user, profiles }) {
-  const [value, setValue] = useState('')
-  const [comments, setComments] = useState([])
+interface CommentsProps {
+  concert: Concert
+  user: User
+  profiles: Profile[]
+}
 
-  function handleChange(event) {
+export const Comments: FC<CommentsProps> = ({ concert, user, profiles }) => {
+  const [value, setValue] = useState('')
+  const [comments, setComments] = useState<Comment[]>([])
+
+  function handleChange(event: ChangeEvent<HTMLTextAreaElement>) {
     setValue(event.target.value)
   }
 
@@ -168,13 +172,17 @@ export default function Comments({ concert, user, profiles }) {
         }
         setComments(data)
       } catch (error) {
-        alert(error.message)
+        if (error instanceof Error) {
+          alert(error.message)
+        } else {
+          alert('Unerwarter Fehler, für Details Browser-Konsole prüfen.')
+        }
       }
     }
     fetchComments()
   }, [])
 
-  async function createComment(event) {
+  async function createComment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
     try {
@@ -185,8 +193,8 @@ export default function Comments({ concert, user, profiles }) {
           user_id: user.id,
           content: value,
         })
-        .single()
         .select()
+        .single()
 
       if (error) {
         throw error
@@ -195,7 +203,11 @@ export default function Comments({ concert, user, profiles }) {
       setComments([...comments, data])
       setValue('')
     } catch (error) {
-      alert(error.message)
+      if (error instanceof Error) {
+        alert(error.message)
+      } else {
+        alert('Unerwarter Fehler, für Details Browser-Konsole prüfen.')
+      }
     }
   }
   return (

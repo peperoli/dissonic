@@ -7,20 +7,40 @@ import { EditBandForm } from './EditBandForm'
 import { PageWrapper } from '../layout/PageWrapper'
 import { Button } from '../Button'
 import { ConcertCard } from '../concerts/ConcertCard'
-import { Band, Concert, Country, Genre } from '../../types/types'
+import { Band } from '../../types/types'
 import { DeleteBandModal } from './DeleteBandModal'
+import { useBand } from '../../hooks/useBand'
+import { useConcerts } from '../../hooks/useConcerts'
+import { useUser } from '../../hooks/useUser'
 
 export interface BandPageProps {
   initialBand: Band
-  countries: Country[]
-  genres: Genre[]
-  concerts: Concert[]
 }
 
-export const BandPage: FC<BandPageProps> = ({ initialBand, countries, genres, concerts }) => {
+export const BandPage: FC<BandPageProps> = ({ initialBand }) => {
+  const { data: band, isLoading: bandIsLoading } = useBand(initialBand)
+  const { data: concerts } = useConcerts()
+  const { data: user } = useUser()
+
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
   const [editIsOpen, setEditIsOpen] = useState(false)
-  const [band, setBand] = useState(initialBand)
+
+  if (bandIsLoading) {
+    return (
+      <PageWrapper>
+        <p>Lade...</p>
+      </PageWrapper>
+    )
+  }
+
+  if (!band) {
+    return (
+      <PageWrapper>
+        <p>Konzert nicht gefunden</p>
+      </PageWrapper>
+    )
+  }
+
   return (
     <PageWrapper>
       <main className="grid gap-4 w-full max-w-2xl p-4 md:p-8">
@@ -52,19 +72,17 @@ export const BandPage: FC<BandPageProps> = ({ initialBand, countries, genres, co
           </div>
         </div>
         <div className="grid gap-4 p-6">
-          {concerts.map(item => (
-            <ConcertCard key={item.id} concert={item} />
+          <h2 className='mb-0 text-slate-300'>Konzerte mit {band.name}</h2>
+          {concerts?.filter(concert => concert.bands?.find(item => item.id === band.id)).map(item => (
+            <ConcertCard key={item.id} concert={item} user={user} />
           ))}
         </div>
       </main>
       <DeleteBandModal band={band} isOpen={deleteIsOpen} setIsOpen={setDeleteIsOpen} />
       <EditBandForm
         band={band}
-        countries={countries}
-        genres={genres}
         isOpen={editIsOpen}
         setIsOpen={setEditIsOpen}
-        setBand={setBand}
       />
     </PageWrapper>
   )

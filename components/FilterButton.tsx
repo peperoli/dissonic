@@ -47,7 +47,7 @@ export const FilterButton: FC<FilterButtonProps> = ({
                 className={`h-icon flex-none${open ? ' transform rotate-180' : ''}`}
               />
             </Popover.Button>
-            <Popover.Panel className="fixed md:absolute flex flex-col overflow-hidden inset-0 md:inset-auto min-w-full md:mt-1 p-4 rounded-lg bg-slate-700 shadow-xl z-20">
+            <Popover.Panel className="fixed md:absolute flex flex-col overflow-hidden inset-0 md:inset-auto min-w-full md:mt-1 p-4 md:rounded-lg bg-slate-700 shadow-xl z-20">
               <div className="flex md:hidden justify-between items-center gap-4 mb-4">
                 <h2 className="mb-0 capitalize">{name}</h2>
                 <Button

@@ -3,6 +3,7 @@ import React, {
   FC,
   FocusEvent,
   MouseEvent as ReactMouseEvent,
+  TouchEvent as ReactTouchEvent,
   SetStateAction,
   useEffect,
   useRef,
@@ -73,18 +74,20 @@ const RangeSliderHandle: FC<RangeSliderHandleProps> = ({
   const [drag, setDrag] = useState(false)
   const ref = useRef<HTMLButtonElement>(null)
 
-  function dragMouseDown(event: ReactMouseEvent<HTMLButtonElement>) {
+  function dragMouseDown(event: ReactMouseEvent<HTMLButtonElement> | ReactTouchEvent<HTMLButtonElement>) {
     event.preventDefault()
     document.addEventListener('mousemove', dragMouseMove)
+    document.addEventListener('touchmove', dragMouseMove)
     document.addEventListener('mouseup', dragMouseUp)
+    document.addEventListener('touchend', dragMouseUp)
     ref.current?.focus()
     setDrag(true)
   }
 
-  function dragMouseMove(event: MouseEvent) {
+  function dragMouseMove(event: MouseEvent | TouchEvent) {
     event.preventDefault()
 
-    const currentPosition = event.clientX - startPosition
+    const currentPosition = event instanceof MouseEvent ? event.clientX - startPosition : event.touches[0].clientX - startPosition
     const currentValue = Math.round(
       initialMin + (currentPosition / width) * (initialMax - initialMin)
     )
@@ -97,6 +100,7 @@ const RangeSliderHandle: FC<RangeSliderHandleProps> = ({
 
   function dragMouseUp() {
     document.removeEventListener('mousemove', dragMouseMove)
+    document.removeEventListener('touchmove', dragMouseMove)
     setDrag(false)
   }
   return (
@@ -104,6 +108,7 @@ const RangeSliderHandle: FC<RangeSliderHandleProps> = ({
       id="minHandle"
       ref={ref}
       onMouseDown={event => dragMouseDown(event)}
+      onTouchStart={event => dragMouseDown(event)}
       className={`absolute w-5 h-5 rounded-full border-2 border-venom bg-slate-700 transform -translate-x-1/2 focus:z-10${
         drag ? ' transform origin-center scale-125' : ''
       }`}

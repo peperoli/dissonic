@@ -1,7 +1,13 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { FC } from "react"
 
-function NavLink({ link, name }) {
+interface NavLinkProps {
+	link: string
+	name: string
+}
+
+const NavLink: FC<NavLinkProps> = ({ link, name }) => {
 	const pathname = usePathname()
 	const isCurrent = pathname === link
 	return (

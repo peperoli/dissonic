@@ -10,7 +10,7 @@ import { Button } from '../Button'
 import dayjs from 'dayjs'
 import 'dayjs/locale/de'
 import { GenreChart } from './GenreChart'
-import Comments from './Comments'
+import { Comments } from './Comments'
 import { DeleteConcertModal } from './DeleteConcertModal'
 import { BandSeen, Concert } from '../../types/types'
 import { BandSeenToggle } from './BandSeenToggle'
@@ -212,9 +212,11 @@ export const ConcertPage: FC<ConcertPageProps> = ({ initialConcert }) => {
             <GenreChart bands={concert.bands} />
           </div>
         )}
-        <div className="p-6 rounded-lg bg-slate-800">
-          <Comments concert={concert} user={user} profiles={profiles} />
-        </div>
+        {user && profiles && (
+          <div className="p-6 rounded-lg bg-slate-800">
+            <Comments concert={concert} user={user} profiles={profiles} />
+          </div>
+        )}
         {editIsOpen && (
           <EditConcertForm concert={concert} isOpen={editIsOpen} setIsOpen={setEditIsOpen} />
         )}

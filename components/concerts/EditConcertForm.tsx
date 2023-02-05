@@ -50,7 +50,7 @@ export const EditConcertForm: FC<EditConcertFormProps> = ({ concert, isOpen, set
   }
 
   if (editConcert.isSuccess) {
-    queryClient.invalidateQueries('concert')
+    queryClient.invalidateQueries(['concert', concert.id])
     setIsOpen(false)
   }
   return (

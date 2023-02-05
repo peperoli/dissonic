@@ -1,5 +1,6 @@
 import { useRouter } from "next/navigation"
 import { Dispatch, FC, SetStateAction, SyntheticEvent, useState } from "react"
+import { useQueryClient } from "react-query"
 import { Band, Country, Genre } from "../../types/types"
 import supabase from "../../utils/supabase"
 import { Button } from "../Button"
@@ -7,21 +8,22 @@ import Modal from "../Modal"
 import { MultiSelect } from "../MultiSelect"
 
 interface AddBandFormProps {
-  countries: Country[]
-  genres: Genre[]
-  bands: Band[]
-  setBands: Dispatch<SetStateAction<Band[]>>
+  countries?: Country[]
+  genres?: Genre[]
+  bands?: Band[]
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
 }
 
-export const AddBandForm: FC<AddBandFormProps> = ({ countries, genres, bands, setBands, isOpen, setIsOpen }) => {
+export const AddBandForm: FC<AddBandFormProps> = ({ countries, genres, bands, isOpen, setIsOpen }) => {
+  const queryClient = useQueryClient()
+  
   const [selectedGenres, setSelectedGenres] = useState<Genre[]>([])
   const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
 
   const regExp = new RegExp(name, 'i')
-  const similarBands = bands.filter(item => item.name.match(regExp))
+  const similarBands = bands?.filter(item => item.name.match(regExp)) || []
   const isSimilar = name.length >= 3 && similarBands.length > 0
   const router = useRouter()
 
@@ -55,16 +57,7 @@ export const AddBandForm: FC<AddBandFormProps> = ({ countries, genres, bands, se
         throw genresError
       }
 
-      const { data: newBand, error: newBandError } = await supabase
-        .from('bands')
-        .select('*, country:countries(*), genres(*)')
-        .eq('id', band.id)
-        .single()
-
-      if (newBandError) {
-        throw newBandError
-      }
-      setBands([...bands, newBand])
+      queryClient.invalidateQueries('bands')
       setName('')
       setSelectedGenres([])
       setIsOpen(false)
@@ -101,18 +94,20 @@ export const AddBandForm: FC<AddBandFormProps> = ({ countries, genres, bands, se
         <div className="form-control">
           <select name="country" id="country" defaultValue="">
             <option value="" disabled hidden>Bitte wählen ...</option>
-            {countries.map((country, index) => (
+            {countries?.map((country, index) => (
               <option key={index} value={country.id}>{country.name}</option>
             ))}
           </select>
           <label htmlFor="country">Land</label>
         </div>
-        <MultiSelect
-          name="genres"
-          options={genres}
-          selectedOptions={selectedGenres}
-          setSelectedOptions={setSelectedGenres}
-        />
+        {genres && (
+          <MultiSelect
+            name="genres"
+            options={genres}
+            selectedOptions={selectedGenres}
+            setSelectedOptions={setSelectedGenres}
+          />
+        )}
         <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10">
           <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
           <Button type="submit" label="Erstellen" style="primary" loading={loading} />

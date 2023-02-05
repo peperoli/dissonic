@@ -3,25 +3,26 @@ import supabase from '../../utils/supabase'
 import { MultiSelect } from '../MultiSelect'
 import { Button } from '../Button'
 import Modal from '../Modal'
-import { Band, Country, Genre } from '../../types/types'
+import { Band } from '../../types/types'
+import { useCountries } from '../../hooks/useCountries'
+import { useGenres } from '../../hooks/useGenres'
+import { useQueryClient } from 'react-query'
 
 interface EditBandFormProps {
   band: Band
-  countries: Country[]
-  genres: Genre[]
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
-  setBand: Dispatch<SetStateAction<Band>>
 }
 
 export const EditBandForm: FC<EditBandFormProps> = ({
   band,
-  countries,
-  genres,
   isOpen,
   setIsOpen,
-  setBand,
 }) => {
+  const { data: countries } = useCountries()
+  const { data: genres } = useGenres()
+  const queryClient = useQueryClient()
+
   const [selectedGenres, setSelectedGenres] = useState(band.genres || [])
   const [loading, setLoading] = useState(false)
 
@@ -74,17 +75,7 @@ export const EditBandForm: FC<EditBandFormProps> = ({
         }
       }
 
-      const { data: newBand, error: newBandError } = await supabase
-        .from('bands')
-        .select('*, country:countries(*), genres(*)')
-        .eq('id', band.id)
-        .single()
-
-      if (newBandError) {
-        throw newBandError
-      }
-
-      setBand(newBand)
+      queryClient.invalidateQueries(['band', band.id])
       setIsOpen(false)
     } catch (error) {
       if (error instanceof Error) {
@@ -108,7 +99,7 @@ export const EditBandForm: FC<EditBandFormProps> = ({
         <div className="form-control">
           <select name="country" id="country" defaultValue={band.country?.id}>
             <option value="international">International</option>
-            {countries.map((country, index) => (
+            {countries?.map((country, index) => (
               <option key={index} value={country.id}>
                 {country.name}
               </option>
@@ -116,12 +107,14 @@ export const EditBandForm: FC<EditBandFormProps> = ({
           </select>
           <label htmlFor="country">Land</label>
         </div>
-        <MultiSelect
-          name="genres"
-          options={genres}
-          selectedOptions={selectedGenres}
-          setSelectedOptions={setSelectedGenres}
-        />
+        {genres && (
+          <MultiSelect
+            name="genres"
+            options={genres}
+            selectedOptions={selectedGenres}
+            setSelectedOptions={setSelectedGenres}
+          />
+        )}
         <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 bg-slate-800 z-10">
           <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
           <Button type="submit" label="Speichern" style="primary" loading={loading} />

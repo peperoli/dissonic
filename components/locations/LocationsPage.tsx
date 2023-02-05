@@ -2,15 +2,20 @@
 
 import { PageWrapper } from "../layout/PageWrapper"
 import { PlusIcon } from "@heroicons/react/20/solid"
-import Table from "../Table"
-import TableRow from "../TableRow"
+import { Table } from "../Table"
+import { TableRow } from "../TableRow"
 import { AddLocationForm } from "./AddLocationForm"
-import { useState } from "react"
+import React, { FC, useState } from "react"
 import { Search } from "../Search"
 import { Button } from "../Button"
 import useMediaQuery from "../../hooks/useMediaQuery"
+import { Location } from "../../types/types"
 
-export default function LocationsPage({ initialLocations }) {
+interface LocationsPageProps {
+  initialLocations: Location[]
+}
+
+export const LocationsPage: FC<LocationsPageProps> = ({ initialLocations }) => {
   const [locations, setLocations] = useState(initialLocations)
   const [isOpen, setIsOpen] = useState(false)
   const [query, setQuery] = useState('')

@@ -80,7 +80,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
 
   const searchRef = useRef<HTMLInputElement>(null)
   const regExp = new RegExp(query, 'i')
-  const filteredOptions = options.filter(option => option.name.match(regExp))
+  const filteredOptions = options.filter(option => option.name?.match(regExp))
 
   function capitalize(string: string) {
     const arr = string.split(' ')

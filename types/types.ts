@@ -55,4 +55,4 @@ export type Friend = Database['public']['Tables']['friends']['Row'] & {
   receiver: Profile
 }
 
-export type Option = Band | Genre
+export type Option = Band | Genre | Country

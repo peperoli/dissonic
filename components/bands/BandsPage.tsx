@@ -1,48 +1,58 @@
 'use client'
 
-import { useState } from 'react'
+import React, { FC, useState } from 'react'
 import { AddBandForm } from './AddBandForm'
 import { ArrowUturnLeftIcon, PlusIcon } from '@heroicons/react/20/solid'
 import { PageWrapper } from '../layout/PageWrapper'
-import Table from '../Table'
-import TableRow from '../TableRow'
+import { Table } from '../Table'
+import { TableRow } from '../TableRow'
 import { Search } from '../Search'
-import { FilterButton } from '../FilterButton'
 import { Button } from '../Button'
 import useMediaQuery from '../../hooks/useMediaQuery'
 import { Pagination } from '../layout/Pagination'
 import { MultiSelectFilter } from '../MultiSelectFilter'
+import { Band, Country, Genre } from '../../types/types'
+import { useBands } from '../../hooks/useBands'
+import { useGenres } from '../../hooks/useGenres'
+import { useCountries } from '../../hooks/useCountries'
 
-export default function BandsPage({ initialBands, countries, genres }) {
+interface BandsPageProps {
+  initialBands: Band[]
+}
+
+export const BandsPage: FC<BandsPageProps> = ({ initialBands }) => {
+  const { data: bands } = useBands(initialBands)
+  const { data: genres } = useGenres()
+  const { data: countries } = useCountries()
+
   const [isOpen, setIsOpen] = useState(false)
-  const [bands, setBands] = useState(initialBands)
-  const [selectedGenres, setSelectedGenres] = useState([])
-  const [selectedCountries, setSelectedCountries] = useState([])
+  const [selectedGenres, setSelectedGenres] = useState<Genre[]>([])
+  const [selectedCountries, setSelectedCountries] = useState<Country[]>([])
   const [query, setQuery] = useState('')
   const [currentPage, setCurrentPage] = useState(0)
 
   const regExp = new RegExp(query, 'i')
-  const filteredBands = bands.filter(item => item.name.match(regExp))
+  const filteredBands = bands?.filter(item => item.name.match(regExp)) || []
   const filteredLength =
-    filteredBands.filter(filterRule).length !== bands.length
+    filteredBands.filter(filterRule).length !== bands?.length
       ? filteredBands.filter(filterRule).length
       : null
 	const perPage = 100
 
-  function filterRule(item) {
+  function filterRule(item: Band) {
     let [genreFilter, countryFilter] = [true, true]
     const selectedGenreIds = selectedGenres.map(item => item.id)
     const selectedCountryIds = selectedCountries.map(item => item.id)
     if (selectedGenreIds.length > 0) {
-      genreFilter = item.genres.some(genreId => selectedGenreIds.includes(genreId.id))
+      genreFilter = item.genres?.some(genreId => selectedGenreIds.includes(genreId.id)) ? true : false
     }
     if (selectedCountryIds.length > 0) {
-      countryFilter = selectedCountryIds.includes(item.country?.id)
+      countryFilter = item.country && selectedCountryIds.includes(item.country.id) ? true : false
     }
     return genreFilter && countryFilter
   }
 
-  function compare(a, b) {
+  function compare(a: Band, b: Band) {
     const bandA = a.name.toUpperCase()
     const bandB = b.name.toUpperCase()
 
@@ -87,7 +97,7 @@ export default function BandsPage({ initialBands, countries, genres }) {
             />
           )}
         </div>
-        <Table entriesCount={filteredBands.filter(filterRule).length}>
+        <Table>
           <div className="flex md:grid md:grid-cols-3 gap-2 md:gap-4 -mx-4 px-4 overflow-x-auto md:overflow-visible scrollbar-hidden">
             <Search name="searchBands" placeholder="Bands" query={query} setQuery={setQuery} />
             <MultiSelectFilter
@@ -106,7 +116,7 @@ export default function BandsPage({ initialBands, countries, genres }) {
           <div className="flex gap-4 items-center">
             <div className="my-4 text-sm text-slate-300">
               {typeof filteredLength === 'number' && <span>{filteredLength}&nbsp;von&nbsp;</span>}
-              {bands.length}&nbsp;Einträge
+              {bands?.length}&nbsp;Einträge
             </div>
             {typeof filteredLength === 'number' && (
               <button
@@ -147,7 +157,6 @@ export default function BandsPage({ initialBands, countries, genres }) {
         countries={countries}
         genres={genres}
         bands={bands}
-        setBands={setBands}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
       />
