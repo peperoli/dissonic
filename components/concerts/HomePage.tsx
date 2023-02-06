@@ -1,7 +1,7 @@
 'use client'
 
 import { AddConcertForm } from './AddConcertForm'
-import React, { useState } from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import { Button } from '../Button'
 import {
   ArrowUturnLeftIcon,
@@ -20,6 +20,7 @@ import { useUser } from '../../hooks/useUser'
 import { useBandsSeen } from '../../hooks/useBandsSeen'
 import { useConcerts } from '../../hooks/useConcerts'
 import { ConcertsGrid } from './ConcertsGrid'
+import { useCookies } from 'react-cookie'
 
 export const HomePage = () => {
   const { data: concerts, isLoading: concertsIsLoading } = useConcerts()
@@ -34,13 +35,20 @@ export const HomePage = () => {
   const [selectedYears, setSelectedYears] = useState<number[]>([])
   const [selectedBandsPerConcert, setSelectedBandsPerConcert] = useState<number[]>([])
   const [sort, setSort] = useState('dateAsc')
-  const [view, setView] = useState('global')
+  const [cookies, setCookie] = useCookies(['view'])
+  const [view, setView] = useState(cookies.view || 'global')
   const initialYears: number[] | undefined = concerts
     ?.map(item => new Date(item.date_start).getFullYear())
     .sort((a, b) => a - b)
   const bandsPerConcert: number[] | undefined = concerts
     ?.map(item => item.bands?.length || 0)
     .sort((a, b) => a - b)
+
+  function handleView(event: ChangeEvent) {
+    const target = event.target as HTMLInputElement
+    setView(target.value)
+    setCookie('view', target.value)
+  }
 
   function viewFilter(item: Concert) {
     const concertBandsSeen = bandsSeen?.filter(bandSeen => bandSeen.concert_id === item.id)
@@ -183,7 +191,7 @@ export const HomePage = () => {
                     type="radio"
                     name="view"
                     value="global"
-                    onChange={event => setView(event.target.value)}
+                    onChange={handleView}
                     checked={view === 'global'}
                     className="sr-only"
                   />
@@ -199,7 +207,7 @@ export const HomePage = () => {
                     type="radio"
                     name="view"
                     value="user"
-                    onChange={event => setView(event.target.value)}
+                    onChange={handleView}
                     checked={view === 'user'}
                     className="sr-only"
                   />

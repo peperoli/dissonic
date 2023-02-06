@@ -5,6 +5,7 @@ import { Albert_Sans } from '@next/font/google'
 const albertSans = Albert_Sans({ subsets: ['latin'] })
 import React, { ReactNode } from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import { CookiesProvider } from 'react-cookie'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,10 +17,12 @@ const queryClient = new QueryClient({
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <html lang="de" className={`${albertSans.className}`}>
-        <body className="text-slate-50 bg-slate-850">{children}</body>
-      </html>
-    </QueryClientProvider>
+    <CookiesProvider>
+      <QueryClientProvider client={queryClient}>
+        <html lang="de" className={`${albertSans.className}`}>
+          <body className="text-slate-50 bg-slate-850">{children}</body>
+        </html>
+      </QueryClientProvider>
+    </CookiesProvider>
   )
 }
