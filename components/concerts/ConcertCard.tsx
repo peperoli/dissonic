@@ -55,7 +55,7 @@ export const ConcertCard: FC<ConcertCardProps> = ({ concert, profiles, user }) =
                 <Link
                   href={`/bands/${band.id}`}
                   onClick={event => event.stopPropagation()}
-                  className={`btn btn-tag${
+                  className={`btn btn-link${
                     concert.bands_seen?.find(item => item.band_id === band.id && item.user_id === user?.id) ? ' !text-venom' : ''
                   }`}
                 >
@@ -81,7 +81,7 @@ export const ConcertCard: FC<ConcertCardProps> = ({ concert, profiles, user }) =
                   key={item?.id}
                   href={`/users/${item?.username}`}
                   onClick={event => event.stopPropagation()}
-                  className="btn btn-tag"
+                  className="btn btn-link"
                 >
                   {item?.username}
                 </Link>

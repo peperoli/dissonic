@@ -188,9 +188,9 @@ export const ConcertPage: FC<ConcertPageProps> = ({ initialConcert }) => {
           {fanProfiles && fanProfiles.length > 0 ? (
             <div className="flex text-sm">
               <UsersIcon className="flex-none h-icon mr-2 self-center text-slate-300" />
-              <div className="-ml-2">
+              <div>
                 {fanProfiles.map(item => (
-                  <Link key={item.id} href={`/users/${item.username}`} className="btn btn-tag">
+                  <Link key={item.id} href={`/users/${item.username}`} className="btn btn-link">
                     {item?.username}
                   </Link>
                 ))}
