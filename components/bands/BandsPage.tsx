@@ -153,13 +153,15 @@ export const BandsPage: FC<BandsPageProps> = ({ initialBands }) => {
           />
         </Table>
       </main>
-      <AddBandForm
-        countries={countries}
-        genres={genres}
-        bands={bands}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-      />
+      {isOpen && (
+        <AddBandForm
+          countries={countries}
+          genres={genres}
+          bands={bands}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+        />
+      )}
     </PageWrapper>
   )
 }

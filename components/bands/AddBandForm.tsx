@@ -32,6 +32,7 @@ export const AddBandForm: FC<AddBandFormProps> = ({ countries, genres, bands, is
     const target = event.target as typeof event.target & {
       name: { value: string }
       country: { value: number }
+      spotify_artist_id: { value: string }
     }
 
     try {
@@ -41,6 +42,7 @@ export const AddBandForm: FC<AddBandFormProps> = ({ countries, genres, bands, is
         .insert({
           name: target.name.value,
           country_id: target.country.value,
+          spotify_artist_id: target.spotify_artist_id.value,
         })
         .select()
         .single()
@@ -108,6 +110,10 @@ export const AddBandForm: FC<AddBandFormProps> = ({ countries, genres, bands, is
             setSelectedOptions={setSelectedGenres}
           />
         )}
+        <div className="form-control">
+          <input type="text" name="spotify_artist_id" id="spotify_artist_id" placeholder='0GDGKpJFhVpcjIGF8N6Ewt' />
+          <label htmlFor="spotify_artist_id">Spotify-Künstler-ID</label>
+        </div>
         <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10">
           <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
           <Button type="submit" label="Erstellen" style="primary" loading={loading} />

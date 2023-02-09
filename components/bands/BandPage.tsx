@@ -12,6 +12,7 @@ import { DeleteBandModal } from './DeleteBandModal'
 import { useBand } from '../../hooks/useBand'
 import { useConcerts } from '../../hooks/useConcerts'
 import { useUser } from '../../hooks/useUser'
+import { useSpotifyArtist } from '../../hooks/useSpotifyArtist'
 
 export interface BandPageProps {
   initialBand: Band
@@ -21,9 +22,12 @@ export const BandPage: FC<BandPageProps> = ({ initialBand }) => {
   const { data: band, isLoading: bandIsLoading } = useBand(initialBand)
   const { data: concerts } = useConcerts()
   const { data: user } = useUser()
+  const { data: spotifyArtist } = useSpotifyArtist(band?.spotify_artist_id)
 
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
   const [editIsOpen, setEditIsOpen] = useState(false)
+
+  const bandConcerts = concerts?.filter(concert => concert.bands?.find(item => item.id === band?.id))
 
   if (bandIsLoading) {
     return (
@@ -66,17 +70,22 @@ export const BandPage: FC<BandPageProps> = ({ initialBand }) => {
                 </Fragment>
               ))}
           </ul>
+          {spotifyArtist?.html && (
+            <div dangerouslySetInnerHTML={{ __html: spotifyArtist.html }} />
+          )}
           <div className="flex gap-4">
             <Button onClick={() => setEditIsOpen(true)} label="Bearbeiten" />
             <Button onClick={() => setDeleteIsOpen(true)} label="Löschen" danger />
           </div>
         </div>
-        <div className="grid gap-4 p-6">
-          <h2 className='mb-0 text-slate-300'>Konzerte mit {band.name}</h2>
-          {concerts?.filter(concert => concert.bands?.find(item => item.id === band.id)).map(item => (
-            <ConcertCard key={item.id} concert={item} user={user} />
-          ))}
-        </div>
+        {bandConcerts && bandConcerts?.length > 0 && (
+          <div className="grid gap-4 p-6">
+            <h2 className='mb-0 text-slate-300'>Konzerte mit {band.name}</h2>
+            {bandConcerts.map(item => (
+              <ConcertCard key={item.id} concert={item} user={user} />
+            ))}
+          </div>
+        )}
       </main>
       <DeleteBandModal band={band} isOpen={deleteIsOpen} setIsOpen={setDeleteIsOpen} />
       <EditBandForm

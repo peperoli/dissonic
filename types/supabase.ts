@@ -14,16 +14,19 @@ export interface Database {
           country_id: number | null
           id: number
           name: string
+          spotify_artist_id: string | null
         }
         Insert: {
           country_id?: number | null
           id?: number
           name: string
+          spotify_artist_id?: string | null
         }
         Update: {
           country_id?: number | null
           id?: number
           name?: string
+          spotify_artist_id?: string | null
         }
       }
       comments: {
@@ -245,6 +248,9 @@ export interface Database {
         | "Oceania"
         | "North America"
         | "South America"
+    }
+    CompositeTypes: {
+      [_ in never]: never
     }
   }
 }
