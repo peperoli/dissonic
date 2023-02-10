@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { ArrowLeftIcon, MapPinIcon, MusicalNoteIcon } from '@heroicons/react/20/solid'
-import React, { FC, Fragment, useState } from 'react'
+import React, { FC, Fragment, useEffect, useState } from 'react'
 import { EditBandForm } from './EditBandForm'
 import { PageWrapper } from '../layout/PageWrapper'
 import { Button } from '../Button'
@@ -88,11 +88,13 @@ export const BandPage: FC<BandPageProps> = ({ initialBand }) => {
         )}
       </main>
       <DeleteBandModal band={band} isOpen={deleteIsOpen} setIsOpen={setDeleteIsOpen} />
-      <EditBandForm
-        band={band}
-        isOpen={editIsOpen}
-        setIsOpen={setEditIsOpen}
-      />
+      {editIsOpen && (
+        <EditBandForm
+          band={band}
+          isOpen={editIsOpen}
+          setIsOpen={setEditIsOpen}
+        />
+      )}
     </PageWrapper>
   )
 }

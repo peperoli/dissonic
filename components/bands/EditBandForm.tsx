@@ -1,11 +1,20 @@
-import { Dispatch, FC, SetStateAction, SyntheticEvent, useState } from 'react'
-import supabase from '../../utils/supabase'
+import {
+  ChangeEvent,
+  Dispatch,
+  FC,
+  SetStateAction,
+  useReducer,
+  useState,
+} from 'react'
 import { MultiSelect } from '../MultiSelect'
 import { Button } from '../Button'
 import Modal from '../Modal'
 import { Band } from '../../types/types'
 import { useCountries } from '../../hooks/useCountries'
 import { useGenres } from '../../hooks/useGenres'
+import { SpotifyArtistSelect } from './SpotifyArtistSelect'
+import { ActionType, editBandReducer } from '../../reducers/editBandReducer'
+import { useEditBand } from '../../hooks/useEditBand'
 import { useQueryClient } from 'react-query'
 
 interface EditBandFormProps {
@@ -14,100 +23,64 @@ interface EditBandFormProps {
   setIsOpen: Dispatch<SetStateAction<boolean>>
 }
 
-export const EditBandForm: FC<EditBandFormProps> = ({
-  band,
-  isOpen,
-  setIsOpen,
-}) => {
+export const EditBandForm: FC<EditBandFormProps> = ({ band, isOpen, setIsOpen }) => {
   const { data: countries } = useCountries()
   const { data: genres } = useGenres()
   const queryClient = useQueryClient()
 
+  const [formState, formDispatch] = useReducer(editBandReducer, {
+    name: band.name,
+    country_id: band.country_id,
+  })
   const [selectedGenres, setSelectedGenres] = useState(band.genres || [])
-  const [loading, setLoading] = useState(false)
+  const [spotifyArtistId, setSpotifyArtistId] = useState(band.spotify_artist_id || '')
 
-  const newGenres = selectedGenres.filter(item => !band.genres?.find(item2 => item.id === item2.id))
+  const addGenres = selectedGenres.filter(item => !band.genres?.find(item2 => item.id === item2.id))
   const deleteGenres = band.genres?.filter(
     item => !selectedGenres.find(item2 => item.id === item2.id)
-  )
+  ) || []
 
-  async function handleSubmit(event: SyntheticEvent) {
-    event.preventDefault()
-    const target = event.target as typeof event.target & {
-      name: { value: string }
-      country: { value: number }
-      spotify_artist_id: { value: string }
-    }
+  const editBand = useEditBand(band.id, formState, addGenres, deleteGenres, spotifyArtistId || null)
 
-    try {
-      setLoading(true)
-      const { error: editBandError } = await supabase
-        .from('bands')
-        .update({
-          name: target.name.value,
-          country_id: target.country.value,
-          spotify_artist_id: target.spotify_artist_id.value,
-        })
-        .eq('id', band.id)
+  function handleChange(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    formDispatch({
+      type: ActionType.CHANGE_INPUT,
+      payload: { name: event.target.name, value: event.target.value },
+    })
+  }
 
-      if (editBandError) {
-        throw editBandError
-      }
+  if (editBand.isError) {
+    const error = editBand.error as Error
+    alert(error.message)
+  }
 
-      const { error: addGenresError } = await supabase
-        .from('j_band_genres')
-        .insert(newGenres.map(genre => ({ band_id: band.id, genre_id: genre.id })))
-
-      if (addGenresError) {
-        throw addGenresError
-      }
-      
-      if (deleteGenres) {
-        const { error: deleteGenresError } = await supabase
-          .from('j_band_genres')
-          .delete()
-          .eq('band_id', band.id)
-          .in(
-            'genre_id',
-            deleteGenres.map(item => item.id)
-          )
-
-        if (deleteGenresError) {
-          throw deleteGenresError
-        }
-      }
-
-      queryClient.invalidateQueries(['band', band.id])
-      setIsOpen(false)
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message)
-      } else {
-        alert('Oops')
-        console.error(error)
-      }
-    } finally {
-      setLoading(false)
-    }
+  if (editBand.isSuccess) {
+    queryClient.invalidateQueries(['band', band.id])
+    setIsOpen(false)
   }
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form className="flex flex-col gap-4">
         <h2>Band bearbeiten</h2>
         <div className="form-control">
-          <input type="text" name="name" id="name" defaultValue={band.name} />
+          <input type="text" name="name" id="name" value={formState.name} onChange={handleChange} />
           <label htmlFor="name">Name</label>
         </div>
         <div className="form-control">
-          <select name="country" id="country" defaultValue={band.country?.id}>
+          <select
+            name="country_id"
+            id="country_id"
+            value={formState.country_id || ''}
+            onChange={handleChange}
+          >
             <option value="international">International</option>
-            {countries?.map((country, index) => (
-              <option key={index} value={country.id}>
-                {country.name}
+            {countries?.map((item, index) => (
+              <option key={index} value={item.id}>
+                {item.name}
               </option>
             ))}
           </select>
-          <label htmlFor="country">Land</label>
+          <label htmlFor="country_id">Land</label>
         </div>
         {genres && (
           <MultiSelect
@@ -117,13 +90,19 @@ export const EditBandForm: FC<EditBandFormProps> = ({
             setSelectedOptions={setSelectedGenres}
           />
         )}
-        <div className="form-control">
-          <input type="text" name="spotify_artist_id" id="spotify_artist_id" placeholder='0GDGKpJFhVpcjIGF8N6Ewt' defaultValue={band.spotify_artist_id || ''} />
-          <label htmlFor="spotify_artist_id">Spotify-Künstler-ID</label>
-        </div>
-        <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 bg-slate-800 z-10">
+        <SpotifyArtistSelect
+          bandName={formState?.name || ''}
+          value={spotifyArtistId}
+          onValueChange={setSpotifyArtistId}
+        />
+        <div className="sticky md:static bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:p-0 bg-slate-800 z-10 md:z-0">
           <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
-          <Button type="submit" label="Speichern" style="primary" loading={loading} />
+          <Button
+            onClick={() => editBand.mutate()}
+            label="Speichern"
+            style="primary"
+            loading={editBand.isLoading}
+          />
         </div>
       </form>
     </Modal>
