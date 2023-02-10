@@ -34,6 +34,10 @@ export type Comment = Database['public']['Tables']['comments']['Row']
 
 export type Band = Database['public']['Tables']['bands']['Row'] & WithCountry & WithGenres
 
+export type AddBand = Database['public']['Tables']['bands']['Insert']
+
+export type EditBand = Database['public']['Tables']['bands']['Update']
+
 export type BandSeenFull = BandSeen & {
   band: Band
   concert: Concert

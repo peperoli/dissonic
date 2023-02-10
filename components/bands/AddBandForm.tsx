@@ -1,11 +1,19 @@
-import { useRouter } from "next/navigation"
-import { Dispatch, FC, SetStateAction, SyntheticEvent, useState } from "react"
-import { useQueryClient } from "react-query"
-import { Band, Country, Genre } from "../../types/types"
-import supabase from "../../utils/supabase"
-import { Button } from "../Button"
-import Modal from "../Modal"
-import { MultiSelect } from "../MultiSelect"
+import {
+  ChangeEvent,
+  Dispatch,
+  FC,
+  SetStateAction,
+  useReducer,
+  useState,
+} from 'react'
+import { useQueryClient } from 'react-query'
+import { useAddBand } from '../../hooks/useAddBand'
+import { ActionType, addBandReducer } from '../../reducers/addBandReducer'
+import { Band, Country, Genre } from '../../types/types'
+import { Button } from '../Button'
+import Modal from '../Modal'
+import { MultiSelect } from '../MultiSelect'
+import { SpotifyArtistSelect } from './SpotifyArtistSelect'
 
 interface AddBandFormProps {
   countries?: Country[]
@@ -15,72 +23,56 @@ interface AddBandFormProps {
   setIsOpen: Dispatch<SetStateAction<boolean>>
 }
 
-export const AddBandForm: FC<AddBandFormProps> = ({ countries, genres, bands, isOpen, setIsOpen }) => {
+export const AddBandForm: FC<AddBandFormProps> = ({
+  countries,
+  genres,
+  bands,
+  isOpen,
+  setIsOpen,
+}) => {
   const queryClient = useQueryClient()
-  
+
   const [selectedGenres, setSelectedGenres] = useState<Genre[]>([])
-  const [name, setName] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [formState, formDispatch] = useReducer(addBandReducer, {
+    name: '',
+    country_id: null,
+  })
+  const [spotifyArtistId, setSpotifyArtistId] = useState('')
 
-  const regExp = new RegExp(name, 'i')
+  const addBand = useAddBand(formState, selectedGenres, spotifyArtistId)
+  const regExp = new RegExp(formState.name, 'i')
   const similarBands = bands?.filter(item => item.name.match(regExp)) || []
-  const isSimilar = name.length >= 3 && similarBands.length > 0
-  const router = useRouter()
+  const isSimilar = formState.name.length >= 3 && similarBands.length > 0
 
-  async function handleSubmit(event: SyntheticEvent) {
-    event.preventDefault()
-    const target = event.target as typeof event.target & {
-      name: { value: string }
-      country: { value: number }
-      spotify_artist_id: { value: string }
-    }
+  function handleChange(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    formDispatch({
+      type: ActionType.CHANGE_INPUT,
+      payload: { name: event.target.name, value: event.target.value },
+    })
+  }
 
-    try {
-      setLoading(true)
-      const { data: band, error: bandError } = await supabase
-        .from('bands')
-        .insert({
-          name: target.name.value,
-          country_id: target.country.value,
-          spotify_artist_id: target.spotify_artist_id.value,
-        })
-        .select()
-        .single()
+  if (addBand.isError) {
+    const error = addBand.error as Error
+    alert(error.message)
+  }
 
-      if (bandError) {
-        throw bandError
-      }
-
-      const { error: genresError } = await supabase
-        .from('j_band_genres')
-        .insert(selectedGenres.map(genre => ({ band_id: band?.id, genre_id: genre.id })))
-
-      if (genresError) {
-        throw genresError
-      }
-
-      queryClient.invalidateQueries('bands')
-      setName('')
-      setSelectedGenres([])
-      setIsOpen(false)
-      router.refresh()
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message)
-      } else {
-        alert('Oops')
-        console.error(error)
-      }
-    } finally {
-      setLoading(false)
-    }
+  if (addBand.isSuccess) {
+    queryClient.invalidateQueries('bands')
+    setIsOpen(false)
   }
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form className="flex flex-col gap-4">
         <h2>Band erstellen</h2>
         <div className="form-control">
-          <input type="text" name="name" id="name" value={name} onChange={(event) => setName(event.target.value)} placeholder="Beatles" />
+          <input
+            type="text"
+            name="name"
+            id="name"
+            value={formState.name}
+            onChange={handleChange}
+            placeholder="Beatles"
+          />
           <label htmlFor="name">Name</label>
           {isSimilar && (
             <div className="mt-2">
@@ -94,10 +86,19 @@ export const AddBandForm: FC<AddBandFormProps> = ({ countries, genres, bands, is
           )}
         </div>
         <div className="form-control">
-          <select name="country" id="country" defaultValue="">
-            <option value="" disabled hidden>Bitte wählen ...</option>
-            {countries?.map((country, index) => (
-              <option key={index} value={country.id}>{country.name}</option>
+          <select
+            name="country_id"
+            id="country_id"
+            value={formState.country_id || ''}
+            onChange={handleChange}
+          >
+            <option value="" disabled hidden>
+              Bitte wählen ...
+            </option>
+            {countries?.map((item, index) => (
+              <option key={index} value={item.id}>
+                {item.name}
+              </option>
             ))}
           </select>
           <label htmlFor="country">Land</label>
@@ -110,13 +111,19 @@ export const AddBandForm: FC<AddBandFormProps> = ({ countries, genres, bands, is
             setSelectedOptions={setSelectedGenres}
           />
         )}
-        <div className="form-control">
-          <input type="text" name="spotify_artist_id" id="spotify_artist_id" placeholder='0GDGKpJFhVpcjIGF8N6Ewt' />
-          <label htmlFor="spotify_artist_id">Spotify-Künstler-ID</label>
-        </div>
-        <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10">
+        <SpotifyArtistSelect
+          bandName={formState?.name || ''}
+          value={spotifyArtistId}
+          onValueChange={setSpotifyArtistId}
+        />
+        <div className="sticky md:static bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10 md:z-0">
           <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
-          <Button type="submit" label="Erstellen" style="primary" loading={loading} />
+          <Button
+            onClick={() => addBand.mutate()}
+            label="Erstellen"
+            style="primary"
+            loading={addBand.isLoading}
+          />
         </div>
       </form>
     </Modal>
