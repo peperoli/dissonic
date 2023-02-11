@@ -60,3 +60,13 @@ export type Friend = Database['public']['Tables']['friends']['Row'] & {
 }
 
 export type Option = Band | Genre | Country
+
+export type SpotifyArtist = {
+  id: string
+  name: string
+  images: {
+    height: number
+    url: string
+    width: number
+  }[]
+}

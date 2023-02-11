@@ -1,15 +1,6 @@
 import { useQuery } from 'react-query'
+import { SpotifyArtist } from '../types/types'
 import { useSpotifyToken } from './useSpotifyToken'
-
-type SpotifyArtist = {
-  id: string
-  name: string
-  images: {
-    height: number
-    url: string
-    width: number
-  }[]
-}
 
 const fetchToken = async (
   token?: string | null,

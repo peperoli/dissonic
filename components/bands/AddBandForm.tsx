@@ -114,7 +114,7 @@ export const AddBandForm: FC<AddBandFormProps> = ({
         <SpotifyArtistSelect
           bandName={formState?.name || ''}
           value={spotifyArtistId}
-          onValueChange={setSpotifyArtistId}
+          setValue={setSpotifyArtistId}
         />
         <div className="sticky md:static bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10 md:z-0">
           <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
