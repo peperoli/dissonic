@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { ArrowLeftIcon, MapPinIcon, MusicalNoteIcon } from '@heroicons/react/20/solid'
-import React, { FC, Fragment, useEffect, useState } from 'react'
+import React, { FC, Fragment, useState } from 'react'
 import { EditBandForm } from './EditBandForm'
 import { PageWrapper } from '../layout/PageWrapper'
 import { Button } from '../Button'
@@ -12,7 +12,7 @@ import { DeleteBandModal } from './DeleteBandModal'
 import { useBand } from '../../hooks/useBand'
 import { useConcerts } from '../../hooks/useConcerts'
 import { useUser } from '../../hooks/useUser'
-import { useSpotifyArtist } from '../../hooks/useSpotifyArtist'
+import { useSpotifyArtistEmbed } from '../../hooks/useSpotifyArtistEmbed'
 
 export interface BandPageProps {
   initialBand: Band
@@ -22,7 +22,7 @@ export const BandPage: FC<BandPageProps> = ({ initialBand }) => {
   const { data: band, isLoading: bandIsLoading } = useBand(initialBand)
   const { data: concerts } = useConcerts()
   const { data: user } = useUser()
-  const { data: spotifyArtist } = useSpotifyArtist(band?.spotify_artist_id)
+  const { data: spotifyArtist } = useSpotifyArtistEmbed(band?.spotify_artist_id)
 
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
   const [editIsOpen, setEditIsOpen] = useState(false)

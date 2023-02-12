@@ -67,8 +67,10 @@ export const LocationsPage: FC<LocationsPageProps> = ({ initialLocations }) => {
               filteredLocations &&
               filteredLocations.map(location => (
                 <TableRow key={location.id} href={''}>
-                  <div className="font-bold">{location.name}</div>
-                  <div className="text-slate-300">{location.city}</div>
+                  <div className="md:flex items-center gap-4 w-full">
+                    <div className="md:w-1/2 font-bold">{location.name}</div>
+                    <div className="md:w-1/2 text-slate-300">{location.city}</div>
+                  </div>
                 </TableRow>
               ))
             )}

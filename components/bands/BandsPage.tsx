@@ -10,11 +10,47 @@ import { Search } from '../Search'
 import { Button } from '../Button'
 import useMediaQuery from '../../hooks/useMediaQuery'
 import { Pagination } from '../layout/Pagination'
+import { UserMusicIcon } from '../layout/UserMusicIcon'
 import { MultiSelectFilter } from '../MultiSelectFilter'
 import { Band, Country, Genre } from '../../types/types'
 import { useBands } from '../../hooks/useBands'
 import { useGenres } from '../../hooks/useGenres'
 import { useCountries } from '../../hooks/useCountries'
+import { useSpotifyArtist } from '../../hooks/useSpotifyArtist'
+import Image from 'next/image'
+
+interface BandTableRowProps {
+  band: Band
+}
+
+const BandTableRow: FC<BandTableRowProps> = ({ band }) => {
+  const { data } = useSpotifyArtist(band.spotify_artist_id)
+  const picture = data?.images[2]
+  return (
+    <TableRow key={band.id} href={`/bands/${band.id}`}>
+      <div className="relative flex-shrink-0 flex justify-center items-center w-10 h-10 rounded-lg bg-slate-750">
+        {picture ? (
+          <Image
+            src={picture.url}
+            alt={band.name}
+            fill
+            sizes="150px"
+            className="object-cover rounded-lg"
+          />
+        ) : (
+          <UserMusicIcon className="h-icon text-slate-300" />
+        )}
+      </div>
+      <div className="md:flex items-center gap-4 w-full">
+        <div className="md:w-1/3">{band.name}</div>
+        <div className="md:w-1/3 text-slate-300">{band.country?.name}</div>
+        <div className="hidden md:block md:w-1/3 text-slate-300 whitespace-nowrap text-ellipsis overflow-hidden">
+          {band.genres?.map(item => item.name).join(' • ')}
+        </div>
+      </div>
+    </TableRow>
+  )
+}
 
 interface BandsPageProps {
   initialBands: Band[]
@@ -37,14 +73,16 @@ export const BandsPage: FC<BandsPageProps> = ({ initialBands }) => {
     filteredBands.filter(filterRule).length !== bands?.length
       ? filteredBands.filter(filterRule).length
       : null
-	const perPage = 100
+  const perPage = 100
 
   function filterRule(item: Band) {
     let [genreFilter, countryFilter] = [true, true]
     const selectedGenreIds = selectedGenres.map(item => item.id)
     const selectedCountryIds = selectedCountries.map(item => item.id)
     if (selectedGenreIds.length > 0) {
-      genreFilter = item.genres?.some(genreId => selectedGenreIds.includes(genreId.id)) ? true : false
+      genreFilter = item.genres?.some(genreId => selectedGenreIds.includes(genreId.id))
+        ? true
+        : false
     }
     if (selectedCountryIds.length > 0) {
       countryFilter = item.country && selectedCountryIds.includes(item.country.id) ? true : false
@@ -135,15 +173,7 @@ export const BandsPage: FC<BandsPageProps> = ({ initialBands }) => {
               .filter(filterRule)
               .slice(currentPage * perPage, currentPage * perPage + perPage)
               .sort(compare)
-              .map(band => (
-                <TableRow key={band.id} href={`/bands/${band.id}`}>
-                  <div className="font-bold">{band.name}</div>
-                  <div className="text-slate-300">{band.country?.name}</div>
-                  <div className="text-slate-300 whitespace-nowrap text-ellipsis overflow-hidden">
-                    {band.genres?.map(item => item.name).join(' • ')}
-                  </div>
-                </TableRow>
-              ))
+              .map(band => <BandTableRow key={band.id} band={band} />)
           )}
           <Pagination
             entriesCount={filteredBands.filter(filterRule).length}

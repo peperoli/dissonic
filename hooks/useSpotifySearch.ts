@@ -2,7 +2,7 @@ import { useQuery } from 'react-query'
 import { SpotifyArtist } from '../types/types'
 import { useSpotifyToken } from './useSpotifyToken'
 
-const fetchToken = async (
+const fetchSearch = async (
   token?: string | null,
   bandName?: string | null
 ): Promise<SpotifyArtist[]> => {
@@ -26,7 +26,7 @@ const fetchToken = async (
 
 export const useSpotifySearch = (bandName: string | null) => {
   const { data: token } = useSpotifyToken()
-  return useQuery(['spotifySearch', bandName], () => fetchToken(token, bandName), {
+  return useQuery(['spotifySearch', bandName], () => fetchSearch(token, bandName), {
     enabled: !!token && !!bandName,
   })
 }

@@ -1,22 +1,26 @@
 import { useQuery } from 'react-query'
+import { SpotifyArtist } from '../types/types'
+import { useSpotifyToken } from './useSpotifyToken'
 
-interface SpotifyOEmbed {
-  html: string
-}
-
-const fetchSpotifyArtist = async (artistId?: string | null): Promise<SpotifyOEmbed> => {
-  if (!artistId) {
-    throw new Error('No artist ID')
+const fetchArtist = async (token: string | null | undefined, bandId: string | null): Promise<SpotifyArtist> => {
+  const artistParams = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
   }
 
-  const query = encodeURIComponent(`https://open.spotify.com/artist/${artistId}`)
-  const data = await fetch(`https://open.spotify.com/oembed?url=${query}`)
+  const data = await fetch(`https://api.spotify.com/v1/artists/${bandId}`, artistParams)
+    .then(response => response.json())
+    .catch(error => console.error(error))
 
-  return data.json()
+  return data
 }
 
-export const useSpotifyArtist = (artistId?: string | null) => {
-  return useQuery(['artist', artistId], () => fetchSpotifyArtist(artistId), {
-    enabled: !!artistId,
+export const useSpotifyArtist = (bandId: string | null) => {
+  const { data: token } = useSpotifyToken()
+  return useQuery(['spotifyArtist', bandId], () => fetchArtist(token, bandId), {
+    enabled: !!token && !!bandId,
   })
 }
