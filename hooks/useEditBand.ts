@@ -20,7 +20,7 @@ const editBand = async (
 
   const { error: addGenresError } = await supabase
     .from('j_band_genres')
-    .insert(addGenres.map(genre => ({ band_id: band.id, genre_id: genre.id })))
+    .insert(addGenres.map(genre => ({ band_id: bandId, genre_id: genre.id })))
 
   if (addGenresError) {
     throw addGenresError
