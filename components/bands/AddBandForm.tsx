@@ -39,7 +39,7 @@ export const AddBandForm: FC<AddBandFormProps> = ({
   })
   const [spotifyArtistId, setSpotifyArtistId] = useState('')
 
-  const addBand = useAddBand(formState, selectedGenres, spotifyArtistId)
+  const addBand = useAddBand(formState, selectedGenres, spotifyArtistId || null)
   const regExp = new RegExp(formState.name, 'i')
   const similarBands = bands?.filter(item => item.name.match(regExp)) || []
   const isSimilar = formState.name.length >= 3 && similarBands.length > 0
