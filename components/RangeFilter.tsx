@@ -1,3 +1,4 @@
+import { ArrowUturnLeftIcon } from '@heroicons/react/20/solid'
 import React, {
   Dispatch,
   FC,
@@ -9,6 +10,7 @@ import React, {
   useRef,
 } from 'react'
 import { useState } from 'react'
+import { Button } from './Button'
 import { FilterButton } from './FilterButton'
 import { NumberField } from './NumberField'
 
@@ -59,6 +61,7 @@ interface RangeSliderHandleProps {
   value: number
   setValue: Dispatch<SetStateAction<number>>
   otherValue: number
+  constrain: (value: number) => number
 }
 
 const RangeSliderHandle: FC<RangeSliderHandleProps> = ({
@@ -70,11 +73,14 @@ const RangeSliderHandle: FC<RangeSliderHandleProps> = ({
   value,
   setValue,
   otherValue,
+  constrain,
 }) => {
   const [drag, setDrag] = useState(false)
   const ref = useRef<HTMLButtonElement>(null)
 
-  function dragMouseDown(event: ReactMouseEvent<HTMLButtonElement> | ReactTouchEvent<HTMLButtonElement>) {
+  function dragMouseDown(
+    event: ReactMouseEvent<HTMLButtonElement> | ReactTouchEvent<HTMLButtonElement>
+  ) {
     event.preventDefault()
     document.addEventListener('mousemove', dragMouseMove)
     document.addEventListener('touchmove', dragMouseMove)
@@ -87,7 +93,10 @@ const RangeSliderHandle: FC<RangeSliderHandleProps> = ({
   function dragMouseMove(event: MouseEvent | TouchEvent) {
     event.preventDefault()
 
-    const currentPosition = event instanceof MouseEvent ? event.clientX - startPosition : event.touches[0].clientX - startPosition
+    const currentPosition =
+      event instanceof MouseEvent
+        ? event.clientX - startPosition
+        : event.touches[0].clientX - startPosition
     const currentValue = Math.round(
       initialMin + (currentPosition / width) * (initialMax - initialMin)
     )
@@ -120,23 +129,37 @@ const RangeSliderHandle: FC<RangeSliderHandleProps> = ({
 interface RangeSliderProps {
   initialMin: number
   initialMax: number
-  minPosition: number
-  setMinPosition: Dispatch<SetStateAction<number>>
-  maxPosition: number
-  setMaxPosition: Dispatch<SetStateAction<number>>
+  minValue: number
+  setMinValue: Dispatch<SetStateAction<number>>
+  maxValue: number
+  setMaxValue: Dispatch<SetStateAction<number>>
 }
 
 const RangeSlider: FC<RangeSliderProps> = ({
   initialMin,
   initialMax,
-  minPosition,
-  setMinPosition,
-  maxPosition,
-  setMaxPosition,
+  minValue,
+  setMinValue,
+  maxValue,
+  setMaxValue,
 }) => {
   const [startPosition, setStartPosition] = useState(0)
   const [width, setWidth] = useState(0)
   const ref = useRef<HTMLDivElement>(null)
+  const range = initialMax - initialMin
+
+  function constrain(value: number) {
+    if (value < initialMin) {
+      return initialMin
+    }
+    if (value > initialMax) {
+      return initialMax
+    }
+    return value
+  }
+
+  const constrainedMinValue = minValue <= maxValue ? constrain(minValue) : constrain(maxValue)
+  const constrainedMaxValue = maxValue >= minValue ? constrain(maxValue) : constrain(minValue)
 
   useEffect(() => {
     if (ref.current) {
@@ -148,8 +171,8 @@ const RangeSlider: FC<RangeSliderProps> = ({
     <div ref={ref} className="relative flex items-center w-full h-1 my-4 rounded-full bg-slate-800">
       <div
         style={{
-          left: ((minPosition - initialMin) / (initialMax - initialMin)) * 100 + '%',
-          right: ((initialMax - maxPosition) / (initialMax - initialMin)) * 100 + '%',
+          left: ((constrainedMinValue - initialMin) / range) * 100 + '%',
+          right: ((initialMax - constrainedMaxValue) / range) * 100 + '%',
         }}
         className="absolute h-1 bg-venom"
       />
@@ -159,9 +182,10 @@ const RangeSlider: FC<RangeSliderProps> = ({
         width={width}
         initialMin={initialMin}
         initialMax={initialMax}
-        value={minPosition}
-        setValue={setMinPosition}
-        otherValue={maxPosition}
+        value={constrainedMinValue}
+        setValue={setMinValue}
+        otherValue={maxValue}
+        constrain={constrain}
       />
       <RangeSliderHandle
         side="max"
@@ -169,9 +193,10 @@ const RangeSlider: FC<RangeSliderProps> = ({
         width={width}
         initialMin={initialMin}
         initialMax={initialMax}
-        value={maxPosition}
-        setValue={setMaxPosition}
-        otherValue={minPosition}
+        value={constrainedMaxValue}
+        setValue={setMaxValue}
+        otherValue={minValue}
+        constrain={constrain}
       />
     </div>
   )
@@ -180,17 +205,22 @@ const RangeSlider: FC<RangeSliderProps> = ({
 interface RangeSliderWrapperProps {
   unit: string
   options: number[]
-  initialMin: number
-  initialMax: number
-  minValue: number
-  setMinValue: Dispatch<SetStateAction<number>>
-  maxValue: number
-  setMaxValue: Dispatch<SetStateAction<number>>
+  selectedOptions: number[]
+  setSelectedOptions: Dispatch<SetStateAction<number[]>>
 }
 
-const RangeSliderWrapper: FC<RangeSliderWrapperProps> = ({ options, unit, initialMin, initialMax, minValue, setMinValue, maxValue, setMaxValue }) => {
-  const [minPosition, setMinPosition] = useState(initialMin)
-  const [maxPosition, setMaxPosition] = useState(initialMax)
+const RangeSliderWrapper: FC<RangeSliderWrapperProps> = ({
+  options,
+  unit,
+  selectedOptions,
+  setSelectedOptions,
+}) => {
+  const initialMin = Math.min(...options)
+  const initialMax = Math.max(...options)
+  const uniqueOptions = [...new Set(options)]
+
+  const [minValue, setMinValue] = useState(initialMin)
+  const [maxValue, setMaxValue] = useState(initialMax)
 
   function handleMinBlur(event: FocusEvent<HTMLInputElement>) {
     const value = Number(event.target.value)
@@ -216,25 +246,9 @@ const RangeSliderWrapper: FC<RangeSliderWrapperProps> = ({ options, unit, initia
     }
   }
 
-  useEffect(() => {
-    if (minValue >= initialMin && minValue <= initialMax && minValue <= maxValue) {
-      setMinPosition(minValue)
-    }
-  }, [minValue])
-
-  useEffect(() => {
-    if (maxValue >= initialMin && maxValue <= initialMax && maxValue >= minValue) {
-      setMaxPosition(maxValue)
-    }
-  }, [maxValue])
-
-  useEffect(() => {
-    setMinValue(minPosition)
-  }, [minPosition])
-
-  useEffect(() => {
-    setMaxValue(maxPosition)
-  }, [maxPosition])
+  function submitSelectedOptions(min: number, max: number) {
+    setSelectedOptions(uniqueOptions.filter(item => item >= min && item <= max))
+  }
   return (
     <>
       <Chart
@@ -247,10 +261,10 @@ const RangeSliderWrapper: FC<RangeSliderWrapperProps> = ({ options, unit, initia
       <RangeSlider
         initialMin={initialMin}
         initialMax={initialMax}
-        minPosition={minPosition}
-        setMinPosition={setMinPosition}
-        maxPosition={maxPosition}
-        setMaxPosition={setMaxPosition}
+        minValue={minValue}
+        setMinValue={setMinValue}
+        maxValue={maxValue}
+        setMaxValue={setMaxValue}
       />
       <div className="flex gap-8">
         <NumberField
@@ -272,6 +286,17 @@ const RangeSliderWrapper: FC<RangeSliderWrapperProps> = ({ options, unit, initia
           onBlur={handleMaxBlur}
         />
       </div>
+      <div className="relative flex justify-end gap-2 w-full pt-4 bg-slate-700 z-10">
+        <Button
+          onClick={() => setSelectedOptions([])}
+          label="Filter zurücksetzen"
+          icon={<ArrowUturnLeftIcon className="h-icon" />}
+          contentType="icon"
+          style="secondary"
+          disabled={selectedOptions.length === 0}
+        />
+        <Button onClick={closePopover} label="Ergebnisse anzeigen" style="primary" />
+      </div>
     </>
   )
 }
@@ -289,43 +314,24 @@ export const RangeFilter: FC<RangeFilterProps> = ({
   unit,
   options,
   selectedOptions,
-  setSelectedOptions,
+  setSelectedOptions
 }) => {
-  const [initialMin, setInitialMin] = useState(0)
-  const [initialMax, setInitialMax] = useState(0)
-  const [minValue, setMinValue] = useState(initialMin)
-  const [maxValue, setMaxValue] = useState(initialMax)
-  const uniqueOptions = [...new Set(options)]
-
-  useEffect(() => {
-    if (options) {
-      setInitialMin(Math.min(...options))
-      setInitialMax(Math.max(...options))
-    }
-  }, [options?.length])
-
-  function submitSelectedOptions(min: number, max: number) {
-    setSelectedOptions(uniqueOptions.filter(item => item >= min && item <= max))
-  }
   return (
     <FilterButton
       name={name}
       selectedOptions={selectedOptions}
       setSelectedOptions={setSelectedOptions}
-      handleSubmit={() => submitSelectedOptions(minValue, maxValue)}
-    >
-      {options && (
-        <RangeSliderWrapper
-          unit={unit}
-          options={options}
-          minValue={minValue}
-          setMinValue={setMinValue}
-          maxValue={maxValue}
-          setMaxValue={setMaxValue}
-          initialMin={initialMin}
-          initialMax={initialMax}
-        />
-      )}
-    </FilterButton>
+      render={(openPopover) => {
+        options && (
+          <RangeSliderWrapper
+            unit={unit}
+            options={options}
+            selectedOptions={selectedOptions}
+            setSelectedOptions={setSelectedOptions}
+            closePopover={closePopover}
+          />
+        )
+      }}
+    />
   )
 }

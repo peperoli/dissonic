@@ -18,6 +18,7 @@ export const FilterButton: FC<FilterButtonProps> = ({
   setSelectedOptions,
   handleSubmit,
   children,
+  render
 }) => {
   return (
     <Popover className="relative">
@@ -57,18 +58,7 @@ export const FilterButton: FC<FilterButtonProps> = ({
                   icon={<XMarkIcon className="h-icon" />}
                 />
               </div>
-              {children}
-              <div className="relative flex justify-end gap-2 w-full pt-4 bg-slate-700 z-10">
-                <Button
-                  onClick={() => setSelectedOptions([])}
-                  label="Filter zurücksetzen"
-                  icon={<ArrowUturnLeftIcon className="h-icon" />}
-                  contentType="icon"
-                  style="secondary"
-                  disabled={selectedOptions.length === 0}
-                />
-                <Button onClick={closePopover} label="Ergebnisse anzeigen" style="primary" />
-              </div>
+              {render(closePopover)}
             </Popover.Panel>
           </>
         )
