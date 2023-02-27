@@ -1,34 +1,23 @@
-import { ArrowUturnLeftIcon, ChevronDownIcon, XMarkIcon } from '@heroicons/react/20/solid'
+import { ChevronDownIcon, XMarkIcon } from '@heroicons/react/20/solid'
 import { Button } from './Button'
 import { Popover } from '@headlessui/react'
 import { Option } from '../types/types'
-import React, { Dispatch, FC, ReactNode, SetStateAction } from 'react'
+import React, { FC, ReactNode } from 'react'
 
 interface FilterButtonProps {
   name: string
   selectedOptions: Option[] | number[]
-  setSelectedOptions: Dispatch<SetStateAction<any[]>>
-  handleSubmit?: () => void
   children: ReactNode
 }
 
 export const FilterButton: FC<FilterButtonProps> = ({
   name,
   selectedOptions,
-  setSelectedOptions,
-  handleSubmit,
-  children,
-  render
+  children
 }) => {
   return (
     <Popover className="relative">
       {({ open, close }) => {
-        function closePopover() {
-          if (handleSubmit) {
-            handleSubmit()
-          }
-          close()
-        }
         return (
           <>
             <Popover.Button className="btn btn-filter btn-secondary w-full h-full">
@@ -58,7 +47,7 @@ export const FilterButton: FC<FilterButtonProps> = ({
                   icon={<XMarkIcon className="h-icon" />}
                 />
               </div>
-              {render(closePopover)}
+              {children}
             </Popover.Panel>
           </>
         )

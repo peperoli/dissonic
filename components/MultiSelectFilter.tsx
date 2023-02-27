@@ -17,11 +17,7 @@ export const MultiSelectFilter: FC<MultiSelectFilterProps> = ({
   setSelectedOptions,
 }) => {
   return (
-    <FilterButton
-      name={name}
-      selectedOptions={selectedOptions}
-      setSelectedOptions={setSelectedOptions}
-    >
+    <FilterButton name={name} selectedOptions={selectedOptions}>
       <div className="relative h-full">
         {options && (
           <MultiSelect

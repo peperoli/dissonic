@@ -1,7 +1,7 @@
 import { FC } from "react"
 
 interface ButtonProps {
-  onClick?: () => void
+  onClick?: any
   type?: 'button' | 'submit' | 'reset' | undefined
   label: string
   style?: 'primary' | 'secondary'

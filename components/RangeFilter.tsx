@@ -295,7 +295,11 @@ const RangeSliderWrapper: FC<RangeSliderWrapperProps> = ({
           style="secondary"
           disabled={selectedOptions.length === 0}
         />
-        <Button onClick={closePopover} label="Ergebnisse anzeigen" style="primary" />
+        <Button
+          onClick={() => submitSelectedOptions(minValue, maxValue)}
+          label="Ergebnisse anzeigen"
+          style="primary"
+        />
       </div>
     </>
   )
@@ -314,24 +318,18 @@ export const RangeFilter: FC<RangeFilterProps> = ({
   unit,
   options,
   selectedOptions,
-  setSelectedOptions
+  setSelectedOptions,
 }) => {
   return (
-    <FilterButton
-      name={name}
-      selectedOptions={selectedOptions}
-      setSelectedOptions={setSelectedOptions}
-      render={(openPopover) => {
-        options && (
-          <RangeSliderWrapper
-            unit={unit}
-            options={options}
-            selectedOptions={selectedOptions}
-            setSelectedOptions={setSelectedOptions}
-            closePopover={closePopover}
-          />
-        )
-      }}
-    />
+    <FilterButton name={name} selectedOptions={selectedOptions}>
+      {options && (
+        <RangeSliderWrapper
+          unit={unit}
+          options={options}
+          selectedOptions={selectedOptions}
+          setSelectedOptions={setSelectedOptions}
+        />
+      )}
+    </FilterButton>
   )
 }
