@@ -32,6 +32,10 @@ export type EditConcert = Database['public']['Tables']['concerts']['Update']
 
 export type Comment = Database['public']['Tables']['comments']['Row']
 
+export type AddComment = Database['public']['Tables']['comments']['Insert']
+
+export type EditComment = Database['public']['Tables']['comments']['Update']
+
 export type Band = Database['public']['Tables']['bands']['Row'] & WithCountry & WithGenres
 
 export type AddBand = Database['public']['Tables']['bands']['Insert']
