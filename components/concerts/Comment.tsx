@@ -1,7 +1,7 @@
 import { Button } from '../Button'
 import { useState, FC, useEffect } from 'react'
 import dayjs from 'dayjs'
-import { PencilIcon, TrashIcon, UserIcon } from '@heroicons/react/20/solid'
+import { ArrowDownCircleIcon, ArrowUpCircleIcon, HandThumbUpIcon, PencilIcon, TrashIcon, UserIcon } from '@heroicons/react/20/solid'
 import { DeleteCommentModal } from './DeleteCommentModal'
 import Image from 'next/image'
 import { Comment, Profile } from '../../types/types'
@@ -46,6 +46,9 @@ export const CommentItem: FC<CommentProps> = ({ comment, profiles, user, concert
     setEdit(false)
     setContent(comment.content)
   }
+
+  const upVotes = comment.votes.filter(item => item.vote === 'up')
+  const downVotes = comment.votes.filter(item => item.vote === 'down')
   return (
     <>
       <div className="flex gap-4">
@@ -102,6 +105,13 @@ export const CommentItem: FC<CommentProps> = ({ comment, profiles, user, concert
                   {comment.edited_at ? (
                     <span className="block text-slate-300">(bearbeitet)</span>
                   ) : null}
+                  {comment.votes && (upVotes.length - downVotes.length != 0) && (
+                    <div className='flex gap-2 items-center mt-2'>
+                      <ArrowUpCircleIcon className='h-icon' />
+                      {upVotes.length - downVotes.length}
+                      <ArrowDownCircleIcon className='h-icon' />
+                    </div>
+                  )}
                 </>
               </p>
             )}
