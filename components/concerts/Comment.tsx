@@ -1,7 +1,7 @@
 import { Button } from '../Button'
 import { useState, FC, useEffect } from 'react'
 import dayjs from 'dayjs'
-import { ArrowDownCircleIcon, ArrowUpCircleIcon, HandThumbUpIcon, PencilIcon, TrashIcon, UserIcon } from '@heroicons/react/20/solid'
+import { PencilIcon, TrashIcon, UserIcon } from '@heroicons/react/20/solid'
 import { DeleteCommentModal } from './DeleteCommentModal'
 import Image from 'next/image'
 import { Comment, Profile } from '../../types/types'
@@ -10,6 +10,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import { useAvatar } from '../../hooks/useAvatar'
 import { useEditComment } from '../../hooks/useEditComment'
 import { useQueryClient } from 'react-query'
+import { ReactionControl } from './ReactionControl'
 dayjs.extend(relativeTime)
 
 interface CommentProps {
@@ -46,12 +47,9 @@ export const CommentItem: FC<CommentProps> = ({ comment, profiles, user, concert
     setEdit(false)
     setContent(comment.content)
   }
-
-  const upVotes = comment.votes.filter(item => item.vote === 'up')
-  const downVotes = comment.votes.filter(item => item.vote === 'down')
   return (
     <>
-      <div className="flex gap-4">
+      <div className="flex gap-4 group">
         <div className="relative flex-shrink-0 flex justify-center items-center w-8 h-8 rounded-full text-slate-850 bg-blue-300">
           {avatarUrl ? (
             <Image
@@ -73,7 +71,7 @@ export const CommentItem: FC<CommentProps> = ({ comment, profiles, user, concert
               {dayjs(createdAt).fromNow()}
             </span>
           </div>
-          <div className="flex gap-4 p-4 rounded-lg rounded-tl-none bg-slate-850">
+          <div className="relative flex gap-4 p-4 pb-6 rounded-lg rounded-tl-none bg-slate-850">
             {edit ? (
               <form className="grid gap-4 w-full">
                 <div className="form-control">
@@ -105,35 +103,39 @@ export const CommentItem: FC<CommentProps> = ({ comment, profiles, user, concert
                   {comment.edited_at ? (
                     <span className="block text-slate-300">(bearbeitet)</span>
                   ) : null}
-                  {comment.votes && (upVotes.length - downVotes.length != 0) && (
-                    <div className='flex gap-2 items-center mt-2'>
-                      <ArrowUpCircleIcon className='h-icon' />
-                      {upVotes.length - downVotes.length}
-                      <ArrowDownCircleIcon className='h-icon' />
-                    </div>
-                  )}
                 </>
               </p>
             )}
-            {comment.user_id === user?.id && !edit && (
-              <div className="flex flex-col md:flex-row gap-2">
-                <Button
-                  onClick={() => setEdit(true)}
-                  contentType="icon"
-                  label="Kommentar bearbeiten"
-                  size="small"
-                  icon={<PencilIcon className="h-icon" />}
+
+            <div className="absolute flex -bottom-4 rounded-lg bg-slate-700">
+              {comment.reactions && (
+                <ReactionControl
+                  comment={comment}
+                  concertId={concertId}
+                  reactions={comment.reactions}
+                  user={user}
                 />
-                <Button
-                  onClick={() => setIsOpen(true)}
-                  contentType="icon"
-                  label="Kommentar löschen"
-                  size="small"
-                  danger
-                  icon={<TrashIcon className="h-icon" />}
-                />
-              </div>
-            )}
+              )}
+              {comment.user_id === user?.id && !edit && (
+                <div className="hidden group-hover:flex">
+                  <Button
+                    onClick={() => setEdit(true)}
+                    contentType="icon"
+                    label="Kommentar bearbeiten"
+                    size="small"
+                    icon={<PencilIcon className="h-icon" />}
+                  />
+                  <Button
+                    onClick={() => setIsOpen(true)}
+                    contentType="icon"
+                    label="Kommentar löschen"
+                    size="small"
+                    danger
+                    icon={<TrashIcon className="h-icon" />}
+                  />
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -30,11 +30,19 @@ export type AddConcert = Database['public']['Tables']['concerts']['Insert']
 
 export type EditConcert = Database['public']['Tables']['concerts']['Update']
 
-export type Comment = Database['public']['Tables']['comments']['Row']
+export type Comment = Database['public']['Tables']['comments']['Row'] & {
+  reactions?: Reaction[]
+}
 
 export type AddComment = Database['public']['Tables']['comments']['Insert']
 
 export type EditComment = Database['public']['Tables']['comments']['Update']
+
+export type Reaction = Database['public']['Tables']['reactions']['Row']
+
+export type AddReaction = Database['public']['Tables']['reactions']['Insert']
+
+export type EditReaction = Database['public']['Tables']['reactions']['Update']
 
 export type Band = Database['public']['Tables']['bands']['Row'] & WithCountry & WithGenres
 

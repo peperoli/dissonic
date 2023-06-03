@@ -232,6 +232,26 @@ export interface Database {
           username?: string
         }
       }
+      reactions: {
+        Row: {
+          comment_id: number
+          created_at: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          comment_id?: number
+          created_at?: string | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          comment_id?: number
+          created_at?: string | null
+          type?: string
+          user_id?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
