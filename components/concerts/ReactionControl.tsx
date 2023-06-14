@@ -15,6 +15,7 @@ type ReactionToggleProps = {
   user: User
   reactions: Reaction[]
   reactionIcons: { [key: string]: string }
+  close: () => void
 }
 
 export const ReactionToggle = ({
@@ -24,6 +25,7 @@ export const ReactionToggle = ({
   user,
   reactions,
   reactionIcons,
+  close,
 }: ReactionToggleProps) => {
   const addReaction = useAddReaction(
     { comment_id: commentId, user_id: user.id, type: type },
@@ -36,15 +38,22 @@ export const ReactionToggle = ({
   const deleteReaction = useDeleteReaction(commentId, user.id, concertId)
   const hasReaction = reactions.find(reaction => reaction.user_id === user.id)
   const isSelected = hasReaction?.type === type
+
+  function handleClick() {
+    if (hasReaction) {
+      if (isSelected) {
+        deleteReaction.mutate()
+      } else {
+        editReaction.mutate()
+      }
+    } else {
+      addReaction.mutate()
+    }
+    close()
+  }
   return (
     <Button
-      onClick={() =>
-        hasReaction
-          ? isSelected
-            ? deleteReaction.mutate()
-            : editReaction.mutate()
-          : addReaction.mutate()
-      }
+      onClick={handleClick}
       label={type}
       icon={reactionIcons[type]}
       contentType="icon"
@@ -67,12 +76,7 @@ type ReactionControlProps = {
   user: User
 }
 
-export const ReactionControl = ({
-  comment,
-  concertId,
-  reactions,
-  user,
-}: ReactionControlProps) => {
+export const ReactionControl = ({ comment, concertId, reactions, user }: ReactionControlProps) => {
   const reactionIcons = {
     up: '👍',
     down: '👎',
@@ -112,18 +116,23 @@ export const ReactionControl = ({
               icon={<FaceSmileIcon className="h-icon" />}
             />
           </Popover.Button>
-          <Popover.Panel className="absolute flex left-1/2 mt-1 rounded-lg bg-slate-700 shadow-xl -translate-x-1/2">
-            {Object.keys(reactionIcons).map(key => (
-              <ReactionToggle
-                type={key}
-                commentId={comment.id}
-                concertId={concertId}
-                user={user}
-                reactions={reactions}
-                reactionIcons={reactionIcons}
-                key={key}
-              />
-            ))}
+          <Popover.Panel className="absolute flex left-1/2 mt-1 rounded-lg bg-slate-700 shadow-xl -translate-x-1/2 z-10">
+            {({ close }) => (
+              <>
+                {Object.keys(reactionIcons).map(key => (
+                  <ReactionToggle
+                    type={key}
+                    commentId={comment.id}
+                    concertId={concertId}
+                    user={user}
+                    reactions={reactions}
+                    reactionIcons={reactionIcons}
+                    close={close}
+                    key={key}
+                  />
+                ))}
+              </>
+            )}
           </Popover.Panel>
         </Popover>
       )}
