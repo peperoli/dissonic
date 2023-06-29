@@ -38,7 +38,7 @@ export type AddComment = Database['public']['Tables']['comments']['Insert']
 
 export type EditComment = Database['public']['Tables']['comments']['Update']
 
-export type Reaction = Database['public']['Tables']['reactions']['Row']
+export type Reaction = Database['public']['Tables']['reactions']['Row'] & { user: Profile }
 
 export type AddReaction = Database['public']['Tables']['reactions']['Insert']
 

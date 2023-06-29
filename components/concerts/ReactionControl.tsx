@@ -1,12 +1,13 @@
 import { Button } from '../Button'
 import { Fragment } from 'react'
 import { FaceSmileIcon } from '@heroicons/react/20/solid'
-import { Comment, Reaction } from '../../types/types'
+import { Comment, Profile, Reaction } from '../../types/types'
 import { User } from '@supabase/supabase-js'
 import { Popover } from '@headlessui/react'
 import { useAddReaction } from '../../hooks/useAddReaction'
 import { useEditReaction } from '../../hooks/useEditReaction'
 import { useDeleteReaction } from '../../hooks/useDeleteReaction'
+import clsx from 'clsx'
 
 type ReactionToggleProps = {
   type: string
@@ -15,7 +16,10 @@ type ReactionToggleProps = {
   user: User
   reactions: Reaction[]
   reactionIcons: { [key: string]: string }
-  close: () => void
+  close?: () => void
+  label: string
+  contentType?: 'icon'
+  users?: Profile[]
 }
 
 export const ReactionToggle = ({
@@ -26,6 +30,8 @@ export const ReactionToggle = ({
   reactions,
   reactionIcons,
   close,
+  users,
+  ...props
 }: ReactionToggleProps) => {
   const addReaction = useAddReaction(
     { comment_id: commentId, user_id: user.id, type: type },
@@ -49,23 +55,29 @@ export const ReactionToggle = ({
     } else {
       addReaction.mutate()
     }
-    close()
+    close && close()
   }
   return (
-    <Button
-      onClick={handleClick}
-      label={type}
-      icon={reactionIcons[type]}
-      contentType="icon"
-      size="small"
-      loading={
-        addReaction.status === 'loading' ||
-        editReaction.status === 'loading' ||
-        deleteReaction.status === 'loading'
-      }
-      className={isSelected ? '!bg-slate-500' : ''}
-      key={type}
-    />
+    <div className="relative">
+      <Button
+        onClick={handleClick}
+        icon={reactionIcons[type]}
+        size="small"
+        loading={
+          addReaction.status === 'loading' ||
+          editReaction.status === 'loading' ||
+          deleteReaction.status === 'loading'
+        }
+        className={clsx('peer', isSelected && '!bg-slate-500')}
+        key={type}
+        {...props}
+      />
+      {users && users.length > 0 && (
+        <div className="absolute hidden peer-hover:block -top-1 left-1/2 -translate-x-1/2 -translate-y-full px-1.5 py-0.5 rounded text-center text-xs bg-slate-900">
+          {users.map(item => item.username).join(', ')}
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -77,32 +89,37 @@ type ReactionControlProps = {
 }
 
 export const ReactionControl = ({ comment, concertId, reactions, user }: ReactionControlProps) => {
-  const reactionIcons = {
+  const reactionIcons: { [key: string]: string } = {
     up: '👍',
     down: '👎',
     funny: '😂',
     horns: '🤘',
     clap: '👏',
     gremlin: '👹',
-  } as { [key: string]: string }
-  const reactionCounts: { type: string; count: number; userIds: string[] }[] = []
+  }
+  const reactionCounts: { type: string; count: number; users: Profile[] }[] = []
 
   reactions.forEach(item => {
     const matchingReaction = reactionCounts.find(reaction => reaction.type.includes(item.type))
     if (matchingReaction) {
       matchingReaction.count += 1
-      matchingReaction.userIds.push(item.user_id)
+      matchingReaction.users.push(item.user)
     } else {
-      reactionCounts.push({ type: item.type, count: 1, userIds: [item.user_id] })
+      reactionCounts.push({ type: item.type, count: 1, users: [item.user] })
     }
   })
   return (
     <div className="flex">
       {reactionCounts.map(reaction => (
-        <Button
+        <ReactionToggle
           label={String(reaction.count)}
-          icon={reactionIcons[reaction.type]}
-          size="small"
+          type={reaction.type}
+          commentId={comment.id}
+          concertId={concertId}
+          user={user}
+          reactions={reactions}
+          reactionIcons={reactionIcons}
+          users={reaction.users}
           key={reaction.type}
         />
       ))}
@@ -128,6 +145,8 @@ export const ReactionControl = ({ comment, concertId, reactions, user }: Reactio
                     reactions={reactions}
                     reactionIcons={reactionIcons}
                     close={close}
+                    label={key}
+                    contentType="icon"
                     key={key}
                   />
                 ))}

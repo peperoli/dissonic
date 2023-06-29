@@ -1,5 +1,5 @@
 import { Button } from '../Button'
-import { useState, FC, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import dayjs from 'dayjs'
 import { PencilIcon, TrashIcon, UserIcon } from '@heroicons/react/20/solid'
 import { DeleteCommentModal } from './DeleteCommentModal'
@@ -20,7 +20,7 @@ interface CommentProps {
   concertId: string
 }
 
-export const CommentItem: FC<CommentProps> = ({ comment, profiles, user, concertId }) => {
+export const CommentItem = ({ comment, profiles, user, concertId }: CommentProps) => {
   const [edit, setEdit] = useState(false)
   const [content, setContent] = useState(comment.content)
   const [isOpen, setIsOpen] = useState(false)
@@ -106,7 +106,6 @@ export const CommentItem: FC<CommentProps> = ({ comment, profiles, user, concert
                 </>
               </p>
             )}
-
             <div className="absolute flex -bottom-4 rounded-lg bg-slate-700">
               {comment.reactions && (
                 <ReactionControl
