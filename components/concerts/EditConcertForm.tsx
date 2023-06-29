@@ -1,21 +1,22 @@
-import { ChangeEvent, Dispatch, FC, SetStateAction, useReducer, useState } from 'react'
+import { ChangeEvent, Dispatch, SetStateAction, useReducer, useState } from 'react'
 import { useBands } from '../../hooks/useBands'
 import { useLocations } from '../../hooks/useLocations'
 import { ActionType, editConcertReducer } from '../../reducers/editConcertReducer'
-import { Concert, EditConcert } from '../../types/types'
+import { EditConcert } from '../../types/types'
 import { Button } from '../Button'
 import Modal from '../Modal'
 import { MultiSelect } from '../MultiSelect'
 import { useEditConcert } from '../../hooks/useEditConcert'
 import { useQueryClient } from 'react-query'
+import { useConcertContext } from '../../hooks/useConcertContext'
 
 interface EditConcertFormProps {
-  concert: Concert
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
 }
 
-export const EditConcertForm: FC<EditConcertFormProps> = ({ concert, isOpen, setIsOpen }) => {
+export const EditConcertForm = ({ isOpen, setIsOpen }: EditConcertFormProps) => {
+  const { concert } = useConcertContext()
   const { data: bands } = useBands()
   const { data: locations } = useLocations()
   const queryClient = useQueryClient()

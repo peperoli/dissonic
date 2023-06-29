@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { ArrowLeftIcon, MapPinIcon, MusicalNoteIcon } from '@heroicons/react/20/solid'
-import React, { FC, Fragment, useState } from 'react'
+import { FC, Fragment, useState } from 'react'
 import { EditBandForm } from './EditBandForm'
 import { PageWrapper } from '../layout/PageWrapper'
 import { Button } from '../Button'
@@ -22,7 +22,7 @@ export const BandPage: FC<BandPageProps> = ({ initialBand }) => {
   const { data: band, isLoading: bandIsLoading } = useBand(initialBand)
   const { data: concerts } = useConcerts()
   const { data: user } = useUser()
-  const { data: spotifyArtist } = useSpotifyArtistEmbed(band?.spotify_artist_id)
+  const { data: spotifyArtistEmbed } = useSpotifyArtistEmbed(band?.spotify_artist_id)
 
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
   const [editIsOpen, setEditIsOpen] = useState(false)
@@ -70,8 +70,8 @@ export const BandPage: FC<BandPageProps> = ({ initialBand }) => {
                 </Fragment>
               ))}
           </ul>
-          {spotifyArtist?.html && (
-            <div dangerouslySetInnerHTML={{ __html: spotifyArtist.html }} />
+          {spotifyArtistEmbed?.html && (
+            <div dangerouslySetInnerHTML={{ __html: spotifyArtistEmbed.html }} />
           )}
           <div className="flex gap-4">
             <Button onClick={() => setEditIsOpen(true)} label="Bearbeiten" />

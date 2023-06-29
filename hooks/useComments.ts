@@ -3,7 +3,10 @@ import { Comment } from '../types/types'
 import supabase from '../utils/supabase'
 
 const fetchComments = async (concertId: string): Promise<Comment[]> => {
-  const { data, error } = await supabase.from('comments').select('*').eq('concert_id', concertId)
+  const { data, error } = await supabase
+    .from('comments')
+    .select('*, reactions(*, user:profiles(*))')
+    .eq('concert_id', concertId)
 
   if (error) {
     throw error

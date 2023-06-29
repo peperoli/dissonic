@@ -1,23 +1,23 @@
 import { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
-import React, { Dispatch, FC, SetStateAction } from 'react'
-import { Band, BandSeen, Concert } from '../../types/types'
+import { Dispatch, SetStateAction } from 'react'
+import { Band, BandSeen } from '../../types/types'
+import { useConcertContext } from '../../hooks/useConcertContext'
 
 interface BandSeenToggleProps {
-  concert: Concert
   band: Band
   selectedBandsSeen: BandSeen[]
   setSelectedBandsSeen: Dispatch<SetStateAction<BandSeen[]>>
   user: User | null
 }
 
-export const BandSeenToggle: FC<BandSeenToggleProps> = ({
-  concert,
+export const BandSeenToggle = ({
   band,
   selectedBandsSeen,
   setSelectedBandsSeen,
   user,
-}) => {
+}: BandSeenToggleProps) => {
+  const { concert } = useConcertContext()
   const router = useRouter()
   const isSeen =
     selectedBandsSeen &&
