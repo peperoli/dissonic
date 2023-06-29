@@ -1,28 +1,24 @@
 import { Button } from '../Button'
 import Modal from '../Modal'
-import React, { FC, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useDeleteComment } from '../../hooks/useDeleteComment'
 import { useQueryClient } from 'react-query'
+import { useConcertContext } from '../../hooks/useConcertContext'
 
-interface IDeleteCommentModal {
+interface DeleteCommentModalProps {
   isOpen: boolean
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
   commentId: number
-  concertId: string
 }
 
-export const DeleteCommentModal: FC<IDeleteCommentModal> = ({
-  isOpen,
-  setIsOpen,
-  commentId,
-  concertId,
-}) => {
+export const DeleteCommentModal = ({ isOpen, setIsOpen, commentId }: DeleteCommentModalProps) => {
+  const { concert } = useConcertContext()
   const deleteComment = useDeleteComment(commentId)
   const queryClient = useQueryClient()
 
   useEffect(() => {
     if (deleteComment.status === 'success') {
-      queryClient.invalidateQueries(['comments', concertId])
+      queryClient.invalidateQueries(['comments', concert.id])
       setIsOpen(false)
     }
   }, [deleteComment.status])

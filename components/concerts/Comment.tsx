@@ -11,16 +11,17 @@ import { useAvatar } from '../../hooks/useAvatar'
 import { useEditComment } from '../../hooks/useEditComment'
 import { useQueryClient } from 'react-query'
 import { ReactionControl } from './ReactionControl'
+import { useConcertContext } from '../../hooks/useConcertContext'
 dayjs.extend(relativeTime)
 
 interface CommentProps {
   comment: Comment
   profiles: Profile[]
   user: User
-  concertId: string
 }
 
-export const CommentItem = ({ comment, profiles, user, concertId }: CommentProps) => {
+export const CommentItem = ({ comment, profiles, user }: CommentProps) => {
+  const { concert } = useConcertContext()
   const [edit, setEdit] = useState(false)
   const [content, setContent] = useState(comment.content)
   const [isOpen, setIsOpen] = useState(false)
@@ -33,7 +34,7 @@ export const CommentItem = ({ comment, profiles, user, concertId }: CommentProps
 
   useEffect(() => {
     if (editComment.status === 'success') {
-      queryClient.invalidateQueries(['comments', concertId])
+      queryClient.invalidateQueries(['comments', concert.id])
       setEdit(false)
     }
   }, [editComment.status])
@@ -110,7 +111,6 @@ export const CommentItem = ({ comment, profiles, user, concertId }: CommentProps
               {comment.reactions && (
                 <ReactionControl
                   comment={comment}
-                  concertId={concertId}
                   reactions={comment.reactions}
                   user={user}
                 />
@@ -142,7 +142,6 @@ export const CommentItem = ({ comment, profiles, user, concertId }: CommentProps
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         commentId={comment.id}
-        concertId={concertId}
       />
     </>
   )

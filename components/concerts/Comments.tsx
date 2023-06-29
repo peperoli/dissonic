@@ -1,22 +1,23 @@
 import { Button } from '../Button'
 import { useState, FC, useEffect } from 'react'
 import dayjs from 'dayjs'
-import { Concert, Profile } from '../../types/types'
+import { Profile } from '../../types/types'
 import { User } from '@supabase/supabase-js'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { useComments } from '../../hooks/useComments'
 import { useAddComment } from '../../hooks/useAddComment'
 import { CommentItem as Comment } from './Comment'
-dayjs.extend(relativeTime)
 import { useQueryClient } from 'react-query'
+import { useConcertContext } from '../../hooks/useConcertContext'
+dayjs.extend(relativeTime)
 
 interface CommentsProps {
-  concert: Concert
   user: User
   profiles: Profile[]
 }
 
-export const Comments: FC<CommentsProps> = ({ concert, user, profiles }) => {
+export const Comments = ({ user, profiles }: CommentsProps) => {
+  const { concert } = useConcertContext()
   const [value, setValue] = useState('')
   const { data: comments } = useComments(concert.id)
   const addComment = useAddComment({ concert_id: concert.id, user_id: user.id, content: value })
@@ -58,7 +59,6 @@ export const Comments: FC<CommentsProps> = ({ concert, user, profiles }) => {
               comment={item}
               profiles={profiles}
               user={user}
-              concertId={concert.id}
             />
           ))
         ) : (

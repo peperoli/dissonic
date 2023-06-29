@@ -8,11 +8,11 @@ import { useAddReaction } from '../../hooks/useAddReaction'
 import { useEditReaction } from '../../hooks/useEditReaction'
 import { useDeleteReaction } from '../../hooks/useDeleteReaction'
 import clsx from 'clsx'
+import { useConcertContext } from '../../hooks/useConcertContext'
 
 type ReactionToggleProps = {
   type: string
   commentId: number
-  concertId: string
   user: User
   reactions: Reaction[]
   reactionIcons: { [key: string]: string }
@@ -25,7 +25,6 @@ type ReactionToggleProps = {
 export const ReactionToggle = ({
   type,
   commentId,
-  concertId,
   user,
   reactions,
   reactionIcons,
@@ -33,15 +32,16 @@ export const ReactionToggle = ({
   users,
   ...props
 }: ReactionToggleProps) => {
+  const { concert } = useConcertContext()
   const addReaction = useAddReaction(
     { comment_id: commentId, user_id: user.id, type: type },
-    concertId
+    concert.id
   )
   const editReaction = useEditReaction(
     { comment_id: commentId, user_id: user.id, type: type },
-    concertId
+    concert.id
   )
-  const deleteReaction = useDeleteReaction(commentId, user.id, concertId)
+  const deleteReaction = useDeleteReaction(commentId, user.id, concert.id)
   const hasReaction = reactions.find(reaction => reaction.user_id === user.id)
   const isSelected = hasReaction?.type === type
 
@@ -83,12 +83,11 @@ export const ReactionToggle = ({
 
 type ReactionControlProps = {
   comment: Comment
-  concertId: string
   reactions: Reaction[]
   user: User
 }
 
-export const ReactionControl = ({ comment, concertId, reactions, user }: ReactionControlProps) => {
+export const ReactionControl = ({ comment, reactions, user }: ReactionControlProps) => {
   const reactionIcons: { [key: string]: string } = {
     up: '👍',
     down: '👎',
@@ -115,7 +114,6 @@ export const ReactionControl = ({ comment, concertId, reactions, user }: Reactio
           label={String(reaction.count)}
           type={reaction.type}
           commentId={comment.id}
-          concertId={concertId}
           user={user}
           reactions={reactions}
           reactionIcons={reactionIcons}
@@ -140,7 +138,6 @@ export const ReactionControl = ({ comment, concertId, reactions, user }: Reactio
                   <ReactionToggle
                     type={key}
                     commentId={comment.id}
-                    concertId={concertId}
                     user={user}
                     reactions={reactions}
                     reactionIcons={reactionIcons}
