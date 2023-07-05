@@ -1,8 +1,7 @@
 'use client'
 
 import { PageWrapper } from '../layout/PageWrapper'
-import React, { useState, useEffect, FC } from 'react'
-import supabase from '../../utils/supabase'
+import { useState } from 'react'
 import { Button } from '../Button'
 import { EditPasswordForm } from './EditPasswordForm'
 import { EditProfileForm } from './EditProfileForm'
@@ -14,6 +13,8 @@ import { TopLocations } from './TopLocations'
 import { ConcertsChart } from './ConcertsChart'
 import { AddFriendModal } from './AddFriendModal'
 import { BandSeenFull, Friend, Profile } from '../../types/types'
+import { useUser } from '../../hooks/useUser'
+import { useAvatar } from '../../hooks/useAvatar'
 
 interface IProfilePage {
   profileData: Profile
@@ -21,13 +22,13 @@ interface IProfilePage {
   friends: Friend[]
 }
 
-export const ProfilePage: FC<IProfilePage> = ({ profileData, bandsSeen, friends }) => {
+export const ProfilePage = ({ profileData, bandsSeen, friends }: IProfilePage) => {
   const [profile, setProfile] = useState(profileData)
   const [editPassIsOpen, setEditPassIsOpen] = useState(false)
   const [editUsernameIsOpen, setEditUsernameIsOpen] = useState(false)
   const [addFriendIsOpen, setAddFriendIsOpen] = useState(false)
-  const [user, setUser] = useState<any | null>(null)
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+  const { data: user } = useUser()
+  const { data: avatarUrl } = useAvatar(profile.avatar_path)
 
   function unique(array: { id: string | number }[]): any[] {
     const mapOfObjects = new Map(array.map(item => [item.id, item]))
@@ -50,40 +51,6 @@ export const ProfilePage: FC<IProfilePage> = ({ profileData, bandsSeen, friends 
   const festivalsSeen = unique(
     bandsSeen.filter(item => item.concert.is_festival).map(item => item.concert)
   )
-
-  useEffect(() => {
-    async function getUser() {
-      const {
-        data: { user: initUser },
-      } = await supabase.auth.getUser()
-      setUser(initUser)
-    }
-
-    async function downloadAvatar() {
-      if (profile.avatar_path) {
-        try {
-          const { data, error } = await supabase.storage
-            .from('avatars')
-            .download(profile.avatar_path)
-
-          if (error) {
-            throw error
-          }
-          const url = URL.createObjectURL(data)
-          setAvatarUrl(url)
-        } catch (error) {
-          if (error instanceof Error) {
-            console.error(error.message)
-          } else {
-            console.error('Unexpected error', error)
-          }
-        }
-      }
-    }
-
-    getUser()
-    downloadAvatar()
-  }, [profile.username, profile.avatar_path])
   return (
     <PageWrapper>
       <>
@@ -160,12 +127,14 @@ export const ProfilePage: FC<IProfilePage> = ({ profileData, bandsSeen, friends 
           setProfile={setProfile}
         />
         <EditPasswordForm isOpen={editPassIsOpen} setIsOpen={setEditPassIsOpen} />
-        <AddFriendModal
-          isOpen={addFriendIsOpen}
-          setIsOpen={setAddFriendIsOpen}
-          user={user}
-          profile={profile}
-        />
+        {user && (
+          <AddFriendModal
+            isOpen={addFriendIsOpen}
+            setIsOpen={setAddFriendIsOpen}
+            user={user}
+            profile={profile}
+          />
+        )}
       </>
     </PageWrapper>
   )

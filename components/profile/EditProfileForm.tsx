@@ -1,10 +1,11 @@
 import supabase from '../../utils/supabase'
 import { Button } from '../Button'
-import { useState, useEffect, Dispatch, SetStateAction, FC, SyntheticEvent } from 'react'
+import { useState, Dispatch, SetStateAction, SyntheticEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import Modal from '../Modal'
 import { Profile } from '../../types/types'
 import { FileInput } from '../FileInput'
+import { useProfiles } from '../../hooks/useProfiles'
 
 interface EditProfileFormProps {
   isOpen: boolean
@@ -13,36 +14,19 @@ interface EditProfileFormProps {
   setProfile: Dispatch<SetStateAction<Profile>>
 }
 
-export const EditProfileForm: FC<EditProfileFormProps> = ({
+export const EditProfileForm = ({
   isOpen,
   setIsOpen,
   profile,
   setProfile,
-}) => {
+}: EditProfileFormProps) => {
+  const { data: profiles } = useProfiles()
+  const usernames = profiles?.map(item => item.username)
   const [file, setFile] = useState<File | null>(null)
   const [username, setUsername] = useState(profile.username)
-  const [usernames, setUsernames] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
 
   const router = useRouter()
-
-  useEffect(() => {
-    async function fetchProfiles() {
-      try {
-        const { data: profiles, error } = await supabase.from('profiles').select('username')
-
-        if (error) {
-          throw error
-        }
-
-        setUsernames(profiles.map(item => item.username))
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
-    fetchProfiles()
-  }, [])
 
   async function updateProfile(event: SyntheticEvent) {
     event.preventDefault()
@@ -110,7 +94,7 @@ export const EditProfileForm: FC<EditProfileFormProps> = ({
             placeholder=""
           />
           <label htmlFor="username">Benutzername</label>
-          {usernames && username !== username && usernames.includes(username) && (
+          {username !== profile.username && usernames?.includes(username) && (
             <div className="mt-1 text-sm text-red">
               Dieser Benutzername ist bereits vergeben, sei mal kreativ.
             </div>

@@ -10,7 +10,7 @@ interface IRemoveFriendModal {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
   friend: Profile
   setFriend: React.Dispatch<React.SetStateAction<Profile | null>>
-  user: User
+  user?: User | null
 }
 
 export const RemoveFriendModal: FC<IRemoveFriendModal> = ({ isOpen, setIsOpen, friend, setFriend, user }) => {
@@ -22,7 +22,7 @@ export const RemoveFriendModal: FC<IRemoveFriendModal> = ({ isOpen, setIsOpen, f
       const { error } = await supabase
         .from('friends')
         .delete()
-        .or(`sender_id.eq.${user.id}, receiver_id.eq.${user.id}`)
+        .or(`sender_id.eq.${user?.id}, receiver_id.eq.${user?.id}`)
         .or(`sender_id.eq.${friend.id}, receiver_id.eq.${friend.id}`)
 
       if (error) {

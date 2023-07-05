@@ -64,7 +64,9 @@ export type Location = Database['public']['Tables']['locations']['Row']
 
 export type Country = Database['public']['Tables']['countries']['Row']
 
-export type Profile = Database['public']['Tables']['profiles']['Row']
+export type Profile = Database['public']['Tables']['profiles']['Row'] & {
+  friends: [{ count: number }]
+}
 
 export type Friend = Database['public']['Tables']['friends']['Row'] & {
   sender: Profile

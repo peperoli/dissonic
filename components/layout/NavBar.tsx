@@ -2,12 +2,10 @@
 
 import Link from 'next/link'
 import Logo from './Logo'
-import supabase from '../../utils/supabase'
 import { Menu } from '@headlessui/react'
 import { useRouter } from 'next/navigation'
 import { ArrowRightOnRectangleIcon, UserGroupIcon, UserIcon } from '@heroicons/react/20/solid'
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
 import { useLogOut } from '../../hooks/useLogOut'
 import { useUser } from '../../hooks/useUser'
 import { useProfile } from '../../hooks/useProfile'
@@ -16,47 +14,14 @@ import { useAvatar } from '../../hooks/useAvatar'
 export const NavBar = () => {
   const { data: user } = useUser()
   const { data: profile } = useProfile(user?.id)
-  const { data: avatarUrl} = useAvatar(profile?.avatar_path)
-
-  const [receivedInvitesCount, setReceivedInvitesCount] = useState(0)
-
+  const { data: avatarUrl } = useAvatar(profile?.avatar_path)
+  const pendingInvites = profile?.friends[0].count ?? 0
   const logOutMutation = useLogOut()
   const router = useRouter()
 
   if (logOutMutation.isSuccess) {
     router.push('/login')
   }
-
-  useEffect(() => {
-    async function getReceivedInvites() {
-      try {
-        const { count, error } = await supabase
-          .from('friends')
-          .select('*', { count: 'exact', head: true })
-          .eq('receiver_id', profile?.id)
-          .eq('pending', true)
-
-        if (error) {
-          throw error
-        }
-
-        if (count) {
-          setReceivedInvitesCount(count)
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          alert(error.message)
-        } else {
-          alert('An unexpected error has occurred')
-          console.error(error)
-        }
-      }
-    }
-
-    if (profile) {
-      getReceivedInvites()
-    }
-  }, [profile])
   return (
     <nav className="flex justify-between items-center p-4 md:px-12 md:py-8">
       <Link href="/">
@@ -64,9 +29,9 @@ export const NavBar = () => {
       </Link>
       {profile ? (
         <Menu as="div" className="relative">
-          <Menu.Button className="flex items-center gap-3">
+          <Menu.Button className="flex items-center gap-3 cursor-pointer group">
             {profile.username}
-            <div className="relative flex justify-center items-center w-10 h-10 rounded-full bg-blue-300">
+            <div className="relative flex justify-center items-center w-10 h-10 rounded-full bg-blue-300 ring-4 ring-transparent group-hover:ring-slate-600">
               {avatarUrl ? (
                 <Image
                   src={avatarUrl}
@@ -103,9 +68,9 @@ export const NavBar = () => {
                 >
                   <UserGroupIcon className="h-icon text-slate-300" />
                   Freunde
-                  {receivedInvitesCount > 0 && (
+                  {pendingInvites > 0 && (
                     <div className="flex justify-center items-center px-2 py-0.5 rounded font-bold text-[0.625rem] text-slate-850 bg-venom  shadow-shine shadow-venom/50">
-                      {receivedInvitesCount}
+                      {pendingInvites}
                     </div>
                   )}
                 </button>

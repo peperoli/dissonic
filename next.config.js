@@ -1,5 +1,10 @@
 /** @type {import('next').NextConfig} */
-const withPWA = require('next-pwa')({ dest: 'public', scope: '/app' })
+const withPWA = require('next-pwa')({
+  dest: 'public',
+  disable: process.env.NODE_ENV === 'development',
+  scope: '/app',
+  skipWaiting: true,
+})
 
 const nextConfig = {
   reactStrictMode: true,

@@ -1,5 +1,4 @@
 import { useQuery } from 'react-query'
-import { Profile } from '../types/types'
 import supabase from '../utils/supabase'
 
 const downloadAvatar = async (avatarPath: string | null | undefined): Promise<string | null> => {

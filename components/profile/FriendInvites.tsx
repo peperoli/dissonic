@@ -3,41 +3,22 @@
 import { UserIcon } from '@heroicons/react/20/solid'
 import Image from 'next/image'
 import Link from 'next/link'
-import { FC, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Friend, Profile } from '../../types/types'
 import supabase from '../../utils/supabase'
 import { Button } from '../Button'
+import { useAvatar } from '../../hooks/useAvatar'
+import { useUser } from '../../hooks/useUser'
 
-const InviteItem = ({ inviteData, type }: { inviteData: Friend; type: 'sent' | 'received' }) => {
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+type InviteItemType = {
+  inviteData: Friend
+  type: 'sent' | 'received'
+}
+
+const InviteItem = ({ inviteData, type }: InviteItemType) => {
   const [invite, setInvite] = useState<Friend | null>(inviteData)
   const profile = type === 'sent' ? invite?.receiver : invite?.sender
-
-  useEffect(() => {
-    async function downloadAvatar() {
-      if (profile?.avatar_path) {
-        try {
-          const { data, error } = await supabase.storage
-            .from('avatars')
-            .download(profile.avatar_path)
-
-          if (error) {
-            throw error
-          }
-          const url = URL.createObjectURL(data)
-          setAvatarUrl(url)
-        } catch (error) {
-          if (error instanceof Error) {
-            console.error(error.message)
-          } else {
-            console.error('Unexpected error', error)
-          }
-        }
-      }
-    }
-
-    downloadAvatar()
-  }, [profile?.avatar_path])
+  const { data: avatarUrl } = useAvatar(profile?.avatar_path)
 
   async function cancelInvite() {
     try {
@@ -86,7 +67,10 @@ const InviteItem = ({ inviteData, type }: { inviteData: Friend; type: 'sent' | '
   if (invite && profile) {
     return (
       <div className="flex flex-wrap items-center gap-2 md:gap-4">
-        <Link href={`/users/${profile.username}`} className="flex items-center gap-2 basis-full md:basis-auto">
+        <Link
+          href={`/users/${profile.username}`}
+          className="flex items-center gap-2 basis-full md:basis-auto"
+        >
           <div className="relative flex-shrink-0 flex justify-center items-center w-8 h-8 rounded-full bg-blue-300">
             {avatarUrl ? (
               <Image
@@ -123,27 +107,10 @@ interface IFriendInvites {
   friends: Friend[]
 }
 
-export const FriendInvites: FC<IFriendInvites> = ({
-  profile,
-  friends
-}) => {
-  const [user, setUser] = useState<any | null>(null)
-
+export const FriendInvites = ({ profile, friends }: IFriendInvites) => {
+  const { data: user } = useUser()
   const sentInvites = friends.filter(item => item.pending && item.sender.id === profile.id)
   const receivedInvites = friends.filter(item => item.pending && item.receiver.id === profile.id)
-  
-  useEffect(() => {
-    async function getUser() {
-      const {
-        data: { user: userData },
-      } = await supabase.auth.getUser()
-      if (userData) {
-        setUser(userData)
-      }
-    }
-
-    getUser()
-  }, [])
 
   if (user?.id === profile.id) {
     return (

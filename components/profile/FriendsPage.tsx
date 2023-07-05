@@ -1,33 +1,19 @@
 'use client'
 
-import React, { FC, useEffect, useState } from 'react'
 import { Friend, Profile } from '../../types/types'
-import supabase from '../../utils/supabase'
 import { PageWrapper } from '../layout/PageWrapper'
 import { FriendInvites } from './FriendInvites'
 import { FriendItem } from './FriendItem'
+import { useUser } from '../../hooks/useUser'
 
 export interface FriendsPageProps {
   profile: Profile
   friends: Friend[]
 }
 
-export const FriendsPage: FC<FriendsPageProps> = ({ profile, friends }) => {
-  const [user, setUser] = useState<any | null>(null)
+export const FriendsPage = ({ profile, friends }: FriendsPageProps) => {
+  const { data: user } = useUser()
   const acceptedFriends = friends.filter(item => !item.pending)
-
-  useEffect(() => {
-    async function getUser() {
-      const {
-        data: { user: userData },
-      } = await supabase.auth.getUser()
-      if (userData) {
-        setUser(userData)
-      }
-    }
-
-    getUser()
-  }, [])
   return (
     <PageWrapper>
       <main className="p-4 md:p-8 w-full max-w-2xl">
