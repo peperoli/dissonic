@@ -1,0 +1,21 @@
+{
+    "name": "Concert Diary",
+    "short_name": "Concert Diary",
+    "icons": [
+        {
+            "src": "/favicon/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/favicon/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#1f282e",
+    "background_color": "#1f282e",
+    "start_url": "/",
+    "display": "standalone",
+    "orientation": "portrait"
+}

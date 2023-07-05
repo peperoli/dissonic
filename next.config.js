@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+const withPWA = require('next-pwa')({ dest: 'public', scope: '/app' })
+
 const nextConfig = {
   reactStrictMode: true,
   images: {
@@ -7,7 +9,7 @@ const nextConfig = {
   swcMinify: true,
   experimental: {
     appDir: true,
-  }
+  },
 }
 
-module.exports = nextConfig
+module.exports = withPWA(nextConfig)
