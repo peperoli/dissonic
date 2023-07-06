@@ -13,7 +13,7 @@ import {
 import { PageWrapper } from '../layout/PageWrapper'
 import { MultiSelectFilter } from '../MultiSelectFilter'
 import { RangeFilter } from '../RangeFilter'
-import { Band, Concert, Location } from '../../types/types'
+import { Band, Concert, Location, WithCount } from '../../types/types'
 import { useBands } from '../../hooks/useBands'
 import { useLocations } from '../../hooks/useLocations'
 import { useUser } from '../../hooks/useUser'
@@ -22,9 +22,17 @@ import { useConcerts } from '../../hooks/useConcerts'
 import { ConcertsGrid } from './ConcertsGrid'
 import { useCookies } from 'react-cookie'
 
-export const HomePage = () => {
-  const { data: concerts, isLoading: concertsIsLoading } = useConcerts()
-  const { data: bands } = useBands()
+type HomePageProps = {
+  initialConcerts: WithCount<Concert[]>
+}
+
+export const HomePage = ({ initialConcerts }: HomePageProps) => {
+  const [page, setPage] = useState(0)
+  const { data: concertsData, isLoading: concertsIsLoading } = useConcerts(initialConcerts, { page: page, size: 25 })
+  const concerts = concertsData?.data  
+  const count = concertsData?.count
+  const { data: bandsData } = useBands()
+  const bands = bandsData?.data
   const { data: locations } = useLocations()
   const { data: bandsSeen } = useBandsSeen()
   const { data: user } = useUser()
@@ -117,24 +125,24 @@ export const HomePage = () => {
   return (
     <PageWrapper>
       <main className="w-full max-w-2xl p-4 md:p-8">
-          <div className="md:hidden fixed bottom-0 right-0 m-4">
-            <Button
-              onClick={() => setIsOpen(true)}
-              label="Konzert hinzufügen"
-              style="primary"
-              contentType="icon"
-              icon={<PlusIcon className="h-icon" />}
-            />
-          </div>
+        <div className="md:hidden fixed bottom-0 right-0 m-4">
+          <Button
+            onClick={() => setIsOpen(true)}
+            label="Konzert hinzufügen"
+            style="primary"
+            contentType="icon"
+            icon={<PlusIcon className="h-icon" />}
+          />
+        </div>
         <div className="sr-only md:not-sr-only flex justify-between items-center mb-6">
           <h1>Konzerte</h1>
-            <Button
-              onClick={() => setIsOpen(true)}
-              label="Konzert hinzufügen"
-              style="primary"
-              icon={<PlusIcon className="h-icon" />}
-              className="hidden md:block"
-            />
+          <Button
+            onClick={() => setIsOpen(true)}
+            label="Konzert hinzufügen"
+            style="primary"
+            icon={<PlusIcon className="h-icon" />}
+            className="hidden md:block"
+          />
         </div>
         <div className="grid gap-4">
           <div className="flex items-center gap-4">
@@ -232,7 +240,11 @@ export const HomePage = () => {
               </div>
             </div>
           </div>
-          <ConcertsGrid concerts={filteredConcerts?.sort(compare)} concertsIsLoading={concertsIsLoading} user={user} />
+          <ConcertsGrid
+            concerts={filteredConcerts?.sort(compare)}
+            concertsIsLoading={concertsIsLoading}
+            user={user}
+          />
         </div>
       </main>
       {isOpen && <AddConcertForm isOpen={isOpen} setIsOpen={setIsOpen} />}

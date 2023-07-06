@@ -53,7 +53,7 @@ const MultiSelectOption: FC<MultiSelectOptionProps> = ({
 
   return (
     <label className="flex gap-2 w-full px-2 py-1.5 rounded hover:bg-slate-600">
-      <input type="checkbox" checked={isSelected} onChange={handleChange} />
+      <input type="checkbox" checked={isSelected} onChange={handleChange} className="flex-none" />
       {option.name}
     </label>
   )

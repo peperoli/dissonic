@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { ArrowLeftIcon, MapPinIcon, MusicalNoteIcon } from '@heroicons/react/20/solid'
-import { FC, Fragment, useState } from 'react'
+import { Fragment, useState } from 'react'
 import { EditBandForm } from './EditBandForm'
 import { PageWrapper } from '../layout/PageWrapper'
 import { Button } from '../Button'
@@ -18,16 +18,14 @@ export interface BandPageProps {
   initialBand: Band
 }
 
-export const BandPage: FC<BandPageProps> = ({ initialBand }) => {
+export const BandPage = ({ initialBand }: BandPageProps) => {
   const { data: band, isLoading: bandIsLoading } = useBand(initialBand)
-  const { data: concerts } = useConcerts()
+  const { data: concertsData } = useConcerts(undefined, { filter: { bands: [initialBand.id] } })
+  const bandConcerts = concertsData?.data
   const { data: user } = useUser()
   const { data: spotifyArtistEmbed } = useSpotifyArtistEmbed(band?.spotify_artist_id)
-
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
   const [editIsOpen, setEditIsOpen] = useState(false)
-
-  const bandConcerts = concerts?.filter(concert => concert.bands?.find(item => item.id === band?.id))
 
   if (bandIsLoading) {
     return (
@@ -80,7 +78,7 @@ export const BandPage: FC<BandPageProps> = ({ initialBand }) => {
         </div>
         {bandConcerts && bandConcerts?.length > 0 && (
           <div className="grid gap-4 p-6">
-            <h2 className='mb-0 text-slate-300'>Konzerte mit {band.name}</h2>
+            <h2 className="mb-0 text-slate-300">Konzerte mit {band.name}</h2>
             {bandConcerts.map(item => (
               <ConcertCard key={item.id} concert={item} user={user} />
             ))}
@@ -88,13 +86,7 @@ export const BandPage: FC<BandPageProps> = ({ initialBand }) => {
         )}
       </main>
       <DeleteBandModal band={band} isOpen={deleteIsOpen} setIsOpen={setDeleteIsOpen} />
-      {editIsOpen && (
-        <EditBandForm
-          band={band}
-          isOpen={editIsOpen}
-          setIsOpen={setEditIsOpen}
-        />
-      )}
+      {editIsOpen && <EditBandForm band={band} isOpen={editIsOpen} setIsOpen={setEditIsOpen} />}
     </PageWrapper>
   )
 }

@@ -1,21 +1,20 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
-import React, { useEffect } from 'react'
-import { FC } from 'react'
+import React, { Dispatch, SetStateAction, useEffect } from 'react'
 import { Button } from '../Button'
 
 interface PaginationProps {
   entriesCount: number
   currentPage: number
-  setCurrentPage: React.Dispatch<React.SetStateAction<number>>
+  setCurrentPage: Dispatch<SetStateAction<number>>
   perPage: number
 }
 
-export const Pagination: FC<PaginationProps> = ({
+export const Pagination = ({
   entriesCount,
   currentPage,
   setCurrentPage,
   perPage,
-}) => {
+}: PaginationProps) => {
   const pagesCount = Math.ceil(entriesCount / perPage)
   const pages = Array.from(Array(pagesCount).keys())
 
@@ -24,9 +23,12 @@ export const Pagination: FC<PaginationProps> = ({
   }, [entriesCount])
   return (
     <div className="flex justify-between items-center gap-4 mt-4">
-      <div className="text-slate-300">{entriesCount} Einträge</div>
-      <div className="flex gap-2">
-        {(pagesCount > 1 && pagesCount < 5) &&
+      <div className="text-sm text-slate-300">
+        {entriesCount}&nbsp;{entriesCount === 1 ? 'Eintrag' : 'Einträge'}
+      </div>
+      <div className="hidden md:flex gap-2">
+        {pagesCount > 1 &&
+          pagesCount < 9 &&
           pages.map((item, idx) => (
             <Button
               key={idx}
