@@ -1,5 +1,5 @@
 import { ArrowUturnLeftIcon } from '@heroicons/react/20/solid'
-import React, {
+import {
   Dispatch,
   FC,
   FocusEvent,
@@ -205,23 +205,24 @@ const RangeSlider: FC<RangeSliderProps> = ({
 interface RangeSliderWrapperProps {
   unit: string
   options: number[]
+  isLoading?: boolean
   selectedOptions: number[]
   setSelectedOptions: Dispatch<SetStateAction<number[]>>
 }
 
-const RangeSliderWrapper: FC<RangeSliderWrapperProps> = ({
-  options,
+export const RangeSliderWrapper: FC<RangeSliderWrapperProps> = ({
   unit,
+  options,
   selectedOptions,
   setSelectedOptions,
 }) => {
   const initialMin = Math.min(...options)
   const initialMax = Math.max(...options)
   const uniqueOptions = [...new Set(options)]
-
+  
   const [minValue, setMinValue] = useState(initialMin)
   const [maxValue, setMaxValue] = useState(initialMax)
-
+  
   function handleMinBlur(event: FocusEvent<HTMLInputElement>) {
     const value = Number(event.target.value)
     if (value < initialMin) {
@@ -233,7 +234,7 @@ const RangeSliderWrapper: FC<RangeSliderWrapperProps> = ({
       setMaxValue(value > initialMax ? initialMax : value)
     }
   }
-
+  
   function handleMaxBlur(event: FocusEvent<HTMLInputElement>) {
     const value = Number(event.target.value)
     if (value < initialMin) {
@@ -245,7 +246,7 @@ const RangeSliderWrapper: FC<RangeSliderWrapperProps> = ({
       setMinValue(value < initialMin ? initialMin : value)
     }
   }
-
+  
   function submitSelectedOptions(min: number, max: number) {
     setSelectedOptions(uniqueOptions.filter(item => item >= min && item <= max))
   }

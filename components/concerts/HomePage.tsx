@@ -1,7 +1,7 @@
 'use client'
 
 import { AddConcertForm } from './AddConcertForm'
-import React, { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import { Button } from '../Button'
 import {
   ArrowUturnLeftIcon,
@@ -11,108 +11,47 @@ import {
   UserIcon,
 } from '@heroicons/react/20/solid'
 import { PageWrapper } from '../layout/PageWrapper'
-import { MultiSelectFilter } from '../MultiSelectFilter'
-import { RangeFilter } from '../RangeFilter'
-import { Band, Concert, Location, WithCount } from '../../types/types'
-import { useBands } from '../../hooks/useBands'
-import { useLocations } from '../../hooks/useLocations'
+import { Band, Concert, Location, ExtendedRes } from '../../types/types'
 import { useUser } from '../../hooks/useUser'
-import { useBandsSeen } from '../../hooks/useBandsSeen'
 import { useConcerts } from '../../hooks/useConcerts'
-import { ConcertsGrid } from './ConcertsGrid'
 import { useCookies } from 'react-cookie'
+import { ConcertCard } from './ConcertCard'
+import { BandFilter } from './BandFilter'
+import { LocationFilter } from './LocationFilter'
+import { YearsFilter } from './YearsFilter'
+import { BandCountFilter } from './BandCountFilter'
 
 type HomePageProps = {
-  initialConcerts: WithCount<Concert[]>
+  initialConcerts: ExtendedRes<Concert[]>
 }
 
 export const HomePage = ({ initialConcerts }: HomePageProps) => {
-  const [page, setPage] = useState(0)
-  const { data: concertsData, isLoading: concertsIsLoading } = useConcerts(initialConcerts, { page: page, size: 25 })
-  const concerts = concertsData?.data  
-  const count = concertsData?.count
-  const { data: bandsData } = useBands()
-  const bands = bandsData?.data
-  const { data: locations } = useLocations()
-  const { data: bandsSeen } = useBandsSeen()
-  const { data: user } = useUser()
-
-  const [isOpen, setIsOpen] = useState(false)
+  const [size, setSize] = useState(25)
   const [selectedBands, setSelectedBands] = useState<Band[]>([])
   const [selectedLocations, setSelectedLocations] = useState<Location[]>([])
   const [selectedYears, setSelectedYears] = useState<number[]>([])
   const [selectedBandsPerConcert, setSelectedBandsPerConcert] = useState<number[]>([])
-  const [sort, setSort] = useState('dateAsc')
   const [cookies, setCookie] = useCookies(['view'])
+  const { data: user } = useUser()
   const [view, setView] = useState(cookies.view || 'global')
-  const initialYears: number[] | undefined = concerts
-    ?.map(item => new Date(item.date_start).getFullYear())
-    .sort((a, b) => a - b)
-  const bandsPerConcert: number[] | undefined = concerts
-    ?.map(item => item.bands?.length || 0)
-    .sort((a, b) => a - b)
+  const [sort, setSort] = useState('date_start,desc')
+  const { data: concerts, isFetching } = useConcerts(initialConcerts, {
+    filter: {
+      locations: selectedLocations.map(item => item.id),
+      bands: selectedBands.map(item => item.id),
+      years: selectedYears,
+      bandsPerConcert: selectedBandsPerConcert,
+      bandsSeenUser: view === 'user' ? user?.id : undefined,
+    },
+    sort: [sort.split(',')[0], sort.split(',')[1] === 'asc' ? true : false],
+    size: size,
+  })
+  const [isOpen, setIsOpen] = useState(false)
 
   function handleView(event: ChangeEvent) {
     const target = event.target as HTMLInputElement
     setView(target.value)
     setCookie('view', target.value)
-  }
-
-  function viewFilter(item: Concert) {
-    const concertBandsSeen = bandsSeen?.filter(bandSeen => bandSeen.concert_id === item.id)
-    if (view === 'user') {
-      return item.bands?.some(band =>
-        concertBandsSeen?.some(bandSeen => bandSeen.band_id === band.id)
-      )
-    }
-    return true
-  }
-
-  function filterRule(item: Concert) {
-    let bandFilter = true
-    let locationFilter = true
-    let yearsFilter = true
-    let bandsPerConcertFilter = true
-    const selectedBandIds = selectedBands.map(item => item.id)
-    const selectedLocationIds = selectedLocations.map(item => item.id)
-
-    if (selectedBandIds.length > 0) {
-      bandFilter = item.bands ? item.bands.some(band => selectedBandIds.includes(band.id)) : false
-    }
-
-    if (selectedLocationIds.length > 0) {
-      locationFilter = item.location ? selectedLocationIds.includes(item.location.id) : false
-    }
-
-    if (selectedYears.length > 0) {
-      yearsFilter = selectedYears.includes(new Date(item.date_start).getFullYear())
-    }
-
-    if (selectedBandsPerConcert.length > 0) {
-      bandsPerConcertFilter = selectedBandsPerConcert.includes(item.bands?.length || 0)
-    }
-
-    return bandFilter && locationFilter && yearsFilter && bandsPerConcertFilter
-  }
-
-  const filteredConcerts = concerts?.filter(filterRule).filter(viewFilter)
-
-  function compare(a: Concert, b: Concert) {
-    let comparison = 0
-    if (a.date_start > b.date_start) {
-      if (sort === 'dateAsc') {
-        comparison = -1
-      } else if (sort === 'dateDsc') {
-        comparison = 1
-      }
-    } else if (a.date_start < b.date_start) {
-      if (sort === 'dateAsc') {
-        comparison = 1
-      } else if (sort === 'dateDsc') {
-        comparison = -1
-      }
-    }
-    return comparison
   }
 
   function resetAll() {
@@ -121,7 +60,6 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
     setSelectedYears([])
     setSelectedBandsPerConcert([])
   }
-
   return (
     <PageWrapper>
       <main className="w-full max-w-2xl p-4 md:p-8">
@@ -146,41 +84,27 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
         </div>
         <div className="grid gap-4">
           <div className="flex items-center gap-4">
-            <div className="text-sm text-slate-300">
-              {filteredConcerts?.length !== concerts?.length && `${filteredConcerts?.length} von `}
-              {concerts?.length}&nbsp;Einträge
-            </div>
-            {concerts?.filter(filterRule).length !== concerts?.length && (
-              <button onClick={resetAll} className="btn btn-secondary btn-small">
-                <ArrowUturnLeftIcon className="h-icon text-slate-300" />
-                Zurücksetzen
-              </button>
+            <div className="text-sm text-slate-300">{concerts?.count}&nbsp;Einträge</div>
+            {(selectedBands.length > 0 ||
+              selectedLocations.length > 0 ||
+              selectedYears.length > 0 ||
+              selectedLocations.length > 0) && (
+              <Button
+                label="Zurücksetzen"
+                onClick={resetAll}
+                icon={<ArrowUturnLeftIcon className="h-icon" />}
+                size="small"
+              ></Button>
             )}
           </div>
           <div className="flex md:grid md:grid-cols-2 gap-2 md:gap-4 -mx-4 px-4 overflow-x-auto md:overflow-visible scrollbar-hidden">
-            <MultiSelectFilter
-              name="bands"
-              options={bands}
-              selectedOptions={selectedBands}
-              setSelectedOptions={setSelectedBands}
-            />
-            <MultiSelectFilter
-              name="locations"
-              options={locations}
+            <BandFilter selectedOptions={selectedBands} setSelectedOptions={setSelectedBands} />
+            <LocationFilter
               selectedOptions={selectedLocations}
               setSelectedOptions={setSelectedLocations}
             />
-            <RangeFilter
-              name="Jahre"
-              unit="Jahr"
-              options={initialYears}
-              selectedOptions={selectedYears}
-              setSelectedOptions={setSelectedYears}
-            />
-            <RangeFilter
-              name="Bands pro Konzert"
-              unit="Bands"
-              options={bandsPerConcert}
+            <YearsFilter selectedOptions={selectedYears} setSelectedOptions={setSelectedYears} />
+            <BandCountFilter
               selectedOptions={selectedBandsPerConcert}
               setSelectedOptions={setSelectedBandsPerConcert}
             />
@@ -233,18 +157,31 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
                   id="sortBy"
                   className="pl-2 pr-7 py-1 rounded-md hover:bg-slate-800 bg-transparent appearance-none"
                 >
-                  <option value="dateAsc">Neuste</option>
-                  <option value="dateDsc">Älteste</option>
+                  <option value="date_start,desc">Neuste</option>
+                  <option value="date_start,asc">Älteste</option>
                 </select>
                 <ChevronDownIcon className="absolute right-2 text-xs h-icon pointer-events-none" />
               </div>
             </div>
           </div>
-          <ConcertsGrid
-            concerts={filteredConcerts?.sort(compare)}
-            concertsIsLoading={concertsIsLoading}
-            user={user}
-          />
+          <div className="grid gap-4">
+            {concerts?.data.map(concert => (
+              <ConcertCard concert={concert} key={concert.id} />
+            ))}
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <p className="text-sm text-slate-300">
+              {concerts?.data.length} von {concerts?.count} Einträgen
+            </p>
+            {concerts?.data.length !== concerts?.count && (
+              <Button
+                label="Mehr anzeigen"
+                onClick={() => setSize(prev => (prev += 25))}
+                loading={isFetching}
+                style="primary"
+              />
+            )}
+          </div>
         </div>
       </main>
       {isOpen && <AddConcertForm isOpen={isOpen} setIsOpen={setIsOpen} />}

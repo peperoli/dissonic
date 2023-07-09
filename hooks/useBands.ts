@@ -1,9 +1,9 @@
 import { useQuery } from 'react-query'
-import { Band, FetchOptions, WithCount } from '../types/types'
+import { Band, FetchOptions, ExtendedRes } from '../types/types'
 import supabase from '../utils/supabase'
 import { getPagination } from '../lib/getPagination'
 
-const fetchBands = async (options?: FetchOptions): Promise<WithCount<Band[]>> => {
+const fetchBands = async (options?: FetchOptions): Promise<ExtendedRes<Band[]>> => {
   let query = supabase
     .from('bands')
     .select('*, country:countries!inner(*), genres!inner(*)', { count: 'exact' })
@@ -17,12 +17,16 @@ const fetchBands = async (options?: FetchOptions): Promise<WithCount<Band[]>> =>
   if (options?.filter?.search) {
     query = query.ilike('name', `%${options.filter.search}%`)
   }
-
+  
   const { count } = await query
-
+  
   const [from, to] = getPagination(options?.page ?? 0, options?.size ?? 24, count ?? 0)
+  
+  if (options?.page || options?.size) {
+    query = query.range(from, to)
+  }
 
-  const { data, error } = await query.range(from, to).order('name')
+  const { data, error } = await query.order('name')
 
   if (error) {
     throw error
@@ -31,8 +35,9 @@ const fetchBands = async (options?: FetchOptions): Promise<WithCount<Band[]>> =>
   return { data, count }
 }
 
-export const useBands = (initialBands?: WithCount<Band[]>, options?: FetchOptions) => {
+export const useBands = (initialBands?: ExtendedRes<Band[]>, options?: FetchOptions) => {
   return useQuery(['bands', JSON.stringify(options)], () => fetchBands(options), {
     initialData: initialBands,
+    keepPreviousData: true,
   })
 }

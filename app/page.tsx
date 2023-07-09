@@ -1,8 +1,8 @@
 import { HomePage } from '../components/concerts/HomePage'
-import { Concert, WithCount } from '../types/types'
+import { Concert, ExtendedRes } from '../types/types'
 import supabase from '../utils/supabase'
 
-const fetchData = async (): Promise<WithCount<Concert[]>> => {
+const fetchData = async (): Promise<ExtendedRes<Concert[]>> => {
   const { data, count, error } = await supabase
     .from('concerts')
     .select(

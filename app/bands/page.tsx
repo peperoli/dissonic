@@ -1,11 +1,11 @@
 import supabase from '../../utils/supabase'
 import { BandsPage } from '../../components/bands/BandsPage'
-import { Band, WithCount } from '../../types/types'
+import { Band, ExtendedRes } from '../../types/types'
 import React from 'react'
 
 export const revalidate = 0
 
-const fetchData = async (): Promise<WithCount<Band[]>> => {
+const fetchData = async (): Promise<ExtendedRes<Band[]>> => {
   const { data, count, error } = await supabase
     .from('bands')
     .select('*, country:countries(*), genres(*)', { count: 'exact' })

@@ -124,10 +124,10 @@ export const EditConcertForm = ({ isOpen, setIsOpen }: EditConcertFormProps) => 
             <label htmlFor="location">Location</label>
           </div>
         )}
-        {bands && (
+        {bands?.data && (
           <MultiSelect
             name="bands"
-            options={bands}
+            options={bands.data}
             selectedOptions={selectedBands}
             setSelectedOptions={setSelectedBands}
           />

@@ -12,7 +12,7 @@ import useMediaQuery from '../../hooks/useMediaQuery'
 import { Pagination } from '../layout/Pagination'
 import { UserMusicIcon } from '../layout/UserMusicIcon'
 import { MultiSelectFilter } from '../MultiSelectFilter'
-import { Band, Country, Genre, WithCount } from '../../types/types'
+import { Band, Country, Genre, ExtendedRes } from '../../types/types'
 import { useBands } from '../../hooks/useBands'
 import { useGenres } from '../../hooks/useGenres'
 import { useCountries } from '../../hooks/useCountries'
@@ -54,7 +54,7 @@ const BandTableRow = ({ band }: BandTableRowProps) => {
 }
 
 interface BandsPageProps {
-  initialBands: WithCount<Band[]>
+  initialBands: ExtendedRes<Band[]>
 }
 
 export const BandsPage = ({ initialBands }: BandsPageProps) => {

@@ -45,7 +45,7 @@ export const AddConcertForm: FC<AddConcertFormProps> = ({ isOpen, setIsOpen }) =
   const router = useRouter()
 
   const similarConcerts = concerts
-    ?.filter(item => item.date_start === formState.date_start)
+    ?.data.filter(item => item.date_start === formState.date_start)
     .filter(item =>
       item.bands?.find(band => selectedBands.find(selectedBand => band.id === selectedBand.id))
     )
@@ -110,10 +110,10 @@ export const AddConcertForm: FC<AddConcertFormProps> = ({ isOpen, setIsOpen }) =
             </div>
           )}
         </div>
-        {bands && (
+        {bands?.data && (
           <MultiSelect
             name="bands"
-            options={bands}
+            options={bands.data}
             selectedOptions={selectedBands}
             setSelectedOptions={setSelectedBands}
           />

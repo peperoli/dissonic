@@ -1,42 +1,33 @@
 import { User } from '@supabase/supabase-js'
 import { Database } from './supabase'
 
-export interface WithCount<T> {
-  data: T
+export interface ExtendedRes<TData> {
+  data: TData
   count: number | null
 }
 
 export interface FetchOptions {
   filter?: {
     bands?: number[]
+    locations?: number[]
+    years?: number[]
+    bandsPerConcert?: number[]
+    bandsSeenUser?: string
     countries?: number[]
     genres?: number[]
     search?: string
   }
+  sort?: [string, boolean?]
   page?: number
   size?: number
 }
 
-type WithLocation = {
-  location: Location | null
-}
-
-type WithCountry = {
-  country: Country | null
-}
-
-type WithBands = {
-  bands: Band[] | null
-}
-
-type WithBandsSeen = {
-  bands_seen: BandSeen[] | null
-}
-
 export type Concert = Database['public']['Tables']['concerts']['Row'] &
-  WithLocation &
-  WithBands &
-  WithBandsSeen
+  {
+    location?: Location
+    bands?: Band[]
+    bands_seen?: BandSeen[]
+  }
 
 export type AddConcert = Database['public']['Tables']['concerts']['Insert']
 

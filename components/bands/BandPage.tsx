@@ -80,7 +80,7 @@ export const BandPage = ({ initialBand }: BandPageProps) => {
           <div className="grid gap-4 p-6">
             <h2 className="mb-0 text-slate-300">Konzerte mit {band.name}</h2>
             {bandConcerts.map(item => (
-              <ConcertCard key={item.id} concert={item} user={user} />
+              <ConcertCard key={item.id} concert={item} />
             ))}
           </div>
         )}
