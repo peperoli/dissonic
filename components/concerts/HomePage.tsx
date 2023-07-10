@@ -29,8 +29,10 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
   const [size, setSize] = useState(25)
   const [selectedBands, setSelectedBands] = useState<Band[]>([])
   const [selectedLocations, setSelectedLocations] = useState<Location[]>([])
-  const [selectedYears, setSelectedYears] = useState<number[]>([])
-  const [selectedBandsPerConcert, setSelectedBandsPerConcert] = useState<number[]>([])
+  const [selectedYears, setSelectedYears] = useState<[number, number] | null>(null)
+  const [selectedBandsPerConcert, setSelectedBandsPerConcert] = useState<[number, number] | null>(
+    null
+  )
   const [cookies, setCookie] = useCookies(['view'])
   const { data: user } = useUser()
   const [view, setView] = useState(cookies.view || 'global')
@@ -57,8 +59,8 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
   function resetAll() {
     setSelectedBands([])
     setSelectedLocations([])
-    setSelectedYears([])
-    setSelectedBandsPerConcert([])
+    setSelectedYears(null)
+    setSelectedBandsPerConcert(null)
   }
   return (
     <PageWrapper>
@@ -87,8 +89,8 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
             <div className="text-sm text-slate-300">{concerts?.count}&nbsp;Einträge</div>
             {(selectedBands.length > 0 ||
               selectedLocations.length > 0 ||
-              selectedYears.length > 0 ||
-              selectedLocations.length > 0) && (
+              selectedYears ||
+              selectedBandsPerConcert) && (
               <Button
                 label="Zurücksetzen"
                 onClick={resetAll}

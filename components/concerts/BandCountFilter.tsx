@@ -21,8 +21,8 @@ const BandCountRangeSlider = ({ ...props }: BandCountFilterProps) => {
 }
 
 interface BandCountFilterProps {
-  selectedOptions: number[]
-  setSelectedOptions: Dispatch<SetStateAction<number[]>>
+  selectedOptions: [number, number] | null
+  setSelectedOptions: Dispatch<SetStateAction<[number, number] | null>>
 }
 
 export const BandCountFilter = ({ selectedOptions, setSelectedOptions }: BandCountFilterProps) => {

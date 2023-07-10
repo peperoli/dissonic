@@ -19,11 +19,8 @@ const fetchConcerts = async (options?: FetchOptions): Promise<ExtendedRes<Concer
     query = query.in('location.id', options.filter.locations)
   }
   if (options?.filter?.years && options.filter.years.length > 0) {
-    query = query.or(
-      options.filter.years
-        .map(year => `and(date_start.gte.${year}-01-01, date_start.lte.${year}-12-31)`)
-        .join(',')
-    )
+    query = query.gte('date_start', `${options.filter.years[0]}-01-01`)
+    query = query.lte('date_start', `${options.filter.years[1]}-12-31`)
   }
   if (options?.filter?.bandsSeenUser) {
     query = query.eq('bands_seen.user_id', options.filter.bandsSeenUser)

@@ -21,8 +21,8 @@ const YearsRangeSlider = ({ ...props }: YearsFilterProps) => {
 }
 
 interface YearsFilterProps {
-  selectedOptions: number[]
-  setSelectedOptions: Dispatch<SetStateAction<number[]>>
+  selectedOptions: [number, number] | null
+  setSelectedOptions: Dispatch<SetStateAction<[number, number] | null>>
 }
 
 export const YearsFilter = ({ selectedOptions, setSelectedOptions }: YearsFilterProps) => {

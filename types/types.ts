@@ -10,8 +10,8 @@ export interface FetchOptions {
   filter?: {
     bands?: number[]
     locations?: number[]
-    years?: number[]
-    bandsPerConcert?: number[]
+    years?: [number, number] | null
+    bandsPerConcert?: [number, number] | null
     bandsSeenUser?: string
     countries?: number[]
     genres?: number[]
