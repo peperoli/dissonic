@@ -64,7 +64,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
   const [selectedCountries, setSelectedCountries] = useState<Country[]>([])
   const [query, setQuery] = useState('')
   const debounceQuery = useDebounce(query, 500)
-  const { data } = useBands(initialBands, {
+  const { data: bands } = useBands(initialBands, {
     filter: {
       countries: selectedCountries.map(item => item.id),
       genres: selectedGenres.map(item => item.id),
@@ -73,8 +73,6 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
     page: currentPage,
     size: perPage,
   })
-  const bands = data?.data
-  const count = data?.count
 
   const { data: genres } = useGenres()
   const { data: countries } = useCountries()
@@ -131,7 +129,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
           </div>
           <div className="flex gap-4 items-center">
             <div className="my-4 text-sm text-slate-300">
-              {count}&nbsp;{count === 1 ? 'Eintrag' : 'Einträge'}
+              {bands?.count}&nbsp;{bands?.count === 1 ? 'Eintrag' : 'Einträge'}
             </div>
             {(selectedCountries.length > 0 || selectedGenres.length > 0 || query.length > 0) && (
               <button
@@ -143,13 +141,13 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
               </button>
             )}
           </div>
-          {bands?.length === 0 ? (
+          {bands?.count === 0 ? (
             <div>Blyat! Keine Einträge gefunden.</div>
           ) : (
-            bands?.map(band => <BandTableRow key={band.id} band={band} />)
+            bands?.data.map(band => <BandTableRow key={band.id} band={band} />)
           )}
           <Pagination
-            entriesCount={count ?? 0}
+            entriesCount={bands?.count ?? 0}
             setCurrentPage={setCurrentPage}
             currentPage={currentPage}
             perPage={perPage}
@@ -160,7 +158,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
         <AddBandForm
           countries={countries}
           genres={genres}
-          bands={bands}
+          bands={bands?.data}
           isOpen={isOpen}
           setIsOpen={setIsOpen}
         />

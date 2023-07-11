@@ -11,8 +11,8 @@ import { Band } from '../../types/types'
 import { DeleteBandModal } from './DeleteBandModal'
 import { useBand } from '../../hooks/useBand'
 import { useConcerts } from '../../hooks/useConcerts'
-import { useUser } from '../../hooks/useUser'
 import { useSpotifyArtistEmbed } from '../../hooks/useSpotifyArtistEmbed'
+import { SpinnerIcon } from '../layout/SpinnerIcon'
 
 export interface BandPageProps {
   initialBand: Band
@@ -20,10 +20,13 @@ export interface BandPageProps {
 
 export const BandPage = ({ initialBand }: BandPageProps) => {
   const { data: band, isLoading: bandIsLoading } = useBand(initialBand)
-  const { data: concertsData } = useConcerts(undefined, { filter: { bands: [initialBand.id] } })
-  const bandConcerts = concertsData?.data
-  const { data: user } = useUser()
-  const { data: spotifyArtistEmbed } = useSpotifyArtistEmbed(band?.spotify_artist_id)
+  const { data: concerts } = useConcerts(undefined, {
+    filter: { bands: [initialBand.id] },
+    sort: ['date_start', false],
+  })
+  const { data: spotifyArtistEmbed, status: spotifyArtistEmbedStatus } = useSpotifyArtistEmbed(
+    band?.spotify_artist_id
+  )
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
   const [editIsOpen, setEditIsOpen] = useState(false)
 
@@ -68,6 +71,11 @@ export const BandPage = ({ initialBand }: BandPageProps) => {
                 </Fragment>
               ))}
           </ul>
+          {spotifyArtistEmbedStatus === 'loading' && (
+            <div className="grid place-content-center h-72 rounded-lg text-slate-300 bg-slate-750">
+              <SpinnerIcon className="h-8 animate-spin" />
+            </div>
+          )}
           {spotifyArtistEmbed?.html && (
             <div dangerouslySetInnerHTML={{ __html: spotifyArtistEmbed.html }} />
           )}
@@ -76,10 +84,10 @@ export const BandPage = ({ initialBand }: BandPageProps) => {
             <Button onClick={() => setDeleteIsOpen(true)} label="Löschen" danger />
           </div>
         </div>
-        {bandConcerts && bandConcerts?.length > 0 && (
+        {concerts?.data && concerts?.data?.length > 0 && (
           <div className="grid gap-4 p-6">
             <h2 className="mb-0 text-slate-300">Konzerte mit {band.name}</h2>
-            {bandConcerts.map(item => (
+            {concerts?.data.map(item => (
               <ConcertCard key={item.id} concert={item} />
             ))}
           </div>

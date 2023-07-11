@@ -53,7 +53,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
   function handleView(event: ChangeEvent) {
     const target = event.target as HTMLInputElement
     setView(target.value)
-    setCookie('view', target.value)
+    setCookie('view', target.value, { sameSite: 'strict' })
   }
 
   function resetAll() {
