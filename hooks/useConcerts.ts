@@ -8,6 +8,7 @@ const fetchConcerts = async (options?: FetchOptions): Promise<ExtendedRes<Concer
     `id,
       location:locations!inner(id),
       bands!j_concert_bands!inner(id),
+      bands_count:j_concert_bands(count),
       bands_seen:j_bands_seen!inner(user_id)`,
     { count: 'estimated' }
   )
@@ -26,13 +27,13 @@ const fetchConcerts = async (options?: FetchOptions): Promise<ExtendedRes<Concer
     query = query.eq('bands_seen.user_id', options.filter.bandsSeenUser)
   }
 
-  const { data: ids, count, error: countError } = await query
-  
+  const { data: ids, count: initialCount, error: countError } = await query
+
   if (countError) {
     throw countError
   }
 
-  const [from, to] = getPagination(options?.page ?? 0, options?.size ?? 24, count ?? 0)
+  const [from, to] = getPagination(options?.page ?? 0, options?.size ?? 24, initialCount ?? 0)
 
   let filteredQuery = supabase
     .from('concerts')
@@ -40,9 +41,21 @@ const fetchConcerts = async (options?: FetchOptions): Promise<ExtendedRes<Concer
       `*,
       location:locations(*),
       bands!j_concert_bands(*),
-      bands_seen:j_bands_seen(band_id, user_id)`
+      bands_seen:j_bands_seen(band_id, user_id)`,
+      { count: 'estimated' }
     )
-    .in('id', ids?.map(id => id.id) as string[])
+    .in(
+      'id',
+      ids
+        ?.filter(
+          item =>
+            !options?.filter?.bandsPerConcert ||
+            (Array.isArray(item.bands_count) &&
+              item.bands_count[0].count >= options.filter.bandsPerConcert[0] &&
+              item.bands_count[0].count <= options?.filter?.bandsPerConcert[1])
+        )
+        .map(id => id.id) as string[]
+    )
 
   if (options?.page || options?.size) {
     filteredQuery = filteredQuery.range(from, to)
@@ -51,7 +64,7 @@ const fetchConcerts = async (options?: FetchOptions): Promise<ExtendedRes<Concer
     filteredQuery = filteredQuery.order(options.sort[0], { ascending: options.sort[1] })
   }
 
-  const { data, error } = await filteredQuery
+  const { data, count, error } = await filteredQuery
 
   if (error) {
     throw error

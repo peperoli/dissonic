@@ -6,11 +6,11 @@ import { RangeSliderWrapper } from './../RangeFilter'
 
 const YearsRangeSlider = ({ ...props }: YearsFilterProps) => {
   const { data: concertDates, isLoading } = useConcertDates()
-  const concertYears = concertDates?.map(
-    item => item.date_start && new Date(item.date_start).getFullYear()
-  ).filter(item => typeof item === 'number') as number[] | undefined
+  const concertYears = concertDates
+    ?.map(item => item.date_start && new Date(item.date_start).getFullYear())
+    .filter(item => typeof item === 'number') as number[] | undefined
 
-  if (!concertYears || isLoading) {
+  if (!concertYears || concertYears.length === 0 || isLoading) {
     return (
       <div className="flex items-center justify-center w-full h-56">
         <SpinnerIcon className="h-8 animate-spin" />

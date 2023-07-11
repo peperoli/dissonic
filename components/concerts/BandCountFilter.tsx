@@ -7,10 +7,10 @@ import { RangeSliderWrapper } from './../RangeFilter'
 const BandCountRangeSlider = ({ ...props }: BandCountFilterProps) => {
   const { data: concertBands, isLoading } = useConcertBands()
   const bandCounts = concertBands
-    ?.map(item => Array.isArray(item.bandsCount) && item.bandsCount[0]?.count)
+    ?.map(item => Array.isArray(item.bands_count) && item.bands_count[0]?.count)
     .filter(item => typeof item === 'number') as number[] | undefined
 
-  if (!bandCounts || isLoading) {
+  if (!bandCounts || bandCounts.length === 0 || isLoading) {
     return (
       <div className="flex items-center justify-center w-full h-56">
         <SpinnerIcon className="h-8 animate-spin" />

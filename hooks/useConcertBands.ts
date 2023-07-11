@@ -3,11 +3,11 @@ import { Concert } from '../types/types'
 import supabase from '../utils/supabase'
 
 const fetchConcertBands = async (): Promise<
-  Partial<Concert & { bandsCount: { count: number } | { count: number }[] | null }>[]
+  Partial<Concert & { bands_count: { count: number } | { count: number }[] | null }>[]
 > => {
   const { data, error } = await supabase
     .from('concerts')
-    .select('id, bandsCount:j_concert_bands(count)')
+    .select('id, bands_count:j_concert_bands(count)')
 
   if (error) {
     throw error

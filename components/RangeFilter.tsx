@@ -215,7 +215,6 @@ export const RangeSliderWrapper = ({
 
   const [minValue, setMinValue] = useState(selectedOptions ? selectedOptions[0] : initialMin)
   const [maxValue, setMaxValue] = useState(selectedOptions ? selectedOptions[1] : initialMax)
-  console.log(minValue, maxValue)
 
   function handleMinBlur(event: FocusEvent<HTMLInputElement>) {
     const value = Number(event.target.value)
