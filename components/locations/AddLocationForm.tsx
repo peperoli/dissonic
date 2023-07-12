@@ -1,74 +1,62 @@
-import React, { Dispatch, FC, SetStateAction, SyntheticEvent, useState } from 'react'
-import { Location } from '../../types/types'
-import supabase from '../../utils/supabase'
+import { Dispatch, SetStateAction, useState } from 'react'
+import { useQueryClient } from 'react-query'
+import { useAddLocation } from '../../hooks/useAddLocation'
 import { Button } from '../Button'
 import Modal from '../Modal'
 
 interface AddLocationFormProps {
-  locations: Location[]
-  setLocations: Dispatch<SetStateAction<Location[]>>
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
 }
 
-export const AddLocationForm: FC<AddLocationFormProps> = ({
-  locations,
-  setLocations,
-  isOpen,
-  setIsOpen,
-}) => {
-  const [loading, setLoading] = useState(false)
+export const AddLocationForm = ({ isOpen, setIsOpen }: AddLocationFormProps) => {
+  const queryClient = useQueryClient()
+  const [name, setName] = useState('')
+  const [city, setCity] = useState('')
+  const addLocation = useAddLocation({ name: name, city: city })
 
-  async function handleSubmit(event: SyntheticEvent) {
-    event.preventDefault()
-    const target = event.target as typeof event.target & {
-      name: { value: string }
-      city: { value: string }
-    }
+  if (addLocation.status === 'error') {
+    console.log(addLocation.error)
+  }
 
-    try {
-      setLoading(true)
-      const { data: newLocation, error: newLocationError } = await supabase
-        .from('locations')
-        .insert({
-          name: target.name.value,
-          city: target.city.value,
-        })
-        .select()
-        .single()
-
-      if (newLocationError) {
-        throw newLocationError
-      }
-
-      setLocations([...locations, newLocation])
-      setIsOpen(false)
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message)
-      } else {
-        alert('Oops')
-        console.error(error)
-      }
-    } finally {
-      setLoading(false)
-    }
+  if (addLocation.status === 'success') {
+    queryClient.invalidateQueries('bands')
+    setIsOpen(false)
   }
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form className="flex flex-col gap-4">
         <h2>Location erstellen</h2>
         <div className="form-control">
-          <input type="text" name="name" id="name" placeholder="Hallenstadion" />
+          <input
+            type="text"
+            name="name"
+            id="name"
+            value={name}
+            onChange={event => setName(event?.target.value)}
+            placeholder="Hallenstadion"
+          />
           <label htmlFor="name">Name</label>
         </div>
         <div className="form-control">
-          <input type="text" name="city" id="city" placeholder="Zürich" />
+          <input
+            type="text"
+            name="city"
+            id="city"
+            value={city}
+            onChange={event => setCity(event?.target.value)}
+            placeholder="Zürich"
+          />
           <label htmlFor="city">Ort</label>
         </div>
         <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 bg-slate-800 z-10">
           <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
-          <Button type="submit" label="Erstellen" style="primary" loading={loading} />
+          <Button
+            label="Erstellen"
+            onClick={() => addLocation.mutate()}
+            style="primary"
+            loading={addLocation.status === 'loading'}
+          />
         </div>
       </form>
     </Modal>

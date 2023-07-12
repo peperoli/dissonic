@@ -1,6 +1,9 @@
-import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/20/solid"
-import React, { useState, useRef, FC, Dispatch, RefObject, SetStateAction } from "react"
-import { Option } from "../types/types"
+import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/20/solid'
+import clsx from 'clsx'
+import { useState, useRef, Dispatch, RefObject, SetStateAction } from 'react'
+import { Option } from '../types/types'
+import { Button } from './Button'
+import { SpinnerIcon } from './layout/SpinnerIcon'
 
 interface SelectedOptionProps {
   selectedOption: Option
@@ -8,19 +11,21 @@ interface SelectedOptionProps {
   setSelectedOptions: Dispatch<SetStateAction<any[]>>
 }
 
-const SelectedOption: FC<SelectedOptionProps> = ({
+const SelectedOption = ({
   selectedOption,
   selectedOptions,
   setSelectedOptions,
-}) => {
+}: SelectedOptionProps) => {
   function handleClick() {
     setSelectedOptions(selectedOptions.filter(item => item.id !== selectedOption.id))
   }
   return (
-    <button className="btn btn-tag" onClick={handleClick}>
-      {selectedOption.name}
-      <XMarkIcon className="h-icon" />
-    </button>
+    <Button
+      label={selectedOption.name ?? ''}
+      onClick={handleClick}
+      icon={<XMarkIcon className="h-icon" />}
+      style="tag"
+    />
   )
 }
 
@@ -32,13 +37,13 @@ interface MultiSelectOptionProps {
   searchRef: RefObject<HTMLInputElement>
 }
 
-const MultiSelectOption: FC<MultiSelectOptionProps> = ({
+const MultiSelectOption = ({
   option,
   selectedOptions,
   setSelectedOptions,
   setQuery,
   searchRef,
-}) => {
+}: MultiSelectOptionProps) => {
   const isSelected = selectedOptions.some(item => item.id === option.id)
 
   function handleChange() {
@@ -52,8 +57,8 @@ const MultiSelectOption: FC<MultiSelectOptionProps> = ({
   }
 
   return (
-    <label className="flex gap-2 w-full px-2 py-1.5 rounded hover:bg-slate-600">
-      <input type="checkbox" checked={isSelected} onChange={handleChange} />
+    <label className="flex items-center gap-2 w-full px-2 py-1.5 rounded hover:bg-slate-600">
+      <input type="checkbox" checked={isSelected} onChange={handleChange} className="flex-none" />
       {option.name}
     </label>
   )
@@ -61,26 +66,28 @@ const MultiSelectOption: FC<MultiSelectOptionProps> = ({
 
 interface MultiSelectProps {
   name: string
-  options: Option[]
+  options?: Option[]
+  isLoading?: boolean
   selectedOptions: Option[]
   setSelectedOptions: Dispatch<SetStateAction<any[]>>
   alwaysOpen?: boolean
   fullHeight?: boolean
 }
 
-export const MultiSelect: FC<MultiSelectProps> = ({
+export const MultiSelect = ({
   name,
   options,
+  isLoading,
   selectedOptions,
   setSelectedOptions,
   alwaysOpen,
   fullHeight,
-}) => {
+}: MultiSelectProps) => {
   const [query, setQuery] = useState('')
 
   const searchRef = useRef<HTMLInputElement>(null)
   const regExp = new RegExp(query, 'i')
-  const filteredOptions = options.filter(option => option.name?.match(regExp))
+  const filteredOptions = options?.filter(option => option.name?.match(regExp))
 
   function capitalize(string: string) {
     const arr = string.split(' ')
@@ -125,25 +132,35 @@ export const MultiSelect: FC<MultiSelectProps> = ({
       </div>
       {(query || alwaysOpen) && (
         <div
-          className={`form-control w-full mt-1 p-2 rounded-lg bg-slate-700 overflow-auto${
-            alwaysOpen ? '' : ' absolute shadow-lg z-20'
-          }${fullHeight ? ' max-h-full md:max-h-72' : ' max-h-72'}`}
+          className={clsx(
+            'form-control w-full mt-1 p-2 rounded-lg bg-slate-700 overflow-auto',
+            !alwaysOpen && 'absolute shadow-lg z-20',
+            fullHeight ? ' max-h-full md:h-72' : ' max-h-72'
+          )}
         >
-          {filteredOptions.length > 0 ? (
-            filteredOptions.map(option => (
-              <MultiSelectOption
-                key={option.id}
-                option={option}
-                selectedOptions={selectedOptions}
-                setSelectedOptions={setSelectedOptions}
-                setQuery={setQuery}
-                searchRef={searchRef}
-              />
-            ))
-          ) : (
-            <div className="p-2 text-slate-300">
-              Versuchs mal mit einem vernünftigen Suchbegriff.
+          {isLoading ? (
+            <div className="w-full h-full grid place-content-center">
+              <SpinnerIcon className="h-8 animate-spin" />
             </div>
+          ) : (
+            <>
+              {filteredOptions && filteredOptions.length > 0 ? (
+                filteredOptions.map(option => (
+                  <MultiSelectOption
+                    key={option.id}
+                    option={option}
+                    selectedOptions={selectedOptions}
+                    setSelectedOptions={setSelectedOptions}
+                    setQuery={setQuery}
+                    searchRef={searchRef}
+                  />
+                ))
+              ) : (
+                <div className="p-2 text-slate-300">
+                  Versuchs mal mit einem vernünftigen Suchbegriff.
+                </div>
+              )}
+            </>
           )}
         </div>
       )}

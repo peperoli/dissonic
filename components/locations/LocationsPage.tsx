@@ -1,28 +1,34 @@
-"use client"
+'use client'
 
-import { PageWrapper } from "../layout/PageWrapper"
-import { PlusIcon } from "@heroicons/react/20/solid"
-import { Table } from "../Table"
-import { TableRow } from "../TableRow"
-import { AddLocationForm } from "./AddLocationForm"
-import React, { FC, useState } from "react"
-import { Search } from "../Search"
-import { Button } from "../Button"
-import useMediaQuery from "../../hooks/useMediaQuery"
-import { Location } from "../../types/types"
+import { PageWrapper } from '../layout/PageWrapper'
+import { PlusIcon } from '@heroicons/react/20/solid'
+import { Table } from '../Table'
+import { TableRow } from '../TableRow'
+import { AddLocationForm } from './AddLocationForm'
+import { useState } from 'react'
+import { Search } from '../Search'
+import { Button } from '../Button'
+import useMediaQuery from '../../hooks/useMediaQuery'
+import { ExtendedRes, Location } from '../../types/types'
+import { useLocations } from '../../hooks/useLocations'
+import { useDebounce } from '../../hooks/useDebounce'
+import { Pagination } from '../layout/Pagination'
 
 interface LocationsPageProps {
-  initialLocations: Location[]
+  initialLocations: ExtendedRes<Location[]>
 }
 
-export const LocationsPage: FC<LocationsPageProps> = ({ initialLocations }) => {
-  const [locations, setLocations] = useState(initialLocations)
-  const [isOpen, setIsOpen] = useState(false)
+export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
   const [query, setQuery] = useState('')
-
-  const regExp = new RegExp(query, 'i')
-  const filteredLocations = locations.filter(item => item.name.match(regExp))
-  const filteredLength = filteredLocations.length !== locations.length ? filteredLocations.length : null
+  const debounceQuery = useDebounce(query, 200)
+  const perPage = 25
+  const [currentPage, setCurrentPage] = useState(0)
+  const { data: locations } = useLocations(initialLocations, {
+    filter: { search: debounceQuery },
+    page: currentPage,
+    size: perPage,
+  })
+  const [isOpen, setIsOpen] = useState(false)
   const isDesktop = useMediaQuery('(min-width: 768px)')
   return (
     <>
@@ -58,15 +64,13 @@ export const LocationsPage: FC<LocationsPageProps> = ({ initialLocations }) => {
               setQuery={setQuery}
             />
             <div className="my-4 text-sm text-slate-300">
-              {typeof filteredLength === 'number' && <span>{filteredLength}&nbsp;von&nbsp;</span>}
-              {locations.length}&nbsp;Einträge
+              {locations?.count}&nbsp;{locations?.count === 1 ? 'Eintrag' : 'Einträge'}
             </div>
-            {typeof filteredLength === 'number' && filteredLength === 0 ? (
+            {locations?.count === 0 ? (
               <div>Blyat! Keine Einträge gefunden.</div>
             ) : (
-              filteredLocations &&
-              filteredLocations.map(location => (
-                <TableRow key={location.id} href={''}>
+              locations?.data.map(location => (
+                <TableRow key={location.id} href="">
                   <div className="md:flex items-center gap-4 w-full">
                     <div className="md:w-1/2 font-bold">{location.name}</div>
                     <div className="md:w-1/2 text-slate-300">{location.city}</div>
@@ -74,14 +78,18 @@ export const LocationsPage: FC<LocationsPageProps> = ({ initialLocations }) => {
                 </TableRow>
               ))
             )}
+            <Pagination
+              entriesCount={locations?.count ?? 0}
+              perPage={perPage}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+            />
           </Table>
         </main>
       </PageWrapper>
       <AddLocationForm
-        locations={locations}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
-        setLocations={setLocations}
       />
     </>
   )

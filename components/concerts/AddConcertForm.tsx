@@ -1,12 +1,4 @@
-import React, {
-  ChangeEvent,
-  Dispatch,
-  FC,
-  FormEvent,
-  SetStateAction,
-  useReducer,
-  useState,
-} from 'react'
+import { ChangeEvent, Dispatch, SetStateAction, useReducer, useState } from 'react'
 import { MultiSelect } from '../MultiSelect'
 import { Button } from '../Button'
 import { useRouter } from 'next/navigation'
@@ -24,7 +16,7 @@ interface AddConcertFormProps {
   setIsOpen: Dispatch<SetStateAction<boolean>>
 }
 
-export const AddConcertForm: FC<AddConcertFormProps> = ({ isOpen, setIsOpen }) => {
+export const AddConcertForm = ({ isOpen, setIsOpen }: AddConcertFormProps) => {
   const { data: bands } = useBands()
   const { data: locations } = useLocations()
   const { data: concerts } = useConcerts()
@@ -44,8 +36,8 @@ export const AddConcertForm: FC<AddConcertFormProps> = ({ isOpen, setIsOpen }) =
   const addConcert = useAddConcert(formState, selectedBands)
   const router = useRouter()
 
-  const similarConcerts = concerts
-    ?.filter(item => item.date_start === formState.date_start)
+  const similarConcerts = concerts?.data
+    .filter(item => item.date_start === formState.date_start)
     .filter(item =>
       item.bands?.find(band => selectedBands.find(selectedBand => band.id === selectedBand.id))
     )
@@ -110,10 +102,10 @@ export const AddConcertForm: FC<AddConcertFormProps> = ({ isOpen, setIsOpen }) =
             </div>
           )}
         </div>
-        {bands && (
+        {bands?.data && (
           <MultiSelect
             name="bands"
-            options={bands}
+            options={bands.data}
             selectedOptions={selectedBands}
             setSelectedOptions={setSelectedBands}
           />
@@ -124,7 +116,7 @@ export const AddConcertForm: FC<AddConcertFormProps> = ({ isOpen, setIsOpen }) =
               <option value="" hidden disabled>
                 Bitte wählen ...
               </option>
-              {locations.map(location => (
+              {locations.data.map(location => (
                 <option key={location.id} value={location.id}>
                   {location.name}
                 </option>

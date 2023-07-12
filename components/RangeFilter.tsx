@@ -1,7 +1,6 @@
 import { ArrowUturnLeftIcon } from '@heroicons/react/20/solid'
-import React, {
+import {
   Dispatch,
-  FC,
   FocusEvent,
   MouseEvent as ReactMouseEvent,
   TouchEvent as ReactTouchEvent,
@@ -11,7 +10,6 @@ import React, {
 } from 'react'
 import { useState } from 'react'
 import { Button } from './Button'
-import { FilterButton } from './FilterButton'
 import { NumberField } from './NumberField'
 
 interface ChartProps {
@@ -22,7 +20,7 @@ interface ChartProps {
   maxValue: number
 }
 
-const Chart: FC<ChartProps> = ({ options, initialMin, initialMax, minValue, maxValue }) => {
+const Chart = ({ options, initialMin, initialMax, minValue, maxValue }: ChartProps) => {
   const optionCounts: { id: number; count: number }[] = []
 
   for (let i = initialMin; i <= initialMax; i++) {
@@ -61,10 +59,9 @@ interface RangeSliderHandleProps {
   value: number
   setValue: Dispatch<SetStateAction<number>>
   otherValue: number
-  constrain: (value: number) => number
 }
 
-const RangeSliderHandle: FC<RangeSliderHandleProps> = ({
+const RangeSliderHandle = ({
   side,
   startPosition,
   width,
@@ -73,8 +70,7 @@ const RangeSliderHandle: FC<RangeSliderHandleProps> = ({
   value,
   setValue,
   otherValue,
-  constrain,
-}) => {
+}: RangeSliderHandleProps) => {
   const [drag, setDrag] = useState(false)
   const ref = useRef<HTMLButtonElement>(null)
 
@@ -135,14 +131,14 @@ interface RangeSliderProps {
   setMaxValue: Dispatch<SetStateAction<number>>
 }
 
-const RangeSlider: FC<RangeSliderProps> = ({
+const RangeSlider = ({
   initialMin,
   initialMax,
   minValue,
   setMinValue,
   maxValue,
   setMaxValue,
-}) => {
+}: RangeSliderProps) => {
   const [startPosition, setStartPosition] = useState(0)
   const [width, setWidth] = useState(0)
   const ref = useRef<HTMLDivElement>(null)
@@ -185,7 +181,6 @@ const RangeSlider: FC<RangeSliderProps> = ({
         value={constrainedMinValue}
         setValue={setMinValue}
         otherValue={maxValue}
-        constrain={constrain}
       />
       <RangeSliderHandle
         side="max"
@@ -196,7 +191,6 @@ const RangeSlider: FC<RangeSliderProps> = ({
         value={constrainedMaxValue}
         setValue={setMaxValue}
         otherValue={minValue}
-        constrain={constrain}
       />
     </div>
   )
@@ -205,22 +199,22 @@ const RangeSlider: FC<RangeSliderProps> = ({
 interface RangeSliderWrapperProps {
   unit: string
   options: number[]
-  selectedOptions: number[]
-  setSelectedOptions: Dispatch<SetStateAction<number[]>>
+  isLoading?: boolean
+  selectedOptions: [number, number] | null
+  setSelectedOptions: Dispatch<SetStateAction<[number, number] | null>>
 }
 
-const RangeSliderWrapper: FC<RangeSliderWrapperProps> = ({
-  options,
+export const RangeSliderWrapper = ({
   unit,
+  options,
   selectedOptions,
   setSelectedOptions,
-}) => {
+}: RangeSliderWrapperProps) => {
   const initialMin = Math.min(...options)
   const initialMax = Math.max(...options)
-  const uniqueOptions = [...new Set(options)]
 
-  const [minValue, setMinValue] = useState(initialMin)
-  const [maxValue, setMaxValue] = useState(initialMax)
+  const [minValue, setMinValue] = useState(selectedOptions ? selectedOptions[0] : initialMin)
+  const [maxValue, setMaxValue] = useState(selectedOptions ? selectedOptions[1] : initialMax)
 
   function handleMinBlur(event: FocusEvent<HTMLInputElement>) {
     const value = Number(event.target.value)
@@ -246,8 +240,14 @@ const RangeSliderWrapper: FC<RangeSliderWrapperProps> = ({
     }
   }
 
-  function submitSelectedOptions(min: number, max: number) {
-    setSelectedOptions(uniqueOptions.filter(item => item >= min && item <= max))
+  function reset() {
+    setMinValue(initialMin)
+    setMaxValue(initialMax)
+    setSelectedOptions(null)
+  }
+
+  function submit() {
+    setSelectedOptions([minValue, maxValue])
   }
   return (
     <>
@@ -288,48 +288,15 @@ const RangeSliderWrapper: FC<RangeSliderWrapperProps> = ({
       </div>
       <div className="relative flex justify-end gap-2 w-full pt-4 bg-slate-700 z-10">
         <Button
-          onClick={() => setSelectedOptions([])}
+          onClick={reset}
           label="Filter zurücksetzen"
           icon={<ArrowUturnLeftIcon className="h-icon" />}
           contentType="icon"
           style="secondary"
-          disabled={selectedOptions.length === 0}
+          disabled={!selectedOptions}
         />
-        <Button
-          onClick={() => submitSelectedOptions(minValue, maxValue)}
-          label="Ergebnisse anzeigen"
-          style="primary"
-        />
+        <Button onClick={submit} label="Ergebnisse anzeigen" style="primary" />
       </div>
     </>
-  )
-}
-
-interface RangeFilterProps {
-  name: string
-  unit: string
-  options: number[] | undefined
-  selectedOptions: number[]
-  setSelectedOptions: Dispatch<SetStateAction<number[]>>
-}
-
-export const RangeFilter: FC<RangeFilterProps> = ({
-  name,
-  unit,
-  options,
-  selectedOptions,
-  setSelectedOptions,
-}) => {
-  return (
-    <FilterButton name={name} selectedOptions={selectedOptions}>
-      {options && (
-        <RangeSliderWrapper
-          unit={unit}
-          options={options}
-          selectedOptions={selectedOptions}
-          setSelectedOptions={setSelectedOptions}
-        />
-      )}
-    </FilterButton>
   )
 }

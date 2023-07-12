@@ -1,17 +1,17 @@
 import Link from 'next/link'
 import { MapPinIcon, UsersIcon } from '@heroicons/react/20/solid'
-import dayjs from 'dayjs'
 import 'dayjs/locale/de'
 import { useRouter } from 'next/navigation'
-import React, { FC, Fragment } from 'react'
-import { Concert, Profile } from '../../types/types'
-import { User } from '@supabase/supabase-js'
+import { Fragment } from 'react'
+import { Concert } from '../../types/types'
+import { useProfiles } from '../../hooks/useProfiles'
+import { useUser } from '../../hooks/useUser'
 
 const ConcertDate = ({ date }: { date: Date }) => {
   return (
     <div className="relative flex-none flex flex-col justify-center items-center w-20 h-20 border border-slate-700 rounded-lg first:bg-slate-700 first:group-hover:bg-slate-600 shadow-md transition duration-200">
       {date && <span className="text-3xl font-bold">{date.getDate()}</span>}
-      {date && <span className="text-sm">{dayjs(date).locale('de-ch').format('MMM')}</span>}
+      {date && <span className="text-sm">{new Date(date).toLocaleDateString('de', {month: 'short'})}</span>}
       {date?.getFullYear() !== new Date().getFullYear() && (
         <span className="absolute -bottom-3 px-2 py-1 rounded-full text-xs font-bold text-slate-850 bg-blue-300">
           {date.getFullYear()}
@@ -21,16 +21,15 @@ const ConcertDate = ({ date }: { date: Date }) => {
   )
 }
 
-export interface ConcertCardProps {
+interface ConcertCardProps {
   concert: Concert
-  profiles?: Profile[]
-  user?: User | null
 }
 
-export const ConcertCard: FC<ConcertCardProps> = ({ concert, profiles, user }) => {
+export const ConcertCard = ({ concert }: ConcertCardProps) => {
+  const { data: user } = useUser()
+  const fanIds = new Set(concert?.bands_seen?.map(item => item.user_id))  
+  const { data: profiles} = useProfiles({ids:[...fanIds]})
   const router = useRouter()
-  const fanIds = new Set(concert?.bands_seen?.map(item => item.user_id))
-  const fanProfiles = profiles?.filter(profile => fanIds.has(profile.id))
   return (
     <div
       onClick={() => router.push(`/concerts/${concert.id}`)}
@@ -72,11 +71,11 @@ export const ConcertCard: FC<ConcertCardProps> = ({ concert, profiles, user }) =
             </div>
           )}
         </div>
-        {fanProfiles && (
+        {profiles && (
           <div className="flex text-sm">
             <UsersIcon className="flex-none h-icon mr-2 self-center text-slate-300" />
             <div className="-ml-2">
-              {fanProfiles.map(item => (
+              {profiles.map(item => (
                 <Link
                   key={item?.id}
                   href={`/users/${item?.username}`}

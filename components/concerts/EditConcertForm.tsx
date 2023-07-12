@@ -114,7 +114,7 @@ export const EditConcertForm = ({ isOpen, setIsOpen }: EditConcertFormProps) => 
               onChange={handleChange}
             >
               <option value="">Bitte wählen ...</option>
-              {locations.map(location => (
+              {locations?.data.map(location => (
                 <option key={location.id} value={location.id}>
                   {location.name}
                   {location.city && ', ' + location.city}
@@ -124,10 +124,10 @@ export const EditConcertForm = ({ isOpen, setIsOpen }: EditConcertFormProps) => 
             <label htmlFor="location">Location</label>
           </div>
         )}
-        {bands && (
+        {bands?.data && (
           <MultiSelect
             name="bands"
-            options={bands}
+            options={bands.data}
             selectedOptions={selectedBands}
             setSelectedOptions={setSelectedBands}
           />

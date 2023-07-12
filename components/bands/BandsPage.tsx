@@ -1,6 +1,6 @@
 'use client'
 
-import React, { FC, useState } from 'react'
+import { useState } from 'react'
 import { AddBandForm } from './AddBandForm'
 import { ArrowUturnLeftIcon, PlusIcon } from '@heroicons/react/20/solid'
 import { PageWrapper } from '../layout/PageWrapper'
@@ -12,18 +12,19 @@ import useMediaQuery from '../../hooks/useMediaQuery'
 import { Pagination } from '../layout/Pagination'
 import { UserMusicIcon } from '../layout/UserMusicIcon'
 import { MultiSelectFilter } from '../MultiSelectFilter'
-import { Band, Country, Genre } from '../../types/types'
+import { Band, Country, Genre, ExtendedRes } from '../../types/types'
 import { useBands } from '../../hooks/useBands'
 import { useGenres } from '../../hooks/useGenres'
 import { useCountries } from '../../hooks/useCountries'
 import { useSpotifyArtist } from '../../hooks/useSpotifyArtist'
 import Image from 'next/image'
+import { useDebounce } from '../../hooks/useDebounce'
 
 interface BandTableRowProps {
   band: Band
 }
 
-const BandTableRow: FC<BandTableRowProps> = ({ band }) => {
+const BandTableRow = ({ band }: BandTableRowProps) => {
   const { data } = useSpotifyArtist(band.spotify_artist_id)
   const picture = data?.images[2]
   return (
@@ -53,55 +54,30 @@ const BandTableRow: FC<BandTableRowProps> = ({ band }) => {
 }
 
 interface BandsPageProps {
-  initialBands: Band[]
+  initialBands: ExtendedRes<Band[]>
 }
 
-export const BandsPage: FC<BandsPageProps> = ({ initialBands }) => {
-  const { data: bands } = useBands(initialBands)
+export const BandsPage = ({ initialBands }: BandsPageProps) => {
+  const perPage = 25
+  const [currentPage, setCurrentPage] = useState(0)
+  const [selectedGenres, setSelectedGenres] = useState<Genre[]>([])
+  const [selectedCountries, setSelectedCountries] = useState<Country[]>([])
+  const [query, setQuery] = useState('')
+  const debounceQuery = useDebounce(query, 200)
+  const { data: bands } = useBands(initialBands, {
+    filter: {
+      countries: selectedCountries.map(item => item.id),
+      genres: selectedGenres.map(item => item.id),
+      search: debounceQuery,
+    },
+    page: currentPage,
+    size: perPage,
+  })
+
   const { data: genres } = useGenres()
   const { data: countries } = useCountries()
 
   const [isOpen, setIsOpen] = useState(false)
-  const [selectedGenres, setSelectedGenres] = useState<Genre[]>([])
-  const [selectedCountries, setSelectedCountries] = useState<Country[]>([])
-  const [query, setQuery] = useState('')
-  const [currentPage, setCurrentPage] = useState(0)
-
-  const regExp = new RegExp(query, 'i')
-  const filteredBands = bands?.filter(item => item.name.match(regExp)) || []
-  const filteredLength =
-    filteredBands.filter(filterRule).length !== bands?.length
-      ? filteredBands.filter(filterRule).length
-      : null
-  const perPage = 100
-
-  function filterRule(item: Band) {
-    let [genreFilter, countryFilter] = [true, true]
-    const selectedGenreIds = selectedGenres.map(item => item.id)
-    const selectedCountryIds = selectedCountries.map(item => item.id)
-    if (selectedGenreIds.length > 0) {
-      genreFilter = item.genres?.some(genreId => selectedGenreIds.includes(genreId.id))
-        ? true
-        : false
-    }
-    if (selectedCountryIds.length > 0) {
-      countryFilter = item.country && selectedCountryIds.includes(item.country.id) ? true : false
-    }
-    return genreFilter && countryFilter
-  }
-
-  function compare(a: Band, b: Band) {
-    const bandA = a.name.toUpperCase()
-    const bandB = b.name.toUpperCase()
-
-    let comparison = 0
-    if (bandA > bandB) {
-      comparison = 1
-    } else if (bandA < bandB) {
-      comparison = -1
-    }
-    return comparison
-  }
 
   function resetAll() {
     setQuery('')
@@ -153,10 +129,9 @@ export const BandsPage: FC<BandsPageProps> = ({ initialBands }) => {
           </div>
           <div className="flex gap-4 items-center">
             <div className="my-4 text-sm text-slate-300">
-              {typeof filteredLength === 'number' && <span>{filteredLength}&nbsp;von&nbsp;</span>}
-              {bands?.length}&nbsp;Einträge
+              {bands?.count}&nbsp;{bands?.count === 1 ? 'Eintrag' : 'Einträge'}
             </div>
-            {typeof filteredLength === 'number' && (
+            {(selectedCountries.length > 0 || selectedGenres.length > 0 || query.length > 0) && (
               <button
                 onClick={resetAll}
                 className="flex gap-2 px-2 py-1 rounded-md text-sm hover:bg-slate-700"
@@ -166,17 +141,13 @@ export const BandsPage: FC<BandsPageProps> = ({ initialBands }) => {
               </button>
             )}
           </div>
-          {typeof filteredLength === 'number' && filteredLength === 0 ? (
+          {bands?.count === 0 ? (
             <div>Blyat! Keine Einträge gefunden.</div>
           ) : (
-            filteredBands
-              .filter(filterRule)
-              .slice(currentPage * perPage, currentPage * perPage + perPage)
-              .sort(compare)
-              .map(band => <BandTableRow key={band.id} band={band} />)
+            bands?.data.map(band => <BandTableRow key={band.id} band={band} />)
           )}
           <Pagination
-            entriesCount={filteredBands.filter(filterRule).length}
+            entriesCount={bands?.count ?? 0}
             setCurrentPage={setCurrentPage}
             currentPage={currentPage}
             perPage={perPage}
@@ -187,7 +158,6 @@ export const BandsPage: FC<BandsPageProps> = ({ initialBands }) => {
         <AddBandForm
           countries={countries}
           genres={genres}
-          bands={bands}
           isOpen={isOpen}
           setIsOpen={setIsOpen}
         />
