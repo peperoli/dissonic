@@ -15,7 +15,7 @@ const LocationMultiSelect = ({ selectedOptions, setSelectedOptions }: LocationMu
     <div className="relative h-full">
       <MultiSelect
         name="locations"
-        options={locations}
+        options={locations?.data}
         isLoading={isLoading}
         selectedOptions={selectedOptions}
         setSelectedOptions={setSelectedOptions}

@@ -63,7 +63,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
   const [selectedGenres, setSelectedGenres] = useState<Genre[]>([])
   const [selectedCountries, setSelectedCountries] = useState<Country[]>([])
   const [query, setQuery] = useState('')
-  const debounceQuery = useDebounce(query, 500)
+  const debounceQuery = useDebounce(query, 200)
   const { data: bands } = useBands(initialBands, {
     filter: {
       countries: selectedCountries.map(item => item.id),
@@ -158,7 +158,6 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
         <AddBandForm
           countries={countries}
           genres={genres}
-          bands={bands?.data}
           isOpen={isOpen}
           setIsOpen={setIsOpen}
         />

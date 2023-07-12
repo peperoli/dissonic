@@ -114,7 +114,7 @@ export const EditConcertForm = ({ isOpen, setIsOpen }: EditConcertFormProps) => 
               onChange={handleChange}
             >
               <option value="">Bitte wählen ...</option>
-              {locations.map(location => (
+              {locations?.data.map(location => (
                 <option key={location.id} value={location.id}>
                   {location.name}
                   {location.city && ', ' + location.city}

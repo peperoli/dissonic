@@ -86,7 +86,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
         </div>
         <div className="grid gap-4">
           <div className="flex items-center gap-4">
-            <div className="text-sm text-slate-300">{concerts?.count}&nbsp;Einträge</div>
+            <div className="my-1.5 text-sm text-slate-300">{concerts?.count}&nbsp;Einträge</div>
             {(selectedBands.length > 0 ||
               selectedLocations.length > 0 ||
               selectedYears ||

@@ -1,13 +1,7 @@
-import {
-  ChangeEvent,
-  Dispatch,
-  FC,
-  SetStateAction,
-  useReducer,
-  useState,
-} from 'react'
+import { ChangeEvent, Dispatch, FC, SetStateAction, useReducer, useState } from 'react'
 import { useQueryClient } from 'react-query'
 import { useAddBand } from '../../hooks/useAddBand'
+import { useBands } from '../../hooks/useBands'
 import { ActionType, addBandReducer } from '../../reducers/addBandReducer'
 import { Band, Country, Genre } from '../../types/types'
 import { Button } from '../Button'
@@ -18,18 +12,12 @@ import { SpotifyArtistSelect } from './SpotifyArtistSelect'
 interface AddBandFormProps {
   countries?: Country[]
   genres?: Genre[]
-  bands?: Band[]
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
 }
 
-export const AddBandForm: FC<AddBandFormProps> = ({
-  countries,
-  genres,
-  bands,
-  isOpen,
-  setIsOpen,
-}) => {
+export const AddBandForm: FC<AddBandFormProps> = ({ countries, genres, isOpen, setIsOpen }) => {
+  const { data: bands } = useBands()
   const queryClient = useQueryClient()
 
   const [selectedGenres, setSelectedGenres] = useState<Genre[]>([])
@@ -41,7 +29,7 @@ export const AddBandForm: FC<AddBandFormProps> = ({
 
   const addBand = useAddBand(formState, selectedGenres, spotifyArtistId || null)
   const regExp = new RegExp(formState.name, 'i')
-  const similarBands = bands?.filter(item => item.name.match(regExp)) || []
+  const similarBands = bands?.data.filter(item => item.name.match(regExp)) || []
   const isSimilar = formState.name.length >= 3 && similarBands.length > 0
 
   function handleChange(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {

@@ -1,14 +1,11 @@
-import supabase from '../../utils/supabase'
 import { BandsPage } from '../../components/bands/BandsPage'
 import { Band, ExtendedRes } from '../../types/types'
-import React from 'react'
-
-export const revalidate = 0
+import supabase from '../../utils/supabase'
 
 const fetchData = async (): Promise<ExtendedRes<Band[]>> => {
   const { data, count, error } = await supabase
     .from('bands')
-    .select('*, country:countries(*), genres(*)', { count: 'exact' })
+    .select('*, country:countries(*), genres(*)', { count: 'estimated' })
     .range(0, 24)
     .order('name')
 

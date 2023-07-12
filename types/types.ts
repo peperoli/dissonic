@@ -69,6 +69,8 @@ export type Genre = Database['public']['Tables']['genres']['Row']
 
 export type Location = Database['public']['Tables']['locations']['Row']
 
+export type AddLocation = Database['public']['Tables']['locations']['Insert']
+
 export type Country = Database['public']['Tables']['countries']['Row']
 
 export type Profile = Database['public']['Tables']['profiles']['Row'] & {
