@@ -7,7 +7,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import { useComments } from '../../hooks/useComments'
 import { useAddComment } from '../../hooks/useAddComment'
 import { CommentItem as Comment } from './Comment'
-import { useQueryClient } from 'react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { useConcertContext } from '../../hooks/useConcertContext'
 dayjs.extend(relativeTime)
 

@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { SpotifyArtist } from '../types/types'
 import { useSpotifyToken } from './useSpotifyToken'
 

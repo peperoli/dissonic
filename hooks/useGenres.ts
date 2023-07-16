@@ -1,4 +1,4 @@
-import { useQuery } from "react-query"
+import { useQuery } from '@tanstack/react-query'
 import { Genre } from "../types/types"
 import supabase from "../utils/supabase"
 
@@ -13,5 +13,5 @@ const fetchGenres = async (): Promise<Genre[]> => {
 }
 
 export const useGenres = () => {
-  return useQuery('genres', fetchGenres)
+  return useQuery(['genres'], fetchGenres)
 }

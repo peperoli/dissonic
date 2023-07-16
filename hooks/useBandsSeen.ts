@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { BandSeen } from '../types/types'
 import supabase from '../utils/supabase'
 
@@ -22,5 +22,5 @@ const fetchBandsSeen = async (): Promise<BandSeen[]> => {
 }
 
 export const useBandsSeen = () => {
-  return useQuery('bandsSeen', fetchBandsSeen)
+  return useQuery(['bandsSeen'], fetchBandsSeen)
 }

@@ -9,7 +9,7 @@ import { User } from '@supabase/supabase-js'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { useAvatar } from '../../hooks/useAvatar'
 import { useEditComment } from '../../hooks/useEditComment'
-import { useQueryClient } from 'react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { ReactionControl } from './ReactionControl'
 import { useConcertContext } from '../../hooks/useConcertContext'
 dayjs.extend(relativeTime)

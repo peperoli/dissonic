@@ -17,7 +17,7 @@ import { BandSeenToggle } from './BandSeenToggle'
 import { useProfiles } from '../../hooks/useProfiles'
 import { useConcert } from '../../hooks/useConcert'
 import { useUser } from '../../hooks/useUser'
-import { useQueryClient } from 'react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { ConcertContext } from '../../hooks/useConcertContext'
 
 interface ConcertPageProps {
@@ -80,7 +80,7 @@ export const ConcertPage: FC<ConcertPageProps> = ({ initialConcert }) => {
       }
 
       setBandsSeen(selectedBandsSeen)
-      queryClient.invalidateQueries('concert')
+      queryClient.invalidateQueries(['concert'])
     } catch (error) {
       if (error instanceof Error) {
         alert(error.message)

@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import supabase from '../utils/supabase'
 
 const deleteReaction = async (commentId: number, userId: string) => {

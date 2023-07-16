@@ -2,7 +2,7 @@ import { Button } from '../Button'
 import Modal from '../Modal'
 import React, { useEffect } from 'react'
 import { useDeleteComment } from '../../hooks/useDeleteComment'
-import { useQueryClient } from 'react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { useConcertContext } from '../../hooks/useConcertContext'
 
 interface DeleteCommentModalProps {

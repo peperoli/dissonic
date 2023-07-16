@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { Country } from '../types/types'
 import supabase from '../utils/supabase'
 
@@ -18,5 +18,5 @@ const fetchCountries = async (): Promise<Country[]> => {
 }
 
 export const useCountries = () => {
-  return useQuery('countries', fetchCountries)
+  return useQuery(['countries'], fetchCountries)
 }

@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { getPagination } from '../lib/getPagination'
 import { ExtendedRes, FetchOptions, Location } from '../types/types'
 import supabase from '../utils/supabase'

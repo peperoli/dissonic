@@ -1,4 +1,4 @@
-import { useMutation } from 'react-query'
+import { useMutation } from '@tanstack/react-query'
 import { EditConcert, Band } from '../types/types'
 import supabase from '../utils/supabase'
 

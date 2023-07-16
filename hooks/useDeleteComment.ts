@@ -1,4 +1,4 @@
-import { useMutation } from 'react-query'
+import { useMutation } from '@tanstack/react-query'
 import supabase from '../utils/supabase'
 
 const deleteComment = async (commentId: number) => {

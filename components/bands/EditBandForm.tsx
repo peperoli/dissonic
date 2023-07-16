@@ -15,7 +15,7 @@ import { useGenres } from '../../hooks/useGenres'
 import { SpotifyArtistSelect } from './SpotifyArtistSelect'
 import { ActionType, editBandReducer } from '../../reducers/editBandReducer'
 import { useEditBand } from '../../hooks/useEditBand'
-import { useQueryClient } from 'react-query'
+import { useQueryClient } from '@tanstack/react-query'
 
 interface EditBandFormProps {
   band: Band

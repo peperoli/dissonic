@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useState } from 'react'
-import { useQueryClient } from 'react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { useAddLocation } from '../../hooks/useAddLocation'
 import { Button } from '../Button'
 import Modal from '../Modal'
@@ -20,7 +20,7 @@ export const AddLocationForm = ({ isOpen, setIsOpen }: AddLocationFormProps) => 
   }
 
   if (addLocation.status === 'success') {
-    queryClient.invalidateQueries('bands')
+    queryClient.invalidateQueries(['bands'])
     setIsOpen(false)
   }
   return (

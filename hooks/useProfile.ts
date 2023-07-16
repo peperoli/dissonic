@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { Profile } from '../types/types'
 import supabase from '../utils/supabase'
 
@@ -18,5 +18,5 @@ const fetchProfile = async (userId: string | undefined): Promise<Profile> => {
 }
 
 export const useProfile = (userId: string | undefined) => {
-  return useQuery('profile', () => fetchProfile(userId), { enabled: !!userId })
+  return useQuery(['profile'], () => fetchProfile(userId), { enabled: !!userId })
 }

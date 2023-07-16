@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import supabase from '../utils/supabase'
 
 const downloadAvatar = async (avatarPath: string | null | undefined): Promise<string | null> => {

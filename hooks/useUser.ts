@@ -1,5 +1,5 @@
 import { User } from '@supabase/supabase-js'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import supabase from '../utils/supabase'
 
 const fetchUser = async (): Promise<User | null> => {
@@ -16,5 +16,5 @@ const fetchUser = async (): Promise<User | null> => {
 }
 
 export function useUser() {
-  return useQuery('user', fetchUser)
+  return useQuery(['user'], fetchUser)
 }

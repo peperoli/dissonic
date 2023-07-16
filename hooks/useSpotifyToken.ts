@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 
 const fetchToken = async (): Promise<string> => {
   const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID
@@ -18,5 +18,5 @@ const fetchToken = async (): Promise<string> => {
 }
 
 export const useSpotifyToken = () => {
-  return useQuery('spotifyAccessToken', fetchToken)
+  return useQuery(['spotifyAccessToken'], fetchToken)
 }

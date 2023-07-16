@@ -1,5 +1,5 @@
 import { ChangeEvent, Dispatch, FC, SetStateAction, useReducer, useState } from 'react'
-import { useQueryClient } from 'react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { useAddBand } from '../../hooks/useAddBand'
 import { useBands } from '../../hooks/useBands'
 import { ActionType, addBandReducer } from '../../reducers/addBandReducer'
@@ -45,7 +45,7 @@ export const AddBandForm: FC<AddBandFormProps> = ({ countries, genres, isOpen, s
   }
 
   if (addBand.isSuccess) {
-    queryClient.invalidateQueries('bands')
+    queryClient.invalidateQueries(['bands'])
     setIsOpen(false)
   }
   return (

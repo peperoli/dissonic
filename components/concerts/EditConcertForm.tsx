@@ -7,7 +7,7 @@ import { Button } from '../Button'
 import Modal from '../Modal'
 import { MultiSelect } from '../MultiSelect'
 import { useEditConcert } from '../../hooks/useEditConcert'
-import { useQueryClient } from 'react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { useConcertContext } from '../../hooks/useConcertContext'
 
 interface EditConcertFormProps {
