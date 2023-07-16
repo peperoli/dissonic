@@ -22,12 +22,11 @@ export interface FetchOptions {
   size?: number
 }
 
-export type Concert = Database['public']['Tables']['concerts']['Row'] &
-  {
-    location?: Location
-    bands?: Band[]
-    bands_seen?: BandSeen[]
-  }
+export type Concert = Database['public']['Tables']['concerts']['Row'] & {
+  location?: Location
+  bands?: Band[]
+  bands_seen?: BandSeen[]
+}
 
 export type AddConcert = Database['public']['Tables']['concerts']['Insert']
 
@@ -53,9 +52,13 @@ export type Band = Database['public']['Tables']['bands']['Row'] & {
   concerts?: Concert[]
 }
 
-export type AddBand = Database['public']['Tables']['bands']['Insert']
+export type AddBand = Database['public']['Tables']['bands']['Insert'] & {
+  genres: Genre[]
+}
 
-export type EditBand = Database['public']['Tables']['bands']['Update']
+export type EditBand = Database['public']['Tables']['bands']['Update'] & {
+  genres: Genre[]
+}
 
 export type BandSeenFull = BandSeen & {
   band: Band
@@ -82,7 +85,7 @@ export type Friend = Database['public']['Tables']['friends']['Row'] & {
   receiver: Profile
 }
 
-export type Option = Band | Genre | Country
+export type Option<IdType = number> = { id: IdType; name: string }
 
 export type SpotifyArtist = {
   id: string

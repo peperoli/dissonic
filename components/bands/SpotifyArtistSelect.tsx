@@ -1,4 +1,3 @@
-import React, { Dispatch, FC, SetStateAction } from 'react'
 import { useSpotifySearch } from '../../hooks/useSpotifySearch'
 import { CheckIcon, ChevronDownIcon, LinkIcon } from '@heroicons/react/20/solid'
 import Image from 'next/image'
@@ -7,11 +6,11 @@ import { Popover } from '@headlessui/react'
 
 interface SelectItemProps {
   item: SpotifyArtist
-  value: string
+  value: string | null
   handleChange: (value: string) => void
 }
 
-const SelectItem: FC<SelectItemProps> = ({ item, value, handleChange }) => {
+const SelectItem = ({ item, value, handleChange }: SelectItemProps) => {
   return (
     <label className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-slate-600 focus-within:bg-slate-600">
       <input
@@ -41,15 +40,15 @@ const SelectItem: FC<SelectItemProps> = ({ item, value, handleChange }) => {
 
 interface SpotifyArtistSelectProps {
   bandName: string
-  value: string
-  setValue: Dispatch<SetStateAction<string>>
+  value: string | null
+  onChange: (event: string) => void
 }
 
-export const SpotifyArtistSelect: FC<SpotifyArtistSelectProps> = ({
+export const SpotifyArtistSelect = ({
   bandName,
   value,
-  setValue,
-}) => {
+  onChange,
+}: SpotifyArtistSelectProps) => {
   const { data: searchResults } = useSpotifySearch(bandName)
   const selectedArtist = searchResults?.find(item => item.id === value)
 
@@ -81,7 +80,7 @@ export const SpotifyArtistSelect: FC<SpotifyArtistSelectProps> = ({
       <Popover.Panel className="fixed md:absolute inset-8 md:inset-auto md:w-full md:max-h-72 md:mt-1 p-2 rounded-lg bg-slate-700 overflow-auto z-20">
         {({ close }) => {
           function handleChange(value: string) {
-            setValue(value)
+            onChange(value)
             close()
           }
           return (

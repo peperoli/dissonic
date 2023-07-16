@@ -1,8 +1,8 @@
 import { useMutation } from '@tanstack/react-query'
-import { AddConcert, Band, Concert } from '../types/types'
+import { AddConcert, Concert } from '../types/types'
 import supabase from '../utils/supabase'
 
-const addConcert = async (concert: AddConcert, bands: Band[]): Promise<Concert> => {
+const addConcert = async (concert: AddConcert, bandIds: number[]): Promise<Concert> => {
   const { data: newConcert, error: addConcertError } = await supabase
     .from('concerts')
     .insert(concert)
@@ -15,7 +15,7 @@ const addConcert = async (concert: AddConcert, bands: Band[]): Promise<Concert> 
 
   const { error: addBandsError } = await supabase
     .from('j_concert_bands')
-    .insert(bands.map(item => ({ concert_id: newConcert?.id, band_id: item.id })))
+    .insert(bandIds.map(item => ({ concert_id: newConcert?.id, band_id: item })))
 
   if (addBandsError) {
     throw addBandsError
@@ -24,6 +24,6 @@ const addConcert = async (concert: AddConcert, bands: Band[]): Promise<Concert> 
   return newConcert
 }
 
-export const useAddConcert = (concert: AddConcert, bands: Band[]) => {
-  return useMutation(() => addConcert(concert, bands))
+export const useAddConcert = (concert: AddConcert, bandIds: number[]) => {
+  return useMutation(() => addConcert(concert, bandIds))
 }

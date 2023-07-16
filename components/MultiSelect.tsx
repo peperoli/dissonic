@@ -8,7 +8,7 @@ import { SpinnerIcon } from './layout/SpinnerIcon'
 interface SelectedOptionProps {
   selectedOption: Option
   selectedOptions: Option[]
-  setSelectedOptions: Dispatch<SetStateAction<any[]>>
+  setSelectedOptions: (event: Option[]) => void
 }
 
 const SelectedOption = ({
@@ -32,7 +32,7 @@ const SelectedOption = ({
 interface MultiSelectOptionProps {
   option: Option
   selectedOptions: Option[]
-  setSelectedOptions: Dispatch<SetStateAction<any[]>>
+  setSelectedOptions: (event: Option[]) => void
   setQuery: Dispatch<SetStateAction<string>>
   searchRef: RefObject<HTMLInputElement>
 }
@@ -69,7 +69,7 @@ interface MultiSelectProps {
   options?: Option[]
   isLoading?: boolean
   selectedOptions: Option[]
-  setSelectedOptions: Dispatch<SetStateAction<any[]>>
+  setSelectedOptions: (event: Option[]) => void
   alwaysOpen?: boolean
   fullHeight?: boolean
 }

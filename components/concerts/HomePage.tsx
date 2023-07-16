@@ -11,7 +11,7 @@ import {
   UserIcon,
 } from '@heroicons/react/20/solid'
 import { PageWrapper } from '../layout/PageWrapper'
-import { Band, Concert, Location, ExtendedRes } from '../../types/types'
+import { Band, Concert, Location, ExtendedRes, Option } from '../../types/types'
 import { useUser } from '../../hooks/useUser'
 import { useConcerts } from '../../hooks/useConcerts'
 import { useCookies } from 'react-cookie'
@@ -27,8 +27,8 @@ type HomePageProps = {
 
 export const HomePage = ({ initialConcerts }: HomePageProps) => {
   const [size, setSize] = useState(25)
-  const [selectedBands, setSelectedBands] = useState<Band[]>([])
-  const [selectedLocations, setSelectedLocations] = useState<Location[]>([])
+  const [selectedBands, setSelectedBands] = useState<Option[]>([])
+  const [selectedLocations, setSelectedLocations] = useState<Option[]>([])
   const [selectedYears, setSelectedYears] = useState<[number, number] | null>(null)
   const [selectedBandsPerConcert, setSelectedBandsPerConcert] = useState<[number, number] | null>(
     null

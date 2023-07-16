@@ -12,7 +12,7 @@ import useMediaQuery from '../../hooks/useMediaQuery'
 import { Pagination } from '../layout/Pagination'
 import { UserMusicIcon } from '../layout/UserMusicIcon'
 import { MultiSelectFilter } from '../MultiSelectFilter'
-import { Band, Country, Genre, ExtendedRes } from '../../types/types'
+import { Band, Country, Genre, ExtendedRes, Option } from '../../types/types'
 import { useBands } from '../../hooks/useBands'
 import { useGenres } from '../../hooks/useGenres'
 import { useCountries } from '../../hooks/useCountries'
@@ -61,7 +61,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
   const perPage = 25
   const [currentPage, setCurrentPage] = useState(0)
   const [selectedGenres, setSelectedGenres] = useState<Genre[]>([])
-  const [selectedCountries, setSelectedCountries] = useState<Country[]>([])
+  const [selectedCountries, setSelectedCountries] = useState<Option[]>([])
   const [query, setQuery] = useState('')
   const debounceQuery = useDebounce(query, 200)
   const { data: bands } = useBands(initialBands, {
@@ -116,7 +116,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
             <Search name="searchBands" placeholder="Bands" query={query} setQuery={setQuery} />
             <MultiSelectFilter
               name="countries"
-              options={countries}
+              options={countries?.map(item => ({ id: item.id, name: item.name ?? 'FEHLER' }))}
               selectedOptions={selectedCountries}
               setSelectedOptions={setSelectedCountries}
             />
@@ -154,14 +154,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
           />
         </Table>
       </main>
-      {isOpen && (
-        <AddBandForm
-          countries={countries}
-          genres={genres}
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-        />
-      )}
+      <AddBandForm isOpen={isOpen} setIsOpen={setIsOpen} />
     </PageWrapper>
   )
 }

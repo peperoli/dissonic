@@ -1,12 +1,12 @@
-import React, { Dispatch, SetStateAction } from 'react'
-import { Location } from '../../types/types'
+import { Dispatch, SetStateAction } from 'react'
+import { Option } from '../../types/types'
 import { FilterButton } from './../FilterButton'
 import { MultiSelect } from './../MultiSelect'
 import { useLocations } from './../../hooks/useLocations'
 
 type LocationMultiSelectProps = {
-  selectedOptions: Location[]
-  setSelectedOptions: Dispatch<SetStateAction<Location[]>>
+  selectedOptions: Option[]
+  setSelectedOptions: Dispatch<SetStateAction<Option[]>>
 }
 
 const LocationMultiSelect = ({ selectedOptions, setSelectedOptions }: LocationMultiSelectProps) => {
@@ -27,8 +27,8 @@ const LocationMultiSelect = ({ selectedOptions, setSelectedOptions }: LocationMu
 }
 
 type LocationFilterProps = {
-  selectedOptions: Location[]
-  setSelectedOptions: Dispatch<SetStateAction<Location[]>>
+  selectedOptions: Option[]
+  setSelectedOptions: Dispatch<SetStateAction<Option[]>>
 }
 
 export const LocationFilter = ({ selectedOptions, setSelectedOptions }: LocationFilterProps) => {

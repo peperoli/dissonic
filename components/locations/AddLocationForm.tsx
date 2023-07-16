@@ -1,8 +1,10 @@
-import { Dispatch, SetStateAction, useState } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
+import { Dispatch, SetStateAction } from 'react'
 import { useAddLocation } from '../../hooks/useAddLocation'
+import { AddLocation } from '../../types/types'
 import { Button } from '../Button'
+import { TextField } from '../forms/TextField'
 import Modal from '../Modal'
+import { useForm, SubmitHandler } from 'react-hook-form'
 
 interface AddLocationFormProps {
   isOpen: boolean
@@ -10,53 +12,39 @@ interface AddLocationFormProps {
 }
 
 export const AddLocationForm = ({ isOpen, setIsOpen }: AddLocationFormProps) => {
-  const queryClient = useQueryClient()
-  const [name, setName] = useState('')
-  const [city, setCity] = useState('')
-  const addLocation = useAddLocation({ name: name, city: city })
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<AddLocation>()
+  const { mutate, status } = useAddLocation()
 
-  if (addLocation.status === 'error') {
-    console.log(addLocation.error)
+  const onSubmit: SubmitHandler<AddLocation> = async function (formData) {
+    mutate(formData)
   }
 
-  if (addLocation.status === 'success') {
-    queryClient.invalidateQueries(['bands'])
+  if (status === 'success') {
     setIsOpen(false)
   }
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-      <form className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <h2>Location erstellen</h2>
-        <div className="form-control">
-          <input
-            type="text"
-            name="name"
-            id="name"
-            value={name}
-            onChange={event => setName(event?.target.value)}
-            placeholder="Hallenstadion"
-          />
-          <label htmlFor="name">Name</label>
-        </div>
-        <div className="form-control">
-          <input
-            type="text"
-            name="city"
-            id="city"
-            value={city}
-            onChange={event => setCity(event?.target.value)}
-            placeholder="Zürich"
-          />
-          <label htmlFor="city">Ort</label>
-        </div>
+        <TextField
+          {...register('name', { required: true })}
+          error={errors.name}
+          label="Name"
+          placeholder="Hallenstadion"
+        />
+        <TextField
+          {...register('city', { required: true })}
+          error={errors.city}
+          label="Stadt"
+          placeholder="Zürich"
+        />
         <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 bg-slate-800 z-10">
           <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
-          <Button
-            label="Erstellen"
-            onClick={() => addLocation.mutate()}
-            style="primary"
-            loading={addLocation.status === 'loading'}
-          />
+          <Button type="submit" label="Erstellen" style="primary" loading={status === 'loading'} />
         </div>
       </form>
     </Modal>

@@ -3,7 +3,7 @@ import { MultiSelect } from '../MultiSelect'
 import { Button } from '../Button'
 import { useRouter } from 'next/navigation'
 import Modal from '../Modal'
-import { AddConcert, Band } from '../../types/types'
+import { AddConcert, Band, Option } from '../../types/types'
 import Link from 'next/link'
 import { useBands } from '../../hooks/useBands'
 import { useLocations } from '../../hooks/useLocations'
@@ -31,9 +31,9 @@ export const AddConcertForm = ({ isOpen, setIsOpen }: AddConcertFormProps) => {
   }
 
   const [formState, formDispatch] = useReducer(addConcertReducer, INITIAL_STATE)
-  const [selectedBands, setSelectedBands] = useState<Band[]>([])
+  const [selectedBands, setSelectedBands] = useState<Option[]>([])
 
-  const addConcert = useAddConcert(formState, selectedBands)
+  const addConcert = useAddConcert(formState, selectedBands.map(item => item.id))
   const router = useRouter()
 
   const similarConcerts = concerts?.data

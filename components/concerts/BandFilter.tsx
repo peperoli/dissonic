@@ -1,12 +1,12 @@
 import { Dispatch, SetStateAction } from 'react'
-import { Band } from '../../types/types'
+import { Band, Option } from '../../types/types'
 import { FilterButton } from './../FilterButton'
 import { MultiSelect } from './../MultiSelect'
 import { useBands } from './../../hooks/useBands'
 
 type BandMultiSelectProps = {
-  selectedOptions: Band[]
-  setSelectedOptions: Dispatch<SetStateAction<Band[]>>
+  selectedOptions: Option[]
+  setSelectedOptions: Dispatch<SetStateAction<Option[]>>
 }
 
 const BandMultiSelect = ({ selectedOptions, setSelectedOptions }: BandMultiSelectProps) => {
@@ -27,8 +27,8 @@ const BandMultiSelect = ({ selectedOptions, setSelectedOptions }: BandMultiSelec
 }
 
 type BandFilterProps = {
-  selectedOptions: Band[]
-  setSelectedOptions: Dispatch<SetStateAction<Band[]>>
+  selectedOptions: Option[]
+  setSelectedOptions: Dispatch<SetStateAction<Option[]>>
 }
 
 export const BandFilter = ({ selectedOptions, setSelectedOptions }: BandFilterProps) => {

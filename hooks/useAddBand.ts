@@ -1,14 +1,14 @@
-import { useMutation } from '@tanstack/react-query'
-import { Genre, EditBand } from '../types/types'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { AddBand } from '../types/types'
 import supabase from '../utils/supabase'
 
-const addBand = async (band: EditBand, addGenres: Genre[], spotifyArtistId: string | null) => {
+const addBand = async (band: AddBand) => {
   const { data: newBand, error: bandError } = await supabase
     .from('bands')
     .insert({
       name: band.name,
       country_id: band.country_id,
-      spotify_artist_id: spotifyArtistId,
+      spotify_artist_id: band.spotify_artist_id,
     })
     .select()
     .single()
@@ -19,13 +19,17 @@ const addBand = async (band: EditBand, addGenres: Genre[], spotifyArtistId: stri
 
   const { error: genresError } = await supabase
     .from('j_band_genres')
-    .insert(addGenres.map(genre => ({ band_id: newBand?.id, genre_id: genre.id })))
+    .insert(band.genres.map(genre => ({ band_id: newBand?.id, genre_id: genre.id })))
 
   if (genresError) {
     throw genresError
   }
 }
 
-export const useAddBand = (band: EditBand, addGenres: Genre[], spotifyArtistId: string | null) => {
-  return useMutation(() => addBand(band, addGenres, spotifyArtistId))
+export const useAddBand = () => {
+  const queryClient = useQueryClient()
+  return useMutation(addBand, {
+    onError: error => console.error(error),
+    onSuccess: () => queryClient.invalidateQueries(['bands']),
+  })
 }

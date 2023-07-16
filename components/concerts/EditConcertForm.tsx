@@ -29,14 +29,14 @@ export const EditConcertForm = ({ isOpen, setIsOpen }: EditConcertFormProps) => 
     location_id: concert.location?.id,
   }
   const [formState, formDispatch] = useReducer(editConcertReducer, INITIAL_STATE)
-  const [selectedBands, setSelectedBands] = useState(concert.bands || [])
+  const [selectedBands, setSelectedBands] = useState(concert.bands?.map(item => ({id: item.id, name: item.name})) || [])
 
   const addBands = selectedBands.filter(item => !concert.bands?.find(item2 => item.id === item2.id))
   const deleteBands = concert.bands?.filter(
     item => !selectedBands.find(item2 => item.id === item2.id)
   ) || []
     
-  const editConcert = useEditConcert(concert.id, formState, addBands, deleteBands)
+  const editConcert = useEditConcert(concert.id, formState, addBands.map(item => item.id), deleteBands)
 
   function handleChange(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     formDispatch({

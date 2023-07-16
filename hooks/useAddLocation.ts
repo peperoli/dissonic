@@ -1,8 +1,8 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AddLocation } from '../types/types'
 import supabase from '../utils/supabase'
 
-const addLocation = async (location: AddLocation) => {
+const addLocation = async (location?: AddLocation) => {
   const { error } = await supabase.from('locations').insert(location)
 
   if (error) {
@@ -10,6 +10,10 @@ const addLocation = async (location: AddLocation) => {
   }
 }
 
-export const useAddLocation = (location: AddLocation) => {
-  return useMutation(() => addLocation(location))
+export const useAddLocation = () => {
+  const queryClient = useQueryClient()
+  return useMutation(addLocation, {
+    onError: error => console.error(error),
+    onSuccess: () => queryClient.invalidateQueries(['locations']),
+  })
 }

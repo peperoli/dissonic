@@ -1,53 +1,67 @@
 import { useMutation } from '@tanstack/react-query'
-import { Genre, EditBand } from '../types/types'
+import { EditBand, Band } from '../types/types'
 import supabase from '../utils/supabase'
 
-const editBand = async (
-  bandId: number,
-  band: EditBand,
-  addGenres: Genre[],
-  deleteGenres: Genre[],
-  spotifyArtistId: string | null
-) => {
-  const { error: editBandError } = await supabase
-    .from('bands')
-    .update({ spotify_artist_id: spotifyArtistId, ...band })
-    .eq('id', bandId)
+const editBand = async (newBand: EditBand) => {
+  try {
+    const { error: editBandError } = await supabase
+      .from('bands')
+      .update({
+        name: newBand.name,
+        country_id: newBand.country_id,
+        spotify_artist_id: newBand.spotify_artist_id,
+      })
+      .eq('id', newBand.id)
 
-  if (editBandError) {
-    throw editBandError
-  }
-
-  const { error: addGenresError } = await supabase
-    .from('j_band_genres')
-    .insert(addGenres.map(genre => ({ band_id: bandId, genre_id: genre.id })))
-
-  if (addGenresError) {
-    throw addGenresError
-  }
-
-  if (deleteGenres) {
-    const { error: deleteGenresError } = await supabase
-      .from('j_band_genres')
-      .delete()
-      .eq('band_id', bandId)
-      .in(
-        'genre_id',
-        deleteGenres.map(item => item.id)
-      )
-
-    if (deleteGenresError) {
-      throw deleteGenresError
+    if (editBandError) {
+      throw editBandError
     }
+
+    const { data: oldBand, error: oldGenresError } = await supabase
+      .from('bands')
+      .select('id, genres(*)')
+      .eq('id', newBand.id)
+      .returns<Band>()
+      .single()
+
+    if (oldGenresError) {
+      throw oldGenresError
+    }
+
+    try {
+      const addGenres = newBand.genres.filter(item => !oldBand.genres.includes(item))
+      const deleteGenres = oldBand.genres.filter(item => !newBand.genres.includes(item))
+
+      const { error: deleteGenresError } = await supabase
+        .from('j_band_genres')
+        .delete()
+        .eq('band_id', newBand.id)
+        .in(
+          'genre_id',
+          deleteGenres.map(item => item.id)
+        )
+
+      if (deleteGenresError) {
+        throw deleteGenresError
+      }
+
+      const { error: addGenresError } = await supabase
+        .from('j_band_genres')
+        .insert(addGenres.map(genre => ({ band_id: newBand.id, genre_id: genre.id })))
+
+      if (addGenresError) {
+        throw addGenresError
+      }
+    } catch (error) {
+      throw error
+    }
+  } catch (error) {
+    throw error
   }
 }
 
-export const useEditBand = (
-  bandId: number,
-  band: EditBand,
-  addGenres: Genre[],
-  deleteGenres: Genre[],
-  spotifyArtistId: string | null
-) => {
-  return useMutation(() => editBand(bandId, band, addGenres, deleteGenres, spotifyArtistId))
+export const useEditBand = () => {
+  return useMutation(editBand, {
+    onError: error => console.error(error),
+  })
 }

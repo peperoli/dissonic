@@ -94,7 +94,7 @@ export const BandPage = ({ initialBand }: BandPageProps) => {
         )}
       </main>
       <DeleteBandModal band={band} isOpen={deleteIsOpen} setIsOpen={setDeleteIsOpen} />
-      {editIsOpen && <EditBandForm band={band} isOpen={editIsOpen} setIsOpen={setEditIsOpen} />}
+      <EditBandForm band={band} isOpen={editIsOpen} setIsOpen={setEditIsOpen} />
     </PageWrapper>
   )
 }
