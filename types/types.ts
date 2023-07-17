@@ -28,9 +28,13 @@ export type Concert = Database['public']['Tables']['concerts']['Row'] & {
   bands_seen?: BandSeen[]
 }
 
-export type AddConcert = Database['public']['Tables']['concerts']['Insert']
+export type AddConcert = Database['public']['Tables']['concerts']['Insert'] & {
+  bands?: Option[]
+}
 
-export type EditConcert = Database['public']['Tables']['concerts']['Update']
+export type EditConcert = Database['public']['Tables']['concerts']['Update'] & {
+  bands?: Option[]
+}
 
 export type Comment = Database['public']['Tables']['comments']['Row'] & {
   reactions?: Reaction[]
@@ -85,7 +89,7 @@ export type Friend = Database['public']['Tables']['friends']['Row'] & {
   receiver: Profile
 }
 
-export type Option<IdType = number> = { id: IdType; name: string }
+export type Option<IdType = number> = { id: IdType; name: string, [key: string]: any }
 
 export type SpotifyArtist = {
   id: string

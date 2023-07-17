@@ -28,8 +28,8 @@ export const AddLocationForm = ({ isOpen, setIsOpen }: AddLocationFormProps) => 
   }
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <h2>Location erstellen</h2>
+      <h2 className="mb-8">Location erstellen</h2>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <TextField
           {...register('name', { required: true })}
           error={errors.name}

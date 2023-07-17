@@ -58,7 +58,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           )}
         >
           <>
-            {icon}
+            <span className={clsx(style === 'tag' && 'p-0.5 rounded-full text-sm bg-slate-800')}>{icon}</span>
             <span className={`${contentType === 'icon' ? ' sr-only ' : ''}`}>{label}</span>
           </>
         </span>

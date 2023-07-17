@@ -186,7 +186,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
           </div>
         </div>
       </main>
-      {isOpen && <AddConcertForm isOpen={isOpen} setIsOpen={setIsOpen} />}
+      <AddConcertForm isOpen={isOpen} setIsOpen={setIsOpen} />
     </PageWrapper>
   )
 }

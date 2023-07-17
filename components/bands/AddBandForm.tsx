@@ -20,16 +20,12 @@ export const AddBandForm = ({ isOpen, setIsOpen }: AddBandFormProps) => {
   const close = () => setIsOpen(false)
 
   if (status === 'success') {
-    setIsOpen(false)
+    close()
   }
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-      <h2>Band erstellen</h2>
-      <Form
-        onSubmit={onSubmit}
-        status={status}
-        close={close}
-      />
+      <h2 className="mb-8">Band erstellen</h2>
+      <Form onSubmit={onSubmit} status={status} close={close} />
     </Modal>
   )
 }

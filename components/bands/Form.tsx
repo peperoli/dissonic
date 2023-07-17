@@ -31,7 +31,7 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
   const similarBands = bands?.data.filter(item => item.name.match(regExp)) || []
   const isSimilar = dirtyFields.name && watch('name')?.length >= 3 && similarBands.length > 0
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
       <TextField
         {...register('name', { required: true })}
         error={errors.name}
@@ -51,7 +51,7 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
       {countries && (
         <Select
           {...register('country_id', { required: true })}
-          options={countries.map(item => ({ label: item.name as string, value: item.id })) ?? []}
+          options={countries.map(item => ({ id: item.id, name: item.name ?? 'FEHLER' })) ?? []}
           error={errors.country_id}
           label="Land"
         />

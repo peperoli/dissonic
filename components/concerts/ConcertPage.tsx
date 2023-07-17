@@ -131,7 +131,7 @@ export const ConcertPage: FC<ConcertPageProps> = ({ initialConcert }) => {
 
   return (
     <PageWrapper>
-      <ConcertContext.Provider value={{concert}}>
+      <ConcertContext.Provider value={{ concert }}>
         <main className="grid gap-4 w-full max-w-2xl p-4 md:p-8">
           <div>
             <Link href="/" className="btn btn-link">
@@ -222,9 +222,7 @@ export const ConcertPage: FC<ConcertPageProps> = ({ initialConcert }) => {
               <Comments user={user} profiles={profiles} />
             </div>
           )}
-          {editIsOpen && (
-            <EditConcertForm isOpen={editIsOpen} setIsOpen={setEditIsOpen} />
-          )}
+          <EditConcertForm isOpen={editIsOpen} setIsOpen={setEditIsOpen} />
           <DeleteConcertModal isOpen={deleteIsOpen} setIsOpen={setDeleteIsOpen} />
         </main>
       </ConcertContext.Provider>

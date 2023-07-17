@@ -4,6 +4,17 @@ import supabase from '../utils/supabase'
 
 const editBand = async (newBand: EditBand) => {
   try {
+    const { data: oldBand, error: oldGenresError } = await supabase
+      .from('bands')
+      .select('id, genres(*)')
+      .eq('id', newBand.id)
+      .returns<Band>()
+      .single()
+
+    if (oldGenresError) {
+      throw oldGenresError
+    }
+
     const { error: editBandError } = await supabase
       .from('bands')
       .update({
@@ -15,17 +26,6 @@ const editBand = async (newBand: EditBand) => {
 
     if (editBandError) {
       throw editBandError
-    }
-
-    const { data: oldBand, error: oldGenresError } = await supabase
-      .from('bands')
-      .select('id, genres(*)')
-      .eq('id', newBand.id)
-      .returns<Band>()
-      .single()
-
-    if (oldGenresError) {
-      throw oldGenresError
     }
 
     try {
