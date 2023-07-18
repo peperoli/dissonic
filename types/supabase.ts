@@ -3,7 +3,7 @@ export type Json =
   | number
   | boolean
   | null
-  | { [key: string]: Json }
+  | { [key: string]: Json | undefined }
   | Json[]
 
 export interface Database {
@@ -28,32 +28,48 @@ export interface Database {
           name?: string
           spotify_artist_id?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: "bands_country_id_fkey"
+            columns: ["country_id"]
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       comments: {
         Row: {
-          concert_id: string | null
+          concert_id: string
           content: Json | null
           created_at: string | null
           edited_at: string | null
           id: number
-          user_id: string | null
+          user_id: string
         }
         Insert: {
-          concert_id?: string | null
+          concert_id: string
           content?: Json | null
           created_at?: string | null
           edited_at?: string | null
           id?: number
-          user_id?: string | null
+          user_id: string
         }
         Update: {
-          concert_id?: string | null
+          concert_id?: string
           content?: Json | null
           created_at?: string | null
           edited_at?: string | null
           id?: number
-          user_id?: string | null
+          user_id?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "comments_concert_id_fkey"
+            columns: ["concert_id"]
+            referencedRelation: "concerts"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       concerts: {
         Row: {
@@ -62,8 +78,7 @@ export interface Database {
           date_start: string
           id: string
           is_festival: boolean
-          is_public: boolean
-          location_id: number | null
+          location_id: number
           name: string | null
         }
         Insert: {
@@ -72,8 +87,7 @@ export interface Database {
           date_start: string
           id?: string
           is_festival?: boolean
-          is_public?: boolean
-          location_id?: number | null
+          location_id: number
           name?: string | null
         }
         Update: {
@@ -82,10 +96,44 @@ export interface Database {
           date_start?: string
           id?: string
           is_festival?: boolean
-          is_public?: boolean
-          location_id?: number | null
+          location_id?: number
           name?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: "concerts_location_id_fkey"
+            columns: ["location_id"]
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      contributions: {
+        Row: {
+          action: string
+          id: string
+          item: string
+          state_new: Json | null
+          state_old: Json | null
+          timestamp: string | null
+        }
+        Insert: {
+          action: string
+          id?: string
+          item: string
+          state_new?: Json | null
+          state_old?: Json | null
+          timestamp?: string | null
+        }
+        Update: {
+          action?: string
+          id?: string
+          item?: string
+          state_new?: Json | null
+          state_old?: Json | null
+          timestamp?: string | null
+        }
+        Relationships: []
       }
       countries: {
         Row: {
@@ -112,6 +160,7 @@ export interface Database {
           local_name?: string | null
           name?: string | null
         }
+        Relationships: []
       }
       friends: {
         Row: {
@@ -135,6 +184,20 @@ export interface Database {
           receiver_id?: string
           sender_id?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "friends_receiver_id_fkey"
+            columns: ["receiver_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "friends_sender_id_fkey"
+            columns: ["sender_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       genres: {
         Row: {
@@ -149,6 +212,7 @@ export interface Database {
           id?: number
           name?: string
         }
+        Relationships: []
       }
       j_band_genres: {
         Row: {
@@ -163,6 +227,20 @@ export interface Database {
           band_id?: number
           genre_id?: number
         }
+        Relationships: [
+          {
+            foreignKeyName: "j_band_genres_band_id_fkey"
+            columns: ["band_id"]
+            referencedRelation: "bands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "j_band_genres_genre_id_fkey"
+            columns: ["genre_id"]
+            referencedRelation: "genres"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       j_bands_seen: {
         Row: {
@@ -180,6 +258,26 @@ export interface Database {
           concert_id?: string
           user_id?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "j_bands_seen_band_id_fkey"
+            columns: ["band_id"]
+            referencedRelation: "bands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "j_bands_seen_concert_id_fkey"
+            columns: ["concert_id"]
+            referencedRelation: "concerts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "j_bands_seen_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       j_concert_bands: {
         Row: {
@@ -194,23 +292,38 @@ export interface Database {
           band_id?: number
           concert_id?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "j_concert_bands_band_id_fkey"
+            columns: ["band_id"]
+            referencedRelation: "bands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "j_concert_bands_concert_id_fkey"
+            columns: ["concert_id"]
+            referencedRelation: "concerts"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       locations: {
         Row: {
-          city: string | null
+          city: string
           id: number
           name: string
         }
         Insert: {
-          city?: string | null
+          city: string
           id?: number
           name: string
         }
         Update: {
-          city?: string | null
+          city?: string
           id?: number
           name?: string
         }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -231,6 +344,14 @@ export interface Database {
           id?: string
           username?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       reactions: {
         Row: {
@@ -251,6 +372,20 @@ export interface Database {
           type?: string
           user_id?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "reactions_comment_id_fkey"
+            columns: ["comment_id"]
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reactions_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {

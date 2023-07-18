@@ -225,7 +225,7 @@ export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
           )}
           {user && profiles && (
             <div className="p-6 rounded-lg bg-slate-800">
-              <Comments user={user} profiles={profiles} />
+              <Comments />
             </div>
           )}
           <EditConcertForm isOpen={editIsOpen} setIsOpen={setEditIsOpen} />
