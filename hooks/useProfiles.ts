@@ -5,7 +5,7 @@ import supabase from "../utils/supabase"
 const fetchProfiles = async (options?: {ids?: string[]}): Promise<Profile[]> => {
   let query = supabase.from('profiles').select('*')
 
-  if (options?.ids && options.ids.length > 0) {
+  if (options?.ids) {
     query = query.in('id', options.ids)
   }
   

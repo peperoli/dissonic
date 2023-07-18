@@ -39,10 +39,10 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
       item.bands?.find(band => watch('bands')?.find(selectedBand => band.id === selectedBand.id))
     )
     .filter(item => item.location?.id === Number(watch('location_id')))
-  const isSimilar = similarConcerts && similarConcerts.length > 0
+  const isSimilar = !defaultValues && similarConcerts && similarConcerts.length > 0
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-      <TextField {...register('name')} label="Name (optional)" />
+      <TextField {...register('name')} label="Name (optional)" placeholder="Greenfield" />
       <CheckBox {...register('is_festival')} label="Festival" />
       <div className="flex gap-4">
         <TextField

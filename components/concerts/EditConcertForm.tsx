@@ -24,8 +24,10 @@ export const EditConcertForm = ({ isOpen, setIsOpen }: EditConcertFormProps) => 
   const close = () => setIsOpen(false)
 
   if (status === 'success') {
-    queryClient.invalidateQueries(['concert', concert.id])
-    close()
+    queryClient
+      .invalidateQueries(['concert', concert.id])
+      .catch(error => console.error(error))
+      .finally(() => close())
   }
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>

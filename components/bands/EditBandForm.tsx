@@ -1,8 +1,6 @@
 import { Dispatch, SetStateAction } from 'react'
 import Modal from '../Modal'
 import { Band, EditBand } from '../../types/types'
-import { useCountries } from '../../hooks/useCountries'
-import { useGenres } from '../../hooks/useGenres'
 import { useEditBand } from '../../hooks/useEditBand'
 import { useQueryClient } from '@tanstack/react-query'
 import { Form } from './Form'

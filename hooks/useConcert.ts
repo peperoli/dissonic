@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Concert } from '../types/types'
 import supabase from '../utils/supabase'
 
-const fetchConcert = async (concertId?: string): Promise<Concert> => {
+const fetchConcert = async (concertId: string): Promise<Concert> => {
   const { data, error } = await supabase
     .from('concerts')
     .select(
@@ -18,9 +18,8 @@ const fetchConcert = async (concertId?: string): Promise<Concert> => {
   return data
 }
 
-export const useConcert = (initialConcert?: Concert, concertId?: string) => {
+export const useConcert = (initialConcert: Concert | null, concertId: string) => {
   return useQuery(['concert', concertId], () => fetchConcert(concertId), {
     initialData: initialConcert,
-    enabled: !!concertId,
   })
 }

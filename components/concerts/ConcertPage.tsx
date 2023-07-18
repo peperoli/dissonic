@@ -1,32 +1,33 @@
 'use client'
 
-import supabase from '../../utils/supabase'
-import Link from 'next/link'
-import { EditConcertForm } from './EditConcertForm'
 import { ArrowLeftIcon, CalendarIcon, MapPinIcon, UsersIcon } from '@heroicons/react/20/solid'
-import React, { FC, useEffect, useState } from 'react'
-import { PageWrapper } from '../layout/PageWrapper'
+import { useQueryClient } from '@tanstack/react-query'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { useConcert } from '../../hooks/useConcert'
+import { ConcertContext } from '../../hooks/useConcertContext'
+import { useProfiles } from '../../hooks/useProfiles'
+import { useUser } from '../../hooks/useUser'
+import { BandSeen, Concert } from '../../types/types'
+import supabase from '../../utils/supabase'
 import { Button } from '../Button'
-import dayjs from 'dayjs'
-import 'dayjs/locale/de'
-import { GenreChart } from './GenreChart'
+import { PageWrapper } from '../layout/PageWrapper'
+import { BandSeenToggle } from './BandSeenToggle'
 import { Comments } from './Comments'
 import { DeleteConcertModal } from './DeleteConcertModal'
-import { BandSeen, Concert } from '../../types/types'
-import { BandSeenToggle } from './BandSeenToggle'
-import { useProfiles } from '../../hooks/useProfiles'
-import { useConcert } from '../../hooks/useConcert'
-import { useUser } from '../../hooks/useUser'
-import { useQueryClient } from '@tanstack/react-query'
-import { ConcertContext } from '../../hooks/useConcertContext'
+import { EditConcertForm } from './EditConcertForm'
+import { GenreChart } from './GenreChart'
 
 interface ConcertPageProps {
   initialConcert: Concert
 }
 
-export const ConcertPage: FC<ConcertPageProps> = ({ initialConcert }) => {
+export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
   const { data: profiles } = useProfiles()
-  const { data: concert, isLoading: concertIsLoading } = useConcert(initialConcert)
+  const { data: concert, isLoading: concertIsLoading } = useConcert(
+    initialConcert,
+    initialConcert.id
+  )
   const { data: user } = useUser()
   const queryClient = useQueryClient()
 
@@ -48,10 +49,14 @@ export const ConcertPage: FC<ConcertPageProps> = ({ initialConcert }) => {
   const deleteBandsSeen = bandsSeen?.filter(
     item => !selectedBandsSeen.find(item2 => item.band_id === item2.band_id)
   )
-  const dateFormat =
-    concert && new Date(concert.date_start).getFullYear() === new Date().getFullYear()
-      ? 'DD. MMM'
-      : 'DD. MMM YYYY'
+  const dateFormat: Intl.DateTimeFormatOptions = {
+    day: 'numeric',
+    month: 'long',
+    year:
+      concert && new Date(concert.date_start).getFullYear() === new Date().getFullYear()
+        ? undefined
+        : 'numeric',
+  }
   const fanIds = concert?.bands_seen && new Set(concert.bands_seen.map(item => item.user_id))
   const fanProfiles = profiles?.filter(profile => fanIds?.has(profile.id))
 
@@ -80,7 +85,7 @@ export const ConcertPage: FC<ConcertPageProps> = ({ initialConcert }) => {
       }
 
       setBandsSeen(selectedBandsSeen)
-      queryClient.invalidateQueries(['concert'])
+      queryClient.invalidateQueries(['concert', concert?.id])
     } catch (error) {
       if (error instanceof Error) {
         alert(error.message)
@@ -176,10 +181,11 @@ export const ConcertPage: FC<ConcertPageProps> = ({ initialConcert }) => {
             <div className="flex flex-col md:flex-row gap-4 w-full mt-4">
               <div className="inline-flex items-center">
                 <CalendarIcon className="h-icon mr-2 text-slate-300" />
-                {dayjs(concert.date_start).locale('de-ch').format(dateFormat)}
+                {new Date(concert.date_start).toLocaleDateString('de-CH', dateFormat)}
                 {concert.date_end && (
                   <span>
-                    &nbsp;&ndash; {dayjs(concert.date_end).locale('de-ch').format(dateFormat)}
+                    &nbsp;&ndash;{' '}
+                    {new Date(concert.date_end).toLocaleDateString('de-CH', dateFormat)}
                   </span>
                 )}
               </div>
