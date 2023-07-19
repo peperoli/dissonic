@@ -4,10 +4,11 @@
 
     input[type="text"],
     input[type="date"],
+    input[type="email"],
     input[type="password"],
     textarea,
     select {
-      @apply block w-full px-4 pt-5 pb-1 rounded-lg border bg-slate-700 accent-slate-50;
+      @apply block w-full px-4 pt-5 pb-1 rounded-lg border bg-slate-750 accent-slate-50;
       
       &::placeholder {
         @apply text-slate-300;

@@ -1,13 +1,14 @@
 import clsx from 'clsx'
-import { forwardRef } from 'react'
+import { forwardRef, HTMLInputTypeAttribute } from 'react'
 import { FieldError } from 'react-hook-form'
 
 type TextFieldProps = {
   name: string
   label: string
-  type?: string
+  type?: HTMLInputTypeAttribute
   placeholder?: string
   error?: FieldError
+  autofill?: 'on' | 'off'
 }
 
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
@@ -24,7 +25,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           {...props}
         />
         <label htmlFor={name}>{label}</label>
-        {error && <span className="mt-1 text-sm text-yellow">Bitte fülle dieses Feld aus.</span>}
+        {error && <span className="mt-1 text-sm text-yellow">{error.message || 'Bitte fülle dieses Feld aus.'}</span>}
       </div>
     )
   }

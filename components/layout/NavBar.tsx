@@ -10,18 +10,24 @@ import { useLogOut } from '../../hooks/useLogOut'
 import { useUser } from '../../hooks/useUser'
 import { useProfile } from '../../hooks/useProfile'
 import { useAvatar } from '../../hooks/useAvatar'
+import { useEffect } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 
 export const NavBar = () => {
   const { data: user } = useUser()
   const { data: profile } = useProfile(user?.id)
   const { data: avatarUrl } = useAvatar(profile?.avatar_path)
-  const pendingInvites = profile?.friends[0].count ?? 0
+  const pendingInvites = (profile?.friends && profile.friends[0].count) || 0
   const logOutMutation = useLogOut()
+  const queryClient = useQueryClient()
   const router = useRouter()
 
-  if (logOutMutation.isSuccess) {
-    router.push('/login')
-  }
+  useEffect(() => {
+    if (logOutMutation.status === 'success') {
+      queryClient.invalidateQueries(['user'])
+      router.push('/login')
+    }
+  }, [logOutMutation.status])
   return (
     <nav className="flex justify-between items-center p-4 md:px-12 md:py-8">
       <Link href="/">

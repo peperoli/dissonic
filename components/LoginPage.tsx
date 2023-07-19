@@ -1,55 +1,52 @@
-"use client"
+'use client'
 
-import { useRouter } from "next/navigation"
-import { PageWrapper } from "./layout/PageWrapper"
-import supabase from "../utils/supabase"
-import React, { FormEvent } from "react"
-import { Button } from "./Button"
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import { useSignIn } from '../hooks/useSignIn'
+import { Button } from './Button'
+import { TextField } from './forms/TextField'
+import { PageWrapper } from './layout/PageWrapper'
 
 export default function LoginPage() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<{ email: string; password: string }>()
+  const { mutate, status } = useSignIn()
   const router = useRouter()
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    const target = event.target as typeof event.target & {
-      email: { value: string }
-      password: { value: string }
-    }
-
-    try {
-      const { error: loginError } = await supabase.auth.signInWithPassword({
-        email: target.email.value,
-        password: target.password.value,
-      })
-
-      if (loginError) {
-        throw loginError
-      }
-
-      router.push('/')
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message)
-      } else {
-        alert('Unexpected error occurred, check the console.')
-        console.error(error)
-      }
-    }
+  const onSubmit: SubmitHandler<{ email: string; password: string }> = async formData => {
+    mutate(formData)
   }
+
+  useEffect(() => {
+    if (status === 'success') {
+      router.push('/')
+    }
+  }, [status])
   return (
     <PageWrapper>
       <main className="w-full max-w-lg p-8">
         <h1>Anmelden &amp; Konzerte eintragen</h1>
-        <form onSubmit={handleSubmit} className="grid gap-4">
-          <div className="form-control">
-            <input type="text" id="email" name="email" placeholder="william@delos.com" />
-            <label htmlFor="email">E-Mail</label>
+        <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5">
+          <TextField
+            {...register('email', { required: true })}
+            error={errors.email}
+            type="email"
+            label="E-Mail"
+            placeholder="william@delos.com"
+          />
+          <TextField
+            {...register('password', { required: true })}
+            error={errors.password}
+            type="password"
+            label="Passwort"
+          />
+          <div>
+            <Button type="submit" label="Anmelden" style="primary" loading={status === 'loading'} />
           </div>
-          <div className="form-control">
-            <input type="password" id="password" name="password" placeholder="" />
-            <label htmlFor="password">Passwort</label>
-          </div>
-          <Button type="submit" label="Anmelden" style="primary" />
         </form>
       </main>
     </PageWrapper>

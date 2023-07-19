@@ -15,27 +15,28 @@ import { AddFriendModal } from './AddFriendModal'
 import { BandSeenFull, Friend, Profile } from '../../types/types'
 import { useUser } from '../../hooks/useUser'
 import { useAvatar } from '../../hooks/useAvatar'
+import { useProfile } from '../../hooks/useProfile'
 
 interface IProfilePage {
-  profileData: Profile
+  initialProfile: Profile
   bandsSeen: BandSeenFull[]
   friends: Friend[]
 }
 
-export const ProfilePage = ({ profileData, bandsSeen, friends }: IProfilePage) => {
-  const [profile, setProfile] = useState(profileData)
+export const ProfilePage = ({ initialProfile, bandsSeen, friends }: IProfilePage) => {
+  const { data: profile, status } = useProfile(initialProfile.id, initialProfile)
   const [editPassIsOpen, setEditPassIsOpen] = useState(false)
   const [editUsernameIsOpen, setEditUsernameIsOpen] = useState(false)
   const [addFriendIsOpen, setAddFriendIsOpen] = useState(false)
   const { data: user } = useUser()
-  const { data: avatarUrl } = useAvatar(profile.avatar_path)
+  const { data: avatarUrl } = useAvatar(profile?.avatar_path)
 
   function unique(array: { id: string | number }[]): any[] {
     const mapOfObjects = new Map(array.map(item => [item.id, item]))
     return [...mapOfObjects.values()]
   }
 
-  const isOwnProfile = user && user.id === profile.id
+  const isOwnProfile = user && user.id === profile?.id
   const isFriend =
     isOwnProfile === false &&
     friends.find(
@@ -120,14 +121,15 @@ export const ProfilePage = ({ profileData, bandsSeen, friends }: IProfilePage) =
             <div>Bitte melde dich an.</div>
           )}
         </main>
-        <EditProfileForm
-          isOpen={editUsernameIsOpen}
-          setIsOpen={setEditUsernameIsOpen}
-          profile={profile}
-          setProfile={setProfile}
-        />
+        {profile && (
+          <EditProfileForm
+            profile={profile}
+            isOpen={editUsernameIsOpen}
+            setIsOpen={setEditUsernameIsOpen}
+          />
+        )}
         <EditPasswordForm isOpen={editPassIsOpen} setIsOpen={setEditPassIsOpen} />
-        {user && (
+        {user && profile && (
           <AddFriendModal
             isOpen={addFriendIsOpen}
             setIsOpen={setAddFriendIsOpen}
