@@ -41,7 +41,7 @@ export const Form = ({ profile, editProfile, killFile, close }: FormProps) => {
 
   const cancel = () => {
     const avatarPath = watch('avatar_path')
-    if (avatarPath) {
+    if (avatarPath && dirtyFields.avatar_path) {
       killFile.mutate({ bucket: 'avatars', name: avatarPath })
     }
     reset()

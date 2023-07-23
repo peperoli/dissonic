@@ -2,9 +2,7 @@ import React from 'react'
 import { ProfilePage } from '../../../components/profile/ProfilePage'
 import supabase from '../../../utils/supabase'
 
-export const revalidate = 0
-
-async function fetchData(username) {
+async function fetchData(username: string) {
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
@@ -30,7 +28,15 @@ async function fetchData(username) {
   return { profile, bandsSeen, friends }
 }
 
-export default async function Page({ params }) {
+type PageProps = {
+  params: {
+    username: string
+  }
+}
+
+export default async function Page({ params }: PageProps) {
   const { profile, bandsSeen, friends } = await fetchData(params.username)
-  return <ProfilePage initialProfile={profile} bandsSeen={bandsSeen || []} friends={friends || []} />
+  return (
+    <ProfilePage initialProfile={profile} bandsSeen={bandsSeen || []} friends={friends || []} />
+  )
 }

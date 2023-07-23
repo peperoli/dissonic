@@ -11,15 +11,15 @@ import {
   UserIcon,
 } from '@heroicons/react/20/solid'
 import { PageWrapper } from '../layout/PageWrapper'
-import { Band, Concert, Location, ExtendedRes, Option } from '../../types/types'
+import { Concert, ExtendedRes, Option } from '../../types/types'
 import { useUser } from '../../hooks/useUser'
 import { useConcerts } from '../../hooks/useConcerts'
-import { useCookies } from 'react-cookie'
 import { ConcertCard } from './ConcertCard'
 import { BandFilter } from './BandFilter'
 import { LocationFilter } from './LocationFilter'
 import { YearsFilter } from './YearsFilter'
 import { BandCountFilter } from './BandCountFilter'
+import Cookies from 'js-cookie'
 
 type HomePageProps = {
   initialConcerts: ExtendedRes<Concert[]>
@@ -33,9 +33,8 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
   const [selectedBandsPerConcert, setSelectedBandsPerConcert] = useState<[number, number] | null>(
     null
   )
-  const [cookies, setCookie] = useCookies(['view'])
   const { data: user } = useUser()
-  const [view, setView] = useState(cookies.view || 'global')
+  const [view, setView] = useState(Cookies.get('view') || 'global')
   const [sort, setSort] = useState('date_start,desc')
   const { data: concerts, isFetching } = useConcerts(initialConcerts, {
     filter: {
@@ -53,7 +52,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
   function handleView(event: ChangeEvent) {
     const target = event.target as HTMLInputElement
     setView(target.value)
-    setCookie('view', target.value, { sameSite: 'strict' })
+    Cookies.set('view', target.value, { sameSite: 'strict' })
   }
 
   function resetAll() {
