@@ -1,9 +1,11 @@
 import { BandPage } from '../../../components/bands/BandPage'
 import { Band } from '../../../types/types'
-import supabase from '../../../utils/supabase'
-import React from 'react'
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { cookies } from 'next/headers'
 
 const fetchData = async(params: { id: string }): Promise<Band> => {
+  const supabase = createServerComponentClient({ cookies })
+
   const { data, error } = await supabase
     .from('bands')
     .select('*, country:countries(id, iso2, name), genres(*)')

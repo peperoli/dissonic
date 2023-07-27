@@ -1,11 +1,13 @@
 import { ConcertPage } from '../../../components/concerts/ConcertPage'
-import React from 'react'
-import supabase from '../../../utils/supabase'
 import { Concert } from '../../../types/types'
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { cookies } from 'next/headers'
 
 export const revalidate = 60
 
 const fetchConcert = async (concertId: string): Promise<Concert> => {
+  const supabase = createServerComponentClient({ cookies })
+
   const { data, error } = await supabase
     .from('concerts')
     .select(

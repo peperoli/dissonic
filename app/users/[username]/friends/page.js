@@ -1,9 +1,10 @@
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { FriendsPage } from '../../../../components/profile/FriendsPage'
-import supabase from '../../../../utils/supabase'
-
-export const revalidate = 0
+import { cookies } from 'next/headers'
 
 async function fetchData(username) {
+  const supabase = createServerComponentClient({ cookies })
+
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')

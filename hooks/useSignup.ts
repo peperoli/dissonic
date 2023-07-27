@@ -1,8 +1,15 @@
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useMutation } from '@tanstack/react-query'
-import supabase from '../utils/supabase'
 
 async function signUp(credentials: { email: string; password: string }) {
-  const { error } = await supabase.auth.signUp(credentials)
+  const supabase = createClientComponentClient()
+
+  const { error } = await supabase.auth.signUp({
+    ...credentials,
+    options: {
+      emailRedirectTo: `${location.origin}/api/auth-callback`,
+    },
+  })
 
   if (error) {
     throw error

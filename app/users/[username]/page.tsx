@@ -1,15 +1,23 @@
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import React from 'react'
 import { ProfilePage } from '../../../components/profile/ProfilePage'
-import supabase from '../../../utils/supabase'
+import { cookies } from 'next/headers'
 
 async function fetchData(username: string) {
-  const { data: profile } = await supabase
+  const supabase = createServerComponentClient({ cookies })
+
+  const { data: profile, error } = await supabase
     .from('profiles')
-    .select('*')
+    .select('*, friends!receiver_id(count)')
     .eq('username', username)
+    .eq('friends.pending', true)
     .single()
 
-  const { data: bandsSeen } = await supabase
+  if (error) {
+    throw error
+  }
+
+  const { data: bandsSeen, error: bandsSeenError } = await supabase
     .from('j_bands_seen')
     .select(
       `
@@ -20,10 +28,18 @@ async function fetchData(username: string) {
     )
     .eq('user_id', profile.id)
 
-  const { data: friends } = await supabase
+  if (bandsSeenError) {
+    throw bandsSeenError
+  }
+
+  const { data: friends, error: friendsError } = await supabase
     .from('friends')
     .select('*, sender:sender_id(*), receiver:receiver_id(*)')
     .or(`sender_id.eq.${profile.id}, receiver_id.eq.${profile.id}`)
+
+  if (friendsError) {
+    throw friendsError
+  }
 
   return { profile, bandsSeen, friends }
 }

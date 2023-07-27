@@ -4,8 +4,8 @@ import { PageWrapper } from '../layout/PageWrapper'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { Button } from '../Button'
 import { TextField } from '../forms/TextField'
-import { useSignUp } from '../../hooks/useSignup'
 import { CheckIcon } from '@heroicons/react/20/solid'
+import { useSignUp } from '../../hooks/useSignUp'
 
 export const Index = () => {
   const {

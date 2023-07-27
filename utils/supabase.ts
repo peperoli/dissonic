@@ -1,6 +1,5 @@
-import { createClient } from '@supabase/supabase-js'
+'use client'
 
-export default createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL as string,
-  process.env.NEXT_PUBLIC_SUPABASE_API_KEY as string
-)
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+
+export default createClientComponentClient()

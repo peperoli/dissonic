@@ -1,8 +1,11 @@
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { BandsPage } from '../../components/bands/BandsPage'
 import { Band, ExtendedRes } from '../../types/types'
-import supabase from '../../utils/supabase'
+import { cookies } from 'next/headers'
 
 const fetchData = async (): Promise<ExtendedRes<Band[]>> => {
+  const supabase = createServerComponentClient({ cookies })
+
   const { data, count, error } = await supabase
     .from('bands')
     .select('*, country:countries(*), genres(*)', { count: 'estimated' })

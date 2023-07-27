@@ -56,6 +56,7 @@ export const ProfilePage = ({ initialProfile, bandsSeen, friends }: IProfilePage
     <PageWrapper>
       <>
         <main className="p-4 md:p-8 w-full max-w-2xl">
+          <pre>{JSON.stringify(bandsSeen, null, 2)}</pre>
           {profile ? (
             <div>
               <div className="flex flex-wrap items-center gap-4 mb-6">
