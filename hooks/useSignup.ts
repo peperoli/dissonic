@@ -7,7 +7,7 @@ async function signUp(credentials: { email: string; password: string }) {
   const { error } = await supabase.auth.signUp({
     ...credentials,
     options: {
-      emailRedirectTo: `${location.origin}/api/auth-callback`,
+      emailRedirectTo: `${location.origin}/auth/callback`,
     },
   })
 
@@ -18,6 +18,6 @@ async function signUp(credentials: { email: string; password: string }) {
 
 export function useSignUp() {
   return useMutation(signUp, {
-    onError: error => console.log(error),
+    onError: error => console.error(error),
   })
 }
