@@ -13,6 +13,8 @@ import { ExtendedRes, Location } from '../../types/types'
 import { useLocations } from '../../hooks/useLocations'
 import { useDebounce } from '../../hooks/useDebounce'
 import { Pagination } from '../layout/Pagination'
+import { useUser } from '../../hooks/useUser'
+import { useRouter } from 'next/navigation'
 
 interface LocationsPageProps {
   initialLocations: ExtendedRes<Location[]>
@@ -30,6 +32,8 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
   })
   const [isOpen, setIsOpen] = useState(false)
   const isDesktop = useMediaQuery('(min-width: 768px)')
+  const { data: user } = useUser()
+  const { push } = useRouter()
   return (
     <>
       <PageWrapper>
@@ -37,7 +41,7 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
           {!isDesktop && (
             <div className="fixed bottom-0 right-0 m-4">
               <Button
-                onClick={() => setIsOpen(true)}
+                onClick={user ? () => setIsOpen(true) : () => push('/login')}
                 label="Location hinzufügen"
                 style="primary"
                 contentType="icon"
@@ -49,7 +53,7 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
             <h1 className="mb-0">Locations</h1>
             {isDesktop && (
               <Button
-                onClick={() => setIsOpen(true)}
+                onClick={user ? () => setIsOpen(true) : () => push('/login')}
                 label="Location hinzufügen"
                 style="primary"
                 icon={<PlusIcon className="h-icon" />}

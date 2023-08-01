@@ -64,13 +64,10 @@ export type EditBand = Database['public']['Tables']['bands']['Update'] & {
   genres: Genre[]
 }
 
-export type BandSeenFull = BandSeen & {
-  band: Band
-  concert: Concert
-  user: User
+export type BandSeen = Database['public']['Tables']['j_bands_seen']['Row'] & {
+  band?: Band
+  concert?: Concert
 }
-
-export type BandSeen = Database['public']['Tables']['j_bands_seen']['Row']
 
 export type Genre = Database['public']['Tables']['genres']['Row']
 
@@ -90,6 +87,8 @@ export type Friend = Database['public']['Tables']['friends']['Row'] & {
   sender: Profile
   receiver: Profile
 }
+
+export type AddFriend = Database['public']['Tables']['friends']['Insert']
 
 export type Option<IdType = number> = { id: IdType; name: string, [key: string]: any }
 

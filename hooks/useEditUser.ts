@@ -13,5 +13,5 @@ const editUser = async (newUser: { email?: string; password?: string }) => {
 }
 
 export const useEditUser = () => {
-  return useMutation(editUser, { onError: error => console.log(error) })
+  return useMutation(editUser, { onError: error => console.error(error) })
 }

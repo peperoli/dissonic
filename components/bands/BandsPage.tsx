@@ -19,6 +19,8 @@ import { useCountries } from '../../hooks/useCountries'
 import { useSpotifyArtist } from '../../hooks/useSpotifyArtist'
 import Image from 'next/image'
 import { useDebounce } from '../../hooks/useDebounce'
+import { useRouter } from 'next/navigation'
+import { useUser } from '../../hooks/useUser'
 
 interface BandTableRowProps {
   band: Band
@@ -73,11 +75,11 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
     page: currentPage,
     size: perPage,
   })
-
   const { data: genres } = useGenres()
   const { data: countries } = useCountries()
-
+  const { data: user } = useUser()
   const [isOpen, setIsOpen] = useState(false)
+  const { push } = useRouter()
 
   function resetAll() {
     setQuery('')
@@ -92,7 +94,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
         {!isDesktop && (
           <div className="fixed bottom-0 right-0 m-4">
             <Button
-              onClick={() => setIsOpen(true)}
+              onClick={user ? () => setIsOpen(true) : () => push('/login')}
               label="Band hinzufügen"
               style="primary"
               contentType="icon"
@@ -104,7 +106,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
           <h1 className="mb-0">Bands</h1>
           {isDesktop && (
             <Button
-              onClick={() => setIsOpen(true)}
+              onClick={user ? () => setIsOpen(true) : () => push('/login')}
               label="Band hinzufügen"
               style="primary"
               icon={<PlusIcon className="h-icon" />}

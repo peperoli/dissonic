@@ -17,6 +17,7 @@ import { Comments } from './Comments'
 import { DeleteConcertModal } from './DeleteConcertModal'
 import { EditConcertForm } from './EditConcertForm'
 import { GenreChart } from './GenreChart'
+import { useRouter } from 'next/navigation'
 
 interface ConcertPageProps {
   initialConcert: Concert
@@ -59,6 +60,7 @@ export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
   }
   const fanIds = concert?.bands_seen && new Set(concert.bands_seen.map(item => item.user_id))
   const fanProfiles = profiles?.filter(profile => fanIds?.has(profile.id))
+  const { push } = useRouter()
 
   async function updateBandsSeen() {
     try {
@@ -214,8 +216,8 @@ export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
               </div>
             )}
             <div className="flex gap-4">
-              <Button onClick={() => setEditIsOpen(true)} label="Bearbeiten" />
-              <Button onClick={() => setDeleteIsOpen(true)} label="Löschen" danger />
+              <Button onClick={user ? () => setEditIsOpen(true) : () => push('/login')} label="Bearbeiten" />
+              <Button onClick={user ? () => setDeleteIsOpen(true) : () => push('/login')} label="Löschen" danger />
             </div>
           </div>
           {concert.bands && (

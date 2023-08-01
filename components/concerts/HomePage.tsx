@@ -20,6 +20,7 @@ import { LocationFilter } from './LocationFilter'
 import { YearsFilter } from './YearsFilter'
 import { BandCountFilter } from './BandCountFilter'
 import Cookies from 'js-cookie'
+import { useRouter } from 'next/navigation'
 
 type HomePageProps = {
   initialConcerts: ExtendedRes<Concert[]>
@@ -48,6 +49,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
     size: size,
   })
   const [isOpen, setIsOpen] = useState(false)
+  const { push } = useRouter()
 
   function handleView(event: ChangeEvent) {
     const target = event.target as HTMLInputElement
@@ -66,7 +68,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
       <main className="w-full max-w-2xl p-4 md:p-8">
         <div className="md:hidden fixed bottom-0 right-0 m-4">
           <Button
-            onClick={() => setIsOpen(true)}
+            onClick={user ? () => setIsOpen(true) : () => push('/login')}
             label="Konzert hinzufügen"
             style="primary"
             contentType="icon"
@@ -76,7 +78,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
         <div className="sr-only md:not-sr-only flex justify-between items-center mb-6">
           <h1>Konzerte</h1>
           <Button
-            onClick={() => setIsOpen(true)}
+            onClick={user ? () => setIsOpen(true) : () => push('/login')}
             label="Konzert hinzufügen"
             style="primary"
             icon={<PlusIcon className="h-icon" />}
@@ -95,7 +97,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
                 onClick={resetAll}
                 icon={<ArrowUturnLeftIcon className="h-icon" />}
                 size="small"
-              ></Button>
+              />
             )}
           </div>
           <div className="flex md:grid md:grid-cols-2 gap-2 md:gap-4 -mx-4 px-4 overflow-x-auto md:overflow-visible scrollbar-hidden">

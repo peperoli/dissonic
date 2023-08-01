@@ -17,5 +17,5 @@ const uploadFile = async (newFile: { file: File; path: string, upsert?: boolean 
 }
 
 export const useUploadFile = () => {
-  return useMutation(uploadFile, { onError: error => console.log(error) })
+  return useMutation(uploadFile, { onError: error => console.error(error) })
 }

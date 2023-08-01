@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { Concert, EditConcert } from '../types/types'
+import { EditConcert } from '../types/types'
 import supabase from '../utils/supabase'
 
 const editConcert = async (newConcert: EditConcert) => {
@@ -8,7 +8,6 @@ const editConcert = async (newConcert: EditConcert) => {
       .from('concerts')
       .select('id, bands!j_concert_bands(*)')
       .eq('id', newConcert.id)
-      .returns<Concert>()
       .single()
 
     if (oldConcertError) {
@@ -69,5 +68,5 @@ const editConcert = async (newConcert: EditConcert) => {
 }
 
 export const useEditConcert = () => {
-  return useMutation(editConcert, { onError: error => console.log(error) })
+  return useMutation(editConcert, { onError: error => console.error(error) })
 }

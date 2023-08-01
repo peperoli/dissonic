@@ -13,6 +13,8 @@ import { useBand } from '../../hooks/useBand'
 import { useConcerts } from '../../hooks/useConcerts'
 import { useSpotifyArtistEmbed } from '../../hooks/useSpotifyArtistEmbed'
 import { SpinnerIcon } from '../layout/SpinnerIcon'
+import { useRouter } from 'next/navigation'
+import { useUser } from '../../hooks/useUser'
 
 export interface BandPageProps {
   initialBand: Band
@@ -29,6 +31,8 @@ export const BandPage = ({ initialBand }: BandPageProps) => {
   )
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
   const [editIsOpen, setEditIsOpen] = useState(false)
+  const { data: user } = useUser()
+  const { push } = useRouter()
 
   if (bandIsLoading) {
     return (
@@ -41,7 +45,7 @@ export const BandPage = ({ initialBand }: BandPageProps) => {
   if (!band) {
     return (
       <PageWrapper>
-        <p>Konzert nicht gefunden</p>
+        <p>Band nicht gefunden</p>
       </PageWrapper>
     )
   }
@@ -80,8 +84,15 @@ export const BandPage = ({ initialBand }: BandPageProps) => {
             <div dangerouslySetInnerHTML={{ __html: spotifyArtistEmbed.html }} />
           )}
           <div className="flex gap-4">
-            <Button onClick={() => setEditIsOpen(true)} label="Bearbeiten" />
-            <Button onClick={() => setDeleteIsOpen(true)} label="Löschen" danger />
+            <Button
+              onClick={user ? () => setEditIsOpen(true) : () => push('/login')}
+              label="Bearbeiten"
+            />
+            <Button
+              onClick={user ? () => setDeleteIsOpen(true) : () => push('/login')}
+              label="Löschen"
+              danger
+            />
           </div>
         </div>
         {concerts?.data && concerts?.data?.length > 0 && (

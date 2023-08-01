@@ -17,5 +17,5 @@ const editProfile = async (newProfile: EditProfile) => {
 }
 
 export const useEditProfile = () => {
-  return useMutation(editProfile, { onError: error => console.log(error) })
+  return useMutation(editProfile, { onError: error => console.error(error) })
 }

@@ -10,5 +10,5 @@ const killFile = async (oldFile: { name: string; bucket: string }) => {
 }
 
 export const useKillFile = () => {
-  return useMutation(killFile, { onError: error => console.log(error) })
+  return useMutation(killFile, { onError: error => console.error(error) })
 }

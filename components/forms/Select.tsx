@@ -34,7 +34,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           ))}
         </select>
         <label htmlFor={name}>{label}</label>
-        <ChevronDownIcon className="absolute right-4 top-1/2 h-icon -translate-y-1/2 pointer-events-none" />
+        <ChevronDownIcon className="absolute right-[18px] top-[18px] h-icon pointer-events-none" />
         {error && <span className="mt-1 text-sm text-yellow">Bitte wähle eine Option aus.</span>}
       </div>
     )
