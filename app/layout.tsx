@@ -4,6 +4,8 @@ import { QueryProvider } from '../components/helpers/QueryProvider'
 import '../styles/globals.scss'
 const albertSans = Albert_Sans({ subsets: ['latin'] })
 
+export const dynamic = 'force-dynamic'
+
 export default async function RootLayout({ children }: { children: ReactNode }) {
   return (
     <QueryProvider>
