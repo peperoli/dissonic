@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react'
 import { useConcert } from '../../hooks/useConcert'
 import { ConcertContext } from '../../hooks/useConcertContext'
 import { useProfiles } from '../../hooks/useProfiles'
-import { useUser } from '../../hooks/useUser'
 import { BandSeen, Concert } from '../../types/types'
 import supabase from '../../utils/supabase'
 import { Button } from '../Button'
@@ -17,7 +16,8 @@ import { Comments } from './Comments'
 import { DeleteConcertModal } from './DeleteConcertModal'
 import { EditConcertForm } from './EditConcertForm'
 import { GenreChart } from './GenreChart'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { useSession } from '../../hooks/useSession'
 
 interface ConcertPageProps {
   initialConcert: Concert
@@ -25,11 +25,8 @@ interface ConcertPageProps {
 
 export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
   const { data: profiles } = useProfiles()
-  const { data: concert, isLoading: concertIsLoading } = useConcert(
-    initialConcert,
-    initialConcert.id
-  )
-  const { data: user } = useUser()
+  const { data: concert } = useConcert(initialConcert, initialConcert.id)
+  const { data: session } = useSession()
   const queryClient = useQueryClient()
 
   const [editIsOpen, setEditIsOpen] = useState(false)
@@ -39,10 +36,10 @@ export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    const concertBandsSeen = concert?.bands_seen?.filter(item => item.user_id === user?.id)
+    const concertBandsSeen = concert?.bands_seen?.filter(item => item.user_id === session?.user.id)
     setBandsSeen(concertBandsSeen || [])
     setSelectedBandsSeen(concertBandsSeen || [])
-  }, [concert?.bands_seen?.length, user])
+  }, [concert?.bands_seen?.length, session])
 
   const addBandsSeen = selectedBandsSeen.filter(
     item => !bandsSeen?.find(item2 => item.band_id === item2.band_id)
@@ -61,6 +58,7 @@ export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
   const fanIds = concert?.bands_seen && new Set(concert.bands_seen.map(item => item.user_id))
   const fanProfiles = profiles?.filter(profile => fanIds?.has(profile.id))
   const { push } = useRouter()
+  const pathname = usePathname()
 
   async function updateBandsSeen() {
     try {
@@ -76,7 +74,7 @@ export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
         .from('j_bands_seen')
         .delete()
         .eq('concert_id', concert?.id)
-        .eq('user_id', user?.id)
+        .eq('user_id', session?.user.id)
         .in(
           'band_id',
           deleteBandsSeen.map(item => item.band_id)
@@ -98,34 +96,6 @@ export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
     } finally {
       setLoading(false)
     }
-  }
-
-  if (concertIsLoading) {
-    return (
-      <PageWrapper>
-        <main className="grid gap-4 w-full max-w-2xl p-4 md:p-8 animate-pulse">
-          <div>
-            <Link href="/" className="btn btn-link">
-              <ArrowLeftIcon className="h-icon" />
-              Zurück
-            </Link>
-          </div>
-          <div className="grid gap-4 min-h-96 p-6 rounded-lg bg-slate-800">
-            <div className="w-64 max-w-full h-10 mb-6 rounded bg-slate-700" />
-            <div className="flex flex-wrap gap-2 mb-2">
-              <div className="w-32 h-6 rounded bg-slate-700" />
-              <div className="w-32 h-6 rounded bg-slate-700" />
-              <div className="w-32 h-6 rounded bg-slate-700" />
-            </div>
-            <div className="w-1/3 h-5 rounded bg-slate-700" />
-            <div className="flex gap-2">
-              <div className="w-24 h-5 rounded bg-slate-700" />
-              <div className="w-24 h-5 rounded bg-slate-700" />
-            </div>
-          </div>
-        </main>
-      </PageWrapper>
-    )
   }
 
   if (!concert) {
@@ -162,14 +132,14 @@ export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
                 concert.bands.map(band => (
                   <BandSeenToggle
                     key={band.id}
-                    user={user || null}
+                    user={session?.user || null}
                     band={band}
                     selectedBandsSeen={selectedBandsSeen}
                     setSelectedBandsSeen={setSelectedBandsSeen}
                   />
                 ))}
             </div>
-            {user && (
+            {session && (
               <div>
                 <Button
                   onClick={updateBandsSeen}
@@ -216,8 +186,8 @@ export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
               </div>
             )}
             <div className="flex gap-4">
-              <Button onClick={user ? () => setEditIsOpen(true) : () => push('/login')} label="Bearbeiten" />
-              <Button onClick={user ? () => setDeleteIsOpen(true) : () => push('/login')} label="Löschen" danger />
+              <Button onClick={session ? () => setEditIsOpen(true) : () => push(`/login?redirect=${pathname}`)} label="Bearbeiten" />
+              <Button onClick={session ? () => setDeleteIsOpen(true) : () => push(`/login?redirect=${pathname}`)} label="Löschen" danger />
             </div>
           </div>
           {concert.bands && (
@@ -225,11 +195,9 @@ export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
               <GenreChart bands={concert.bands} />
             </div>
           )}
-          {user && profiles && (
-            <div className="p-6 rounded-lg bg-slate-800">
-              <Comments />
-            </div>
-          )}
+          <div className="p-6 rounded-lg bg-slate-800">
+            <Comments />
+          </div>
           <EditConcertForm isOpen={editIsOpen} setIsOpen={setEditIsOpen} />
           <DeleteConcertModal isOpen={deleteIsOpen} setIsOpen={setDeleteIsOpen} />
         </main>

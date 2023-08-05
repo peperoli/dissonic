@@ -1,5 +1,4 @@
 import { User } from '@supabase/supabase-js'
-import { useRouter } from 'next/navigation'
 import { Dispatch, SetStateAction } from 'react'
 import { Band, BandSeen } from '../../types/types'
 import { useConcertContext } from '../../hooks/useConcertContext'
@@ -18,7 +17,6 @@ export const BandSeenToggle = ({
   user,
 }: BandSeenToggleProps) => {
   const { concert } = useConcertContext()
-  const router = useRouter()
   const isSeen =
     selectedBandsSeen &&
     selectedBandsSeen.some(item => item.band_id === band.id && item.user_id === user?.id)
@@ -26,23 +24,25 @@ export const BandSeenToggle = ({
       : false
 
   function handleChange() {
-    if (user) {
-      if (isSeen) {
-        setSelectedBandsSeen(selectedBandsSeen.filter(item => item.band_id !== band.id))
-      } else {
-        setSelectedBandsSeen([
-          ...selectedBandsSeen,
-          {
-            concert_id: concert.id,
-            user_id: user.id,
-            band_id: band.id,
-          },
-        ])
-      }
+    if (!user) return
+    if (isSeen) {
+      setSelectedBandsSeen(selectedBandsSeen.filter(item => item.band_id !== band.id))
     } else {
-      router.push('/login')
+      setSelectedBandsSeen([
+        ...selectedBandsSeen,
+        {
+          concert_id: concert.id,
+          user_id: user?.id,
+          band_id: band.id,
+        },
+      ])
     }
   }
+
+  if (!user) {
+    return <p className="btn btn-tag pointer-events-none">{band.name}</p>
+  }
+
   return (
     <label className={`btn btn-tag ${isSeen ? 'btn-seen' : ''}`}>
       <input

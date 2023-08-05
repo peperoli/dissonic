@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Fragment } from 'react'
 import { Concert } from '../../types/types'
 import { useProfiles } from '../../hooks/useProfiles'
-import { useUser } from '../../hooks/useUser'
+import { useSession } from '../../hooks/useSession'
 
 const ConcertDate = ({ date }: { date: Date }) => {
   return (
@@ -26,7 +26,7 @@ interface ConcertCardProps {
 }
 
 export const ConcertCard = ({ concert }: ConcertCardProps) => {
-  const { data: user } = useUser()
+  const { data: session } = useSession()
   const fanIds = new Set(concert?.bands_seen?.map(item => item.user_id))  
   const { data: profiles} = useProfiles({ids:[...fanIds]})
   const router = useRouter()
@@ -55,7 +55,7 @@ export const ConcertCard = ({ concert }: ConcertCardProps) => {
                   href={`/bands/${band.id}`}
                   onClick={event => event.stopPropagation()}
                   className={`btn btn-link${
-                    concert.bands_seen?.find(item => item.band_id === band.id && item.user_id === user?.id) ? ' !text-venom' : ''
+                    concert.bands_seen?.find(item => item.band_id === band.id && item.user_id === session?.user.id) ? ' !text-venom' : ''
                   }`}
                 >
                   {band.name}

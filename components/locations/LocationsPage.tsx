@@ -13,8 +13,8 @@ import { ExtendedRes, Location } from '../../types/types'
 import { useLocations } from '../../hooks/useLocations'
 import { useDebounce } from '../../hooks/useDebounce'
 import { Pagination } from '../layout/Pagination'
-import { useUser } from '../../hooks/useUser'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { useSession } from '../../hooks/useSession'
 
 interface LocationsPageProps {
   initialLocations: ExtendedRes<Location[]>
@@ -32,8 +32,9 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
   })
   const [isOpen, setIsOpen] = useState(false)
   const isDesktop = useMediaQuery('(min-width: 768px)')
-  const { data: user } = useUser()
+  const { data: session } = useSession()
   const { push } = useRouter()
+  const pathname = usePathname()
   return (
     <>
       <PageWrapper>
@@ -41,7 +42,7 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
           {!isDesktop && (
             <div className="fixed bottom-0 right-0 m-4">
               <Button
-                onClick={user ? () => setIsOpen(true) : () => push('/login')}
+                onClick={session ? () => setIsOpen(true) : () => push(`/login?redirect=${pathname}`)}
                 label="Location hinzufügen"
                 style="primary"
                 contentType="icon"
@@ -53,7 +54,7 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
             <h1 className="mb-0">Locations</h1>
             {isDesktop && (
               <Button
-                onClick={user ? () => setIsOpen(true) : () => push('/login')}
+                onClick={session ? () => setIsOpen(true) : () => push(`/login?redirect=${pathname}`)}
                 label="Location hinzufügen"
                 style="primary"
                 icon={<PlusIcon className="h-icon" />}

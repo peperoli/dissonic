@@ -3,29 +3,30 @@
 import Link from 'next/link'
 import Logo from './Logo'
 import { Menu } from '@headlessui/react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { ArrowRightOnRectangleIcon, UserGroupIcon, UserIcon } from '@heroicons/react/20/solid'
 import Image from 'next/image'
 import { useLogOut } from '../../hooks/useLogOut'
-import { useUser } from '../../hooks/useUser'
 import { useProfile } from '../../hooks/useProfile'
 import { useAvatar } from '../../hooks/useAvatar'
 import { useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
+import { useSession } from '../../hooks/useSession'
 
 export const NavBar = () => {
-  const { data: user } = useUser()
-  const { data: profile } = useProfile(user?.id)
+  const { data: session } = useSession()
+  const { data: profile } = useProfile(session?.user.id)
   const { data: avatarUrl } = useAvatar(profile?.avatar_path)
   const pendingInvites = (profile?.friends && profile.friends[0].count) || 0
   const logOutMutation = useLogOut()
   const queryClient = useQueryClient()
-  const router = useRouter()
+  const { push } = useRouter()
+  const pathname = usePathname()
 
   useEffect(() => {
     if (logOutMutation.status === 'success') {
       queryClient.invalidateQueries(['user'])
-      router.push('/login')
+      push('/login')
     }
   }, [logOutMutation.status])
   return (
@@ -54,7 +55,7 @@ export const NavBar = () => {
             <Menu.Item>
               {({ active }) => (
                 <button
-                  onClick={() => router.push(`/users/${profile.username}`)}
+                  onClick={() => push(`/users/${profile.username}`)}
                   className={`flex items-center gap-2 w-full px-2 py-1 rounded${
                     active ? ' bg-slate-500' : ''
                   }`}
@@ -67,7 +68,7 @@ export const NavBar = () => {
             <Menu.Item>
               {({ active }) => (
                 <button
-                  onClick={() => router.push(`/users/${profile.username}/friends`)}
+                  onClick={() => push(`/users/${profile.username}/friends`)}
                   className={`flex items-center gap-2 w-full px-2 py-1 rounded${
                     active ? ' bg-slate-500' : ''
                   }`}
@@ -98,7 +99,7 @@ export const NavBar = () => {
           </Menu.Items>
         </Menu>
       ) : (
-        <Link href="/login" className="btn btn-secondary">
+        <Link href={`/login?redirect=${pathname}`} className="btn btn-secondary">
           Anmelden
         </Link>
       )}

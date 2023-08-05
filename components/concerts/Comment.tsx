@@ -13,8 +13,8 @@ import { ReactionControl } from './ReactionControl'
 import { useConcertContext } from '../../hooks/useConcertContext'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { TextArea } from '../forms/TextArea'
-import { useUser } from '../../hooks/useUser'
 import { useProfile } from '../../hooks/useProfile'
+import { useSession } from '../../hooks/useSession'
 dayjs.extend(relativeTime)
 
 type EditCommentFormProps = {
@@ -28,7 +28,7 @@ const EditCommentForm = ({ comment, setEdit }: EditCommentFormProps) => {
     register,
     watch,
     handleSubmit,
-    formState: { dirtyFields, errors },
+    formState: { dirtyFields },
     reset,
   } = useForm({ defaultValues: { new_content: JSON.stringify(comment.content) } })
   const { mutate, status } = useEditComment()
@@ -81,7 +81,7 @@ interface CommentItemProps {
 }
 
 export const CommentItem = ({ comment }: CommentItemProps) => {
-  const { data: user } = useUser()
+  const { data: session } = useSession()
   const { data: profile } = useProfile(comment.user_id)
   const [edit, setEdit] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
@@ -124,10 +124,10 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
               </p>
             )}
             <div className="absolute flex -bottom-4 rounded-lg bg-slate-700">
-              {comment.reactions && user && (
-                <ReactionControl comment={comment} reactions={comment.reactions} user={user} />
+              {comment.reactions && session && (
+                <ReactionControl comment={comment} reactions={comment.reactions} user={session.user} />
               )}
-              {comment.user_id === user?.id && !edit && (
+              {comment.user_id === session?.user.id && !edit && (
                 <div className="hidden group-hover:flex">
                   <Button
                     onClick={() => setEdit(true)}

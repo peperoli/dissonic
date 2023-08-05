@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useSignIn } from '../hooks/useSignIn'
@@ -21,6 +21,8 @@ export default function LoginPage() {
   } = useForm<{ email: string; password: string }>()
   const { mutate, status, error } = useSignIn()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirect = searchParams.get('redirect')
 
   const onSubmit: SubmitHandler<{ email: string; password: string }> = async formData => {
     mutate(formData)
@@ -28,7 +30,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (status === 'success') {
-      router.push('/')
+      router.push(redirect ? redirect : '/')
     }
     if (status === 'error') {
       resetField('password')

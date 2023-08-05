@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { BandSeen } from '../types/types'
 import supabase from '../utils/supabase'
+import { useSession } from './useSession'
 import { useUser } from './useUser'
 
 const fetchBandsSeen = async (profileId?: string): Promise<BandSeen[]> => {
@@ -17,7 +18,8 @@ const fetchBandsSeen = async (profileId?: string): Promise<BandSeen[]> => {
 }
 
 export const useBandsSeen = (userId?: string) => {
-  const { data: user } = useUser()
+  const { data: session } = useSession()
+  const { data: user } = useUser(session?.access_token)
   const profileId = userId ?? user?.id
   return useQuery(['bandsSeen', profileId], () => fetchBandsSeen(profileId), {
     enabled: !!profileId,

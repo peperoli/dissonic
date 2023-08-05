@@ -12,15 +12,15 @@ import useMediaQuery from '../../hooks/useMediaQuery'
 import { Pagination } from '../layout/Pagination'
 import { UserMusicIcon } from '../layout/UserMusicIcon'
 import { MultiSelectFilter } from '../MultiSelectFilter'
-import { Band, Country, Genre, ExtendedRes, Option } from '../../types/types'
+import { Band, Genre, ExtendedRes, Option } from '../../types/types'
 import { useBands } from '../../hooks/useBands'
 import { useGenres } from '../../hooks/useGenres'
 import { useCountries } from '../../hooks/useCountries'
 import { useSpotifyArtist } from '../../hooks/useSpotifyArtist'
 import Image from 'next/image'
 import { useDebounce } from '../../hooks/useDebounce'
-import { useRouter } from 'next/navigation'
-import { useUser } from '../../hooks/useUser'
+import { usePathname, useRouter } from 'next/navigation'
+import { useSession } from '../../hooks/useSession'
 
 interface BandTableRowProps {
   band: Band
@@ -77,9 +77,10 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
   })
   const { data: genres } = useGenres()
   const { data: countries } = useCountries()
-  const { data: user } = useUser()
+  const { data: session } = useSession()
   const [isOpen, setIsOpen] = useState(false)
   const { push } = useRouter()
+  const pathname = usePathname()
 
   function resetAll() {
     setQuery('')
@@ -94,7 +95,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
         {!isDesktop && (
           <div className="fixed bottom-0 right-0 m-4">
             <Button
-              onClick={user ? () => setIsOpen(true) : () => push('/login')}
+              onClick={session ? () => setIsOpen(true) : () => push(`/login?redirect=${pathname}`)}
               label="Band hinzufügen"
               style="primary"
               contentType="icon"
@@ -106,7 +107,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
           <h1 className="mb-0">Bands</h1>
           {isDesktop && (
             <Button
-              onClick={user ? () => setIsOpen(true) : () => push('/login')}
+              onClick={session ? () => setIsOpen(true) : () => push(`/login?redirect=${pathname}`)}
               label="Band hinzufügen"
               style="primary"
               icon={<PlusIcon className="h-icon" />}

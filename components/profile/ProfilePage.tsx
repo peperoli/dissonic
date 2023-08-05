@@ -12,12 +12,12 @@ import { TopBands } from './TopBands'
 import { TopLocations } from './TopLocations'
 import { ConcertsChart } from './ConcertsChart'
 import { AddFriendModal } from './AddFriendModal'
-import { Band, BandSeen, Concert, Location, Profile } from '../../types/types'
-import { useUser } from '../../hooks/useUser'
+import { Band, Concert, Location, Profile } from '../../types/types'
 import { useAvatar } from '../../hooks/useAvatar'
 import { useProfile } from '../../hooks/useProfile'
 import { useFriends } from '../../hooks/useFriends'
 import { useBandsSeen } from '../../hooks/useBandsSeen'
+import { useSession } from '../../hooks/useSession'
 
 interface IProfilePage {
   initialProfile: Profile
@@ -30,22 +30,22 @@ export const ProfilePage = ({ initialProfile }: IProfilePage) => {
   const [editPassIsOpen, setEditPassIsOpen] = useState(false)
   const [editUsernameIsOpen, setEditUsernameIsOpen] = useState(false)
   const [addFriendIsOpen, setAddFriendIsOpen] = useState(false)
-  const { data: user } = useUser()
+  const { data: session } = useSession()
   const { data: avatarUrl } = useAvatar(profile?.avatar_path)
 
   function unique(array: ({ id: string | number } | undefined)[]): any[] {
     const mapOfObjects = new Map(array.map(item => [item?.id, item]))
     return [...mapOfObjects.values()]
   }
-  const isOwnProfile = user && user.id === profile?.id
+  const isOwnProfile = session?.user.id === profile?.id
   const isFriend =
     isOwnProfile === false &&
     friends?.find(
       item =>
-        item.pending === false && (item.sender.id === user?.id || item.receiver.id === user?.id)
+        item.pending === false && (item.sender.id === session?.user.id || item.receiver.id === session?.user.id)
     ) != undefined
   const isPending = friends?.find(
-    item => item.pending && (item.sender.id === user?.id || item.receiver.id === user?.id)
+    item => item.pending && (item.sender.id === session?.user.id || item.receiver.id === session?.user.id)
   )
   const uniqueBandsSeen: Band[] = bandsSeen ? unique(bandsSeen.map(item => item.band)) : []
   const concertsSeen: Concert[] = bandsSeen ? unique(bandsSeen.map(item => item.concert)) : []
@@ -78,7 +78,7 @@ export const ProfilePage = ({ initialProfile }: IProfilePage) => {
                     Freund
                   </p>
                 )}
-                {!isFriend && user?.id !== profile.id && (
+                {!isFriend && session?.user.id !== profile.id && (
                   <Button
                     onClick={() => setAddFriendIsOpen(true)}
                     label="Freund hinzufügen"
@@ -149,11 +149,11 @@ export const ProfilePage = ({ initialProfile }: IProfilePage) => {
           />
         )}
         <EditPasswordForm isOpen={editPassIsOpen} setIsOpen={setEditPassIsOpen} />
-        {user && profile && (
+        {session && profile && (
           <AddFriendModal
             isOpen={addFriendIsOpen}
             setIsOpen={setAddFriendIsOpen}
-            user={user}
+            user={session.user}
             profile={profile}
           />
         )}

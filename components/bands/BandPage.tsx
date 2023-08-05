@@ -13,8 +13,8 @@ import { useBand } from '../../hooks/useBand'
 import { useConcerts } from '../../hooks/useConcerts'
 import { useSpotifyArtistEmbed } from '../../hooks/useSpotifyArtistEmbed'
 import { SpinnerIcon } from '../layout/SpinnerIcon'
-import { useRouter } from 'next/navigation'
-import { useUser } from '../../hooks/useUser'
+import { usePathname, useRouter } from 'next/navigation'
+import { useSession } from '../../hooks/useSession'
 
 export interface BandPageProps {
   initialBand: Band
@@ -31,8 +31,9 @@ export const BandPage = ({ initialBand }: BandPageProps) => {
   )
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
   const [editIsOpen, setEditIsOpen] = useState(false)
-  const { data: user } = useUser()
+  const { data: session } = useSession()
   const { push } = useRouter()
+  const pathname = usePathname()
 
   if (bandIsLoading) {
     return (
@@ -85,11 +86,11 @@ export const BandPage = ({ initialBand }: BandPageProps) => {
           )}
           <div className="flex gap-4">
             <Button
-              onClick={user ? () => setEditIsOpen(true) : () => push('/login')}
+              onClick={session ? () => setEditIsOpen(true) : () => push(`/login?redirect=${pathname}`)}
               label="Bearbeiten"
             />
             <Button
-              onClick={user ? () => setDeleteIsOpen(true) : () => push('/login')}
+              onClick={session ? () => setDeleteIsOpen(true) : () => push(`/login?redirect=${pathname}`)}
               label="Löschen"
               danger
             />
