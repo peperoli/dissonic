@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useEffect } from 'react'
 import { EditConcert } from '../../types/types'
 import Modal from '../Modal'
 import { useEditConcert } from '../../hooks/useEditConcert'
@@ -23,12 +23,14 @@ export const EditConcertForm = ({ isOpen, setIsOpen }: EditConcertFormProps) => 
 
   const close = () => setIsOpen(false)
 
-  if (status === 'success') {
-    queryClient
-      .invalidateQueries(['concert', concert.id])
-      .catch(error => console.error(error))
-      .finally(() => close())
-  }
+  useEffect(() => {
+    if (status === 'success') {
+      queryClient
+        .invalidateQueries(['concert', concert.id])
+        .catch(error => console.error(error))
+        .finally(() => close())
+    }
+  }, [status])
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
       <h2 className="mb-8">Konzert bearbeiten</h2>

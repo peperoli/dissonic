@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useEffect } from 'react'
 import { useAddBand } from '../../hooks/useAddBand'
 import { AddBand } from '../../types/types'
 import Modal from '../Modal'
@@ -19,9 +19,11 @@ export const AddBandForm = ({ isOpen, setIsOpen }: AddBandFormProps) => {
 
   const close = () => setIsOpen(false)
 
-  if (status === 'success') {
-    close()
-  }
+  useEffect(() => {
+    if (status === 'success') {
+      close()
+    }
+  }, [status])
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
       <h2 className="mb-8">Band erstellen</h2>

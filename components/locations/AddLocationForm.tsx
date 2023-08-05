@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useEffect } from 'react'
 import { useAddLocation } from '../../hooks/useAddLocation'
 import { AddLocation } from '../../types/types'
 import { Button } from '../Button'
@@ -23,9 +23,11 @@ export const AddLocationForm = ({ isOpen, setIsOpen }: AddLocationFormProps) => 
     mutate(formData)
   }
 
-  if (status === 'success') {
-    setIsOpen(false)
-  }
+  useEffect(() => {
+    if (status === 'success') {
+      setIsOpen(false)
+    }
+  }, [status])
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
       <h2 className="mb-8">Location erstellen</h2>

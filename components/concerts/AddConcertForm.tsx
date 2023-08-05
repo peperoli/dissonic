@@ -1,5 +1,5 @@
 import { useRouter } from 'next/navigation'
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useEffect } from 'react'
 import { SubmitHandler } from 'react-hook-form'
 import { useAddConcert } from '../../hooks/useAddConcert'
 import { AddConcert } from '../../types/types'
@@ -19,9 +19,11 @@ export const AddConcertForm = ({ isOpen, setIsOpen }: AddConcertFormProps) => {
     mutate(formData)
   }
 
-  if (status === 'success') {
-    router.push(`/concerts/${data.id}`)
-  }
+  useEffect(() => {
+    if (status === 'success') {
+      router.push(`/concerts/${data.id}`)
+    }
+  }, [status])
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
       <h2 className="mb-8">Konzert hinzufügen</h2>

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useEffect } from 'react'
 import Modal from '../Modal'
 import { Band, EditBand } from '../../types/types'
 import { useEditBand } from '../../hooks/useEditBand'
@@ -13,7 +13,7 @@ interface EditBandFormProps {
 }
 
 export const EditBandForm = ({ band, isOpen, setIsOpen }: EditBandFormProps) => {
-  const { mutate, status } = useEditBand()
+  const { mutate, status,  } = useEditBand()
   const queryClient = useQueryClient()  
 
   const onSubmit: SubmitHandler<EditBand> = async function (formData) {
@@ -22,10 +22,12 @@ export const EditBandForm = ({ band, isOpen, setIsOpen }: EditBandFormProps) => 
 
   const close = () => setIsOpen(false)
 
-  if (status === 'success') {
-    queryClient.invalidateQueries(['band', band.id])
-    close()
-  }
+  useEffect(() => {
+    if (status === 'success') {
+      queryClient.invalidateQueries(['band', band.id])
+      close()
+    }
+  }, [status])
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
       <h2>Band bearbeiten</h2>

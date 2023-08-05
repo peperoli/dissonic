@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useEditUser } from '../../hooks/useEditUser'
 import { Button } from '../Button'
@@ -21,6 +21,12 @@ export const EditPasswordForm = ({ isOpen, setIsOpen }: EditPasswordFormProps) =
   const onSubmit: SubmitHandler<{ password: string }> = async formData => {
     mutate(formData)
   }
+
+  useEffect(() => {
+    if (status === 'success') {
+      setIsOpen(false)
+    }
+  }, [status])
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
       <h2>Passwort ändern</h2>
