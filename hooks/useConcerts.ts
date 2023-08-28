@@ -35,6 +35,20 @@ const fetchConcerts = async (options?: FetchOptions): Promise<ExtendedRes<Concer
 
   const [from, to] = getPagination(options?.page ?? 0, options?.size ?? 24, initialCount ?? 0)
 
+  let filteredIds = ids.map(id => id.id) as string[]
+
+  if (options?.filter?.bandsPerConcert) {
+    filteredIds = ids
+      ?.filter(
+        item =>
+          !options?.filter?.bandsPerConcert ||
+          (Array.isArray(item.bands_count) &&
+            item.bands_count[0].count >= options.filter.bandsPerConcert[0] &&
+            item.bands_count[0].count <= options?.filter?.bandsPerConcert[1])
+      )
+      .map(id => id.id)
+  }
+
   let filteredQuery = supabase
     .from('concerts')
     .select(
@@ -44,21 +58,8 @@ const fetchConcerts = async (options?: FetchOptions): Promise<ExtendedRes<Concer
       bands_seen:j_bands_seen(band_id, user_id)`,
       { count: 'estimated' }
     )
+    .in('id', filteredIds)
 
-  if (options?.filter?.bandsPerConcert) {
-    filteredQuery = filteredQuery.in(
-      'id',
-      ids
-        ?.filter(
-          item =>
-            !options?.filter?.bandsPerConcert ||
-            (Array.isArray(item.bands_count) &&
-              item.bands_count[0].count >= options.filter.bandsPerConcert[0] &&
-              item.bands_count[0].count <= options?.filter?.bandsPerConcert[1])
-        )
-        .map(id => id.id) as string[]
-    )
-  }
   if (options?.page || options?.size) {
     filteredQuery = filteredQuery.range(from, to)
   }

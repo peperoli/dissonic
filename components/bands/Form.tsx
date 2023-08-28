@@ -79,7 +79,7 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
       />
       <div className="sticky md:static bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10 md:z-0">
         <Button onClick={close} label="Abbrechen" />
-        <Button type="submit" label="Erstellen" style="primary" loading={status === 'loading'} />
+        <Button type="submit" label="Speichern" style="primary" loading={status === 'loading'} />
       </div>
     </form>
   )

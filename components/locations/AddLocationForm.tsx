@@ -46,7 +46,7 @@ export const AddLocationForm = ({ isOpen, setIsOpen }: AddLocationFormProps) => 
         />
         <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 bg-slate-800 z-10">
           <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
-          <Button type="submit" label="Erstellen" style="primary" loading={status === 'loading'} />
+          <Button type="submit" label="Speichern" style="primary" loading={status === 'loading'} />
         </div>
       </form>
     </Modal>
