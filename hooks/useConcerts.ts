@@ -44,7 +44,9 @@ const fetchConcerts = async (options?: FetchOptions): Promise<ExtendedRes<Concer
       bands_seen:j_bands_seen(band_id, user_id)`,
       { count: 'estimated' }
     )
-    .in(
+
+  if (options?.filter?.bandsPerConcert) {
+    filteredQuery = filteredQuery.in(
       'id',
       ids
         ?.filter(
@@ -56,7 +58,7 @@ const fetchConcerts = async (options?: FetchOptions): Promise<ExtendedRes<Concer
         )
         .map(id => id.id) as string[]
     )
-
+  }
   if (options?.page || options?.size) {
     filteredQuery = filteredQuery.range(from, to)
   }
