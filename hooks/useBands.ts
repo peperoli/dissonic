@@ -34,7 +34,6 @@ const fetchBands = async (options?: FetchOptions): Promise<ExtendedRes<Band[]>> 
   if (options?.page || options?.size) {
     query = query.range(from, to)
   }
-  query = query.order('name')
 
   const { data, error } = await query.order('name')
 

@@ -18,7 +18,11 @@ async function fetchLocations(options?: FetchOptions): Promise<ExtendedRes<Locat
 
   const [from, to] = getPagination(options?.page, options?.size, initialCount ?? 0)
 
-  const { data, count, error } = await query.range(from, to).order('name')
+  if (options?.page || options?.size) {
+    query = query.range(from, to)
+  }
+
+  const { data, count, error } = await query.order('name')
 
   if (error) {
     throw error
