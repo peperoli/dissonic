@@ -81,6 +81,8 @@ export type Profile = Database['public']['Tables']['profiles']['Row'] & {
   friends: [{ count: number }]
 }
 
+export type AddProfile = Database['public']['Tables']['profiles']['Insert']
+
 export type EditProfile = Database['public']['Tables']['profiles']['Update']
 
 export type Friend = Database['public']['Tables']['friends']['Row'] & {

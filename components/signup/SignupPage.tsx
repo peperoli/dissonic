@@ -1,28 +1,28 @@
 'use client'
-import React from 'react'
 import { PageWrapper } from '../layout/PageWrapper'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { SubmitHandler } from 'react-hook-form'
 import { Button } from '../Button'
-import { TextField } from '../forms/TextField'
 import { CheckIcon } from '@heroicons/react/20/solid'
-import { useSignUp } from '../../hooks/useGagu'
+import { useSignUp } from '../../hooks/useSignup'
 import { StatusBanner } from '../forms/StatusBanner'
-import { AuthError } from '@supabase/supabase-js'
 import { errorMessages } from '../../lib/errorMessages'
 import { useRouter } from 'next/navigation'
+import { Form } from './Form'
+import { AuthError, PostgrestError } from '@supabase/supabase-js'
 
-export const Index = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<{ email: string; password: string }>({ mode: 'onChange' })
-  const { mutate, status, error } = useSignUp()
+export const SignupPage = () => {
+  const signUp = useSignUp()
   const { push } = useRouter()
 
-  const onSubmit: SubmitHandler<{ email: string; password: string }> = async formData => {
-    mutate(formData)
+  const onSubmit: SubmitHandler<{
+    email: string
+    username: string
+    password: string
+  }> = async formData => {
+    signUp.mutate(formData)
   }
+
+  const error = signUp.error as AuthError | PostgrestError
   return (
     <PageWrapper>
       <main className="w-full max-w-lg p-8">
@@ -50,35 +50,25 @@ export const Index = () => {
             Konzerte kommentieren und auf Kommentare reagieren
           </li>
         </ul>
-        <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5">
-          <TextField
-            {...register('email', { required: true })}
-            error={errors.email}
-            type="email"
-            label="E-Mail"
-            placeholder="william@delos.com"
+        {signUp.status !== 'success' && <Form onSubmit={onSubmit} status={signUp.status} />}
+        {signUp.status === 'error' && (
+          <StatusBanner
+            statusType="error"
+            message={
+              'code' in error && error.code === '23505'
+                ? 'Fehler: Es existiert bereits ein Benutzer für diese E-Mail-Adresse.'
+                : errorMessages[error.message]
+            }
+            className="mt-6"
           />
-          <TextField
-            {...register('password', {
-              required: true,
-              minLength: {
-                value: 10,
-                message: 'Das Passwort muss mindestens 10 Zeichen enthalten.',
-              },
-            })}
-            error={errors.password}
-            type="password"
-            label="Passwort"
+        )}
+        {signUp.status === 'success' && (
+          <StatusBanner
+            statusType="success"
+            message="Erfolgreich! Bestätige deine E-Mail-Adresse, um dein Benutzerkonto zu aktivieren."
+            className="mt-6"
           />
-          <div>
-            <Button type="submit" label="Konto erstellen" style="primary" loading={status === 'loading'} />
-          </div>
-          {status === 'error' && (
-            <StatusBanner
-              message={error instanceof AuthError ? errorMessages[error.message] : undefined}
-            />
-          )}
-        </form>
+        )}
         <h3 className="mt-10">Hast du bereits ein Konto?</h3>
         <Button label="Anmelden" onClick={() => push('/login')} size="small" style="secondary" />
       </main>

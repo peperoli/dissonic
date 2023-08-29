@@ -62,12 +62,13 @@ export default function LoginPage() {
           </div>
           {status === 'error' && (
             <StatusBanner
+              statusType="error"
               message={error instanceof AuthError ? errorMessages[error.message] : undefined}
             />
           )}
         </form>
-        <h3 className='mt-10'>Hast du noch gar kein Konto?</h3>
-        <p className='mb-4'>Dann nichts wie los!</p>
+        <h3 className="mt-10">Hast du noch gar kein Konto?</h3>
+        <p className="mb-4">Dann nichts wie los!</p>
         <Button
           label="Registrieren"
           onClick={() => router.push('/signup')}

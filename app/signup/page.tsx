@@ -1,5 +1,5 @@
-import { Index } from '../../components/signup/Index'
+import { SignupPage } from '../../components/signup/SignupPage'
 
 export default function Page() {
-  return <Index />
+  return <SignupPage />
 }

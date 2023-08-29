@@ -3,19 +3,23 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { useProfiles } from '../../hooks/useProfiles'
-import { EditProfile, Profile } from '../../types/types'
+import { AddProfile, EditProfile, Profile } from '../../types/types'
 import { Button } from '../Button'
 import { FileUpload } from '../forms/FileUpload'
 import { TextField } from '../forms/TextField'
 
 type FormProps = {
-  profile: Profile
-  editProfile: UseMutationResult<void, unknown, EditProfile, unknown>
+  userId: string
+  profile?: Profile
+  onSubmit: SubmitHandler<AddProfile> | SubmitHandler<EditProfile>
+  mutateProfile:
+    | UseMutationResult<void, unknown, AddProfile, unknown>
+    | UseMutationResult<void, unknown, EditProfile, unknown>
   killFile: UseMutationResult<void, unknown, { bucket: string; name: string }, unknown>
   close: () => void
 }
 
-export const Form = ({ profile, editProfile, killFile, close }: FormProps) => {
+export const Form = ({ userId, profile, onSubmit, mutateProfile, killFile, close }: FormProps) => {
   const {
     register,
     control,
@@ -24,20 +28,13 @@ export const Form = ({ profile, editProfile, killFile, close }: FormProps) => {
     formState: { dirtyFields, errors },
     reset,
   } = useForm<EditProfile>({
-    defaultValues: { username: profile.username, avatar_path: profile.avatar_path },
+    defaultValues: profile && { username: profile.username, avatar_path: profile.avatar_path },
     mode: 'onChange',
   })
   const { data: profiles } = useProfiles()
   const usernames = profiles?.map(item => item.username)
   const queryClient = useQueryClient()
   const { push } = useRouter()
-
-  const onSubmit: SubmitHandler<EditProfile> = async formData => {
-    if (profile.avatar_path) {
-      killFile.mutate({ bucket: 'avatars', name: profile.avatar_path })
-    }
-    editProfile.mutate({ ...formData, id: profile.id })
-  }
 
   const cancel = () => {
     const avatarPath = watch('avatar_path')
@@ -49,13 +46,13 @@ export const Form = ({ profile, editProfile, killFile, close }: FormProps) => {
   }
 
   useEffect(() => {
-    if (editProfile.status === 'success') {
+    if (mutateProfile.status === 'success') {
       queryClient
-        .invalidateQueries(['profile', profile.id])
+        .invalidateQueries(['profile', userId])
         .catch(error => console.error(error))
-        .finally(() => (dirtyFields.username ? push(`/users/${profile.username}`) : close()))
+        .finally(() => (dirtyFields.username ? push(`/users/${watch('username')}`) : close()))
     }
-  }, [editProfile.status])
+  }, [mutateProfile.status])
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5">
       <Controller
@@ -65,7 +62,7 @@ export const Form = ({ profile, editProfile, killFile, close }: FormProps) => {
           <FileUpload
             name="avatar_path"
             label="Profilbild"
-            path={`${profile.id}/`}
+            path={`${userId}/`}
             value={value}
             onChange={onChange}
           />
@@ -75,7 +72,7 @@ export const Form = ({ profile, editProfile, killFile, close }: FormProps) => {
         {...register('username', {
           required: true,
           validate: value =>
-            value === profile.username ||
+            value === profile?.username ||
             !usernames?.includes(value ?? '') ||
             'Dieser Benutzername ist bereits vergeben, sei mal kreativ.',
         })}
@@ -83,14 +80,14 @@ export const Form = ({ profile, editProfile, killFile, close }: FormProps) => {
         label="Benutzername"
         autofill="off"
       />
-      <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10">
+      <div className="flex gap-4 [&>*]:flex-1">
         <Button onClick={cancel} label="Abbrechen" />
         <Button
           type="submit"
           label="Speichern"
           style="primary"
           disabled={Object.keys(errors).length > 0}
-          loading={editProfile.status === 'loading' || killFile.status === 'loading'}
+          loading={mutateProfile.status === 'loading' || killFile.status === 'loading'}
         />
       </div>
     </form>
