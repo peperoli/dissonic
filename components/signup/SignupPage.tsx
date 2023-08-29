@@ -31,7 +31,7 @@ export const SignupPage = () => {
           <br />
           geschätzter Fan von Live-Musik!
         </h1>
-        <p className="mb-2">Ein Concert-Diary-Konto ermöglicht dir folgende Funktionen:</p>
+        <p className="mb-2">Ein Dissonic-Konto ermöglicht dir folgende Funktionen:</p>
         <ul className="mb-6">
           <li className="flex items-center gap-4">
             <CheckIcon className="h-icon text-slate-300" />
