@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { useProfiles } from '../../hooks/useProfiles'
+import { useSession } from '../../hooks/useSession'
 import { EditProfile, Profile } from '../../types/types'
 import { Button } from '../Button'
 import { FileUpload } from '../forms/FileUpload'
@@ -28,6 +29,7 @@ export const Form = ({ profile, editProfile, killFile, close }: FormProps) => {
     mode: 'onChange',
   })
   const { data: profiles } = useProfiles()
+  const { data: session } = useSession()
   const usernames = profiles?.map(item => item.username)
   const queryClient = useQueryClient()
   const { push } = useRouter()
@@ -41,7 +43,7 @@ export const Form = ({ profile, editProfile, killFile, close }: FormProps) => {
 
   const cancel = () => {
     const avatarPath = watch('avatar_path')
-    if (avatarPath) {
+    if (avatarPath && dirtyFields.avatar_path) {
       killFile.mutate({ bucket: 'avatars', name: avatarPath })
     }
     reset()
@@ -51,9 +53,9 @@ export const Form = ({ profile, editProfile, killFile, close }: FormProps) => {
   useEffect(() => {
     if (editProfile.status === 'success') {
       queryClient
-        .invalidateQueries(['profile', profile.id])
+        .invalidateQueries(['profile', session?.user.id])
         .catch(error => console.error(error))
-        .finally(() => (dirtyFields.username ? push(`/users/${profile.username}`) : close()))
+        .finally(() => (dirtyFields.username ? push(`/users/${watch('username')}`) : close()))
     }
   }, [editProfile.status])
   return (
@@ -65,7 +67,7 @@ export const Form = ({ profile, editProfile, killFile, close }: FormProps) => {
           <FileUpload
             name="avatar_path"
             label="Profilbild"
-            path={`${profile.id}/`}
+            path={`${session?.user.id}/`}
             value={value}
             onChange={onChange}
           />
@@ -75,7 +77,7 @@ export const Form = ({ profile, editProfile, killFile, close }: FormProps) => {
         {...register('username', {
           required: true,
           validate: value =>
-            value === profile.username ||
+            value === profile?.username ||
             !usernames?.includes(value ?? '') ||
             'Dieser Benutzername ist bereits vergeben, sei mal kreativ.',
         })}
@@ -83,7 +85,7 @@ export const Form = ({ profile, editProfile, killFile, close }: FormProps) => {
         label="Benutzername"
         autofill="off"
       />
-      <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10">
+      <div className="flex gap-4 [&>*]:flex-1">
         <Button onClick={cancel} label="Abbrechen" />
         <Button
           type="submit"

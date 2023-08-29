@@ -12,46 +12,46 @@ import { TopBands } from './TopBands'
 import { TopLocations } from './TopLocations'
 import { ConcertsChart } from './ConcertsChart'
 import { AddFriendModal } from './AddFriendModal'
-import { BandSeenFull, Friend, Profile } from '../../types/types'
-import { useUser } from '../../hooks/useUser'
+import { Band, Concert, Location, Profile } from '../../types/types'
 import { useAvatar } from '../../hooks/useAvatar'
 import { useProfile } from '../../hooks/useProfile'
+import { useFriends } from '../../hooks/useFriends'
+import { useBandsSeen } from '../../hooks/useBandsSeen'
+import { useSession } from '../../hooks/useSession'
 
 interface IProfilePage {
   initialProfile: Profile
-  bandsSeen: BandSeenFull[]
-  friends: Friend[]
 }
 
-export const ProfilePage = ({ initialProfile, bandsSeen, friends }: IProfilePage) => {
-  const { data: profile, status } = useProfile(initialProfile.id, initialProfile)
+export const ProfilePage = ({ initialProfile }: IProfilePage) => {
+  const { data: profile } = useProfile(initialProfile.id, initialProfile)
+  const { data: friends } = useFriends(initialProfile.id)
+  const { data: bandsSeen } = useBandsSeen(initialProfile.id)
   const [editPassIsOpen, setEditPassIsOpen] = useState(false)
   const [editUsernameIsOpen, setEditUsernameIsOpen] = useState(false)
   const [addFriendIsOpen, setAddFriendIsOpen] = useState(false)
-  const { data: user } = useUser()
+  const { data: session } = useSession()
   const { data: avatarUrl } = useAvatar(profile?.avatar_path)
 
-  function unique(array: { id: string | number }[]): any[] {
-    const mapOfObjects = new Map(array.map(item => [item.id, item]))
+  function unique(array: ({ id: string | number } | undefined)[]): any[] {
+    const mapOfObjects = new Map(array.map(item => [item?.id, item]))
     return [...mapOfObjects.values()]
   }
-
-  const isOwnProfile = user && user.id === profile?.id
+  const isOwnProfile = session?.user.id === profile?.id
   const isFriend =
     isOwnProfile === false &&
-    friends.find(
+    friends?.find(
       item =>
-        item.pending === false && (item.sender.id === user?.id || item.receiver.id === user?.id)
+        item.pending === false && (item.sender.id === session?.user.id || item.receiver.id === session?.user.id)
     ) != undefined
-  const isPending =
-    friends.find(
-      item => item.pending && (item.sender.id === user?.id || item.receiver.id === user?.id)
-    ) != undefined
-  const uniqueBandsSeen = unique(bandsSeen.map(item => item.band))
-  const concertsSeen = unique(bandsSeen.map(item => item.concert))
-  const festivalsSeen = unique(
-    bandsSeen.filter(item => item.concert.is_festival).map(item => item.concert)
+  const isPending = friends?.find(
+    item => item.pending && (item.sender.id === session?.user.id || item.receiver.id === session?.user.id)
   )
+  const uniqueBandsSeen: Band[] = bandsSeen ? unique(bandsSeen.map(item => item.band)) : []
+  const concertsSeen: Concert[] = bandsSeen ? unique(bandsSeen.map(item => item.concert)) : []
+  const festivalsSeen: Concert[] = bandsSeen
+    ? unique(bandsSeen.filter(item => item.concert?.is_festival).map(item => item.concert))
+    : []
   return (
     <PageWrapper>
       <>
@@ -78,13 +78,13 @@ export const ProfilePage = ({ initialProfile, bandsSeen, friends }: IProfilePage
                     Freund
                   </p>
                 )}
-                {!isFriend && user?.id !== profile.id && (
+                {!isFriend && session?.user.id !== profile.id && (
                   <Button
                     onClick={() => setAddFriendIsOpen(true)}
                     label="Freund hinzufügen"
                     contentType="icon"
                     icon={<UserPlusIcon className="h-icon" />}
-                    disabled={isPending}
+                    disabled={!!isPending}
                   />
                 )}
               </div>
@@ -101,14 +101,34 @@ export const ProfilePage = ({ initialProfile, bandsSeen, friends }: IProfilePage
                   <p className="mb-0 text-2xl text-venom">{festivalsSeen?.length}</p>
                   <h2 className="text-sm font-normal mb-0">Festivals besucht</h2>
                 </div>
-                <TopBands bands={bandsSeen.map(item => item.band)} />
-                <div className="col-span-full p-6 rounded-lg bg-slate-800">
-                  <GenreChart bands={uniqueBandsSeen} />
-                </div>
-                <div className="col-span-full p-6 rounded-lg bg-slate-800">
-                  <ConcertsChart concerts={concertsSeen} />
-                </div>
-                <TopLocations locations={concertsSeen.map(item => item.location)} />
+                {bandsSeen && (
+                  <TopBands
+                    bands={
+                      bandsSeen
+                        .filter(item => item.band != undefined)
+                        .map(item => item.band) as Band[]
+                    }
+                  />
+                )}
+                {uniqueBandsSeen && (
+                  <div className="col-span-full p-6 rounded-lg bg-slate-800">
+                    <GenreChart bands={uniqueBandsSeen} />
+                  </div>
+                )}
+                {concertsSeen && (
+                  <div className="col-span-full p-6 rounded-lg bg-slate-800">
+                    <ConcertsChart concerts={concertsSeen} />
+                  </div>
+                )}
+                {concertsSeen && (
+                  <TopLocations
+                    locations={
+                      concertsSeen
+                        .filter(item => item.location != undefined)
+                        .map(item => item.location) as Location[]
+                    }
+                  />
+                )}
               </div>
               {isOwnProfile && (
                 <div className="flex gap-3">
@@ -129,11 +149,11 @@ export const ProfilePage = ({ initialProfile, bandsSeen, friends }: IProfilePage
           />
         )}
         <EditPasswordForm isOpen={editPassIsOpen} setIsOpen={setEditPassIsOpen} />
-        {user && profile && (
+        {session && profile && (
           <AddFriendModal
             isOpen={addFriendIsOpen}
             setIsOpen={setAddFriendIsOpen}
-            user={user}
+            user={session.user}
             profile={profile}
           />
         )}

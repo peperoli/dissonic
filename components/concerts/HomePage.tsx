@@ -11,15 +11,16 @@ import {
   UserIcon,
 } from '@heroicons/react/20/solid'
 import { PageWrapper } from '../layout/PageWrapper'
-import { Band, Concert, Location, ExtendedRes, Option } from '../../types/types'
-import { useUser } from '../../hooks/useUser'
+import { Concert, ExtendedRes, Option } from '../../types/types'
 import { useConcerts } from '../../hooks/useConcerts'
-import { useCookies } from 'react-cookie'
 import { ConcertCard } from './ConcertCard'
 import { BandFilter } from './BandFilter'
 import { LocationFilter } from './LocationFilter'
 import { YearsFilter } from './YearsFilter'
 import { BandCountFilter } from './BandCountFilter'
+import Cookies from 'js-cookie'
+import { usePathname, useRouter } from 'next/navigation'
+import { useSession } from '../../hooks/useSession'
 
 type HomePageProps = {
   initialConcerts: ExtendedRes<Concert[]>
@@ -33,9 +34,8 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
   const [selectedBandsPerConcert, setSelectedBandsPerConcert] = useState<[number, number] | null>(
     null
   )
-  const [cookies, setCookie] = useCookies(['view'])
-  const { data: user } = useUser()
-  const [view, setView] = useState(cookies.view || 'global')
+  const { data: session } = useSession()
+  const [view, setView] = useState(Cookies.get('view') || 'global')
   const [sort, setSort] = useState('date_start,desc')
   const { data: concerts, isFetching } = useConcerts(initialConcerts, {
     filter: {
@@ -43,17 +43,19 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
       bands: selectedBands.map(item => item.id),
       years: selectedYears,
       bandsPerConcert: selectedBandsPerConcert,
-      bandsSeenUser: view === 'user' ? user?.id : undefined,
+      bandsSeenUser: view === 'user' ? session?.user.id : undefined,
     },
     sort: [sort.split(',')[0], sort.split(',')[1] === 'asc' ? true : false],
     size: size,
   })
   const [isOpen, setIsOpen] = useState(false)
+  const { push } = useRouter()
+  const pathname = usePathname()
 
   function handleView(event: ChangeEvent) {
     const target = event.target as HTMLInputElement
     setView(target.value)
-    setCookie('view', target.value, { sameSite: 'strict' })
+    Cookies.set('view', target.value, { sameSite: 'strict' })
   }
 
   function resetAll() {
@@ -67,7 +69,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
       <main className="w-full max-w-2xl p-4 md:p-8">
         <div className="md:hidden fixed bottom-0 right-0 m-4">
           <Button
-            onClick={() => setIsOpen(true)}
+            onClick={session ? () => setIsOpen(true) : () => push(`/login?redirect=${pathname}`)}
             label="Konzert hinzufügen"
             style="primary"
             contentType="icon"
@@ -77,7 +79,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
         <div className="sr-only md:not-sr-only flex justify-between items-center mb-6">
           <h1>Konzerte</h1>
           <Button
-            onClick={() => setIsOpen(true)}
+            onClick={session ? () => setIsOpen(true) : () => push(`/login?redirect=${pathname}`)}
             label="Konzert hinzufügen"
             style="primary"
             icon={<PlusIcon className="h-icon" />}
@@ -96,7 +98,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
                 onClick={resetAll}
                 icon={<ArrowUturnLeftIcon className="h-icon" />}
                 size="small"
-              ></Button>
+              />
             )}
           </div>
           <div className="flex md:grid md:grid-cols-2 gap-2 md:gap-4 -mx-4 px-4 overflow-x-auto md:overflow-visible scrollbar-hidden">
@@ -112,7 +114,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
             />
           </div>
           <div className="flex items-center gap-4">
-            {user && (
+            {session && (
               <fieldset className="flex rounded-md bg-slate-800">
                 <label
                   className={`flex items-center gap-2 px-2 py-1 rounded-md${

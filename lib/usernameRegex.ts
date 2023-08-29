@@ -1,0 +1,1 @@
+export const usernameRegex = /^(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/gm

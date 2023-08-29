@@ -11,5 +11,5 @@ const addComment = async (comment: AddComment) => {
 }
 
 export const useAddComment = () => {
-  return useMutation(addComment, { onError: error => console.log(error) })
+  return useMutation(addComment, { onError: error => console.error(error) })
 }

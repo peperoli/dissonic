@@ -8,7 +8,7 @@ import { Profile } from '../../types/types'
 import { Button } from '../Button'
 import { RemoveFriendModal } from './RemoveFriendModal'
 import { useAvatar } from '../../hooks/useAvatar'
-import { useUser } from '../../hooks/useUser'
+import { useSession } from '../../hooks/useSession'
 
 interface IFriendItem {
   friendData: Profile
@@ -19,7 +19,7 @@ export const FriendItem: FC<IFriendItem> = ({ friendData, profile }) => {
   const { data: avatarUrl } = useAvatar(friendData.avatar_path)
   const [friend, setFriend] = useState<Profile | null>(friendData)
   const [isOpen, setIsOpen] = useState(false)
-  const { data: user } = useUser()
+  const { data: session } = useSession()
 
   if (friend) {
     return (
@@ -40,7 +40,7 @@ export const FriendItem: FC<IFriendItem> = ({ friendData, profile }) => {
             </div>
             {friend.username}
           </Link>
-          {user?.id === profile.id && (
+          {session?.user.id === profile.id && (
             <Button
               label="Freund entfernen"
               onClick={() => setIsOpen(true)}
@@ -57,7 +57,7 @@ export const FriendItem: FC<IFriendItem> = ({ friendData, profile }) => {
             setIsOpen={setIsOpen}
             friend={friend}
             setFriend={setFriend}
-            user={user}
+            user={session?.user}
           />
         )}
       </>

@@ -13,7 +13,6 @@ const addConcert = async (concert: AddConcert): Promise<Concert> => {
       location_id: concert.location_id,
     })
     .select()
-    .returns<Concert>()
     .single()
 
   if (addConcertError) {
@@ -32,5 +31,5 @@ const addConcert = async (concert: AddConcert): Promise<Concert> => {
 }
 
 export const useAddConcert = () => {
-  return useMutation(addConcert, { onError: error => console.log(error) })
+  return useMutation(addConcert, { onError: error => console.error(error) })
 }

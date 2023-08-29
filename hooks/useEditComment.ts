@@ -11,5 +11,5 @@ const editComment = async (comment: EditComment) => {
 }
 
 export const useEditComment = () => {
-  return useMutation(editComment, { onError: error => console.log(error) })
+  return useMutation(editComment, { onError: error => console.error(error) })
 }
