@@ -55,7 +55,7 @@ export const ProfilePage = ({ initialProfile }: IProfilePage) => {
   return (
     <PageWrapper>
       <>
-        <main className="p-4 md:p-8 w-full max-w-2xl">
+        <main className="container">
           {profile ? (
             <div>
               <div className="flex flex-wrap items-center gap-4 mb-6">

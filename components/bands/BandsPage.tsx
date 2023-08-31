@@ -91,7 +91,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
   const isDesktop = useMediaQuery('(min-width: 768px)')
   return (
     <PageWrapper>
-      <main className="p-4 md:p-8 w-full">
+      <main className="container-fluid">
         {!isDesktop && (
           <div className="fixed bottom-0 right-0 m-4">
             <Button

@@ -3,15 +3,15 @@
 		@apply inline-flex justify-center items-center gap-2 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed;
 
 		&:not(.btn-icon) {
-			@apply px-4 py-2;
+			@apply px-5 py-3 md:px-4 md:py-2;
 
 			&.btn-small {
-				@apply px-3 py-1.5 text-sm;
+				@apply px-4 py-2 md:px-3 md:py-1.5 text-sm;
 			}
 		}
 
 		&.btn-icon {
-			@apply w-10 h-10;
+			@apply w-12 h-12 md:w-10 md:h-10;
 
 			&.btn-small {
 				@apply w-8 h-8 text-sm;

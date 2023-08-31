@@ -109,7 +109,7 @@ export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
   return (
     <PageWrapper>
       <ConcertContext.Provider value={{ concert }}>
-        <main className="grid gap-4 w-full max-w-2xl p-4 md:p-8">
+        <main className="container grid gap-4">
           <div>
             <Link href="/" className="btn btn-link">
               <ArrowLeftIcon className="h-icon" />

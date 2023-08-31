@@ -38,7 +38,7 @@ export default function LoginPage() {
   }, [status])
   return (
     <PageWrapper>
-      <main className="w-full max-w-lg p-8">
+      <main className="container-sm">
         <h1>Anmelden &amp; Konzerte eintragen</h1>
         <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5">
           <TextField

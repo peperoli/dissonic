@@ -66,7 +66,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
   }
   return (
     <PageWrapper>
-      <main className="w-full max-w-2xl p-4 md:p-8">
+      <main className="container">
         <div className="md:hidden fixed bottom-0 right-0 m-4">
           <Button
             onClick={session ? () => setIsOpen(true) : () => push(`/login?redirect=${pathname}`)}

@@ -22,7 +22,7 @@ export const FriendsPage = ({ profile, initialFriends }: FriendsPageProps) => {
   const pathname = usePathname()
   return (
     <PageWrapper>
-      <main className="p-4 md:p-8 w-full max-w-2xl">
+      <main className="container">
         <h1>{profile.username}s Freunde</h1>
         {session ? (
           <div className="grid grid-cols-2 gap-4">

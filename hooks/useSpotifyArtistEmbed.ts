@@ -18,5 +18,6 @@ const fetchSpotifyArtistEmbed = async (artistId?: string | null): Promise<Spotif
 export const useSpotifyArtistEmbed = (artistId?: string | null) => {
   return useQuery(['spotifyArtistEmbed', artistId], () => fetchSpotifyArtistEmbed(artistId), {
     enabled: !!artistId,
+    refetchOnWindowFocus: false,
   })
 }

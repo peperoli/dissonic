@@ -53,7 +53,7 @@ export const BandPage = ({ initialBand }: BandPageProps) => {
 
   return (
     <PageWrapper>
-      <main className="grid gap-4 w-full max-w-2xl p-4 md:p-8">
+      <main className="container grid gap-4">
         <div>
           <Link href="/bands" className="btn btn-link">
             <ArrowLeftIcon className="h-icon" />
@@ -76,7 +76,7 @@ export const BandPage = ({ initialBand }: BandPageProps) => {
                 </Fragment>
               ))}
           </ul>
-          {spotifyArtistEmbedStatus === 'loading' && (
+          {band.spotify_artist_id && spotifyArtistEmbedStatus === 'loading' && (
             <div className="grid place-content-center h-72 rounded-lg text-slate-300 bg-slate-750">
               <SpinnerIcon className="h-8 animate-spin" />
             </div>

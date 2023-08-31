@@ -1,28 +1,73 @@
-import { FC } from 'react'
+import Image from 'next/legacy/image'
+import Link from 'next/link'
+import { useState } from 'react'
+import { useSpotifyArtist } from '../../hooks/useSpotifyArtist'
 import { Band } from '../../types/types'
+import { Button } from '../Button'
+import { UserMusicIcon } from '../layout/UserMusicIcon'
 
-export interface TopBandsProps {
+type TopBand = {
+  readonly id: number
+  name: string
+  spotify_artist_id: string | null
+  count: number
+}
+
+type BandItemProps = {
+  topBand: TopBand
+}
+
+const BandItem = ({ topBand }: BandItemProps) => {
+  const { data } = useSpotifyArtist(topBand.spotify_artist_id)
+  const picture = data?.images[1]
+  return (
+    <Link href={`/bands/${topBand.id}`} className="flex gap-4 md:block">
+      <div className="relative flex-shrink-0 flex justify-center items-center aspect-square rounded-2xl bg-slate-750">
+        {picture ? (
+          <Image
+            src={picture.url}
+            alt={topBand.name}
+            layout="fill"
+            objectFit="cover"
+            placeholder="blur"
+            blurDataURL={data?.images[2].url}
+            className="rounded-2xl"
+          />
+        ) : (
+          <UserMusicIcon className="h-8 text-slate-300" />
+        )}
+      </div>
+      <div className="mt-2">
+        <h3 className="mb-0">{topBand.name}</h3>
+        <div className="text-slate-300">{topBand.count} Konzerte</div>
+      </div>
+    </Link>
+  )
+}
+
+type TopBandsProps = {
   bands: Band[]
 }
 
-export const TopBands: FC<TopBandsProps> = ({ bands }) => {
-  type TopBand = {
-    readonly id: number
-    name: string
-    count: number
-  }
+export const TopBands = ({ bands }: TopBandsProps) => {
   const topBands: TopBand[] = []
+  const [visibleItems, setVisibleItems] = useState(8)
 
   bands.forEach(band => {
     let topBand = topBands.find(item => item.id === band.id)
     if (!topBand) {
-      topBands.push({ id: band.id, name: band.name, count: 1 })
+      topBands.push({
+        id: band.id,
+        name: band.name,
+        spotify_artist_id: band.spotify_artist_id,
+        count: 1,
+      })
     } else if (topBand?.count) {
       topBand.count += 1
     }
   })
 
-  const highestCount = Math.max(...topBands.map(item => item.count))
+  const totalCount = topBands.filter(item => item.count > 1).length
 
   function compare(a: { count: number }, b: { count: number }): number {
     let comparison = 0
@@ -38,25 +83,20 @@ export const TopBands: FC<TopBandsProps> = ({ bands }) => {
     return (
       <div className="col-span-full p-6 rounded-lg bg-slate-800">
         <h2>Top Bands</h2>
-        <div className="flex gap-4 overflow-auto">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 mb-6">
           {topBands
             .filter(item => item.count > 1)
             .sort(compare)
+            .slice(0, visibleItems)
             .map(item => (
-              <div key={item.id} className="flex-shrink-0 w-22 overflow-hidden">
-                <div className="relative flex justify-center items-end h-24 mb-2">
-                  <div
-                    className="w-8 rounded bg-venom"
-                    style={{ height: (item.count / highestCount) * 100 + '%' }}
-                  />
-                  <p className="absolute w-full pb-1 text-center mix-blend-difference">
-                    {item.count}
-                  </p>
-                </div>
-                <p className="text-center text-ellipsis overflow-hidden">{item.name}</p>
-              </div>
+              <BandItem topBand={item} key={item.id} />
             ))}
         </div>
+        {visibleItems < totalCount ? (
+          <Button onClick={() => setVisibleItems(prev => (prev += 8))} label="Mehr anzeigen" />
+        ) : (
+          <Button onClick={() => setVisibleItems(8)} label="Weniger anzeigen" />
+        )}
       </div>
     )
   }

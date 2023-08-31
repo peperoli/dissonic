@@ -25,7 +25,7 @@ export const SignupPage = () => {
   const error = signUp.error as AuthError | PostgrestError
   return (
     <PageWrapper>
-      <main className="w-full max-w-lg p-8">
+      <main className="container-sm">
         <h1>
           <span className="text-[1.5em]">Willkommen,</span>
           <br />
@@ -34,19 +34,19 @@ export const SignupPage = () => {
         <p className="mb-2">Ein Dissonic-Konto ermöglicht dir folgende Funktionen:</p>
         <ul className="mb-6">
           <li className="flex items-center gap-4">
-            <CheckIcon className="h-icon text-slate-300" />
+            <CheckIcon className="flex-shrink-0 h-icon text-slate-300" />
             Konzerte, Bands und Locations eintragen und aktualisieren
           </li>
           <li className="flex items-center gap-4">
-            <CheckIcon className="h-icon text-slate-300" />
+            <CheckIcon className="flex-shrink-0 h-icon text-slate-300" />
             Deine Konzert-Historie und Statistiken einsehen
           </li>
           <li className="flex items-center gap-4">
-            <CheckIcon className="h-icon text-slate-300" />
+            <CheckIcon className="flex-shrink-0 h-icon text-slate-300" />
             Bands markieren, die du live erlebt hast
           </li>
           <li className="flex items-center gap-4">
-            <CheckIcon className="h-icon text-slate-300" />
+            <CheckIcon className="flex-shrink-0 h-icon text-slate-300" />
             Konzerte kommentieren und auf Kommentare reagieren
           </li>
         </ul>
