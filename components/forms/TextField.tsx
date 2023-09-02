@@ -10,7 +10,7 @@ type TextFieldProps = {
   type?: HTMLInputTypeAttribute
   placeholder?: string
   error?: FieldError
-  autofill?: 'on' | 'off'
+  autocomplete?: 'on' | 'off'
 }
 
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(

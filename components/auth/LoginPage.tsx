@@ -3,14 +3,15 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { useSignIn } from '../hooks/useSignIn'
-import { Button } from './Button'
-import { TextField } from './forms/TextField'
-import { PageWrapper } from './layout/PageWrapper'
+import { useSignIn } from '../../hooks/useSignIn'
+import { Button } from './../Button'
+import { TextField } from './../forms/TextField'
+import { PageWrapper } from './../layout/PageWrapper'
 import { AuthError } from '@supabase/supabase-js'
-import { errorMessages } from '../lib/errorMessages'
-import { StatusBanner } from './forms/StatusBanner'
-import { emailRegex } from '../lib/emailRegex'
+import { errorMessages } from '../../lib/errorMessages'
+import { StatusBanner } from './../forms/StatusBanner'
+import { emailRegex } from '../../lib/emailRegex'
+import Link from 'next/link'
 
 export default function LoginPage() {
   const {
@@ -57,8 +58,9 @@ export default function LoginPage() {
             type="password"
             label="Passwort"
           />
-          <div>
+          <div className="flex items-center gap-4">
             <Button type="submit" label="Anmelden" style="primary" loading={status === 'loading'} />
+            <Link href="/reset-password" className="text-sm font-bold text-venom hover:underline">Passwort vergessen?</Link>
           </div>
           {status === 'error' && (
             <StatusBanner
