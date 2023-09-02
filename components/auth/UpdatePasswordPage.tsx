@@ -45,7 +45,7 @@ export function UpdatePasswordPage() {
             error={errors.password}
             type="password"
             label="Passwort"
-            autocomplete="off"
+            autoComplete="off"
           />
           <div className="flex items-center gap-4">
             <Button type="submit" label="Speichern" style="primary" loading={status === 'loading'} />

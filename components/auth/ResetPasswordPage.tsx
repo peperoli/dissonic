@@ -42,7 +42,7 @@ export function ResetPasswordPage() {
             type="email"
             label="E-Mail"
             placeholder="william@delos.com"
-            autocomplete="off"
+            autoComplete="off"
           />
           <div className="flex items-center gap-4">
             <Button type="submit" label="Bestätigen" style="primary" loading={status === 'loading'} />

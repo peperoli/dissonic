@@ -83,7 +83,7 @@ export const Form = ({ profile, editProfile, killFile, close }: FormProps) => {
         })}
         error={errors.username}
         label="Benutzername"
-        autocomplete="off"
+        autoComplete="off"
       />
       <div className="flex gap-4 [&>*]:flex-1">
         <Button onClick={cancel} label="Abbrechen" />
