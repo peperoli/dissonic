@@ -22,7 +22,7 @@ const BandItem = ({ topBand }: BandItemProps) => {
   const picture = data?.images[1]
   return (
     <Link href={`/bands/${topBand.id}`} className="flex gap-4 md:block">
-      <div className="relative flex-shrink-0 flex justify-center items-center aspect-square rounded-2xl bg-slate-750">
+      <div className="relative flex-shrink-0 flex justify-center items-center w-15 h-15 md:w-auto md:h-auto md:aspect-square rounded-2xl bg-slate-750">
         {picture ? (
           <Image
             src={picture.url}

@@ -35,7 +35,8 @@ module.exports = {
       'shine': '0 0 16px',
     },
     extend: {
-      width: {
+      spacing: {
+        15: '3.75rem',
         22: '5.5rem',
       },
       minWidth: {
