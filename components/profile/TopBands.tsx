@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -83,7 +84,12 @@ export const TopBands = ({ bands }: TopBandsProps) => {
     return (
       <div className="col-span-full p-6 rounded-lg bg-slate-800">
         <h2>Top Bands</h2>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 mb-6">
+        <div
+          className={clsx(
+            'grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6',
+            totalCount >= 4 && 'mb-6'
+          )}
+        >
           {topBands
             .filter(item => item.count > 1)
             .sort(compare)
@@ -92,10 +98,14 @@ export const TopBands = ({ bands }: TopBandsProps) => {
               <BandItem topBand={item} key={item.id} />
             ))}
         </div>
-        {visibleItems < totalCount ? (
-          <Button onClick={() => setVisibleItems(prev => (prev += 8))} label="Mehr anzeigen" />
-        ) : (
-          <Button onClick={() => setVisibleItems(8)} label="Weniger anzeigen" />
+        {totalCount >= 4 && (
+          <>
+            {visibleItems < totalCount ? (
+              <Button onClick={() => setVisibleItems(prev => (prev += 8))} label="Mehr anzeigen" />
+            ) : (
+              <Button onClick={() => setVisibleItems(8)} label="Weniger anzeigen" />
+            )}
+          </>
         )}
       </div>
     )
