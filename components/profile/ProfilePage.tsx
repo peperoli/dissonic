@@ -18,12 +18,51 @@ import { useProfile } from '../../hooks/useProfile'
 import { useFriends } from '../../hooks/useFriends'
 import { useBandsSeen } from '../../hooks/useBandsSeen'
 import { useSession } from '../../hooks/useSession'
+import { Tab } from '@headlessui/react'
+import clsx from 'clsx'
+import { useConcerts } from '../../hooks/useConcerts'
+import { ConcertCard } from '../concerts/ConcertCard'
 
-interface IProfilePage {
+type ConcertListProps = {
+  userId: string
+}
+
+function ConcertList({ userId }: ConcertListProps) {
+  const [size, setSize] = useState(25)
+  const { data: concerts, fetchStatus } = useConcerts(undefined, {
+    filter: { bandsSeenUser: userId },
+    sort: ['date_start', false],
+    size,
+  })
+  return (
+    <>
+      {concerts ? (
+        concerts.data.map(concert => <ConcertCard concert={concert} key={concert.id} />)
+      ) : (
+        <p>Loading ...</p>
+      )}
+      <div className="flex flex-col items-center gap-2">
+        <p className="text-sm text-slate-300">
+          {concerts?.data.length} von {concerts?.count} Einträgen
+        </p>
+        {concerts?.data.length !== concerts?.count && (
+          <Button
+            label="Mehr anzeigen"
+            onClick={() => setSize(prev => (prev += 25))}
+            loading={fetchStatus === 'fetching'}
+            style="primary"
+          />
+        )}
+      </div>
+    </>
+  )
+}
+
+type ProfilePageProps = {
   initialProfile: Profile
 }
 
-export const ProfilePage = ({ initialProfile }: IProfilePage) => {
+export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
   const { data: profile } = useProfile(initialProfile.id, initialProfile)
   const { data: friends } = useFriends(initialProfile.id)
   const { data: bandsSeen } = useBandsSeen(initialProfile.id)
@@ -37,15 +76,18 @@ export const ProfilePage = ({ initialProfile }: IProfilePage) => {
     const mapOfObjects = new Map(array.map(item => [item?.id, item]))
     return [...mapOfObjects.values()]
   }
+
   const isOwnProfile = session?.user.id === profile?.id
   const isFriend =
     isOwnProfile === false &&
     friends?.find(
       item =>
-        item.pending === false && (item.sender.id === session?.user.id || item.receiver.id === session?.user.id)
+        item.pending === false &&
+        (item.sender.id === session?.user.id || item.receiver.id === session?.user.id)
     ) != undefined
   const isPending = friends?.find(
-    item => item.pending && (item.sender.id === session?.user.id || item.receiver.id === session?.user.id)
+    item =>
+      item.pending && (item.sender.id === session?.user.id || item.receiver.id === session?.user.id)
   )
   const uniqueBandsSeen: Band[] = bandsSeen ? unique(bandsSeen.map(item => item.band)) : []
   const concertsSeen: Concert[] = bandsSeen ? unique(bandsSeen.map(item => item.concert)) : []
@@ -101,34 +143,57 @@ export const ProfilePage = ({ initialProfile }: IProfilePage) => {
                   <p className="mb-0 text-2xl text-venom">{festivalsSeen?.length}</p>
                   <h2 className="text-sm font-normal mb-0">Festivals besucht</h2>
                 </div>
-                {bandsSeen && (
-                  <TopBands
-                    bands={
-                      bandsSeen
-                        .filter(item => item.band != undefined)
-                        .map(item => item.band) as Band[]
-                    }
-                  />
-                )}
-                {uniqueBandsSeen && (
-                  <div className="col-span-full p-6 rounded-lg bg-slate-800">
-                    <GenreChart bands={uniqueBandsSeen} />
-                  </div>
-                )}
-                {concertsSeen && (
-                  <div className="col-span-full p-6 rounded-lg bg-slate-800">
-                    <ConcertsChart concerts={concertsSeen} />
-                  </div>
-                )}
-                {concertsSeen && (
-                  <TopLocations
-                    locations={
-                      concertsSeen
-                        .filter(item => item.location != undefined)
-                        .map(item => item.location) as Location[]
-                    }
-                  />
-                )}
+                <Tab.Group as="section" className="col-span-full">
+                  <Tab.List className="mb-4 px-3 rounded-lg bg-slate-700">
+                    {['Statistik', 'Konzerte'].map(item => (
+                      <Tab className="px-3 rounded" key={item}>
+                        {({ selected }) => (
+                          <span
+                            className={clsx(
+                              'block py-3 border-b-2',
+                              selected ? 'border-venom' : 'border-transparent text-slate-300'
+                            )}
+                          >
+                            {item}
+                          </span>
+                        )}
+                      </Tab>
+                    ))}
+                  </Tab.List>
+                  <Tab.Panel className="grid grid-cols-3 gap-4">
+                    {bandsSeen && (
+                      <TopBands
+                        bands={
+                          bandsSeen
+                            .filter(item => item.band != undefined)
+                            .map(item => item.band) as Band[]
+                        }
+                      />
+                    )}
+                    {uniqueBandsSeen && (
+                      <div className="col-span-full p-6 rounded-lg bg-slate-800">
+                        <GenreChart bands={uniqueBandsSeen} />
+                      </div>
+                    )}
+                    {concertsSeen && (
+                      <div className="col-span-full p-6 rounded-lg bg-slate-800">
+                        <ConcertsChart concerts={concertsSeen} />
+                      </div>
+                    )}
+                    {concertsSeen && (
+                      <TopLocations
+                        locations={
+                          concertsSeen
+                            .filter(item => item.location != undefined)
+                            .map(item => item.location) as Location[]
+                        }
+                      />
+                    )}
+                  </Tab.Panel>
+                  <Tab.Panel className="grid gap-4">
+                    <ConcertList userId={profile.id} />
+                  </Tab.Panel>
+                </Tab.Group>
               </div>
               {isOwnProfile && (
                 <div className="flex gap-3">

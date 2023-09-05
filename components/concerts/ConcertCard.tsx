@@ -6,6 +6,7 @@ import { Concert } from '../../types/types'
 import { useProfiles } from '../../hooks/useProfiles'
 import { useSession } from '../../hooks/useSession'
 import clsx from 'clsx'
+import useMediaQuery from '../../hooks/useMediaQuery'
 
 type ConcertDateProps = {
   date: Date
@@ -44,6 +45,23 @@ export const ConcertCard = ({ concert, display = 'compact' }: ConcertCardProps) 
   const { data: profiles } = useProfiles({ ids: [...fanIds] })
   const router = useRouter()
   const bandsCount = concert.bands?.length || 0
+  const isDesktop = useMediaQuery('(min-width: 768px)')
+
+  function generateVisibleBandCount(threshold: number) {
+    let charCount = concert.bands?.[0]?.name.length || 0
+    let index = 1
+
+    for (index; index < bandsCount; index++) {
+      charCount += concert.bands?.[index]?.name.length || 0
+      if (charCount > threshold) {
+        break
+      }
+    }
+
+    return index
+  }
+
+  const visibleBandCount = generateVisibleBandCount(isDesktop ? 40 : 24)
   return (
     <div
       onClick={() => router.push(`/concerts/${concert.id}`)}
@@ -70,26 +88,30 @@ export const ConcertCard = ({ concert, display = 'compact' }: ConcertCardProps) 
         )}
         <div className="flex flex-wrap items-center -ml-2 mb-2">
           {concert.bands &&
-            concert.bands.slice(0, display === 'compact' ? 3 : undefined).map((band, index) => (
-              <Fragment key={band.id}>
-                {index !== 0 ? <span className="text-slate-300">&bull;</span> : null}
-                <Link
-                  href={`/bands/${band.id}`}
-                  onClick={event => event.stopPropagation()}
-                  className={`btn btn-link${
-                    concert.bands_seen?.find(
-                      item => item.band_id === band.id && item.user_id === session?.user.id
-                    )
-                      ? ' !text-venom'
-                      : ''
-                  }`}
-                >
-                  {band.name}
-                </Link>
-              </Fragment>
-            ))}
-          {display === 'compact' && bandsCount > 3 && (
-            <div className="px-1.5 rounded-md text-slate-300 bg-slate-700">+{bandsCount - 3}</div>
+            concert.bands
+              .slice(0, display === 'compact' ? visibleBandCount : undefined)
+              .map((band, index) => (
+                <Fragment key={band.id}>
+                  {index !== 0 ? <span className="text-slate-300">&bull;</span> : null}
+                  <Link
+                    href={`/bands/${band.id}`}
+                    onClick={event => event.stopPropagation()}
+                    className={`btn btn-link${
+                      concert.bands_seen?.find(
+                        item => item.band_id === band.id && item.user_id === session?.user.id
+                      )
+                        ? ' !text-venom'
+                        : ''
+                    }`}
+                  >
+                    {band.name}
+                  </Link>
+                </Fragment>
+              ))}
+          {display === 'compact' && bandsCount > visibleBandCount && (
+            <div className="px-1.5 rounded-md text-slate-300 bg-slate-700">
+              +{bandsCount - visibleBandCount}
+            </div>
           )}
         </div>
         <div className="flex gap-4 w-full mb-2">
