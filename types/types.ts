@@ -51,7 +51,7 @@ export type AddReaction = Database['public']['Tables']['reactions']['Insert']
 export type EditReaction = Database['public']['Tables']['reactions']['Update']
 
 export type Band = Database['public']['Tables']['bands']['Row'] & {
-  country: Country
+  country: Country | null
   genres: Genre[]
   concerts?: Concert[]
 }
@@ -75,7 +75,7 @@ export type Location = Database['public']['Tables']['locations']['Row']
 
 export type AddLocation = Database['public']['Tables']['locations']['Insert']
 
-export type Country = Database['public']['Tables']['countries']['Row']
+export type Country = { id: number; iso2: string }
 
 export type Profile = Database['public']['Tables']['profiles']['Row'] & {
   friends: [{ count: number }]
@@ -92,7 +92,7 @@ export type Friend = Database['public']['Tables']['friends']['Row'] & {
 
 export type AddFriend = Database['public']['Tables']['friends']['Insert']
 
-export type Option<IdType = number> = { id: IdType; name: string, [key: string]: any }
+export type Option<IdType = number> = { id: IdType; name: string; [key: string]: any }
 
 export type SpotifyArtist = {
   id: string

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate-db-types": "supabase gen types typescript > types/supabase.ts"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.3",

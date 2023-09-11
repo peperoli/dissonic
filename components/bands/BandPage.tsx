@@ -34,6 +34,7 @@ export const BandPage = ({ initialBand }: BandPageProps) => {
   const { data: session } = useSession()
   const { push } = useRouter()
   const pathname = usePathname()
+  const regionNames = new Intl.DisplayNames('de', { type: 'region' })
 
   if (bandIsLoading) {
     return (
@@ -62,10 +63,12 @@ export const BandPage = ({ initialBand }: BandPageProps) => {
         </div>
         <div className="grid gap-4 p-6 rounded-lg bg-slate-800">
           <h1>{band.name}</h1>
-          <div className="flex gap-2 items-center">
-            <MapPinIcon className="h-icon text-slate-300" />
-            {band.country?.name}
-          </div>
+          {band.country && (
+            <div className="flex gap-2 items-center">
+              <MapPinIcon className="h-icon text-slate-300" />
+              {regionNames.of(band.country.iso2)}
+            </div>
+          )}
           <ul className="flex gap-2">
             <MusicalNoteIcon className="h-icon text-slate-300" />
             {band.genres &&

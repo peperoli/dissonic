@@ -1,11 +1,13 @@
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useQuery } from '@tanstack/react-query'
-import { Country } from '../types/types'
-import supabase from '../utils/supabase'
+import { Database } from '../types/supabase'
 
-const fetchCountries = async (): Promise<Country[]> => {
+const fetchCountries = async () => {
+  const supabase = createClientComponentClient<Database>()
+  
   const { data, error } = await supabase
     .from('countries')
-    .select('*')
+    .select('id, iso2')
     .neq('local_name', null)
     .neq('iso2', 'AQ')
     .order('name')

@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { Band, FetchOptions, ExtendedRes } from '../types/types'
-import supabase from '../utils/supabase'
 import { getPagination } from '../lib/getPagination'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 const fetchBands = async (options?: FetchOptions): Promise<ExtendedRes<Band[]>> => {
+  const supabase = createClientComponentClient()
+
   let filterQuery = supabase
     .from('bands')
     .select('id, country:countries!inner(id), genres!inner(id)', { count: 'estimated' })
@@ -32,8 +34,8 @@ const fetchBands = async (options?: FetchOptions): Promise<ExtendedRes<Band[]>> 
 
   let query = supabase
     .from('bands')
-    .select('*, country:countries(*), genres(*)')
-    .in('id', ids?.map(item => item.id) as string[])
+    .select('*, country:countries(id, iso2), genres(*)')
+    .in('id', ids?.map(item => item.id) as number[])
 
   if (options?.page || options?.size) {
     query = query.range(from, to)

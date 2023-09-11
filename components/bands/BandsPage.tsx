@@ -11,16 +11,16 @@ import { Button } from '../Button'
 import useMediaQuery from '../../hooks/useMediaQuery'
 import { Pagination } from '../layout/Pagination'
 import { UserMusicIcon } from '../layout/UserMusicIcon'
-import { MultiSelectFilter } from '../MultiSelectFilter'
 import { Band, Genre, ExtendedRes, Option } from '../../types/types'
 import { useBands } from '../../hooks/useBands'
-import { useGenres } from '../../hooks/useGenres'
-import { useCountries } from '../../hooks/useCountries'
 import { useSpotifyArtist } from '../../hooks/useSpotifyArtist'
 import Image from 'next/image'
 import { useDebounce } from '../../hooks/useDebounce'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/useSession'
+import { StatusBanner } from '../forms/StatusBanner'
+import { CountryFilter } from './CountryFilter'
+import { GenreFilter } from './GenreFilter'
 
 interface BandTableRowProps {
   band: Band
@@ -29,6 +29,7 @@ interface BandTableRowProps {
 const BandTableRow = ({ band }: BandTableRowProps) => {
   const { data } = useSpotifyArtist(band.spotify_artist_id)
   const picture = data?.images[2]
+  const regionNames = new Intl.DisplayNames('de', { type: 'region' })
   return (
     <TableRow key={band.id} href={`/bands/${band.id}`}>
       <div className="relative flex-shrink-0 flex justify-center items-center w-10 h-10 rounded-lg bg-slate-750">
@@ -46,7 +47,9 @@ const BandTableRow = ({ band }: BandTableRowProps) => {
       </div>
       <div className="md:flex items-center gap-4 w-full">
         <div className="md:w-1/3">{band.name}</div>
-        <div className="md:w-1/3 text-slate-300">{band.country?.name}</div>
+        {band.country && (
+          <div className="md:w-1/3 text-slate-300">{regionNames.of(band.country.iso2)}</div>
+        )}
         <div className="hidden md:block md:w-1/3 text-slate-300 whitespace-nowrap text-ellipsis overflow-hidden">
           {band.genres?.map(item => item.name).join(' • ')}
         </div>
@@ -75,8 +78,6 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
     page: currentPage,
     size: perPage,
   })
-  const { data: genres } = useGenres()
-  const { data: countries } = useCountries()
   const { data: session } = useSession()
   const [isOpen, setIsOpen] = useState(false)
   const { push } = useRouter()
@@ -89,6 +90,17 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
   }
 
   const isDesktop = useMediaQuery('(min-width: 768px)')
+  const regionNames = new Intl.DisplayNames('de', { type: 'region' })
+
+  if (!bands) {
+    return (
+      <StatusBanner
+        statusType="error"
+        message="Es ist ein Fehler aufgetreten. Bitte versuche es später erneut."
+        className="container"
+      />
+    )
+  }
   return (
     <PageWrapper>
       <main className="container-fluid">
@@ -117,18 +129,11 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
         <Table>
           <div className="flex md:grid md:grid-cols-3 gap-2 md:gap-4 -mx-4 px-4 overflow-x-auto md:overflow-visible scrollbar-hidden">
             <Search name="searchBands" placeholder="Bands" query={query} setQuery={setQuery} />
-            <MultiSelectFilter
-              name="countries"
-              options={countries?.map(item => ({ id: item.id, name: item.name ?? 'FEHLER' }))}
+            <CountryFilter
               selectedOptions={selectedCountries}
               setSelectedOptions={setSelectedCountries}
             />
-            <MultiSelectFilter
-              name="genres"
-              options={genres}
-              selectedOptions={selectedGenres}
-              setSelectedOptions={setSelectedGenres}
-            />
+            <GenreFilter selectedOptions={selectedGenres} setSelectedOptions={setSelectedGenres} />
           </div>
           <div className="flex gap-4 items-center">
             <div className="my-4 text-sm text-slate-300">
@@ -144,10 +149,10 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
               </button>
             )}
           </div>
-          {bands?.count === 0 ? (
-            <div>Blyat! Keine Einträge gefunden.</div>
+          {bands.data.length === 0 ? (
+            <StatusBanner statusType="info" message="Blyat! Keine Einträge gefunden." />
           ) : (
-            bands?.data.map(band => <BandTableRow key={band.id} band={band} />)
+            bands.data.map(band => <BandTableRow key={band.id} band={band} />)
           )}
           <Pagination
             entriesCount={bands?.count ?? 0}

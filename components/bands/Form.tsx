@@ -36,6 +36,7 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
         .match(regExp)
     ) || []
   const isSimilar = dirtyFields.name && watch('name')?.length >= 3 && similarBands.length > 0
+  const regionNames = new Intl.DisplayNames(['de'], { type: 'region' })
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
       <TextField
@@ -57,7 +58,7 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
       {countries && (
         <Select
           {...register('country_id', { required: true })}
-          options={countries.map(item => ({ id: item.id, name: item.name ?? 'FEHLER' })) ?? []}
+          options={countries.map(item => ({ id: item.id, name: regionNames.of(item.iso2) ?? 'FEHLER' })) ?? []}
           error={errors.country_id}
           label="Land"
         />
