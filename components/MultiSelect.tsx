@@ -86,8 +86,15 @@ export const MultiSelect = ({
   const [query, setQuery] = useState('')
 
   const searchRef = useRef<HTMLInputElement>(null)
-  const regExp = new RegExp(query, 'i')
-  const filteredOptions = options?.filter(option => option.name?.match(regExp))
+  const regExp = new RegExp(query, 'iu')
+  console.log(regExp)
+
+  const filteredOptions = options?.filter(option =>
+    option.name
+      ?.normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .match(regExp)
+  )
 
   function capitalize(string: string) {
     const arr = string.split(' ')

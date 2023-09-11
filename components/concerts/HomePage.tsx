@@ -136,17 +136,15 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
                 onValueChange={handleView}
               />
             )}
-            {session && (
-              <SegmentedControl
-                options={[
-                  { value: 'roomy', label: 'Geräumig', icon: <Bars2Icon className="h-icon" /> },
-                  { value: 'compact', label: 'Kompakt', icon: <Bars4Icon className="h-icon" /> },
-                ]}
-                value={display}
-                onValueChange={handleDisplay}
-                iconOnly
-              />
-            )}
+            <SegmentedControl
+              options={[
+                { value: 'roomy', label: 'Geräumig', icon: <Bars2Icon className="h-icon" /> },
+                { value: 'compact', label: 'Kompakt', icon: <Bars4Icon className="h-icon" /> },
+              ]}
+              value={display}
+              onValueChange={handleDisplay}
+              iconOnly
+            />
             <div className="flex items-center ml-auto text-sm">
               <label htmlFor="sortBy" className="sr-only md:not-sr-only text-slate-300">
                 Sortieren nach:

@@ -28,7 +28,13 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
   const { data: countries } = useCountries()
   const { data: genres } = useGenres()
   const regExp = new RegExp(watch('name'), 'i')
-  const similarBands = bands?.data.filter(item => item.name.match(regExp)) || []
+  const similarBands =
+    bands?.data.filter(item =>
+      item.name
+        ?.normalize('NFD')
+        .replace(/\p{Diacritic}/gu, '')
+        .match(regExp)
+    ) || []
   const isSimilar = dirtyFields.name && watch('name')?.length >= 3 && similarBands.length > 0
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">

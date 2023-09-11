@@ -1,13 +1,19 @@
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useQuery } from '@tanstack/react-query'
 import { getPagination } from '../lib/getPagination'
 import { ExtendedRes, FetchOptions, Location } from '../types/types'
-import supabase from '../utils/supabase'
 
 async function fetchLocations(options?: FetchOptions): Promise<ExtendedRes<Location[]>> {
+  const supabase = createClientComponentClient()
+
   let query = supabase.from('locations').select('*', { count: 'estimated' })
 
   if (options?.filter?.search) {
-    query = query.ilike('name', `%${options.filter.search.replace(' ', '%')}%`)
+    query = supabase.rpc(
+      'search_locations',
+      { search_string: options.filter.search },
+      { count: 'estimated' }
+    )
   }
 
   const { count: initialCount, error: countError } = await query

@@ -8,14 +8,18 @@ const fetchBands = async (options?: FetchOptions): Promise<ExtendedRes<Band[]>> 
     .from('bands')
     .select('id, country:countries!inner(id), genres!inner(id)', { count: 'estimated' })
 
+  if (options?.filter?.search) {
+    filterQuery = supabase.rpc(
+      'search_bands',
+      { search_string: options.filter.search },
+      { count: 'estimated' }
+    )
+  }
   if (options?.filter?.countries && options.filter.countries.length > 0) {
     filterQuery = filterQuery.in('countries.id', options.filter.countries)
   }
   if (options?.filter?.genres && options.filter.genres.length > 0) {
     filterQuery = filterQuery.in('genres.id', options.filter.genres)
-  }
-  if (options?.filter?.search) {
-    filterQuery = filterQuery.ilike('name', `%${options.filter.search.split(' ').join('%')}%`)
   }
 
   const { data: ids, count, error: countError } = await filterQuery
