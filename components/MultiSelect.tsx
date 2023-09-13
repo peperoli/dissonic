@@ -84,11 +84,8 @@ export const MultiSelect = ({
   fullHeight,
 }: MultiSelectProps) => {
   const [query, setQuery] = useState('')
-
   const searchRef = useRef<HTMLInputElement>(null)
   const regExp = new RegExp(query, 'iu')
-  console.log(regExp)
-
   const filteredOptions = options?.filter(option =>
     option.name
       ?.normalize('NFD')

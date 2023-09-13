@@ -1,6 +1,13 @@
 'use client'
 
-import { ArrowLeftIcon, CalendarIcon, MapPinIcon, UsersIcon } from '@heroicons/react/20/solid'
+import {
+  ArrowLeftIcon,
+  CalendarIcon,
+  MapPinIcon,
+  PencilSquareIcon,
+  TrashIcon,
+  UsersIcon,
+} from '@heroicons/react/20/solid'
 import { useQueryClient } from '@tanstack/react-query'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
@@ -18,6 +25,7 @@ import { EditConcertForm } from './EditConcertForm'
 import { GenreChart } from './GenreChart'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/useSession'
+import { UserItem } from './UserItem'
 
 interface ConcertPageProps {
   initialConcert: Concert
@@ -49,7 +57,7 @@ export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
   )
   const dateFormat: Intl.DateTimeFormatOptions = {
     day: 'numeric',
-    month: 'long',
+    month: 'short',
     year:
       concert && new Date(concert.date_start).getFullYear() === new Date().getFullYear()
         ? undefined
@@ -110,23 +118,54 @@ export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
     <PageWrapper>
       <ConcertContext.Provider value={{ concert }}>
         <main className="container grid gap-4">
-          <div>
+          <div className="flex justify-between items-center">
             <Link href="/" className="btn btn-link">
               <ArrowLeftIcon className="h-icon" />
               Zurück
             </Link>
+            <div className="flex gap-3">
+              <Button
+                onClick={
+                  session ? () => setEditIsOpen(true) : () => push(`/login?redirect=${pathname}`)
+                }
+                label="Bearbeiten"
+                icon={<PencilSquareIcon className="h-icon" />}
+                contentType="icon"
+                size="small"
+              />
+              <Button
+                onClick={
+                  session ? () => setDeleteIsOpen(true) : () => push(`/login?redirect=${pathname}`)
+                }
+                label="Löschen"
+                icon={<TrashIcon className="h-icon" />}
+                contentType="icon"
+                danger
+                size="small"
+              />
+            </div>
           </div>
-          <div className="grid gap-4 p-6 rounded-lg bg-slate-800">
-            {concert.name ? (
-              <>
-                {concert.is_festival && <p>Festival</p>}
-                <h1>{concert.name}</h1>
-              </>
-            ) : (
-              <h1>
-                {concert.bands && concert.bands[0]?.name} @ {concert.location?.name}
-              </h1>
-            )}
+          <div className="grid gap-4 p-4 md:p-6 rounded-lg bg-slate-800">
+            <div className="flex justify-between items-start gap-4">
+              {concert.name ? (
+                <div>
+                  {concert.is_festival && <p>Festival</p>}
+                  <h1>{concert.name}</h1>
+                </div>
+              ) : (
+                <h1>
+                  {concert.bands && concert.bands[0]?.name} @ {concert.location?.name}
+                </h1>
+              )}
+            </div>
+            <ul className="flex flex-wrap gap-1">
+              {concert.bands?.map((band, index) => (
+                <li role="presentation" key={band.id}>
+                  <Link href={`/bands/${band.id}`} className="font-bold">{band.name}</Link>
+                  {index !== 0 ? <span className="text-slate-300">&bull;</span> : null}
+                </li>
+              ))}
+            </ul>
             <div className="flex flex-wrap gap-2 mb-2">
               {concert.bands &&
                 concert.bands.map(band => (
@@ -150,52 +189,42 @@ export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
                 />
               </div>
             )}
-            <div className="flex flex-col md:flex-row gap-4 w-full mt-4">
-              <div className="inline-flex items-center">
+            <div className="grid gap-4 mt-4">
+              <div className="flex items-center">
                 <CalendarIcon className="h-icon mr-2 text-slate-300" />
-                {new Date(concert.date_start).toLocaleDateString('de-CH', dateFormat)}
-                {concert.date_end && (
+                <div>
                   <span>
-                    &nbsp;&ndash;{' '}
-                    {new Date(concert.date_end).toLocaleDateString('de-CH', dateFormat)}
+                    {new Date(concert.date_start).toLocaleDateString('de-CH', dateFormat)}
+                    {concert.date_end && <>&nbsp;&ndash; </>}
                   </span>
-                )}
+                  {concert.date_end && (
+                    <span>
+                      {new Date(concert.date_end).toLocaleDateString('de-CH', dateFormat)}
+                    </span>
+                  )}
+                </div>
               </div>
               {concert.location && (
                 <div className="inline-flex items-center">
                   <MapPinIcon className="h-icon mr-2 text-slate-300" />
-                  {concert.location.name}
+                  <div>{concert.location.name}</div>
+                </div>
+              )}
+              {fanProfiles && fanProfiles.length > 0 && (
+                <div className="flex flex-wrap gap-3">
+                  {fanProfiles.map(item => (
+                    <UserItem profile={item} key={item.id} />
+                  ))}
                 </div>
               )}
             </div>
-            {fanProfiles && fanProfiles.length > 0 ? (
-              <div className="flex text-sm">
-                <UsersIcon className="flex-none h-icon mr-2 self-center text-slate-300" />
-                <div>
-                  {fanProfiles.map(item => (
-                    <Link key={item.id} href={`/users/${item.username}`} className="btn btn-link">
-                      {item?.username}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div className="flex text-sm">
-                <UsersIcon className="flex-none h-icon mr-2 self-center text-slate-300" />
-                <div className="py-1 text-slate-300">Niemand da :/</div>
-              </div>
-            )}
-            <div className="flex gap-4">
-              <Button onClick={session ? () => setEditIsOpen(true) : () => push(`/login?redirect=${pathname}`)} label="Bearbeiten" />
-              <Button onClick={session ? () => setDeleteIsOpen(true) : () => push(`/login?redirect=${pathname}`)} label="Löschen" danger />
-            </div>
           </div>
           {concert.bands && (
-            <div className="p-6 rounded-lg bg-slate-800">
+            <div className="p-4 md:p-6 rounded-lg bg-slate-800">
               <GenreChart bands={concert.bands} />
             </div>
           )}
-          <div className="p-6 rounded-lg bg-slate-800">
+          <div className="p-4 md:p-6 rounded-lg bg-slate-800">
             <Comments />
           </div>
           <EditConcertForm isOpen={editIsOpen} setIsOpen={setEditIsOpen} />
