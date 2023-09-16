@@ -6,19 +6,15 @@ import {
   MapPinIcon,
   PencilSquareIcon,
   TrashIcon,
-  UsersIcon,
 } from '@heroicons/react/20/solid'
-import { useQueryClient } from '@tanstack/react-query'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useConcert } from '../../hooks/useConcert'
 import { ConcertContext } from '../../hooks/useConcertContext'
 import { useProfiles } from '../../hooks/useProfiles'
-import { BandSeen, Concert } from '../../types/types'
-import supabase from '../../utils/supabase'
+import { Concert } from '../../types/types'
 import { Button } from '../Button'
 import { PageWrapper } from '../layout/PageWrapper'
-import { BandSeenToggle } from './BandSeenToggle'
 import { Comments } from './Comments'
 import { DeleteConcertModal } from './DeleteConcertModal'
 import { EditConcertForm } from './EditConcertForm'
@@ -26,85 +22,29 @@ import { GenreChart } from './GenreChart'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/useSession'
 import { UserItem } from './UserItem'
+import { BandList } from './BandList'
 
 interface ConcertPageProps {
   initialConcert: Concert
 }
 
 export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
-  const { data: profiles } = useProfiles()
   const { data: concert } = useConcert(initialConcert, initialConcert.id)
+  const { data: profiles } = useProfiles()
   const { data: session } = useSession()
-  const queryClient = useQueryClient()
-
   const [editIsOpen, setEditIsOpen] = useState(false)
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
-  const [bandsSeen, setBandsSeen] = useState<BandSeen[]>([])
-  const [selectedBandsSeen, setSelectedBandsSeen] = useState<BandSeen[]>([])
-  const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    const concertBandsSeen = concert?.bands_seen?.filter(item => item.user_id === session?.user.id)
-    setBandsSeen(concertBandsSeen || [])
-    setSelectedBandsSeen(concertBandsSeen || [])
-  }, [concert?.bands_seen?.length, session])
-
-  const addBandsSeen = selectedBandsSeen.filter(
-    item => !bandsSeen?.find(item2 => item.band_id === item2.band_id)
-  )
-  const deleteBandsSeen = bandsSeen?.filter(
-    item => !selectedBandsSeen.find(item2 => item.band_id === item2.band_id)
-  )
+  const today = new Date()
+  const dateStart = concert && new Date(concert?.date_start)
   const dateFormat: Intl.DateTimeFormatOptions = {
     day: 'numeric',
     month: 'short',
-    year:
-      concert && new Date(concert.date_start).getFullYear() === new Date().getFullYear()
-        ? undefined
-        : 'numeric',
+    year: dateStart?.getFullYear() === today.getFullYear() ? undefined : 'numeric',
   }
   const fanIds = concert?.bands_seen && new Set(concert.bands_seen.map(item => item.user_id))
   const fanProfiles = profiles?.filter(profile => fanIds?.has(profile.id))
   const { push } = useRouter()
   const pathname = usePathname()
-
-  async function updateBandsSeen() {
-    try {
-      setLoading(true)
-
-      const { error: addBandsSeenError } = await supabase.from('j_bands_seen').insert(addBandsSeen)
-
-      if (addBandsSeenError) {
-        throw addBandsSeenError
-      }
-
-      const { error: deleteBandsSeenError } = await supabase
-        .from('j_bands_seen')
-        .delete()
-        .eq('concert_id', concert?.id)
-        .eq('user_id', session?.user.id)
-        .in(
-          'band_id',
-          deleteBandsSeen.map(item => item.band_id)
-        )
-
-      if (deleteBandsSeenError) {
-        throw deleteBandsSeenError
-      }
-
-      setBandsSeen(selectedBandsSeen)
-      queryClient.invalidateQueries(['concert', concert?.id])
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message)
-      } else {
-        alert('Unexpected error. See browser console for more information.')
-        console.error(error)
-      }
-    } finally {
-      setLoading(false)
-    }
-  }
 
   if (!concert) {
     return (
@@ -146,7 +86,7 @@ export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
             </div>
           </div>
           <div className="grid gap-4 p-4 md:p-6 rounded-lg bg-slate-800">
-            <div className="flex justify-between items-start gap-4">
+            <div>
               {concert.name ? (
                 <div>
                   {concert.is_festival && <p>Festival</p>}
@@ -157,47 +97,23 @@ export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
                   {concert.bands && concert.bands[0]?.name} @ {concert.location?.name}
                 </h1>
               )}
-            </div>
-            <ul className="flex flex-wrap gap-1">
-              {concert.bands?.map((band, index) => (
-                <li role="presentation" key={band.id}>
-                  <Link href={`/bands/${band.id}`} className="font-bold">{band.name}</Link>
-                  {index !== 0 ? <span className="text-slate-300">&bull;</span> : null}
-                </li>
-              ))}
-            </ul>
-            <div className="flex flex-wrap gap-2 mb-2">
-              {concert.bands &&
-                concert.bands.map(band => (
-                  <BandSeenToggle
-                    key={band.id}
-                    user={session?.user || null}
-                    band={band}
-                    selectedBandsSeen={selectedBandsSeen}
-                    setSelectedBandsSeen={setSelectedBandsSeen}
-                  />
-                ))}
-            </div>
-            {session && (
-              <div>
-                <Button
-                  onClick={updateBandsSeen}
-                  label="Speichern"
-                  style="primary"
-                  loading={loading}
-                  disabled={addBandsSeen?.length === 0 && deleteBandsSeen?.length === 0}
+              {concert.bands && (
+                <BandList
+                  bands={concert.bands}
+                  bandsSeen={concert.bands_seen?.filter(item => item.user_id === session?.user.id)}
+                  concertId={concert.id}
                 />
-              </div>
-            )}
+              )}
+            </div>
             <div className="grid gap-4 mt-4">
               <div className="flex items-center">
                 <CalendarIcon className="h-icon mr-2 text-slate-300" />
                 <div>
                   <span>
                     {new Date(concert.date_start).toLocaleDateString('de-CH', dateFormat)}
-                    {concert.date_end && <>&nbsp;&ndash; </>}
+                    {concert.date_end && concert.is_festival && <>&nbsp;&ndash; </>}
                   </span>
-                  {concert.date_end && (
+                  {concert.date_end && concert.is_festival && (
                     <span>
                       {new Date(concert.date_end).toLocaleDateString('de-CH', dateFormat)}
                     </span>
@@ -211,7 +127,7 @@ export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
                 </div>
               )}
               {fanProfiles && fanProfiles.length > 0 && (
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-4">
                   {fanProfiles.map(item => (
                     <UserItem profile={item} key={item.id} />
                   ))}
