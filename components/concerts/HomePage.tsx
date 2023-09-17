@@ -5,8 +5,6 @@ import { ChangeEvent, useState } from 'react'
 import { Button } from '../Button'
 import {
   ArrowUturnLeftIcon,
-  Bars2Icon,
-  Bars4Icon,
   ChevronDownIcon,
   GlobeAltIcon,
   PlusIcon,
@@ -39,9 +37,6 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
   )
   const { data: session } = useSession()
   const [view, setView] = useState(Cookies.get('view') ?? 'global')
-  const [display, setDisplay] = useState(
-    (Cookies.get('display') as 'roomy' | 'compact' | undefined) ?? 'roomy'
-  )
   const [sort, setSort] = useState('date_start,desc')
   const { data: concerts, isFetching } = useConcerts(initialConcerts, {
     filter: {
@@ -62,12 +57,6 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
     const target = event.target as HTMLInputElement
     setView(target.value)
     Cookies.set('view', target.value, { expires: 365, sameSite: 'strict' })
-  }
-
-  function handleDisplay(event: ChangeEvent) {
-    const target = event.target as HTMLInputElement
-    setDisplay(target.value as 'roomy' | 'compact')
-    Cookies.set('display', target.value, { expires: 365, sameSite: 'strict' })
   }
 
   function resetAll() {
@@ -136,15 +125,6 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
                 onValueChange={handleView}
               />
             )}
-            <SegmentedControl
-              options={[
-                { value: 'roomy', label: 'Geräumig', icon: <Bars2Icon className="h-icon" /> },
-                { value: 'compact', label: 'Kompakt', icon: <Bars4Icon className="h-icon" /> },
-              ]}
-              value={display}
-              onValueChange={handleDisplay}
-              iconOnly
-            />
             <div className="flex items-center ml-auto text-sm">
               <label htmlFor="sortBy" className="sr-only md:not-sr-only text-slate-300">
                 Sortieren nach:
@@ -165,7 +145,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
           </div>
           <div className="grid gap-4">
             {concerts?.data.map(concert => (
-              <ConcertCard concert={concert} display={display} key={concert.id} />
+              <ConcertCard concert={concert} key={concert.id} />
             ))}
           </div>
           <div className="flex flex-col items-center gap-2">
