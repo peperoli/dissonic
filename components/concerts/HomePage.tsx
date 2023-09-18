@@ -1,7 +1,7 @@
 'use client'
 
 import { AddConcertForm } from './AddConcertForm'
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useCallback, useState } from 'react'
 import { Button } from '../Button'
 import {
   ArrowUturnLeftIcon,
@@ -19,7 +19,7 @@ import { LocationFilter } from './LocationFilter'
 import { YearsFilter } from './YearsFilter'
 import { BandCountFilter } from './BandCountFilter'
 import Cookies from 'js-cookie'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from '../../hooks/useSession'
 import { SegmentedControl } from '../controls/SegmentedControl'
 
@@ -28,8 +28,13 @@ type HomePageProps = {
 }
 
 export const HomePage = ({ initialConcerts }: HomePageProps) => {
-  const [size, setSize] = useState(25)
-  const [selectedBands, setSelectedBands] = useState<Option[]>([])
+  const searchParams = useSearchParams()
+  const size = searchParams.get('size') ? Number(searchParams.get('size')) : 25
+  const selectedBands =
+    searchParams
+      .get('filter[bands]')
+      ?.split('|')
+      .map(item => Number(item)) ?? []
   const [selectedLocations, setSelectedLocations] = useState<Option[]>([])
   const [selectedYears, setSelectedYears] = useState<[number, number] | null>(null)
   const [selectedBandsPerConcert, setSelectedBandsPerConcert] = useState<[number, number] | null>(
@@ -37,11 +42,12 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
   )
   const { data: session } = useSession()
   const [view, setView] = useState(Cookies.get('view') ?? 'global')
-  const [sort, setSort] = useState('date_start,desc')
+  const sort = searchParams.get('sort') ?? 'date_start,desc'
+
   const { data: concerts, isFetching } = useConcerts(initialConcerts, {
     filter: {
       locations: selectedLocations.map(item => item.id),
-      bands: selectedBands.map(item => item.id),
+      bands: selectedBands,
       years: selectedYears,
       bandsPerConcert: selectedBandsPerConcert,
       bandsSeenUser: view === 'user' ? session?.user.id : undefined,
@@ -53,6 +59,24 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
   const { push } = useRouter()
   const pathname = usePathname()
 
+  function updateSearchParams(name: string, value: string | number) {
+    // now you got a read/write object
+    const current = new URLSearchParams(Array.from(searchParams.entries())) // -> has to use this form
+    // update as necessary
+    if (!value) {
+      current.delete(name)
+    } else {
+      current.set(name, String(value))
+    }
+
+    // cast to string
+    const search = current.toString()
+    // or const query = `${'?'.repeat(search.length && 1)}${search}`;
+    const query = search ? `?${search}` : ''
+
+    push(`${pathname}${query}`, { scroll: false })
+  }
+
   function handleView(event: ChangeEvent) {
     const target = event.target as HTMLInputElement
     setView(target.value)
@@ -60,10 +84,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
   }
 
   function resetAll() {
-    setSelectedBands([])
-    setSelectedLocations([])
-    setSelectedYears(null)
-    setSelectedBandsPerConcert(null)
+    push(pathname, { scroll: false })
   }
   return (
     <PageWrapper>
@@ -103,7 +124,10 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
             )}
           </div>
           <div className="flex md:grid md:grid-cols-2 gap-2 md:gap-4 -mx-4 px-4 overflow-x-auto md:overflow-visible scrollbar-hidden">
-            <BandFilter selectedOptions={selectedBands} setSelectedOptions={setSelectedBands} />
+            <BandFilter
+              value={selectedBands}
+              onSubmit={value => updateSearchParams('filter[bands]', value.join('|'))}
+            />
             <LocationFilter
               selectedOptions={selectedLocations}
               setSelectedOptions={setSelectedLocations}
@@ -125,16 +149,17 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
                 onValueChange={handleView}
               />
             )}
-            <div className="flex items-center ml-auto text-sm">
-              <label htmlFor="sortBy" className="sr-only md:not-sr-only text-slate-300">
+            <div className="flex items-center gap-1 ml-auto text-sm">
+              <label htmlFor="sort" className="sr-only md:not-sr-only text-slate-300">
                 Sortieren nach:
               </label>
               <div className="relative flex items-center">
                 <select
-                  onChange={e => setSort(e.target.value)}
-                  name="sortBy"
-                  id="sortBy"
-                  className="pl-2 pr-7 py-1 rounded-md hover:bg-slate-800 bg-transparent appearance-none"
+                  value={sort}
+                  onChange={event => updateSearchParams('sort', event.target.value)}
+                  name="sort"
+                  id="sort"
+                  className="appearance-none pl-2 pr-7 py-1 rounded-md font-sans bg-slate-750 hover:bg-slate-700"
                 >
                   <option value="date_start,desc">Neuste</option>
                   <option value="date_start,asc">Älteste</option>
@@ -155,7 +180,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
             {concerts?.data.length !== concerts?.count && (
               <Button
                 label="Mehr anzeigen"
-                onClick={() => setSize(prev => (prev += 25))}
+                onClick={() => updateSearchParams('size', size + 25)}
                 loading={isFetching}
                 style="primary"
               />

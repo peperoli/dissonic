@@ -6,22 +6,24 @@ import { Button } from './Button'
 import { SpinnerIcon } from './layout/SpinnerIcon'
 
 interface SelectedOptionProps {
-  selectedOption: Option
-  selectedOptions: Option[]
-  setSelectedOptions: (event: Option[]) => void
+  selectedOption: number
+  options?: Option[]
+  selectedOptions: number[]
+  setSelectedOptions: (event: number[]) => void
 }
 
 const SelectedOption = ({
   selectedOption,
+  options,
   selectedOptions,
   setSelectedOptions,
 }: SelectedOptionProps) => {
   function handleClick() {
-    setSelectedOptions(selectedOptions.filter(item => item.id !== selectedOption.id))
+    setSelectedOptions(selectedOptions.filter(item => item !== selectedOption))
   }
   return (
     <Button
-      label={selectedOption.name ?? ''}
+      label={options?.find(item => item.id === selectedOption)?.name ?? ''}
       onClick={handleClick}
       icon={<XMarkIcon className="h-icon" />}
       style="tag"
@@ -31,8 +33,8 @@ const SelectedOption = ({
 
 interface MultiSelectOptionProps {
   option: Option
-  selectedOptions: Option[]
-  setSelectedOptions: (event: Option[]) => void
+  selectedOptions: number[]
+  setSelectedOptions: (event: number[]) => void
   setQuery: Dispatch<SetStateAction<string>>
   searchRef: RefObject<HTMLInputElement>
 }
@@ -44,13 +46,13 @@ const MultiSelectOption = ({
   setQuery,
   searchRef,
 }: MultiSelectOptionProps) => {
-  const isSelected = selectedOptions.some(item => item.id === option.id)
+  const isSelected = selectedOptions.some(item => item === option.id)
 
   function handleChange() {
-    if (selectedOptions.some(item => item.id === option.id)) {
-      setSelectedOptions(selectedOptions.filter(item => item.id !== option.id))
+    if (selectedOptions.some(item => item === option.id)) {
+      setSelectedOptions(selectedOptions.filter(item => item !== option.id))
     } else {
-      setSelectedOptions([...selectedOptions, option])
+      setSelectedOptions([...selectedOptions, option.id])
     }
     setQuery('')
     searchRef.current?.focus()
@@ -68,8 +70,8 @@ interface MultiSelectProps {
   name: string
   options?: Option[]
   isLoading?: boolean
-  selectedOptions: Option[]
-  setSelectedOptions: (event: Option[]) => void
+  selectedOptions: number[]
+  setSelectedOptions: (event: number[]) => void
   alwaysOpen?: boolean
   fullHeight?: boolean
 }
@@ -110,7 +112,8 @@ export const MultiSelect = ({
         <div className="flex flex-wrap gap-2 mb-2">
           {selectedOptions.map(selectedOption => (
             <SelectedOption
-              key={selectedOption.id}
+              key={selectedOption}
+              options={options}
               selectedOption={selectedOption}
               selectedOptions={selectedOptions}
               setSelectedOptions={setSelectedOptions}

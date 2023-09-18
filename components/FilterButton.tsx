@@ -1,16 +1,16 @@
 import { ChevronDownIcon, XMarkIcon } from '@heroicons/react/20/solid'
 import { Button } from './Button'
 import { Popover } from '@headlessui/react'
-import { Option } from '../types/types'
 import { ReactNode } from 'react'
 
 interface FilterButtonProps {
   name: string
-  selectedOptions: Option[] | [number, number] | null
+  selectedOptions: number[]
+  onSubmit: (value: number[]) => void
   children: ReactNode
 }
 
-export const FilterButton = ({ name, selectedOptions, children }: FilterButtonProps) => {
+export const FilterButton = ({ name, selectedOptions, onSubmit, children }: FilterButtonProps) => {
   return (
     <Popover className="relative">
       {({ open, close }) => {
@@ -44,6 +44,14 @@ export const FilterButton = ({ name, selectedOptions, children }: FilterButtonPr
                 />
               </div>
               {children}
+              <Button
+                onClick={() => {
+                  onSubmit(selectedOptions)
+                  close()
+                }}
+                label="Übernehmen"
+                style="primary"
+              />
             </Popover.Panel>
           </>
         )

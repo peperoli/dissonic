@@ -1,12 +1,11 @@
-import { Dispatch, SetStateAction } from 'react'
-import { Band, Option } from '../../types/types'
+import { useState } from 'react'
 import { FilterButton } from './../FilterButton'
 import { MultiSelect } from './../MultiSelect'
 import { useBands } from './../../hooks/useBands'
 
 type BandMultiSelectProps = {
-  selectedOptions: Option[]
-  setSelectedOptions: Dispatch<SetStateAction<Option[]>>
+  selectedOptions: number[]
+  setSelectedOptions: (value: number[]) => void
 }
 
 const BandMultiSelect = ({ selectedOptions, setSelectedOptions }: BandMultiSelectProps) => {
@@ -27,14 +26,15 @@ const BandMultiSelect = ({ selectedOptions, setSelectedOptions }: BandMultiSelec
 }
 
 type BandFilterProps = {
-  selectedOptions: Option[]
-  setSelectedOptions: Dispatch<SetStateAction<Option[]>>
+  value: number[]
+  onSubmit: (value: number[]) => void
 }
 
-export const BandFilter = ({ selectedOptions, setSelectedOptions }: BandFilterProps) => {
+export const BandFilter = ({ value, onSubmit }: BandFilterProps) => {
+  const [selectedIds, setSelectedIds] = useState<number[]>(value)
   return (
-    <FilterButton name="bands" selectedOptions={selectedOptions}>
-      <BandMultiSelect selectedOptions={selectedOptions} setSelectedOptions={setSelectedOptions} />
+    <FilterButton name="bands" onSubmit={onSubmit} selectedOptions={selectedIds}>
+      <BandMultiSelect selectedOptions={selectedIds} setSelectedOptions={setSelectedIds} />
     </FilterButton>
   )
 }
