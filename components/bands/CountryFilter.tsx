@@ -1,12 +1,11 @@
-import { Dispatch, SetStateAction } from 'react'
-import { Option } from '../../types/types'
+import { useEffect, useState } from 'react'
 import { FilterButton } from './../FilterButton'
 import { MultiSelect } from './../MultiSelect'
 import { useCountries } from './../../hooks/useCountries'
 
 type CountryMultiSelectProps = {
-  selectedOptions: Option[]
-  setSelectedOptions: Dispatch<SetStateAction<Option[]>>
+  selectedOptions: number[]
+  setSelectedOptions: (value: number[]) => void
 }
 
 const CountryMultiSelect = ({ selectedOptions, setSelectedOptions }: CountryMultiSelectProps) => {
@@ -28,13 +27,18 @@ const CountryMultiSelect = ({ selectedOptions, setSelectedOptions }: CountryMult
 }
 
 type CountryFilterProps = {
-  selectedOptions: Option[]
-  setSelectedOptions: Dispatch<SetStateAction<Option[]>>
+  value?: number[]
+  onSubmit: (value: number[]) => void
 }
 
-export const CountryFilter = ({ selectedOptions, setSelectedOptions }: CountryFilterProps) => {
+export const CountryFilter = ({ value, onSubmit }: CountryFilterProps) => {
+  const [selectedOptions, setSelectedOptions] = useState(value ?? [])
+
+  useEffect(() => {
+    setSelectedOptions(value ?? [])
+  }, [value])
   return (
-    <FilterButton name="Länder" selectedOptions={selectedOptions}>
+    <FilterButton name="Länder" selectedOptions={selectedOptions} onSubmit={onSubmit}>
       <CountryMultiSelect
         selectedOptions={selectedOptions}
         setSelectedOptions={setSelectedOptions}

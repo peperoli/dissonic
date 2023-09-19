@@ -87,13 +87,12 @@ export const MultiSelect = ({
 }: MultiSelectProps) => {
   const [query, setQuery] = useState('')
   const searchRef = useRef<HTMLInputElement>(null)
-  const regExp = new RegExp(query, 'iu')
-  const filteredOptions = options?.filter(option =>
-    option.name
-      ?.normalize('NFD')
-      .replace(/\p{Diacritic}/gu, '')
-      .match(regExp)
-  )
+  const regExp = new RegExp(handleDiacritics(query), 'iu')
+  const filteredOptions = options?.filter(option => handleDiacritics(option.name).match(regExp))
+  
+  function handleDiacritics(string: string) {
+    return string.normalize('NFD').replace(/\p{Diacritic}/gu, '')
+  }
 
   function capitalize(string: string) {
     const arr = string.split(' ')
@@ -140,9 +139,9 @@ export const MultiSelect = ({
       {(query || alwaysOpen) && (
         <div
           className={clsx(
-            'form-control w-full mt-1 p-2 rounded-lg bg-slate-700 overflow-auto',
-            !alwaysOpen && 'absolute shadow-lg z-20',
-            fullHeight ? ' max-h-full md:h-72' : ' max-h-72'
+            'form-control w-full  bg-slate-700 overflow-auto',
+            alwaysOpen ? 'mt-2' : 'absolute mt-1 p-2 rounded-lg shadow-lg z-20',
+            fullHeight ? 'max-h-full md:h-72' : 'max-h-72'
           )}
         >
           {isLoading ? (

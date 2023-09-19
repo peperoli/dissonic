@@ -1,10 +1,15 @@
-import React, { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useConcertBands } from '../../hooks/useConcertBands'
 import { SpinnerIcon } from '../layout/SpinnerIcon'
 import { FilterButton } from './../FilterButton'
 import { RangeSliderWrapper } from './../RangeFilter'
 
-const BandCountRangeSlider = ({ ...props }: BandCountFilterProps) => {
+type BandCountRangeSliderProps = {
+  selectedOptions: number[]
+  setSelectedOptions: Dispatch<SetStateAction<number[]>>
+}
+
+const BandCountRangeSlider = ({ ...props }: BandCountRangeSliderProps) => {
   const { data: concertBands, isLoading } = useConcertBands()
   const bandCounts = concertBands
     ?.map(item => Array.isArray(item.bands_count) && item.bands_count[0]?.count)
@@ -21,13 +26,18 @@ const BandCountRangeSlider = ({ ...props }: BandCountFilterProps) => {
 }
 
 interface BandCountFilterProps {
-  selectedOptions: [number, number] | null
-  setSelectedOptions: Dispatch<SetStateAction<[number, number] | null>>
+  value?: number[]
+  onSubmit: (value: number[]) => void
 }
 
-export const BandCountFilter = ({ selectedOptions, setSelectedOptions }: BandCountFilterProps) => {
+export const BandCountFilter = ({ value, onSubmit }: BandCountFilterProps) => {
+  const [selectedOptions, setSelectedOptions] = useState(value ?? [])
+
+  useEffect(() => {
+    setSelectedOptions(value ?? [])
+  }, [value])
   return (
-    <FilterButton name="Bands pro Konzert" selectedOptions={selectedOptions}>
+    <FilterButton name="Bands pro Konzert" selectedOptions={selectedOptions} onSubmit={onSubmit}>
       <BandCountRangeSlider
         selectedOptions={selectedOptions}
         setSelectedOptions={setSelectedOptions}

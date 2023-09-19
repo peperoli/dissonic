@@ -5,58 +5,21 @@ import { AddBandForm } from './AddBandForm'
 import { ArrowUturnLeftIcon, PlusIcon } from '@heroicons/react/20/solid'
 import { PageWrapper } from '../layout/PageWrapper'
 import { Table } from '../Table'
-import { TableRow } from '../TableRow'
 import { Search } from '../Search'
 import { Button } from '../Button'
 import useMediaQuery from '../../hooks/useMediaQuery'
 import { Pagination } from '../layout/Pagination'
-import { UserMusicIcon } from '../layout/UserMusicIcon'
-import { Band, Genre, ExtendedRes, Option } from '../../types/types'
+import { Band, ExtendedRes } from '../../types/types'
 import { useBands } from '../../hooks/useBands'
-import { useSpotifyArtist } from '../../hooks/useSpotifyArtist'
-import Image from 'next/image'
 import { useDebounce } from '../../hooks/useDebounce'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from '../../hooks/useSession'
 import { StatusBanner } from '../forms/StatusBanner'
 import { CountryFilter } from './CountryFilter'
 import { GenreFilter } from './GenreFilter'
-
-interface BandTableRowProps {
-  band: Band
-}
-
-const BandTableRow = ({ band }: BandTableRowProps) => {
-  const { data } = useSpotifyArtist(band.spotify_artist_id)
-  const picture = data?.images[2]
-  const regionNames = new Intl.DisplayNames('de', { type: 'region' })
-  return (
-    <TableRow key={band.id} href={`/bands/${band.id}`}>
-      <div className="relative flex-shrink-0 flex justify-center items-center w-10 h-10 rounded-lg bg-slate-750">
-        {picture ? (
-          <Image
-            src={picture.url}
-            alt={band.name}
-            fill
-            sizes="150px"
-            className="object-cover rounded-lg"
-          />
-        ) : (
-          <UserMusicIcon className="h-icon text-slate-300" />
-        )}
-      </div>
-      <div className="md:flex items-center gap-4 w-full">
-        <div className="md:w-1/3">{band.name}</div>
-        {band.country && (
-          <div className="md:w-1/3 text-slate-300">{regionNames.of(band.country.iso2)}</div>
-        )}
-        <div className="hidden md:block md:w-1/3 text-slate-300 whitespace-nowrap text-ellipsis overflow-hidden">
-          {band.genres?.map(item => item.name).join(' • ')}
-        </div>
-      </div>
-    </TableRow>
-  )
-}
+import { BandTableRow } from './TableRow'
+import { urlParamToArray } from '../../lib/urlParamToArray'
+import { useUpdateSearchParams } from '../../hooks/useUpdateSearchParams'
 
 interface BandsPageProps {
   initialBands: ExtendedRes<Band[]>
@@ -65,14 +28,16 @@ interface BandsPageProps {
 export const BandsPage = ({ initialBands }: BandsPageProps) => {
   const perPage = 25
   const [currentPage, setCurrentPage] = useState(0)
-  const [selectedGenres, setSelectedGenres] = useState<Genre[]>([])
-  const [selectedCountries, setSelectedCountries] = useState<Option[]>([])
+  const searchParams = useSearchParams()
+  const selectedCountries = urlParamToArray(searchParams.get('filter[countries]'))
+  const selectedGenres = urlParamToArray(searchParams.get('filter[genres]'))
+  const updateSearchParams = useUpdateSearchParams()
   const [query, setQuery] = useState('')
   const debounceQuery = useDebounce(query, 200)
   const { data: bands } = useBands(initialBands, {
     filter: {
-      countries: selectedCountries.map(item => item.id),
-      genres: selectedGenres.map(item => item.id),
+      countries: selectedCountries,
+      genres: selectedGenres,
       search: debounceQuery,
     },
     page: currentPage,
@@ -84,9 +49,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
   const pathname = usePathname()
 
   function resetAll() {
-    setQuery('')
-    setSelectedCountries([])
-    setSelectedGenres([])
+    push(pathname, { scroll: false })
   }
 
   const isDesktop = useMediaQuery('(min-width: 768px)')
@@ -130,16 +93,19 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
           <div className="flex md:grid md:grid-cols-3 gap-2 md:gap-4 -mx-4 px-4 overflow-x-auto md:overflow-visible scrollbar-hidden">
             <Search name="searchBands" placeholder="Bands" query={query} setQuery={setQuery} />
             <CountryFilter
-              selectedOptions={selectedCountries}
-              setSelectedOptions={setSelectedCountries}
+              value={selectedCountries}
+              onSubmit={value => updateSearchParams('filter[countries]', value.join('|'))}
             />
-            <GenreFilter selectedOptions={selectedGenres} setSelectedOptions={setSelectedGenres} />
+            <GenreFilter
+              value={selectedGenres}
+              onSubmit={value => updateSearchParams('filter[genres]', value.join('|'))}
+            />
           </div>
           <div className="flex gap-4 items-center">
             <div className="my-4 text-sm text-slate-300">
               {bands?.count}&nbsp;{bands?.count === 1 ? 'Eintrag' : 'Einträge'}
             </div>
-            {(selectedCountries.length > 0 || selectedGenres.length > 0 || query.length > 0) && (
+            {(selectedCountries || selectedGenres) && (
               <button
                 onClick={resetAll}
                 className="flex gap-2 px-2 py-1 rounded-md text-sm hover:bg-slate-700"

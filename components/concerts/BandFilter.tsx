@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FilterButton } from './../FilterButton'
 import { MultiSelect } from './../MultiSelect'
 import { useBands } from './../../hooks/useBands'
@@ -26,12 +26,16 @@ const BandMultiSelect = ({ selectedOptions, setSelectedOptions }: BandMultiSelec
 }
 
 type BandFilterProps = {
-  value: number[]
+  value?: number[]
   onSubmit: (value: number[]) => void
 }
 
 export const BandFilter = ({ value, onSubmit }: BandFilterProps) => {
-  const [selectedIds, setSelectedIds] = useState<number[]>(value)
+  const [selectedIds, setSelectedIds] = useState<number[]>(value ?? [])
+
+  useEffect(() => {
+    setSelectedIds(value ?? [])
+  }, [value])
   return (
     <FilterButton name="bands" onSubmit={onSubmit} selectedOptions={selectedIds}>
       <BandMultiSelect selectedOptions={selectedIds} setSelectedOptions={setSelectedIds} />

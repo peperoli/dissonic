@@ -1,12 +1,11 @@
-import { Dispatch, SetStateAction } from 'react'
-import { Option } from '../../types/types'
+import { useEffect, useState } from 'react'
 import { FilterButton } from './../FilterButton'
 import { MultiSelect } from './../MultiSelect'
 import { useGenres } from './../../hooks/useGenres'
 
 type GenreMultiSelectProps = {
-  selectedOptions: Option[]
-  setSelectedOptions: Dispatch<SetStateAction<Option[]>>
+  selectedOptions: number[]
+  setSelectedOptions: (value: number[]) => void
 }
 
 const GenreMultiSelect = ({ selectedOptions, setSelectedOptions }: GenreMultiSelectProps) => {
@@ -27,13 +26,18 @@ const GenreMultiSelect = ({ selectedOptions, setSelectedOptions }: GenreMultiSel
 }
 
 type GenreFilterProps = {
-  selectedOptions: Option[]
-  setSelectedOptions: Dispatch<SetStateAction<Option[]>>
+  value?: number[]
+  onSubmit: (value: number[]) => void
 }
 
-export const GenreFilter = ({ selectedOptions, setSelectedOptions }: GenreFilterProps) => {
+export const GenreFilter = ({ value, onSubmit }: GenreFilterProps) => {
+  const [selectedOptions, setSelectedOptions] = useState(value ?? [])
+
+  useEffect(() => {
+    setSelectedOptions(value ?? [])
+  }, [value])
   return (
-    <FilterButton name="Genres" selectedOptions={selectedOptions}>
+    <FilterButton name="Genres" selectedOptions={selectedOptions} onSubmit={onSubmit}>
       <GenreMultiSelect
         selectedOptions={selectedOptions}
         setSelectedOptions={setSelectedOptions}

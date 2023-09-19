@@ -1,4 +1,3 @@
-import { User } from '@supabase/supabase-js'
 import { Database } from './supabase'
 
 export interface ExtendedRes<TData> {
@@ -10,8 +9,8 @@ export interface FetchOptions {
   filter?: {
     bands?: number[]
     locations?: number[]
-    years?: [number, number] | null
-    bandsPerConcert?: [number, number] | null
+    years?: number[]
+    bandsPerConcert?: number[]
     bandsSeenUser?: string
     countries?: number[]
     genres?: number[]
