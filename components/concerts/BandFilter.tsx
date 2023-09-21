@@ -37,7 +37,12 @@ export const BandFilter = ({ value, onSubmit }: BandFilterProps) => {
     setSelectedIds(value ?? [])
   }, [value])
   return (
-    <FilterButton name="bands" onSubmit={onSubmit} selectedOptions={selectedIds}>
+    <FilterButton
+      name="Bands"
+      onSubmit={onSubmit}
+      selectedOptions={selectedIds}
+      count={value?.length ?? 0}
+    >
       <BandMultiSelect selectedOptions={selectedIds} setSelectedOptions={setSelectedIds} />
     </FilterButton>
   )

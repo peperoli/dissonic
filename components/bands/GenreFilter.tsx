@@ -31,17 +31,19 @@ type GenreFilterProps = {
 }
 
 export const GenreFilter = ({ value, onSubmit }: GenreFilterProps) => {
-  const [selectedOptions, setSelectedOptions] = useState(value ?? [])
+  const [selectedIds, setSelectedIds] = useState(value ?? [])
 
   useEffect(() => {
-    setSelectedOptions(value ?? [])
+    setSelectedIds(value ?? [])
   }, [value])
   return (
-    <FilterButton name="Genres" selectedOptions={selectedOptions} onSubmit={onSubmit}>
-      <GenreMultiSelect
-        selectedOptions={selectedOptions}
-        setSelectedOptions={setSelectedOptions}
-      />
+    <FilterButton
+      name="Genres"
+      selectedOptions={selectedIds}
+      count={value?.length ?? 0}
+      onSubmit={onSubmit}
+    >
+      <GenreMultiSelect selectedOptions={selectedIds} setSelectedOptions={setSelectedIds} />
     </FilterButton>
   )
 }

@@ -15,7 +15,10 @@ const CountryMultiSelect = ({ selectedOptions, setSelectedOptions }: CountryMult
     <div className="relative h-full">
       <MultiSelect
         name="Länder"
-        options={countries?.map(item => ({ id: item.id, name: regionNames.of(item.iso2) ?? 'FEHLER' }))}
+        options={countries?.map(item => ({
+          id: item.id,
+          name: regionNames.of(item.iso2) ?? 'FEHLER',
+        }))}
         isLoading={isLoading}
         selectedOptions={selectedOptions}
         setSelectedOptions={setSelectedOptions}
@@ -32,17 +35,19 @@ type CountryFilterProps = {
 }
 
 export const CountryFilter = ({ value, onSubmit }: CountryFilterProps) => {
-  const [selectedOptions, setSelectedOptions] = useState(value ?? [])
+  const [selectedIds, setSelectedIds] = useState(value ?? [])
 
   useEffect(() => {
-    setSelectedOptions(value ?? [])
+    setSelectedIds(value ?? [])
   }, [value])
   return (
-    <FilterButton name="Länder" selectedOptions={selectedOptions} onSubmit={onSubmit}>
-      <CountryMultiSelect
-        selectedOptions={selectedOptions}
-        setSelectedOptions={setSelectedOptions}
-      />
+    <FilterButton
+      name="Länder"
+      selectedOptions={selectedIds}
+      count={value?.length ?? 0}
+      onSubmit={onSubmit}
+    >
+      <CountryMultiSelect selectedOptions={selectedIds} setSelectedOptions={setSelectedIds} />
     </FilterButton>
   )
 }

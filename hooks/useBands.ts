@@ -30,7 +30,7 @@ const fetchBands = async (options?: FetchOptions): Promise<ExtendedRes<Band[]>> 
     throw countError
   }
 
-  const [from, to] = getPagination(options?.page ?? 0, options?.size ?? 24, count ?? 0)
+  const [from, to] = getPagination(options?.page ?? 1, options?.size ?? 25, count ?? 0)
 
   let query = supabase
     .from('bands')

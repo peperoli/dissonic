@@ -32,12 +32,13 @@ interface YearsFilterProps {
 
 export const YearsFilter = ({ value, onSubmit }: YearsFilterProps) => {
   const [selectedOptions, setSelectedOptions] = useState(value ?? [])
+  const count = value?.[1] && value?.[0] ? value[1] - value[0] + 1 : 0
 
   useEffect(() => {
     setSelectedOptions(value ?? [])
   }, [value])
   return (
-    <FilterButton name="Jahre" selectedOptions={selectedOptions} onSubmit={onSubmit} count={selectedOptions[1] - selectedOptions[0]}>
+    <FilterButton name="Jahre" selectedOptions={selectedOptions} onSubmit={onSubmit} count={count}>
       <YearsRangeSlider selectedOptions={selectedOptions} setSelectedOptions={setSelectedOptions} />
     </FilterButton>
   )

@@ -31,14 +31,19 @@ type LocationFilterProps = {
 }
 
 export const LocationFilter = ({ value, onSubmit }: LocationFilterProps) => {
-  const [selectedOptions, setSelectedOptions] = useState(value ?? [])
+  const [selectedIds, setSelectedIds] = useState(value ?? [])
 
   useEffect(() => {
-    setSelectedOptions(value ?? [])
+    setSelectedIds(value ?? [])
   }, [value])
   return (
-    <FilterButton name="locations" selectedOptions={selectedOptions} onSubmit={onSubmit}>
-      <LocationMultiSelect selectedOptions={selectedOptions} setSelectedOptions={setSelectedOptions} />
+    <FilterButton
+      name="Locations"
+      selectedOptions={selectedIds}
+      count={value?.length ?? 0}
+      onSubmit={onSubmit}
+    >
+      <LocationMultiSelect selectedOptions={selectedIds} setSelectedOptions={setSelectedIds} />
     </FilterButton>
   )
 }

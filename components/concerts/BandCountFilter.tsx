@@ -31,17 +31,20 @@ interface BandCountFilterProps {
 }
 
 export const BandCountFilter = ({ value, onSubmit }: BandCountFilterProps) => {
-  const [selectedOptions, setSelectedOptions] = useState(value ?? [])
+  const [selectedIds, setSelectedIds] = useState(value ?? [])
+  const count = value?.[1] && value?.[0] ? value[1] - value[0] + 1 : 0
 
   useEffect(() => {
-    setSelectedOptions(value ?? [])
+    setSelectedIds(value ?? [])
   }, [value])
   return (
-    <FilterButton name="Bands pro Konzert" selectedOptions={selectedOptions} onSubmit={onSubmit}>
-      <BandCountRangeSlider
-        selectedOptions={selectedOptions}
-        setSelectedOptions={setSelectedOptions}
-      />
+    <FilterButton
+      name="Bands pro Konzert"
+      selectedOptions={selectedIds}
+      count={count}
+      onSubmit={onSubmit}
+    >
+      <BandCountRangeSlider selectedOptions={selectedIds} setSelectedOptions={setSelectedIds} />
     </FilterButton>
   )
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AddBandForm } from './AddBandForm'
 import { ArrowUturnLeftIcon, PlusIcon } from '@heroicons/react/20/solid'
 import { PageWrapper } from '../layout/PageWrapper'
@@ -27,8 +27,8 @@ interface BandsPageProps {
 
 export const BandsPage = ({ initialBands }: BandsPageProps) => {
   const perPage = 25
-  const [currentPage, setCurrentPage] = useState(0)
   const searchParams = useSearchParams()
+  const currentPage = Number(searchParams.get('page')) || 1
   const selectedCountries = urlParamToArray(searchParams.get('filter[countries]'))
   const selectedGenres = urlParamToArray(searchParams.get('filter[genres]'))
   const updateSearchParams = useUpdateSearchParams()
@@ -47,6 +47,12 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const { push } = useRouter()
   const pathname = usePathname()
+
+  useEffect(() => {
+    if (selectedCountries || selectedGenres || query) {
+      updateSearchParams('page', 1)
+    }
+  }, [selectedCountries, selectedGenres, query])
 
   function resetAll() {
     push(pathname, { scroll: false })
@@ -122,8 +128,8 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
           )}
           <Pagination
             entriesCount={bands?.count ?? 0}
-            setCurrentPage={setCurrentPage}
             currentPage={currentPage}
+            onChange={page => updateSearchParams('page', page)}
             perPage={perPage}
           />
         </Table>

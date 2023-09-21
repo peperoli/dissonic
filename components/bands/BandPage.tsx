@@ -64,21 +64,23 @@ export const BandPage = ({ initialBand }: BandPageProps) => {
         <div className="grid gap-4 p-6 rounded-lg bg-slate-800">
           <h1>{band.name}</h1>
           {band.country && (
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-4 items-center">
               <MapPinIcon className="h-icon text-slate-300" />
               {regionNames.of(band.country.iso2)}
             </div>
           )}
-          <ul className="flex gap-2">
+          <div className="flex items-center gap-4">
             <MusicalNoteIcon className="h-icon text-slate-300" />
-            {band.genres &&
-              band.genres.map((genre, index) => (
-                <Fragment key={index}>
-                  <li>{genre.name}</li>
-                  {index + 1 !== band.genres?.length && <span>&bull;</span>}
-                </Fragment>
-              ))}
-          </ul>
+            <ul className="flex flex-wrap gap-x-2 gap-y-1">
+              {band.genres &&
+                band.genres.map((genre, index) => (
+                  <Fragment key={index}>
+                    <li>{genre.name}</li>
+                    {index + 1 !== band.genres?.length && <span>&bull;</span>}
+                  </Fragment>
+                ))}
+            </ul>
+          </div>
           {band.spotify_artist_id && spotifyArtistEmbedStatus === 'loading' && (
             <div className="grid place-content-center h-72 rounded-lg text-slate-300 bg-slate-750">
               <SpinnerIcon className="h-8 animate-spin" />
@@ -89,11 +91,15 @@ export const BandPage = ({ initialBand }: BandPageProps) => {
           )}
           <div className="flex gap-4">
             <Button
-              onClick={session ? () => setEditIsOpen(true) : () => push(`/login?redirect=${pathname}`)}
+              onClick={
+                session ? () => setEditIsOpen(true) : () => push(`/login?redirect=${pathname}`)
+              }
               label="Bearbeiten"
             />
             <Button
-              onClick={session ? () => setDeleteIsOpen(true) : () => push(`/login?redirect=${pathname}`)}
+              onClick={
+                session ? () => setDeleteIsOpen(true) : () => push(`/login?redirect=${pathname}`)
+              }
               label="Löschen"
               danger
             />

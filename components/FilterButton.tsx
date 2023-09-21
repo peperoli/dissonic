@@ -7,11 +7,17 @@ interface FilterButtonProps {
   name: string
   selectedOptions: number[]
   onSubmit: (value: number[]) => void
-  count?: number
+  count: number
   children: ReactNode
 }
 
-export const FilterButton = ({ name, selectedOptions, onSubmit, count, children }: FilterButtonProps) => {
+export const FilterButton = ({
+  name,
+  selectedOptions,
+  onSubmit,
+  count,
+  children,
+}: FilterButtonProps) => {
   return (
     <Popover className="relative">
       {({ open, close }) => {
@@ -19,15 +25,12 @@ export const FilterButton = ({ name, selectedOptions, onSubmit, count, children 
           <>
             <Popover.Button className="btn btn-filter btn-secondary w-full h-full">
               <span className="whitespace-nowrap overflow-hidden text-ellipsis">
-                {(count ? count : selectedOptions?.length) > 0 ? (
+                <span>{name}</span>
+                {count > 0 && (
                   <>
-                    <span className="capitalize">{name}: </span>
-                    <span className="px-1 py-0.5 rounded-md bg-slate-800">
-                      {selectedOptions.length} ausgewählt
-                    </span>
+                    :{' '}
+                    <span className="px-1 py-0.5 rounded-md bg-slate-800">{count} ausgewählt</span>
                   </>
-                ) : (
-                  <span className="capitalize">{name}</span>
                 )}
               </span>
               <ChevronDownIcon
@@ -52,7 +55,7 @@ export const FilterButton = ({ name, selectedOptions, onSubmit, count, children 
                 }}
                 label="Übernehmen"
                 style="primary"
-                className='mt-2'
+                className="mt-2"
               />
             </Popover.Panel>
           </>
