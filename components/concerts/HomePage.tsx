@@ -24,6 +24,7 @@ import { useSession } from '../../hooks/useSession'
 import { SegmentedControl } from '../controls/SegmentedControl'
 import { urlParamToArray } from '../../lib/urlParamToArray'
 import { useUpdateSearchParams } from '../../hooks/useUpdateSearchParams'
+import { useProfile } from '../../hooks/useProfile'
 
 type HomePageProps = {
   initialConcerts: ExtendedRes<Concert[]>
@@ -37,6 +38,8 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
   const selectedLocations = urlParamToArray(searchParams.get('filter[locations]'))
   const selectedYears = urlParamToArray(searchParams.get('filter[years]'))
   const selectedBandsPerConcert = urlParamToArray(searchParams.get('filter[band_count]'))
+  const { data: profile } = useProfile(null, searchParams.get('filter[user]'))
+  const selectedUserId = profile?.id
   const updateSearchParams = useUpdateSearchParams()
   const [view, setView] = useState(Cookies.get('view') ?? 'global')
   const sort = searchParams.get('sort') ?? 'date_start,desc'
@@ -46,7 +49,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
       locations: selectedLocations,
       years: selectedYears,
       bandsPerConcert: selectedBandsPerConcert,
-      bandsSeenUser: view === 'user' ? session?.user.id : undefined,
+      bandsSeenUser: view === 'user' ? selectedUserId ?? session?.user.id : undefined,
     },
     sort: [sort.split(',')[0], sort.split(',')[1] === 'asc' ? true : false],
     size: size,
@@ -89,7 +92,11 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
         <div className="grid gap-4">
           <div className="flex items-center gap-4">
             <div className="my-1.5 text-sm text-slate-300">{concerts?.count}&nbsp;Einträge</div>
-            {(selectedBands || selectedLocations || selectedYears || selectedBandsPerConcert) && (
+            {(selectedBands ||
+              selectedLocations ||
+              selectedYears ||
+              selectedBandsPerConcert ||
+              selectedUserId) && (
               <Button
                 label="Zurücksetzen"
                 onClick={resetAll}

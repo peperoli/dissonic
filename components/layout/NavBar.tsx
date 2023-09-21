@@ -15,7 +15,7 @@ import { useSession } from '../../hooks/useSession'
 
 export const NavBar = () => {
   const { data: session } = useSession()
-  const { data: profile } = useProfile(session?.user.id)
+  const { data: profile } = useProfile(session?.user.id ?? null)
   const { data: avatarUrl } = useAvatar(profile?.avatar_path)
   const pendingInvites = (profile?.friends && profile.friends[0].count) || 0
   const logOutMutation = useLogOut()

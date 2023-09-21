@@ -63,7 +63,7 @@ type ProfilePageProps = {
 }
 
 export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
-  const { data: profile } = useProfile(initialProfile.id, initialProfile)
+  const { data: profile } = useProfile(initialProfile.id, null, initialProfile)
   const { data: friends } = useFriends(initialProfile.id)
   const { data: bandsSeen } = useBandsSeen(initialProfile.id)
   const [editPassIsOpen, setEditPassIsOpen] = useState(false)
@@ -177,7 +177,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                     )}
                     {concertsSeen && (
                       <div className="col-span-full p-6 rounded-lg bg-slate-800">
-                        <ConcertsChart concerts={concertsSeen} />
+                        <ConcertsChart concerts={concertsSeen} username={profile.username} />
                       </div>
                     )}
                     {concertsSeen && (
@@ -187,6 +187,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                             .filter(item => item.location != undefined)
                             .map(item => item.location) as Location[]
                         }
+                        username={profile.username}
                       />
                     )}
                   </Tab.Panel>

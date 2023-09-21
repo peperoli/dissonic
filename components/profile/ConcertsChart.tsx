@@ -1,11 +1,12 @@
-import React, { FC } from 'react'
+import Link from 'next/link'
 import { Concert } from '../../types/types'
 
 export interface ConcertsChartProps {
   concerts: Concert[]
+  username: string
 }
 
-export const ConcertsChart: FC<ConcertsChartProps> = ({ concerts }) => {
+export const ConcertsChart = ({ concerts, username }: ConcertsChartProps) => {
   const years: { year: number; count: number }[] = []
 
   concerts.forEach(concert => {
@@ -32,7 +33,11 @@ export const ConcertsChart: FC<ConcertsChartProps> = ({ concerts }) => {
       <h2>Besuchte Konzerte</h2>
       <div className="flex gap-4 -mx-6 px-6 overflow-auto scrollbar-hidden">
         {years.sort(compare).map(item => (
-          <div key={item.year} className="flex-1 flex flex-col items-center">
+          <Link
+            href={`/?filter[years]=${item.year}|${item.year}&filter[user]=${username}`}
+            className="flex-1 flex flex-col items-center"
+            key={item.year}
+          >
             <div className="relative flex justify-center items-end h-24 mb-2">
               <div
                 className="w-6 md:w-8 rounded bg-venom"
@@ -41,7 +46,7 @@ export const ConcertsChart: FC<ConcertsChartProps> = ({ concerts }) => {
               <p className="absolute w-full pb-1 text-center mix-blend-difference">{item.count}</p>
             </div>
             <p className="text-vertical text-center text-sm">{item.year}</p>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

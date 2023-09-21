@@ -1,12 +1,12 @@
-import React from 'react'
-import { FC } from 'react'
+import Link from 'next/link'
 import { Location } from '../../types/types'
 
 export interface TopLocationsProps {
   locations: Location[]
+  username: string
 }
 
-export const TopLocations: FC<TopLocationsProps> = ({ locations = [] }) => {
+export const TopLocations = ({ locations = [], username }: TopLocationsProps) => {
   type TopLocation = {
     readonly id: number
     name: string
@@ -43,7 +43,11 @@ export const TopLocations: FC<TopLocationsProps> = ({ locations = [] }) => {
             .filter(item => item.count > 1)
             .sort(compare)
             .map(item => (
-              <div key={item.id} className="flex-shrink-0 w-22 overflow-hidden">
+              <Link
+                href={`/?filter[locations]=${item.id}&filter[user]=${username}`}
+                className="flex-shrink-0 w-22 overflow-hidden"
+                key={item.id}
+              >
                 <div className="relative flex justify-center items-end h-24 mb-2">
                   <div
                     className="w-8 rounded bg-venom"
@@ -54,7 +58,7 @@ export const TopLocations: FC<TopLocationsProps> = ({ locations = [] }) => {
                   </p>
                 </div>
                 <p className="text-center text-ellipsis overflow-hidden">{item.name}</p>
-              </div>
+              </Link>
             ))}
         </div>
       </div>
