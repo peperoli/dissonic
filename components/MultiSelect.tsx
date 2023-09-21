@@ -9,7 +9,7 @@ interface SelectedOptionProps {
   selectedOption: number
   options?: Option[]
   selectedOptions: number[]
-  setSelectedOptions: (event: number[]) => void
+  setSelectedOptions: (value: number[]) => void
 }
 
 const SelectedOption = ({
