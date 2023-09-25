@@ -80,7 +80,7 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
       <Controller
         name="spotify_artist_id"
         control={control}
-        render={({ field: { value = '', onChange } }) => (
+        render={({ field: { value = null, onChange } }) => (
           <SpotifyArtistSelect bandName={watch('name')} value={value} onChange={onChange} />
         )}
       />
