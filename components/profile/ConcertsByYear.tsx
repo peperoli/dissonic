@@ -1,11 +1,10 @@
-import React, { FC } from 'react'
 import { Concert } from '../../types/types'
 
-export interface ConcertsChartProps {
+export interface ConcertsByYearProps {
   concerts: Concert[]
 }
 
-export const ConcertsChart: FC<ConcertsChartProps> = ({ concerts }) => {
+export const ConcertsByYear = ({ concerts }: ConcertsByYearProps) => {
   const years: { year: number; count: number }[] = []
 
   concerts.forEach(concert => {
@@ -29,7 +28,7 @@ export const ConcertsChart: FC<ConcertsChartProps> = ({ concerts }) => {
   }
   return (
     <div>
-      <h2>Besuchte Konzerte</h2>
+      <h2>Konzerte pro Jahr</h2>
       <div className="flex gap-4 -mx-6 px-6 overflow-auto scrollbar-hidden">
         {years.sort(compare).map(item => (
           <div key={item.year} className="flex-1 flex flex-col items-center">

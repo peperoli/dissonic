@@ -10,7 +10,7 @@ import Image from 'next/image'
 import { CheckCircleIcon, UserIcon, UserPlusIcon } from '@heroicons/react/20/solid'
 import { TopBands } from './TopBands'
 import { TopLocations } from './TopLocations'
-import { ConcertsChart } from './ConcertsChart'
+import { ConcertsByYear } from './ConcertsByYear'
 import { AddFriendModal } from './AddFriendModal'
 import { Band, Concert, Location, Profile } from '../../types/types'
 import { useAvatar } from '../../hooks/useAvatar'
@@ -22,6 +22,7 @@ import { Tab } from '@headlessui/react'
 import clsx from 'clsx'
 import { useConcerts } from '../../hooks/useConcerts'
 import { ConcertCard } from '../concerts/ConcertCard'
+import { Score } from './Score'
 
 type ConcertListProps = {
   userId: string
@@ -89,6 +90,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
     item =>
       item.pending && (item.sender.id === session?.user.id || item.receiver.id === session?.user.id)
   )
+  const bands = (bandsSeen?.map(item => item.band) as Band[]) ?? []
   const uniqueBandsSeen: Band[] = bandsSeen ? unique(bandsSeen.map(item => item.band)) : []
   const concertsSeen: Concert[] = bandsSeen ? unique(bandsSeen.map(item => item.concert)) : []
   const festivalsSeen: Concert[] = bandsSeen
@@ -130,19 +132,13 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                   />
                 )}
               </div>
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                <div className="p-6 rounded-lg bg-slate-800">
-                  <p className="mb-0 text-2xl text-venom">{uniqueBandsSeen?.length}</p>
-                  <h2 className="text-sm font-normal mb-0">Bands live erlebt</h2>
-                </div>
-                <div className="p-6 rounded-lg bg-slate-800">
-                  <p className="mb-0 text-2xl text-venom">{concertsSeen?.length}</p>
-                  <h2 className="text-sm font-normal mb-0">Konzerte besucht</h2>
-                </div>
-                <div className="p-6 rounded-lg bg-slate-800">
-                  <p className="mb-0 text-2xl text-venom">{festivalsSeen?.length}</p>
-                  <h2 className="text-sm font-normal mb-0">Festivals besucht</h2>
-                </div>
+              <div className="grid md:grid-cols-2 gap-4 mb-6">
+                <Score
+                  uniqueBandsSeen={uniqueBandsSeen}
+                  bandsSeen={bands}
+                  concertsSeen={concertsSeen}
+                  festivalsSeen={festivalsSeen}
+                />
                 <Tab.Group as="section" className="col-span-full">
                   <Tab.List className="mb-4 px-3 rounded-lg bg-slate-700">
                     {['Statistik', 'Konzerte'].map(item => (
@@ -170,14 +166,18 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                         }
                       />
                     )}
-                    {uniqueBandsSeen && (
+                    {bandsSeen && uniqueBandsSeen && (
                       <div className="col-span-full p-6 rounded-lg bg-slate-800">
-                        <GenreChart bands={uniqueBandsSeen} />
+                        <GenreChart
+                          bands={bands}
+                          uniqueBands={uniqueBandsSeen}
+                          profile={isOwnProfile ? null : profile}
+                        />
                       </div>
                     )}
                     {concertsSeen && (
                       <div className="col-span-full p-6 rounded-lg bg-slate-800">
-                        <ConcertsChart concerts={concertsSeen} />
+                        <ConcertsByYear concerts={concertsSeen} />
                       </div>
                     )}
                     {concertsSeen && (
