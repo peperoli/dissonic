@@ -46,10 +46,10 @@ export const TopLocations: FC<TopLocationsProps> = ({ locations = [] }) => {
               <div key={item.id} className="flex-shrink-0 w-22 overflow-hidden">
                 <div className="relative flex justify-center items-end h-24 mb-2">
                   <div
-                    className="w-8 rounded bg-venom"
+                    className="w-8 rounded bg-venom-600"
                     style={{ height: (item.count / highestCount) * 100 + '%' }}
                   />
-                  <p className="absolute w-full pb-1 text-center mix-blend-difference">
+                  <p className="absolute w-full pb-1 text-center font-bold">
                     {item.count}
                   </p>
                 </div>

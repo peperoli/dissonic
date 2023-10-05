@@ -64,14 +64,14 @@ export const GenreChart = ({ bands, uniqueBands, profile }: GenreChartProps) => 
       <h2>Genres</h2>
       {uniqueBands && (
         <p>
-          {profile ? `${profile.username}s` : 'Dein'} Top-Genre ist {genres.sort(compare)[0].name} mit{' '}
-          {genres.sort(compare)[0].uniqueCount} verschiedenen Bands.
+          {profile ? `${profile.username}s` : 'Dein'} Top-Genre ist {genres.sort(compare)[0].name}{' '}
+          mit {genres.sort(compare)[0].uniqueCount} verschiedenen Bands.
         </p>
       )}
-      {uniqueBands && uniqueBands?.length > bands.length && (
+      {uniqueBands && uniqueBands?.length !== bands.length && (
         <div className="flex gap-4">
           <div className="flex items-center gap-2">
-            <span className="w-3 h-1 rounded-full bg-venom" />
+            <span className="w-3 h-1 rounded-full bg-venom-600" />
             <span className="text-sm text-slate-300">verschieden</span>
           </div>
           <div className="flex items-center gap-2">
@@ -86,30 +86,36 @@ export const GenreChart = ({ bands, uniqueBands, profile }: GenreChartProps) => 
       >
         <div ref={ref} className="grid gap-2">
           {genres.sort(compare).map(genre => (
-            <div key={genre.id} className="grid md:grid-cols-2 items-center">
-              <div className="hidden md:block">{genre.name}</div>
-              <div className="relative flex items-center mr-6">
+            <div key={genre.id} className="flex group items-center">
+              <div className="hidden md:block w-1/3">{genre.name}</div>
+              <div className="relative flex items-center w-3/4 md:w-1/2 mr-6">
                 <div
-                  className={clsx("absolute group h-6 md:h-4 rounded", uniqueBands ? 'bg-slate-600' : 'bg-venom')}
+                  className={clsx(
+                    'absolute h-6 md:h-4 rounded',
+                    uniqueBands ? 'bg-slate-600' : 'bg-venom-600'
+                  )}
                   style={{ width: (genre.count / highestCount) * 100 + '%' }}
                 >
-                  <div className={clsx("absolute -right-1 translate-x-full md:text-xs invisible group-hover:visible", uniqueBands && 'text-slate-300')}>
-                    {genre.count}
-                  </div>
+                  <div
+                    className={clsx(
+                      'absolute -right-1 translate-x-full md:text-xs invisible group-hover:visible',
+                      uniqueBands && 'text-slate-300'
+                    )}
+                  />
                 </div>
                 {uniqueBands && (
                   <div
-                    className="absolute group h-6 md:h-4 rounded bg-venom"
+                    className="absolute group h-6 md:h-4 rounded bg-venom-600"
                     style={{ width: (genre.uniqueCount / highestCount) * 100 + '%' }}
-                  >
-                    <div className="absolute -right-1 translate-x-full md:text-xs invisible group-hover:visible">
-                      {genre.uniqueCount}
-                    </div>
-                  </div>
+                  />
                 )}
-                <div className="md:hidden pl-2 whitespace-nowrap mix-blend-difference">
+                <div className="relative md:hidden pointer-events-none pl-2 font-bold whitespace-nowrap">
                   {genre.name}
                 </div>
+              </div>
+              <div className="right-0 font-bold whitespace-nowrap invisible group-hover:visible">
+                {uniqueBands && <span>{genre.uniqueCount} &bull; </span>}
+                <span className={clsx(uniqueBands && "text-slate-300")}>{genre.count}</span>
               </div>
             </div>
           ))}

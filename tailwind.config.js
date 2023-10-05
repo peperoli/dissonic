@@ -6,7 +6,10 @@ module.exports = {
   ],
   theme: {
     colors: {
-      venom: '#99F162',
+      venom: {
+        'DEFAULT': '#99F162',
+        600: '#3BB31A'
+      },
       purple: '#C462F1',
       deepPurple: '#661881',
       blue: {

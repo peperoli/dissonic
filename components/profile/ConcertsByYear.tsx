@@ -34,10 +34,10 @@ export const ConcertsByYear = ({ concerts }: ConcertsByYearProps) => {
           <div key={item.year} className="flex-1 flex flex-col items-center">
             <div className="relative flex justify-center items-end h-24 mb-2">
               <div
-                className="w-6 md:w-8 rounded bg-venom"
+                className="w-6 md:w-8 rounded bg-venom-600"
                 style={{ height: (item.count / highestCount) * 100 + '%' }}
               />
-              <p className="absolute w-full pb-1 text-center mix-blend-difference">{item.count}</p>
+              <p className="absolute w-full pb-1 text-center font-bold">{item.count}</p>
             </div>
             <p className="text-vertical text-center text-sm">{item.year}</p>
           </div>

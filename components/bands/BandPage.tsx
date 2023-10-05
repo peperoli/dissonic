@@ -69,16 +69,18 @@ export const BandPage = ({ initialBand }: BandPageProps) => {
               {regionNames.of(band.country.iso2)}
             </div>
           )}
-          <ul className="flex gap-2">
+          <div className="flex gap-2">
             <MusicalNoteIcon className="h-icon text-slate-300" />
-            {band.genres &&
-              band.genres.map((genre, index) => (
-                <Fragment key={index}>
-                  <li>{genre.name}</li>
-                  {index + 1 !== band.genres?.length && <span>&bull;</span>}
-                </Fragment>
-              ))}
-          </ul>
+            <ul className='flex flex-wrap gap-x-2'>
+              {band.genres &&
+                band.genres.map((genre, index) => (
+                  <Fragment key={index}>
+                    <li>{genre.name}</li>
+                    {index + 1 !== band.genres?.length && <span>&bull;</span>}
+                  </Fragment>
+                ))}
+            </ul>
+          </div>
           {band.spotify_artist_id && spotifyArtistEmbedStatus === 'loading' && (
             <div className="grid place-content-center h-72 rounded-lg text-slate-300 bg-slate-750">
               <SpinnerIcon className="h-8 animate-spin" />

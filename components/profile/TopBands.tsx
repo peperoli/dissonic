@@ -1,7 +1,8 @@
 import clsx from 'clsx'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import useMediaQuery from '../../hooks/useMediaQuery'
 import { useSpotifyArtist } from '../../hooks/useSpotifyArtist'
 import { Band } from '../../types/types'
 import { Button } from '../Button'
@@ -22,8 +23,8 @@ const BandItem = ({ topBand }: BandItemProps) => {
   const { data } = useSpotifyArtist(topBand.spotify_artist_id)
   const picture = data?.images[1]
   return (
-    <Link href={`/bands/${topBand.id}`} className="flex gap-4 md:block">
-      <div className="relative flex-shrink-0 flex justify-center items-center w-15 h-15 md:w-auto md:h-auto md:aspect-square rounded-2xl bg-slate-750">
+    <Link href={`/bands/${topBand.id}`} className="block">
+      <div className="relative flex-shrink-0 flex justify-center items-center aspect-square rounded-2xl bg-slate-750">
         {picture ? (
           <Image
             src={picture.url}
@@ -38,9 +39,9 @@ const BandItem = ({ topBand }: BandItemProps) => {
           <UserMusicIcon className="h-8 text-slate-300" />
         )}
       </div>
-      <div className="mt-2">
-        <h3 className="mb-0">{topBand.name}</h3>
-        <div className="text-slate-300">{topBand.count} Konzerte</div>
+      <div className="mt-2 overflow-hidden">
+        <h3 className="mb-0 max-md:text-base whitespace-nowrap truncate">{topBand.name}</h3>
+        <div className="text-slate-300 max-md:text-sm">{topBand.count} Konzerte</div>
       </div>
     </Link>
   )
@@ -52,7 +53,16 @@ type TopBandsProps = {
 
 export const TopBands = ({ bands }: TopBandsProps) => {
   const topBands: TopBand[] = []
-  const [visibleItems, setVisibleItems] = useState(8)
+  const isDesktop = useMediaQuery('(min-width: 768px)')
+  const [visibleItems, setVisibleItems] = useState(9)
+
+  useEffect(() => {
+    if (isDesktop) {
+      setVisibleItems(8)
+    } else {
+      setVisibleItems(9)
+    }
+  }, [isDesktop])
 
   bands.forEach(band => {
     let topBand = topBands.find(item => item.id === band.id)
@@ -86,7 +96,7 @@ export const TopBands = ({ bands }: TopBandsProps) => {
         <h2>Top Bands</h2>
         <div
           className={clsx(
-            'grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6',
+            'grid grid-cols-3 md:grid-cols-4 gap-4 md:gap-6',
             totalCount >= 4 && 'mb-6'
           )}
         >
@@ -101,7 +111,7 @@ export const TopBands = ({ bands }: TopBandsProps) => {
         {totalCount >= 4 && (
           <>
             {visibleItems < totalCount ? (
-              <Button onClick={() => setVisibleItems(prev => (prev += 8))} label="Mehr anzeigen" />
+              <Button onClick={() => setVisibleItems(prev => (prev += isDesktop ? 8 : 9))} label="Mehr anzeigen" />
             ) : (
               <Button onClick={() => setVisibleItems(8)} label="Weniger anzeigen" />
             )}
