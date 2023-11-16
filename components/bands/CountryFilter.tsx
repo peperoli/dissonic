@@ -30,7 +30,7 @@ const CountryMultiSelect = ({ selectedOptions, setSelectedOptions }: CountryMult
 }
 
 type CountryFilterProps = {
-  value?: number[]
+  value: number[] | null
   onSubmit: (value: number[]) => void
 }
 

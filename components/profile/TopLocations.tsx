@@ -44,7 +44,7 @@ export const TopLocations = ({ locations = [], username }: TopLocationsProps) =>
             .sort(compare)
             .map(item => (
               <Link
-                href={`/?filter[locations]=${item.id}&filter[user]=${username}`}
+                href={`/?locations=${item.id}&user=${username}`}
                 className="flex-shrink-0 w-22 overflow-hidden"
                 key={item.id}
               >

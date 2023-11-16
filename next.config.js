@@ -12,9 +12,6 @@ const nextConfig = {
     domains: ['i.scdn.co'],
   },
   swcMinify: true,
-  experimental: {
-    appDir: true,
-  },
 }
 
 module.exports = withPWA(nextConfig)

@@ -34,7 +34,7 @@ export const ConcertsChart = ({ concerts, username }: ConcertsChartProps) => {
       <div className="flex gap-4 -mx-6 px-6 overflow-auto scrollbar-hidden">
         {years.sort(compare).map(item => (
           <Link
-            href={`/?filter[years]=${item.year}|${item.year}&filter[user]=${username}`}
+            href={`/?years=${item.year},${item.year}&user=${username}`}
             className="flex-1 flex flex-col items-center"
             key={item.year}
           >

@@ -19,40 +19,42 @@ import { LocationFilter } from './LocationFilter'
 import { YearsFilter } from './YearsFilter'
 import { BandCountFilter } from './BandCountFilter'
 import Cookies from 'js-cookie'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/useSession'
 import { SegmentedControl } from '../controls/SegmentedControl'
-import { urlParamToArray } from '../../lib/urlParamToArray'
-import { useUpdateSearchParams } from '../../hooks/useUpdateSearchParams'
 import { useProfile } from '../../hooks/useProfile'
+import { parseAsArrayOf, parseAsBoolean, parseAsInteger, parseAsStringEnum, useQueryState, useQueryStates } from 'next-usequerystate'
 
 type HomePageProps = {
   initialConcerts: ExtendedRes<Concert[]>
 }
 
+enum SortBy {
+  dateStart = 'date_start'
+}
+
 export const HomePage = ({ initialConcerts }: HomePageProps) => {
   const { data: session } = useSession()
-  const searchParams = useSearchParams()
-  const size = searchParams.get('size') ? Number(searchParams.get('size')) : 25
-  const selectedBands = urlParamToArray(searchParams.get('filter[bands]'))
-  const selectedLocations = urlParamToArray(searchParams.get('filter[locations]'))
-  const selectedYears = urlParamToArray(searchParams.get('filter[years]'))
-  const selectedBandsPerConcert = urlParamToArray(searchParams.get('filter[band_count]'))
-  const { data: profile } = useProfile(null, searchParams.get('filter[user]'))
-  const selectedUserId = profile?.id
-  const updateSearchParams = useUpdateSearchParams()
+  const [size, setSize] = useQueryState('size', parseAsInteger.withDefault(25))
+  const [selectedBands, setSelectedBands] = useQueryState('bands', parseAsArrayOf(parseAsInteger))
+  const [selectedLocations, setSelectedLocations] = useQueryState('locations', parseAsArrayOf(parseAsInteger))
+  const [selectedYears, setSelectedYears] = useQueryState('years', parseAsArrayOf(parseAsInteger))
+  const [selectedBandCount, setSelectedBandCount] = useQueryState('band_count', parseAsArrayOf(parseAsInteger))
+  const [user] = useQueryState('user')
+  const { data: profile } = useProfile(null, user)
+  const selectedUserId = user && profile?.id
   const [view, setView] = useState(Cookies.get('view') ?? 'global')
-  const sort = searchParams.get('sort') ?? 'date_start,desc'
+  const [sort, setSort] = useQueryStates({sort_by: parseAsStringEnum<SortBy>(Object.values(SortBy)).withDefault(SortBy.dateStart), sort_asc: parseAsBoolean.withDefault(false)})
   const { data: concerts, isFetching } = useConcerts(initialConcerts, {
     filter: {
       bands: selectedBands,
       locations: selectedLocations,
       years: selectedYears,
-      bandsPerConcert: selectedBandsPerConcert,
-      bandsSeenUser: view === 'user' ? selectedUserId ?? session?.user.id : undefined,
+      bandsPerConcert: selectedBandCount,
+      bandsSeenUser: selectedUserId ?? (view === 'user' ? session?.user.id : undefined),
     },
-    sort: [sort.split(',')[0], sort.split(',')[1] === 'asc' ? true : false],
-    size: size,
+    sort,
+    size,
   })
   const [isOpen, setIsOpen] = useState(false)
   const { push } = useRouter()
@@ -95,7 +97,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
             {(selectedBands ||
               selectedLocations ||
               selectedYears ||
-              selectedBandsPerConcert ||
+              selectedBandCount ||
               selectedUserId) && (
               <Button
                 label="Zurücksetzen"
@@ -108,19 +110,19 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
           <div className="flex md:grid md:grid-cols-2 gap-2 md:gap-4 -mx-4 px-4 overflow-x-auto md:overflow-visible scrollbar-hidden">
             <BandFilter
               value={selectedBands}
-              onSubmit={value => updateSearchParams('filter[bands]', value.join('|'))}
+              onSubmit={setSelectedBands}
             />
             <LocationFilter
               value={selectedLocations}
-              onSubmit={value => updateSearchParams('filter[locations]', value.join('|'))}
+              onSubmit={setSelectedLocations}
             />
             <YearsFilter
               value={selectedYears}
-              onSubmit={value => updateSearchParams('filter[years]', value.join('|'))}
+              onSubmit={setSelectedYears}
             />
             <BandCountFilter
-              value={selectedBandsPerConcert}
-              onSubmit={value => updateSearchParams('filter[band_count]', value.join('|'))}
+              value={selectedBandCount}
+              onSubmit={setSelectedBandCount}
             />
           </div>
           <div className="flex items-center gap-4 -mx-4 px-4 overflow-x-auto scrollbar-hidden">
@@ -140,14 +142,14 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
               </label>
               <div className="relative flex items-center">
                 <select
-                  value={sort}
-                  onChange={event => updateSearchParams('sort', event.target.value)}
+                  value={`${sort.sort_by},${sort.sort_asc}`}
+                  onChange={event => setSort({sort_by: event.target.value.split(',')[0] as SortBy, sort_asc: Boolean(event.target.value.split(',')[1])})}
                   name="sort"
                   id="sort"
                   className="appearance-none pl-2 pr-7 py-1 rounded-md font-sans bg-slate-750 hover:bg-slate-700"
                 >
-                  <option value="date_start,desc">Neuste</option>
-                  <option value="date_start,asc">Älteste</option>
+                  <option value="date_start,false">Neuste</option>
+                  <option value="date_start,true">Älteste</option>
                 </select>
                 <ChevronDownIcon className="absolute right-2 text-xs h-icon pointer-events-none" />
               </div>
@@ -165,7 +167,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
             {concerts?.data.length !== concerts?.count && (
               <Button
                 label="Mehr anzeigen"
-                onClick={() => updateSearchParams('size', size + 25)}
+                onClick={() => setSize(prev => prev + 25)}
                 loading={isFetching}
                 style="primary"
               />

@@ -26,7 +26,7 @@ const LocationMultiSelect = ({ selectedOptions, setSelectedOptions }: LocationMu
 }
 
 type LocationFilterProps = {
-  value?: number[]
+  value: number[] | null
   onSubmit: (value: number[]) => void
 }
 

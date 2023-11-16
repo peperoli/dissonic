@@ -1,9 +1,9 @@
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useQuery } from '@tanstack/react-query'
 import { getPagination } from '../lib/getPagination'
-import { ExtendedRes, FetchOptions, Location } from '../types/types'
+import { ExtendedRes, Location, LocationFetchOptions } from '../types/types'
 
-async function fetchLocations(options?: FetchOptions): Promise<ExtendedRes<Location[]>> {
+async function fetchLocations(options?: LocationFetchOptions): Promise<ExtendedRes<Location[]>> {
   const supabase = createClientComponentClient()
 
   let query = supabase.from('locations').select('*', { count: 'estimated' })
@@ -39,7 +39,7 @@ async function fetchLocations(options?: FetchOptions): Promise<ExtendedRes<Locat
 
 export const useLocations = (
   initialLocations?: ExtendedRes<Location[]>,
-  options?: FetchOptions
+  options?: LocationFetchOptions
 ) => {
   return useQuery(['locations', JSON.stringify(options)], () => fetchLocations(options), {
     initialData: initialLocations,

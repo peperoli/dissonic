@@ -1,4 +1,4 @@
-import { Metadata } from 'next'
+import { Metadata, Viewport } from 'next'
 import { Albert_Sans } from 'next/font/google'
 import { ReactNode } from 'react'
 import { QueryProvider } from '../components/helpers/QueryProvider'
@@ -11,7 +11,6 @@ export const metadata: Metadata = {
   description: 'Hier leben deine Konzerte und Festivals.',
   metadataBase: new URL('https://dissonic.ch'),
   applicationName: 'Dissonic',
-  themeColor: '#1f282e',
   manifest: '/manifest.json',
   appleWebApp: {
     title: 'Dissonic',
@@ -25,6 +24,10 @@ export const metadata: Metadata = {
     apple: '/favicon/apple-touch-icon.png',
     other: [{ rel: 'mask-icon', url: '/favicon/safari-pinned-tab.svg', color: '#1f282e' }],
   },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#1f282e',
 }
 
 const albertSans = Albert_Sans({

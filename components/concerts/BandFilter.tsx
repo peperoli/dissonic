@@ -26,7 +26,7 @@ const BandMultiSelect = ({ selectedOptions, setSelectedOptions }: BandMultiSelec
 }
 
 type BandFilterProps = {
-  value?: number[]
+  value: number[] | null
   onSubmit: (value: number[]) => void
 }
 

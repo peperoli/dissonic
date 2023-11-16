@@ -26,7 +26,7 @@ const GenreMultiSelect = ({ selectedOptions, setSelectedOptions }: GenreMultiSel
 }
 
 type GenreFilterProps = {
-  value?: number[]
+  value: number[] | null
   onSubmit: (value: number[]) => void
 }
 

@@ -31,7 +31,7 @@ function ConcertList({ userId }: ConcertListProps) {
   const [size, setSize] = useState(25)
   const { data: concerts, fetchStatus } = useConcerts(undefined, {
     filter: { bandsSeenUser: userId },
-    sort: ['date_start', false],
+    sort: { sort_by: 'date_start', sort_asc: false },
     size,
   })
   return (

@@ -26,7 +26,7 @@ const BandCountRangeSlider = ({ ...props }: BandCountRangeSliderProps) => {
 }
 
 interface BandCountFilterProps {
-  value?: number[]
+  value: number[] | null
   onSubmit: (value: number[]) => void
 }
 

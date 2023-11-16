@@ -13,9 +13,9 @@ import { ExtendedRes, Location } from '../../types/types'
 import { useLocations } from '../../hooks/useLocations'
 import { useDebounce } from '../../hooks/useDebounce'
 import { Pagination } from '../layout/Pagination'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/useSession'
-import { useUpdateSearchParams } from '../../hooks/useUpdateSearchParams'
+import { parseAsInteger, useQueryState } from 'next-usequerystate'
 
 interface LocationsPageProps {
   initialLocations: ExtendedRes<Location[]>
@@ -25,9 +25,7 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
   const [query, setQuery] = useState('')
   const debounceQuery = useDebounce(query, 200)
   const perPage = 25
-  const searchParams = useSearchParams()
-  const currentPage = Number(searchParams.get('page')) || 1
-  const updateSearchParams = useUpdateSearchParams()
+  const [currentPage, setCurrentPage] = useQueryState('page', parseAsInteger.withDefault(1))
   const { data: locations } = useLocations(initialLocations, {
     filter: { search: debounceQuery },
     page: currentPage,
@@ -41,7 +39,7 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
 
   useEffect(() => {
     if (query) {
-      updateSearchParams('page', 1)
+      setCurrentPage(1)
     }
   }, [query])
   return (
@@ -100,7 +98,7 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
               entriesCount={locations?.count ?? 0}
               perPage={perPage}
               currentPage={currentPage}
-              onChange={page => updateSearchParams('page', page)}
+              onChange={setCurrentPage}
             />
           </Table>
         </main>

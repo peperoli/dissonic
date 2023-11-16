@@ -24,7 +24,7 @@ export const BandPage = ({ initialBand }: BandPageProps) => {
   const { data: band, isLoading: bandIsLoading } = useBand(initialBand)
   const { data: concerts } = useConcerts(undefined, {
     filter: { bands: [initialBand.id] },
-    sort: ['date_start', false],
+    sort: { sort_by: 'date_start', sort_asc: false },
   })
   const { data: spotifyArtistEmbed, status: spotifyArtistEmbedStatus } = useSpotifyArtistEmbed(
     band?.spotify_artist_id

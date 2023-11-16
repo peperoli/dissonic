@@ -26,7 +26,7 @@ const YearsRangeSlider = ({ ...props }: YearsRangeSliderProps) => {
 }
 
 interface YearsFilterProps {
-  value?: number[]
+  value: number[] | null
   onSubmit: (value: number[]) => void
 }
 

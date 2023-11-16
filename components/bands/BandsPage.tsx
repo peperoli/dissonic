@@ -12,14 +12,13 @@ import { Pagination } from '../layout/Pagination'
 import { Band, ExtendedRes } from '../../types/types'
 import { useBands } from '../../hooks/useBands'
 import { useDebounce } from '../../hooks/useDebounce'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/useSession'
 import { StatusBanner } from '../forms/StatusBanner'
 import { CountryFilter } from './CountryFilter'
 import { GenreFilter } from './GenreFilter'
 import { BandTableRow } from './TableRow'
-import { urlParamToArray } from '../../lib/urlParamToArray'
-import { useUpdateSearchParams } from '../../hooks/useUpdateSearchParams'
+import { parseAsArrayOf, parseAsInteger, useQueryState } from 'next-usequerystate'
 
 interface BandsPageProps {
   initialBands: ExtendedRes<Band[]>
@@ -27,11 +26,9 @@ interface BandsPageProps {
 
 export const BandsPage = ({ initialBands }: BandsPageProps) => {
   const perPage = 25
-  const searchParams = useSearchParams()
-  const currentPage = Number(searchParams.get('page')) || 1
-  const selectedCountries = urlParamToArray(searchParams.get('filter[countries]'))
-  const selectedGenres = urlParamToArray(searchParams.get('filter[genres]'))
-  const updateSearchParams = useUpdateSearchParams()
+  const [currentPage, setCurrentPage] = useQueryState('page', parseAsInteger.withDefault(1))
+  const [selectedCountries, setSelectedCountries] = useQueryState('countries', parseAsArrayOf(parseAsInteger))
+  const [selectedGenres, setSelectedGenres] = useQueryState('genres', parseAsArrayOf(parseAsInteger))
   const [query, setQuery] = useState('')
   const debounceQuery = useDebounce(query, 200)
   const { data: bands } = useBands(initialBands, {
@@ -50,7 +47,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
 
   useEffect(() => {
     if (selectedCountries || selectedGenres || query) {
-      updateSearchParams('page', 1)
+      setCurrentPage(1)
     }
   }, [selectedCountries, selectedGenres, query])
 
@@ -100,11 +97,11 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
             <Search name="searchBands" placeholder="Bands" query={query} setQuery={setQuery} />
             <CountryFilter
               value={selectedCountries}
-              onSubmit={value => updateSearchParams('filter[countries]', value.join('|'))}
+              onSubmit={setSelectedCountries}
             />
             <GenreFilter
               value={selectedGenres}
-              onSubmit={value => updateSearchParams('filter[genres]', value.join('|'))}
+              onSubmit={setSelectedGenres}
             />
           </div>
           <div className="flex gap-4 items-center">
@@ -129,7 +126,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
           <Pagination
             entriesCount={bands?.count ?? 0}
             currentPage={currentPage}
-            onChange={page => updateSearchParams('page', page)}
+            onChange={setCurrentPage}
             perPage={perPage}
           />
         </Table>
