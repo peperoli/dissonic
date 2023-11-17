@@ -26,9 +26,10 @@ import { BandList } from './BandList'
 
 interface ConcertPageProps {
   initialConcert: Concert
+  concertQueryState?: string
 }
 
-export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
+export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPageProps) => {
   const { data: concert } = useConcert(initialConcert, initialConcert.id)
   const { data: profiles } = useProfiles()
   const { data: session } = useSession()
@@ -57,9 +58,9 @@ export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
       <ConcertContext.Provider value={{ concert }}>
         <main className="container grid gap-4">
           <div className="flex justify-between items-center">
-            <Link href="/" className="btn btn-link">
+            <Link href={`/?${concertQueryState}` ?? '/'} className="btn btn-link">
               <ArrowLeftIcon className="h-icon" />
-              Zurück
+              Zurück zu Konzerte
             </Link>
             <div className="flex gap-3">
               <Button

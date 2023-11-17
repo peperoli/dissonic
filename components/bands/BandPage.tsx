@@ -18,9 +18,10 @@ import { useSession } from '../../hooks/useSession'
 
 export interface BandPageProps {
   initialBand: Band
+  bandQueryState?: string
 }
 
-export const BandPage = ({ initialBand }: BandPageProps) => {
+export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
   const { data: band, isLoading: bandIsLoading } = useBand(initialBand)
   const { data: concerts } = useConcerts(undefined, {
     filter: { bands: [initialBand.id] },
@@ -51,14 +52,14 @@ export const BandPage = ({ initialBand }: BandPageProps) => {
       </PageWrapper>
     )
   }
-
+  console.log('bandQueryState', bandQueryState)
   return (
     <PageWrapper>
       <main className="container grid gap-4">
         <div>
-          <Link href="/bands" className="btn btn-link">
+          <Link href={'/bands' + (bandQueryState && `?${bandQueryState}`)} className="btn btn-link">
             <ArrowLeftIcon className="h-icon" />
-            Zurück
+            Zurück zu Bands
           </Link>
         </div>
         <div className="grid gap-4 p-6 rounded-lg bg-slate-800">

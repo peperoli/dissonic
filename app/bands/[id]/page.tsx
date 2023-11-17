@@ -21,5 +21,6 @@ const fetchData = async(params: { id: string }): Promise<Band> => {
 
 export default async function Page({ params }: { params: { id: string } }) {
   const band = await fetchData(params)
-  return <BandPage initialBand={band} />
+  const cookieStore = cookies()
+  return <BandPage initialBand={band} bandQueryState={cookieStore.get('bandQueryState')?.value} />
 }

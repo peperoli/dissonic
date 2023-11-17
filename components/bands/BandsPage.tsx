@@ -18,7 +18,13 @@ import { StatusBanner } from '../forms/StatusBanner'
 import { CountryFilter } from './CountryFilter'
 import { GenreFilter } from './GenreFilter'
 import { BandTableRow } from './TableRow'
-import { parseAsArrayOf, parseAsInteger, useQueryState } from 'next-usequerystate'
+import {
+  parseAsArrayOf,
+  parseAsInteger,
+  subscribeToQueryUpdates,
+  useQueryState,
+} from 'next-usequerystate'
+import Cookies from 'js-cookie'
 
 interface BandsPageProps {
   initialBands: ExtendedRes<Band[]>
@@ -27,8 +33,14 @@ interface BandsPageProps {
 export const BandsPage = ({ initialBands }: BandsPageProps) => {
   const perPage = 25
   const [currentPage, setCurrentPage] = useQueryState('page', parseAsInteger.withDefault(1))
-  const [selectedCountries, setSelectedCountries] = useQueryState('countries', parseAsArrayOf(parseAsInteger))
-  const [selectedGenres, setSelectedGenres] = useQueryState('genres', parseAsArrayOf(parseAsInteger))
+  const [selectedCountries, setSelectedCountries] = useQueryState(
+    'countries',
+    parseAsArrayOf(parseAsInteger)
+  )
+  const [selectedGenres, setSelectedGenres] = useQueryState(
+    'genres',
+    parseAsArrayOf(parseAsInteger)
+  )
   const [query, setQuery] = useState('')
   const debounceQuery = useDebounce(query, 200)
   const { data: bands } = useBands(initialBands, {
@@ -56,7 +68,12 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
   }
 
   const isDesktop = useMediaQuery('(min-width: 768px)')
-  const regionNames = new Intl.DisplayNames('de', { type: 'region' })
+
+  useEffect(() => {
+    subscribeToQueryUpdates(({ search }) => {
+      Cookies.set('bandQueryState', search.toString(), { sameSite: 'strict' })
+    })
+  }, [])
 
   if (!bands) {
     return (
@@ -95,14 +112,8 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
         <Table>
           <div className="flex md:grid md:grid-cols-3 gap-2 md:gap-4 -mx-4 px-4 overflow-x-auto md:overflow-visible scrollbar-hidden">
             <Search name="searchBands" placeholder="Bands" query={query} setQuery={setQuery} />
-            <CountryFilter
-              value={selectedCountries}
-              onSubmit={setSelectedCountries}
-            />
-            <GenreFilter
-              value={selectedGenres}
-              onSubmit={setSelectedGenres}
-            />
+            <CountryFilter value={selectedCountries} onSubmit={setSelectedCountries} />
+            <GenreFilter value={selectedGenres} onSubmit={setSelectedGenres} />
           </div>
           <div className="flex gap-4 items-center">
             <div className="my-4 text-sm text-slate-300">

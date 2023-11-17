@@ -1,7 +1,7 @@
 'use client'
 
 import { AddConcertForm } from './AddConcertForm'
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { Button } from '../Button'
 import {
   ArrowUturnLeftIcon,
@@ -19,32 +19,49 @@ import { LocationFilter } from './LocationFilter'
 import { YearsFilter } from './YearsFilter'
 import { BandCountFilter } from './BandCountFilter'
 import Cookies from 'js-cookie'
-import { usePathname, useRouter } from 'next/navigation'
+import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from '../../hooks/useSession'
 import { SegmentedControl } from '../controls/SegmentedControl'
 import { useProfile } from '../../hooks/useProfile'
-import { parseAsArrayOf, parseAsBoolean, parseAsInteger, parseAsStringEnum, useQueryState, useQueryStates } from 'next-usequerystate'
+import {
+  parseAsArrayOf,
+  parseAsBoolean,
+  parseAsInteger,
+  parseAsStringEnum,
+  useQueryState,
+  useQueryStates,
+  subscribeToQueryUpdates
+} from 'next-usequerystate'
 
 type HomePageProps = {
   initialConcerts: ExtendedRes<Concert[]>
 }
 
 enum SortBy {
-  dateStart = 'date_start'
+  dateStart = 'date_start',
 }
 
 export const HomePage = ({ initialConcerts }: HomePageProps) => {
   const { data: session } = useSession()
   const [size, setSize] = useQueryState('size', parseAsInteger.withDefault(25))
   const [selectedBands, setSelectedBands] = useQueryState('bands', parseAsArrayOf(parseAsInteger))
-  const [selectedLocations, setSelectedLocations] = useQueryState('locations', parseAsArrayOf(parseAsInteger))
+  const [selectedLocations, setSelectedLocations] = useQueryState(
+    'locations',
+    parseAsArrayOf(parseAsInteger)
+  )
   const [selectedYears, setSelectedYears] = useQueryState('years', parseAsArrayOf(parseAsInteger))
-  const [selectedBandCount, setSelectedBandCount] = useQueryState('band_count', parseAsArrayOf(parseAsInteger))
+  const [selectedBandCount, setSelectedBandCount] = useQueryState(
+    'band_count',
+    parseAsArrayOf(parseAsInteger)
+  )
   const [user] = useQueryState('user')
   const { data: profile } = useProfile(null, user)
   const selectedUserId = user && profile?.id
   const [view, setView] = useState(Cookies.get('view') ?? 'global')
-  const [sort, setSort] = useQueryStates({sort_by: parseAsStringEnum<SortBy>(Object.values(SortBy)).withDefault(SortBy.dateStart), sort_asc: parseAsBoolean.withDefault(false)})
+  const [sort, setSort] = useQueryStates({
+    sort_by: parseAsStringEnum<SortBy>(Object.values(SortBy)).withDefault(SortBy.dateStart),
+    sort_asc: parseAsBoolean.withDefault(false),
+  })
   const { data: concerts, isFetching } = useConcerts(initialConcerts, {
     filter: {
       bands: selectedBands,
@@ -58,7 +75,13 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
   })
   const [isOpen, setIsOpen] = useState(false)
   const { push } = useRouter()
-  const pathname = usePathname()
+  const pathname = usePathname()  
+
+  useEffect(() => {
+    subscribeToQueryUpdates(({search}) => {
+      Cookies.set('concertQueryState', search.toString(), { sameSite: 'strict' })
+    })
+  }, [])
 
   function handleView(event: ChangeEvent) {
     const target = event.target as HTMLInputElement
@@ -108,22 +131,10 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
             )}
           </div>
           <div className="flex md:grid md:grid-cols-2 gap-2 md:gap-4 -mx-4 px-4 overflow-x-auto md:overflow-visible scrollbar-hidden">
-            <BandFilter
-              value={selectedBands}
-              onSubmit={setSelectedBands}
-            />
-            <LocationFilter
-              value={selectedLocations}
-              onSubmit={setSelectedLocations}
-            />
-            <YearsFilter
-              value={selectedYears}
-              onSubmit={setSelectedYears}
-            />
-            <BandCountFilter
-              value={selectedBandCount}
-              onSubmit={setSelectedBandCount}
-            />
+            <BandFilter value={selectedBands} onSubmit={setSelectedBands} />
+            <LocationFilter value={selectedLocations} onSubmit={setSelectedLocations} />
+            <YearsFilter value={selectedYears} onSubmit={setSelectedYears} />
+            <BandCountFilter value={selectedBandCount} onSubmit={setSelectedBandCount} />
           </div>
           <div className="flex items-center gap-4 -mx-4 px-4 overflow-x-auto scrollbar-hidden">
             {session && (
@@ -143,7 +154,12 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
               <div className="relative flex items-center">
                 <select
                   value={`${sort.sort_by},${sort.sort_asc}`}
-                  onChange={event => setSort({sort_by: event.target.value.split(',')[0] as SortBy, sort_asc: Boolean(event.target.value.split(',')[1])})}
+                  onChange={event =>
+                    setSort({
+                      sort_by: event.target.value.split(',')[0] as SortBy,
+                      sort_asc: Boolean(event.target.value.split(',')[1]),
+                    })
+                  }
                   name="sort"
                   id="sort"
                   className="appearance-none pl-2 pr-7 py-1 rounded-md font-sans bg-slate-750 hover:bg-slate-700"
