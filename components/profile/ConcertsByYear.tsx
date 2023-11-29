@@ -1,12 +1,10 @@
-import Link from 'next/link'
 import { Concert } from '../../types/types'
 
-export interface ConcertsChartProps {
+export interface ConcertsByYearProps {
   concerts: Concert[]
-  username: string
 }
 
-export const ConcertsChart = ({ concerts, username }: ConcertsChartProps) => {
+export const ConcertsByYear = ({ concerts }: ConcertsByYearProps) => {
   const years: { year: number; count: number }[] = []
 
   concerts.forEach(concert => {
@@ -30,23 +28,19 @@ export const ConcertsChart = ({ concerts, username }: ConcertsChartProps) => {
   }
   return (
     <div>
-      <h2>Besuchte Konzerte</h2>
+      <h2>Konzerte pro Jahr</h2>
       <div className="flex gap-4 -mx-6 px-6 overflow-auto scrollbar-hidden">
         {years.sort(compare).map(item => (
-          <Link
-            href={`/?years=${item.year},${item.year}&user=${username}`}
-            className="flex-1 flex flex-col items-center"
-            key={item.year}
-          >
+          <div key={item.year} className="flex-1 flex flex-col items-center">
             <div className="relative flex justify-center items-end h-24 mb-2">
               <div
-                className="w-6 md:w-8 rounded bg-venom"
+                className="w-6 md:w-8 rounded bg-venom-600"
                 style={{ height: (item.count / highestCount) * 100 + '%' }}
               />
-              <p className="absolute w-full pb-1 text-center mix-blend-difference">{item.count}</p>
+              <p className="absolute w-full pb-1 text-center font-bold">{item.count}</p>
             </div>
             <p className="text-vertical text-center text-sm">{item.year}</p>
-          </Link>
+          </div>
         ))}
       </div>
     </div>
