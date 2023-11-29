@@ -10,7 +10,7 @@ export interface ConcertFetchOptions {
     bands?: number[] | null
     locations?: number[] | null
     years?: number[] | null
-    bandsPerConcert?: number[] | null
+    bandCount?: number[] | null
     bandsSeenUser?: string
   }
   sort?: { sort_by: 'date_start', sort_asc: boolean }

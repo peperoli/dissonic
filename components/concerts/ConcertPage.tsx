@@ -58,7 +58,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
       <ConcertContext.Provider value={{ concert }}>
         <main className="container grid gap-4">
           <div className="flex justify-between items-center">
-            <Link href={`/?${concertQueryState}` ?? '/'} className="btn btn-link">
+            <Link href={`/${concertQueryState}`} className="btn btn-link">
               <ArrowLeftIcon className="h-icon" />
               Zurück zu Konzerte
             </Link>

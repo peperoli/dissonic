@@ -19,19 +19,17 @@ import { LocationFilter } from './LocationFilter'
 import { YearsFilter } from './YearsFilter'
 import { BandCountFilter } from './BandCountFilter'
 import Cookies from 'js-cookie'
-import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/useSession'
 import { SegmentedControl } from '../controls/SegmentedControl'
 import { useProfile } from '../../hooks/useProfile'
+import { useQueryState, useQueryStates } from 'next-usequerystate'
 import {
   parseAsArrayOf,
   parseAsBoolean,
   parseAsInteger,
   parseAsStringEnum,
-  useQueryState,
-  useQueryStates,
-  subscribeToQueryUpdates
-} from 'next-usequerystate'
+} from 'next-usequerystate/parsers'
 
 type HomePageProps = {
   initialConcerts: ExtendedRes<Concert[]>
@@ -67,7 +65,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
       bands: selectedBands,
       locations: selectedLocations,
       years: selectedYears,
-      bandsPerConcert: selectedBandCount,
+      bandCount: selectedBandCount,
       bandsSeenUser: selectedUserId ?? (view === 'user' ? session?.user.id : undefined),
     },
     sort,
@@ -75,13 +73,12 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
   })
   const [isOpen, setIsOpen] = useState(false)
   const { push } = useRouter()
-  const pathname = usePathname()  
-
+  const pathname = usePathname()
+  const queryStateString = window.location.search
+  
   useEffect(() => {
-    subscribeToQueryUpdates(({search}) => {
-      Cookies.set('concertQueryState', search.toString(), { sameSite: 'strict' })
-    })
-  }, [])
+    Cookies.set('concertQueryState', queryStateString, { sameSite: 'strict' })
+  }, [queryStateString])
 
   function handleView(event: ChangeEvent) {
     const target = event.target as HTMLInputElement

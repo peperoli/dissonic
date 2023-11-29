@@ -20,9 +20,7 @@ import { GenreFilter } from './GenreFilter'
 import { BandTableRow } from './TableRow'
 import {
   parseAsArrayOf,
-  parseAsInteger,
-  subscribeToQueryUpdates,
-  useQueryState,
+  parseAsInteger, useQueryState
 } from 'next-usequerystate'
 import Cookies from 'js-cookie'
 
@@ -68,12 +66,11 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
   }
 
   const isDesktop = useMediaQuery('(min-width: 768px)')
-
+  
+  const queryStateString = window.location.search
   useEffect(() => {
-    subscribeToQueryUpdates(({ search }) => {
-      Cookies.set('bandQueryState', search.toString(), { sameSite: 'strict' })
-    })
-  }, [])
+    Cookies.set('bandQueryState', queryStateString, { sameSite: 'strict' })
+  }, [queryStateString])
 
   if (!bands) {
     return (

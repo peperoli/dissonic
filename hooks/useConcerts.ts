@@ -33,14 +33,14 @@ const fetchConcerts = async (options?: ConcertFetchOptions): Promise<ExtendedRes
 
   let filteredIds = ids.map(id => id.id) as string[]
 
-  if (options?.filter?.bandsPerConcert) {
+  if (options?.filter?.bandCount) {
     filteredIds = ids
       ?.filter(
         item =>
-          !options?.filter?.bandsPerConcert ||
+          !options?.filter?.bandCount ||
           (Array.isArray(item.bands_count) &&
-            item.bands_count[0].count >= options.filter.bandsPerConcert[0] &&
-            item.bands_count[0].count <= options?.filter?.bandsPerConcert[1])
+            item.bands_count[0].count >= options.filter.bandCount[0] &&
+            item.bands_count[0].count <= options?.filter?.bandCount[1])
       )
       .map(id => id.id)
   }
