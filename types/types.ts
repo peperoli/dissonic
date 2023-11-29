@@ -1,4 +1,3 @@
-import { User } from '@supabase/supabase-js'
 import { Database } from './supabase'
 
 export interface ExtendedRes<TData> {
@@ -6,20 +5,34 @@ export interface ExtendedRes<TData> {
   count: number | null
 }
 
-export interface FetchOptions {
+export interface ConcertFetchOptions {
   filter?: {
-    bands?: number[]
-    locations?: number[]
-    years?: [number, number] | null
-    bandsPerConcert?: [number, number] | null
+    bands?: number[] | null
+    locations?: number[] | null
+    years?: number[] | null
+    bandCount?: number[] | null
     bandsSeenUser?: string
-    countries?: number[]
-    genres?: number[]
+  }
+  sort?: { sort_by: 'date_start', sort_asc: boolean }
+  size?: number
+}
+
+export type BandFetchOptions = {
+  filter: {
+    countries: number[] | null
+    genres: number[] | null
     search?: string
   }
-  sort?: [string, boolean?]
-  page?: number
   size?: number
+  page?: number
+}
+
+export type LocationFetchOptions = {
+  filter: {
+    search?: string
+  }
+  size?: number
+  page?: number
 }
 
 export type Concert = Database['public']['Tables']['concerts']['Row'] & {

@@ -68,8 +68,10 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
             <MultiSelect
               name="bands"
               options={bands.data}
-              selectedOptions={value}
-              setSelectedOptions={onChange}
+              selectedOptions={value.map(item => item.id)}
+              setSelectedOptions={value =>
+                onChange(bands.data.filter(item => value.includes(item.id)))
+              }
             />
           )}
         />

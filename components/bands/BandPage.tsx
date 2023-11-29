@@ -18,13 +18,14 @@ import { useSession } from '../../hooks/useSession'
 
 export interface BandPageProps {
   initialBand: Band
+  bandQueryState?: string
 }
 
-export const BandPage = ({ initialBand }: BandPageProps) => {
+export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
   const { data: band, isLoading: bandIsLoading } = useBand(initialBand)
   const { data: concerts } = useConcerts(undefined, {
     filter: { bands: [initialBand.id] },
-    sort: ['date_start', false],
+    sort: { sort_by: 'date_start', sort_asc: false },
   })
   const { data: spotifyArtistEmbed, status: spotifyArtistEmbedStatus } = useSpotifyArtistEmbed(
     band?.spotify_artist_id
@@ -51,27 +52,27 @@ export const BandPage = ({ initialBand }: BandPageProps) => {
       </PageWrapper>
     )
   }
-
+  console.log('bandQueryState', bandQueryState)
   return (
     <PageWrapper>
       <main className="container grid gap-4">
         <div>
-          <Link href="/bands" className="btn btn-link">
+          <Link href={`/bands${bandQueryState}`} className="btn btn-link">
             <ArrowLeftIcon className="h-icon" />
-            Zurück
+            Zurück zu Bands
           </Link>
         </div>
         <div className="grid gap-4 p-6 rounded-lg bg-slate-800">
           <h1>{band.name}</h1>
           {band.country && (
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-4 items-center">
               <MapPinIcon className="h-icon text-slate-300" />
               {regionNames.of(band.country.iso2)}
             </div>
           )}
-          <div className="flex gap-2">
+          <div className="flex items-center gap-4">
             <MusicalNoteIcon className="h-icon text-slate-300" />
-            <ul className='flex flex-wrap gap-x-2'>
+            <ul className="flex flex-wrap gap-x-2 gap-y-1">
               {band.genres &&
                 band.genres.map((genre, index) => (
                   <Fragment key={index}>
@@ -91,11 +92,15 @@ export const BandPage = ({ initialBand }: BandPageProps) => {
           )}
           <div className="flex gap-4">
             <Button
-              onClick={session ? () => setEditIsOpen(true) : () => push(`/login?redirect=${pathname}`)}
+              onClick={
+                session ? () => setEditIsOpen(true) : () => push(`/login?redirect=${pathname}`)
+              }
               label="Bearbeiten"
             />
             <Button
-              onClick={session ? () => setDeleteIsOpen(true) : () => push(`/login?redirect=${pathname}`)}
+              onClick={
+                session ? () => setDeleteIsOpen(true) : () => push(`/login?redirect=${pathname}`)
+              }
               label="Löschen"
               danger
             />

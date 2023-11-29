@@ -26,20 +26,19 @@ import { BandList } from './BandList'
 
 interface ConcertPageProps {
   initialConcert: Concert
+  concertQueryState?: string
 }
 
-export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
+export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPageProps) => {
   const { data: concert } = useConcert(initialConcert, initialConcert.id)
   const { data: profiles } = useProfiles()
   const { data: session } = useSession()
   const [editIsOpen, setEditIsOpen] = useState(false)
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
-  const today = new Date()
-  const dateStart = concert && new Date(concert?.date_start)
   const dateFormat: Intl.DateTimeFormatOptions = {
     day: 'numeric',
     month: 'short',
-    year: dateStart?.getFullYear() === today.getFullYear() ? undefined : 'numeric',
+    year: 'numeric',
   }
   const fanIds = concert?.bands_seen && new Set(concert.bands_seen.map(item => item.user_id))
   const fanProfiles = profiles?.filter(profile => fanIds?.has(profile.id))
@@ -59,9 +58,9 @@ export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
       <ConcertContext.Provider value={{ concert }}>
         <main className="container grid gap-4">
           <div className="flex justify-between items-center">
-            <Link href="/" className="btn btn-link">
+            <Link href={`/${concertQueryState}`} className="btn btn-link">
               <ArrowLeftIcon className="h-icon" />
-              Zurück
+              Zurück zu Konzerte
             </Link>
             <div className="flex gap-3">
               <Button
@@ -106,8 +105,8 @@ export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
               )}
             </div>
             <div className="grid gap-4 mt-4">
-              <div className="flex items-center">
-                <CalendarIcon className="h-icon mr-2 text-slate-300" />
+              <div className="flex items-center gap-4">
+                <CalendarIcon className="h-icon text-slate-300" />
                 <div>
                   <span>
                     {new Date(concert.date_start).toLocaleDateString('de-CH', dateFormat)}
@@ -121,9 +120,9 @@ export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
                 </div>
               </div>
               {concert.location && (
-                <div className="inline-flex items-center">
-                  <MapPinIcon className="h-icon mr-2 text-slate-300" />
-                  <div>{concert.location.name}</div>
+                <div className="flex gap-4 items-center">
+                  <MapPinIcon className="h-icon text-slate-300" />
+                  <div>{concert.location.name}, {concert.location.city}</div>
                 </div>
               )}
               {fanProfiles && fanProfiles.length > 0 && (

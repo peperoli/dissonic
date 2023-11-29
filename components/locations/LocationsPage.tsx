@@ -5,7 +5,7 @@ import { PlusIcon } from '@heroicons/react/20/solid'
 import { Table } from '../Table'
 import { TableRow } from '../TableRow'
 import { AddLocationForm } from './AddLocationForm'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Search } from '../Search'
 import { Button } from '../Button'
 import useMediaQuery from '../../hooks/useMediaQuery'
@@ -15,6 +15,7 @@ import { useDebounce } from '../../hooks/useDebounce'
 import { Pagination } from '../layout/Pagination'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/useSession'
+import { parseAsInteger, useQueryState } from 'next-usequerystate'
 
 interface LocationsPageProps {
   initialLocations: ExtendedRes<Location[]>
@@ -24,7 +25,7 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
   const [query, setQuery] = useState('')
   const debounceQuery = useDebounce(query, 200)
   const perPage = 25
-  const [currentPage, setCurrentPage] = useState(0)
+  const [currentPage, setCurrentPage] = useQueryState('page', parseAsInteger.withDefault(1))
   const { data: locations } = useLocations(initialLocations, {
     filter: { search: debounceQuery },
     page: currentPage,
@@ -35,6 +36,12 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
   const { data: session } = useSession()
   const { push } = useRouter()
   const pathname = usePathname()
+
+  useEffect(() => {
+    if (query) {
+      setCurrentPage(1)
+    }
+  }, [query])
   return (
     <>
       <PageWrapper>
@@ -42,7 +49,9 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
           {!isDesktop && (
             <div className="fixed bottom-0 right-0 m-4">
               <Button
-                onClick={session ? () => setIsOpen(true) : () => push(`/login?redirect=${pathname}`)}
+                onClick={
+                  session ? () => setIsOpen(true) : () => push(`/login?redirect=${pathname}`)
+                }
                 label="Location hinzufügen"
                 style="primary"
                 contentType="icon"
@@ -54,7 +63,9 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
             <h1 className="mb-0">Locations</h1>
             {isDesktop && (
               <Button
-                onClick={session ? () => setIsOpen(true) : () => push(`/login?redirect=${pathname}`)}
+                onClick={
+                  session ? () => setIsOpen(true) : () => push(`/login?redirect=${pathname}`)
+                }
                 label="Location hinzufügen"
                 style="primary"
                 icon={<PlusIcon className="h-icon" />}
@@ -87,15 +98,12 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
               entriesCount={locations?.count ?? 0}
               perPage={perPage}
               currentPage={currentPage}
-              setCurrentPage={setCurrentPage}
+              onChange={setCurrentPage}
             />
           </Table>
         </main>
       </PageWrapper>
-      <AddLocationForm
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-      />
+      <AddLocationForm isOpen={isOpen} setIsOpen={setIsOpen} />
     </>
   )
 }

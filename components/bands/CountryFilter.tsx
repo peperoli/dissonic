@@ -1,12 +1,11 @@
-import { Dispatch, SetStateAction } from 'react'
-import { Option } from '../../types/types'
+import { useEffect, useState } from 'react'
 import { FilterButton } from './../FilterButton'
 import { MultiSelect } from './../MultiSelect'
 import { useCountries } from './../../hooks/useCountries'
 
 type CountryMultiSelectProps = {
-  selectedOptions: Option[]
-  setSelectedOptions: Dispatch<SetStateAction<Option[]>>
+  selectedOptions: number[]
+  setSelectedOptions: (value: number[]) => void
 }
 
 const CountryMultiSelect = ({ selectedOptions, setSelectedOptions }: CountryMultiSelectProps) => {
@@ -16,7 +15,10 @@ const CountryMultiSelect = ({ selectedOptions, setSelectedOptions }: CountryMult
     <div className="relative h-full">
       <MultiSelect
         name="Länder"
-        options={countries?.map(item => ({ id: item.id, name: regionNames.of(item.iso2) ?? 'FEHLER' }))}
+        options={countries?.map(item => ({
+          id: item.id,
+          name: regionNames.of(item.iso2) ?? 'FEHLER',
+        }))}
         isLoading={isLoading}
         selectedOptions={selectedOptions}
         setSelectedOptions={setSelectedOptions}
@@ -28,17 +30,24 @@ const CountryMultiSelect = ({ selectedOptions, setSelectedOptions }: CountryMult
 }
 
 type CountryFilterProps = {
-  selectedOptions: Option[]
-  setSelectedOptions: Dispatch<SetStateAction<Option[]>>
+  value: number[] | null
+  onSubmit: (value: number[]) => void
 }
 
-export const CountryFilter = ({ selectedOptions, setSelectedOptions }: CountryFilterProps) => {
+export const CountryFilter = ({ value, onSubmit }: CountryFilterProps) => {
+  const [selectedIds, setSelectedIds] = useState(value ?? [])
+
+  useEffect(() => {
+    setSelectedIds(value ?? [])
+  }, [value])
   return (
-    <FilterButton name="Länder" selectedOptions={selectedOptions}>
-      <CountryMultiSelect
-        selectedOptions={selectedOptions}
-        setSelectedOptions={setSelectedOptions}
-      />
+    <FilterButton
+      name="Länder"
+      selectedOptions={selectedIds}
+      count={value?.length ?? 0}
+      onSubmit={onSubmit}
+    >
+      <CountryMultiSelect selectedOptions={selectedIds} setSelectedOptions={setSelectedIds} />
     </FilterButton>
   )
 }

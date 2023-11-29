@@ -58,7 +58,10 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
       {countries && (
         <Select
           {...register('country_id', { required: true })}
-          options={countries.map(item => ({ id: item.id, name: regionNames.of(item.iso2) ?? 'FEHLER' })) ?? []}
+          options={
+            countries.map(item => ({ id: item.id, name: regionNames.of(item.iso2) ?? 'FEHLER' })) ??
+            []
+          }
           error={errors.country_id}
           label="Land"
         />
@@ -71,8 +74,8 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
             <MultiSelect
               name="genres"
               options={genres}
-              selectedOptions={value}
-              setSelectedOptions={onChange}
+              selectedOptions={value.map(item => item.id)}
+              setSelectedOptions={value => onChange(genres.filter(item => value.includes(item.id)))}
             />
           )}
         />
@@ -88,6 +91,7 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
         <Button onClick={close} label="Abbrechen" />
         <Button type="submit" label="Speichern" style="primary" loading={status === 'loading'} />
       </div>
+      <pre>{JSON.stringify(watch(), null, 2)}</pre>
     </form>
   )
 }

@@ -25,7 +25,8 @@ const fetchConcert = async (concertId: string): Promise<Concert> => {
 
 export default async function Page({ params }: { params: { id: string } }) {
   const concert = await fetchConcert(params.id)
+  const cookieStore = cookies()
   return (
-    <ConcertPage initialConcert={concert} />
+    <ConcertPage initialConcert={concert} concertQueryState={cookieStore.get('concertQueryState')?.value} />
   )
 }

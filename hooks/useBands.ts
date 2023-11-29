@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
-import { Band, FetchOptions, ExtendedRes } from '../types/types'
+import { Band, ExtendedRes, BandFetchOptions } from '../types/types'
 import { getPagination } from '../lib/getPagination'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
-const fetchBands = async (options?: FetchOptions): Promise<ExtendedRes<Band[]>> => {
+const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[]>> => {
   const supabase = createClientComponentClient()
 
   let filterQuery = supabase
@@ -55,7 +55,7 @@ const fetchBands = async (options?: FetchOptions): Promise<ExtendedRes<Band[]>> 
   return { data, count }
 }
 
-export const useBands = (initialBands?: ExtendedRes<Band[]>, options?: FetchOptions) => {
+export const useBands = (initialBands?: ExtendedRes<Band[]>, options?: BandFetchOptions) => {
   return useQuery(['bands', JSON.stringify(options)], () => fetchBands(options), {
     initialData: initialBands,
     keepPreviousData: true,

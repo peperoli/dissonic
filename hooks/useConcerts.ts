@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import { getPagination } from '../lib/getPagination'
-import { Concert, FetchOptions, ExtendedRes } from '../types/types'
+import { Concert, ConcertFetchOptions, ExtendedRes } from '../types/types'
 import supabase from '../utils/supabase'
 
-const fetchConcerts = async (options?: FetchOptions): Promise<ExtendedRes<Concert[]>> => {
+const fetchConcerts = async (options?: ConcertFetchOptions): Promise<ExtendedRes<Concert[]>> => {
   let query = supabase.from('concerts').select(
     `id,
       bands!j_concert_bands(id),
@@ -21,13 +20,11 @@ const fetchConcerts = async (options?: FetchOptions): Promise<ExtendedRes<Concer
     query = query.lte('date_start', `${options.filter.years[1]}-12-31`)
   }
 
-  const { data: initalFilteredConcerts, count: initialCount, error: countError } = await query
+  const { data: initalFilteredConcerts, error: countError } = await query
 
   if (countError) {
     throw countError
   }
-
-  const [from, to] = getPagination(options?.page ?? 0, options?.size ?? 24, initialCount ?? 0)
 
   let filteredConcerts = initalFilteredConcerts
 
@@ -43,13 +40,13 @@ const fetchConcerts = async (options?: FetchOptions): Promise<ExtendedRes<Concer
     )
   }
 
-  if (options?.filter?.bandsPerConcert) {
+  if (options?.filter?.bandCount) {
     filteredConcerts = filteredConcerts?.filter(
       item =>
-        !options?.filter?.bandsPerConcert ||
+        !options?.filter?.bandCount ||
         (Array.isArray(item.bands_count) &&
-          item.bands_count[0].count >= options.filter.bandsPerConcert[0] &&
-          item.bands_count[0].count <= options?.filter?.bandsPerConcert[1])
+          item.bands_count[0].count >= options.filter.bandCount[0] &&
+          item.bands_count[0].count <= options?.filter?.bandCount[1])
     )
   }
 
@@ -64,11 +61,11 @@ const fetchConcerts = async (options?: FetchOptions): Promise<ExtendedRes<Concer
     )
     .in('id', filteredConcerts.map(id => id.id) as string[])
 
-  if (options?.page || options?.size) {
-    filteredQuery = filteredQuery.range(from, to)
+  if (options?.size) {
+    filteredQuery = filteredQuery.range(0, options.size - 1)
   }
   if (options?.sort) {
-    filteredQuery = filteredQuery.order(options.sort[0], { ascending: options.sort[1] })
+    filteredQuery = filteredQuery.order(options.sort.sort_by, { ascending: options.sort.sort_asc })
   }
 
   const { data, count, error } = await filteredQuery
@@ -80,7 +77,7 @@ const fetchConcerts = async (options?: FetchOptions): Promise<ExtendedRes<Concer
   return { data, count }
 }
 
-export const useConcerts = (initialConcerts?: ExtendedRes<Concert[]>, options?: FetchOptions) => {
+export const useConcerts = (initialConcerts?: ExtendedRes<Concert[]>, options?: ConcertFetchOptions) => {
   return useQuery(['concerts', JSON.stringify(options)], () => fetchConcerts(options), {
     initialData: initialConcerts,
     keepPreviousData: true,

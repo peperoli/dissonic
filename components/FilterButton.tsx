@@ -1,16 +1,23 @@
 import { ChevronDownIcon, XMarkIcon } from '@heroicons/react/20/solid'
 import { Button } from './Button'
 import { Popover } from '@headlessui/react'
-import { Option } from '../types/types'
 import { ReactNode } from 'react'
 
 interface FilterButtonProps {
   name: string
-  selectedOptions: Option[] | [number, number] | null
+  selectedOptions: number[]
+  onSubmit: (value: number[]) => void
+  count: number
   children: ReactNode
 }
 
-export const FilterButton = ({ name, selectedOptions, children }: FilterButtonProps) => {
+export const FilterButton = ({
+  name,
+  selectedOptions,
+  onSubmit,
+  count,
+  children,
+}: FilterButtonProps) => {
   return (
     <Popover className="relative">
       {({ open, close }) => {
@@ -18,15 +25,12 @@ export const FilterButton = ({ name, selectedOptions, children }: FilterButtonPr
           <>
             <Popover.Button className="btn btn-filter btn-secondary w-full h-full">
               <span className="whitespace-nowrap overflow-hidden text-ellipsis">
-                {selectedOptions && selectedOptions.length > 0 ? (
+                <span>{name}</span>
+                {count > 0 && (
                   <>
-                    <span className="capitalize">{name}: </span>
-                    <span className="px-1 py-0.5 rounded-md bg-slate-800">
-                      {selectedOptions.length} ausgewählt
-                    </span>
+                    :{' '}
+                    <span className="px-1 py-0.5 rounded-md bg-slate-800">{count} ausgewählt</span>
                   </>
-                ) : (
-                  <span className="capitalize">{name}</span>
                 )}
               </span>
               <ChevronDownIcon
@@ -34,7 +38,7 @@ export const FilterButton = ({ name, selectedOptions, children }: FilterButtonPr
               />
             </Popover.Button>
             <Popover.Panel className="fixed md:absolute flex flex-col overflow-hidden inset-0 md:inset-auto min-w-full md:mt-1 p-4 md:rounded-lg bg-slate-700 shadow-xl z-20">
-              <div className="flex md:hidden justify-between items-center gap-4 mb-4">
+              <div className="flex md:hidden justify-between items-center gap-4">
                 <h2 className="mb-0 capitalize">{name}</h2>
                 <Button
                   onClick={() => close()}
@@ -44,6 +48,15 @@ export const FilterButton = ({ name, selectedOptions, children }: FilterButtonPr
                 />
               </div>
               {children}
+              <Button
+                onClick={() => {
+                  onSubmit(selectedOptions)
+                  close()
+                }}
+                label="Übernehmen"
+                style="primary"
+                className="mt-2"
+              />
             </Popover.Panel>
           </>
         )

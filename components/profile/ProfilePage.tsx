@@ -32,7 +32,7 @@ function ConcertList({ userId }: ConcertListProps) {
   const [size, setSize] = useState(25)
   const { data: concerts, fetchStatus } = useConcerts(undefined, {
     filter: { bandsSeenUser: userId },
-    sort: ['date_start', false],
+    sort: { sort_by: 'date_start', sort_asc: false },
     size,
   })
   return (
@@ -64,7 +64,7 @@ type ProfilePageProps = {
 }
 
 export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
-  const { data: profile } = useProfile(initialProfile.id, initialProfile)
+  const { data: profile } = useProfile(initialProfile.id, null, initialProfile)
   const { data: friends } = useFriends(initialProfile.id)
   const { data: bandsSeen } = useBandsSeen(initialProfile.id)
   const [editPassIsOpen, setEditPassIsOpen] = useState(false)
@@ -187,6 +187,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                             .filter(item => item.location != undefined)
                             .map(item => item.location) as Location[]
                         }
+                        username={profile.username}
                       />
                     )}
                   </Tab.Panel>

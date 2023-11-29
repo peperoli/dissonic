@@ -6,22 +6,24 @@ import { Button } from './Button'
 import { SpinnerIcon } from './layout/SpinnerIcon'
 
 interface SelectedOptionProps {
-  selectedOption: Option
-  selectedOptions: Option[]
-  setSelectedOptions: (event: Option[]) => void
+  selectedOption: number
+  options?: Option[]
+  selectedOptions: number[]
+  setSelectedOptions: (value: number[]) => void
 }
 
 const SelectedOption = ({
   selectedOption,
+  options,
   selectedOptions,
   setSelectedOptions,
 }: SelectedOptionProps) => {
   function handleClick() {
-    setSelectedOptions(selectedOptions.filter(item => item.id !== selectedOption.id))
+    setSelectedOptions(selectedOptions.filter(item => item !== selectedOption))
   }
   return (
     <Button
-      label={selectedOption.name ?? ''}
+      label={options?.find(item => item.id === selectedOption)?.name ?? ''}
       onClick={handleClick}
       icon={<XMarkIcon className="h-icon" />}
       style="tag"
@@ -31,8 +33,8 @@ const SelectedOption = ({
 
 interface MultiSelectOptionProps {
   option: Option
-  selectedOptions: Option[]
-  setSelectedOptions: (event: Option[]) => void
+  selectedOptions: number[]
+  setSelectedOptions: (event: number[]) => void
   setQuery: Dispatch<SetStateAction<string>>
   searchRef: RefObject<HTMLInputElement>
 }
@@ -44,13 +46,13 @@ const MultiSelectOption = ({
   setQuery,
   searchRef,
 }: MultiSelectOptionProps) => {
-  const isSelected = selectedOptions.some(item => item.id === option.id)
+  const isSelected = selectedOptions.some(item => item === option.id)
 
   function handleChange() {
-    if (selectedOptions.some(item => item.id === option.id)) {
-      setSelectedOptions(selectedOptions.filter(item => item.id !== option.id))
+    if (selectedOptions.some(item => item === option.id)) {
+      setSelectedOptions(selectedOptions.filter(item => item !== option.id))
     } else {
-      setSelectedOptions([...selectedOptions, option])
+      setSelectedOptions([...selectedOptions, option.id])
     }
     setQuery('')
     searchRef.current?.focus()
@@ -68,8 +70,8 @@ interface MultiSelectProps {
   name: string
   options?: Option[]
   isLoading?: boolean
-  selectedOptions: Option[]
-  setSelectedOptions: (event: Option[]) => void
+  selectedOptions: number[]
+  setSelectedOptions: (event: number[]) => void
   alwaysOpen?: boolean
   fullHeight?: boolean
 }
@@ -85,13 +87,12 @@ export const MultiSelect = ({
 }: MultiSelectProps) => {
   const [query, setQuery] = useState('')
   const searchRef = useRef<HTMLInputElement>(null)
-  const regExp = new RegExp(query, 'iu')
-  const filteredOptions = options?.filter(option =>
-    option.name
-      ?.normalize('NFD')
-      .replace(/\p{Diacritic}/gu, '')
-      .match(regExp)
-  )
+  const regExp = new RegExp(handleDiacritics(query), 'iu')
+  const filteredOptions = options?.filter(option => handleDiacritics(option.name).match(regExp))
+  
+  function handleDiacritics(string: string) {
+    return string.normalize('NFD').replace(/\p{Diacritic}/gu, '')
+  }
 
   function capitalize(string: string) {
     const arr = string.split(' ')
@@ -110,7 +111,8 @@ export const MultiSelect = ({
         <div className="flex flex-wrap gap-2 mb-2">
           {selectedOptions.map(selectedOption => (
             <SelectedOption
-              key={selectedOption.id}
+              key={selectedOption}
+              options={options}
               selectedOption={selectedOption}
               selectedOptions={selectedOptions}
               setSelectedOptions={setSelectedOptions}
@@ -137,9 +139,9 @@ export const MultiSelect = ({
       {(query || alwaysOpen) && (
         <div
           className={clsx(
-            'form-control w-full mt-1 p-2 rounded-lg bg-slate-700 overflow-auto',
-            !alwaysOpen && 'absolute shadow-lg z-20',
-            fullHeight ? ' max-h-full md:h-72' : ' max-h-72'
+            'form-control w-full  bg-slate-700 overflow-auto',
+            alwaysOpen ? 'mt-2' : 'absolute mt-1 p-2 rounded-lg shadow-lg z-20',
+            fullHeight ? 'max-h-full md:h-72' : 'max-h-72'
           )}
         >
           {isLoading ? (

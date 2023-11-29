@@ -200,8 +200,8 @@ interface RangeSliderWrapperProps {
   unit: string
   options: number[]
   isLoading?: boolean
-  selectedOptions: [number, number] | null
-  setSelectedOptions: Dispatch<SetStateAction<[number, number] | null>>
+  selectedOptions: number[]
+  setSelectedOptions: Dispatch<SetStateAction<number[]>>
 }
 
 export const RangeSliderWrapper = ({
@@ -213,8 +213,8 @@ export const RangeSliderWrapper = ({
   const initialMin = Math.min(...options)
   const initialMax = Math.max(...options)
 
-  const [minValue, setMinValue] = useState(selectedOptions ? selectedOptions[0] : initialMin)
-  const [maxValue, setMaxValue] = useState(selectedOptions ? selectedOptions[1] : initialMax)
+  const [minValue, setMinValue] = useState(selectedOptions?.[0] || initialMin)
+  const [maxValue, setMaxValue] = useState(selectedOptions?.[1] || initialMax)
 
   function handleMinBlur(event: FocusEvent<HTMLInputElement>) {
     const value = Number(event.target.value)
@@ -240,15 +240,9 @@ export const RangeSliderWrapper = ({
     }
   }
 
-  function reset() {
-    setMinValue(initialMin)
-    setMaxValue(initialMax)
-    setSelectedOptions(null)
-  }
-
-  function submit() {
+  useEffect(() => {
     setSelectedOptions([minValue, maxValue])
-  }
+  }, [minValue, maxValue])
   return (
     <>
       <Chart
@@ -266,7 +260,7 @@ export const RangeSliderWrapper = ({
         maxValue={maxValue}
         setMaxValue={setMaxValue}
       />
-      <div className="flex gap-8">
+      <div className="flex gap-8 mb-2">
         <NumberField
           id="min"
           unit={unit}
@@ -285,17 +279,6 @@ export const RangeSliderWrapper = ({
           setValue={setMaxValue}
           onBlur={handleMaxBlur}
         />
-      </div>
-      <div className="relative flex justify-end gap-2 w-full pt-4 bg-slate-700 z-10">
-        <Button
-          onClick={reset}
-          label="Filter zurücksetzen"
-          icon={<ArrowUturnLeftIcon className="h-icon" />}
-          contentType="icon"
-          style="secondary"
-          disabled={!selectedOptions}
-        />
-        <Button onClick={submit} label="Ergebnisse anzeigen" style="primary" />
       </div>
     </>
   )

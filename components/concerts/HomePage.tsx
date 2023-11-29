@@ -1,7 +1,7 @@
 'use client'
 
 import { AddConcertForm } from './AddConcertForm'
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { Button } from '../Button'
 import {
   ArrowUturnLeftIcon,
@@ -11,7 +11,7 @@ import {
   UserIcon,
 } from '@heroicons/react/20/solid'
 import { PageWrapper } from '../layout/PageWrapper'
-import { Concert, ExtendedRes, Option } from '../../types/types'
+import { Concert, ExtendedRes } from '../../types/types'
 import { useConcerts } from '../../hooks/useConcerts'
 import { ConcertCard } from './ConcertCard'
 import { BandFilter } from './BandFilter'
@@ -22,36 +22,63 @@ import Cookies from 'js-cookie'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/useSession'
 import { SegmentedControl } from '../controls/SegmentedControl'
+import { useProfile } from '../../hooks/useProfile'
+import { useQueryState, useQueryStates } from 'next-usequerystate'
+import {
+  parseAsArrayOf,
+  parseAsBoolean,
+  parseAsInteger,
+  parseAsStringEnum,
+} from 'next-usequerystate/parsers'
 
 type HomePageProps = {
   initialConcerts: ExtendedRes<Concert[]>
 }
 
+enum SortBy {
+  dateStart = 'date_start',
+}
+
 export const HomePage = ({ initialConcerts }: HomePageProps) => {
-  const [size, setSize] = useState(25)
-  const [selectedBands, setSelectedBands] = useState<Option[]>([])
-  const [selectedLocations, setSelectedLocations] = useState<Option[]>([])
-  const [selectedYears, setSelectedYears] = useState<[number, number] | null>(null)
-  const [selectedBandsPerConcert, setSelectedBandsPerConcert] = useState<[number, number] | null>(
-    null
-  )
   const { data: session } = useSession()
+  const [size, setSize] = useQueryState('size', parseAsInteger.withDefault(25))
+  const [selectedBands, setSelectedBands] = useQueryState('bands', parseAsArrayOf(parseAsInteger))
+  const [selectedLocations, setSelectedLocations] = useQueryState(
+    'locations',
+    parseAsArrayOf(parseAsInteger)
+  )
+  const [selectedYears, setSelectedYears] = useQueryState('years', parseAsArrayOf(parseAsInteger))
+  const [selectedBandCount, setSelectedBandCount] = useQueryState(
+    'band_count',
+    parseAsArrayOf(parseAsInteger)
+  )
+  const [user] = useQueryState('user')
+  const { data: profile } = useProfile(null, user)
+  const selectedUserId = user && profile?.id
   const [view, setView] = useState(Cookies.get('view') ?? 'global')
-  const [sort, setSort] = useState('date_start,desc')
+  const [sort, setSort] = useQueryStates({
+    sort_by: parseAsStringEnum<SortBy>(Object.values(SortBy)).withDefault(SortBy.dateStart),
+    sort_asc: parseAsBoolean.withDefault(false),
+  })
   const { data: concerts, isFetching } = useConcerts(initialConcerts, {
     filter: {
-      locations: selectedLocations.map(item => item.id),
-      bands: selectedBands.map(item => item.id),
+      bands: selectedBands,
+      locations: selectedLocations,
       years: selectedYears,
-      bandsPerConcert: selectedBandsPerConcert,
-      bandsSeenUser: view === 'user' ? session?.user.id : undefined,
+      bandCount: selectedBandCount,
+      bandsSeenUser: selectedUserId ?? (view === 'user' ? session?.user.id : undefined),
     },
-    sort: [sort.split(',')[0], sort.split(',')[1] === 'asc' ? true : false],
-    size: size,
+    sort,
+    size,
   })
   const [isOpen, setIsOpen] = useState(false)
   const { push } = useRouter()
   const pathname = usePathname()
+  const queryStateString = window.location.search
+  
+  useEffect(() => {
+    Cookies.set('concertQueryState', queryStateString, { sameSite: 'strict' })
+  }, [queryStateString])
 
   function handleView(event: ChangeEvent) {
     const target = event.target as HTMLInputElement
@@ -60,10 +87,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
   }
 
   function resetAll() {
-    setSelectedBands([])
-    setSelectedLocations([])
-    setSelectedYears(null)
-    setSelectedBandsPerConcert(null)
+    push(pathname, { scroll: false })
   }
   return (
     <PageWrapper>
@@ -90,10 +114,11 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
         <div className="grid gap-4">
           <div className="flex items-center gap-4">
             <div className="my-1.5 text-sm text-slate-300">{concerts?.count}&nbsp;Einträge</div>
-            {(selectedBands.length > 0 ||
-              selectedLocations.length > 0 ||
+            {(selectedBands ||
+              selectedLocations ||
               selectedYears ||
-              selectedBandsPerConcert) && (
+              selectedBandCount ||
+              selectedUserId) && (
               <Button
                 label="Zurücksetzen"
                 onClick={resetAll}
@@ -103,16 +128,10 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
             )}
           </div>
           <div className="flex md:grid md:grid-cols-2 gap-2 md:gap-4 -mx-4 px-4 overflow-x-auto md:overflow-visible scrollbar-hidden">
-            <BandFilter selectedOptions={selectedBands} setSelectedOptions={setSelectedBands} />
-            <LocationFilter
-              selectedOptions={selectedLocations}
-              setSelectedOptions={setSelectedLocations}
-            />
-            <YearsFilter selectedOptions={selectedYears} setSelectedOptions={setSelectedYears} />
-            <BandCountFilter
-              selectedOptions={selectedBandsPerConcert}
-              setSelectedOptions={setSelectedBandsPerConcert}
-            />
+            <BandFilter value={selectedBands} onSubmit={setSelectedBands} />
+            <LocationFilter value={selectedLocations} onSubmit={setSelectedLocations} />
+            <YearsFilter value={selectedYears} onSubmit={setSelectedYears} />
+            <BandCountFilter value={selectedBandCount} onSubmit={setSelectedBandCount} />
           </div>
           <div className="flex items-center gap-4 -mx-4 px-4 overflow-x-auto scrollbar-hidden">
             {session && (
@@ -125,19 +144,25 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
                 onValueChange={handleView}
               />
             )}
-            <div className="flex items-center ml-auto text-sm">
-              <label htmlFor="sortBy" className="sr-only md:not-sr-only text-slate-300">
+            <div className="flex items-center gap-1 ml-auto text-sm">
+              <label htmlFor="sort" className="sr-only md:not-sr-only text-slate-300">
                 Sortieren nach:
               </label>
               <div className="relative flex items-center">
                 <select
-                  onChange={e => setSort(e.target.value)}
-                  name="sortBy"
-                  id="sortBy"
-                  className="pl-2 pr-7 py-1 rounded-md hover:bg-slate-800 bg-transparent appearance-none"
+                  value={`${sort.sort_by},${sort.sort_asc}`}
+                  onChange={event =>
+                    setSort({
+                      sort_by: event.target.value.split(',')[0] as SortBy,
+                      sort_asc: Boolean(event.target.value.split(',')[1]),
+                    })
+                  }
+                  name="sort"
+                  id="sort"
+                  className="appearance-none pl-2 pr-7 py-1 rounded-md font-sans bg-slate-750 hover:bg-slate-700"
                 >
-                  <option value="date_start,desc">Neuste</option>
-                  <option value="date_start,asc">Älteste</option>
+                  <option value="date_start,false">Neuste</option>
+                  <option value="date_start,true">Älteste</option>
                 </select>
                 <ChevronDownIcon className="absolute right-2 text-xs h-icon pointer-events-none" />
               </div>
@@ -155,7 +180,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
             {concerts?.data.length !== concerts?.count && (
               <Button
                 label="Mehr anzeigen"
-                onClick={() => setSize(prev => (prev += 25))}
+                onClick={() => setSize(prev => prev + 25)}
                 loading={isFetching}
                 style="primary"
               />

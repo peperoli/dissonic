@@ -1,10 +1,15 @@
-import React, { Dispatch, SetStateAction } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useConcertDates } from '../../hooks/useConcertDates'
 import { SpinnerIcon } from '../layout/SpinnerIcon'
 import { FilterButton } from './../FilterButton'
 import { RangeSliderWrapper } from './../RangeFilter'
 
-const YearsRangeSlider = ({ ...props }: YearsFilterProps) => {
+type YearsRangeSliderProps = {
+  selectedOptions: number[]
+  setSelectedOptions: Dispatch<SetStateAction<number[]>>
+}
+
+const YearsRangeSlider = ({ ...props }: YearsRangeSliderProps) => {
   const { data: concertDates, isLoading } = useConcertDates()
   const concertYears = concertDates
     ?.map(item => item.date_start && new Date(item.date_start).getFullYear())
@@ -21,13 +26,19 @@ const YearsRangeSlider = ({ ...props }: YearsFilterProps) => {
 }
 
 interface YearsFilterProps {
-  selectedOptions: [number, number] | null
-  setSelectedOptions: Dispatch<SetStateAction<[number, number] | null>>
+  value: number[] | null
+  onSubmit: (value: number[]) => void
 }
 
-export const YearsFilter = ({ selectedOptions, setSelectedOptions }: YearsFilterProps) => {
+export const YearsFilter = ({ value, onSubmit }: YearsFilterProps) => {
+  const [selectedOptions, setSelectedOptions] = useState(value ?? [])
+  const count = value?.[1] && value?.[0] ? value[1] - value[0] + 1 : 0
+
+  useEffect(() => {
+    setSelectedOptions(value ?? [])
+  }, [value])
   return (
-    <FilterButton name="Jahre" selectedOptions={selectedOptions}>
+    <FilterButton name="Jahre" selectedOptions={selectedOptions} onSubmit={onSubmit} count={count}>
       <YearsRangeSlider selectedOptions={selectedOptions} setSelectedOptions={setSelectedOptions} />
     </FilterButton>
   )

@@ -1,12 +1,11 @@
-import { Dispatch, SetStateAction } from 'react'
-import { Option } from '../../types/types'
+import { useEffect, useState } from 'react'
 import { FilterButton } from './../FilterButton'
 import { MultiSelect } from './../MultiSelect'
 import { useLocations } from './../../hooks/useLocations'
 
 type LocationMultiSelectProps = {
-  selectedOptions: Option[]
-  setSelectedOptions: Dispatch<SetStateAction<Option[]>>
+  selectedOptions: number[]
+  setSelectedOptions: (value: number[]) => void
 }
 
 const LocationMultiSelect = ({ selectedOptions, setSelectedOptions }: LocationMultiSelectProps) => {
@@ -27,14 +26,24 @@ const LocationMultiSelect = ({ selectedOptions, setSelectedOptions }: LocationMu
 }
 
 type LocationFilterProps = {
-  selectedOptions: Option[]
-  setSelectedOptions: Dispatch<SetStateAction<Option[]>>
+  value: number[] | null
+  onSubmit: (value: number[]) => void
 }
 
-export const LocationFilter = ({ selectedOptions, setSelectedOptions }: LocationFilterProps) => {
+export const LocationFilter = ({ value, onSubmit }: LocationFilterProps) => {
+  const [selectedIds, setSelectedIds] = useState(value ?? [])
+
+  useEffect(() => {
+    setSelectedIds(value ?? [])
+  }, [value])
   return (
-    <FilterButton name="locations" selectedOptions={selectedOptions}>
-      <LocationMultiSelect selectedOptions={selectedOptions} setSelectedOptions={setSelectedOptions} />
+    <FilterButton
+      name="Locations"
+      selectedOptions={selectedIds}
+      count={value?.length ?? 0}
+      onSubmit={onSubmit}
+    >
+      <LocationMultiSelect selectedOptions={selectedIds} setSelectedOptions={setSelectedIds} />
     </FilterButton>
   )
 }

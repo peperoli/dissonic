@@ -5,6 +5,9 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    fontFamily: {
+      sans: ['var(--font-albert-sans)'],
+    },
     colors: {
       venom: {
         'DEFAULT': '#99F162',

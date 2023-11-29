@@ -1,9 +1,8 @@
-import { Metadata } from 'next'
+import { Metadata, Viewport } from 'next'
 import { Albert_Sans } from 'next/font/google'
 import { ReactNode } from 'react'
 import { QueryProvider } from '../components/helpers/QueryProvider'
 import '../styles/globals.scss'
-const albertSans = Albert_Sans({ subsets: ['latin'] })
 
 export const dynamic = 'force-dynamic'
 
@@ -12,7 +11,6 @@ export const metadata: Metadata = {
   description: 'Hier leben deine Konzerte und Festivals.',
   metadataBase: new URL('https://dissonic.ch'),
   applicationName: 'Dissonic',
-  themeColor: '#1f282e',
   manifest: '/manifest.json',
   appleWebApp: {
     title: 'Dissonic',
@@ -28,10 +26,20 @@ export const metadata: Metadata = {
   },
 }
 
+export const viewport: Viewport = {
+  themeColor: '#1f282e',
+}
+
+const albertSans = Albert_Sans({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-albert-sans',
+})
+
 export default async function RootLayout({ children }: { children: ReactNode }) {
   return (
     <QueryProvider>
-      <html lang="de-CH" className={`${albertSans.className}`}>
+      <html lang="de-CH" className={`${albertSans.variable}`}>
         <body className="text-slate-50 bg-slate-850">{children}</body>
       </html>
     </QueryProvider>
