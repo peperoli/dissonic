@@ -52,12 +52,11 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
       </PageWrapper>
     )
   }
-  console.log('bandQueryState', bandQueryState)
   return (
     <PageWrapper>
       <main className="container grid gap-4">
         <div>
-          <Link href={`/bands${bandQueryState}`} className="btn btn-link">
+          <Link href={`/bands${bandQueryState ?? ''}`} className="btn btn-link">
             <ArrowLeftIcon className="h-icon" />
             Zurück zu Bands
           </Link>

@@ -91,7 +91,6 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
         <Button onClick={close} label="Abbrechen" />
         <Button type="submit" label="Speichern" style="primary" loading={status === 'loading'} />
       </div>
-      <pre>{JSON.stringify(watch(), null, 2)}</pre>
     </form>
   )
 }
