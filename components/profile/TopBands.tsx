@@ -80,14 +80,19 @@ export const TopBands = ({ bands }: TopBandsProps) => {
 
   const totalCount = topBands.filter(item => item.count > 1).length
 
-  function compare(a: { count: number }, b: { count: number }): number {
-    let comparison = 0
+  function compare(a: TopBand, b: TopBand): number {
     if (a.count > b.count) {
-      comparison = -1
+      return -1
     } else if (a.count < b.count) {
-      comparison = 1
+      return 1
+    } else {
+      if (a.name.toLowerCase() > b.name.toLowerCase()) {
+        return 1
+      } else if (a.name.toLowerCase() < b.name.toLowerCase()) {
+        return -1
+      }
     }
-    return comparison
+    return 0
   }
 
   if (topBands.filter(item => item.count > 1).length > 0) {
@@ -111,7 +116,10 @@ export const TopBands = ({ bands }: TopBandsProps) => {
         {totalCount >= 4 && (
           <>
             {visibleItems < totalCount ? (
-              <Button onClick={() => setVisibleItems(prev => (prev += isDesktop ? 8 : 9))} label="Mehr anzeigen" />
+              <Button
+                onClick={() => setVisibleItems(prev => (prev += isDesktop ? 8 : 9))}
+                label="Mehr anzeigen"
+              />
             ) : (
               <Button onClick={() => setVisibleItems(8)} label="Weniger anzeigen" />
             )}
