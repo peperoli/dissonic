@@ -1,4 +1,4 @@
-import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/20/solid'
+import { ArrowsUpDownIcon, MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/20/solid'
 import clsx from 'clsx'
 import { useState, useRef, Dispatch, RefObject, SetStateAction } from 'react'
 import { Option } from '../types/types'
@@ -72,6 +72,7 @@ interface MultiSelectProps {
   isLoading?: boolean
   selectedOptions: number[]
   setSelectedOptions: (event: number[]) => void
+  reorderable?: boolean
   alwaysOpen?: boolean
   fullHeight?: boolean
 }
@@ -82,6 +83,7 @@ export const MultiSelect = ({
   isLoading,
   selectedOptions,
   setSelectedOptions,
+  reorderable,
   alwaysOpen,
   fullHeight,
 }: MultiSelectProps) => {
@@ -89,7 +91,7 @@ export const MultiSelect = ({
   const searchRef = useRef<HTMLInputElement>(null)
   const regExp = new RegExp(handleDiacritics(query), 'iu')
   const filteredOptions = options?.filter(option => handleDiacritics(option.name).match(regExp))
-  
+
   function handleDiacritics(string: string) {
     return string.normalize('NFD').replace(/\p{Diacritic}/gu, '')
   }
@@ -108,7 +110,7 @@ export const MultiSelect = ({
       }`}
     >
       {selectedOptions.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-2">
+        <div className="flex flex-wrap items-center gap-2 mb-2">
           {selectedOptions.map(selectedOption => (
             <SelectedOption
               key={selectedOption}
@@ -118,6 +120,14 @@ export const MultiSelect = ({
               setSelectedOptions={setSelectedOptions}
             />
           ))}
+          {reorderable && selectedOptions.length > 1 && (
+            <Button
+              label="Neu anordnen"
+              icon={<ArrowsUpDownIcon className="h-icon" />}
+              contentType="icon"
+              size="small"
+            />
+          )}
         </div>
       )}
       <div className="form-control">

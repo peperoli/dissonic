@@ -38,3 +38,7 @@ next-env.d.ts
 # PWA files
 public/sw.js
 public/workbox-*.js
+
+
+# Misc
+.tool-versions

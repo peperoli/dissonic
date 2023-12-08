@@ -10,6 +10,7 @@ import { CheckBox } from '../forms/CheckBox'
 import { Select } from '../forms/Select'
 import { TextField } from '../forms/TextField'
 import { MultiSelect } from '../MultiSelect'
+import { ReorderableList } from '../forms/ReorderableList'
 
 interface FormProps {
   defaultValues?: EditConcert
@@ -60,6 +61,7 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
           />
         )}
       </div>
+      <ReorderableList />
       {bands?.data && (
         <Controller
           name="bands"
@@ -72,6 +74,7 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
               setSelectedOptions={value =>
                 onChange(bands.data.filter(item => value.includes(item.id)))
               }
+              reorderable
             />
           )}
         />
