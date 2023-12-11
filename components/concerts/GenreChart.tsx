@@ -62,7 +62,7 @@ export const GenreChart = ({ bands, uniqueBands, profile }: GenreChartProps) => 
   return (
     <section>
       <h2>Genres</h2>
-      {uniqueBands && (
+      {uniqueBands && genres.length > 0 && (
         <p>
           {profile ? `${profile.username}s` : 'Dein'} Top-Genre ist {genres.sort(compare)[0].name}{' '}
           mit {genres.sort(compare)[0].uniqueCount} verschiedenen Bands.
