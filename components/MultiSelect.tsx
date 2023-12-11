@@ -1,13 +1,14 @@
 import { ArrowsUpDownIcon, MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/20/solid'
 import clsx from 'clsx'
 import { useState, useRef, Dispatch, RefObject, SetStateAction } from 'react'
-import { Option } from '../types/types'
+import { ListItem, Option } from '../types/types'
 import { Button } from './Button'
 import { SpinnerIcon } from './layout/SpinnerIcon'
+import { ReorderableList } from './forms/ReorderableList'
 
 interface SelectedOptionProps {
   selectedOption: number
-  options?: Option[]
+  options?: ListItem[]
   selectedOptions: number[]
   setSelectedOptions: (value: number[]) => void
 }
@@ -32,7 +33,7 @@ const SelectedOption = ({
 }
 
 interface MultiSelectOptionProps {
-  option: Option
+  option: ListItem
   selectedOptions: number[]
   setSelectedOptions: (event: number[]) => void
   setQuery: Dispatch<SetStateAction<string>>
@@ -68,7 +69,7 @@ const MultiSelectOption = ({
 
 interface MultiSelectProps {
   name: string
-  options?: Option[]
+  options?: ListItem[]
   isLoading?: boolean
   selectedOptions: number[]
   setSelectedOptions: (event: number[]) => void
@@ -111,6 +112,7 @@ export const MultiSelect = ({
     >
       {selectedOptions.length > 0 && (
         <div className="flex flex-wrap items-center gap-2 mb-2">
+          <ReorderableList listItems={selectedOptions} onListReorder={setSelectedOptions} />
           {selectedOptions.map(selectedOption => (
             <SelectedOption
               key={selectedOption}

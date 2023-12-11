@@ -1,6 +1,7 @@
-import { forwardRef, useEffect, useRef, useState } from 'react'
-import { Option } from '../../types/types'
 import clsx from 'clsx'
+import { forwardRef, useEffect, useRef, useState } from 'react'
+import { reorderList } from '../../lib/reorderList'
+import { ListItem, Option } from '../../types/types'
 
 type DropZoneProps = {
   isVisible: boolean
@@ -17,7 +18,7 @@ const DropZone = forwardRef<HTMLDivElement, DropZoneProps>(({ isVisible }, ref) 
 DropZone.displayName = 'DropZone'
 
 type ReorderableListItemProps = {
-  item: string
+  item: Option
   index: number
   dragged: number | null
   setDragged: (value: number | null) => void
@@ -36,7 +37,7 @@ function ReorderableListItem({ item, index, getRef, ...props }: ReorderableListI
         }}
         className="bg-slate-750"
       >
-        {item}
+        {item.name}
       </li>
       <DropZone
         ref={node => getRef(node, index + 1)}
@@ -47,23 +48,11 @@ function ReorderableListItem({ item, index, getRef, ...props }: ReorderableListI
 }
 
 type ReorderableListProps = {
-  items: Option[]
+  listItems: ReorderableListItem[]
+  onListReorder: (values: ListItem[]) => void
 }
 
-export function ReorderableList({}: ReorderableListProps) {
-  const initialItems = [
-    'Arch Enemy',
-    'Behemoth',
-    'Cellar Darling',
-    'Delain',
-    'Eluveitie',
-    'Fleshgod Apocalypse',
-    'Gojira',
-    'Halestorm',
-    'Infected Rain',
-    'Jinjer',
-  ]
-  const [items, setItems] = useState(initialItems)
+export function ReorderableList({ listItems, onListReorder }: ReorderableListProps) {
   const [dragged, setDragged] = useState<number | null>(null)
   const [mouse, setMouse] = useState([0, 0])
   const [dropZone, setDropZone] = useState(0)
@@ -105,47 +94,12 @@ export function ReorderableList({}: ReorderableListProps) {
     }
   }, [dragged, mouse])
 
-  function reorderListForward(items: string[], start: number, end: number) {
-    const temp = items[start]
-    const reorderedItems = [...items]
-
-    for (let i = start; i < end; i++) {
-      reorderedItems[i] = reorderedItems[i + 1]
-    }
-    reorderedItems[end - 1] = temp
-
-    return reorderedItems
-  }
-
-  const reorderListBackward = <T,>(items: T[], start: number, end: number) => {
-    const temp = items[start]
-    const reorderedItems = [...items]
-
-    for (let i = start; i > end; i--) {
-      reorderedItems[i] = reorderedItems[i - 1]
-    }
-
-    reorderedItems[end] = temp
-
-    return reorderedItems
-  }
-
-  function reorderList(items: string[], start: number, end: number) {
-    if (start < end) {
-      return reorderListForward(items, start, end)
-    } else if (start > end) {
-      return reorderListBackward(items, start, end)
-    }
-
-    return items
-  }
-
   useEffect(() => {
     function handleMouseUp(event: MouseEvent) {
       if (dragged !== null) {
         event.preventDefault()
         setDragged(null)
-        setItems(prev => reorderList(prev, dragged, dropZone))
+        onListReorder(reorderList(listItems, dragged, dropZone))
       }
     }
 
@@ -154,20 +108,17 @@ export function ReorderableList({}: ReorderableListProps) {
   })
   return (
     <>
-      <button type="button" onClick={() => setItems(initialItems)}>
-        Reset items
-      </button>
       <ul className="flex flex-wrap gap-1">
         {dragged !== null && (
           <li
             className="fixed z-50 -translate-y-1/2 bg-slate-750 shadow-xl"
             style={{ left: `${mouse[0]}px`, top: `${mouse[1]}px` }}
           >
-            {items[dragged]}
+            {listItems[dragged].name}
           </li>
         )}
         <DropZone ref={node => getRef(node, 0)} isVisible={dragged !== null && dropZone === 0} />
-        {items.map((item, index) => {
+        {listItems.map((item, index) => {
           if (dragged !== index) {
             return (
               <ReorderableListItem
@@ -186,7 +137,7 @@ export function ReorderableList({}: ReorderableListProps) {
       <pre>dragged: {JSON.stringify(dragged)}</pre>
       <pre>dropZone: {JSON.stringify(dropZone)}</pre>
       <pre>mouse: {JSON.stringify(mouse)}</pre>
-      <pre className="text-sm">items: {JSON.stringify(items, null, 2)}</pre>
+      <pre className="text-sm">items: {JSON.stringify(listItems, null, 2)}</pre>
     </>
   )
 }

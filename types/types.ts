@@ -13,7 +13,7 @@ export interface ConcertFetchOptions {
     bandCount?: number[] | null
     bandsSeenUser?: string
   }
-  sort?: { sort_by: 'date_start', sort_asc: boolean }
+  sort?: { sort_by: 'date_start'; sort_asc: boolean }
   size?: number
 }
 
@@ -105,7 +105,20 @@ export type Friend = Database['public']['Tables']['friends']['Row'] & {
 
 export type AddFriend = Database['public']['Tables']['friends']['Insert']
 
-export type Option<IdType = number> = { id: IdType; name: string; [key: string]: any }
+export type Option<IdType = number> = {
+  id: IdType
+  name: string
+  [key: string]: any
+}
+
+export type ListItem<IdType = number> = {
+  id: IdType
+  name: string
+}
+
+export type ReorderableListItem = ListItem & {
+  index: number | null
+}
 
 export type SpotifyArtist = {
   id: string
