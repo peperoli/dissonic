@@ -45,7 +45,7 @@ export function ResetPasswordPage() {
             autoComplete="off"
           />
           <div className="flex items-center gap-4">
-            <Button type="submit" label="Bestätigen" style="primary" loading={status === 'loading'} />
+            <Button type="submit" label="Bestätigen" appearance="primary" loading={status === 'loading'} />
           </div>
           {status === 'error' && (
             <StatusBanner

@@ -113,7 +113,7 @@ export function BandList({ bands, bandsSeen, concertId }: BandListProps) {
             <Button
               onClick={updateBandsSeen}
               label="Speichern"
-              style="primary"
+              appearance="primary"
               loading={isLoading}
             />
             <Button onClick={() => setEditing(false)} label="Abbrechen" />
@@ -129,7 +129,7 @@ export function BandList({ bands, bandsSeen, concertId }: BandListProps) {
                 <PlusIcon className="h-icon" />
               )
             }
-            style={hasBandsSeen ? 'secondary' : 'primary'}
+            appearance={hasBandsSeen ? 'secondary' : 'primary'}
             size={hasBandsSeen ? 'small' : 'medium'}
           />
         )}

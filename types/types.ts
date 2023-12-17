@@ -46,7 +46,7 @@ export type AddConcert = Database['public']['Tables']['concerts']['Insert'] & {
 }
 
 export type EditConcert = Database['public']['Tables']['concerts']['Update'] & {
-  bands?: Option[]
+  bands?: ReorderableListItem[]
 }
 
 export type Comment = Database['public']['Tables']['comments']['Row'] & {

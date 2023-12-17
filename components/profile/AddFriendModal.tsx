@@ -40,7 +40,7 @@ export const AddFriendModal = ({ isOpen, setIsOpen, user, profile }: AddFriendMo
         <Button
           label="Hinzufügen"
           onClick={addFriend}
-          style="primary"
+          appearance="primary"
           loading={status === 'loading'}
         />
       </div>

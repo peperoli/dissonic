@@ -52,7 +52,7 @@ export const FriendsPage = ({ profile, initialFriends }: FriendsPageProps) => {
             <Button
               label="Anmelden"
               onClick={() => push(`/login?redirect=${pathname}`)}
-              style="primary"
+              appearance="primary"
             />
           </>
         )}

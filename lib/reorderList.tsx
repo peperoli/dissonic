@@ -1,6 +1,4 @@
-import { Option } from '../types/types'
-
-function reorderListForward(items: Option[], start: number, end: number) {
+function reorderListForward(items: number[], start: number, end: number) {
   const temp = items[start]
   const reorderedItems = [...items]
 
@@ -12,7 +10,7 @@ function reorderListForward(items: Option[], start: number, end: number) {
   return reorderedItems
 }
 
-function reorderListBackward(items: Option[], start: number, end: number) {
+function reorderListBackward(items: number[], start: number, end: number) {
   const temp = items[start]
   const reorderedItems = [...items]
 
@@ -25,7 +23,7 @@ function reorderListBackward(items: Option[], start: number, end: number) {
   return reorderedItems
 }
 
-export function reorderList(items: Option[], start: number, end: number) {
+export function reorderList(items: number[], start: number, end: number) {
   if (start < end) {
     return reorderListForward(items, start, end)
   } else if (start > end) {

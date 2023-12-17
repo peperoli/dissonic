@@ -51,7 +51,7 @@ function ConcertList({ userId }: ConcertListProps) {
             label="Mehr anzeigen"
             onClick={() => setSize(prev => (prev += 25))}
             loading={fetchStatus === 'fetching'}
-            style="primary"
+            appearance="primary"
           />
         )}
       </div>

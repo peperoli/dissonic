@@ -54,7 +54,7 @@ export const FilterButton = ({
                   close()
                 }}
                 label="Übernehmen"
-                style="primary"
+                appearance="primary"
                 className="mt-2"
               />
             </Popover.Panel>

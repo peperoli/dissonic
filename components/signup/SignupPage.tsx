@@ -70,7 +70,7 @@ export const SignupPage = () => {
           />
         )}
         <h3 className="mt-10">Hast du bereits ein Konto?</h3>
-        <Button label="Anmelden" onClick={() => push('/login')} size="small" style="secondary" />
+        <Button label="Anmelden" onClick={() => push('/login')} size="small" appearance="secondary" />
       </main>
     </PageWrapper>
   )

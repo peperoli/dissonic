@@ -50,7 +50,7 @@ export const Comments = () => {
               <Button
                 type="submit"
                 label="Kommentieren"
-                style="primary"
+                appearance="primary"
                 disabled={watch('content') === ''}
                 loading={status === 'loading'}
               />
@@ -74,7 +74,7 @@ export const Comments = () => {
           <Button
             label="Anmelden"
             onClick={() => push(`/login?redirect=${pathname}`)}
-            style="primary"
+            appearance="primary"
           />
         </>
       )}

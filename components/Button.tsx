@@ -1,65 +1,64 @@
 import clsx from 'clsx'
-import { forwardRef } from 'react'
+import { forwardRef, HTMLAttributes } from 'react'
 import { SpinnerIcon } from './layout/SpinnerIcon'
 
 type ButtonProps = {
-  onClick?: any
   type?: 'button' | 'submit' | 'reset' | undefined
   label: string
-  style?: 'primary' | 'secondary' | 'tag'
+  appearance?: 'primary' | 'secondary' | 'tag'
   contentType?: 'text' | 'icon'
   icon?: JSX.Element | string
-  disabled?: boolean
   loading?: boolean
+  disabled?: boolean
   size?: 'small' | 'medium'
   danger?: boolean
-  className?: string
-}
+} & HTMLAttributes<HTMLButtonElement>
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
-      onClick,
       type = 'button',
       label,
-      style = 'secondary',
+      appearance = 'secondary',
       contentType = 'text',
       icon,
-      disabled,
       loading,
+      disabled,
       size = 'medium',
       danger,
       className,
+      ...props
     },
     ref
   ) => {
     return (
       <button
-        type={type || 'button'}
-        onClick={onClick}
+        type={type}
+        ref={ref}
         disabled={disabled || loading}
         className={clsx(
           'btn',
-          style === 'primary' && 'btn-primary',
-          style === 'secondary' && 'btn-secondary',
-          style === 'tag' && 'btn-tag',
+          appearance === 'primary' && 'btn-primary',
+          appearance === 'secondary' && 'btn-secondary',
+          appearance === 'tag' && 'btn-tag',
           contentType === 'icon' && 'btn-icon',
           size === 'small' && 'btn-small',
           danger && 'btn-danger',
           className
         )}
+        {...props}
       >
         {loading && <SpinnerIcon className="absolute h-icon animate-spin" />}
         <span
           className={clsx(
             'flex gap-2 items-center',
             loading && 'opacity-0',
-            style === 'tag' && 'flex-row-reverse'
+            appearance === 'tag' && 'flex-row-reverse'
           )}
         >
           <>
             {icon && (
-              <span className={clsx(style === 'tag' && 'p-0.5 rounded-full text-sm bg-slate-800')}>
+              <span className={clsx(appearance === 'tag' && 'p-0.5 rounded-full text-sm bg-slate-800')}>
                 {icon}
               </span>
             )}{' '}

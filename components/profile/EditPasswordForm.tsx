@@ -42,7 +42,7 @@ export const EditPasswordForm = ({ isOpen, setIsOpen }: EditPasswordFormProps) =
         />
         <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10">
           <Button onClick={() => setIsOpen(false)} label="Abbrechen" />
-          <Button type="submit" label="Speichern" style="primary" loading={status === 'loading'} />
+          <Button type="submit" label="Speichern" appearance="primary" loading={status === 'loading'} />
         </div>
       </form>
     </Modal>

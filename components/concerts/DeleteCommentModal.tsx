@@ -31,7 +31,7 @@ export const DeleteCommentModal = ({ isOpen, setIsOpen, commentId }: DeleteComme
         <Button
           label="Löschen"
           onClick={() => deleteComment.mutate()}
-          style="primary"
+          appearance="primary"
           danger
           loading={deleteComment.status === 'loading'}
         />
