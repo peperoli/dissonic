@@ -37,12 +37,12 @@ export type LocationFetchOptions = {
 
 export type Concert = Database['public']['Tables']['concerts']['Row'] & {
   location?: Location
-  bands?: Band[]
+  bands?: (Band & { index: number | null })[]
   bands_seen?: BandSeen[]
 }
 
 export type AddConcert = Database['public']['Tables']['concerts']['Insert'] & {
-  bands?: Option[]
+  bands?: ReorderableListItem[]
 }
 
 export type EditConcert = Database['public']['Tables']['concerts']['Update'] & {
@@ -105,15 +105,10 @@ export type Friend = Database['public']['Tables']['friends']['Row'] & {
 
 export type AddFriend = Database['public']['Tables']['friends']['Insert']
 
-export type Option<IdType = number> = {
-  id: IdType
-  name: string
-  [key: string]: any
-}
-
 export type ListItem<IdType = number> = {
   id: IdType
   name: string
+  [key: string]: any
 }
 
 export type ReorderableListItem = ListItem & {

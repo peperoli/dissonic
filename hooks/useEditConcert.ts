@@ -39,11 +39,25 @@ const editConcert = async (newConcert: EditConcert) => {
 
       const { error: addBandsError } = await supabase
         .from('j_concert_bands')
-        .insert(addBands?.map(item => ({ concert_id: newConcert.id, band_id: item.id })))
+        .insert(
+          addBands?.map((item, index) => ({ concert_id: newConcert.id, band_id: item.id, index }))
+        )
 
       if (addBandsError) {
         throw addBandsError
       }
+
+      newConcert.bands?.forEach(async (band, index) => {
+        const { error: editBandsError } = await supabase
+          .from('j_concert_bands')
+          .update({ index })
+          .eq('concert_id', newConcert.id)
+          .eq('band_id', band.id)
+
+        if (editBandsError) {
+          throw editBandsError
+        }
+      })
 
       if (deleteBands) {
         const { error: deleteBandsError } = await supabase

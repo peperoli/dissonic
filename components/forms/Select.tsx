@@ -2,12 +2,12 @@ import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import clsx from 'clsx'
 import { forwardRef } from 'react'
 import { FieldError } from 'react-hook-form'
-import { Option } from '../../types/types'
+import { ListItem } from '../../types/types'
 
 type SelectProps = {
   name: string
   label: string
-  options: Option[]
+  options: ListItem[]
   placeholder?: string
   error?: FieldError
 }

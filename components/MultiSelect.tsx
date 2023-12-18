@@ -1,10 +1,10 @@
-import { ArrowsUpDownIcon, MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/20/solid'
+import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import clsx from 'clsx'
 import { useState, useRef, Dispatch, RefObject, SetStateAction } from 'react'
-import { ListItem, Option } from '../types/types'
-import { Button } from './Button'
+import { ListItem, ReorderableListItem } from '../types/types'
 import { SpinnerIcon } from './layout/SpinnerIcon'
 import { ReorderableList } from './forms/ReorderableList'
+import { Chip } from './Chip'
 
 interface SelectedOptionProps {
   selectedOption: number
@@ -23,11 +23,9 @@ const SelectedOption = ({
     setSelectedOptions(selectedOptions.filter(item => item !== selectedOption))
   }
   return (
-    <Button
+    <Chip
       label={options?.find(item => item.id === selectedOption)?.name ?? ''}
       onClick={handleClick}
-      icon={<XMarkIcon className="h-icon" />}
-      style="tag"
     />
   )
 }
@@ -67,16 +65,23 @@ const MultiSelectOption = ({
   )
 }
 
-interface MultiSelectProps {
+type MultiSelectProps = {
   name: string
-  options?: ListItem[]
   isLoading?: boolean
   selectedOptions: number[]
   setSelectedOptions: (event: number[]) => void
-  reorderable?: boolean
   alwaysOpen?: boolean
   fullHeight?: boolean
-}
+} & (
+  | {
+      reorderable: true
+      options?: ReorderableListItem[]
+    }
+  | {
+      reorderable?: false
+      options?: ListItem[]
+    }
+)
 
 export const MultiSelect = ({
   name,
@@ -111,26 +116,27 @@ export const MultiSelect = ({
       }`}
     >
       {selectedOptions.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2 mb-2">
-          <ReorderableList listItems={selectedOptions} onListReorder={setSelectedOptions} />
-          {selectedOptions.map(selectedOption => (
-            <SelectedOption
-              key={selectedOption}
-              options={options}
-              selectedOption={selectedOption}
-              selectedOptions={selectedOptions}
-              setSelectedOptions={setSelectedOptions}
+        <>
+          {reorderable ? (
+            <ReorderableList
+              items={options}
+              selectedItems={selectedOptions}
+              setSelectedItems={setSelectedOptions}
             />
-          ))}
-          {reorderable && selectedOptions.length > 1 && (
-            <Button
-              label="Neu anordnen"
-              icon={<ArrowsUpDownIcon className="h-icon" />}
-              contentType="icon"
-              size="small"
-            />
+          ) : (
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              {selectedOptions.map(selectedOption => (
+                <SelectedOption
+                  key={selectedOption}
+                  options={options}
+                  selectedOption={selectedOption}
+                  selectedOptions={selectedOptions}
+                  setSelectedOptions={setSelectedOptions}
+                />
+              ))}
+            </div>
           )}
-        </div>
+        </>
       )}
       <div className="form-control">
         <MagnifyingGlassIcon className="h-icon absolute top-1/2 ml-3 transform -translate-y-1/2 pointer-events-none" />

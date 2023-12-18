@@ -4,7 +4,7 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { useBands } from '../../hooks/useBands'
 import { useConcerts } from '../../hooks/useConcerts'
 import { useLocations } from '../../hooks/useLocations'
-import { AddConcert, EditConcert } from '../../types/types'
+import { AddConcert, EditConcert, ReorderableListItem } from '../../types/types'
 import { Button } from '../Button'
 import { CheckBox } from '../forms/CheckBox'
 import { Select } from '../forms/Select'
@@ -67,10 +67,14 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
           render={({ field: { value = [], onChange } }) => (
             <MultiSelect
               name="bands"
-              options={bands.data}
+              options={bands.data.map(item => ({ ...item, index: null }))}
               selectedOptions={value.map(item => item.id)}
               setSelectedOptions={value =>
-                onChange(bands.data.filter(item => value.includes(item.id)))
+                onChange(
+                  bands.data
+                    .filter(item => value.includes(item.id))
+                    .map((item, index) => ({ ...item, index }))
+                )
               }
               reorderable
             />
@@ -119,7 +123,12 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
       )}
       <div className="sticky md:static bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10">
         <Button onClick={close} label="Abbrechen" />
-        <Button type="submit" label="Speichern" appearance="primary" loading={status === 'loading'} />
+        <Button
+          type="submit"
+          label="Speichern"
+          appearance="primary"
+          loading={status === 'loading'}
+        />
       </div>
     </form>
   )

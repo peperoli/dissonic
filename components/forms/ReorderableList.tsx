@@ -1,59 +1,77 @@
 import clsx from 'clsx'
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { reorderList } from '../../lib/reorderList'
-import { ListItem, Option } from '../../types/types'
+import { ReorderableListItem } from '../../types/types'
+import { Chip } from '../Chip'
 
 type DropZoneProps = {
+  item?: ReorderableListItem
   isVisible: boolean
 }
 
-const DropZone = forwardRef<HTMLDivElement, DropZoneProps>(({ isVisible }, ref) => {
+const DropZone = forwardRef<HTMLDivElement, DropZoneProps>(({ item, isVisible }, ref) => {
   return (
     <div
       ref={ref}
-      className={clsx('drop-zone bg-slate-700', isVisible ? 'w-4 h-6' : 'h-0 overflow-hidden')}
-    />
+      className={clsx(
+        'drop-zone',
+        isVisible
+          ? 'px-2 py-1 border-2 border-dashed border-slate-300 rounded-md bg-slate-750'
+          : 'w-0 h-0 p-0 overflow-hidden'
+      )}
+    >
+      <span className="invisible">{item?.name}</span>
+    </div>
   )
 })
 DropZone.displayName = 'DropZone'
 
-type ReorderableListItemProps = {
-  item: Option
+type ReorderableItemProps = {
+  item?: ReorderableListItem
   index: number
-  dragged: number | null
-  setDragged: (value: number | null) => void
+  dragged: { id: number; index: number } | null
+  setDragged: (value: { id: number; index: number } | null) => void
   dropZone: number
   getRef: (node: HTMLDivElement | null, index: number) => void
+  removeItem: () => void
 }
 
-function ReorderableListItem({ item, index, getRef, ...props }: ReorderableListItemProps) {
+function ReorderableItem({
+  item,
+  index,
+  dragged,
+  setDragged,
+  dropZone,
+  getRef,
+  removeItem,
+}: ReorderableItemProps) {
   return (
-    <div className="flex">
-      <li
-        role="button"
+    <div className={clsx('flex', dragged !== null && dropZone === index + 1 && 'gap-1')}>
+      <Chip
+        label={item?.name ?? ''}
         onMouseDown={event => {
           event.preventDefault()
-          props.setDragged(index)
+          setDragged({ id: item!.id, index })
         }}
-        className="bg-slate-750"
-      >
-        {item.name}
-      </li>
+        remove={removeItem}
+      />
       <DropZone
         ref={node => getRef(node, index + 1)}
-        isVisible={props.dragged !== null && props.dropZone === index + 1}
+        item={item}
+        isVisible={dragged !== null && dropZone === index + 1}
       />
     </div>
   )
 }
 
 type ReorderableListProps = {
-  listItems: ReorderableListItem[]
-  onListReorder: (values: ListItem[]) => void
+  items?: ReorderableListItem[]
+  selectedItems: number[]
+  setSelectedItems: (values: number[]) => void
 }
 
-export function ReorderableList({ listItems, onListReorder }: ReorderableListProps) {
-  const [dragged, setDragged] = useState<number | null>(null)
+export function ReorderableList({ items, selectedItems, setSelectedItems }: ReorderableListProps) {
+  const [dragged, setDragged] = useState<{ id: number; index: number } | null>(null)
   const [mouse, setMouse] = useState([0, 0])
   const [dropZone, setDropZone] = useState(0)
   const dropZonesRef = useRef<Map<number, HTMLDivElement> | null>(null)
@@ -87,7 +105,7 @@ export function ReorderableList({ listItems, onListReorder }: ReorderableListPro
         position => Math.abs(position.left - mouse[0]) + Math.abs(position.top - mouse[1])
       )
       let result = absoluteDifferences.indexOf(Math.min(...absoluteDifferences))
-      if (result > dragged) {
+      if (result > dragged.index) {
         result += 1
       }
       setDropZone(result)
@@ -99,45 +117,57 @@ export function ReorderableList({ listItems, onListReorder }: ReorderableListPro
       if (dragged !== null) {
         event.preventDefault()
         setDragged(null)
-        onListReorder(reorderList(listItems, dragged, dropZone))
+        setSelectedItems(reorderList(selectedItems, dragged.index, dropZone))
       }
     }
 
     document.addEventListener('mouseup', handleMouseUp)
     return () => document.removeEventListener('mouseup', handleMouseUp)
   })
+
+  function removeItem(selectedItem: number) {
+    setSelectedItems(selectedItems.filter(item => item !== selectedItem))
+  }
   return (
     <>
       <ul className="flex flex-wrap gap-1">
         {dragged !== null && (
-          <li
-            className="fixed z-50 -translate-y-1/2 bg-slate-750 shadow-xl"
+          <Chip
+            label={items?.find(item => item.id === dragged.id)?.name || 'Band'}
+            className="fixed z-50 -translate-y-1/2 opacity-80 shadow-2xl pointer-events-none"
             style={{ left: `${mouse[0]}px`, top: `${mouse[1]}px` }}
-          >
-            {listItems[dragged].name}
-          </li>
+          />
         )}
-        <DropZone ref={node => getRef(node, 0)} isVisible={dragged !== null && dropZone === 0} />
-        {listItems.map((item, index) => {
-          if (dragged !== index) {
+        {dragged && (
+          <DropZone
+            ref={node => getRef(node, 0)}
+            item={items?.find(item => item.id === dragged.id)}
+            isVisible={dragged !== null && dropZone === 0}
+          />
+        )}
+        {selectedItems.map((selectedItem, index) => {
+          if (dragged?.index !== index) {
             return (
-              <ReorderableListItem
-                item={item}
+              <ReorderableItem
+                item={items?.find(item => item.id === selectedItem)}
                 index={index}
                 dragged={dragged}
                 setDragged={setDragged}
                 dropZone={dropZone}
                 getRef={getRef}
+                removeItem={() => removeItem(selectedItem)}
                 key={index}
               />
             )
           }
         })}
       </ul>
-      <pre>dragged: {JSON.stringify(dragged)}</pre>
-      <pre>dropZone: {JSON.stringify(dropZone)}</pre>
-      <pre>mouse: {JSON.stringify(mouse)}</pre>
-      <pre className="text-sm">items: {JSON.stringify(listItems, null, 2)}</pre>
+      <div>
+        <pre>dragged: {JSON.stringify(dragged)}</pre>
+        <pre>dropZone: {JSON.stringify(dropZone)}</pre>
+        <pre>mouse: {JSON.stringify(mouse)}</pre>
+        <pre className="text-sm">selectedItems: {JSON.stringify(selectedItems, null, 2)}</pre>
+      </div>
     </>
   )
 }

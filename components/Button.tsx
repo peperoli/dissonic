@@ -5,7 +5,7 @@ import { SpinnerIcon } from './layout/SpinnerIcon'
 type ButtonProps = {
   type?: 'button' | 'submit' | 'reset' | undefined
   label: string
-  appearance?: 'primary' | 'secondary' | 'tag'
+  appearance?: 'primary' | 'secondary'
   contentType?: 'text' | 'icon'
   icon?: JSX.Element | string
   loading?: boolean
@@ -40,7 +40,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           'btn',
           appearance === 'primary' && 'btn-primary',
           appearance === 'secondary' && 'btn-secondary',
-          appearance === 'tag' && 'btn-tag',
           contentType === 'icon' && 'btn-icon',
           size === 'small' && 'btn-small',
           danger && 'btn-danger',
@@ -49,21 +48,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {loading && <SpinnerIcon className="absolute h-icon animate-spin" />}
-        <span
-          className={clsx(
-            'flex gap-2 items-center',
-            loading && 'opacity-0',
-            appearance === 'tag' && 'flex-row-reverse'
-          )}
-        >
-          <>
-            {icon && (
-              <span className={clsx(appearance === 'tag' && 'p-0.5 rounded-full text-sm bg-slate-800')}>
-                {icon}
-              </span>
-            )}{' '}
-            <span className={`${contentType === 'icon' ? ' sr-only ' : ''}`}>{label}</span>
-          </>
+        <span className={clsx('flex gap-2 items-center', loading && 'opacity-0')}>
+          {icon}
+          <span className={`${contentType === 'icon' ? ' sr-only ' : ''}`}>{label}</span>
         </span>
       </button>
     )
