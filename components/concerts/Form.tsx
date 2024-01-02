@@ -30,7 +30,7 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
     defaultValues: defaultValues ?? { date_start: today },
   })
   const { data: concerts } = useConcerts()
-  const { data: bands } = useBands()
+  const { data: bands, fetchStatus: bandsFetchStatus } = useBands()
   const { data: locations } = useLocations()
 
   const similarConcerts = concerts?.data
@@ -60,7 +60,7 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
           />
         )}
       </div>
-      {bands?.data && (
+      {bands?.data ? (
         <Controller
           name="bands"
           control={control}
@@ -71,15 +71,21 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
               selectedOptions={value.map(item => item.id)}
               setSelectedOptions={value =>
                 onChange(
-                  bands.data
-                    .filter(item => value.includes(item.id))
-                    .map((item, index) => ({ ...item, index }))
+                  value.map(
+                    (item, index) =>
+                      ({
+                        ...bands.data.find(band => band.id === item),
+                        index,
+                      } as ReorderableListItem)
+                  )
                 )
               }
               reorderable
             />
           )}
         />
+      ) : (
+        <>{bandsFetchStatus === 'fetching' && <p className="text-slate-300">Loading bands ...</p>}</>
       )}
       {locations && (
         <Select

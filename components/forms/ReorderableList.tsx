@@ -68,9 +68,10 @@ type ReorderableListProps = {
   items?: ReorderableListItem[]
   selectedItems: number[]
   setSelectedItems: (values: number[]) => void
+  className?: string
 }
 
-export function ReorderableList({ items, selectedItems, setSelectedItems }: ReorderableListProps) {
+export function ReorderableList({ items, selectedItems, setSelectedItems, ...props }: ReorderableListProps) {
   const [dragged, setDragged] = useState<{ id: number; index: number } | null>(null)
   const [mouse, setMouse] = useState([0, 0])
   const [dropZone, setDropZone] = useState(0)
@@ -129,45 +130,37 @@ export function ReorderableList({ items, selectedItems, setSelectedItems }: Reor
     setSelectedItems(selectedItems.filter(item => item !== selectedItem))
   }
   return (
-    <>
-      <ul className="flex flex-wrap gap-1">
-        {dragged !== null && (
-          <Chip
-            label={items?.find(item => item.id === dragged.id)?.name || 'Band'}
-            className="fixed z-50 -translate-y-1/2 opacity-80 shadow-2xl pointer-events-none"
-            style={{ left: `${mouse[0]}px`, top: `${mouse[1]}px` }}
-          />
-        )}
-        {dragged && (
-          <DropZone
-            ref={node => getRef(node, 0)}
-            item={items?.find(item => item.id === dragged.id)}
-            isVisible={dragged !== null && dropZone === 0}
-          />
-        )}
-        {selectedItems.map((selectedItem, index) => {
-          if (dragged?.index !== index) {
-            return (
-              <ReorderableItem
-                item={items?.find(item => item.id === selectedItem)}
-                index={index}
-                dragged={dragged}
-                setDragged={setDragged}
-                dropZone={dropZone}
-                getRef={getRef}
-                removeItem={() => removeItem(selectedItem)}
-                key={index}
-              />
-            )
-          }
-        })}
-      </ul>
-      <div>
-        <pre>dragged: {JSON.stringify(dragged)}</pre>
-        <pre>dropZone: {JSON.stringify(dropZone)}</pre>
-        <pre>mouse: {JSON.stringify(mouse)}</pre>
-        <pre className="text-sm">selectedItems: {JSON.stringify(selectedItems, null, 2)}</pre>
-      </div>
-    </>
+    <ul className={clsx("flex flex-wrap gap-1", props.className)}>
+      {dragged !== null && (
+        <Chip
+          label={items?.find(item => item.id === dragged.id)?.name || 'Band'}
+          className="fixed z-50 -translate-y-1/2 opacity-80 shadow-2xl pointer-events-none"
+          style={{ left: `${mouse[0]}px`, top: `${mouse[1]}px` }}
+        />
+      )}
+      {dragged && (
+        <DropZone
+          ref={node => getRef(node, 0)}
+          item={items?.find(item => item.id === dragged.id)}
+          isVisible={dragged !== null && dropZone === 0}
+        />
+      )}
+      {selectedItems.map((selectedItem, index) => {
+        if (dragged?.index !== index) {
+          return (
+            <ReorderableItem
+              item={items?.find(item => item.id === selectedItem)}
+              index={index}
+              dragged={dragged}
+              setDragged={setDragged}
+              dropZone={dropZone}
+              getRef={getRef}
+              removeItem={() => removeItem(selectedItem)}
+              key={index}
+            />
+          )
+        }
+      })}
+    </ul>
   )
 }

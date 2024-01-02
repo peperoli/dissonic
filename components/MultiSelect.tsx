@@ -19,13 +19,13 @@ const SelectedOption = ({
   selectedOptions,
   setSelectedOptions,
 }: SelectedOptionProps) => {
-  function handleClick() {
+  function removeItem() {
     setSelectedOptions(selectedOptions.filter(item => item !== selectedOption))
   }
   return (
     <Chip
       label={options?.find(item => item.id === selectedOption)?.name ?? ''}
-      onClick={handleClick}
+      remove={removeItem}
     />
   )
 }
@@ -122,6 +122,7 @@ export const MultiSelect = ({
               items={options}
               selectedItems={selectedOptions}
               setSelectedItems={setSelectedOptions}
+              className="mb-2"
             />
           ) : (
             <div className="flex flex-wrap items-center gap-2 mb-2">

@@ -7,25 +7,19 @@ type ChipProps = {
   remove?: () => void
   onMouseDown?: MouseEventHandler
   size?: 'small' | 'medium'
-} & HTMLAttributes<HTMLDivElement>
+  className?: string
+  style?: HTMLAttributes<HTMLDivElement>['style']
+}
 
-export const Chip = ({ label, size = 'medium', remove, className, ...props }: ChipProps) => {
+export const Chip = ({ label, size = 'medium', onMouseDown, remove, className }: ChipProps) => {
+  const ConditionalTag = onMouseDown ? 'button' : 'div'
   return (
-    <div
-      role={props.onMouseDown ? 'button' : undefined}
-      tabIndex={0}
-      className={clsx('btn btn-tag', size === 'small' && 'btn-small', className)}
-      {...props}
-    >
-      {label}
+    <div tabIndex={0} className={clsx('btn btn-tag', size === 'small' && 'btn-small', className)}>
+      <ConditionalTag type="button" onMouseDown={onMouseDown}>
+        {label}
+      </ConditionalTag>
       {remove && (
-        <button
-          type="button"
-          onClick={event => {
-            event.stopPropagation()
-            remove()
-          }}
-        >
+        <button type="button" onClick={remove}>
           <XMarkIcon className="h-icon text-slate-300" />
         </button>
       )}
