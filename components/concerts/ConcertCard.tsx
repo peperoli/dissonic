@@ -85,23 +85,26 @@ export const ConcertCard = ({ concert }: ConcertCardProps) => {
         )}
         <div className="flex flex-wrap items-center gap-2 mb-2">
           {concert.bands &&
-            concert.bands.slice(0, isExpanded ? undefined : visibleBandCount).map((band, index) => (
-              <li role="presentation" className="flex gap-2" key={band.id}>
-                <Link
-                  href={`/bands/${band.id}`}
-                  onClick={event => event.stopPropagation()}
-                  className={clsx(
-                    'hover:underline',
-                    bandsSeen?.find(bandSeen => band.id === bandSeen.band_id) && 'text-venom'
-                  )}
-                >
-                  {band.name}
-                </Link>
-                {index + 1 !== concert.bands?.length ? (
-                  <span className="text-slate-300">&bull;</span>
-                ) : null}
-              </li>
-            ))}
+            concert.bands
+              .sort((a, b) => (a.index !== null && b.index !== null ? a.index - b.index : 0))
+              .slice(0, isExpanded ? undefined : visibleBandCount)
+              .map((band, index) => (
+                <li role="presentation" className="flex gap-2" key={band.id}>
+                  <Link
+                    href={`/bands/${band.id}`}
+                    onClick={event => event.stopPropagation()}
+                    className={clsx(
+                      'hover:underline',
+                      bandsSeen?.find(bandSeen => band.id === bandSeen.band_id) && 'text-venom'
+                    )}
+                  >
+                    {band.name}
+                  </Link>
+                  {index + 1 !== concert.bands?.length ? (
+                    <span className="text-slate-300">&bull;</span>
+                  ) : null}
+                </li>
+              ))}
           {bandsCount > visibleBandCount && (
             <button
               onClick={event => {

@@ -98,7 +98,9 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
               )}
               {concert.bands && (
                 <BandList
-                  bands={concert.bands}
+                  bands={concert.bands.sort((a, b) =>
+                    a.index !== null && b.index !== null ? a.index - b.index : 0
+                  )}
                   bandsSeen={concert.bands_seen?.filter(item => item.user_id === session?.user.id)}
                   concertId={concert.id}
                 />
@@ -122,7 +124,9 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
               {concert.location && (
                 <div className="flex gap-4 items-center">
                   <MapPinIcon className="h-icon text-slate-300" />
-                  <div>{concert.location.name}, {concert.location.city}</div>
+                  <div>
+                    {concert.location.name}, {concert.location.city}
+                  </div>
                 </div>
               )}
               {fanProfiles && fanProfiles.length > 0 && (

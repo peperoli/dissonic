@@ -1,8 +1,11 @@
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useQuery } from '@tanstack/react-query'
+import { Database } from '../types/supabase'
 import { Concert, ConcertFetchOptions, ExtendedRes } from '../types/types'
-import supabase from '../utils/supabase'
 
-const fetchConcerts = async (options?: ConcertFetchOptions): Promise<ExtendedRes<Concert[]>> => {
+const fetchConcerts = async (options?: ConcertFetchOptions) => {
+  const supabase = createClientComponentClient<Database>()
+
   let query = supabase.from('concerts').select(
     `id,
       bands!j_concert_bands(id),
@@ -14,7 +17,7 @@ const fetchConcerts = async (options?: ConcertFetchOptions): Promise<ExtendedRes
   if (options?.filter?.locations && options.filter.locations.length > 0) {
     query = query.in('location_id', options.filter.locations)
   }
-  
+
   if (options?.filter?.years && options.filter.years.length > 0) {
     query = query.gte('date_start', `${options.filter.years[0]}-01-01`)
     query = query.lte('date_start', `${options.filter.years[1]}-12-31`)
@@ -41,13 +44,14 @@ const fetchConcerts = async (options?: ConcertFetchOptions): Promise<ExtendedRes
   }
 
   if (options?.filter?.bandCount) {
-    filteredConcerts = filteredConcerts?.filter(
-      item =>
-        !options?.filter?.bandCount ||
+    filteredConcerts = filteredConcerts?.filter(item => {
+      // @ts-ignore
+      const count = item.bands_count[0].count
+      !options?.filter?.bandCount ||
         (Array.isArray(item.bands_count) &&
-          item.bands_count[0].count >= options.filter.bandCount[0] &&
-          item.bands_count[0].count <= options?.filter?.bandCount[1])
-    )
+          count >= options.filter.bandCount[0] &&
+          count <= options?.filter?.bandCount[1])
+    })
   }
 
   let filteredQuery = supabase
@@ -55,7 +59,7 @@ const fetchConcerts = async (options?: ConcertFetchOptions): Promise<ExtendedRes
     .select(
       `*,
       location:locations(*),
-      bands!j_concert_bands(*),
+      bands:j_concert_bands(*, ...bands(*, genres(*))),
       bands_seen:j_bands_seen(band_id, user_id)`,
       { count: 'estimated' }
     )
@@ -68,7 +72,7 @@ const fetchConcerts = async (options?: ConcertFetchOptions): Promise<ExtendedRes
     filteredQuery = filteredQuery.order(options.sort.sort_by, { ascending: options.sort.sort_asc })
   }
 
-  const { data, count, error } = await filteredQuery
+  const { data, count, error } = await filteredQuery.returns<Concert[]>()
 
   if (error) {
     throw error
@@ -77,7 +81,10 @@ const fetchConcerts = async (options?: ConcertFetchOptions): Promise<ExtendedRes
   return { data, count }
 }
 
-export const useConcerts = (initialConcerts?: ExtendedRes<Concert[]>, options?: ConcertFetchOptions) => {
+export const useConcerts = (
+  initialConcerts?: ExtendedRes<Concert[]>,
+  options?: ConcertFetchOptions
+) => {
   return useQuery(['concerts', JSON.stringify(options)], () => fetchConcerts(options), {
     initialData: initialConcerts,
     keepPreviousData: true,
