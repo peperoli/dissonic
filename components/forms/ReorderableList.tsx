@@ -49,10 +49,8 @@ function ReorderableItem({
     <div className={clsx('flex', dragged !== null && dropZone === index + 1 && 'gap-1')}>
       <Chip
         label={item?.name ?? ''}
-        onMouseDown={event => {
-          event.preventDefault()
-          setDragged({ id: item!.id, index })
-        }}
+        onMouseDown={() => setDragged({ id: item!.id, index })}
+        onTouchStart={() => setDragged({ id: item!.id, index })}
         remove={removeItem}
       />
       <DropZone
@@ -71,11 +69,17 @@ type ReorderableListProps = {
   className?: string
 }
 
-export function ReorderableList({ items, selectedItems, setSelectedItems, ...props }: ReorderableListProps) {
+export function ReorderableList({
+  items,
+  selectedItems,
+  setSelectedItems,
+  ...props
+}: ReorderableListProps) {
   const [dragged, setDragged] = useState<{ id: number; index: number } | null>(null)
   const [mouse, setMouse] = useState([0, 0])
   const [dropZone, setDropZone] = useState(0)
   const dropZonesRef = useRef<Map<number, HTMLDivElement> | null>(null)
+  console.log(dragged, mouse, dropZone)
 
   function getRef(node: HTMLDivElement | null, index: number) {
     if (!dropZonesRef.current) {
@@ -94,8 +98,16 @@ export function ReorderableList({ items, selectedItems, setSelectedItems, ...pro
       setMouse([event.x, event.y])
     }
 
+    function handleTouchMove(event: TouchEvent) {
+      setMouse([event.touches[0].clientX, event.touches[0].clientY])
+    }
+
     document.addEventListener('mousemove', handleMouseMove)
-    return () => document.removeEventListener('mousemove', handleMouseMove)
+    document.addEventListener('touchmove', handleTouchMove)
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('touchmove', handleTouchMove)
+    }
   }, [])
 
   useEffect(() => {
@@ -114,7 +126,7 @@ export function ReorderableList({ items, selectedItems, setSelectedItems, ...pro
   }, [dragged, mouse])
 
   useEffect(() => {
-    function handleMouseUp(event: MouseEvent) {
+    function handleMouseUpOrTouchEnd(event: MouseEvent | TouchEvent) {
       if (dragged !== null) {
         event.preventDefault()
         setDragged(null)
@@ -122,15 +134,19 @@ export function ReorderableList({ items, selectedItems, setSelectedItems, ...pro
       }
     }
 
-    document.addEventListener('mouseup', handleMouseUp)
-    return () => document.removeEventListener('mouseup', handleMouseUp)
+    document.addEventListener('mouseup', handleMouseUpOrTouchEnd)
+    document.addEventListener('touchend', handleMouseUpOrTouchEnd)
+    return () => {
+      document.removeEventListener('mouseup', handleMouseUpOrTouchEnd)
+      document.removeEventListener('touchend', handleMouseUpOrTouchEnd)
+    }
   })
 
   function removeItem(selectedItem: number) {
     setSelectedItems(selectedItems.filter(item => item !== selectedItem))
   }
   return (
-    <ul className={clsx("flex flex-wrap gap-1", props.className)}>
+    <ul className={clsx('flex flex-wrap gap-1', props.className)}>
       {dragged !== null && (
         <Chip
           label={items?.find(item => item.id === dragged.id)?.name || 'Band'}
