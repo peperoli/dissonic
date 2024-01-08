@@ -1,29 +1,21 @@
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import clsx from 'clsx'
-import { HTMLAttributes, MouseEventHandler, TouchEventHandler } from 'react'
+import { HTMLAttributes, PointerEventHandler } from 'react'
 
 type ChipProps = {
   label: string
   remove?: () => void
-  onMouseDown?: MouseEventHandler
-  onTouchStart?: TouchEventHandler
+  onPointerDown?: PointerEventHandler
   size?: 'small' | 'medium'
   className?: string
   style?: HTMLAttributes<HTMLDivElement>['style']
 }
 
-export const Chip = ({
-  label,
-  size = 'medium',
-  onMouseDown,
-  onTouchStart,
-  remove,
-  className,
-}: ChipProps) => {
-  const ConditionalTag = onMouseDown ? 'button' : 'div'
+export const Chip = ({ label, size = 'medium', onPointerDown, remove, className, style }: ChipProps) => {
+  const ConditionalTag = onPointerDown ? 'button' : 'div'
   return (
-    <div tabIndex={0} className={clsx('btn btn-tag', size === 'small' && 'btn-small', className)}>
-      <ConditionalTag type="button" onMouseDown={onMouseDown} onTouchStart={onTouchStart}>
+    <div tabIndex={0} className={clsx('btn btn-tag', size === 'small' && 'btn-small', className)} style={style}>
+      <ConditionalTag type="button" onPointerDown={onPointerDown}>
         {label}
       </ConditionalTag>
       {remove && (

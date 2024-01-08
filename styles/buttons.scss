@@ -34,6 +34,10 @@
 			}
 		}
 
+		&.btn-tertiary {
+			@apply font-bold text-slate-50 bg-transparent hover:bg-slate-700;
+		}
+
 		&.btn-filter {
 			@apply justify-between;
 		}

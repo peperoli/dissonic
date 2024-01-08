@@ -10,6 +10,7 @@ import { CheckBox } from '../forms/CheckBox'
 import { Select } from '../forms/Select'
 import { TextField } from '../forms/TextField'
 import { MultiSelect } from '../MultiSelect'
+import { EditBandsButton } from './EditBandsButton'
 
 interface FormProps {
   defaultValues?: EditConcert
@@ -60,6 +61,23 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
           />
         )}
       </div>
+      {bands?.data && (
+        <Controller
+          name="bands"
+          control={control}
+          render={({ field: { value = [] } }) => (
+            <EditBandsButton
+              selectedBands={value.map(
+                (item, index) =>
+                  ({
+                    ...bands?.data.find(band => band.id === item.id),
+                    index,
+                  } as ReorderableListItem)
+              )}
+            />
+          )}
+        />
+      )}
       {bands?.data ? (
         <Controller
           name="bands"
@@ -85,7 +103,9 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
           )}
         />
       ) : (
-        <>{bandsFetchStatus === 'fetching' && <p className="text-slate-300">Loading bands ...</p>}</>
+        <>
+          {bandsFetchStatus === 'fetching' && <p className="text-slate-300">Loading bands ...</p>}
+        </>
       )}
       {locations && (
         <Select

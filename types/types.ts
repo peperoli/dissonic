@@ -18,9 +18,9 @@ export interface ConcertFetchOptions {
 }
 
 export type BandFetchOptions = {
-  filter: {
-    countries: number[] | null
-    genres: number[] | null
+  filter?: {
+    countries?: number[] | null
+    genres?: number[] | null
     search?: string
   }
   size?: number

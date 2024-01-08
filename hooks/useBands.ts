@@ -55,9 +55,10 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
   return { data, count }
 }
 
-export const useBands = (initialBands?: ExtendedRes<Band[]>, options?: BandFetchOptions) => {
+export const useBands = (initialBands?: ExtendedRes<Band[]>, options?: BandFetchOptions, enabled: boolean = true) => {
   return useQuery(['bands', JSON.stringify(options)], () => fetchBands(options), {
     initialData: initialBands,
     keepPreviousData: true,
+    enabled
   })
 }

@@ -5,7 +5,7 @@ import { SpinnerIcon } from './layout/SpinnerIcon'
 type ButtonProps = {
   type?: 'button' | 'submit' | 'reset' | undefined
   label: string
-  appearance?: 'primary' | 'secondary'
+  appearance?: 'primary' | 'secondary' | 'tertiary'
   contentType?: 'text' | 'icon'
   icon?: JSX.Element | string
   loading?: boolean
@@ -40,6 +40,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           'btn',
           appearance === 'primary' && 'btn-primary',
           appearance === 'secondary' && 'btn-secondary',
+          appearance === 'tertiary' && 'btn-tertiary',
           contentType === 'icon' && 'btn-icon',
           size === 'small' && 'btn-small',
           danger && 'btn-danger',
