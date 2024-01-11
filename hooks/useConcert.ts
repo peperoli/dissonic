@@ -15,6 +15,7 @@ const fetchConcert = async (concertId: string) => {
       bands_seen:j_bands_seen(*)`
     )
     .eq('id', concertId)
+    .order('item_index', { referencedTable: 'j_concert_bands', ascending: true })
     .returns<Concert>()
     .single()
 

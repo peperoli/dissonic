@@ -2,16 +2,16 @@ import { PencilSquareIcon } from '@heroicons/react/20/solid'
 import { useState } from 'react'
 import { useBands } from '../../hooks/useBands'
 import { useDebounce } from '../../hooks/useDebounce'
-import { ReorderableListItem } from '../../types/types'
+import { Band, ReorderableListItem } from '../../types/types'
 import { ListManager } from '../forms/ListManager'
 import Modal from '../Modal'
 
 type BandsListManagerProps = {
   initialListItems: ReorderableListItem[]
-  close: () => void
+  onSave: (items: ReorderableListItem[]) => void
 }
 
-const BandsListManager = ({ initialListItems, close }: BandsListManagerProps) => {
+const BandsListManager = ({ initialListItems, onSave }: BandsListManagerProps) => {
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebounce(search, 200)
   const { data: bands } = useBands(
@@ -23,19 +23,25 @@ const BandsListManager = ({ initialListItems, close }: BandsListManagerProps) =>
     <ListManager
       search={search}
       setSearch={setSearch}
-      searchResults={bands?.data.map(band => ({ ...band, index: null })) ?? []}
+      searchResults={bands?.data.map(band => ({ ...band, item_index: null })) ?? []}
       initialListItems={initialListItems}
-      close={close}
+      onSave={onSave}
     />
   )
 }
 
 type EditBandsButtonProps = {
-  selectedBands: ReorderableListItem[]
+  value: ReorderableListItem[]
+  onChange: (value: ReorderableListItem[]) => void
 }
 
-export const EditBandsButton = ({ selectedBands }: EditBandsButtonProps) => {
+export const EditBandsButton = ({ value, onChange }: EditBandsButtonProps) => {
   const [isOpen, setIsOpen] = useState(false)
+
+  function onSave(items: ReorderableListItem[]) {
+    onChange(items)
+    setIsOpen(false)
+  }
   return (
     <>
       <button
@@ -46,8 +52,8 @@ export const EditBandsButton = ({ selectedBands }: EditBandsButtonProps) => {
         <div>
           <div className="mb-1 text-xs text-slate-300 group-focus:text-venom">Bands</div>
           <div className="relative flex flex-wrap items-start gap-1 h-12 overflow-hidden">
-            {selectedBands.length > 0 ? (
-              selectedBands.map(item => (
+            {value.length > 0 ? (
+              value.map(item => (
                 <div className="px-1.5 py-0.5 rounded bg-slate-700 text-sm font-bold" key={item.id}>
                   {item.name}
                 </div>
@@ -61,7 +67,7 @@ export const EditBandsButton = ({ selectedBands }: EditBandsButtonProps) => {
         <PencilSquareIcon className="h-icon flex-none text-slate-300" />
       </button>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen} fullHeight>
-        <BandsListManager initialListItems={selectedBands} close={() => setIsOpen(false)} />
+        <BandsListManager initialListItems={value} onSave={onSave} />
       </Modal>
     </>
   )

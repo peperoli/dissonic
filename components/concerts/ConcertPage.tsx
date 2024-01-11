@@ -98,9 +98,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
               )}
               {concert.bands && (
                 <BandList
-                  bands={concert.bands.sort((a, b) =>
-                    a.index !== null && b.index !== null ? a.index - b.index : 0
-                  )}
+                  bands={concert.bands}
                   bandsSeen={concert.bands_seen?.filter(item => item.user_id === session?.user.id)}
                   concertId={concert.id}
                 />

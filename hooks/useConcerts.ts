@@ -72,7 +72,9 @@ const fetchConcerts = async (options?: ConcertFetchOptions) => {
     filteredQuery = filteredQuery.order(options.sort.sort_by, { ascending: options.sort.sort_asc })
   }
 
-  const { data, count, error } = await filteredQuery.returns<Concert[]>()
+  const { data, count, error } = await filteredQuery
+    .order('item_index', { referencedTable: 'j_concert_bands', ascending: true })
+    .returns<Concert[]>()
 
   if (error) {
     throw error

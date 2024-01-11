@@ -1,7 +1,6 @@
 import { ExclamationTriangleIcon } from '@heroicons/react/20/solid'
 import Link from 'next/link'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
-import { useBands } from '../../hooks/useBands'
 import { useConcerts } from '../../hooks/useConcerts'
 import { useLocations } from '../../hooks/useLocations'
 import { AddConcert, EditConcert, ReorderableListItem } from '../../types/types'
@@ -9,7 +8,6 @@ import { Button } from '../Button'
 import { CheckBox } from '../forms/CheckBox'
 import { Select } from '../forms/Select'
 import { TextField } from '../forms/TextField'
-import { MultiSelect } from '../MultiSelect'
 import { EditBandsButton } from './EditBandsButton'
 
 interface FormProps {
@@ -31,7 +29,6 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
     defaultValues: defaultValues ?? { date_start: today },
   })
   const { data: concerts } = useConcerts()
-  const { data: bands, fetchStatus: bandsFetchStatus } = useBands()
   const { data: locations } = useLocations()
 
   const similarConcerts = concerts?.data
@@ -61,52 +58,16 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
           />
         )}
       </div>
-      {bands?.data && (
-        <Controller
-          name="bands"
-          control={control}
-          render={({ field: { value = [] } }) => (
-            <EditBandsButton
-              selectedBands={value.map(
-                (item, index) =>
-                  ({
-                    ...bands?.data.find(band => band.id === item.id),
-                    index,
-                  } as ReorderableListItem)
-              )}
-            />
-          )}
-        />
-      )}
-      {bands?.data ? (
-        <Controller
-          name="bands"
-          control={control}
-          render={({ field: { value = [], onChange } }) => (
-            <MultiSelect
-              name="bands"
-              options={bands.data.map(item => ({ ...item, index: null }))}
-              selectedOptions={value.map(item => item.id)}
-              setSelectedOptions={value =>
-                onChange(
-                  value.map(
-                    (item, index) =>
-                      ({
-                        ...bands.data.find(band => band.id === item),
-                        index,
-                      } as ReorderableListItem)
-                  )
-                )
-              }
-              reorderable
-            />
-          )}
-        />
-      ) : (
-        <>
-          {bandsFetchStatus === 'fetching' && <p className="text-slate-300">Loading bands ...</p>}
-        </>
-      )}
+      <Controller
+        name="bands"
+        control={control}
+        render={({ field: { value = [], onChange } }) => (
+          <EditBandsButton
+            value={value as ReorderableListItem[]}
+            onChange={onChange as (value: ReorderableListItem[]) => void}
+          />
+        )}
+      />
       {locations && (
         <Select
           {...register('location_id', { required: true })}

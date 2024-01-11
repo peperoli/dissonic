@@ -1,5 +1,4 @@
 import { Button } from '../Button'
-import { Fragment } from 'react'
 import { FaceSmileIcon } from '@heroicons/react/20/solid'
 import { Comment, Profile, Reaction } from '../../types/types'
 import { User } from '@supabase/supabase-js'
@@ -123,13 +122,8 @@ export const ReactionControl = ({ comment, reactions, user }: ReactionControlPro
       ))}
       {comment.user_id !== user.id && (
         <Popover>
-          <Popover.Button as={Fragment}>
-            <Button
-              contentType="icon"
-              label="Reagieren"
-              size="small"
-              icon={<FaceSmileIcon className="h-icon" />}
-            />
+          <Popover.Button aria-label='Reagieren' className="btn btn-icon btn-small">
+            <FaceSmileIcon className="h-icon" />
           </Popover.Button>
           <Popover.Panel className="absolute flex left-1/2 mt-1 rounded-lg bg-slate-700 shadow-xl -translate-x-1/2 z-10">
             {({ close }) => (

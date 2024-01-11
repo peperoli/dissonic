@@ -1,9 +1,8 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import clsx from 'clsx'
 import { useState, useRef, Dispatch, RefObject, SetStateAction } from 'react'
-import { ListItem, ReorderableListItem } from '../types/types'
+import { ListItem } from '../types/types'
 import { SpinnerIcon } from './layout/SpinnerIcon'
-import { ReorderableList } from './forms/ReorderableList'
 import { Chip } from './Chip'
 
 interface SelectedOptionProps {
@@ -72,16 +71,8 @@ type MultiSelectProps = {
   setSelectedOptions: (event: number[]) => void
   alwaysOpen?: boolean
   fullHeight?: boolean
-} & (
-  | {
-      reorderable: true
-      options?: ReorderableListItem[]
-    }
-  | {
-      reorderable?: false
-      options?: ListItem[]
-    }
-)
+  options?: ListItem[]
+}
 
 export const MultiSelect = ({
   name,
@@ -89,7 +80,6 @@ export const MultiSelect = ({
   isLoading,
   selectedOptions,
   setSelectedOptions,
-  reorderable,
   alwaysOpen,
   fullHeight,
 }: MultiSelectProps) => {
@@ -116,28 +106,17 @@ export const MultiSelect = ({
       }`}
     >
       {selectedOptions.length > 0 && (
-        <>
-          {reorderable ? (
-            <ReorderableList
-              items={options}
-              selectedItems={selectedOptions}
-              setSelectedItems={setSelectedOptions}
-              className="mb-2"
+        <div className="flex flex-wrap items-center gap-2 mb-2">
+          {selectedOptions.map(selectedOption => (
+            <SelectedOption
+              key={selectedOption}
+              options={options}
+              selectedOption={selectedOption}
+              selectedOptions={selectedOptions}
+              setSelectedOptions={setSelectedOptions}
             />
-          ) : (
-            <div className="flex flex-wrap items-center gap-2 mb-2">
-              {selectedOptions.map(selectedOption => (
-                <SelectedOption
-                  key={selectedOption}
-                  options={options}
-                  selectedOption={selectedOption}
-                  selectedOptions={selectedOptions}
-                  setSelectedOptions={setSelectedOptions}
-                />
-              ))}
-            </div>
-          )}
-        </>
+          ))}
+        </div>
       )}
       <div className="form-control">
         <MagnifyingGlassIcon className="h-icon absolute top-1/2 ml-3 transform -translate-y-1/2 pointer-events-none" />

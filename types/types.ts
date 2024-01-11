@@ -37,16 +37,16 @@ export type LocationFetchOptions = {
 
 export type Concert = Database['public']['Tables']['concerts']['Row'] & {
   location?: Location
-  bands?: (Band & { index: number | null })[]
+  bands?: Band[]
   bands_seen?: BandSeen[]
 }
 
 export type AddConcert = Database['public']['Tables']['concerts']['Insert'] & {
-  bands?: ReorderableListItem[]
+  bands?: Band[]
 }
 
 export type EditConcert = Database['public']['Tables']['concerts']['Update'] & {
-  bands?: ReorderableListItem[]
+  bands?: Band[]
 }
 
 export type Comment = Database['public']['Tables']['comments']['Row'] & {
@@ -67,6 +67,7 @@ export type Band = Database['public']['Tables']['bands']['Row'] & {
   country: Country | null
   genres: Genre[]
   concerts?: Concert[]
+  item_index?: number | null
 }
 
 export type AddBand = Database['public']['Tables']['bands']['Insert'] & {
@@ -112,7 +113,7 @@ export type ListItem<IdType = number> = {
 }
 
 export type ReorderableListItem = ListItem & {
-  index: number | null
+  item_index: number | null
 }
 
 export type SpotifyArtist = {

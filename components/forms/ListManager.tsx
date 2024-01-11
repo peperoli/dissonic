@@ -55,7 +55,7 @@ const ListItem = ({
 }: ListItemProps) => {
   const { data: spotifyArtist } = useSpotifyArtist(band.spotify_artist_id)
   const regionNames = new Intl.DisplayNames('de', { type: 'region' })
-  const selectedToReorder = selectedItemToReorder === band.index
+  const selectedToReorder = selectedItemToReorder === index
   return (
     <>
       {selectedItemToReorder !== null && !selectedToReorder && index === 0 && (
@@ -168,7 +168,7 @@ type ListManagerProps = {
   initialListItems: ReorderableListItem[]
   search: string
   setSearch: (search: string) => void
-  close: () => void
+  onSave: (items: ReorderableListItem[]) => void
 }
 
 export const ListManager = ({
@@ -176,7 +176,7 @@ export const ListManager = ({
   initialListItems,
   search,
   setSearch,
-  close,
+  onSave,
 }: ListManagerProps) => {
   const [listItems, setListItems] = useState(initialListItems)
   const [selectedItemToReorder, setSelectedItemToReorder] = useState<number | null>(null)
@@ -188,6 +188,7 @@ export const ListManager = ({
 
   function reorderItems(start: number, end: number) {
     setListItems(reorderList(listItems, start, end))
+    setSelectedItemToReorder(null)
   }
   return (
     <div className="flex flex-col h-full">
@@ -226,7 +227,7 @@ export const ListManager = ({
               index={index}
               removeItem={() => setListItems(prev => prev.filter(item => item.id !== listItem.id))}
               selectedItemToReorder={selectedItemToReorder}
-              selectItemToReorder={() => setSelectedItemToReorder(listItem.index)}
+              selectItemToReorder={() => setSelectedItemToReorder(index)}
               reorderItems={reorderItems}
             />
           ))}
@@ -249,9 +250,8 @@ export const ListManager = ({
             </button>
           )}
         </div>
-        <Button onClick={close} label="Fertig" appearance="primary" />
+        <Button onClick={() => onSave(listItems)} label="Fertig" appearance="primary" />
       </div>
-      <pre>{JSON.stringify(listItems.map(item => item.index))}</pre>
     </div>
   )
 }

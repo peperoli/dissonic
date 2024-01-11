@@ -293,17 +293,17 @@ export interface Database {
         Row: {
           band_id: number
           concert_id: string
-          index: number | null
+          item_index: number | null
         }
         Insert: {
           band_id: number
           concert_id: string
-          index?: number | null
+          item_index?: number | null
         }
         Update: {
           band_id?: number
           concert_id?: string
-          index?: number | null
+          item_index?: number | null
         }
         Relationships: [
           {
