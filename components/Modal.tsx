@@ -20,7 +20,7 @@ export const Modal: FC<ModalProps> = ({ isOpen, setIsOpen, children, fullHeight 
             !fullHeight && 'items-start'
           )}
         >
-          <div className="mx-auto w-full max-w-lg min-h-full md:min-h-0 md:m-16 p-8 md:rounded-lg bg-slate-800">
+          <div className="mx-auto w-full max-w-lg min-h-full md:min-h-0 md:m-16 p-6 md:p-8 md:rounded-lg bg-slate-800">
             {children}
           </div>
         </Dialog.Content>

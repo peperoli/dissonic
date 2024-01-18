@@ -1,6 +1,8 @@
 import {
+  ArrowRightEndOnRectangleIcon,
   ArrowsUpDownIcon,
   CheckIcon,
+  LightBulbIcon,
   MagnifyingGlassIcon,
   PlusCircleIcon,
   XCircleIcon,
@@ -9,17 +11,19 @@ import {
 import Image from 'next/image'
 import { useState } from 'react'
 import { useSpotifyArtist } from '../../hooks/useSpotifyArtist'
-import { Band, ReorderableListItem } from '../../types/types'
+import { ReorderableListItem } from '../../types/types'
 import { Button } from '../Button'
 import { UserMusicIcon } from '../layout/UserMusicIcon'
 import clsx from 'clsx'
 import { reorderList } from '../../lib/reorderList'
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 
 type InsertHereProps = {
   reorderItems: () => void
+  isDown?: boolean
 }
 
-const InsertHere = ({ reorderItems }: InsertHereProps) => {
+const InsertHere = ({ reorderItems, isDown }: InsertHereProps) => {
   return (
     <div className="relative flex justify-center items-center">
       <hr className="w-full mx-2 my-0 border-t border-slate-500" />
@@ -28,7 +32,11 @@ const InsertHere = ({ reorderItems }: InsertHereProps) => {
         label="Hier einfügen"
         contentType="icon"
         size="small"
-        icon={<ArrowsUpDownIcon className="h-icon" />}
+        icon={
+          <ArrowRightEndOnRectangleIcon
+            className={clsx('h-icon', isDown ? 'rotate-90' : '-rotate-90')}
+          />
+        }
         appearance="secondary"
         className="absolute"
       />
@@ -61,7 +69,12 @@ const ListItem = ({
       {selectedItemToReorder !== null && !selectedToReorder && index === 0 && (
         <InsertHere reorderItems={() => reorderItems(selectedItemToReorder, index)} />
       )}
-      <div className={clsx('flex gap-4 p-2 rounded-lg', selectedToReorder && 'bg-venom/10')}>
+      <li
+        className={clsx(
+          'group flex items-center gap-4 p-2 rounded-lg',
+          selectedToReorder && 'bg-venom/10'
+        )}
+      >
         <div className="relative grid place-content-center w-11 h-11 flex-none rounded-lg bg-slate-750">
           {spotifyArtist?.images?.[2] ? (
             <Image
@@ -81,14 +94,18 @@ const ListItem = ({
             <div className="text-sm text-slate-300">{regionNames.of(band.country.iso2)}</div>
           )}
         </div>
-        <div className="flex flex-none">
+        <div
+          className={clsx(
+            'flex flex-none md:opacity-0 group-hover:opacity-100 group-focus-within:opacity-100',
+            selectedItemToReorder !== null && 'invisible'
+          )}
+        >
           <Button
             onClick={removeItem}
             label="Eintrag entfernen"
             contentType="icon"
             icon={<XCircleIcon className="h-icon text-red" />}
             appearance="tertiary"
-            disabled={selectedItemToReorder !== null}
           />
           <Button
             onClick={selectItemToReorder}
@@ -96,14 +113,16 @@ const ListItem = ({
             contentType="icon"
             icon={<ArrowsUpDownIcon className="h-icon" />}
             appearance="tertiary"
-            disabled={selectedItemToReorder !== null}
           />
         </div>
-      </div>
+      </li>
       {selectedItemToReorder !== null &&
         !selectedToReorder &&
         selectedItemToReorder !== index + 1 && (
-          <InsertHere reorderItems={() => reorderItems(selectedItemToReorder, index + 1)} />
+          <InsertHere
+            reorderItems={() => reorderItems(selectedItemToReorder, index + 1)}
+            isDown={selectedItemToReorder < index + 1}
+          />
         )}
     </>
   )
@@ -180,6 +199,7 @@ export const ListManager = ({
 }: ListManagerProps) => {
   const [listItems, setListItems] = useState(initialListItems)
   const [selectedItemToReorder, setSelectedItemToReorder] = useState<number | null>(null)
+  const [animationParent] = useAutoAnimate()
 
   function addItem(searchResult: ReorderableListItem) {
     setListItems(prev => [...prev, { ...searchResult, index: prev.length }])
@@ -191,7 +211,7 @@ export const ListManager = ({
     setSelectedItemToReorder(null)
   }
   return (
-    <div className="flex flex-col h-full">
+    <div className="relative flex flex-col h-full">
       <div className={clsx('absolute', selectedItemToReorder !== null && 'invisible')}>
         <h3>Bands hinzufügen</h3>
         <p className="text-sm text-slate-300">
@@ -200,26 +220,29 @@ export const ListManager = ({
       </div>
       <div
         className={clsx(
-          'px-4 py-2 flex gap-4 border rounded-lg border-slate-500 bg-slate-800 text-sm',
+          'p-4 flex items-center gap-4 rounded-lg bg-slate-750 text-sm',
           selectedItemToReorder === null && 'invisible'
         )}
       >
+        <LightBulbIcon className="h-icon flex-none text-yellow" />
         Auf ein Ziel klicken, um den Eintrag zu verschieben.
-        <Button onClick={() => setSelectedItemToReorder(null)} label="Abbrechen" size="small" />
+        <Button
+          onClick={() => setSelectedItemToReorder(null)}
+          label="Abbrechen"
+          contentType="icon"
+          icon={<XMarkIcon className="h-icon" />}
+          size="small"
+          className="flex-none"
+        />
       </div>
-      {search !== '' ? (
-        <div className="grid overflow-auto py-6">
-          {searchResults.map(searchResult => (
-            <SearchResult
-              key={searchResult.id}
-              band={searchResult}
-              selected={!!listItems.find(item => searchResult.id === item.id)}
-              addItem={() => addItem(searchResult)}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="grid content-start h-full overflow-auto my-2 py-4">
+      <div className="relative h-full overflow-auto">
+        <ul
+          ref={animationParent}
+          className={clsx(
+            'grid content-start my-2 py-4',
+            search !== '' && 'invisible'
+          )}
+        >
           {listItems.map((listItem, index) => (
             <ListItem
               key={listItem.id}
@@ -231,8 +254,26 @@ export const ListManager = ({
               reorderItems={reorderItems}
             />
           ))}
-        </div>
-      )}
+        </ul>
+        {search !== '' && (
+          <div className="absolute grid top-0 py-6">
+            {searchResults.length > 0 ? (
+              searchResults.map(searchResult => (
+                <SearchResult
+                  key={searchResult.id}
+                  band={searchResult}
+                  selected={!!listItems.find(item => searchResult.id === item.id)}
+                  addItem={() => addItem(searchResult)}
+                />
+              ))
+            ) : (
+              <div className="p-4 text-center text-sm text-slate-300">
+                Keine Ergebnisse gefunden.
+              </div>
+            )}
+          </div>
+        )}
+      </div>
       <div className="flex gap-4 mt-auto">
         <div className="relative flex items-center w-full">
           <MagnifyingGlassIcon className="absolute pointer-events-none h-icon ml-4 text-slate-300" />
