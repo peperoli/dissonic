@@ -59,7 +59,7 @@ const fetchConcerts = async (options?: ConcertFetchOptions) => {
     .select(
       `*,
       location:locations(*),
-      bands:j_concert_bands(*, ...bands(*, genres(*))),
+      bands:j_concert_bands(*, ...bands(*)),
       bands_seen:j_bands_seen(band_id, user_id)`,
       { count: 'estimated' }
     )

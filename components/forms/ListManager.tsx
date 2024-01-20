@@ -235,28 +235,25 @@ export const ListManager = ({
           className="flex-none"
         />
       </div>
-      <div className="relative h-full overflow-auto">
-        <ul
-          ref={animationParent}
-          className={clsx(
-            'grid content-start my-2 py-4',
-            search !== '' && 'invisible'
-          )}
-        >
-          {listItems.map((listItem, index) => (
-            <ListItem
-              key={listItem.id}
-              band={listItem}
-              index={index}
-              removeItem={() => setListItems(prev => prev.filter(item => item.id !== listItem.id))}
-              selectedItemToReorder={selectedItemToReorder}
-              selectItemToReorder={() => setSelectedItemToReorder(index)}
-              reorderItems={reorderItems}
-            />
-          ))}
-        </ul>
-        {search !== '' && (
-          <div className="absolute grid top-0 py-6">
+      <div className="h-full overflow-auto">
+        {search === '' ? (
+          <ul ref={animationParent} className="grid content-start my-2 py-4">
+            {listItems.map((listItem, index) => (
+              <ListItem
+                key={listItem.id}
+                band={listItem}
+                index={index}
+                removeItem={() =>
+                  setListItems(prev => prev.filter(item => item.id !== listItem.id))
+                }
+                selectedItemToReorder={selectedItemToReorder}
+                selectItemToReorder={() => setSelectedItemToReorder(index)}
+                reorderItems={reorderItems}
+              />
+            ))}
+          </ul>
+        ) : (
+          <div className="grid content-start py-6">
             {searchResults.length > 0 ? (
               searchResults.map(searchResult => (
                 <SearchResult

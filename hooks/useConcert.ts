@@ -11,7 +11,7 @@ const fetchConcert = async (concertId: string) => {
     .select(
       `*,
       location:locations(*),
-      bands:j_concert_bands(*, ...bands(*, genres(*))),
+      bands:j_concert_bands(*, ...bands(*, country:countries(id, iso2), genres(*))),
       bands_seen:j_bands_seen(*)`
     )
     .eq('id', concertId)

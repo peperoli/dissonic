@@ -5,15 +5,20 @@ import { cookies } from 'next/headers'
 
 export const revalidate = 60
 
-const fetchConcert = async (concertId: string): Promise<Concert> => {
+const fetchConcert = async (concertId: string) => {
   const supabase = createServerComponentClient({ cookies })
 
   const { data, error } = await supabase
     .from('concerts')
     .select(
-      '*, location:locations(*), bands!j_concert_bands(*, genres(*)), bands_seen:j_bands_seen(band_id, user_id)'
+      `*,
+      location:locations(*),
+      bands:j_concert_bands(*, ...bands(*, country:countries(id, iso2), genres(*))),
+      bands_seen:j_bands_seen(*)`
     )
     .eq('id', concertId)
+    .order('item_index', { referencedTable: 'j_concert_bands', ascending: true })
+    .returns<Concert>()
     .single()
 
   if (error) {
