@@ -25,7 +25,7 @@ export const Pagination = ({ entriesCount, currentPage, onChange, perPage }: Pag
               onClick={() => onChange(item)}
               label={String(item + 1)}
               size="small"
-              style={item === currentPage - 1 ? 'primary' : undefined}
+              appearance={item === currentPage - 1 ? 'primary' : undefined}
             />
           ))}
       </div>

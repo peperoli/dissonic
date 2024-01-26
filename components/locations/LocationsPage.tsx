@@ -53,7 +53,7 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
                   session ? () => setIsOpen(true) : () => push(`/login?redirect=${pathname}`)
                 }
                 label="Location hinzufügen"
-                style="primary"
+                appearance="primary"
                 contentType="icon"
                 icon={<PlusIcon className="h-icon" />}
               />
@@ -67,7 +67,7 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
                   session ? () => setIsOpen(true) : () => push(`/login?redirect=${pathname}`)
                 }
                 label="Location hinzufügen"
-                style="primary"
+                appearance="primary"
                 icon={<PlusIcon className="h-icon" />}
               />
             )}

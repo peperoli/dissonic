@@ -1,13 +1,13 @@
-import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/20/solid'
+import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import clsx from 'clsx'
 import { useState, useRef, Dispatch, RefObject, SetStateAction } from 'react'
-import { Option } from '../types/types'
-import { Button } from './Button'
+import { ListItem } from '../types/types'
 import { SpinnerIcon } from './layout/SpinnerIcon'
+import { Chip } from './Chip'
 
 interface SelectedOptionProps {
   selectedOption: number
-  options?: Option[]
+  options?: ListItem[]
   selectedOptions: number[]
   setSelectedOptions: (value: number[]) => void
 }
@@ -18,21 +18,19 @@ const SelectedOption = ({
   selectedOptions,
   setSelectedOptions,
 }: SelectedOptionProps) => {
-  function handleClick() {
+  function removeItem() {
     setSelectedOptions(selectedOptions.filter(item => item !== selectedOption))
   }
   return (
-    <Button
+    <Chip
       label={options?.find(item => item.id === selectedOption)?.name ?? ''}
-      onClick={handleClick}
-      icon={<XMarkIcon className="h-icon" />}
-      style="tag"
+      remove={removeItem}
     />
   )
 }
 
 interface MultiSelectOptionProps {
-  option: Option
+  option: ListItem
   selectedOptions: number[]
   setSelectedOptions: (event: number[]) => void
   setQuery: Dispatch<SetStateAction<string>>
@@ -66,14 +64,14 @@ const MultiSelectOption = ({
   )
 }
 
-interface MultiSelectProps {
+type MultiSelectProps = {
   name: string
-  options?: Option[]
   isLoading?: boolean
   selectedOptions: number[]
   setSelectedOptions: (event: number[]) => void
   alwaysOpen?: boolean
   fullHeight?: boolean
+  options?: ListItem[]
 }
 
 export const MultiSelect = ({
@@ -89,7 +87,7 @@ export const MultiSelect = ({
   const searchRef = useRef<HTMLInputElement>(null)
   const regExp = new RegExp(handleDiacritics(query), 'iu')
   const filteredOptions = options?.filter(option => handleDiacritics(option.name).match(regExp))
-  
+
   function handleDiacritics(string: string) {
     return string.normalize('NFD').replace(/\p{Diacritic}/gu, '')
   }
@@ -108,7 +106,7 @@ export const MultiSelect = ({
       }`}
     >
       {selectedOptions.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-2">
+        <div className="flex flex-wrap items-center gap-2 mb-2">
           {selectedOptions.map(selectedOption => (
             <SelectedOption
               key={selectedOption}

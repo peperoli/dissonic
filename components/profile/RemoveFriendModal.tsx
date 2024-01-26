@@ -49,7 +49,7 @@ export const RemoveFriendModal: FC<IRemoveFriendModal> = ({ isOpen, setIsOpen, f
       </p>
       <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 bg-slate-800 z-10">
         <Button label="Abbrechen" onClick={() => setIsOpen(false)} />
-        <Button label="Entfernen" onClick={removeFriend} style="primary" loading={loading} danger />
+        <Button label="Entfernen" onClick={removeFriend} appearance="primary" loading={loading} danger />
       </div>
     </Modal>
   )

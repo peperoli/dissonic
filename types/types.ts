@@ -13,14 +13,14 @@ export interface ConcertFetchOptions {
     bandCount?: number[] | null
     bandsSeenUser?: string
   }
-  sort?: { sort_by: 'date_start', sort_asc: boolean }
+  sort?: { sort_by: 'date_start'; sort_asc: boolean }
   size?: number
 }
 
 export type BandFetchOptions = {
-  filter: {
-    countries: number[] | null
-    genres: number[] | null
+  filter?: {
+    countries?: number[] | null
+    genres?: number[] | null
     search?: string
   }
   size?: number
@@ -42,11 +42,11 @@ export type Concert = Database['public']['Tables']['concerts']['Row'] & {
 }
 
 export type AddConcert = Database['public']['Tables']['concerts']['Insert'] & {
-  bands?: Option[]
+  bands?: Band[]
 }
 
 export type EditConcert = Database['public']['Tables']['concerts']['Update'] & {
-  bands?: Option[]
+  bands?: Band[]
 }
 
 export type Comment = Database['public']['Tables']['comments']['Row'] & {
@@ -67,6 +67,7 @@ export type Band = Database['public']['Tables']['bands']['Row'] & {
   country: Country | null
   genres: Genre[]
   concerts?: Concert[]
+  item_index?: number | null
 }
 
 export type AddBand = Database['public']['Tables']['bands']['Insert'] & {
@@ -105,7 +106,15 @@ export type Friend = Database['public']['Tables']['friends']['Row'] & {
 
 export type AddFriend = Database['public']['Tables']['friends']['Insert']
 
-export type Option<IdType = number> = { id: IdType; name: string; [key: string]: any }
+export type ListItem<IdType = number> = {
+  id: IdType
+  name: string
+  [key: string]: any
+}
+
+export type ReorderableListItem = ListItem & {
+  item_index: number | null
+}
 
 export type SpotifyArtist = {
   id: string

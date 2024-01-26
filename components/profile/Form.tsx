@@ -90,7 +90,7 @@ export const Form = ({ profile, editProfile, killFile, close }: FormProps) => {
         <Button
           type="submit"
           label="Speichern"
-          style="primary"
+          appearance="primary"
           disabled={Object.keys(errors).length > 0}
           loading={editProfile.status === 'loading' || killFile.status === 'loading'}
         />

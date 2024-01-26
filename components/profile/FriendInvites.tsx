@@ -90,7 +90,7 @@ const InviteItem = ({ inviteData, type }: InviteItemType) => {
           ) : (
             <>
               <Button onClick={cancelInvite} label="Ablehnen" size="small" />
-              <Button onClick={confirmInvite} label="Bestätigen" size="small" style="primary" />
+              <Button onClick={confirmInvite} label="Bestätigen" size="small" appearance="primary" />
             </>
           )}
         </div>

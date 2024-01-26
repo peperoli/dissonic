@@ -89,7 +89,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
             <Button
               onClick={session ? () => setIsOpen(true) : () => push(`/login?redirect=${pathname}`)}
               label="Band hinzufügen"
-              style="primary"
+              appearance="primary"
               contentType="icon"
               icon={<PlusIcon className="h-icon" />}
             />
@@ -101,7 +101,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
             <Button
               onClick={session ? () => setIsOpen(true) : () => push(`/login?redirect=${pathname}`)}
               label="Band hinzufügen"
-              style="primary"
+              appearance="primary"
               icon={<PlusIcon className="h-icon" />}
             />
           )}

@@ -53,7 +53,7 @@ export const DeleteBandModal: FC<DeleteBandModalProps> = ({ band, isOpen, setIsO
       <p>Willst du die Band wirklich unwiderruflich löschen?</p>
       <div className="sticky bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 bg-slate-800 z-10">
         <Button label="Abbrechen" onClick={() => setIsOpen(false)} />
-        <Button label="Löschen" onClick={deleteBand} style="primary" danger loading={loading} />
+        <Button label="Löschen" onClick={deleteBand} appearance="primary" danger loading={loading} />
       </div>
     </div>
   </Modal>

@@ -6,7 +6,7 @@
 			@apply px-5 py-3 md:px-4 md:py-2;
 
 			&.btn-small {
-				@apply px-4 py-2 md:px-3 md:py-1.5 text-sm;
+				@apply px-4 py-2 md:px-3 md:py-1.5 rounded-md text-sm;
 			}
 		}
 
@@ -32,6 +32,10 @@
 			&.btn-danger {
 				@apply text-red;
 			}
+		}
+
+		&.btn-tertiary {
+			@apply font-bold text-slate-50 bg-transparent hover:bg-slate-700;
 		}
 
 		&.btn-filter {

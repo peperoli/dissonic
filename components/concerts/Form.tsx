@@ -1,15 +1,14 @@
 import { ExclamationTriangleIcon } from '@heroicons/react/20/solid'
 import Link from 'next/link'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
-import { useBands } from '../../hooks/useBands'
 import { useConcerts } from '../../hooks/useConcerts'
 import { useLocations } from '../../hooks/useLocations'
-import { AddConcert, EditConcert } from '../../types/types'
+import { AddConcert, EditConcert, ReorderableListItem } from '../../types/types'
 import { Button } from '../Button'
 import { CheckBox } from '../forms/CheckBox'
 import { Select } from '../forms/Select'
 import { TextField } from '../forms/TextField'
-import { MultiSelect } from '../MultiSelect'
+import { EditBandsButton } from './EditBandsButton'
 
 interface FormProps {
   defaultValues?: EditConcert
@@ -30,7 +29,6 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
     defaultValues: defaultValues ?? { date_start: today },
   })
   const { data: concerts } = useConcerts()
-  const { data: bands } = useBands()
   const { data: locations } = useLocations()
 
   const similarConcerts = concerts?.data
@@ -60,22 +58,16 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
           />
         )}
       </div>
-      {bands?.data && (
-        <Controller
-          name="bands"
-          control={control}
-          render={({ field: { value = [], onChange } }) => (
-            <MultiSelect
-              name="bands"
-              options={bands.data}
-              selectedOptions={value.map(item => item.id)}
-              setSelectedOptions={value =>
-                onChange(bands.data.filter(item => value.includes(item.id)))
-              }
-            />
-          )}
-        />
-      )}
+      <Controller
+        name="bands"
+        control={control}
+        render={({ field: { value = [], onChange } }) => (
+          <EditBandsButton
+            value={value as ReorderableListItem[]}
+            onChange={onChange as (value: ReorderableListItem[]) => void}
+          />
+        )}
+      />
       {locations && (
         <Select
           {...register('location_id', { required: true })}
@@ -118,7 +110,12 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
       )}
       <div className="sticky md:static bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10">
         <Button onClick={close} label="Abbrechen" />
-        <Button type="submit" label="Speichern" style="primary" loading={status === 'loading'} />
+        <Button
+          type="submit"
+          label="Speichern"
+          appearance="primary"
+          loading={status === 'loading'}
+        />
       </div>
     </form>
   )

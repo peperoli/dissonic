@@ -66,7 +66,7 @@ const EditCommentForm = ({ comment, setEdit }: EditCommentFormProps) => {
         <Button
           type="submit"
           label="Speichern"
-          style="primary"
+          appearance="primary"
           loading={status === 'loading'}
           disabled={!dirtyFields.new_content || watch('new_content') === ''}
           size="small"

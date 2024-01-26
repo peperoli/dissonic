@@ -21,7 +21,7 @@ const addConcert = async (concert: AddConcert): Promise<Concert> => {
 
   const { error: addBandsError } = await supabase
     .from('j_concert_bands')
-    .insert(concert.bands?.map(item => ({ concert_id: newConcert.id, band_id: item.id })))
+    .insert(concert.bands?.map((item, index) => ({ concert_id: newConcert.id, band_id: item.id, item_index: index })))
 
   if (addBandsError) {
     throw addBandsError
