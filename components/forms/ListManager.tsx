@@ -17,6 +17,8 @@ import { UserMusicIcon } from '../layout/UserMusicIcon'
 import clsx from 'clsx'
 import { reorderList } from '../../lib/reorderList'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
+import { FetchStatus } from '@tanstack/react-query'
+import { SpinnerIcon } from '../layout/SpinnerIcon'
 
 type InsertHereProps = {
   reorderItems: () => void
@@ -184,6 +186,7 @@ const SearchResult = ({ band, selected, addItem }: SearchResultProps) => {
 
 type ListManagerProps = {
   searchResults: ReorderableListItem[]
+  fetchStatus: FetchStatus
   initialListItems: ReorderableListItem[]
   search: string
   setSearch: (search: string) => void
@@ -192,6 +195,7 @@ type ListManagerProps = {
 
 export const ListManager = ({
   searchResults,
+  fetchStatus,
   initialListItems,
   search,
   setSearch,
@@ -265,7 +269,7 @@ export const ListManager = ({
               ))
             ) : (
               <div className="p-4 text-center text-sm text-slate-300">
-                Keine Ergebnisse gefunden.
+                {fetchStatus === 'fetching' ? 'Laden ...' : 'Keine Ergebnisse gefunden.'}
               </div>
             )}
           </div>
@@ -281,10 +285,10 @@ export const ListManager = ({
             placeholder="Bands hinzufügen"
             className="block w-full pl-12 pr-4 py-2 border rounded-lg border-slate-500 bg-slate-750"
           />
-          {search && (
+          {search &&  (
             <button onClick={() => setSearch('')} className="btn btn-icon absolute right-0">
               <span className="sr-only">Suche zurücksetzen</span>
-              <XMarkIcon className="h-icon" />
+              {fetchStatus === 'fetching' ? <SpinnerIcon className="h-icon animate-spin" /> : <XMarkIcon className="h-icon" />}
             </button>
           )}
         </div>

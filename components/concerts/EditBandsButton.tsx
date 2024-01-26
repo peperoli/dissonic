@@ -14,7 +14,7 @@ type BandsListManagerProps = {
 const BandsListManager = ({ initialListItems, onSave }: BandsListManagerProps) => {
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebounce(search, 200)
-  const { data: bands } = useBands(
+  const { data: bands, fetchStatus } = useBands(
     undefined,
     { filter: { search: debouncedSearch } },
     !!debouncedSearch
@@ -24,6 +24,7 @@ const BandsListManager = ({ initialListItems, onSave }: BandsListManagerProps) =
       search={search}
       setSearch={setSearch}
       searchResults={bands?.data.map(band => ({ ...band, item_index: null })) ?? []}
+      fetchStatus={fetchStatus}
       initialListItems={initialListItems}
       onSave={onSave}
     />
