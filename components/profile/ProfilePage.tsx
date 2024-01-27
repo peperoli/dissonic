@@ -11,6 +11,7 @@ import { CheckCircleIcon, UserIcon, UserPlusIcon } from '@heroicons/react/20/sol
 import { TopBands } from './TopBands'
 import { TopLocations } from './TopLocations'
 import { ConcertsByYear } from './ConcertsByYear'
+import { ConcertsByMonth } from './ConcertsByMonth'
 import { AddFriendModal } from './AddFriendModal'
 import { Band, Concert, Location, Profile } from '../../types/types'
 import { useAvatar } from '../../hooks/useAvatar'
@@ -178,6 +179,11 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                     {concertsSeen && (
                       <div className="col-span-full p-6 rounded-lg bg-slate-800">
                         <ConcertsByYear concerts={concertsSeen} />
+                      </div>
+                    )}
+                    {concertsSeen && (
+                      <div className="col-span-full p-6 rounded-lg bg-slate-800">
+                        <ConcertsByMonth concerts={concertsSeen} />
                       </div>
                     )}
                     {concertsSeen && (
