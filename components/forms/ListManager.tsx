@@ -206,7 +206,7 @@ export const ListManager = ({
   const [animationParent] = useAutoAnimate()
 
   function addItem(searchResult: ReorderableListItem) {
-    setListItems(prev => [...prev, { ...searchResult, index: prev.length }])
+    setListItems([...listItems, { ...searchResult, index: listItems.length }])
     setSearch('')
   }
 
@@ -248,7 +248,7 @@ export const ListManager = ({
                 band={listItem}
                 index={index}
                 removeItem={() =>
-                  setListItems(prev => prev.filter(item => item.id !== listItem.id))
+                  setListItems(listItems.filter(item => item.id !== listItem.id))
                 }
                 selectedItemToReorder={selectedItemToReorder}
                 selectItemToReorder={() => setSelectedItemToReorder(index)}
