@@ -5,7 +5,7 @@ import { MultiSelect } from '../MultiSelect'
 import { SpotifyArtistSelect } from './SpotifyArtistSelect'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { TextField } from '../forms/TextField'
-import { Select } from '../forms/Select'
+import { Select } from '../forms/controlled/Select'
 import { useCountries } from '../../hooks/useCountries'
 import { useGenres } from '../../hooks/useGenres'
 
@@ -56,14 +56,22 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
         </div>
       )}
       {countries && (
-        <Select
-          {...register('country_id', { required: true })}
-          options={
-            countries.map(item => ({ id: item.id, name: regionNames.of(item.iso2) ?? 'FEHLER' })) ??
-            []
-          }
-          error={errors.country_id}
-          label="Land"
+        <Controller
+          name="country_id"
+          control={control}
+          rules={{ required: true }}
+          render={({ field: { value, onChange } }) => (
+            <Select
+              value={value ?? null}
+              onValueChange={onChange}
+              options={countries.map(item => ({
+                id: item.id,
+                name: regionNames.of(item.iso2) ?? item.iso2,
+              }))}
+              error={errors.country_id}
+              label="Land"
+            />
+          )}
         />
       )}
       {genres && (
@@ -89,7 +97,12 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
       />
       <div className="sticky md:static bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10 md:z-0">
         <Button onClick={close} label="Abbrechen" />
-        <Button type="submit" label="Speichern" appearance="primary" loading={status === 'loading'} />
+        <Button
+          type="submit"
+          label="Speichern"
+          appearance="primary"
+          loading={status === 'loading'}
+        />
       </div>
     </form>
   )

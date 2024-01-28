@@ -6,7 +6,7 @@ import { useLocations } from '../../hooks/useLocations'
 import { AddConcert, EditConcert, ReorderableListItem } from '../../types/types'
 import { Button } from '../Button'
 import { CheckBox } from '../forms/CheckBox'
-import { Select } from '../forms/Select'
+import { Select } from '../forms/controlled/Select'
 import { TextField } from '../forms/TextField'
 import { EditBandsButton } from './EditBandsButton'
 
@@ -61,19 +61,29 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
       <Controller
         name="bands"
         control={control}
+        rules={{ required: true }}
         render={({ field: { value = [], onChange } }) => (
           <EditBandsButton
             value={value as ReorderableListItem[]}
             onChange={onChange as (value: ReorderableListItem[]) => void}
+            error={errors.bands}
           />
         )}
       />
       {locations && (
-        <Select
-          {...register('location_id', { required: true })}
-          options={locations.data?.map(item => ({ id: item.id, name: item.name }))}
-          error={errors.location_id}
-          label="Location"
+        <Controller
+          name="location_id"
+          control={control}
+          rules={{ required: true }}
+          render={({ field: { value, onChange } }) => (
+            <Select
+              value={value}
+              onValueChange={onChange}
+              options={locations.data?.map(item => ({ id: item.id, name: item.name }))}
+              error={errors.location_id}
+              label="Location"
+            />
+          )}
         />
       )}
       {isSimilar && (

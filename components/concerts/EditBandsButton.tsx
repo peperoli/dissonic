@@ -5,6 +5,8 @@ import { useDebounce } from '../../hooks/useDebounce'
 import { Band, ReorderableListItem } from '../../types/types'
 import { ListManager } from '../forms/ListManager'
 import Modal from '../Modal'
+import { FieldError } from 'react-hook-form'
+import clsx from 'clsx'
 
 type BandsListManagerProps = {
   initialListItems: ReorderableListItem[]
@@ -34,9 +36,10 @@ const BandsListManager = ({ initialListItems, onSave }: BandsListManagerProps) =
 type EditBandsButtonProps = {
   value: ReorderableListItem[]
   onChange: (value: ReorderableListItem[]) => void
+  error?: any
 }
 
-export const EditBandsButton = ({ value, onChange }: EditBandsButtonProps) => {
+export const EditBandsButton = ({ value, onChange, error }: EditBandsButtonProps) => {
   const [isOpen, setIsOpen] = useState(false)
 
   function onSave(items: ReorderableListItem[]) {
@@ -45,28 +48,39 @@ export const EditBandsButton = ({ value, onChange }: EditBandsButtonProps) => {
   }
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setIsOpen(true)}
-        className="group flex justify-between items-center gap-4 px-4 pt-1 border rounded-lg border-slate-500 bg-slate-750 text-left focus:outline-none focus:ring-2 focus:ring-venom"
-      >
-        <div>
-          <div className="mb-1 text-xs text-slate-300 group-focus:text-venom">Bands</div>
-          <div className="relative flex flex-wrap items-start gap-1 h-12 overflow-hidden">
-            {value.length > 0 ? (
-              value.map(item => (
-                <div className="px-1.5 py-0.5 rounded bg-slate-700 text-sm font-bold" key={item.id}>
-                  {item.name}
-                </div>
-              ))
-            ) : (
-              <div className="text-slate-300">Bands hinzufügen</div>
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-750" />
+      <div>
+        <button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          className={clsx(
+            'group flex justify-between items-center gap-4 w-full px-4 pt-1 border rounded-lg bg-slate-750 text-left focus:outline-none focus:ring-2 focus:ring-venom',
+            error ? 'border-yellow' : 'border-slate-500'
+          )}
+        >
+          <div>
+            <div className="mb-1 text-xs text-slate-300 group-focus:text-venom">Bands</div>
+            <div className="relative flex flex-wrap items-start gap-1 h-12 overflow-hidden">
+              {value.length > 0 ? (
+                value.map(item => (
+                  <div
+                    className="px-1.5 py-0.5 rounded bg-slate-700 text-sm font-bold"
+                    key={item.id}
+                  >
+                    {item.name}
+                  </div>
+                ))
+              ) : (
+                <div className="text-slate-300">Bands hinzufügen</div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-750" />
+            </div>
           </div>
-        </div>
-        <PencilSquareIcon className="h-icon flex-none text-slate-300" />
-      </button>
+          <PencilSquareIcon className="h-icon flex-none text-slate-300" />
+        </button>
+        {error && (
+          <div className="mt-1 text-sm text-yellow">Bitte füge mindestens eine Band hinzu.</div>
+        )}
+      </div>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen} fullHeight>
         <BandsListManager initialListItems={value} onSave={onSave} />
       </Modal>

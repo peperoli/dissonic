@@ -4,6 +4,7 @@ import { useState, useRef, Dispatch, RefObject, SetStateAction } from 'react'
 import { ListItem } from '../types/types'
 import { SpinnerIcon } from './layout/SpinnerIcon'
 import { Chip } from './Chip'
+import { normalizeString } from '../lib/normalizeString'
 
 interface SelectedOptionProps {
   selectedOption: number
@@ -85,12 +86,8 @@ export const MultiSelect = ({
 }: MultiSelectProps) => {
   const [query, setQuery] = useState('')
   const searchRef = useRef<HTMLInputElement>(null)
-  const regExp = new RegExp(handleDiacritics(query), 'iu')
-  const filteredOptions = options?.filter(option => handleDiacritics(option.name).match(regExp))
-
-  function handleDiacritics(string: string) {
-    return string.normalize('NFD').replace(/\p{Diacritic}/gu, '')
-  }
+  const regExp = new RegExp(normalizeString(query), 'iu')
+  const filteredOptions = options?.filter(option => normalizeString(option.name).match(regExp))
 
   function capitalize(string: string) {
     const arr = string.split(' ')
