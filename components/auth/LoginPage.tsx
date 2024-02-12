@@ -12,6 +12,7 @@ import { errorMessages } from '../../lib/errorMessages'
 import { StatusBanner } from './../forms/StatusBanner'
 import { emailRegex } from '../../lib/emailRegex'
 import Link from 'next/link'
+import { SignInFormData } from '../../actions/auth'
 
 export default function LoginPage() {
   const {
@@ -19,13 +20,13 @@ export default function LoginPage() {
     handleSubmit,
     formState: { errors },
     resetField,
-  } = useForm<{ email: string; password: string }>()
+  } = useForm<SignInFormData>()
   const { mutate, status, error } = useSignIn()
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirect = searchParams.get('redirect')
 
-  const onSubmit: SubmitHandler<{ email: string; password: string }> = async formData => {
+  const onSubmit: SubmitHandler<SignInFormData> = async formData => {
     mutate(formData)
   }
 

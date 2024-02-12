@@ -4,15 +4,10 @@ import { useProfiles } from '../../hooks/useProfiles'
 import { usernameRegex } from '../../lib/usernameRegex'
 import { Button } from '../Button'
 import { TextField } from '../forms/TextField'
-
-type Fields = {
-  email: string
-  username: string
-  password: string
-}
+import { SignUpFormData } from '../../actions/auth'
 
 type FormProps = {
-  onSubmit: (data: Fields) => void
+  onSubmit: (data: SignUpFormData) => void
   status: MutationStatus
 }
 
@@ -21,7 +16,7 @@ export const Form = ({ onSubmit, status }: FormProps) => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Fields>({ mode: 'onChange' })
+  } = useForm<SignUpFormData>({ mode: 'onChange' })
   const { data: profiles } = useProfiles()
   const usernames = profiles?.map(item => item.username)
   return (
