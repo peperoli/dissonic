@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import { Friend, Profile } from '../../types/types'
-import supabase from '../../utils/supabase'
+import supabase from '../../utils/supabase/client'
 import { Button } from '../Button'
 import { useAvatar } from '../../hooks/useAvatar'
 
@@ -20,12 +20,13 @@ const InviteItem = ({ inviteData, type }: InviteItemType) => {
   const { data: avatarUrl } = useAvatar(profile?.avatar_path)
 
   async function cancelInvite() {
+    if (!invite) return
     try {
       const { error } = await supabase
         .from('friends')
         .delete()
-        .eq('sender_id', invite?.sender.id)
-        .eq('receiver_id', invite?.receiver.id)
+        .eq('sender_id', invite.sender.id)
+        .eq('receiver_id', invite.receiver.id)
 
       if (error) {
         throw error
@@ -42,12 +43,13 @@ const InviteItem = ({ inviteData, type }: InviteItemType) => {
   }
 
   async function confirmInvite() {
+    if (!invite) return
     try {
       const { error } = await supabase
         .from('friends')
-        .update({ pending: false, accepted_at: new Date() })
-        .eq('sender_id', invite?.sender.id)
-        .eq('receiver_id', invite?.receiver.id)
+        .update({ pending: false, accepted_at: new Date().toISOString() })
+        .eq('sender_id', invite.sender.id)
+        .eq('receiver_id', invite.receiver.id)
 
       if (error) {
         throw error

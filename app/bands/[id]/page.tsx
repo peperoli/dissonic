@@ -1,10 +1,9 @@
 import { BandPage } from '../../../components/bands/BandPage'
-import { Band } from '../../../types/types'
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
+import { createClient } from '../../../utils/supabase/server'
 
-const fetchData = async(params: { id: string }): Promise<Band> => {
-  const supabase = createServerComponentClient({ cookies })
+const fetchData = async(params: { id: string }) => {
+  const supabase = createClient(cookies())
 
   const { data, error } = await supabase
     .from('bands')

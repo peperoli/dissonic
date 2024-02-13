@@ -1,16 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
 import { Band, ExtendedRes, BandFetchOptions } from '../types/types'
 import { getPagination } from '../lib/getPagination'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import supabase from '../utils/supabase/client'
 
 const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[]>> => {
-  const supabase = createClientComponentClient()
-
   let filterQuery = supabase
     .from('bands')
     .select('id, genres(id)', { count: 'estimated' })
 
   if (options?.filter?.search) {
+    // @ts-expect-error
     filterQuery = supabase.rpc(
       'search_bands',
       { search_string: options.filter.search },

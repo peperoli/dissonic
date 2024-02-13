@@ -36,7 +36,7 @@ export type LocationFetchOptions = {
 }
 
 export type Concert = Database['public']['Tables']['concerts']['Row'] & {
-  location?: Location
+  location?: Location | null
   bands?: Band[]
   bands_seen?: BandSeen[]
 }
@@ -57,14 +57,14 @@ export type AddComment = Database['public']['Tables']['comments']['Insert']
 
 export type EditComment = Database['public']['Tables']['comments']['Update']
 
-export type Reaction = Database['public']['Tables']['reactions']['Row'] & { user: Profile }
+export type Reaction = Database['public']['Tables']['reactions']['Row'] & { user: Profile | null }
 
 export type AddReaction = Database['public']['Tables']['reactions']['Insert']
 
 export type EditReaction = Database['public']['Tables']['reactions']['Update']
 
 export type Band = Database['public']['Tables']['bands']['Row'] & {
-  country: Country | null
+  country?: Country | null
   genres: Genre[]
   concerts?: Concert[]
   item_index?: number | null
@@ -79,8 +79,8 @@ export type EditBand = Database['public']['Tables']['bands']['Update'] & {
 }
 
 export type BandSeen = Database['public']['Tables']['j_bands_seen']['Row'] & {
-  band?: Band
-  concert?: Concert
+  band?: Band | null
+  concert?: Concert | null
 }
 
 export type Genre = Database['public']['Tables']['genres']['Row']
@@ -92,7 +92,7 @@ export type AddLocation = Database['public']['Tables']['locations']['Insert']
 export type Country = { id: number; iso2: string }
 
 export type Profile = Database['public']['Tables']['profiles']['Row'] & {
-  friends: [{ count: number }]
+  friends?: [{ count: number }]
 }
 
 export type AddProfile = Database['public']['Tables']['profiles']['Insert']

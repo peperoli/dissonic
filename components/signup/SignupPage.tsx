@@ -9,16 +9,13 @@ import { errorMessages } from '../../lib/errorMessages'
 import { useRouter } from 'next/navigation'
 import { Form } from './Form'
 import { AuthError, PostgrestError } from '@supabase/supabase-js'
+import { SignUpFormData } from '../../actions/auth'
 
 export const SignupPage = () => {
   const signUp = useSignUp()
   const { push } = useRouter()
 
-  const onSubmit: SubmitHandler<{
-    email: string
-    username: string
-    password: string
-  }> = async formData => {
+  const onSubmit: SubmitHandler<SignUpFormData> = async formData => {
     signUp.mutate(formData)
   }
 

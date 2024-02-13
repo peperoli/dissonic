@@ -1,4 +1,4 @@
-import supabase from '../../utils/supabase'
+import supabase from '../../utils/supabase/client'
 import { Button } from '../Button'
 import Modal from '../Modal'
 import React, { FC, useState } from 'react'

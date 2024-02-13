@@ -74,7 +74,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
   const { data: session } = useSession()
   const { data: avatarUrl } = useAvatar(profile?.avatar_path)
 
-  function unique(array: ({ id: string | number } | undefined)[]): any[] {
+  function unique(array: ({ id: string | number } | null | undefined)[]): any[] {
     const mapOfObjects = new Map(array.map(item => [item?.id, item]))
     return [...mapOfObjects.values()]
   }

@@ -99,11 +99,13 @@ export const ReactionControl = ({ comment, reactions, user }: ReactionControlPro
 
   reactions.forEach(item => {
     const matchingReaction = reactionCounts.find(reaction => reaction.type.includes(item.type))
-    if (matchingReaction) {
-      matchingReaction.count += 1
-      matchingReaction.users.push(item.user)
-    } else {
-      reactionCounts.push({ type: item.type, count: 1, users: [item.user] })
+    if (item.user) {
+      if (matchingReaction) {
+        matchingReaction.count += 1
+        matchingReaction.users.push(item.user)
+      } else {
+        reactionCounts.push({ type: item.type, count: 1, users: [item.user] })
+      }
     }
   })
   return (
@@ -122,7 +124,7 @@ export const ReactionControl = ({ comment, reactions, user }: ReactionControlPro
       ))}
       {comment.user_id !== user.id && (
         <Popover>
-          <Popover.Button aria-label='Reagieren' className="btn btn-icon btn-small">
+          <Popover.Button aria-label="Reagieren" className="btn btn-icon btn-small">
             <FaceSmileIcon className="h-icon" />
           </Popover.Button>
           <Popover.Panel className="absolute flex left-1/2 mt-1 rounded-lg bg-slate-700 shadow-xl -translate-x-1/2 z-10">

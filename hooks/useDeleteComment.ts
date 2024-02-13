@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import supabase from '../utils/supabase'
+import supabase from '../utils/supabase/client'
 
 const deleteComment = async (commentId: number) => {
   const { error } = await supabase.from('comments').delete().eq('id', commentId)

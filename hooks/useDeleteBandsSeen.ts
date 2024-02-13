@@ -1,10 +1,9 @@
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import supabase from '../utils/supabase/client'
 import { BandSeen } from '../types/types'
 import { useMutation } from '@tanstack/react-query'
 import { Database } from '../types/supabase'
 
 async function deleteBandsSeen(bandsSeen: BandSeen[]) {
-  const supabase = createClientComponentClient<Database>()
   const bandsSeenIds = bandsSeen.map(item => item.band_id)
 
   if (bandsSeenIds.length === 0) {

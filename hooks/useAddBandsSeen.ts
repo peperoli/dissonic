@@ -1,11 +1,8 @@
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { BandSeen } from '../types/types'
 import { useMutation } from '@tanstack/react-query'
-import { Database } from '../types/supabase'
+import supabase from '../utils/supabase/client'
 
 async function addBandsSeen(bandsSeen: BandSeen[]) {
-  const supabase = createClientComponentClient<Database>()
-
   const { error } = await supabase.from('j_bands_seen').insert(bandsSeen)
 
   if (error) {

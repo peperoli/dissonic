@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Comment } from '../types/types'
-import supabase from '../utils/supabase'
+import supabase from '../utils/supabase/client'
 
 const fetchComments = async (concertId: string): Promise<Comment[]> => {
   const { data, error } = await supabase
