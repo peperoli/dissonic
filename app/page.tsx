@@ -1,10 +1,10 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { HomePage } from '../components/concerts/HomePage'
 import { Concert } from '../types/types'
 import { cookies } from 'next/headers'
+import { createClient } from '../utils/supabase/server'
 
 const fetchData = async () => {
-  const supabase = createServerComponentClient({ cookies })
+  const supabase = createClient(cookies())
 
   const { data, count, error } = await supabase
     .from('concerts')

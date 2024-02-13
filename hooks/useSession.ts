@@ -1,9 +1,7 @@
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import supabase from '../utils/supabase/client'
 import { useQuery } from '@tanstack/react-query'
 
 const retrieveSession = async () => {
-  const supabase = createClientComponentClient()
-
   const {
     data: { session },
     error,

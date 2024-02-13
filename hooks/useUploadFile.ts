@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import supabase from '../utils/supabase'
+import supabase from '../utils/supabase/client'
 
 const uploadFile = async (newFile: { file: File; path: string, upsert?: boolean }): Promise<{ path: string }> => {
   const { data, error: uploadError } = await supabase.storage

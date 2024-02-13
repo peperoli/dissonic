@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AddBand } from '../types/types'
-import supabase from '../utils/supabase'
+import supabase from '../utils/supabase/client'
 
 const addBand = async (band: AddBand) => {
   const { data: newBand, error: bandError } = await supabase

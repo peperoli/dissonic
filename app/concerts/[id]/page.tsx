@@ -1,12 +1,12 @@
 import { ConcertPage } from '../../../components/concerts/ConcertPage'
 import { Concert } from '../../../types/types'
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
+import { createClient } from '../../../utils/supabase/server'
 
 export const revalidate = 60
 
 const fetchConcert = async (concertId: string) => {
-  const supabase = createServerComponentClient({ cookies })
+  const supabase = createClient(cookies())
 
   const { data, error } = await supabase
     .from('concerts')

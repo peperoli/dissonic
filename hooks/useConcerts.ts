@@ -1,11 +1,8 @@
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useQuery } from '@tanstack/react-query'
-import { Database } from '../types/supabase'
 import { Concert, ConcertFetchOptions, ExtendedRes } from '../types/types'
+import supabase from '../utils/supabase/client'
 
 const fetchConcerts = async (options?: ConcertFetchOptions) => {
-  const supabase = createClientComponentClient<Database>()
-
   let query = supabase.from('concerts').select(
     `id,
       bands!j_concert_bands(id),

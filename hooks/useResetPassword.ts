@@ -1,9 +1,7 @@
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import supabase from '../utils/supabase/client'
 import { useMutation } from '@tanstack/react-query'
 
 async function resetPassword(email: string) {
-  const supabase = createClientComponentClient()
-
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/update-password`,
   })

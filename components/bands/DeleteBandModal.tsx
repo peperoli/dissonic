@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation"
 import { Dispatch, FC, SetStateAction, useState } from "react"
 import { Band } from "../../types/types"
-import supabase from "../../utils/supabase"
+import supabase from "../../utils/supabase/client"
 import { Button } from "../Button"
 import Modal from "../Modal"
 

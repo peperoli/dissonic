@@ -38,9 +38,13 @@ export async function signUp(formData: SignUpFormData) {
     throw error
   }
 
+  if (!data.user) {
+    throw new Error('Error: No user returned')
+  }
+
   const { error: profileError } = await supabase
     .from('profiles')
-    .insert({ id: data.user?.id, username: formData.username })
+    .insert({ id: data.user.id, username: formData.username })
 
   if (profileError) {
     throw profileError

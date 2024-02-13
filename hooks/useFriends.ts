@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Friend } from '../types/types'
-import supabase from '../utils/supabase'
+import supabase from '../utils/supabase/client'
 
 async function fetchFriends(profileId: string): Promise<Friend[]> {
   const { data, error } = await supabase
@@ -11,7 +11,7 @@ async function fetchFriends(profileId: string): Promise<Friend[]> {
   if (error) {
     throw error
   }
-
+  // @ts-expect-error
   return data
 }
 

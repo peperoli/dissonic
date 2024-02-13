@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import supabase from '../utils/supabase'
+import supabase from '../utils/supabase/client'
 
 const killFile = async (oldFile: { name: string; bucket: string }) => {
   const { error } = await supabase.storage.from(oldFile.bucket).remove([oldFile.name])

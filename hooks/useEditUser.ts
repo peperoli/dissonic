@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import supabase from '../utils/supabase'
+import supabase from '../utils/supabase/client'
 
 const editUser = async (newUser: { email?: string; password?: string }) => {
   const { error } = await supabase.auth.updateUser({

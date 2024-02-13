@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Profile } from "../types/types"
-import supabase from "../utils/supabase"
+import supabase from "../utils/supabase/client"
 
 const fetchProfiles = async (options?: {ids?: string[]}): Promise<Profile[]> => {
   let query = supabase.from('profiles').select('*')

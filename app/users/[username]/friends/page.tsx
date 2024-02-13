@@ -1,10 +1,11 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { FriendsPage } from '../../../../components/profile/FriendsPage'
 import { cookies } from 'next/headers'
 import React from 'react'
+import { createClient } from '../../../../utils/supabase/server'
+import { Friend, Profile } from '../../../../types/types';
 
-async function fetchData(username: string) {
-  const supabase = createServerComponentClient({ cookies })
+async function fetchData(username: string): Promise<{ profile: Profile; friends: Friend[] }> {
+  const supabase = createClient(cookies())
 
   const { data: profile, error: profileError } = await supabase
     .from('profiles')
@@ -25,6 +26,7 @@ async function fetchData(username: string) {
     throw error
   }
 
+  // @ts-expect-error
   return { profile, friends }
 }
 
