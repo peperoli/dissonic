@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { useEditUser } from '../../hooks/useEditUser'
+import { useEditUser } from '../../hooks/auth/useEditUser'
 import { Button } from '../Button'
 import { TextField } from '../forms/TextField'
 import Modal from '../Modal'

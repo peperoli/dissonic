@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useEffect } from 'react'
-import { useAddBand } from '../../hooks/useAddBand'
+import { useAddBand } from '../../hooks/bands/useAddBand'
 import { AddBand } from '../../types/types'
 import Modal from '../Modal'
 import { Form } from './Form'

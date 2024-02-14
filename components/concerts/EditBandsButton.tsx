@@ -1,11 +1,10 @@
 import { PencilSquareIcon } from '@heroicons/react/20/solid'
 import { useState } from 'react'
-import { useBands } from '../../hooks/useBands'
-import { useDebounce } from '../../hooks/useDebounce'
-import { Band, ReorderableListItem } from '../../types/types'
+import { useBands } from '../../hooks/bands/useBands'
+import { useDebounce } from '../../hooks/helpers/useDebounce'
+import { ReorderableListItem } from '../../types/types'
 import { ListManager } from '../forms/ListManager'
 import Modal from '../Modal'
-import { FieldError } from 'react-hook-form'
 import clsx from 'clsx'
 
 type BandsListManagerProps = {

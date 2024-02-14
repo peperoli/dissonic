@@ -3,7 +3,7 @@ import Modal from '../Modal'
 import { Dispatch, SetStateAction, useEffect } from 'react'
 import { Profile } from '../../types/types'
 import { User } from '@supabase/supabase-js'
-import { useAddFriend } from '../../hooks/useAddFriend'
+import { useAddFriend } from '../../hooks/profiles/useAddFriend'
 import { useQueryClient } from '@tanstack/react-query'
 
 type AddFriendModalProps = {

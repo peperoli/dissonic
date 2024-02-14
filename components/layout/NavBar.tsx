@@ -4,14 +4,14 @@ import Link from 'next/link'
 import Logo from './Logo'
 import { Menu } from '@headlessui/react'
 import { usePathname, useRouter } from 'next/navigation'
-import { ArrowRightOnRectangleIcon, UserGroupIcon, UserIcon } from '@heroicons/react/20/solid'
+import { ArrowRightStartOnRectangleIcon, UserGroupIcon, UserIcon } from '@heroicons/react/20/solid'
 import Image from 'next/image'
-import { useLogOut } from '../../hooks/useLogOut'
-import { useProfile } from '../../hooks/useProfile'
-import { useAvatar } from '../../hooks/useAvatar'
+import { useLogOut } from '../../hooks/auth/useLogOut'
+import { useProfile } from '../../hooks/profiles/useProfile'
+import { useAvatar } from '../../hooks/profiles/useAvatar'
 import { useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { useSession } from '../../hooks/useSession'
+import { useSession } from '../../hooks/auth/useSession'
 
 export const NavBar = () => {
   const { data: session } = useSession()
@@ -91,7 +91,7 @@ export const NavBar = () => {
                   }`}
                   onClick={() => logOutMutation.mutate()}
                 >
-                  <ArrowRightOnRectangleIcon className="h-icon text-slate-300" />
+                  <ArrowRightStartOnRectangleIcon className="h-icon text-slate-300" />
                   Abmelden
                 </button>
               )}

@@ -3,7 +3,7 @@ import { Button } from '../Button'
 import Modal from '../Modal'
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useConcertContext } from '../../hooks/useConcertContext'
+import { useConcertContext } from '../../hooks/concerts/useConcertContext'
 
 interface DeleteConcertModalProps {
   isOpen: boolean

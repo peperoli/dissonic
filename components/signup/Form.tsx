@@ -1,6 +1,6 @@
 import { MutationStatus } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
-import { useProfiles } from '../../hooks/useProfiles'
+import { useProfiles } from '../../hooks/profiles/useProfiles'
 import { usernameRegex } from '../../lib/usernameRegex'
 import { Button } from '../Button'
 import { TextField } from '../forms/TextField'

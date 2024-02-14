@@ -1,7 +1,7 @@
 import { UserIcon } from '@heroicons/react/20/solid'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useAvatar } from '../../hooks/useAvatar'
+import { useAvatar } from '../../hooks/profiles/useAvatar'
 import { Profile } from '../../types/types'
 import clsx from 'clsx'
 

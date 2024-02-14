@@ -1,7 +1,7 @@
 import { User } from '@supabase/supabase-js'
 import { Dispatch, SetStateAction } from 'react'
 import { Band, BandSeen } from '../../types/types'
-import { useConcertContext } from '../../hooks/useConcertContext'
+import { useConcertContext } from '../../hooks/concerts/useConcertContext'
 
 interface BandSeenToggleProps {
   band: Band

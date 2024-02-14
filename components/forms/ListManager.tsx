@@ -10,7 +10,7 @@ import {
 } from '@heroicons/react/20/solid'
 import Image from 'next/image'
 import { useState } from 'react'
-import { useSpotifyArtist } from '../../hooks/useSpotifyArtist'
+import { useSpotifyArtist } from '../../hooks/spotify/useSpotifyArtist'
 import { ReorderableListItem } from '../../types/types'
 import { Button } from '../Button'
 import { UserMusicIcon } from '../layout/UserMusicIcon'

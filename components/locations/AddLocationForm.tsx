@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useEffect } from 'react'
-import { useAddLocation } from '../../hooks/useAddLocation'
+import { useAddLocation } from '../../hooks/locations/useAddLocation'
 import { AddLocation } from '../../types/types'
 import { Button } from '../Button'
 import { TextField } from '../forms/TextField'

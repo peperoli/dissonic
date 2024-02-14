@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { useConcertBands } from '../../hooks/useConcertBands'
+import { useConcertBands } from '../../hooks/concerts/useConcertBands'
 import { SpinnerIcon } from '../layout/SpinnerIcon'
 import { FilterButton } from './../FilterButton'
 import { RangeSliderWrapper } from './../RangeFilter'

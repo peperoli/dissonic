@@ -1,7 +1,7 @@
 import { useRouter } from 'next/navigation'
 import { Dispatch, SetStateAction, useEffect } from 'react'
 import { SubmitHandler } from 'react-hook-form'
-import { useAddConcert } from '../../hooks/useAddConcert'
+import { useAddConcert } from '../../hooks/concerts/useAddConcert'
 import { AddConcert } from '../../types/types'
 import Modal from '../Modal'
 import { Form } from './Form'

@@ -1,9 +1,9 @@
 import { Dispatch, SetStateAction, useEffect } from 'react'
 import { EditConcert } from '../../types/types'
 import Modal from '../Modal'
-import { useEditConcert } from '../../hooks/useEditConcert'
+import { useEditConcert } from '../../hooks/concerts/useEditConcert'
 import { useQueryClient } from '@tanstack/react-query'
-import { useConcertContext } from '../../hooks/useConcertContext'
+import { useConcertContext } from '../../hooks/concerts/useConcertContext'
 import { Form } from './Form'
 import { SubmitHandler } from 'react-hook-form'
 

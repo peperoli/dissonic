@@ -8,7 +8,7 @@ import { Button } from '../Button'
 import { StatusBanner } from '../forms/StatusBanner'
 import { AuthError } from '@supabase/supabase-js'
 import { errorMessages } from '../../lib/errorMessages'
-import { useEditUser } from '../../hooks/useEditUser'
+import { useEditUser } from '../../hooks/auth/useEditUser'
 import { useRouter } from 'next/navigation'
 
 export function UpdatePasswordPage() {

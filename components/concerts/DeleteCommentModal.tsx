@@ -1,9 +1,9 @@
 import { Button } from '../Button'
 import Modal from '../Modal'
 import React, { useEffect } from 'react'
-import { useDeleteComment } from '../../hooks/useDeleteComment'
+import { useDeleteComment } from '../../hooks/concerts/useDeleteComment'
 import { useQueryClient } from '@tanstack/react-query'
-import { useConcertContext } from '../../hooks/useConcertContext'
+import { useConcertContext } from '../../hooks/concerts/useConcertContext'
 
 interface DeleteCommentModalProps {
   isOpen: boolean

@@ -7,8 +7,8 @@ import { UserIcon, UserMinusIcon } from '@heroicons/react/20/solid'
 import { Profile } from '../../types/types'
 import { Button } from '../Button'
 import { RemoveFriendModal } from './RemoveFriendModal'
-import { useAvatar } from '../../hooks/useAvatar'
-import { useSession } from '../../hooks/useSession'
+import { useAvatar } from '../../hooks/profiles/useAvatar'
+import { useSession } from '../../hooks/auth/useSession'
 
 interface IFriendItem {
   friendData: Profile

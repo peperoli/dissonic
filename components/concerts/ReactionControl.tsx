@@ -3,11 +3,11 @@ import { FaceSmileIcon } from '@heroicons/react/20/solid'
 import { Comment, Profile, Reaction } from '../../types/types'
 import { User } from '@supabase/supabase-js'
 import { Popover } from '@headlessui/react'
-import { useAddReaction } from '../../hooks/useAddReaction'
-import { useEditReaction } from '../../hooks/useEditReaction'
-import { useDeleteReaction } from '../../hooks/useDeleteReaction'
+import { useAddReaction } from '../../hooks/concerts/useAddReaction'
+import { useEditReaction } from '../../hooks/concerts/useEditReaction'
+import { useDeleteReaction } from '../../hooks/concerts/useDeleteReaction'
 import clsx from 'clsx'
-import { useConcertContext } from '../../hooks/useConcertContext'
+import { useConcertContext } from '../../hooks/concerts/useConcertContext'
 
 type ReactionToggleProps = {
   type: string

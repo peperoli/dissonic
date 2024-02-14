@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { Friend, Profile } from '../../types/types'
 import supabase from '../../utils/supabase/client'
 import { Button } from '../Button'
-import { useAvatar } from '../../hooks/useAvatar'
+import { useAvatar } from '../../hooks/profiles/useAvatar'
 
 type InviteItemType = {
   inviteData: Friend

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { FilterButton } from './../FilterButton'
 import { MultiSelect } from './../MultiSelect'
-import { useBands } from './../../hooks/useBands'
+import { useBands } from './../../hooks/bands/useBands'
 
 type BandMultiSelectProps = {
   selectedOptions: number[]

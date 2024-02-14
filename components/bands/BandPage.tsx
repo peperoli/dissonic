@@ -9,12 +9,12 @@ import { Button } from '../Button'
 import { ConcertCard } from '../concerts/ConcertCard'
 import { Band } from '../../types/types'
 import { DeleteBandModal } from './DeleteBandModal'
-import { useBand } from '../../hooks/useBand'
-import { useConcerts } from '../../hooks/useConcerts'
-import { useSpotifyArtistEmbed } from '../../hooks/useSpotifyArtistEmbed'
+import { useBand } from '../../hooks/bands/useBand'
+import { useConcerts } from '../../hooks/concerts/useConcerts'
+import { useSpotifyArtistEmbed } from '../../hooks/spotify/useSpotifyArtistEmbed'
 import { SpinnerIcon } from '../layout/SpinnerIcon'
 import { usePathname, useRouter } from 'next/navigation'
-import { useSession } from '../../hooks/useSession'
+import { useSession } from '../../hooks/auth/useSession'
 
 export interface BandPageProps {
   initialBand: Band

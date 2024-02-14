@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { FilterButton } from './../FilterButton'
 import { MultiSelect } from './../MultiSelect'
-import { useLocations } from './../../hooks/useLocations'
+import { useLocations } from './../../hooks/locations/useLocations'
 
 type LocationMultiSelectProps = {
   selectedOptions: number[]

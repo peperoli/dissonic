@@ -1,4 +1,4 @@
-import { useBands } from '../../hooks/useBands'
+import { useBands } from '../../hooks/bands/useBands'
 import { AddBand, EditBand } from '../../types/types'
 import { Button } from '../Button'
 import { MultiSelect } from '../MultiSelect'

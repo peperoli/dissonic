@@ -1,4 +1,4 @@
-import { useSpotifySearch } from '../../hooks/useSpotifySearch'
+import { useSpotifySearch } from '../../hooks/spotify/useSpotifySearch'
 import { CheckIcon, ChevronDownIcon, LinkIcon } from '@heroicons/react/20/solid'
 import Image from 'next/image'
 import { SpotifyArtist } from '../../types/types'

@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { useSignIn } from '../../hooks/useSignIn'
+import { useSignIn } from '../../hooks/auth/useSignIn'
 import { Button } from './../Button'
 import { TextField } from './../forms/TextField'
 import { PageWrapper } from './../layout/PageWrapper'

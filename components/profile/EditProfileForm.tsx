@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from 'react'
-import { useEditProfile } from '../../hooks/useEditProfile'
-import { useKillFile } from '../../hooks/useKillFile'
+import { useEditProfile } from '../../hooks/profiles/useEditProfile'
+import { useKillFile } from '../../hooks/files/useKillFile'
 import { Profile } from '../../types/types'
 import Modal from '../Modal'
 import { Form } from './Form'

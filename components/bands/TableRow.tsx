@@ -3,7 +3,7 @@
 import { TableRow } from '../TableRow'
 import { UserMusicIcon } from '../layout/UserMusicIcon'
 import { Band } from '../../types/types'
-import { useSpotifyArtist } from '../../hooks/useSpotifyArtist'
+import { useSpotifyArtist } from '../../hooks/spotify/useSpotifyArtist'
 import Image from 'next/image'
 
 type BandTableRowProps = {

@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { useConcertDates } from '../../hooks/useConcertDates'
+import { useConcertDates } from '../../hooks/concerts/useConcertDates'
 import { SpinnerIcon } from '../layout/SpinnerIcon'
 import { FilterButton } from './../FilterButton'
 import { RangeSliderWrapper } from './../RangeFilter'
