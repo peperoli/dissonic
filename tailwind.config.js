@@ -51,6 +51,9 @@ module.exports = {
       height: {
         'icon': '1.33em',
       },
+      size: {
+        'icon': '1.25em',
+      },
       minHeight: {
         96: '24rem',
       },

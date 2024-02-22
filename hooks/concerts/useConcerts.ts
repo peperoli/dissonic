@@ -34,9 +34,9 @@ const fetchConcerts = async (options?: ConcertFetchOptions) => {
     )
   }
 
-  if (options?.filter?.bandsSeenUser) {
+  if (options?.filter?.bandsSeenUsers && options.filter.bandsSeenUsers.length > 0) {
     filteredConcerts = filteredConcerts?.filter(concert =>
-      concert.bands_seen.some(band => options.filter?.bandsSeenUser === band.user_id)
+      concert.bands_seen.some(band => options.filter?.bandsSeenUsers?.includes(band.user_id))
     )
   }
 

@@ -16,7 +16,7 @@ export interface FriendsPageProps {
 
 export const FriendsPage = ({ profile, initialFriends }: FriendsPageProps) => {
   const { data: session } = useSession()
-  const { data: friends } = useFriends(profile.id, initialFriends)
+  const { data: friends } = useFriends({ profileId: profile.id }, initialFriends)
   const acceptedFriends = friends?.filter(item => !item.pending)
   const { push } = useRouter()
   const pathname = usePathname()

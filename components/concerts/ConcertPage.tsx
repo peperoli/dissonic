@@ -12,7 +12,7 @@ import { useState } from 'react'
 import { useConcert } from '../../hooks/concerts/useConcert'
 import { ConcertContext } from '../../hooks/concerts/useConcertContext'
 import { useProfiles } from '../../hooks/profiles/useProfiles'
-import { Concert } from '../../types/types'
+import { BandSeen, Concert } from '../../types/types'
 import { Button } from '../Button'
 import { PageWrapper } from '../layout/PageWrapper'
 import { Comments } from './Comments'
@@ -21,7 +21,7 @@ import { EditConcertForm } from './EditConcertForm'
 import { GenreChart } from './GenreChart'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
-import { UserItem } from './UserItem'
+import { UserItem } from '../shared/UserItem'
 import { BandList } from './BandList'
 
 interface ConcertPageProps {
@@ -31,7 +31,11 @@ interface ConcertPageProps {
 
 export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPageProps) => {
   const { data: concert } = useConcert(initialConcert, initialConcert.id)
-  const { data: profiles } = useProfiles()
+  const fanIds = concert?.bands_seen
+    ? new Set(concert.bands_seen.map(item => item.user_id))
+    : new Set([])
+  const { data: profiles } = useProfiles({ ids: [...fanIds] })
+  const fanProfiles = profiles?.filter(profile => fanIds?.has(profile.id))
   const { data: session } = useSession()
   const [editIsOpen, setEditIsOpen] = useState(false)
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
@@ -40,8 +44,6 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
     month: 'short',
     year: 'numeric',
   }
-  const fanIds = concert?.bands_seen && new Set(concert.bands_seen.map(item => item.user_id))
-  const fanProfiles = profiles?.filter(profile => fanIds?.has(profile.id))
   const { push } = useRouter()
   const pathname = usePathname()
 
@@ -53,11 +55,24 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
     )
   }
 
+  function getBandCountsPerUser(bandsSeen: BandSeen[]) {
+    const counts = new Map<string, number>()
+    bandsSeen.forEach(item => {
+      if (counts.has(item.user_id)) {
+        counts.set(item.user_id, counts.get(item.user_id)! + 1)
+      } else {
+        counts.set(item.user_id, 1)
+      }
+    })
+    return counts
+  }
+  const bandCountsPerUser = concert.bands_seen && getBandCountsPerUser(concert.bands_seen)
+
   return (
     <PageWrapper>
       <ConcertContext.Provider value={{ concert }}>
         <main className="container grid gap-4">
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <Link href={`/${concertQueryState ?? ''}`} className="btn btn-link">
               <ArrowLeftIcon className="h-icon" />
               Zurück zu Konzerte
@@ -84,7 +99,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
               />
             </div>
           </div>
-          <div className="grid gap-4 p-4 md:p-6 rounded-lg bg-slate-800">
+          <div className="grid gap-4 rounded-lg bg-slate-800 p-4 md:p-6">
             <div>
               {concert.name ? (
                 <div>
@@ -104,7 +119,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
                 />
               )}
             </div>
-            <div className="grid gap-4 mt-4">
+            <div className="mt-4 grid gap-4">
               <div className="flex items-center gap-4">
                 <CalendarIcon className="h-icon text-slate-300" />
                 <div>
@@ -120,7 +135,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
                 </div>
               </div>
               {concert.location && (
-                <div className="flex gap-4 items-center">
+                <div className="flex items-center gap-4">
                   <MapPinIcon className="h-icon text-slate-300" />
                   <div>
                     {concert.location.name}, {concert.location.city}
@@ -129,19 +144,26 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
               )}
               {fanProfiles && fanProfiles.length > 0 && (
                 <div className="flex flex-wrap gap-4">
-                  {fanProfiles.map(item => (
-                    <UserItem profile={item} key={item.id} />
-                  ))}
+                  {fanProfiles.map(item => {
+                    const count = bandCountsPerUser?.get(item.id)
+                    return (
+                      <UserItem
+                        user={item}
+                        description={count ? `${count} Band${count > 1 ? 's' : ''}` : null}
+                        key={item.id}
+                      />
+                    )
+                  })}
                 </div>
               )}
             </div>
           </div>
           {concert.bands && (
-            <div className="p-4 md:p-6 rounded-lg bg-slate-800">
+            <div className="rounded-lg bg-slate-800 p-4 md:p-6">
               <GenreChart bands={concert.bands} />
             </div>
           )}
-          <div className="p-4 md:p-6 rounded-lg bg-slate-800">
+          <div className="rounded-lg bg-slate-800 p-4 md:p-6">
             <Comments />
           </div>
           <EditConcertForm isOpen={editIsOpen} setIsOpen={setEditIsOpen} />

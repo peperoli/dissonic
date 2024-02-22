@@ -2,22 +2,34 @@ import { useQuery } from '@tanstack/react-query'
 import { Friend } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 
-async function fetchFriends(profileId: string): Promise<Friend[]> {
-  const { data, error } = await supabase
-    .from('friends')
-    .select('*, sender:sender_id(*), receiver:receiver_id(*)')
-    .or(`sender_id.eq.${profileId}, receiver_id.eq.${profileId}`)
+type Options = {
+  profileId?: string
+  pending?: boolean
+}
+
+async function fetchFriends(options?: Options): Promise<Friend[]> {
+  let query = supabase.from('friends').select('*, sender:sender_id(*), receiver:receiver_id(*)')
+
+  if (options?.profileId) {
+    query = query.or(`sender_id.eq.${options.profileId}, receiver_id.eq.${options.profileId}`)
+  }
+
+  if (options?.pending !== undefined) {
+    query = query.eq('pending', options.pending)
+  }
+
+  const { data, error } = await query
 
   if (error) {
     throw error
   }
+
   // @ts-expect-error
   return data
 }
 
-export function useFriends(profileId: string, initialData?: Friend[]) {
-  return useQuery(['friends', profileId], () => fetchFriends(profileId), {
-    enabled: !!profileId,
+export function useFriends(options?: Options, initialData?: Friend[]) {
+  return useQuery(['friends', JSON.stringify(options)], () => fetchFriends(options), {
     initialData,
     onError: error => console.error(error),
   })

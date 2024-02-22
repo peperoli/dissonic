@@ -11,7 +11,7 @@ export interface ConcertFetchOptions {
     locations?: number[] | null
     years?: number[] | null
     bandCount?: number[] | null
-    bandsSeenUser?: string
+    bandsSeenUsers?: string[] | null
   }
   sort?: { sort_by: 'date_start'; sort_asc: boolean }
   size?: number
@@ -92,7 +92,7 @@ export type AddLocation = Database['public']['Tables']['locations']['Insert']
 export type Country = { id: number; iso2: string }
 
 export type Profile = Database['public']['Tables']['profiles']['Row'] & {
-  friends?: [{ count: number }]
+  friends?:  [{ count: number }]
 }
 
 export type AddProfile = Database['public']['Tables']['profiles']['Insert']

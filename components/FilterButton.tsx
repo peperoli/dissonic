@@ -1,7 +1,7 @@
-import { ChevronDownIcon, XMarkIcon } from '@heroicons/react/20/solid'
 import { Button } from './Button'
 import { Popover } from '@headlessui/react'
 import { ReactNode } from 'react'
+import { ChevronDown, X } from 'lucide-react'
 
 interface FilterButtonProps {
   name: string
@@ -33,8 +33,8 @@ export const FilterButton = ({
                   </>
                 )}
               </span>
-              <ChevronDownIcon
-                className={`h-icon flex-none${open ? ' transform rotate-180' : ''}`}
+              <ChevronDown
+                className={`size-icon flex-none${open ? ' transform rotate-180' : ''}`}
               />
             </Popover.Button>
             <Popover.Panel className="fixed md:absolute flex flex-col overflow-hidden inset-0 md:inset-auto min-w-full md:mt-1 p-4 md:rounded-lg bg-slate-700 shadow-xl z-20">
@@ -44,7 +44,7 @@ export const FilterButton = ({
                   onClick={() => close()}
                   label="Schliessen"
                   contentType="icon"
-                  icon={<XMarkIcon className="h-icon" />}
+                  icon={<X className="size-icon" />}
                 />
               </div>
               {children}

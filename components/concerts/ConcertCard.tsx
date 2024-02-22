@@ -6,7 +6,7 @@ import { useProfiles } from '../../hooks/profiles/useProfiles'
 import { useSession } from '../../hooks/auth/useSession'
 import clsx from 'clsx'
 import useMediaQuery from '../../hooks/helpers/useMediaQuery'
-import { UserItem } from './UserItem'
+import { UserItem } from '../shared/UserItem'
 import { useState } from 'react'
 
 type ConcertDateProps = {
@@ -123,7 +123,7 @@ export const ConcertCard = ({ concert }: ConcertCardProps) => {
         {profiles && (
           <div className="flex flex-wrap gap-2 md:gap-x-4">
             {profiles.map(item => (
-              <UserItem profile={item} usernameIsHidden={!isDesktop} key={item.id} />
+              <UserItem user={item} size='sm' usernameIsHidden={!isDesktop} key={item.id} />
             ))}
           </div>
         )}
