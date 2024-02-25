@@ -1,4 +1,3 @@
-import { ArrowUturnLeftIcon } from '@heroicons/react/20/solid'
 import {
   Dispatch,
   FocusEvent,
@@ -9,7 +8,6 @@ import {
   useRef,
 } from 'react'
 import { useState } from 'react'
-import { Button } from './Button'
 import { NumberField } from './NumberField'
 
 interface ChartProps {
@@ -36,12 +34,12 @@ const Chart = ({ options, initialMin, initialMax, minValue, maxValue }: ChartPro
 
   const highestCount = Math.max(...optionCounts.map(item => item.count))
   return (
-    <div className="flex justify-between items-end gap-[2px]">
+    <div className="flex items-end justify-between gap-[2px]">
       {optionCounts.map(item => (
         <div
           key={item.id}
           style={{ height: (item.count / highestCount) * 100 }}
-          className={`flex-1 max-w-[0.5rem] rounded-sm${
+          className={`max-w-[0.5rem] flex-1 rounded-sm${
             item.id >= minValue && item.id <= maxValue ? ' bg-venom' : ' bg-slate-800'
           }`}
         />
@@ -114,8 +112,8 @@ const RangeSliderHandle = ({
       ref={ref}
       onMouseDown={event => dragMouseDown(event)}
       onTouchStart={event => dragMouseDown(event)}
-      className={`absolute w-5 h-5 rounded-full border-2 border-venom bg-slate-700 transform -translate-x-1/2 focus:z-10${
-        drag ? ' transform origin-center scale-125' : ''
+      className={`absolute h-5 w-5 -translate-x-1/2 transform rounded-full border-2 border-venom bg-slate-700 focus:z-10${
+        drag ? ' origin-center scale-125 transform' : ''
       }`}
       style={{ left: ((value - initialMin) / (initialMax - initialMin)) * 100 + '%' }}
     />
@@ -164,7 +162,7 @@ const RangeSlider = ({
     }
   }, [])
   return (
-    <div ref={ref} className="relative flex items-center w-full h-1 my-4 rounded-full bg-slate-800">
+    <div ref={ref} className="relative my-4 flex h-1 w-full items-center rounded-full bg-slate-800">
       <div
         style={{
           left: ((constrainedMinValue - initialMin) / range) * 100 + '%',
@@ -244,7 +242,7 @@ export const RangeSliderWrapper = ({
     setSelectedOptions([minValue, maxValue])
   }, [minValue, maxValue])
   return (
-    <>
+    <div className="size-full md:h-auto">
       <Chart
         options={options}
         initialMin={initialMin}
@@ -260,7 +258,7 @@ export const RangeSliderWrapper = ({
         maxValue={maxValue}
         setMaxValue={setMaxValue}
       />
-      <div className="flex gap-8 mb-2">
+      <div className="mb-2 flex gap-8">
         <NumberField
           id="min"
           unit={unit}
@@ -280,6 +278,6 @@ export const RangeSliderWrapper = ({
           onBlur={handleMaxBlur}
         />
       </div>
-    </>
+    </div>
   )
 }

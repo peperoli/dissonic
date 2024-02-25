@@ -133,14 +133,15 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
                 onClick={resetAll}
                 icon={<RotateCcw className="size-icon" />}
                 size="small"
+                appearance="tertiary"
               />
             )}
           </div>
           <div className="scrollbar-hidden -mx-4 flex gap-2 overflow-x-auto px-4 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible">
-            <BandFilter value={selectedBands} onSubmit={setSelectedBands} />
-            <LocationFilter value={selectedLocations} onSubmit={setSelectedLocations} />
-            <YearsFilter value={selectedYears} onSubmit={setSelectedYears} />
-            <BandCountFilter value={selectedBandCount} onSubmit={setSelectedBandCount} />
+            <BandFilter values={selectedBands} onSubmit={setSelectedBands} />
+            <LocationFilter values={selectedLocations} onSubmit={setSelectedLocations} />
+            <YearsFilter values={selectedYears} onSubmit={setSelectedYears} />
+            <BandCountFilter values={selectedBandCount} onSubmit={setSelectedBandCount} />
           </div>
           <div className="scrollbar-hidden -mx-4 flex items-center gap-4 overflow-x-auto px-4">
             {session && (

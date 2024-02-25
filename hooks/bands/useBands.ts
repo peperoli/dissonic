@@ -16,6 +16,11 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
       { count: 'estimated' }
     )
   }
+
+  if (options?.filter?.ids && options.filter.ids.length > 0) {
+    filterQuery = filterQuery.in('id', options.filter.ids)
+  }
+
   if (options?.filter?.countries && options.filter.countries.length > 0) {
     filterQuery = filterQuery.in('country_id', options.filter.countries)
   }
@@ -54,7 +59,7 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
   return { data, count }
 }
 
-export const useBands = (initialBands?: ExtendedRes<Band[]>, options?: BandFetchOptions, enabled: boolean = true) => {
+export const useBands = (initialBands?: ExtendedRes<Band[]> | null, options?: BandFetchOptions, enabled: boolean = true) => {
   return useQuery(['bands', JSON.stringify(options)], () => fetchBands(options), {
     initialData: initialBands,
     keepPreviousData: true,

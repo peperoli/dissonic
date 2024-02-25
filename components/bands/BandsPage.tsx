@@ -5,7 +5,7 @@ import { AddBandForm } from './AddBandForm'
 import { ArrowUturnLeftIcon, PlusIcon } from '@heroicons/react/20/solid'
 import { PageWrapper } from '../layout/PageWrapper'
 import { Table } from '../Table'
-import { Search } from '../Search'
+import { SearchField } from '../forms/SearchField'
 import { Button } from '../Button'
 import useMediaQuery from '../../hooks/helpers/useMediaQuery'
 import { Pagination } from '../layout/Pagination'
@@ -108,9 +108,9 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
         </div>
         <Table>
           <div className="flex md:grid md:grid-cols-3 gap-2 md:gap-4 -mx-4 px-4 overflow-x-auto md:overflow-visible scrollbar-hidden">
-            <Search name="searchBands" placeholder="Bands" query={query} setQuery={setQuery} />
-            <CountryFilter value={selectedCountries} onSubmit={setSelectedCountries} />
-            <GenreFilter value={selectedGenres} onSubmit={setSelectedGenres} />
+            <SearchField name="searchBands" placeholder="Bands" query={query} setQuery={setQuery} />
+            <CountryFilter values={selectedCountries} onSubmit={setSelectedCountries} />
+            <GenreFilter values={selectedGenres} onSubmit={setSelectedGenres} />
           </div>
           <div className="flex gap-4 items-center">
             <div className="my-4 text-sm text-slate-300">

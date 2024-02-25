@@ -6,9 +6,9 @@ import { useLocations } from '../../hooks/locations/useLocations'
 import { AddConcert, EditConcert, ReorderableListItem } from '../../types/types'
 import { Button } from '../Button'
 import { CheckBox } from '../forms/CheckBox'
-import { Select } from '../forms/controlled/Select'
 import { TextField } from '../forms/TextField'
 import { EditBandsButton } from './EditBandsButton'
+import { SelectField } from '../forms/SelectField'
 
 interface FormProps {
   defaultValues?: EditConcert
@@ -70,40 +70,39 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
           />
         )}
       />
-      {locations && (
-        <Controller
-          name="location_id"
-          control={control}
-          rules={{ required: true }}
-          render={({ field: { value, onChange } }) => (
-            <Select
-              value={value}
-              onValueChange={onChange}
-              options={locations.data?.map(item => ({ id: item.id, name: item.name }))}
-              error={errors.location_id}
-              label="Location"
-            />
-          )}
-        />
-      )}
+      <Controller
+        name="location_id"
+        control={control}
+        rules={{ required: true }}
+        render={({ field: { value, onChange } }) => (
+          <SelectField
+            name="location_id"
+            value={value}
+            onValueChange={onChange}
+            items={locations?.data.map(item => ({ id: item.id, name: item.name }))}
+            error={errors.location_id}
+            label="Location"
+          />
+        )}
+      />
       {isSimilar && (
-        <div className="p-4 rounded-lg bg-yellow/10">
+        <div className="rounded-lg bg-yellow/10 p-4">
           <div className="flex items-center gap-4 text-yellow">
-            <ExclamationTriangleIcon className="flex-none h-icon" />
+            <ExclamationTriangleIcon className="h-icon flex-none" />
             <p>
               <strong>Achtung:</strong>{' '}
               {similarConcerts.length === 1 ? 'Ein Konzert' : 'Folgende Konzerte'} mit ähnlichen
               Eigenschaften {similarConcerts.length === 1 ? 'existiert' : 'existieren'} bereits:
             </p>
           </div>
-          <div className="grid gap-2 mt-4">
+          <div className="mt-4 grid gap-2">
             {similarConcerts.map(item => (
               <Link
                 key={item.id}
                 href={`/concerts/${item.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block px-4 py-2 rounded-md bg-slate-800 shadow-lg hover:bg-slate-750"
+                className="block rounded-md bg-slate-800 px-4 py-2 shadow-lg hover:bg-slate-750"
               >
                 <div>{new Date(item.date_start).toLocaleDateString('de-CH')}</div>
                 <div className="font-bold">
@@ -118,7 +117,7 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
           </div>
         </div>
       )}
-      <div className="sticky md:static bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10">
+      <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:static md:justify-end md:pb-0 [&>*]:flex-1">
         <Button onClick={close} label="Abbrechen" />
         <Button
           type="submit"

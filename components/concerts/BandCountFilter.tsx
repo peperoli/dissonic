@@ -17,7 +17,7 @@ const BandCountRangeSlider = ({ ...props }: BandCountRangeSliderProps) => {
 
   if (!bandCounts || bandCounts.length === 0 || isLoading) {
     return (
-      <div className="flex items-center justify-center w-full h-56">
+      <div className="flex h-56 w-full items-center justify-center">
         <SpinnerIcon className="h-8 animate-spin" />
       </div>
     )
@@ -26,22 +26,21 @@ const BandCountRangeSlider = ({ ...props }: BandCountRangeSliderProps) => {
 }
 
 interface BandCountFilterProps {
-  value: number[] | null
+  values: number[] | null
   onSubmit: (value: number[]) => void
 }
 
-export const BandCountFilter = ({ value, onSubmit }: BandCountFilterProps) => {
-  const [selectedIds, setSelectedIds] = useState(value ?? [])
-  const count = value?.[1] && value?.[0] ? value[1] - value[0] + 1 : 0
+export const BandCountFilter = ({ values: submittedValues, onSubmit }: BandCountFilterProps) => {
+  const [selectedIds, setSelectedIds] = useState(submittedValues ?? [])
 
   useEffect(() => {
-    setSelectedIds(value ?? [])
-  }, [value])
+    setSelectedIds(submittedValues ?? [])
+  }, [submittedValues])
   return (
     <FilterButton
-      name="Bands pro Konzert"
-      selectedOptions={selectedIds}
-      count={count}
+      label="Anzahl Bands"
+      submittedValues={submittedValues}
+      selectedIds={selectedIds}
       onSubmit={onSubmit}
     >
       <BandCountRangeSlider selectedOptions={selectedIds} setSelectedOptions={setSelectedIds} />

@@ -40,7 +40,7 @@ export const ConcertCard = ({ concert }: ConcertCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const { data: session } = useSession()
   const fanIds = new Set(concert?.bands_seen?.map(item => item.user_id))
-  const { data: profiles } = useProfiles({ ids: [...fanIds] })
+  const { data: profiles } = useProfiles({ ids: [...fanIds] }, fanIds.size > 0)
   const router = useRouter()
   const bandsCount = concert.bands?.length || 0
   const bandsSeen = concert.bands_seen?.filter(item => item.user_id === session?.user.id)

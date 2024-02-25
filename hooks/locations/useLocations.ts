@@ -14,6 +14,10 @@ async function fetchLocations(options?: LocationFetchOptions): Promise<ExtendedR
     )
   }
 
+  if (options?.filter?.ids && options.filter.ids.length > 0) {
+    query = query.in('id', options.filter.ids)
+  }
+
   const { count: initialCount, error: countError } = await query
 
   if (countError) {
@@ -36,7 +40,7 @@ async function fetchLocations(options?: LocationFetchOptions): Promise<ExtendedR
 }
 
 export const useLocations = (
-  initialLocations?: ExtendedRes<Location[]>,
+  initialLocations?: ExtendedRes<Location[]> | null,
   options?: LocationFetchOptions
 ) => {
   return useQuery(['locations', JSON.stringify(options)], () => fetchLocations(options), {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { FilterButton } from './../FilterButton'
-import { MultiSelect } from './../MultiSelect'
 import { useGenres } from './../../hooks/useGenres'
+import { Select } from '../forms/Select'
 
 type GenreMultiSelectProps = {
   selectedOptions: number[]
@@ -11,36 +11,36 @@ type GenreMultiSelectProps = {
 const GenreMultiSelect = ({ selectedOptions, setSelectedOptions }: GenreMultiSelectProps) => {
   const { data: genres, isLoading } = useGenres()
   return (
-    <div className="relative h-full">
-      <MultiSelect
-        name="Genres"
-        options={genres}
-        isLoading={isLoading}
-        selectedOptions={selectedOptions}
-        setSelectedOptions={setSelectedOptions}
-        alwaysOpen
-        fullHeight
-      />
-    </div>
+    <Select
+      name="Genre"
+      items={genres}
+      isLoading={isLoading}
+      multiple
+      values={selectedOptions}
+      onValuesChange={setSelectedOptions}
+      fixedHeight
+    />
   )
 }
 
 type GenreFilterProps = {
-  value: number[] | null
+  values: number[] | null
   onSubmit: (value: number[]) => void
 }
 
-export const GenreFilter = ({ value, onSubmit }: GenreFilterProps) => {
-  const [selectedIds, setSelectedIds] = useState(value ?? [])
+export const GenreFilter = ({ values: submittedValues, onSubmit }: GenreFilterProps) => {
+  const { data: genres } = useGenres({ ids: submittedValues })
+  const [selectedIds, setSelectedIds] = useState(submittedValues ?? [])
 
   useEffect(() => {
-    setSelectedIds(value ?? [])
-  }, [value])
+    setSelectedIds(submittedValues ?? [])
+  }, [submittedValues])
   return (
     <FilterButton
-      name="Genres"
-      selectedOptions={selectedIds}
-      count={value?.length ?? 0}
+      label="Genre"
+      items={genres}
+      selectedIds={selectedIds}
+      submittedValues={submittedValues}
       onSubmit={onSubmit}
     >
       <GenreMultiSelect selectedOptions={selectedIds} setSelectedOptions={setSelectedIds} />

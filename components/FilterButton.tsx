@@ -1,66 +1,87 @@
 import { Button } from './Button'
-import { Popover } from '@headlessui/react'
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 import { ChevronDown, X } from 'lucide-react'
+import { ListItem } from '@/types/types'
+import { TruncatedList } from 'react-truncate-list'
+import clsx from 'clsx'
+import * as Dialog from '@radix-ui/react-dialog'
+import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 
 interface FilterButtonProps {
-  name: string
-  selectedOptions: number[]
+  label: string
+  type?: 'multiselect' | 'range'
+  items?: ListItem[]
+  selectedIds: number[]
+  submittedValues: number[] | null
   onSubmit: (value: number[]) => void
-  count: number
   children: ReactNode
 }
 
 export const FilterButton = ({
-  name,
-  selectedOptions,
+  label,
+  type = 'multiselect',
+  items,
+  selectedIds,
+  submittedValues,
   onSubmit,
-  count,
   children,
 }: FilterButtonProps) => {
+  const [open, setOpen] = useState(false)
+  const isDesktop = useMediaQuery('(min-width: 768px)')
+  const close = () => setOpen(false)
+  const count = submittedValues?.length ?? 0
   return (
-    <Popover className="relative">
-      {({ open, close }) => {
-        return (
-          <>
-            <Popover.Button className="btn btn-filter btn-secondary w-full h-full">
-              <span className="whitespace-nowrap overflow-hidden text-ellipsis">
-                <span>{name}</span>
-                {count > 0 && (
-                  <>
-                    :{' '}
-                    <span className="px-1 py-0.5 rounded-md bg-slate-800">{count} ausgewählt</span>
-                  </>
-                )}
-              </span>
-              <ChevronDown
-                className={`size-icon flex-none${open ? ' transform rotate-180' : ''}`}
-              />
-            </Popover.Button>
-            <Popover.Panel className="fixed md:absolute flex flex-col overflow-hidden inset-0 md:inset-auto min-w-full md:mt-1 p-4 md:rounded-lg bg-slate-700 shadow-xl z-20">
-              <div className="flex md:hidden justify-between items-center gap-4">
-                <h2 className="mb-0 capitalize">{name}</h2>
-                <Button
-                  onClick={() => close()}
-                  label="Schliessen"
-                  contentType="icon"
-                  icon={<X className="size-icon" />}
-                />
+    <div className="relative">
+      <Dialog.Root open={open} onOpenChange={setOpen} modal={!isDesktop}>
+        <Dialog.Trigger className="flex gap-2 w-full items-center whitespace-nowrap rounded-lg bg-slate-700 px-4 py-2">
+          <div>{count > 0 ? <>{label}:&nbsp;</> : label}</div>
+          {count > 0 &&
+            submittedValues &&
+            (type === 'range' ? (
+              <div className="whitespace-nowrap rounded bg-slate-800 px-1 py-0.5 text-sm">
+                {Math.min(...submittedValues)}&thinsp;–&thinsp;{Math.max(...submittedValues)}
               </div>
-              {children}
-              <Button
-                onClick={() => {
-                  onSubmit(selectedOptions)
-                  close()
-                }}
-                label="Übernehmen"
-                appearance="primary"
-                className="mt-2"
-              />
-            </Popover.Panel>
-          </>
-        )
-      }}
-    </Popover>
+            ) : (
+              <TruncatedList
+                renderTruncator={({ hiddenItemsCount }) => <div>+{hiddenItemsCount}</div>}
+                className="flex w-full items-center gap-1 overflow-auto"
+              >
+                {items
+                  ?.filter(item => submittedValues.includes(item.id))
+                  .map(item => (
+                    <li
+                      className="whitespace-nowrap rounded bg-slate-800 px-1 py-0.5 text-sm"
+                      key={item.id}
+                    >
+                      {item.name}
+                    </li>
+                  ))}
+              </TruncatedList>
+            ))}
+          <ChevronDown className={clsx('ml-auto size-icon flex-none', open && 'rotate-180')} />
+        </Dialog.Trigger>
+        <Dialog.Content className="fixed inset-0 z-20 flex min-w-full flex-col overflow-hidden bg-slate-700 p-4 shadow-xl md:absolute md:inset-auto md:mt-1 md:rounded-lg">
+          <div className="mb-2 flex items-center justify-between gap-4 md:hidden">
+            <h2 className="mb-0 capitalize">{label}</h2>
+            <Button
+              onClick={() => close()}
+              label="Schliessen"
+              contentType="icon"
+              icon={<X className="size-icon" />}
+            />
+          </div>
+          {children}
+          <Button
+            onClick={() => {
+              onSubmit(selectedIds)
+              close()
+            }}
+            label="Übernehmen"
+            appearance="primary"
+            className="mt-2"
+          />
+        </Dialog.Content>
+      </Dialog.Root>
+    </div>
   )
 }

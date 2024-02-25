@@ -1,11 +1,10 @@
 import { useBands } from '../../hooks/bands/useBands'
 import { AddBand, EditBand } from '../../types/types'
 import { Button } from '../Button'
-import { MultiSelect } from '../MultiSelect'
 import { SpotifyArtistSelect } from './SpotifyArtistSelect'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { TextField } from '../forms/TextField'
-import { Select } from '../forms/controlled/Select'
+import { SelectField } from '../forms/SelectField'
 import { useCountries } from '../../hooks/useCountries'
 import { useGenres } from '../../hooks/useGenres'
 
@@ -48,46 +47,47 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
       {isSimilar && (
         <div className="mt-2">
           <p className="text-red">Vorsicht, diese Band könnte schon vorhanden sein:</p>
-          <ul className="list-disc list-inside text-slate-300">
+          <ul className="list-inside list-disc text-slate-300">
             {similarBands.map(band => (
               <li key={band.id}>{band.name}</li>
             ))}
           </ul>
         </div>
       )}
-      {countries && (
-        <Controller
-          name="country_id"
-          control={control}
-          rules={{ required: true }}
-          render={({ field: { value, onChange } }) => (
-            <Select
-              value={value ?? null}
-              onValueChange={onChange}
-              options={countries.map(item => ({
-                id: item.id,
-                name: regionNames.of(item.iso2) ?? item.iso2,
-              }))}
-              error={errors.country_id}
-              label="Land"
-            />
-          )}
-        />
-      )}
-      {genres && (
-        <Controller
-          name="genres"
-          control={control}
-          render={({ field: { value = [], onChange } }) => (
-            <MultiSelect
-              name="genres"
-              options={genres}
-              selectedOptions={value.map(item => item.id)}
-              setSelectedOptions={value => onChange(genres.filter(item => value.includes(item.id)))}
-            />
-          )}
-        />
-      )}
+      <Controller
+        name="country_id"
+        control={control}
+        rules={{ required: true }}
+        render={({ field: { value = null, onChange } }) => (
+          <SelectField
+            name="country_id"
+            value={value}
+            onValueChange={onChange}
+            items={countries?.map(item => ({
+              id: item.id,
+              name: regionNames.of(item.iso2) ?? item.iso2,
+            }))}
+            error={errors.country_id}
+            label="Land"
+          />
+        )}
+      />
+      <Controller
+        name="genres"
+        control={control}
+        render={({ field: { value = [], onChange } }) => (
+          <SelectField
+            name="genres"
+            items={genres}
+            multiple
+            values={value.map(item => item.id)}
+            onValuesChange={value =>
+              onChange(genres?.filter(item => value.includes(item.id)) ?? [])
+            }
+            label="Genres"
+          />
+        )}
+      />
       <Controller
         name="spotify_artist_id"
         control={control}
@@ -95,7 +95,7 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
           <SpotifyArtistSelect bandName={watch('name')} value={value} onChange={onChange} />
         )}
       />
-      <div className="sticky md:static bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10 md:z-0">
+      <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:static md:z-0 md:justify-end md:pb-0 [&>*]:flex-1">
         <Button onClick={close} label="Abbrechen" />
         <Button
           type="submit"

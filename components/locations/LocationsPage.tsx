@@ -6,7 +6,7 @@ import { Table } from '../Table'
 import { TableRow } from '../TableRow'
 import { AddLocationForm } from './AddLocationForm'
 import { useEffect, useState } from 'react'
-import { Search } from '../Search'
+import { SearchField } from '../forms/SearchField'
 import { Button } from '../Button'
 import useMediaQuery from '../../hooks/helpers/useMediaQuery'
 import { ExtendedRes, Location } from '../../types/types'
@@ -73,7 +73,7 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
             )}
           </div>
           <Table>
-            <Search
+            <SearchField
               name="searchLocations"
               placeholder="Locations"
               query={query}

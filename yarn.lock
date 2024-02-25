@@ -4286,6 +4286,11 @@ react-toastify@^9.0.8:
   dependencies:
     clsx "^1.1.1"
 
+react-truncate-list@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/react-truncate-list/-/react-truncate-list-1.0.3.tgz#8a1542217774a27c7b7cae239c47b63549820eb8"
+  integrity sha512-Hat8P7X0fk+f3FHUnHIMEbQ4aOjCYvYc7vow2e5sQ4QzUlHJO54wzGdGoRHpUiiq0Gf11pimW6+HeWvcilN4qg==
+
 react@^18.2.0:
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/react/-/react-18.2.0.tgz#555bd98592883255fa00de14f1151a917b5d77d5"
