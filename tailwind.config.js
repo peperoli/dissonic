@@ -16,7 +16,7 @@ module.exports = {
       purple: '#C462F1',
       deepPurple: '#661881',
       blue: {
-        300: '#75C8F0',
+        DEFAULT: '#75C8F0',
       },
       slate: {
         50: '#F0F3F5',

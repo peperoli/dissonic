@@ -18,10 +18,7 @@ import { StatusBanner } from '../forms/StatusBanner'
 import { CountryFilter } from './CountryFilter'
 import { GenreFilter } from './GenreFilter'
 import { BandTableRow } from './TableRow'
-import {
-  parseAsArrayOf,
-  parseAsInteger, useQueryState
-} from 'next-usequerystate'
+import { parseAsArrayOf, parseAsInteger, useQueryState } from 'next-usequerystate'
 import Cookies from 'js-cookie'
 
 interface BandsPageProps {
@@ -42,11 +39,9 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
   const [query, setQuery] = useState('')
   const debounceQuery = useDebounce(query, 200)
   const { data: bands } = useBands(initialBands, {
-    filter: {
-      countries: selectedCountries,
-      genres: selectedGenres,
-      search: debounceQuery,
-    },
+    countries: selectedCountries,
+    genres: selectedGenres,
+    search: debounceQuery,
     page: currentPage,
     size: perPage,
   })
@@ -66,7 +61,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
   }
 
   const isDesktop = useMediaQuery('(min-width: 768px)')
-  
+
   const queryStateString = window.location.search
   useEffect(() => {
     Cookies.set('bandQueryState', queryStateString, { sameSite: 'strict' })
@@ -95,7 +90,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
             />
           </div>
         )}
-        <div className="sr-only md:not-sr-only flex justify-between md:mb-6">
+        <div className="sr-only flex justify-between md:not-sr-only md:mb-6">
           <h1 className="mb-0">Bands</h1>
           {isDesktop && (
             <Button
@@ -107,19 +102,19 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
           )}
         </div>
         <Table>
-          <div className="flex md:grid md:grid-cols-3 gap-2 md:gap-4 -mx-4 px-4 overflow-x-auto md:overflow-visible scrollbar-hidden">
+          <div className="scrollbar-hidden -mx-4 flex gap-2 overflow-x-auto px-4 md:grid md:grid-cols-3 md:gap-4 md:overflow-visible">
             <SearchField name="searchBands" placeholder="Bands" query={query} setQuery={setQuery} />
             <CountryFilter values={selectedCountries} onSubmit={setSelectedCountries} />
             <GenreFilter values={selectedGenres} onSubmit={setSelectedGenres} />
           </div>
-          <div className="flex gap-4 items-center">
+          <div className="flex items-center gap-4">
             <div className="my-4 text-sm text-slate-300">
               {bands?.count}&nbsp;{bands?.count === 1 ? 'Eintrag' : 'Einträge'}
             </div>
             {(selectedCountries || selectedGenres) && (
               <button
                 onClick={resetAll}
-                className="flex gap-2 px-2 py-1 rounded-md text-sm hover:bg-slate-700"
+                className="flex gap-2 rounded-md px-2 py-1 text-sm hover:bg-slate-700"
               >
                 <ArrowUturnLeftIcon className="h-icon text-slate-300" />
                 Zurücksetzen

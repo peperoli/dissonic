@@ -31,7 +31,7 @@ export const Select = ({ name, items, isLoading, fixedHeight, ...props }: Select
   return (
     <>
       <SearchField ref={searchRef} name={`${name}-search`} query={query} setQuery={setQuery} />
-      <div className={clsx('size-full overflow-auto p-2', fixedHeight ? 'md:h-72' : 'md:max-h-72')}>
+      <div className={clsx('size-full overflow-auto pt-2', fixedHeight ? 'md:h-72' : 'md:max-h-72')}>
         {isLoading ? (
           <div className="grid h-full w-full place-content-center p-4">
             <Loader2 className="size-8 animate-spin" />

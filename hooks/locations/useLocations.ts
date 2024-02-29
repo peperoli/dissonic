@@ -6,16 +6,16 @@ import { ExtendedRes, Location, LocationFetchOptions } from '@/types/types'
 async function fetchLocations(options?: LocationFetchOptions): Promise<ExtendedRes<Location[]>> {
   let query = supabase.from('locations').select('*', { count: 'estimated' })
 
-  if (options?.filter?.search) {
+  if (options?.search) {
     query = supabase.rpc(
       'search_locations',
-      { search_string: options.filter.search },
+      { search_string: options.search },
       { count: 'estimated' }
     )
   }
 
-  if (options?.filter?.ids && options.filter.ids.length > 0) {
-    query = query.in('id', options.filter.ids)
+  if (options?.ids && options.ids.length > 0) {
+    query = query.in('id', options.ids)
   }
 
   const { count: initialCount, error: countError } = await query

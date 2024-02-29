@@ -2,7 +2,7 @@ import clsx from 'clsx'
 import { LucideIcon } from 'lucide-react'
 
 type SegmentedControlProps = {
-  options: { value: string; label: string; icon: LucideIcon }[]
+  options: { value: string; label: string; icon?: LucideIcon }[]
   value: string
   onValueChange: (value: string) => void
   iconOnly?: boolean
@@ -15,9 +15,10 @@ export function SegmentedControl({
   iconOnly,
 }: SegmentedControlProps) {
   return (
-    <fieldset className="flex rounded-lg bg-slate-800 p-1">
+    <fieldset className="flex w-fit rounded-lg bg-slate-750 p-1">
       {options.map(option => (
         <button
+        type='button'
           onClick={() => onValueChange(option.value)}
           className={clsx(
             'flex items-center gap-2 rounded-md px-2 py-1',
@@ -25,7 +26,7 @@ export function SegmentedControl({
           )}
           key={option.value}
         >
-          {<option.icon className="size-icon" />}
+          {option.icon && <option.icon className="size-icon" />}
           <span className={clsx(iconOnly && 'sr-only')}>{option.label}</span>
         </button>
       ))}

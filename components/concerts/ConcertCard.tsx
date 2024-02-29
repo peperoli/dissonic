@@ -19,7 +19,7 @@ const ConcertDate = ({ date, isFirst }: ConcertDateProps) => {
   return (
     <div
       className={clsx(
-        'relative flex-none flex flex-col justify-center items-center w-16 aspect-square border border-slate-700 rounded-lg transition duration-200',
+        'relative flex aspect-square w-16 flex-none flex-col items-center justify-center rounded-lg border border-slate-700 transition duration-200',
         clsx(isFirst && 'bg-slate-700 group-hover:bg-slate-600')
       )}
     >
@@ -66,24 +66,25 @@ export const ConcertCard = ({ concert }: ConcertCardProps) => {
   return (
     <div
       onClick={() => router.push(`/concerts/${concert.id}`)}
-      className="flex group gap-4 p-5 rounded-2xl bg-slate-800 hover:cursor-pointer"
+      className="group flex gap-4 rounded-2xl bg-slate-800 p-5 hover:cursor-pointer"
     >
       <div className="flex flex-col items-center">
         <ConcertDate date={new Date(concert.date_start)} isFirst />
         {concert.date_end && concert.date_end !== concert.date_start && (
           <>
-            <div className="h-2 md:h-4 border-l border-slate-700" />
+            <div className="h-2 border-l border-slate-700 md:h-4" />
             <ConcertDate date={new Date(concert.date_end)} />
           </>
         )}
       </div>
       <div>
-        {concert.name && (
-          <div className="w-fit mb-2 px-3 py-1 rounded-full font-bold text-sm text-slate-850 bg-purple">
-            {concert.name}
+        {(concert.festival_root || concert.name) && (
+          <div className={clsx("mb-2 w-fit rounded-full px-3 py-1 border-2 text-sm font-bold", concert.festival_root ? 'border-purple text-purple' : 'border-blue text-blue')}>
+            {concert.festival_root ? concert.festival_root.name + ' ' + new Date(concert.date_start).getFullYear() :
+              concert.name}
           </div>
         )}
-        <div className="flex flex-wrap items-center gap-2 mb-2">
+        <div className="mb-2 flex flex-wrap items-center gap-2">
           {concert.bands &&
             concert.bands.slice(0, isExpanded ? undefined : visibleBandCount).map((band, index) => (
               <li role="presentation" className="flex gap-2" key={band.id}>
@@ -108,22 +109,22 @@ export const ConcertCard = ({ concert }: ConcertCardProps) => {
                 setIsExpanded(prev => !prev)
                 event?.stopPropagation()
               }}
-              className="px-1.5 rounded-md text-slate-300 bg-slate-700"
+              className="rounded-md bg-slate-700 px-1.5 text-slate-300"
             >
               {isExpanded ? 'Weniger' : `+${bandsCount - visibleBandCount}`}
             </button>
           )}
         </div>
-        <div className="flex gap-4 w-full mb-2">
+        <div className="mb-2 flex w-full gap-4">
           <div className="inline-flex items-center text-sm">
-            <MapPinIcon className="h-icon mr-2 text-slate-300" />
+            <MapPinIcon className="mr-2 h-icon text-slate-300" />
             {concert.location?.name}
           </div>
         </div>
         {profiles && (
           <div className="flex flex-wrap gap-2 md:gap-x-4">
             {profiles.map(item => (
-              <UserItem user={item} size='sm' usernameIsHidden={!isDesktop} key={item.id} />
+              <UserItem user={item} size="sm" usernameIsHidden={!isDesktop} key={item.id} />
             ))}
           </div>
         )}

@@ -24,6 +24,7 @@ import clsx from 'clsx'
 import { useConcerts } from '../../hooks/concerts/useConcerts'
 import { ConcertCard } from '../concerts/ConcertCard'
 import { Score } from './Score'
+import { UserItem } from '../shared/UserItem'
 
 type ConcertListProps = {
   userId: string
@@ -32,7 +33,7 @@ type ConcertListProps = {
 function ConcertList({ userId }: ConcertListProps) {
   const [size, setSize] = useState(25)
   const { data: concerts, fetchStatus } = useConcerts(undefined, {
-    filter: { bandsSeenUsers: [userId] },
+    bandsSeenUsers: [userId],
     sort: { sort_by: 'date_start', sort_asc: false },
     size,
   })
@@ -103,20 +104,8 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
         <main className="container">
           {profile ? (
             <div>
-              <div className="flex flex-wrap items-center gap-4 mb-6">
-                <div className="relative flex-shrink-0 flex justify-center items-center w-16 h-16 rounded-full text-lg text-slate-850 bg-blue-300">
-                  {avatarUrl ? (
-                    <Image
-                      src={avatarUrl}
-                      alt="Profile picture"
-                      fill={true}
-                      className="object-cover rounded-full"
-                    />
-                  ) : (
-                    <UserIcon className="h-icon" />
-                  )}
-                </div>
-                <h1 className="mb-0">{profile.username}</h1>
+              <div className="mb-6 flex flex-wrap items-center gap-4">
+                <UserItem user={profile} size="lg" />
                 {isFriend && (
                   <p className="flex gap-2 text-slate-300">
                     <CheckCircleIcon className="h-icon" />
@@ -133,7 +122,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                   />
                 )}
               </div>
-              <div className="grid md:grid-cols-2 gap-4 mb-6">
+              <div className="mb-6 grid gap-4 md:grid-cols-2">
                 <Score
                   uniqueBandsSeen={uniqueBandsSeen}
                   bandsSeen={bands}
@@ -141,13 +130,13 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                   festivalsSeen={festivalsSeen}
                 />
                 <Tab.Group as="section" className="col-span-full">
-                  <Tab.List className="mb-4 px-3 rounded-lg bg-slate-700">
+                  <Tab.List className="mb-4 rounded-lg bg-slate-700 px-3">
                     {['Statistik', 'Konzerte'].map(item => (
-                      <Tab className="px-3 rounded" key={item}>
+                      <Tab className="rounded px-3" key={item}>
                         {({ selected }) => (
                           <span
                             className={clsx(
-                              'block py-3 border-b-2',
+                              'block border-b-2 py-3',
                               selected ? 'border-venom' : 'border-transparent text-slate-300'
                             )}
                           >
@@ -168,7 +157,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                       />
                     )}
                     {bandsSeen && uniqueBandsSeen && (
-                      <div className="col-span-full p-6 rounded-lg bg-slate-800">
+                      <div className="col-span-full rounded-lg bg-slate-800 p-6">
                         <GenreChart
                           bands={bands}
                           uniqueBands={uniqueBandsSeen}
@@ -177,12 +166,12 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                       </div>
                     )}
                     {concertsSeen && (
-                      <div className="col-span-full p-6 rounded-lg bg-slate-800">
+                      <div className="col-span-full rounded-lg bg-slate-800 p-6">
                         <ConcertsByYear concerts={concertsSeen} />
                       </div>
                     )}
                     {concertsSeen && (
-                      <div className="col-span-full p-6 rounded-lg bg-slate-800">
+                      <div className="col-span-full rounded-lg bg-slate-800 p-6">
                         <ConcertsByMonth concerts={concertsSeen} />
                       </div>
                     )}

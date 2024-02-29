@@ -12,18 +12,24 @@ export type Database = {
       bands: {
         Row: {
           country_id: number | null
+          created_at: string | null
+          creator_id: string | null
           id: number
           name: string
           spotify_artist_id: string | null
         }
         Insert: {
           country_id?: number | null
+          created_at?: string | null
+          creator_id?: string | null
           id?: number
           name: string
           spotify_artist_id?: string | null
         }
         Update: {
           country_id?: number | null
+          created_at?: string | null
+          creator_id?: string | null
           id?: number
           name?: string
           spotify_artist_id?: string | null
@@ -34,6 +40,13 @@ export type Database = {
             columns: ["country_id"]
             isOneToOne: false
             referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_bands_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           }
         ]
@@ -76,8 +89,10 @@ export type Database = {
       concerts: {
         Row: {
           created_at: string | null
+          creator_id: string | null
           date_end: string | null
           date_start: string
+          festival_root_id: number | null
           id: string
           is_festival: boolean
           location_id: number
@@ -85,8 +100,10 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          creator_id?: string | null
           date_end?: string | null
           date_start: string
+          festival_root_id?: number | null
           id?: string
           is_festival?: boolean
           location_id: number
@@ -94,8 +111,10 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          creator_id?: string | null
           date_end?: string | null
           date_start?: string
+          festival_root_id?: number | null
           id?: string
           is_festival?: boolean
           location_id?: number
@@ -107,6 +126,20 @@ export type Database = {
             columns: ["location_id"]
             isOneToOne: false
             referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_concerts_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_concerts_festival_root_id_fkey"
+            columns: ["festival_root_id"]
+            isOneToOne: false
+            referencedRelation: "festival_roots"
             referencedColumns: ["id"]
           }
         ]
@@ -164,6 +197,48 @@ export type Database = {
           name?: string | null
         }
         Relationships: []
+      }
+      festival_roots: {
+        Row: {
+          created_at: string
+          creator_id: string
+          default_location_id: number | null
+          id: number
+          name: string
+          website: string | null
+        }
+        Insert: {
+          created_at?: string
+          creator_id?: string
+          default_location_id?: number | null
+          id?: number
+          name: string
+          website?: string | null
+        }
+        Update: {
+          created_at?: string
+          creator_id?: string
+          default_location_id?: number | null
+          id?: number
+          name?: string
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_festival_roots_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_festival_roots_default_location_id_fkey"
+            columns: ["default_location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       friends: {
         Row: {
@@ -325,20 +400,34 @@ export type Database = {
       locations: {
         Row: {
           city: string
+          created_at: string | null
+          creator_id: string | null
           id: number
           name: string
         }
         Insert: {
           city: string
+          created_at?: string | null
+          creator_id?: string | null
           id?: number
           name: string
         }
         Update: {
           city?: string
+          created_at?: string | null
+          creator_id?: string | null
           id?: number
           name?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "public_locations_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       profiles: {
         Row: {
@@ -446,6 +535,8 @@ export type Database = {
         }
         Returns: {
           country_id: number | null
+          created_at: string | null
+          creator_id: string | null
           id: number
           name: string
           spotify_artist_id: string | null
@@ -457,6 +548,8 @@ export type Database = {
         }
         Returns: {
           city: string
+          created_at: string | null
+          creator_id: string | null
           id: number
           name: string
         }[]

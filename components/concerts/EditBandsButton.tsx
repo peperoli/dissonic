@@ -17,7 +17,7 @@ const BandsListManager = ({ initialListItems, onSave }: BandsListManagerProps) =
   const debouncedSearch = useDebounce(search, 200)
   const { data: bands, fetchStatus } = useBands(
     undefined,
-    { filter: { search: debouncedSearch } },
+    { search: debouncedSearch },
     !!debouncedSearch
   )
   return (
@@ -52,17 +52,17 @@ export const EditBandsButton = ({ value, onChange, error }: EditBandsButtonProps
           type="button"
           onClick={() => setIsOpen(true)}
           className={clsx(
-            'group flex justify-between items-center gap-4 w-full px-4 pt-1 border rounded-lg bg-slate-750 text-left focus:outline-none focus:ring-2 focus:ring-venom',
+            'group flex w-full items-center justify-between gap-4 rounded-lg border bg-slate-750 px-4 pt-1 text-left focus:outline-none focus:ring-2 focus:ring-venom',
             error ? 'border-yellow' : 'border-slate-500'
           )}
         >
           <div>
             <div className="mb-1 text-xs text-slate-300 group-focus:text-venom">Bands</div>
-            <div className="relative flex flex-wrap items-start gap-1 h-12 overflow-hidden">
+            <div className="relative flex h-12 flex-wrap items-start gap-1 overflow-hidden">
               {value.length > 0 ? (
                 value.map(item => (
                   <div
-                    className="px-1.5 py-0.5 rounded bg-slate-700 text-sm font-bold"
+                    className="rounded bg-slate-700 px-1.5 py-0.5 text-sm font-bold"
                     key={item.id}
                   >
                     {item.name}

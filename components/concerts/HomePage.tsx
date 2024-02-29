@@ -11,7 +11,7 @@ import { ConcertCard } from './ConcertCard'
 import { BandFilter } from './BandFilter'
 import { LocationFilter } from './LocationFilter'
 import { YearsFilter } from './YearsFilter'
-import { BandCountFilter } from './BandCountFilter'
+import { FestivalRootFilter } from './FestivalRootFilter'
 import Cookies from 'js-cookie'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
@@ -44,8 +44,8 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
     parseAsArrayOf(parseAsInteger)
   )
   const [selectedYears, setSelectedYears] = useQueryState('years', parseAsArrayOf(parseAsInteger))
-  const [selectedBandCount, setSelectedBandCount] = useQueryState(
-    'band_count',
+  const [selectedFestivalRoots, setSelectedFestivalRoots] = useQueryState(
+    'festivals',
     parseAsArrayOf(parseAsInteger)
   )
   const [user] = useQueryState('user')
@@ -71,13 +71,11 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
   }
 
   const { data: concerts, isFetching } = useConcerts(initialConcerts, {
-    filter: {
-      bands: selectedBands,
-      locations: selectedLocations,
-      years: selectedYears,
-      bandCount: selectedBandCount,
-      bandsSeenUsers: getView(),
-    },
+    bands: selectedBands,
+    locations: selectedLocations,
+    years: selectedYears,
+    festivalRoots: selectedFestivalRoots,
+    bandsSeenUsers: getView(),
     sort,
     size,
   })
@@ -126,7 +124,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
             {(selectedBands ||
               selectedLocations ||
               selectedYears ||
-              selectedBandCount ||
+              selectedFestivalRoots ||
               selectedUserId) && (
               <Button
                 label="Zurücksetzen"
@@ -141,7 +139,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
             <BandFilter values={selectedBands} onSubmit={setSelectedBands} />
             <LocationFilter values={selectedLocations} onSubmit={setSelectedLocations} />
             <YearsFilter values={selectedYears} onSubmit={setSelectedYears} />
-            <BandCountFilter values={selectedBandCount} onSubmit={setSelectedBandCount} />
+            <FestivalRootFilter values={selectedFestivalRoots} onSubmit={setSelectedFestivalRoots} />
           </div>
           <div className="scrollbar-hidden -mx-4 flex items-center gap-4 overflow-x-auto px-4">
             {session && (

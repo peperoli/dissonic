@@ -30,7 +30,7 @@ type LocationFilterProps = {
 }
 
 export const LocationFilter = ({ values: submittedValues, onSubmit }: LocationFilterProps) => {
-  const { data: locations } = useLocations(null, { filter: { ids: submittedValues } })
+  const { data: locations } = useLocations(null, { ids: submittedValues })
   const [selectedIds, setSelectedIds] = useState(submittedValues ?? [])
 
   useEffect(() => {

@@ -23,6 +23,7 @@ const editConcert = async (newConcert: EditConcert) => {
       .update({
         name: newConcert.name,
         is_festival: newConcert.is_festival,
+        festival_root_id: newConcert.festival_root_id,
         date_start: newConcert.date_start,
         date_end: newConcert.date_end,
         location_id: newConcert.location_id,

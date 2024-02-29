@@ -24,7 +24,7 @@ export interface BandPageProps {
 export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
   const { data: band, isLoading: bandIsLoading } = useBand(initialBand)
   const { data: concerts } = useConcerts(undefined, {
-    filter: { bands: [initialBand.id] },
+    bands: [initialBand.id],
     sort: { sort_by: 'date_start', sort_asc: false },
   })
   const { data: spotifyArtistEmbed, status: spotifyArtistEmbedStatus } = useSpotifyArtistEmbed(
@@ -61,10 +61,10 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
             Zurück zu Bands
           </Link>
         </div>
-        <div className="grid gap-4 p-6 rounded-lg bg-slate-800">
+        <div className="grid gap-4 rounded-lg bg-slate-800 p-6">
           <h1>{band.name}</h1>
           {band.country && (
-            <div className="flex gap-4 items-center">
+            <div className="flex items-center gap-4">
               <MapPinIcon className="h-icon text-slate-300" />
               {regionNames.of(band.country.iso2)}
             </div>
@@ -82,7 +82,7 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
             </ul>
           </div>
           {band.spotify_artist_id && spotifyArtistEmbedStatus === 'loading' && (
-            <div className="grid place-content-center h-72 rounded-lg text-slate-300 bg-slate-750">
+            <div className="grid h-72 place-content-center rounded-lg bg-slate-750 text-slate-300">
               <SpinnerIcon className="h-8 animate-spin" />
             </div>
           )}
@@ -108,9 +108,7 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
         {concerts?.data && concerts?.data?.length > 0 && (
           <div className="grid gap-4 p-6">
             <h2 className="mb-0 text-slate-300">Konzerte mit {band.name}</h2>
-            {concerts?.data.map(item => (
-              <ConcertCard key={item.id} concert={item} />
-            ))}
+            {concerts?.data.map(item => <ConcertCard key={item.id} concert={item} />)}
           </div>
         )}
       </main>

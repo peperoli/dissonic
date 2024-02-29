@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { forwardRef, HTMLAttributes } from 'react'
+import { forwardRef, HTMLAttributes, ReactElement } from 'react'
 import { Loader2 } from 'lucide-react'
 
 type ButtonProps = {
@@ -7,7 +7,7 @@ type ButtonProps = {
   label: string
   appearance?: 'primary' | 'secondary' | 'tertiary'
   contentType?: 'text' | 'icon'
-  icon?: JSX.Element | string
+  icon?: ReactElement | string
   loading?: boolean
   disabled?: boolean
   size?: 'small' | 'medium'

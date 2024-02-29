@@ -90,7 +90,7 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
   return (
     <>
       <div className="flex gap-4 group">
-        <div className="relative flex-shrink-0 flex justify-center items-center w-8 h-8 rounded-full text-slate-850 bg-blue-300">
+        <div className="relative flex-shrink-0 flex justify-center items-center w-8 h-8 rounded-full text-slate-850 bg-blue">
           {avatarUrl ? (
             <Image
               src={avatarUrl}

@@ -27,7 +27,7 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
   const perPage = 25
   const [currentPage, setCurrentPage] = useQueryState('page', parseAsInteger.withDefault(1))
   const { data: locations } = useLocations(initialLocations, {
-    filter: { search: debounceQuery },
+    search: debounceQuery,
     page: currentPage,
     size: perPage,
   })
@@ -59,7 +59,7 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
               />
             </div>
           )}
-          <div className="sr-only md:not-sr-only flex justify-between md:mb-6">
+          <div className="sr-only flex justify-between md:not-sr-only md:mb-6">
             <h1 className="mb-0">Locations</h1>
             {isDesktop && (
               <Button
@@ -87,9 +87,9 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
             ) : (
               locations?.data.map(location => (
                 <TableRow key={location.id} href="">
-                  <div className="md:flex items-center gap-4 w-full">
-                    <div className="md:w-1/2 font-bold">{location.name}</div>
-                    <div className="md:w-1/2 text-slate-300">{location.city}</div>
+                  <div className="w-full items-center gap-4 md:flex">
+                    <div className="font-bold md:w-1/2">{location.name}</div>
+                    <div className="text-slate-300 md:w-1/2">{location.city}</div>
                   </div>
                 </TableRow>
               ))

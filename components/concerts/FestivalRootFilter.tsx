@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react'
 import { FilterButton } from './../FilterButton'
-import { useBands } from './../../hooks/bands/useBands'
 import { Select } from '../forms/Select'
+import { useFestivalRoots } from '../../hooks/concerts/useFestivalRoots'
 
-type BandMultiSelectProps = {
+type FestivalRootSelectProps = {
   values: number[]
   onValuesChange: (value: number[]) => void
 }
 
-const BandMultiSelect = ({ ...props }: BandMultiSelectProps) => {
-  const { data: bands, isLoading } = useBands()
+const FestivalRootSelect = ({ ...props }: FestivalRootSelectProps) => {
+  const { data: festivalRoots, isLoading } = useFestivalRoots()
   return (
     <Select
-      name="band"
-      items={bands?.data}
+      name="festivalRoot"
+      items={festivalRoots}
       isLoading={isLoading}
       multiple
       fixedHeight
@@ -22,13 +22,13 @@ const BandMultiSelect = ({ ...props }: BandMultiSelectProps) => {
   )
 }
 
-type BandFilterProps = {
+type FestivalRootFilterProps = {
   values: number[] | null
   onSubmit: (value: number[]) => void
 }
 
-export const BandFilter = ({ values: submittedValues, onSubmit }: BandFilterProps) => {
-  const { data: bands } = useBands(null, { ids: submittedValues })
+export const FestivalRootFilter = ({ values: submittedValues, onSubmit }: FestivalRootFilterProps) => {
+  const { data: festivalRoots } = useFestivalRoots(null, { ids: submittedValues })
   const [selectedIds, setSelectedIds] = useState<number[]>(submittedValues ?? [])
 
   useEffect(() => {
@@ -36,13 +36,13 @@ export const BandFilter = ({ values: submittedValues, onSubmit }: BandFilterProp
   }, [submittedValues])
   return (
     <FilterButton
-      label="Band"
-      items={bands?.data}
+      label="Festival"
+      items={festivalRoots}
       selectedIds={selectedIds}
       submittedValues={submittedValues}
       onSubmit={onSubmit}
     >
-      <BandMultiSelect values={selectedIds} onValuesChange={setSelectedIds} />
+      <FestivalRootSelect values={selectedIds} onValuesChange={setSelectedIds} />
     </FilterButton>
   )
 }
