@@ -57,6 +57,13 @@ module.exports = {
       minHeight: {
         96: '24rem',
       },
+      aspectRatio: {
+        '2/1': '2 / 1',
+        '4/3': '4 / 3',
+      },
+      backgroundImage: {
+        'radial-gradient': 'radial-gradient(80% 100% at top, var(--tw-gradient-stops))',
+      }
     },
   },
   plugins: [],

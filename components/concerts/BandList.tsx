@@ -94,7 +94,7 @@ export function BandList({ bands, bandsSeen, concertId }: BandListProps) {
                 <Link
                   href={`/bands/${band.id}`}
                   className={clsx(
-                    'text-lg hover:underline',
+                    'font-bold hover:underline',
                     bandsSeen?.find(bandSeen => band.id === bandSeen.band_id) && 'text-venom'
                   )}
                 >

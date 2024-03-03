@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { MapPinIcon } from '@heroicons/react/20/solid'
 import { useRouter } from 'next/navigation'
 import { Concert } from '../../types/types'
 import { useProfiles } from '../../hooks/profiles/useProfiles'
@@ -8,29 +7,8 @@ import clsx from 'clsx'
 import useMediaQuery from '../../hooks/helpers/useMediaQuery'
 import { UserItem } from '../shared/UserItem'
 import { useState } from 'react'
-
-type ConcertDateProps = {
-  date: Date
-  isFirst?: boolean
-}
-
-const ConcertDate = ({ date, isFirst }: ConcertDateProps) => {
-  const isCurrentYear = date.getFullYear() === new Date().getFullYear()
-  return (
-    <div
-      className={clsx(
-        'relative flex aspect-square w-16 flex-none flex-col items-center justify-center rounded-lg border border-slate-700 transition duration-200',
-        clsx(isFirst && 'bg-slate-700 group-hover:bg-slate-600')
-      )}
-    >
-      <div className={clsx('flex items-center', isCurrentYear ? 'flex-col' : 'gap-1')}>
-        <span className="font-bold">{date.toLocaleDateString('de-CH', { day: 'numeric' })}</span>
-        <span className="text-sm">{date.toLocaleDateString('de-CH', { month: 'short' })}</span>
-      </div>
-      {!isCurrentYear && <span className="text-sm">{date.getFullYear()}</span>}
-    </div>
-  )
-}
+import { ConcertDate } from './ConcertDate'
+import { MapPin } from 'lucide-react'
 
 interface ConcertCardProps {
   concert: Concert
@@ -79,7 +57,7 @@ export const ConcertCard = ({ concert }: ConcertCardProps) => {
       </div>
       <div>
         {(concert.festival_root || concert.name) && (
-          <div className={clsx("mb-2 w-fit rounded-full px-3 py-1 border-2 text-sm font-bold", concert.festival_root ? 'border-purple text-purple' : 'border-blue text-blue')}>
+          <div className={clsx("mb-2 w-fit rounded-md px-2 py-1 border-2 text-sm font-bold", concert.festival_root ? 'border-purple/50 text-purple' : 'border-blue/50 text-blue')}>
             {concert.festival_root ? concert.festival_root.name + ' ' + new Date(concert.date_start).getFullYear() :
               concert.name}
           </div>
@@ -92,7 +70,7 @@ export const ConcertCard = ({ concert }: ConcertCardProps) => {
                   href={`/bands/${band.id}`}
                   onClick={event => event.stopPropagation()}
                   className={clsx(
-                    'hover:underline',
+                    'font-bold hover:underline',
                     bandsSeen?.find(bandSeen => band.id === bandSeen.band_id) && 'text-venom'
                   )}
                 >
@@ -116,8 +94,8 @@ export const ConcertCard = ({ concert }: ConcertCardProps) => {
           )}
         </div>
         <div className="mb-2 flex w-full gap-4">
-          <div className="inline-flex items-center text-sm">
-            <MapPinIcon className="mr-2 h-icon text-slate-300" />
+          <div className="flex items-center gap-2 text-sm">
+            <MapPin className="size-icon text-slate-300" />
             {concert.location?.name}
           </div>
         </div>

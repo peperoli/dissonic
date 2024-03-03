@@ -21,7 +21,6 @@ export const FestivalRootForm = ({ close }: FestivalRootFormProps) => {
   const { mutate, status, error } = useAddFestivalRoot()
 
   async function onSubmit(data: TablesInsert<'festival_roots'>) {
-    console.log(data)
     mutate(data)
   }
 

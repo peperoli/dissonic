@@ -1,29 +1,28 @@
-import { XMarkIcon } from '@heroicons/react/20/solid'
 import clsx from 'clsx'
-import { HTMLAttributes, PointerEventHandler } from 'react'
 
 type ChipProps = {
   label: string
-  remove?: () => void
-  onPointerDown?: PointerEventHandler
-  size?: 'small' | 'medium'
-  className?: string
-  style?: HTMLAttributes<HTMLDivElement>['style']
+  onClick?: () => void
+  size?: 'md' | 'sm'
+  count?: number
 }
 
-export const Chip = ({ label, size = 'medium', onPointerDown, remove, className, style }: ChipProps) => {
-  const ConditionalTag = onPointerDown ? 'button' : 'div'
+export const Chip = ({ label, onClick, size = 'md', count }: ChipProps) => {
+  const ConditionalWrapper = onClick ? 'button' : 'div'
   return (
-    <div tabIndex={0} className={clsx('btn btn-tag', size === 'small' && 'btn-small', className)} style={style}>
-      <ConditionalTag type="button" onPointerDown={onPointerDown}>
-        {label}
-      </ConditionalTag>
-      {remove && (
-        <button type="button" onClick={remove}>
-          <XMarkIcon className="h-icon text-slate-300" />
-        </button>
+    <ConditionalWrapper
+      type={onClick ? 'button' : undefined}
+      className={clsx(
+        'flex items-center justify-center gap-2 rounded-md border-2 border-slate-500 disabled:cursor-not-allowed disabled:opacity-30',
+        size === 'md' && 'px-2 py-1',
+        size === 'sm' && ''
       )}
-    </div>
+    >
+      {label}
+      {count && (
+        <div className="min-w-4 rounded bg-slate-700 px-1 text-center text-sm">{count}</div>
+      )}
+    </ConditionalWrapper>
   )
 }
 Chip.displayName = 'Chip'

@@ -1,3 +1,4 @@
+import { TooltipProvider } from '@/components/shared/TooltipProvider'
 import { Metadata, Viewport } from 'next'
 import { Albert_Sans } from 'next/font/google'
 import { ReactNode } from 'react'
@@ -39,9 +40,11 @@ const albertSans = Albert_Sans({
 export default async function RootLayout({ children }: { children: ReactNode }) {
   return (
     <QueryProvider>
-      <html lang="de-CH" className={`${albertSans.variable}`}>
-        <body className="text-slate-50 bg-slate-850">{children}</body>
-      </html>
+      <TooltipProvider>
+        <html lang="de-CH" className={`${albertSans.variable}`}>
+          <body className="bg-slate-850 text-slate-50">{children}</body>
+        </html>
+      </TooltipProvider>
     </QueryProvider>
   )
 }

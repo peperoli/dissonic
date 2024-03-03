@@ -66,14 +66,13 @@ type ProfilePageProps = {
 }
 
 export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
-  const { data: profile } = useProfile(initialProfile.id, null, initialProfile)
-  const { data: friends } = useFriends({ profileId: initialProfile.id })
-  const { data: bandsSeen } = useBandsSeen(initialProfile.id)
+  const { data: profile } = useProfile(initialProfile?.id, null, initialProfile)
+  const { data: friends } = useFriends({ profileId: initialProfile?.id })
+  const { data: bandsSeen } = useBandsSeen(initialProfile?.id)
   const [editPassIsOpen, setEditPassIsOpen] = useState(false)
   const [editUsernameIsOpen, setEditUsernameIsOpen] = useState(false)
   const [addFriendIsOpen, setAddFriendIsOpen] = useState(false)
   const { data: session } = useSession()
-  const { data: avatarUrl } = useAvatar(profile?.avatar_path)
 
   function unique(array: ({ id: string | number } | null | undefined)[]): any[] {
     const mapOfObjects = new Map(array.map(item => [item?.id, item]))
