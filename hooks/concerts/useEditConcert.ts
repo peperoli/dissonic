@@ -69,6 +69,16 @@ const editConcert = async (newConcert: EditConcert) => {
       })
 
       if (deleteBands) {
+        const { count } = await supabase
+          .from('j_bands_seen')
+          .select('*', { count: 'estimated' })
+          .eq('concert_id', newConcert.id)
+          .in('band_id', deleteBands.map(item => item.id))
+
+        if (count && count > 0) {
+          throw new Error('Cannot remove bands. Some bands have been marked as seen by users.')
+        }
+          
         const { error: deleteBandsError } = await supabase
           .from('j_concert_bands')
           .delete()
