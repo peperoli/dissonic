@@ -124,7 +124,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
           </div>
           <section
             className={clsx(
-              'relative rounded-2xl',
+              'relative rounded-2xl overflow-hidden',
               concert.festival_root_id ? 'aspect-2/1 bg-purple' : 'aspect-4/3 bg-venom'
             )}
           >
@@ -133,12 +133,12 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
                 src={spotifyArtist.images[0].url}
                 alt=""
                 fill
-                className="rounded-2xl object-cover"
+                className="object-cover"
               />
             )}
             <div
               className={clsx(
-                'absolute inset-0 rounded-2xl bg-radial-gradient from-transparent to-slate-800',
+                'absolute inset-0 bg-radial-gradient from-transparent to-slate-850',
                 !concert.festival_root_id && spotifyArtist?.images[0] && 'via-transparent'
               )}
             />

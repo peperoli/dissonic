@@ -11,12 +11,20 @@ export type SelectProps = {
   name: string
   items?: ListItem[]
   isLoading?: boolean
+  searchable?: boolean
   fixedHeight?: boolean
 } & (
   | { multiple?: false; value: number | null; onValueChange: (value: number) => void }
   | { multiple: true; values: number[]; onValuesChange: (values: number[]) => void }
 )
-export const Select = ({ name, items, isLoading, fixedHeight, ...props }: SelectProps) => {
+export const Select = ({
+  name,
+  items,
+  isLoading,
+  searchable = true,
+  fixedHeight,
+  ...props
+}: SelectProps) => {
   const [query, setQuery] = useState('')
   const searchRef = useRef<HTMLInputElement>(null)
   const regExp = new RegExp(normalizeString(query), 'iu')
@@ -30,8 +38,16 @@ export const Select = ({ name, items, isLoading, fixedHeight, ...props }: Select
   }, [props.values, props.value])
   return (
     <>
-      <SearchField ref={searchRef} name={`${name}-search`} query={query} setQuery={setQuery} />
-      <div className={clsx('size-full overflow-auto pt-2', fixedHeight ? 'md:h-72' : 'md:max-h-72')}>
+      {searchable && (
+        <SearchField ref={searchRef} name={`${name}-search`} query={query} setQuery={setQuery} />
+      )}
+      <div
+        className={clsx(
+          'size-full overflow-auto',
+          searchable && 'pt-2',
+          fixedHeight ? 'md:h-72' : 'md:max-h-72'
+        )}
+      >
         {isLoading ? (
           <div className="grid h-full w-full place-content-center p-4">
             <Loader2 className="size-8 animate-spin" />

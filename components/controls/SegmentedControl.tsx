@@ -15,13 +15,13 @@ export function SegmentedControl({
   iconOnly,
 }: SegmentedControlProps) {
   return (
-    <fieldset className="flex w-fit rounded-lg bg-slate-750 p-1">
+    <fieldset className="flex w-full rounded-lg bg-slate-750 p-1 md:w-fit">
       {options.map(option => (
         <button
-        type='button'
+          type="button"
           onClick={() => onValueChange(option.value)}
           className={clsx(
-            'flex items-center gap-2 rounded-md px-2 py-1',
+            'flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-md px-2 py-1 md:w-fit md:flex-none',
             option.value === value ? 'bg-slate-700 text-slate-50 shadow-lg' : 'text-slate-300'
           )}
           key={option.value}

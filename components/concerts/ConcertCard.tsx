@@ -9,6 +9,7 @@ import { UserItem } from '../shared/UserItem'
 import { useState } from 'react'
 import { ConcertDate } from './ConcertDate'
 import { MapPin } from 'lucide-react'
+import { Chip } from '../Chip'
 
 interface ConcertCardProps {
   concert: Concert
@@ -57,12 +58,17 @@ export const ConcertCard = ({ concert }: ConcertCardProps) => {
       </div>
       <div>
         {(concert.festival_root || concert.name) && (
-          <div className={clsx("mb-2 w-fit rounded-md px-2 py-1 border-2 text-sm font-bold", concert.festival_root ? 'border-purple/50 text-purple' : 'border-blue/50 text-blue')}>
-            {concert.festival_root ? concert.festival_root.name + ' ' + new Date(concert.date_start).getFullYear() :
-              concert.name}
-          </div>
+          <Chip
+            label={
+              concert.festival_root
+                ? concert.festival_root.name + ' ' + new Date(concert.date_start).getFullYear()
+                : concert.name ?? ''
+            }
+            size="sm"
+            color={concert.festival_root ? 'purple' : 'blue'}
+          />
         )}
-        <div className="mb-2 flex flex-wrap items-center gap-2">
+        <div className="my-2 flex flex-wrap items-center gap-2">
           {concert.bands &&
             concert.bands.slice(0, isExpanded ? undefined : visibleBandCount).map((band, index) => (
               <li role="presentation" className="flex gap-2" key={band.id}>

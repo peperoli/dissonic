@@ -13,7 +13,7 @@ import { LocationFilter } from './LocationFilter'
 import { YearsFilter } from './YearsFilter'
 import { FestivalRootFilter } from './FestivalRootFilter'
 import Cookies from 'js-cookie'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
 import { SegmentedControl } from '../controls/SegmentedControl'
 import { useProfile } from '../../hooks/profiles/useProfile'
@@ -26,6 +26,9 @@ import {
 } from 'next-usequerystate/parsers'
 import { BookUser, ChevronDown, Globe, Plus, RotateCcw, User } from 'lucide-react'
 import { useFriends } from '@/hooks/profiles/useFriends'
+import { Select } from '../forms/Select'
+import { FilterButton } from '../FilterButton'
+import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 
 type HomePageProps = {
   initialConcerts: ExtendedRes<Concert[]>
@@ -83,6 +86,11 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
   const { push } = useRouter()
   const pathname = usePathname()
   const queryStateString = window.location.search
+  const sortItems = [
+    { id: 0, value: 'date_start,false', name: 'Neuste' },
+    { id: 1, value: 'date_start,true', name: 'Älteste' },
+  ]
+  const isDesktop = useMediaQuery('(min-width: 768px)')
 
   useEffect(() => {
     Cookies.set('concertQueryState', queryStateString, { sameSite: 'strict' })
@@ -108,8 +116,8 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
             icon={<Plus className="size-icon" />}
           />
         </div>
-        <div className="sr-only mb-6 flex items-center justify-between md:not-sr-only">
-          <h1>Konzerte</h1>
+        <div className="mb-6 hidden items-center justify-between md:flex">
+          <h1 className="mb-0">Konzerte</h1>
           <Button
             onClick={session ? () => setIsOpen(true) : () => push(`/login?redirect=${pathname}`)}
             label="Konzert hinzufügen"
@@ -118,7 +126,16 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
             className="hidden md:block"
           />
         </div>
-        <div className="grid gap-4">
+        <section className="-mx-4 mb-4 grid gap-4 bg-radial-gradient from-blue/20 p-5 md:mx-auto md:rounded-2xl">
+          <div className="scrollbar-hidden -mx-4 flex gap-2 overflow-x-auto px-4 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible">
+            <BandFilter values={selectedBands} onSubmit={setSelectedBands} />
+            <LocationFilter values={selectedLocations} onSubmit={setSelectedLocations} />
+            <YearsFilter values={selectedYears} onSubmit={setSelectedYears} />
+            <FestivalRootFilter
+              values={selectedFestivalRoots}
+              onSubmit={setSelectedFestivalRoots}
+            />
+          </div>
           <div className="flex items-center gap-4">
             <div className="my-1.5 text-sm text-slate-300">{concerts?.count}&nbsp;Einträge</div>
             {(selectedBands ||
@@ -130,69 +147,66 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
                 label="Zurücksetzen"
                 onClick={resetAll}
                 icon={<RotateCcw className="size-icon" />}
+                contentType={isDesktop ? 'text' : 'icon'}
                 size="small"
                 appearance="tertiary"
               />
             )}
-          </div>
-          <div className="scrollbar-hidden -mx-4 flex gap-2 overflow-x-auto px-4 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible">
-            <BandFilter values={selectedBands} onSubmit={setSelectedBands} />
-            <LocationFilter values={selectedLocations} onSubmit={setSelectedLocations} />
-            <YearsFilter values={selectedYears} onSubmit={setSelectedYears} />
-            <FestivalRootFilter values={selectedFestivalRoots} onSubmit={setSelectedFestivalRoots} />
-          </div>
-          <div className="scrollbar-hidden -mx-4 flex items-center gap-4 overflow-x-auto px-4">
-            {session && (
-              <SegmentedControl
-                options={[
-                  { value: 'global', label: 'Alle', icon: Globe },
-                  { value: 'user', label: 'Du', icon: User },
-                  { value: 'friends', label: 'Du & Freunde', icon: BookUser },
-                ]}
-                value={view}
-                onValueChange={handleView}
-              />
-            )}
-            <div className="ml-auto flex items-center gap-1 text-sm">
-              <label htmlFor="sort" className="sr-only text-slate-300 md:not-sr-only">
-                Sortieren nach:
-              </label>
-              <div className="relative flex items-center">
-                <select
-                  value={`${sort.sort_by},${sort.sort_asc}`}
-                  onChange={event =>
+            <div className="ml-auto">
+              <FilterButton
+                label="Sortieren nach"
+                items={sortItems}
+                type="singleselect"
+                size="sm"
+                appearance="tertiary"
+                selectedId={sortItems.findIndex(
+                  item => item.value === `${sort.sort_by},${sort.sort_asc}`
+                )}
+              >
+                <Select
+                  name="sort"
+                  items={sortItems}
+                  value={sortItems.findIndex(
+                    item => item.value === `${sort.sort_by},${sort.sort_asc}`
+                  )}
+                  onValueChange={value =>
                     setSort({
-                      sort_by: event.target.value.split(',')[0] as SortBy,
-                      sort_asc: Boolean(event.target.value.split(',')[1]),
+                      sort_by: sortItems[value].value.split(',')[0] as SortBy,
+                      sort_asc: sortItems[value].value.split(',')[1] === 'true',
                     })
                   }
-                  name="sort"
-                  id="sort"
-                  className="appearance-none rounded-md bg-slate-750 py-1 pl-2 pr-7 font-sans hover:bg-slate-700"
-                >
-                  <option value="date_start,false">Neuste</option>
-                  <option value="date_start,true">Älteste</option>
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-2 h-icon text-xs" />
-              </div>
+                  searchable={false}
+                />
+              </FilterButton>
             </div>
           </div>
-          <div className="grid gap-4">
-            {concerts?.data.map(concert => <ConcertCard concert={concert} key={concert.id} />)}
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-sm text-slate-300">
-              {concerts?.data.length} von {concerts?.count} Einträgen
-            </p>
-            {concerts?.data.length !== concerts?.count && (
-              <Button
-                label="Mehr anzeigen"
-                onClick={() => setSize(prev => prev + 25)}
-                loading={isFetching}
-                appearance="primary"
-              />
-            )}
-          </div>
+          {session && (
+            <SegmentedControl
+              options={[
+                { value: 'global', label: 'Alle', icon: Globe },
+                { value: 'user', label: 'Du', icon: User },
+                { value: 'friends', label: 'Du & Freunde', icon: BookUser },
+              ]}
+              value={view}
+              onValueChange={handleView}
+            />
+          )}
+        </section>
+        <div className="grid gap-4">
+          {concerts?.data.map(concert => <ConcertCard concert={concert} key={concert.id} />)}
+        </div>
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-sm text-slate-300">
+            {concerts?.data.length} von {concerts?.count} Einträgen
+          </p>
+          {concerts?.data.length !== concerts?.count && (
+            <Button
+              label="Mehr anzeigen"
+              onClick={() => setSize(prev => prev + 25)}
+              loading={isFetching}
+              appearance="primary"
+            />
+          )}
         </div>
       </main>
       <AddConcertForm isOpen={isOpen} setIsOpen={setIsOpen} />
