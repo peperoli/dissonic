@@ -94,13 +94,13 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
     parseAsInteger.withOptions({ history: 'push' })
   )
   const createdAt = comment.created_at && new Date(comment.created_at)
-  const { data: avatarUrl } = useAvatar(profile?.avatar_path)
+  const { data: avatar } = useAvatar(profile?.avatar_path)
   return (
     <div className="group flex gap-4">
       <div className="relative flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue text-slate-850">
-        {avatarUrl ? (
+        {avatar?.url ? (
           <Image
-            src={avatarUrl}
+            src={avatar?.url}
             alt="Profile picture"
             fill={true}
             className="rounded-full object-cover"

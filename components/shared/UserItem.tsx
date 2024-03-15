@@ -20,7 +20,7 @@ export const UserItem = ({
   usernameIsHidden,
   avatarRight = false,
 }: UserItemProps) => {
-  const { data: avatarUrl } = useAvatar(user.avatar_path)
+  const { data: avatar } = useAvatar(user.avatar_path)
   const ConditionalTag = size === 'lg' ? 'h1' : 'div'
   return (
     <div
@@ -39,8 +39,8 @@ export const UserItem = ({
           size === 'sm' && 'size-5'
         )}
       >
-        {avatarUrl ? (
-          <Image src={avatarUrl} alt="Avatar" fill={true} className="rounded-full object-cover" />
+        {avatar?.url ? (
+          <Image src={avatar?.url} alt="Avatar" fill={true} className="rounded-full object-cover" />
         ) : (
           <User
             className={clsx(
