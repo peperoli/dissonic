@@ -80,7 +80,7 @@ export const EditBandsButton = ({ value, onChange, error }: EditBandsButtonProps
           <div className="mt-1 text-sm text-yellow">Bitte füge mindestens eine Band hinzu.</div>
         )}
       </div>
-      <Modal isOpen={isOpen} setIsOpen={setIsOpen} fullHeight>
+      <Modal open={isOpen} onOpenChange={setIsOpen} fullHeight>
         <BandsListManager initialListItems={value} onSave={onSave} />
       </Modal>
     </>

@@ -1,3 +1,4 @@
+import { ModalProvider } from '@/components/shared/ModalProvider'
 import { TooltipProvider } from '@/components/shared/TooltipProvider'
 import { Metadata, Viewport } from 'next'
 import { Albert_Sans } from 'next/font/google'
@@ -44,6 +45,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <html lang="de-CH" className={`${albertSans.variable}`}>
           <body className="bg-slate-850 text-slate-50">{children}</body>
         </html>
+        <ModalProvider />
       </TooltipProvider>
     </QueryProvider>
   )

@@ -3,18 +3,13 @@
 import { PageWrapper } from '../layout/PageWrapper'
 import { useState } from 'react'
 import { Button } from '../Button'
-import { EditPasswordForm } from './EditPasswordForm'
-import { EditProfileForm } from './EditProfileForm'
 import { GenreChart } from '../concerts/GenreChart'
-import Image from 'next/image'
-import { CheckCircleIcon, UserIcon, UserPlusIcon } from '@heroicons/react/20/solid'
+import { CheckCircleIcon, UserPlusIcon } from '@heroicons/react/20/solid'
 import { TopBands } from './TopBands'
 import { TopLocations } from './TopLocations'
 import { ConcertsByYear } from './ConcertsByYear'
 import { ConcertsByMonth } from './ConcertsByMonth'
-import { AddFriendModal } from './AddFriendModal'
 import { Band, Concert, Location, Profile } from '../../types/types'
-import { useAvatar } from '../../hooks/profiles/useAvatar'
 import { useProfile } from '../../hooks/profiles/useProfile'
 import { useFriends } from '../../hooks/profiles/useFriends'
 import { useBandsSeen } from '../../hooks/bands/useBandsSeen'
@@ -25,6 +20,8 @@ import { useConcerts } from '../../hooks/concerts/useConcerts'
 import { ConcertCard } from '../concerts/ConcertCard'
 import { Score } from './Score'
 import { UserItem } from '../shared/UserItem'
+import { parseAsStringLiteral, useQueryState } from 'nuqs'
+import { modalPaths } from '../shared/ModalProvider'
 
 type ConcertListProps = {
   userId: string
@@ -69,9 +66,10 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
   const { data: profile } = useProfile(initialProfile?.id, null, initialProfile)
   const { data: friends } = useFriends({ profileId: initialProfile?.id })
   const { data: bandsSeen } = useBandsSeen(initialProfile?.id)
-  const [editPassIsOpen, setEditPassIsOpen] = useState(false)
-  const [editUsernameIsOpen, setEditUsernameIsOpen] = useState(false)
-  const [addFriendIsOpen, setAddFriendIsOpen] = useState(false)
+  const [_, setModal] = useQueryState(
+    'modal',
+    parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
+  )
   const { data: session } = useSession()
 
   function unique(array: ({ id: string | number } | null | undefined)[]): any[] {
@@ -113,7 +111,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                 )}
                 {!isFriend && session?.user.id !== profile.id && (
                   <Button
-                    onClick={() => setAddFriendIsOpen(true)}
+                    onClick={() => setModal('add-friend')}
                     label="Freund hinzufügen"
                     contentType="icon"
                     icon={<UserPlusIcon className="h-icon" />}
@@ -192,8 +190,8 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
               </div>
               {isOwnProfile && (
                 <div className="flex gap-3">
-                  <Button label="Profil bearbeiten" onClick={() => setEditUsernameIsOpen(true)} />
-                  <Button label="Passwort ändern" onClick={() => setEditPassIsOpen(true)} />
+                  <Button label="Profil bearbeiten" onClick={() => setModal('update-profile')} />
+                  <Button label="Passwort ändern" onClick={() => setModal('update-password')} />
                 </div>
               )}
             </div>
@@ -201,22 +199,6 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
             <div>Bitte melde dich an.</div>
           )}
         </main>
-        {profile && (
-          <EditProfileForm
-            profile={profile}
-            isOpen={editUsernameIsOpen}
-            setIsOpen={setEditUsernameIsOpen}
-          />
-        )}
-        <EditPasswordForm isOpen={editPassIsOpen} setIsOpen={setEditPassIsOpen} />
-        {session && profile && (
-          <AddFriendModal
-            isOpen={addFriendIsOpen}
-            setIsOpen={setAddFriendIsOpen}
-            user={session.user}
-            profile={profile}
-          />
-        )}
       </>
     </PageWrapper>
   )

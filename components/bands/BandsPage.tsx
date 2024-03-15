@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { AddBandForm } from './AddBandForm'
 import { ArrowUturnLeftIcon, PlusIcon } from '@heroicons/react/20/solid'
 import { PageWrapper } from '../layout/PageWrapper'
 import { Table } from '../Table'
@@ -18,8 +17,9 @@ import { StatusBanner } from '../forms/StatusBanner'
 import { CountryFilter } from './CountryFilter'
 import { GenreFilter } from './GenreFilter'
 import { BandTableRow } from './TableRow'
-import { parseAsArrayOf, parseAsInteger, useQueryState } from 'next-usequerystate'
+import { parseAsArrayOf, parseAsInteger, parseAsStringLiteral, useQueryState } from 'nuqs'
 import Cookies from 'js-cookie'
+import { modalPaths } from '../shared/ModalProvider'
 
 interface BandsPageProps {
   initialBands: ExtendedRes<Band[]>
@@ -46,7 +46,10 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
     size: perPage,
   })
   const { data: session } = useSession()
-  const [isOpen, setIsOpen] = useState(false)
+  const [_, setModal] = useQueryState(
+    'modal',
+    parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
+  )
   const { push } = useRouter()
   const pathname = usePathname()
 
@@ -82,7 +85,9 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
         {!isDesktop && (
           <div className="fixed bottom-0 right-0 m-4">
             <Button
-              onClick={session ? () => setIsOpen(true) : () => push(`/login?redirect=${pathname}`)}
+              onClick={
+                session ? () => setModal('create-band') : () => push(`/login?redirect=${pathname}`)
+              }
               label="Band hinzufügen"
               appearance="primary"
               contentType="icon"
@@ -94,7 +99,9 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
           <h1 className="mb-0">Bands</h1>
           {isDesktop && (
             <Button
-              onClick={session ? () => setIsOpen(true) : () => push(`/login?redirect=${pathname}`)}
+              onClick={
+                session ? () => setModal('create-band') : () => push(`/login?redirect=${pathname}`)
+              }
               label="Band hinzufügen"
               appearance="primary"
               icon={<PlusIcon className="h-icon" />}
@@ -134,7 +141,6 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
           />
         </Table>
       </main>
-      <AddBandForm isOpen={isOpen} setIsOpen={setIsOpen} />
     </PageWrapper>
   )
 }

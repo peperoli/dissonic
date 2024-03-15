@@ -3,18 +3,18 @@
 import Link from 'next/link'
 import { ArrowLeftIcon, MapPinIcon, MusicalNoteIcon } from '@heroicons/react/20/solid'
 import { Fragment, useState } from 'react'
-import { EditBandForm } from './EditBandForm'
 import { PageWrapper } from '../layout/PageWrapper'
 import { Button } from '../Button'
 import { ConcertCard } from '../concerts/ConcertCard'
 import { Band } from '../../types/types'
-import { DeleteBandModal } from './DeleteBandModal'
 import { useBand } from '../../hooks/bands/useBand'
 import { useConcerts } from '../../hooks/concerts/useConcerts'
 import { useSpotifyArtistEmbed } from '../../hooks/spotify/useSpotifyArtistEmbed'
 import { SpinnerIcon } from '../layout/SpinnerIcon'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
+import { parseAsStringLiteral, useQueryState } from 'nuqs'
+import { modalPaths } from '../shared/ModalProvider'
 
 export interface BandPageProps {
   initialBand: Band
@@ -22,7 +22,7 @@ export interface BandPageProps {
 }
 
 export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
-  const { data: band, isLoading: bandIsLoading } = useBand(initialBand)
+  const { data: band, isLoading: bandIsLoading } = useBand(initialBand.id, initialBand)
   const { data: concerts } = useConcerts(undefined, {
     bands: [initialBand.id],
     sort: { sort_by: 'date_start', sort_asc: false },
@@ -30,8 +30,10 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
   const { data: spotifyArtistEmbed, status: spotifyArtistEmbedStatus } = useSpotifyArtistEmbed(
     band?.spotify_artist_id
   )
-  const [deleteIsOpen, setDeleteIsOpen] = useState(false)
-  const [editIsOpen, setEditIsOpen] = useState(false)
+  const [_, setModal] = useQueryState(
+    'modal',
+    parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
+  )
   const { data: session } = useSession()
   const { push } = useRouter()
   const pathname = usePathname()
@@ -92,13 +94,13 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
           <div className="flex gap-4">
             <Button
               onClick={
-                session ? () => setEditIsOpen(true) : () => push(`/login?redirect=${pathname}`)
+                session ? () => setModal('update-band') : () => push(`/login?redirect=${pathname}`)
               }
               label="Bearbeiten"
             />
             <Button
               onClick={
-                session ? () => setDeleteIsOpen(true) : () => push(`/login?redirect=${pathname}`)
+                session ? () => setModal('delete-band') : () => push(`/login?redirect=${pathname}`)
               }
               label="Löschen"
               danger
@@ -112,8 +114,6 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
           </div>
         )}
       </main>
-      <DeleteBandModal band={band} isOpen={deleteIsOpen} setIsOpen={setDeleteIsOpen} />
-      <EditBandForm band={band} isOpen={editIsOpen} setIsOpen={setEditIsOpen} />
     </PageWrapper>
   )
 }

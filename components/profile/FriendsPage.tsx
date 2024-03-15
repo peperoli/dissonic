@@ -33,7 +33,7 @@ export const FriendsPage = ({ profile, initialFriends }: FriendsPageProps) => {
               acceptedFriends.map(item => (
                 <FriendItem
                   key={item.sender.id + item.receiver.id}
-                  friendData={item.sender.id === profile.id ? item.receiver : item.sender}
+                  friend={item.sender.id === profile.id ? item.receiver : item.sender}
                   profile={profile}
                 />
               ))

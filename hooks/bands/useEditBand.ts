@@ -1,6 +1,7 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EditBand, Genre } from '@/types/types'
 import supabase from '@/utils/supabase/client'
+import { useQueryState } from 'nuqs'
 
 const editBand = async (newBand: EditBand) => {
   if (!newBand.id) {
@@ -64,7 +65,13 @@ const editBand = async (newBand: EditBand) => {
 }
 
 export const useEditBand = () => {
+  const queryClient = useQueryClient()
+  const [_, setModal] = useQueryState('modal', { history: 'push' })
   return useMutation(editBand, {
     onError: error => console.error(error),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['bands'])
+      setModal(null)
+    },
   })
 }

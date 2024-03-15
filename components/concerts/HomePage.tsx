@@ -1,6 +1,5 @@
 'use client'
 
-import { AddConcertForm } from './AddConcertForm'
 import { useEffect, useState } from 'react'
 import { Button } from '../Button'
 import { PlusIcon } from '@heroicons/react/20/solid'
@@ -13,32 +12,30 @@ import { LocationFilter } from './LocationFilter'
 import { YearsFilter } from './YearsFilter'
 import { FestivalRootFilter } from './FestivalRootFilter'
 import Cookies from 'js-cookie'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
 import { SegmentedControl } from '../controls/SegmentedControl'
 import { useProfile } from '../../hooks/profiles/useProfile'
-import { useQueryState, useQueryStates } from 'next-usequerystate'
 import {
   parseAsArrayOf,
   parseAsBoolean,
   parseAsInteger,
-  parseAsStringEnum,
-} from 'next-usequerystate/parsers'
-import { BookUser, ChevronDown, Globe, Plus, RotateCcw, User } from 'lucide-react'
+  parseAsStringLiteral,
+  useQueryState,
+  useQueryStates,
+} from 'nuqs'
+import { BookUser, Globe, Plus, RotateCcw, User } from 'lucide-react'
 import { useFriends } from '@/hooks/profiles/useFriends'
 import { Select } from '../forms/Select'
 import { FilterButton } from '../FilterButton'
 import useMediaQuery from '@/hooks/helpers/useMediaQuery'
+import { modalPaths } from '../shared/ModalProvider'
 
 type HomePageProps = {
-  initialConcerts: ExtendedRes<Concert[]>
+  concerts: ExtendedRes<Concert[]>
 }
 
-enum SortBy {
-  dateStart = 'date_start',
-}
-
-export const HomePage = ({ initialConcerts }: HomePageProps) => {
+export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
   const { data: session } = useSession()
   const [size, setSize] = useQueryState('size', parseAsInteger.withDefault(25))
   const [selectedBands, setSelectedBands] = useQueryState('bands', parseAsArrayOf(parseAsInteger))
@@ -56,10 +53,12 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
   const selectedUserId = user && profile?.id
   const [view, setView] = useState(Cookies.get('view') ?? 'global')
   const { data: friends } = useFriends({ profileId: session?.user?.id, pending: false })
+  const sortBy = ['date_start'] as const
   const [sort, setSort] = useQueryStates({
-    sort_by: parseAsStringEnum<SortBy>(Object.values(SortBy)).withDefault(SortBy.dateStart),
+    sort_by: parseAsStringLiteral(sortBy).withDefault('date_start'),
     sort_asc: parseAsBoolean.withDefault(false),
   })
+  const [_, setModal] = useQueryState('modal', parseAsStringLiteral(modalPaths))
 
   function getView() {
     if (selectedUserId) return [selectedUserId]
@@ -82,7 +81,6 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
     sort,
     size,
   })
-  const [isOpen, setIsOpen] = useState(false)
   const { push } = useRouter()
   const pathname = usePathname()
   const queryStateString = window.location.search
@@ -109,7 +107,9 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
       <main className="container">
         <div className="fixed bottom-0 right-0 m-4 md:hidden">
           <Button
-            onClick={session ? () => setIsOpen(true) : () => push(`/login?redirect=${pathname}`)}
+            onClick={
+              session ? () => setModal('create-concert') : () => push(`/login?redirect=${pathname}`)
+            }
             label="Konzert hinzufügen"
             appearance="primary"
             contentType="icon"
@@ -119,7 +119,9 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
         <div className="mb-6 hidden items-center justify-between md:flex">
           <h1 className="mb-0">Konzerte</h1>
           <Button
-            onClick={session ? () => setIsOpen(true) : () => push(`/login?redirect=${pathname}`)}
+            onClick={
+              session ? () => setModal('create-concert') : () => push(`/login?redirect=${pathname}`)
+            }
             label="Konzert hinzufügen"
             appearance="primary"
             icon={<PlusIcon className="size-icon" />}
@@ -171,7 +173,7 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
                   )}
                   onValueChange={value =>
                     setSort({
-                      sort_by: sortItems[value].value.split(',')[0] as SortBy,
+                      sort_by: sortItems[value].value.split(',')[0] as 'date_start',
                       sort_asc: sortItems[value].value.split(',')[1] === 'true',
                     })
                   }
@@ -209,7 +211,6 @@ export const HomePage = ({ initialConcerts }: HomePageProps) => {
           )}
         </div>
       </main>
-      <AddConcertForm isOpen={isOpen} setIsOpen={setIsOpen} />
     </PageWrapper>
   )
 }

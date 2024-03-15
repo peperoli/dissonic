@@ -121,4 +121,9 @@ export type SpotifyArtist = {
     url: string
     width: number
   }[]
+  genres: string[]
+  followers: {
+    href: string | null
+    total: number
+  }
 }

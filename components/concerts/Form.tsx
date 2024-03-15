@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { useConcerts } from '../../hooks/concerts/useConcerts'
 import { useLocations } from '../../hooks/locations/useLocations'
-import { AddConcert, EditConcert, ReorderableListItem } from '../../types/types'
+import { AddConcert, ReorderableListItem } from '../../types/types'
 import { Button } from '../Button'
 import { TextField } from '../forms/TextField'
 import { EditBandsButton } from './EditBandsButton'
@@ -14,16 +14,21 @@ import { useEffect, useState } from 'react'
 import { Plus } from 'lucide-react'
 import Modal from '../Modal'
 import { FestivalRootForm } from './FestivalRootForm'
+import { useAddConcert } from '@/hooks/concerts/useAddConcert'
+import { useConcert } from '@/hooks/concerts/useConcert'
+import { useEditConcert } from '@/hooks/concerts/useEditConcert'
+import { usePathname, useRouter } from 'next/navigation'
 
-interface FormProps {
-  defaultValues?: EditConcert
-  onSubmit: SubmitHandler<AddConcert> | SubmitHandler<EditConcert>
-  status: 'idle' | 'loading' | 'error' | 'success'
+type FormProps = {
+  isNew?: boolean
   close: () => void
 }
 
-export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
-  const [today] = new Date().toISOString().split('T')
+export const Form = ({ close, isNew }: FormProps) => {
+  const pathname = usePathname()
+  const concertId = !isNew ? pathname.split('/').pop() : null
+  const { data: concert } = useConcert(null, concertId ?? null)
+  const today = new Date().toISOString().split('T')[0]
   const {
     register,
     control,
@@ -32,8 +37,12 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
     handleSubmit,
     formState: { errors },
   } = useForm<AddConcert>({
-    defaultValues: defaultValues ?? { is_festival: false, date_start: today },
+    defaultValues: concert ?? { is_festival: false, date_start: today },
   })
+  const addConcert = useAddConcert()
+  const editConcert = useEditConcert()
+  const { status } = isNew ? addConcert : editConcert
+  const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const { data: concerts } = useConcerts()
   const { data: locations } = useLocations()
@@ -47,7 +56,13 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
       item.bands?.find(band => watch('bands')?.find(selectedBand => band.id === selectedBand.id))
     )
     .filter(item => item.location?.id === Number(watch('location_id')))
-  const isSimilar = !defaultValues && similarConcerts && similarConcerts.length > 0
+  const isSimilar = isNew && similarConcerts && similarConcerts.length > 0
+
+  useEffect(() => {
+    if (isNew && status === 'success') {
+      router.push(`/concerts/${addConcert.data?.id}`)
+    }
+  }, [status])
 
   useEffect(() => {
     if (!festivalRootId) return
@@ -60,8 +75,17 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
 
     setValue('location_id', defaultLocationId)
   }, [festivalRootId])
+
+  const onSubmit: SubmitHandler<AddConcert> = async function (formData) {
+    if (isNew) {
+      addConcert.mutate(formData)
+    } else {
+      editConcert.mutate(formData)
+    }
+  }
   return (
     <>
+      <h2 className="mb-8">{isNew ? 'Konzert hinzufügen' : 'Konzert bearbeiten'}</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <Controller
           name="is_festival"
@@ -94,12 +118,13 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
                 />
               )}
             />
-            <div className="flex items-center justify-between">
+            <div className="flex items-center">
               <p className="text-slate-300">Festival-Stamm fehlt?</p>
               <Button
                 onClick={() => setIsOpen(true)}
                 label="Hinzufügen"
-                icon={<Plus className="size-icon" />}
+                icon={<Plus className="size-small" />}
+                size="small"
                 appearance="tertiary"
               />
             </div>
@@ -192,7 +217,7 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
           />
         </div>
       </form>
-      <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+      <Modal open={isOpen} onOpenChange={setIsOpen}>
         <FestivalRootForm close={() => setIsOpen(false)} />
       </Modal>
     </>

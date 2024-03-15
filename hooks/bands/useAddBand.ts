@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AddBand } from '@/types/types'
 import supabase from '@/utils/supabase/client'
+import { useQueryState } from 'nuqs'
 
 const addBand = async (band: AddBand) => {
   const { data: newBand, error: bandError } = await supabase
@@ -28,8 +29,12 @@ const addBand = async (band: AddBand) => {
 
 export const useAddBand = () => {
   const queryClient = useQueryClient()
+  const [_, setModal] = useQueryState('modal', { history: 'push' })
   return useMutation(addBand, {
     onError: error => console.error(error),
-    onSuccess: () => queryClient.invalidateQueries(['bands']),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['bands'])
+      setModal(null)
+    },
   })
 }

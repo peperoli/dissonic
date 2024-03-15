@@ -4,7 +4,8 @@ import { cookies } from 'next/headers'
 import { createClient } from '../utils/supabase/server'
 
 const fetchData = async () => {
-  const supabase = createClient(cookies())
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
 
   const { data, count, error } = await supabase
     .from('concerts')
@@ -29,5 +30,5 @@ const fetchData = async () => {
 
 export default async function Page() {
   const concerts = await fetchData()
-  return <HomePage initialConcerts={concerts} />
+  return <HomePage concerts={concerts} />
 }

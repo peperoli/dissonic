@@ -1,5 +1,5 @@
 import { useBands } from '../../hooks/bands/useBands'
-import { AddBand, EditBand } from '../../types/types'
+import { AddBand } from '../../types/types'
 import { Button } from '../Button'
 import { SpotifyArtistSelect } from './SpotifyArtistSelect'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
@@ -7,25 +7,33 @@ import { TextField } from '../forms/TextField'
 import { SelectField } from '../forms/SelectField'
 import { useCountries } from '../../hooks/useCountries'
 import { useGenres } from '../../hooks/useGenres'
+import { useBand } from '@/hooks/bands/useBand'
+import { usePathname } from 'next/navigation'
+import { useAddBand } from '@/hooks/bands/useAddBand'
+import { useEditBand } from '@/hooks/bands/useEditBand'
 
 interface FormProps {
-  defaultValues?: EditBand
-  onSubmit: SubmitHandler<AddBand> | SubmitHandler<EditBand>
-  status: 'idle' | 'loading' | 'error' | 'success'
+  isNew?: boolean
   close: () => void
 }
 
-export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
+export const Form = ({ isNew, close }: FormProps) => {
+  const pathname = usePathname()
+  const bandId = !isNew ? pathname.split('/').pop() : null
+  const { data: band } = useBand(parseInt(bandId!))
   const {
     register,
     control,
     watch,
     handleSubmit,
     formState: { dirtyFields, errors },
-  } = useForm<AddBand>({ defaultValues: defaultValues })
+  } = useForm<AddBand>({ defaultValues: band })
   const { data: bands } = useBands()
   const { data: countries } = useCountries()
   const { data: genres } = useGenres()
+  const addBand = useAddBand()
+  const editBand = useEditBand()
+  const { status } = isNew ? addBand : editBand
   const regExp = new RegExp(watch('name'), 'i')
   const similarBands =
     bands?.data.filter(item =>
@@ -36,8 +44,17 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
     ) || []
   const isSimilar = dirtyFields.name && watch('name')?.length >= 3 && similarBands.length > 0
   const regionNames = new Intl.DisplayNames(['de'], { type: 'region' })
+
+  const onSubmit: SubmitHandler<AddBand> = async function (formData) {
+    if (isNew) {
+      addBand.mutate(formData)
+    } else {
+      editBand.mutate(formData)
+    }
+  }
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+      <h2 className="mb-0">{isNew ? 'Band hinzufügen' : 'Band bearbeiten'}</h2>
       <TextField
         {...register('name', { required: true })}
         error={errors.name}

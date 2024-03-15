@@ -16,6 +16,6 @@ const fetchBand = async (bandId: number): Promise<Band> => {
   return data
 }
 
-export const useBand = (band: Band) => {
-  return useQuery(['band', band.id], () => fetchBand(band.id), { initialData: band })
+export const useBand = (id: number, initialData?: Band) => {
+  return useQuery(['band', id], () => fetchBand(id), { initialData, enabled: !!id })
 }

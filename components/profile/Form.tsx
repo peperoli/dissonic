@@ -1,22 +1,25 @@
-import { UseMutationResult, useQueryClient } from '@tanstack/react-query'
-import { useRouter } from 'next/navigation'
+import { useQueryClient } from '@tanstack/react-query'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { useProfiles } from '../../hooks/profiles/useProfiles'
 import { useSession } from '../../hooks/auth/useSession'
-import { EditProfile, Profile } from '../../types/types'
+import { EditProfile } from '../../types/types'
 import { Button } from '../Button'
 import { FileUpload } from '../forms/FileUpload'
 import { TextField } from '../forms/TextField'
+import { useEditProfile } from '@/hooks/profiles/useEditProfile'
+import { useKillFile } from '@/hooks/files/useKillFile'
+import { useProfile } from '@/hooks/profiles/useProfile'
 
 type FormProps = {
-  profile: Profile
-  editProfile: UseMutationResult<void, unknown, EditProfile, unknown>
-  killFile: UseMutationResult<void, unknown, { bucket: string; name: string }, unknown>
   close: () => void
 }
 
-export const Form = ({ profile, editProfile, killFile, close }: FormProps) => {
+export const Form = ({ close }: FormProps) => {
+  const pathname = usePathname()
+  const username = pathname.split('/').pop()
+  const { data: profile } = useProfile(null, username)
   const {
     register,
     control,
@@ -25,20 +28,22 @@ export const Form = ({ profile, editProfile, killFile, close }: FormProps) => {
     formState: { dirtyFields, errors },
     reset,
   } = useForm<EditProfile>({
-    defaultValues: { username: profile.username, avatar_path: profile.avatar_path },
+    defaultValues: profile,
     mode: 'onChange',
   })
   const { data: profiles } = useProfiles()
   const { data: session } = useSession()
+  const editProfile = useEditProfile()
+  const killFile = useKillFile()
   const usernames = profiles?.map(item => item.username)
   const queryClient = useQueryClient()
   const { push } = useRouter()
 
   const onSubmit: SubmitHandler<EditProfile> = async formData => {
-    if (profile.avatar_path) {
+    if (profile?.avatar_path) {
       killFile.mutate({ bucket: 'avatars', name: profile.avatar_path })
     }
-    editProfile.mutate({ ...formData, id: profile.id })
+    editProfile.mutate({ ...formData, id: profile?.id })
   }
 
   const cancel = () => {
@@ -60,6 +65,7 @@ export const Form = ({ profile, editProfile, killFile, close }: FormProps) => {
   }, [editProfile.status])
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5">
+      <h2>Profil bearbeiten</h2>
       <Controller
         name="avatar_path"
         control={control}

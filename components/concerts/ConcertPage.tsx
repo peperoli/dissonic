@@ -9,8 +9,6 @@ import { BandSeen, Concert, Profile } from '../../types/types'
 import { Button } from '../Button'
 import { PageWrapper } from '../layout/PageWrapper'
 import { Comments } from './Comments'
-import { DeleteConcertModal } from './DeleteConcertModal'
-import { EditConcertForm } from './EditConcertForm'
 import { notFound, usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
 import { UserItem } from '../shared/UserItem'
@@ -23,6 +21,8 @@ import clsx from 'clsx'
 import { useBands } from '@/hooks/bands/useBands'
 import * as Tooltip from '@radix-ui/react-tooltip'
 import { ConcertStats } from './ConcertStats'
+import { parseAsStringLiteral, useQueryState } from 'nuqs'
+import { modalPaths } from '../shared/ModalProvider'
 
 type ConcertUserItemProps = {
   concert: Concert
@@ -80,7 +80,10 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
   const fanProfiles = profiles?.filter(profile => fanIds?.has(profile.id))
   const { data: session } = useSession()
   const { data: spotifyArtist } = useSpotifyArtist(concert?.bands?.[0]?.spotify_artist_id)
-  const [editIsOpen, setEditIsOpen] = useState(false)
+  const [_, setModal] = useQueryState(
+    'modal',
+    parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
+  )
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
   const { push } = useRouter()
   const pathname = usePathname()
@@ -96,12 +99,14 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
           <div className="flex items-center justify-between">
             <Link href={`/${concertQueryState ?? ''}`} className="btn btn-small btn-tertiary">
               <ArrowLeft className="size-icon" />
-              Zurück zu Konzerte
+              Zurück zur Übersicht
             </Link>
             <div className="flex gap-3">
               <Button
                 onClick={
-                  session ? () => setEditIsOpen(true) : () => push(`/login?redirect=${pathname}`)
+                  session
+                    ? () => setModal('update-concert')
+                    : () => push(`/login?redirect=${pathname}`)
                 }
                 label="Bearbeiten"
                 icon={<Edit className="size-icon" />}
@@ -111,7 +116,9 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
               />
               <Button
                 onClick={
-                  session ? () => setDeleteIsOpen(true) : () => push(`/login?redirect=${pathname}`)
+                  session
+                    ? () => setModal('delete-concert')
+                    : () => push(`/login?redirect=${pathname}`)
                 }
                 label="Löschen"
                 icon={<Trash className="size-icon" />}
@@ -124,17 +131,12 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
           </div>
           <section
             className={clsx(
-              'relative rounded-2xl overflow-hidden',
+              'relative overflow-hidden rounded-2xl',
               concert.festival_root_id ? 'aspect-2/1 bg-purple' : 'aspect-4/3 bg-venom'
             )}
           >
             {!concert.festival_root_id && spotifyArtist?.images[0] && (
-              <Image
-                src={spotifyArtist.images[0].url}
-                alt=""
-                fill
-                className="object-cover"
-              />
+              <Image src={spotifyArtist.images[0].url} alt="" fill className="object-cover" />
             )}
             <div
               className={clsx(
@@ -180,14 +182,10 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
               </div>
             </section>
           )}
-          {concert.bands && (
-            <ConcertStats bands={concert.bands} />
-          )}
+          {concert.bands && <ConcertStats bands={concert.bands} />}
           <div className="rounded-lg bg-slate-800 p-4 md:p-6">
             <Comments />
           </div>
-          <EditConcertForm isOpen={editIsOpen} setIsOpen={setEditIsOpen} />
-          <DeleteConcertModal isOpen={deleteIsOpen} setIsOpen={setDeleteIsOpen} />
         </main>
       </ConcertContext.Provider>
     </PageWrapper>

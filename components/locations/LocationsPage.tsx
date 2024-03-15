@@ -4,7 +4,6 @@ import { PageWrapper } from '../layout/PageWrapper'
 import { PlusIcon } from '@heroicons/react/20/solid'
 import { Table } from '../Table'
 import { TableRow } from '../TableRow'
-import { AddLocationForm } from './AddLocationForm'
 import { useEffect, useState } from 'react'
 import { SearchField } from '../forms/SearchField'
 import { Button } from '../Button'
@@ -15,7 +14,8 @@ import { useDebounce } from '../../hooks/helpers/useDebounce'
 import { Pagination } from '../layout/Pagination'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
-import { parseAsInteger, useQueryState } from 'next-usequerystate'
+import { parseAsInteger, parseAsStringLiteral, useQueryState } from 'nuqs'
+import { modalPaths } from '../shared/ModalProvider'
 
 interface LocationsPageProps {
   initialLocations: ExtendedRes<Location[]>
@@ -31,7 +31,10 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
     page: currentPage,
     size: perPage,
   })
-  const [isOpen, setIsOpen] = useState(false)
+  const [_, setModal] = useQueryState(
+    'modal',
+    parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
+  )
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const { data: session } = useSession()
   const { push } = useRouter()
@@ -43,67 +46,68 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
     }
   }, [query])
   return (
-    <>
-      <PageWrapper>
-        <main className="container-fluid">
-          {!isDesktop && (
-            <div className="fixed bottom-0 right-0 m-4">
-              <Button
-                onClick={
-                  session ? () => setIsOpen(true) : () => push(`/login?redirect=${pathname}`)
-                }
-                label="Location hinzufügen"
-                appearance="primary"
-                contentType="icon"
-                icon={<PlusIcon className="h-icon" />}
-              />
-            </div>
-          )}
-          <div className="sr-only flex justify-between md:not-sr-only md:mb-6">
-            <h1 className="mb-0">Locations</h1>
-            {isDesktop && (
-              <Button
-                onClick={
-                  session ? () => setIsOpen(true) : () => push(`/login?redirect=${pathname}`)
-                }
-                label="Location hinzufügen"
-                appearance="primary"
-                icon={<PlusIcon className="h-icon" />}
-              />
-            )}
+    <PageWrapper>
+      <main className="container-fluid">
+        {!isDesktop && (
+          <div className="fixed bottom-0 right-0 m-4">
+            <Button
+              onClick={
+                session
+                  ? () => setModal('create-location')
+                  : () => push(`/login?redirect=${pathname}`)
+              }
+              label="Location hinzufügen"
+              appearance="primary"
+              contentType="icon"
+              icon={<PlusIcon className="h-icon" />}
+            />
           </div>
-          <Table>
-            <SearchField
-              name="searchLocations"
-              placeholder="Locations"
-              query={query}
-              setQuery={setQuery}
+        )}
+        <div className="sr-only flex justify-between md:not-sr-only md:mb-6">
+          <h1 className="mb-0">Locations</h1>
+          {isDesktop && (
+            <Button
+              onClick={
+                session
+                  ? () => setModal('create-location')
+                  : () => push(`/login?redirect=${pathname}`)
+              }
+              label="Location hinzufügen"
+              appearance="primary"
+              icon={<PlusIcon className="h-icon" />}
             />
-            <div className="my-4 text-sm text-slate-300">
-              {locations?.count}&nbsp;{locations?.count === 1 ? 'Eintrag' : 'Einträge'}
-            </div>
-            {locations?.count === 0 ? (
-              <div>Blyat! Keine Einträge gefunden.</div>
-            ) : (
-              locations?.data.map(location => (
-                <TableRow key={location.id} href="">
-                  <div className="w-full items-center gap-4 md:flex">
-                    <div className="font-bold md:w-1/2">{location.name}</div>
-                    <div className="text-slate-300 md:w-1/2">{location.city}</div>
-                  </div>
-                </TableRow>
-              ))
-            )}
-            <Pagination
-              entriesCount={locations?.count ?? 0}
-              perPage={perPage}
-              currentPage={currentPage}
-              onChange={setCurrentPage}
-            />
-          </Table>
-        </main>
-      </PageWrapper>
-      <AddLocationForm isOpen={isOpen} setIsOpen={setIsOpen} />
-    </>
+          )}
+        </div>
+        <Table>
+          <SearchField
+            name="searchLocations"
+            placeholder="Locations"
+            query={query}
+            setQuery={setQuery}
+          />
+          <div className="my-4 text-sm text-slate-300">
+            {locations?.count}&nbsp;{locations?.count === 1 ? 'Eintrag' : 'Einträge'}
+          </div>
+          {locations?.count === 0 ? (
+            <div>Blyat! Keine Einträge gefunden.</div>
+          ) : (
+            locations?.data.map(location => (
+              <TableRow key={location.id} href="">
+                <div className="w-full items-center gap-4 md:flex">
+                  <div className="font-bold md:w-1/2">{location.name}</div>
+                  <div className="text-slate-300 md:w-1/2">{location.city}</div>
+                </div>
+              </TableRow>
+            ))
+          )}
+          <Pagination
+            entriesCount={locations?.count ?? 0}
+            perPage={perPage}
+            currentPage={currentPage}
+            onChange={setCurrentPage}
+          />
+        </Table>
+      </main>
+    </PageWrapper>
   )
 }
