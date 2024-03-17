@@ -53,7 +53,7 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
             <Button
               onClick={
                 session
-                  ? () => setModal('create-location')
+                  ? () => setModal('add-location')
                   : () => push(`/login?redirect=${pathname}`)
               }
               label="Location hinzufügen"
@@ -69,7 +69,7 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
             <Button
               onClick={
                 session
-                  ? () => setModal('create-location')
+                  ? () => setModal('add-location')
                   : () => push(`/login?redirect=${pathname}`)
               }
               label="Location hinzufügen"

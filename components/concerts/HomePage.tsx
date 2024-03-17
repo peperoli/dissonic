@@ -108,7 +108,7 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
         <div className="fixed bottom-0 right-0 m-4 md:hidden">
           <Button
             onClick={
-              session ? () => setModal('create-concert') : () => push(`/login?redirect=${pathname}`)
+              session ? () => setModal('add-concert') : () => push(`/login?redirect=${pathname}`)
             }
             label="Konzert hinzufügen"
             appearance="primary"
@@ -120,7 +120,7 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
           <h1 className="mb-0">Konzerte</h1>
           <Button
             onClick={
-              session ? () => setModal('create-concert') : () => push(`/login?redirect=${pathname}`)
+              session ? () => setModal('add-concert') : () => push(`/login?redirect=${pathname}`)
             }
             label="Konzert hinzufügen"
             appearance="primary"

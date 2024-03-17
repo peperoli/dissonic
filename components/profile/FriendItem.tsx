@@ -32,7 +32,7 @@ export const FriendItem = ({ friend, profile }: FriendItemProps) => {
         <Button
           label="Freund entfernen"
           onClick={() => {
-            setModal('remove-friend')
+            setModal('delete-friend')
             setFriendId(friend.id)
           }}
           contentType="icon"

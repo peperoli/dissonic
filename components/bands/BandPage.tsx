@@ -94,7 +94,7 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
           <div className="flex gap-4">
             <Button
               onClick={
-                session ? () => setModal('update-band') : () => push(`/login?redirect=${pathname}`)
+                session ? () => setModal('edit-band') : () => push(`/login?redirect=${pathname}`)
               }
               label="Bearbeiten"
             />

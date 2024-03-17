@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
 
-async function removeFriend({ friendId, userId }: { friendId: string; userId: string }) {
+async function deleteFriend({ friendId, userId }: { friendId: string; userId: string }) {
   const { error } = await supabase
     .from('friends')
     .delete()
@@ -14,10 +14,10 @@ async function removeFriend({ friendId, userId }: { friendId: string; userId: st
   }
 }
 
-export function useRemoveFriend() {
+export function useDeleteFriend() {
   const queryClient = useQueryClient()
   const [_, setModal] = useQueryState('modal', { history: 'push' })
-  return useMutation(removeFriend, {
+  return useMutation(deleteFriend, {
     onError: error => console.error(error),
     onSuccess: () => {
       queryClient.invalidateQueries(['friends'])

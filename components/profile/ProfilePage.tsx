@@ -190,8 +190,8 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
               </div>
               {isOwnProfile && (
                 <div className="flex gap-3">
-                  <Button label="Profil bearbeiten" onClick={() => setModal('update-profile')} />
-                  <Button label="Passwort ändern" onClick={() => setModal('update-password')} />
+                  <Button label="Profil bearbeiten" onClick={() => setModal('edit-profile')} />
+                  <Button label="Passwort ändern" onClick={() => setModal('edit-password')} />
                 </div>
               )}
             </div>

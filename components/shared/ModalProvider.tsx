@@ -22,37 +22,37 @@ const AddFriendForm = dynamic(() =>
   import('../profile/AddFriendForm').then(mod => mod.AddFriendForm)
 )
 const RemoveFriendForm = dynamic(() =>
-  import('../profile/RemoveFriendForm').then(mod => mod.RemoveFriendForm)
+  import('../profile/DeleteFriendForm').then(mod => mod.RemoveFriendForm)
 )
 
 export const modalPaths = [
-  'create-concert',
-  'update-concert',
+  'add-concert',
+  'edit-concert',
   'delete-concert',
   'delete-comment',
-  'create-band',
-  'update-band',
+  'add-band',
+  'edit-band',
   'delete-band',
-  'create-location',
-  'update-profile',
-  'update-password',
+  'add-location',
+  'edit-profile',
+  'edit-password',
   'add-friend',
-  'remove-friend',
+  'delete-friend',
 ] as const
 
 const modalComponents = {
-  'create-concert': ConcertForm,
-  'update-concert': ConcertForm,
+  'add-concert': ConcertForm,
+  'edit-concert': ConcertForm,
   'delete-concert': DeleteConcertForm,
   'delete-comment': DeleteCommentForm,
-  'create-band': BandForm,
-  'update-band': BandForm,
+  'add-band': BandForm,
+  'edit-band': BandForm,
   'delete-band': DeleteBandForm,
-  'create-location': LocationForm,
-  'update-profile': ProfileForm,
-  'update-password': PasswordForm,
+  'add-location': LocationForm,
+  'edit-profile': ProfileForm,
+  'edit-password': PasswordForm,
   'add-friend': AddFriendForm,
-  'remove-friend': RemoveFriendForm,
+  'delete-friend': RemoveFriendForm,
 } as const
 
 export const ModalProvider = () => {
@@ -67,7 +67,7 @@ export const ModalProvider = () => {
   if (ModalComponent) {
     return (
       <Modal defaultOpen>
-        <ModalComponent isNew={modal?.startsWith('create')} close={close} />
+        <ModalComponent isNew={modal?.startsWith('add')} close={close} />
       </Modal>
     )
   }

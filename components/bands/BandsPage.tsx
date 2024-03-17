@@ -86,7 +86,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
           <div className="fixed bottom-0 right-0 m-4">
             <Button
               onClick={
-                session ? () => setModal('create-band') : () => push(`/login?redirect=${pathname}`)
+                session ? () => setModal('add-band') : () => push(`/login?redirect=${pathname}`)
               }
               label="Band hinzufügen"
               appearance="primary"
@@ -100,7 +100,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
           {isDesktop && (
             <Button
               onClick={
-                session ? () => setModal('create-band') : () => push(`/login?redirect=${pathname}`)
+                session ? () => setModal('add-band') : () => push(`/login?redirect=${pathname}`)
               }
               label="Band hinzufügen"
               appearance="primary"

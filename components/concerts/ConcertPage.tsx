@@ -105,7 +105,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
               <Button
                 onClick={
                   session
-                    ? () => setModal('update-concert')
+                    ? () => setModal('edit-concert')
                     : () => push(`/login?redirect=${pathname}`)
                 }
                 label="Bearbeiten"
