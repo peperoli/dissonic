@@ -1,11 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
 import { useConcert } from '../../hooks/concerts/useConcert'
 import { ConcertContext } from '../../hooks/concerts/useConcertContext'
-import { useProfiles } from '../../hooks/profiles/useProfiles'
-import { BandSeen, Concert, Profile } from '../../types/types'
+import { Concert, Profile } from '../../types/types'
 import { Button } from '../Button'
 import { PageWrapper } from '../layout/PageWrapper'
 import { Comments } from './Comments'
@@ -23,31 +21,19 @@ import * as Tooltip from '@radix-ui/react-tooltip'
 import { ConcertStats } from './ConcertStats'
 import { parseAsStringLiteral, useQueryState } from 'nuqs'
 import { modalPaths } from '../shared/ModalProvider'
+import { useConcertProfiles } from '@/hooks/concerts/useConcertProfiles'
+import { Chip } from '../Chip'
 
 type ConcertUserItemProps = {
   concert: Concert
   user: Profile
+  count: number
 }
 
-const ConcertUserItem = ({ concert, user }: ConcertUserItemProps) => {
+const ConcertUserItem = ({ concert, user, count }: ConcertUserItemProps) => {
   const { data: bands } = useBands(null, {
     ids: concert.bands_seen?.filter(item => item.user_id === user.id).map(item => item.band_id),
   })
-
-  function getBandCountsPerUser(bandsSeen: BandSeen[]) {
-    const counts = new Map<string, number>()
-    bandsSeen.forEach(item => {
-      if (counts.has(item.user_id)) {
-        counts.set(item.user_id, counts.get(item.user_id)! + 1)
-      } else {
-        counts.set(item.user_id, 1)
-      }
-    })
-    return counts
-  }
-
-  const bandCountsPerUser = concert.bands_seen && getBandCountsPerUser(concert.bands_seen)
-  const count = bandCountsPerUser?.get(user.id)
   return (
     <Tooltip.Root>
       <Tooltip.Trigger asChild>
@@ -73,18 +59,13 @@ type ConcertPageProps = {
 
 export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPageProps) => {
   const { data: concert } = useConcert(initialConcert, initialConcert.id)
-  const fanIds = concert?.bands_seen
-    ? new Set(concert.bands_seen.map(item => item.user_id))
-    : new Set([])
-  const { data: profiles } = useProfiles({ ids: [...fanIds] })
-  const fanProfiles = profiles?.filter(profile => fanIds?.has(profile.id))
+  const { data: concertProfiles } = useConcertProfiles(initialConcert.id)
   const { data: session } = useSession()
   const { data: spotifyArtist } = useSpotifyArtist(concert?.bands?.[0]?.spotify_artist_id)
   const [_, setModal] = useQueryState(
     'modal',
     parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
   )
-  const [deleteIsOpen, setDeleteIsOpen] = useState(false)
   const { push } = useRouter()
   const pathname = usePathname()
 
@@ -154,7 +135,11 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
                   </>
                 )}
               </div>
-              {concert.is_festival && <p className="text-sm font-bold">Festival</p>}
+              {(concert.name || concert.is_festival) && (
+                <div className="mb-2">
+                  <Chip label={concert.name || 'Festival'} size="sm" />
+                </div>
+              )}
               <h1 className="mb-2">{concert.bands?.[0]?.name}</h1>
               <p className="h2 mb-0 flex items-center gap-3">
                 <MapPin className="size-icon" />
@@ -172,13 +157,20 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
               />
             )}
           </section>
-          {fanProfiles && fanProfiles.length > 0 && (
+          {concertProfiles && concertProfiles.length > 0 && (
             <section className="rounded-lg bg-slate-800 p-4 md:p-6">
               <h2>Fans</h2>
               <div className="flex flex-wrap gap-4">
-                {fanProfiles.map(item => (
-                  <ConcertUserItem concert={concert} user={item} key={item.id} />
-                ))}
+                {concertProfiles
+                  .sort((a, b) => b.count - a.count)
+                  .map(item => (
+                    <ConcertUserItem
+                      concert={concert}
+                      user={item.profile}
+                      count={item.count}
+                      key={item.profile.id}
+                    />
+                  ))}
               </div>
             </section>
           )}

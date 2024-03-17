@@ -126,4 +126,7 @@ export type SpotifyArtist = {
     href: string | null
     total: number
   }
+  external_urls: {
+    spotify: string
+  }
 }

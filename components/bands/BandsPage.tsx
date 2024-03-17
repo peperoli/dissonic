@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { ArrowUturnLeftIcon, PlusIcon } from '@heroicons/react/20/solid'
 import { PageWrapper } from '../layout/PageWrapper'
 import { Table } from '../Table'
 import { SearchField } from '../forms/SearchField'
@@ -20,6 +19,7 @@ import { BandTableRow } from './TableRow'
 import { parseAsArrayOf, parseAsInteger, parseAsStringLiteral, useQueryState } from 'nuqs'
 import Cookies from 'js-cookie'
 import { modalPaths } from '../shared/ModalProvider'
+import { Plus, RotateCcw } from 'lucide-react'
 
 interface BandsPageProps {
   initialBands: ExtendedRes<Band[]>
@@ -91,7 +91,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
               label="Band hinzufügen"
               appearance="primary"
               contentType="icon"
-              icon={<PlusIcon className="h-icon" />}
+              icon={<Plus className="h-icon" />}
             />
           </div>
         )}
@@ -104,7 +104,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
               }
               label="Band hinzufügen"
               appearance="primary"
-              icon={<PlusIcon className="h-icon" />}
+              icon={<Plus className="h-icon" />}
             />
           )}
         </div>
@@ -119,13 +119,13 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
               {bands?.count}&nbsp;{bands?.count === 1 ? 'Eintrag' : 'Einträge'}
             </div>
             {(selectedCountries || selectedGenres) && (
-              <button
+              <Button
+                label="Zurücksetzen"
                 onClick={resetAll}
-                className="flex gap-2 rounded-md px-2 py-1 text-sm hover:bg-slate-700"
-              >
-                <ArrowUturnLeftIcon className="h-icon text-slate-300" />
-                Zurücksetzen
-              </button>
+                icon={<RotateCcw className="size-icon text-slate-300" />}
+                size="small"
+                appearance="tertiary"
+              />
             )}
           </div>
           {bands.data.length === 0 ? (

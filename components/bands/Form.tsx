@@ -11,6 +11,10 @@ import { useBand } from '@/hooks/bands/useBand'
 import { usePathname } from 'next/navigation'
 import { useAddBand } from '@/hooks/bands/useAddBand'
 import { useEditBand } from '@/hooks/bands/useEditBand'
+import { ChevronDown } from 'lucide-react'
+import { Disclosure } from '@headlessui/react'
+import { Fragment } from 'react'
+import clsx from 'clsx'
 
 interface FormProps {
   isNew?: boolean
@@ -112,6 +116,25 @@ export const Form = ({ isNew, close }: FormProps) => {
           <SpotifyArtistSelect bandName={watch('name')} value={value} onChange={onChange} />
         )}
       />
+      <Disclosure>
+        <Disclosure.Panel>
+          <TextField
+            {...register('youtube_url')}
+            label="YouTube-Kanal"
+            placeholder="https://youtube.com/channel/UC4BSeEq7XNtihGqI309vhYg"
+          />
+        </Disclosure.Panel>
+        <Disclosure.Button as={Fragment}>
+          {({ open }) => (
+            <Button
+              label={open ? 'Weniger anzeigen' : 'Mehr anzeigen'}
+              icon={<ChevronDown className={clsx('size-icon', open && 'rotate-180')} />}
+              size="small"
+              appearance="tertiary"
+            />
+          )}
+        </Disclosure.Button>
+      </Disclosure>
       <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:static md:z-0 md:justify-end md:pb-0 [&>*]:flex-1">
         <Button onClick={close} label="Abbrechen" />
         <Button

@@ -13,9 +13,10 @@ import { Chip } from '../Chip'
 
 interface ConcertCardProps {
   concert: Concert
+  nested?: boolean
 }
 
-export const ConcertCard = ({ concert }: ConcertCardProps) => {
+export const ConcertCard = ({ concert, nested }: ConcertCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const { data: session } = useSession()
   const fanIds = new Set(concert?.bands_seen?.map(item => item.user_id))
@@ -45,7 +46,10 @@ export const ConcertCard = ({ concert }: ConcertCardProps) => {
   return (
     <div
       onClick={() => router.push(`/concerts/${concert.id}`)}
-      className="group flex gap-4 rounded-2xl bg-slate-800 p-5 hover:cursor-pointer"
+      className={clsx(
+        'group flex gap-4 rounded-2xl p-5 hover:cursor-pointer',
+        nested ? 'bg-slate-750' : 'bg-slate-800'
+      )}
     >
       <div className="flex flex-col items-center">
         <ConcertDate date={new Date(concert.date_start)} isFirst />

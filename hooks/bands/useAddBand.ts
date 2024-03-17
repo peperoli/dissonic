@@ -10,6 +10,7 @@ const addBand = async (band: AddBand) => {
       name: band.name,
       country_id: band.country_id,
       spotify_artist_id: band.spotify_artist_id,
+      youtube_url: band.youtube_url,
     })
     .select()
     .single()

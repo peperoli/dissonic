@@ -25,6 +25,7 @@ const editBand = async (newBand: EditBand) => {
         name: newBand.name,
         country_id: newBand.country_id,
         spotify_artist_id: newBand.spotify_artist_id,
+        youtube_url: newBand.youtube_url,
       })
       .eq('id', newBand.id)
 

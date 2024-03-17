@@ -17,6 +17,7 @@ export type Database = {
           id: number
           name: string
           spotify_artist_id: string | null
+          youtube_url: string | null
         }
         Insert: {
           country_id?: number | null
@@ -25,6 +26,7 @@ export type Database = {
           id?: number
           name: string
           spotify_artist_id?: string | null
+          youtube_url?: string | null
         }
         Update: {
           country_id?: number | null
@@ -33,6 +35,7 @@ export type Database = {
           id?: number
           name?: string
           spotify_artist_id?: string | null
+          youtube_url?: string | null
         }
         Relationships: [
           {
@@ -78,7 +81,7 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "comments_concert_id_fkey"
+            foreignKeyName: "public_comments_concert_id_fkey"
             columns: ["concert_id"]
             isOneToOne: false
             referencedRelation: "concerts"
@@ -309,17 +312,17 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "j_band_genres_band_id_fkey"
-            columns: ["band_id"]
-            isOneToOne: false
-            referencedRelation: "bands"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "j_band_genres_genre_id_fkey"
             columns: ["genre_id"]
             isOneToOne: false
             referencedRelation: "genres"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_j_band_genres_band_id_fkey"
+            columns: ["band_id"]
+            isOneToOne: false
+            referencedRelation: "bands"
             referencedColumns: ["id"]
           }
         ]
@@ -349,17 +352,17 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "j_bands_seen_concert_id_fkey"
-            columns: ["concert_id"]
-            isOneToOne: false
-            referencedRelation: "concerts"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "j_bands_seen_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_j_bands_seen_concert_id_fkey"
+            columns: ["concert_id"]
+            isOneToOne: false
+            referencedRelation: "concerts"
             referencedColumns: ["id"]
           }
         ]
@@ -389,7 +392,7 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "j_concert_bands_concert_id_fkey"
+            foreignKeyName: "public_j_concert_bands_concert_id_fkey"
             columns: ["concert_id"]
             isOneToOne: false
             referencedRelation: "concerts"
@@ -540,6 +543,7 @@ export type Database = {
           id: number
           name: string
           spotify_artist_id: string | null
+          youtube_url: string | null
         }[]
       }
       search_locations: {

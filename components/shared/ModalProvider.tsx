@@ -1,7 +1,6 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { usePathname } from 'next/navigation'
 import { parseAsStringLiteral, useQueryState } from 'nuqs'
 import Modal from '../Modal'
 const ConcertForm = dynamic(() => import('../concerts/Form').then(mod => mod.Form))
@@ -60,7 +59,6 @@ export const ModalProvider = () => {
     'modal',
     parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
   )
-  const pathname = usePathname()
   const close = () => setModal(null)
   const ModalComponent = modal ? modalComponents[modal] : null
 
