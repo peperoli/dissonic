@@ -51,7 +51,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {loading && <Loader2 className="absolute h-icon animate-spin" />}
         <span className={clsx('flex gap-2 items-center', loading && 'opacity-0')}>
           {icon}
-          <span className={`${contentType === 'icon' ? ' sr-only ' : ''}`}>{label}</span>
+          {label !== '' && <span className={`${contentType === 'icon' ? ' sr-only ' : ''}`}>{label}</span>}
         </span>
       </button>
     )

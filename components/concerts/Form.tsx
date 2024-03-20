@@ -132,12 +132,13 @@ export const Form = ({ close, isNew }: FormProps) => {
         ) : (
           <TextField {...register('name')} label="Name (optional)" placeholder="Greenfield" />
         )}
-        <div className="flex gap-4">
+        <div className="flex">
           <TextField
             {...register('date_start', { required: true })}
             error={errors.date_start}
             type="date"
             label={isFestival ? 'Startdatum' : 'Datum'}
+            grouped={isFestival ? 'start' : undefined}
           />
           {isFestival && (
             <TextField
@@ -145,6 +146,7 @@ export const Form = ({ close, isNew }: FormProps) => {
               error={errors.date_end}
               type="date"
               label="Enddatum"
+              grouped='end'
             />
           )}
         </div>

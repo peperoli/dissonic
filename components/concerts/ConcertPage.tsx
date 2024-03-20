@@ -113,7 +113,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
           <section
             className={clsx(
               'relative overflow-hidden rounded-2xl',
-              concert.festival_root_id ? 'aspect-2/1 bg-purple' : 'aspect-4/3 bg-venom'
+              concert.festival_root_id ? 'aspect-2/1 bg-purple' : 'aspect-square md:aspect-4/3 bg-venom'
             )}
           >
             {!concert.festival_root_id && spotifyArtist?.images[0] && (
@@ -137,12 +137,12 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
               </div>
               {(concert.name || concert.is_festival) && (
                 <div className="mb-2">
-                  <Chip label={concert.name || 'Festival'} size="sm" />
+                  <Chip label={concert.name || 'Festival'} size="sm" color="blue" />
                 </div>
               )}
               <h1 className="mb-2">{concert.bands?.[0]?.name}</h1>
               <p className="h2 mb-0 flex items-center gap-3">
-                <MapPin className="size-icon" />
+                <MapPin className="size-icon text-slate-300" />
                 {concert.location?.name}, {concert.location?.city}
               </p>
             </div>

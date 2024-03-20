@@ -24,7 +24,7 @@ const Bar = ({ item, highestCount, bgColor = 'venom' }: BarProps) => {
         )}
         style={{ width: (item.count / highestCount) * 100 + '%' }}
       >
-        <div className='ml-1 text-sm text-slate-850'>{item.count}</div>
+        <div className="ml-1 text-sm text-slate-850">{item.count}</div>
       </div>
     </li>
   )
@@ -57,41 +57,39 @@ export const ConcertStats = ({ bands }: ConcertStatsProps) => {
     return itemCounts
   }
 
-  const genreCounts = getCounts(genres).sort((a, b) => b.count - a.count).slice(0, 10)
-  const countryCounts = getCounts(countries).sort((a, b) => b.count - a.count).slice(0, 10)
+  const genreCounts = getCounts(genres)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 10)
+  const countryCounts = getCounts(countries)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 10)
   return (
     <section className="rounded-lg bg-slate-800 p-4 md:p-6">
-      <h2>Details</h2>
-      <div className="grid grid-cols-2 gap-4 md:gap-6">
-        <div>
-          <h3>Genres</h3>
-          <ul className="flex flex-wrap gap-2">
-            {genreCounts.map(item => {
-              if (genreCounts.length >= 3) {
-                return <Bar item={item} highestCount={genreCounts[0].count} key={item.id} />
-              }
-              return <Chip key={item.id} label={item.name} count={item.count} />
-            })}
-          </ul>
-        </div>
-        <div>
-          <h3>Länder</h3>
-          <ul className="flex flex-wrap gap-2">
-            {countryCounts.map(item => {
-              if (countryCounts.length >= 3) {
-                return (
-                  <Bar
-                    item={item}
-                    highestCount={countryCounts[0].count}
-                    bgColor="blue"
-                    key={item.id}
-                  />
-                )
-              }
-              return <Chip key={item.id} label={item.name} count={item.count} />
-            })}
-          </ul>
-        </div>
+      <h2>Genres & Länder</h2>
+      <div className="grid items-start gap-5 md:gap-6 md:grid-cols-2">
+        <ul className="flex flex-wrap gap-2">
+          {genreCounts.map(item => {
+            if (genreCounts.length >= 3) {
+              return <Bar item={item} highestCount={genreCounts[0].count} key={item.id} />
+            }
+            return <Chip key={item.id} label={item.name} count={item.count} />
+          })}
+        </ul>
+        <ul className="flex flex-wrap gap-2">
+          {countryCounts.map(item => {
+            if (countryCounts.length >= 3) {
+              return (
+                <Bar
+                  item={item}
+                  highestCount={countryCounts[0].count}
+                  bgColor="blue"
+                  key={item.id}
+                />
+              )
+            }
+            return <Chip key={item.id} label={item.name} count={item.count} />
+          })}
+        </ul>
       </div>
     </section>
   )

@@ -11,16 +11,14 @@ type LocationMultiSelectProps = {
 const LocationMultiSelect = ({ ...props }: LocationMultiSelectProps) => {
   const { data: locations, isLoading } = useLocations()
   return (
-    <div className="relative h-full">
-      <Select
-        name="location"
-        items={locations?.data}
-        isLoading={isLoading}
-        multiple
-        fixedHeight
-        {...props}
-      />
-    </div>
+    <Select
+      name="location"
+      items={locations?.data}
+      isLoading={isLoading}
+      multiple
+      fixedHeight
+      {...props}
+    />
   )
 }
 
