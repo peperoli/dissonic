@@ -47,5 +47,6 @@
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.11",
     "supabase": "^1.64.8"
-  }
+  },
+  "packageManager": "yarn@4.1.1"
 }
