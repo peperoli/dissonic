@@ -92,10 +92,10 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
             <div>Blyat! Keine Einträge gefunden.</div>
           ) : (
             locations?.data.map(location => (
-              <TableRow key={location.id} href="">
-                <div className="w-full items-center gap-4 md:flex">
-                  <div className="font-bold md:w-1/2">{location.name}</div>
-                  <div className="text-slate-300 md:w-1/2">{location.city}</div>
+              <TableRow key={location.id} href={`/locations/${location.id}`}>
+                <div className="w-full items-center gap-4 md:grid grid-cols-2">
+                  <div className="font-bold">{location.name}</div>
+                  <div className="text-slate-300">{location.city}</div>
                 </div>
               </TableRow>
             ))

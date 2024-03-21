@@ -120,7 +120,7 @@ export const Form = ({ isNew, close }: FormProps) => {
         <Disclosure.Panel>
           <TextField
             {...register('youtube_url')}
-            label="YouTube-Kanal"
+            label="YouTube-Kanal (optional)"
             placeholder="https://youtube.com/channel/UC4BSeEq7XNtihGqI309vhYg"
           />
         </Disclosure.Panel>

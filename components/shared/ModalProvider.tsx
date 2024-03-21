@@ -1,27 +1,53 @@
 'use client'
 
+import { Loader2 } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { parseAsStringLiteral, useQueryState } from 'nuqs'
 import Modal from '../Modal'
-const ConcertForm = dynamic(() => import('../concerts/Form').then(mod => mod.Form))
-const DeleteConcertForm = dynamic(() =>
-  import('../concerts/DeleteConcertForm').then(mod => mod.DeleteConcertForm)
+
+function Loader() {
+  return <Loader2 className="size-8 animate-spin text-slate-300" />
+}
+
+const ConcertForm = dynamic(() => import('../concerts/Form').then(mod => mod.Form), {
+  loading: () => <Loader />,
+})
+const DeleteConcertForm = dynamic(
+  () => import('../concerts/DeleteConcertForm').then(mod => mod.DeleteConcertForm),
+  { loading: () => <Loader /> }
 )
-const DeleteCommentForm = dynamic(() =>
-  import('../concerts/DeleteCommentForm').then(mod => mod.DeleteCommentForm)
+const DeleteCommentForm = dynamic(
+  () => import('../concerts/DeleteCommentForm').then(mod => mod.DeleteCommentForm),
+  { loading: () => <Loader /> }
 )
-const BandForm = dynamic(() => import('../bands/Form').then(mod => mod.Form))
-const DeleteBandForm = dynamic(() =>
-  import('../bands/DeleteBandForm').then(mod => mod.DeleteBandForm)
+const BandForm = dynamic(() => import('../bands/Form').then(mod => mod.Form), {
+  loading: () => <Loader />,
+})
+const DeleteBandForm = dynamic(
+  () => import('../bands/DeleteBandForm').then(mod => mod.DeleteBandForm),
+  { loading: () => <Loader /> }
 )
-const LocationForm = dynamic(() => import('../locations/Form').then(mod => mod.Form))
-const ProfileForm = dynamic(() => import('../profile/Form').then(mod => mod.Form))
-const PasswordForm = dynamic(() => import('../profile/PasswordForm').then(mod => mod.PasswordForm))
-const AddFriendForm = dynamic(() =>
-  import('../profile/AddFriendForm').then(mod => mod.AddFriendForm)
+const LocationForm = dynamic(() => import('../locations/Form').then(mod => mod.Form), {
+  loading: () => <Loader />,
+})
+const DeleteLocationForm = dynamic(
+  () => import('../locations/DeleteLocationForm').then(mod => mod.DeleteLocationForm),
+  { loading: () => <Loader /> }
 )
-const RemoveFriendForm = dynamic(() =>
-  import('../profile/DeleteFriendForm').then(mod => mod.RemoveFriendForm)
+const ProfileForm = dynamic(() => import('../profile/Form').then(mod => mod.Form), {
+  loading: () => <Loader />,
+})
+const PasswordForm = dynamic(
+  () => import('../profile/PasswordForm').then(mod => mod.PasswordForm),
+  { loading: () => <Loader /> }
+)
+const AddFriendForm = dynamic(
+  () => import('../profile/AddFriendForm').then(mod => mod.AddFriendForm),
+  { loading: () => <Loader /> }
+)
+const RemoveFriendForm = dynamic(
+  () => import('../profile/DeleteFriendForm').then(mod => mod.RemoveFriendForm),
+  { loading: () => <Loader /> }
 )
 
 export const modalPaths = [
@@ -33,6 +59,8 @@ export const modalPaths = [
   'edit-band',
   'delete-band',
   'add-location',
+  'edit-location',
+  'delete-location',
   'edit-profile',
   'edit-password',
   'add-friend',
@@ -48,6 +76,8 @@ const modalComponents = {
   'edit-band': BandForm,
   'delete-band': DeleteBandForm,
   'add-location': LocationForm,
+  'edit-location': LocationForm,
+  'delete-location': DeleteLocationForm,
   'edit-profile': ProfileForm,
   'edit-password': PasswordForm,
   'add-friend': AddFriendForm,

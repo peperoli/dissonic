@@ -17,7 +17,7 @@ const fetchBandProfiles = async (bandId: number): Promise<{ profile: Profile; co
 }
 
 export const useBandProfiles = (bandId: number) => {
-  return useQuery(['bandsSeen', bandId], () => fetchBandProfiles(bandId), {
+  return useQuery(['bandProfiles', bandId], () => fetchBandProfiles(bandId), {
     onError: error => console.error(error),
   })
 }
