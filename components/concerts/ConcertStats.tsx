@@ -1,6 +1,11 @@
+import { getCounts } from '@/lib/getCounts'
 import { Band, Genre, Country } from '@/types/types'
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import clsx from 'clsx'
+import { useState } from 'react'
+import { Button } from '../Button'
 import { Chip } from '../Chip'
+import { ToggleSwitch } from '../forms/ToggleSwitch'
 
 type BarProps = {
   item: {
@@ -32,43 +37,47 @@ const Bar = ({ item, highestCount, bgColor = 'venom' }: BarProps) => {
 
 type ConcertStatsProps = {
   bands: Band[]
+  uniqueBands?: Band[]
 }
 
-export const ConcertStats = ({ bands }: ConcertStatsProps) => {
-  const genres = bands.map(band => band.genres).flat(1)
-  const countries = bands.map(band => band.country as Country)
+export const ConcertStats = ({ bands, uniqueBands }: ConcertStatsProps) => {
+  const [showAll, setShowAll] = useState(false)
+  const [visibleItems, setVisibleItems] = useState(10)
+  const [animationParent] = useAutoAnimate()
+  const hasUniqueBands =
+    uniqueBands && uniqueBands.length > 0 && uniqueBands.length !== bands.length
+  const genres =
+    hasUniqueBands && !showAll
+      ? uniqueBands.map(band => band.genres).flat()
+      : bands.map(band => band.genres).flat(1)
+  const countries =
+    hasUniqueBands && !showAll
+      ? uniqueBands.filter(band => !!band.country).map(band => band.country as Country)
+      : bands.filter(band => !!band.country).map(band => band.country as Country)
   const regionNames = new Intl.DisplayNames('de', { type: 'region' })
-
-  function getCounts(items: Genre[] | Country[]) {
-    const itemCounts: { id: number; name: string; count: number }[] = []
-    items.forEach(item => {
-      const matchingItem = itemCounts.find(itemCount => itemCount.id === item.id)
-      if (!matchingItem) {
-        itemCounts.push({
-          id: item.id,
-          name: 'name' in item ? item.name : regionNames.of(item.iso2) || item.iso2,
-          count: 1,
-        })
-      } else if (matchingItem?.count) {
-        matchingItem.count += 1
-      }
-    })
-
-    return itemCounts
-  }
-
-  const genreCounts = getCounts(genres)
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 10)
-  const countryCounts = getCounts(countries)
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 10)
+  const genreCounts = getCounts(genres).sort((a, b) => b.count - a.count)
+  const countryCounts = getCounts(
+    countries.map(country => ({
+      name: regionNames.of(country.iso2) || country.iso2,
+      ...country,
+    }))
+  ).sort((a, b) => b.count - a.count)
+  
   return (
     <section className="rounded-lg bg-slate-800 p-4 md:p-6">
       <h2>Genres & Länder</h2>
-      <div className="grid items-start gap-5 md:gap-6 md:grid-cols-2">
-        <ul className="flex flex-wrap gap-2">
-          {genreCounts.map(item => {
+      {hasUniqueBands && (
+        <div className="mb-5">
+          <ToggleSwitch
+            label="Mehrfach erlebte Bands einschliessen"
+            checked={showAll}
+            onChange={setShowAll}
+          />
+        </div>
+      )}
+      <div className="grid items-start gap-5 md:grid-cols-2 md:gap-6">
+        <ul ref={animationParent} className="flex flex-wrap gap-2">
+          {genreCounts.slice(0, visibleItems).map(item => {
             if (genreCounts.length >= 3) {
               return <Bar item={item} highestCount={genreCounts[0].count} key={item.id} />
             }
@@ -76,7 +85,7 @@ export const ConcertStats = ({ bands }: ConcertStatsProps) => {
           })}
         </ul>
         <ul className="flex flex-wrap gap-2">
-          {countryCounts.map(item => {
+          {countryCounts.slice(0, visibleItems).map(item => {
             if (countryCounts.length >= 3) {
               return (
                 <Bar
@@ -91,6 +100,18 @@ export const ConcertStats = ({ bands }: ConcertStatsProps) => {
           })}
         </ul>
       </div>
+      {(genreCounts.length > 10 || countryCounts.length > 10) && (
+        <div className="mt-5 flex justify-center">
+          {visibleItems === 10 ? (
+            <Button
+              onClick={() => setVisibleItems(Math.max(genreCounts.length, countryCounts.length))}
+              label="Mehr anzeigen"
+            />
+          ) : (
+            <Button onClick={() => setVisibleItems(10)} label="Weniger anzeigen" />
+          )}
+        </div>
+      )}
     </section>
   )
 }

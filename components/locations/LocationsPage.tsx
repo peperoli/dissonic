@@ -16,6 +16,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
 import { parseAsInteger, parseAsStringLiteral, useQueryState } from 'nuqs'
 import { modalPaths } from '../shared/ModalProvider'
+import { StatusBanner } from '../forms/StatusBanner'
 
 interface LocationsPageProps {
   initialLocations: ExtendedRes<Location[]>
@@ -89,7 +90,7 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
             {locations?.count}&nbsp;{locations?.count === 1 ? 'Eintrag' : 'Einträge'}
           </div>
           {locations?.count === 0 ? (
-            <div>Blyat! Keine Einträge gefunden.</div>
+            <StatusBanner statusType="info" message="Blyat! Keine Einträge gefunden." />
           ) : (
             locations?.data.map(location => (
               <TableRow key={location.id} href={`/locations/${location.id}`}>

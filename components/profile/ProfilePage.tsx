@@ -3,13 +3,9 @@
 import { PageWrapper } from '../layout/PageWrapper'
 import { useState } from 'react'
 import { Button } from '../Button'
-import { GenreChart } from '../concerts/GenreChart'
 import { CheckCircleIcon, UserPlusIcon } from '@heroicons/react/20/solid'
-import { TopBands } from './TopBands'
-import { TopLocations } from './TopLocations'
 import { ConcertsByYear } from './ConcertsByYear'
-import { ConcertsByMonth } from './ConcertsByMonth'
-import { Band, Concert, Location, Profile } from '../../types/types'
+import { Band, Location, Profile } from '../../types/types'
 import { useProfile } from '../../hooks/profiles/useProfile'
 import { useFriends } from '../../hooks/profiles/useFriends'
 import { useBandsSeen } from '../../hooks/bands/useBandsSeen'
@@ -22,6 +18,15 @@ import { Score } from './Score'
 import { UserItem } from '../shared/UserItem'
 import { parseAsStringLiteral, useQueryState } from 'nuqs'
 import { modalPaths } from '../shared/ModalProvider'
+import { FriendItem } from './FriendItem'
+import { getUniqueObjects } from '@/lib/getUniqueObjects'
+import { Edit, Lock } from 'lucide-react'
+import { ConcertStats } from '../concerts/ConcertStats'
+import { TopGrid } from './TopGrid'
+import { BandItem } from './BandItem'
+import { LocationItem } from './LocationItem'
+import { StatusBanner } from '../forms/StatusBanner'
+import { PieChart } from './PieChart'
 
 type ConcertListProps = {
   userId: string
@@ -34,13 +39,16 @@ function ConcertList({ userId }: ConcertListProps) {
     sort: { sort_by: 'date_start', sort_asc: false },
     size,
   })
+
+  if (!concerts) return <p className="text-sm text-slate-300">Lade ...</p>
+
+  if (concerts.data.length === 0) {
+    return <StatusBanner statusType="info" message="Blyat! Noch keine Konzerte vorhanden." />
+  }
+
   return (
     <>
-      {concerts ? (
-        concerts.data.map(concert => <ConcertCard concert={concert} key={concert.id} />)
-      ) : (
-        <p>Loading ...</p>
-      )}
+      {concerts?.data.map(concert => <ConcertCard concert={concert} key={concert.id} />)}
       <div className="flex flex-col items-center gap-2">
         <p className="text-sm text-slate-300">
           {concerts?.data.length} von {concerts?.count} Einträgen
@@ -63,20 +71,15 @@ type ProfilePageProps = {
 }
 
 export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
-  const { data: profile } = useProfile(initialProfile?.id, null, initialProfile)
-  const { data: friends } = useFriends({ profileId: initialProfile?.id })
-  const { data: bandsSeen } = useBandsSeen(initialProfile?.id)
+  const { data: profile } = useProfile(initialProfile.id, null, initialProfile)
+  const { data: friends } = useFriends({ profileId: initialProfile.id })
+  const acceptedFriends = friends?.filter(item => !item.pending)
+  const { data: bandsSeen } = useBandsSeen(initialProfile.id)
   const [_, setModal] = useQueryState(
     'modal',
     parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
   )
   const { data: session } = useSession()
-
-  function unique(array: ({ id: string | number } | null | undefined)[]): any[] {
-    const mapOfObjects = new Map(array.map(item => [item?.id, item]))
-    return [...mapOfObjects.values()]
-  }
-
   const isOwnProfile = session?.user.id === profile?.id
   const isFriend =
     isOwnProfile === false &&
@@ -89,117 +92,160 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
     item =>
       item.pending && (item.sender.id === session?.user.id || item.receiver.id === session?.user.id)
   )
-  const bands = (bandsSeen?.map(item => item.band) as Band[]) ?? []
-  const uniqueBandsSeen: Band[] = bandsSeen ? unique(bandsSeen.map(item => item.band)) : []
-  const concertsSeen: Concert[] = bandsSeen ? unique(bandsSeen.map(item => item.concert)) : []
-  const festivalsSeen: Concert[] = bandsSeen
-    ? unique(bandsSeen.filter(item => item.concert?.is_festival).map(item => item.concert))
-    : []
+  const bands = bandsSeen?.map(item => item.band as Band) ?? []
+  const uniqueBandsSeen = getUniqueObjects(bandsSeen?.map(item => item.band) ?? [])
+  const concertsSeen = getUniqueObjects(bandsSeen?.map(item => item.concert) ?? [])
+
   return (
     <PageWrapper>
-      <>
-        <main className="container">
-          {profile ? (
-            <div>
-              <div className="mb-6 flex flex-wrap items-center gap-4">
-                <UserItem user={profile} size="lg" />
-                {isFriend && (
-                  <p className="flex gap-2 text-slate-300">
-                    <CheckCircleIcon className="h-icon" />
-                    Freund
-                  </p>
-                )}
-                {!isFriend && session?.user.id !== profile.id && (
-                  <Button
-                    onClick={() => setModal('add-friend')}
-                    label="Freund hinzufügen"
-                    contentType="icon"
-                    icon={<UserPlusIcon className="h-icon" />}
-                    disabled={!!isPending}
-                  />
-                )}
-              </div>
-              <div className="mb-6 grid gap-4 md:grid-cols-2">
-                <Score
-                  uniqueBandsSeen={uniqueBandsSeen}
-                  bandsSeen={bands}
-                  concertsSeen={concertsSeen}
-                  festivalsSeen={festivalsSeen}
+      <main className="container grid gap-4">
+        {profile ? (
+          <>
+            <section className="mb-6 flex flex-wrap items-center gap-4">
+              <UserItem
+                user={profile}
+                description={isOwnProfile ? session?.user.email : ''}
+                size="lg"
+              />
+              {isFriend && (
+                <p className="flex gap-2 text-slate-300">
+                  <CheckCircleIcon className="h-icon" />
+                  Freund
+                </p>
+              )}
+              {!isFriend && session?.user.id !== profile.id && (
+                <Button
+                  onClick={() => setModal('add-friend')}
+                  label="Freund hinzufügen"
+                  contentType="icon"
+                  icon={<UserPlusIcon className="h-icon" />}
+                  disabled={!!isPending}
                 />
-                <Tab.Group as="section" className="col-span-full">
-                  <Tab.List className="mb-4 rounded-lg bg-slate-700 px-3">
-                    {['Statistik', 'Konzerte'].map(item => (
-                      <Tab className="rounded px-3" key={item}>
-                        {({ selected }) => (
-                          <span
-                            className={clsx(
-                              'block border-b-2 py-3',
-                              selected ? 'border-venom' : 'border-transparent text-slate-300'
-                            )}
-                          >
-                            {item}
-                          </span>
-                        )}
-                      </Tab>
-                    ))}
-                  </Tab.List>
-                  <Tab.Panel className="grid grid-cols-3 gap-4">
-                    {bandsSeen && (
-                      <TopBands
-                        bands={
-                          bandsSeen
-                            .filter(item => item.band != undefined)
-                            .map(item => item.band) as Band[]
-                        }
-                      />
-                    )}
-                    {bandsSeen && uniqueBandsSeen && (
-                      <div className="col-span-full rounded-lg bg-slate-800 p-6">
-                        <GenreChart
-                          bands={bands}
-                          uniqueBands={uniqueBandsSeen}
-                          profile={isOwnProfile ? null : profile}
-                        />
-                      </div>
-                    )}
-                    {concertsSeen && (
-                      <div className="col-span-full rounded-lg bg-slate-800 p-6">
-                        <ConcertsByYear concerts={concertsSeen} />
-                      </div>
-                    )}
-                    {concertsSeen && (
-                      <div className="col-span-full rounded-lg bg-slate-800 p-6">
-                        <ConcertsByMonth concerts={concertsSeen} />
-                      </div>
-                    )}
-                    {concertsSeen && (
-                      <TopLocations
-                        locations={
-                          concertsSeen
-                            .filter(item => item.location != undefined)
-                            .map(item => item.location) as Location[]
-                        }
-                        username={profile.username}
-                      />
-                    )}
-                  </Tab.Panel>
-                  <Tab.Panel className="grid gap-4">
-                    <ConcertList userId={profile.id} />
-                  </Tab.Panel>
-                </Tab.Group>
-              </div>
+              )}
               {isOwnProfile && (
-                <div className="flex gap-3">
-                  <Button label="Profil bearbeiten" onClick={() => setModal('edit-profile')} />
-                  <Button label="Passwort ändern" onClick={() => setModal('edit-password')} />
+                <div className="ml-auto flex gap-2">
+                  <Button
+                    label="Profil bearbeiten"
+                    onClick={() => setModal('edit-profile')}
+                    icon={<Edit className="size-icon" />}
+                    contentType="icon"
+                    size="small"
+                    appearance="tertiary"
+                  />
+                  <Button
+                    label="Passwort ändern"
+                    onClick={() => setModal('edit-password')}
+                    icon={<Lock className="size-icon" />}
+                    contentType="icon"
+                    size="small"
+                    appearance="tertiary"
+                  />
                 </div>
               )}
-            </div>
-          ) : (
-            <div>Bitte melde dich an.</div>
-          )}
-        </main>
-      </>
+            </section>
+            <Score uniqueBandsSeen={uniqueBandsSeen} concertsSeen={concertsSeen} />
+            <Tab.Group as="section">
+              <Tab.List as="nav" className="mb-4 rounded-lg bg-slate-700 px-3">
+                {['Statistik', 'Konzerte', 'Freunde'].map(item => (
+                  <Tab className="relative rounded p-3" key={item}>
+                    {({ selected }) => (
+                      <>
+                        {item}
+                        <span
+                          className={clsx(
+                            'absolute bottom-0 left-0 h-1 w-full rounded-t',
+                            selected ? 'bg-venom' : 'bg-transparent'
+                          )}
+                        />
+                      </>
+                    )}
+                  </Tab>
+                ))}
+              </Tab.List>
+              <Tab.Panel className="grid gap-4">
+                {!bandsSeen && <p className="text-sm text-slate-300">Lade ...</p>}
+                {bandsSeen && bandsSeen.length === 0 && (
+                  <StatusBanner
+                    statusType="info"
+                    message="Blyat! Noch keine Statistik vorhanden."
+                  />
+                )}
+                {bandsSeen && (
+                  <TopGrid
+                    headline="Top Bands"
+                    items={bandsSeen.filter(item => !!item.band).map(item => item.band) as Band[]}
+                    Item={BandItem}
+                  />
+                )}
+                {bandsSeen && (
+                  <section className="grid md:grid-cols-2 gap-4 rounded-lg bg-slate-800 p-4 md:p-6">
+                    <PieChart
+                      data={[
+                        {
+                          name: 'Konzerte',
+                          value: concertsSeen.filter(item => !item.is_festival).length,
+                        },
+                        {
+                          name: 'Festivals',
+                          value: concertsSeen.filter(item => item.is_festival).length,
+                        },
+                      ]}
+                    />
+                    <PieChart
+                      data={[
+                        { name: 'Einmal erlebte Bands', value: uniqueBandsSeen.length },
+                        {
+                          name: 'Mehrfach erlebte Bands',
+                          value: bandsSeen?.length - uniqueBandsSeen.length,
+                        },
+                      ]}
+                    />
+                  </section>
+                )}
+                {bandsSeen && bandsSeen.length > 0 && uniqueBandsSeen && (
+                  <ConcertStats bands={bands} uniqueBands={uniqueBandsSeen} />
+                )}
+                <ConcertsByYear userId={profile.id} />
+                {concertsSeen && (
+                  <TopGrid
+                    headline="Top Locations"
+                    items={
+                      concertsSeen
+                        .filter(item => !!item.location)
+                        .map(item => item.location) as Location[]
+                    }
+                    Item={LocationItem}
+                  />
+                )}
+              </Tab.Panel>
+              <Tab.Panel className="grid gap-4">
+                <ConcertList userId={profile.id} />
+              </Tab.Panel>
+              <Tab.Panel>
+                {acceptedFriends && acceptedFriends.length > 0 ? (
+                  <div className="grid grid-cols-2 gap-4">
+                    {acceptedFriends.map(item => (
+                      <FriendItem
+                        key={item.sender.id + item.receiver.id}
+                        friend={item.sender.id === profile.id ? item.receiver : item.sender}
+                        profile={profile}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <StatusBanner
+                    statusType="info"
+                    message={`${session?.user.id === profile.id ? 'Du hast' : profile.username + ' hat'} noch
+                  keine Konzertfreunde :/`}
+                  />
+                )}
+              </Tab.Panel>
+            </Tab.Group>
+          </>
+        ) : (
+          <div>Bitte melde dich an.</div>
+        )}
+      </main>
     </PageWrapper>
   )
 }
