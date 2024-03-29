@@ -1,48 +1,63 @@
+import { useState } from 'react'
 import { Concert } from '../../types/types'
+import { BarChart } from '../BarChart'
+import { SegmentedControl } from '../controls/SegmentedControl'
+import { useBandsSeen } from '@/hooks/bands/useBandsSeen'
+import { getUniqueObjects } from '@/lib/getUniqueObjects'
 
-export interface ConcertsByYearProps {
-  concerts: Concert[]
+type ConcertsByYearProps = {
+  userId: string
 }
 
-export const ConcertsByYear = ({ concerts }: ConcertsByYearProps) => {
-  const years: { year: number; count: number }[] = []
+export const ConcertsByYear = ({ userId }: ConcertsByYearProps) => {
+  const { data: bandsSeen } = useBandsSeen(userId)
+  const [selected, setSelected] = useState('concerts')
+  const concerts = getUniqueObjects(bandsSeen?.map(band => band.concert) as Concert[])
 
-  concerts.forEach(concert => {
-    let year = years.find(item => item.year === Number(concert.date_start.slice(0, 4)))
-    if (!year) {
-      years.push({ year: Number(concert.date_start.slice(0, 4)), count: 1 })
-    } else if (year?.count) {
-      year.count += 1
-    }
-  })
-
-  const highestCount = Math.max(...years.map(item => item.count))
-
-  function compare(a: { year: number }, b: { year: number }): number {
-    if (a.year > b.year) {
-      return 1
-    } else if (a.year < b.year) {
-      return -1
-    }
-    return 0
+  if (!concerts) {
+    return null
   }
+
+  const start = Math.min(...concerts?.map(concert => parseInt(concert.date_start.slice(0, 4))))
+  const end = Math.max(...concerts?.map(concert => parseInt(concert.date_start.slice(0, 4))))
+  const years = Array.from({ length: end - start + 1 }, (_, i) => start + i)
+  const concertsPerYear = years.map(year => ({
+    name: year.toString(),
+    value: concerts?.filter(concert => parseInt(concert.date_start.slice(0, 4)) === year)
+      .length,
+  }))
+  const bandsPerYear = years.map(year => ({
+    name: year.toString(),
+    value:
+      bandsSeen?.filter(band => band.concert?.date_start.slice(0, 4) === year.toString()).length ||
+      0,
+  }))
   return (
     <div>
       <h2>Konzerte pro Jahr</h2>
-      <div className="flex gap-4 -mx-6 px-6 overflow-auto scrollbar-hidden">
-        {years.sort(compare).map(item => (
-          <div key={item.year} className="flex-1 flex flex-col items-center">
-            <div className="relative flex justify-center items-end h-24 mb-2">
-              <div
-                className="w-6 md:w-8 rounded bg-venom-600"
-                style={{ height: (item.count / highestCount) * 100 + '%' }}
-              />
-              <p className="absolute w-full pb-1 text-center font-bold">{item.count}</p>
-            </div>
-            <p className="text-vertical text-center text-sm">{item.year}</p>
-          </div>
-        ))}
-      </div>
+      <SegmentedControl
+        options={[
+          { value: 'concerts', label: 'Konzerte' },
+          { value: 'bands', label: 'Bands' },
+        ]}
+        value={selected}
+        onValueChange={setSelected}
+      />
+      <BarChart
+        datasets={[
+          selected === 'concerts'
+            ? {
+                unit: ['Konzert', 'Konzerte'],
+                color: 'venom',
+                data: concertsPerYear,
+              }
+            : {
+                unit: ['Band', 'Bande'],
+                color: 'blue',
+                data: bandsPerYear,
+              },
+        ]}
+      />
     </div>
   )
 }

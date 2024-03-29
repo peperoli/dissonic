@@ -22,6 +22,8 @@ import { Score } from './Score'
 import { UserItem } from '../shared/UserItem'
 import { parseAsStringLiteral, useQueryState } from 'nuqs'
 import { modalPaths } from '../shared/ModalProvider'
+import { FriendItem } from './FriendItem'
+import { getUniqueObjects } from '@/lib/getUniqueObjects'
 
 type ConcertListProps = {
   userId: string
@@ -63,20 +65,15 @@ type ProfilePageProps = {
 }
 
 export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
-  const { data: profile } = useProfile(initialProfile?.id, null, initialProfile)
-  const { data: friends } = useFriends({ profileId: initialProfile?.id })
-  const { data: bandsSeen } = useBandsSeen(initialProfile?.id)
+  const { data: profile } = useProfile(initialProfile.id, null, initialProfile)
+  const { data: friends } = useFriends({ profileId: initialProfile.id })
+  const acceptedFriends = friends?.filter(item => !item.pending)
+  const { data: bandsSeen } = useBandsSeen(initialProfile.id)
   const [_, setModal] = useQueryState(
     'modal',
     parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
   )
   const { data: session } = useSession()
-
-  function unique(array: ({ id: string | number } | null | undefined)[]): any[] {
-    const mapOfObjects = new Map(array.map(item => [item?.id, item]))
-    return [...mapOfObjects.values()]
-  }
-
   const isOwnProfile = session?.user.id === profile?.id
   const isFriend =
     isOwnProfile === false &&
@@ -89,12 +86,13 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
     item =>
       item.pending && (item.sender.id === session?.user.id || item.receiver.id === session?.user.id)
   )
-  const bands = (bandsSeen?.map(item => item.band) as Band[]) ?? []
-  const uniqueBandsSeen: Band[] = bandsSeen ? unique(bandsSeen.map(item => item.band)) : []
-  const concertsSeen: Concert[] = bandsSeen ? unique(bandsSeen.map(item => item.concert)) : []
-  const festivalsSeen: Concert[] = bandsSeen
-    ? unique(bandsSeen.filter(item => item.concert?.is_festival).map(item => item.concert))
-    : []
+  const bands = bandsSeen?.map(item => item.band as Band) ?? []
+  const uniqueBandsSeen = getUniqueObjects(bandsSeen?.map(item => item.band) ?? [])
+  const concertsSeen = getUniqueObjects(bandsSeen?.map(item => item.concert) ?? [])
+  const festivalsSeen = getUniqueObjects(
+    bandsSeen?.filter(item => item.concert?.is_festival).map(item => item.concert) ?? []
+  )
+
   return (
     <PageWrapper>
       <>
@@ -102,7 +100,11 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
           {profile ? (
             <div>
               <div className="mb-6 flex flex-wrap items-center gap-4">
-                <UserItem user={profile} size="lg" />
+                <UserItem
+                  user={profile}
+                  description={isOwnProfile ? session?.user.email : ''}
+                  size="lg"
+                />
                 {isFriend && (
                   <p className="flex gap-2 text-slate-300">
                     <CheckCircleIcon className="h-icon" />
@@ -128,17 +130,18 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                 />
                 <Tab.Group as="section" className="col-span-full">
                   <Tab.List className="mb-4 rounded-lg bg-slate-700 px-3">
-                    {['Statistik', 'Konzerte'].map(item => (
-                      <Tab className="rounded px-3" key={item}>
+                    {['Statistik', 'Konzerte', 'Freunde'].map(item => (
+                      <Tab className="relative rounded p-3" key={item}>
                         {({ selected }) => (
-                          <span
-                            className={clsx(
-                              'block border-b-2 py-3',
-                              selected ? 'border-venom' : 'border-transparent text-slate-300'
-                            )}
-                          >
+                          <>
                             {item}
-                          </span>
+                            <span
+                              className={clsx(
+                                'absolute bottom-0 left-0 h-1 w-full rounded-t',
+                                selected ? 'bg-venom' : 'bg-transparent'
+                              )}
+                            />
+                          </>
                         )}
                       </Tab>
                     ))}
@@ -162,11 +165,9 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                         />
                       </div>
                     )}
-                    {concertsSeen && (
-                      <div className="col-span-full rounded-lg bg-slate-800 p-6">
-                        <ConcertsByYear concerts={concertsSeen} />
-                      </div>
-                    )}
+                    <div className="col-span-full rounded-lg bg-slate-800 p-6">
+                      <ConcertsByYear userId={profile.id} />
+                    </div>
                     {concertsSeen && (
                       <div className="col-span-full rounded-lg bg-slate-800 p-6">
                         <ConcertsByMonth concerts={concertsSeen} />
@@ -185,6 +186,22 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                   </Tab.Panel>
                   <Tab.Panel className="grid gap-4">
                     <ConcertList userId={profile.id} />
+                  </Tab.Panel>
+                  <Tab.Panel className="grid grid-cols-2 gap-4">
+                    {acceptedFriends && acceptedFriends.length > 0 ? (
+                      acceptedFriends.map(item => (
+                        <FriendItem
+                          key={item.sender.id + item.receiver.id}
+                          friend={item.sender.id === profile.id ? item.receiver : item.sender}
+                          profile={profile}
+                        />
+                      ))
+                    ) : (
+                      <p className="col-span-full text-slate-300">
+                        {session?.user.id === profile.id ? 'Du hast' : `${profile.username} hat`}{' '}
+                        noch keine Konzertfreunde :/
+                      </p>
+                    )}
                   </Tab.Panel>
                 </Tab.Group>
               </div>
