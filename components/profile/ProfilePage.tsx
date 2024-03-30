@@ -8,8 +8,7 @@ import { CheckCircleIcon, UserPlusIcon } from '@heroicons/react/20/solid'
 import { TopBands } from './TopBands'
 import { TopLocations } from './TopLocations'
 import { ConcertsByYear } from './ConcertsByYear'
-import { ConcertsByMonth } from './ConcertsByMonth'
-import { Band, Concert, Location, Profile } from '../../types/types'
+import { Band, Location, Profile } from '../../types/types'
 import { useProfile } from '../../hooks/profiles/useProfile'
 import { useFriends } from '../../hooks/profiles/useFriends'
 import { useBandsSeen } from '../../hooks/bands/useBandsSeen'
@@ -168,11 +167,6 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                     <div className="col-span-full rounded-lg bg-slate-800 p-6">
                       <ConcertsByYear userId={profile.id} />
                     </div>
-                    {concertsSeen && (
-                      <div className="col-span-full rounded-lg bg-slate-800 p-6">
-                        <ConcertsByMonth concerts={concertsSeen} />
-                      </div>
-                    )}
                     {concertsSeen && (
                       <TopLocations
                         locations={
