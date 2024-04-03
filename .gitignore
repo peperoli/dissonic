@@ -5,6 +5,15 @@
 /.pnp
 .pnp.js
 
+# yarn
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
 # testing
 /coverage
 
@@ -38,7 +47,6 @@ next-env.d.ts
 # PWA files
 public/sw.js
 public/workbox-*.js
-
 
 # Misc
 .tool-versions
