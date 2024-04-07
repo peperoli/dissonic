@@ -1,4 +1,5 @@
 import * as Tooltip from '@radix-ui/react-tooltip'
+import clsx from 'clsx'
 import { Info } from 'lucide-react'
 import { Band, Concert } from '../../types/types'
 
@@ -42,9 +43,15 @@ type ScoreProps = {
 }
 
 export function Score({ uniqueBandsSeen, concertsSeen }: ScoreProps) {
+  const festivalsSeen = concertsSeen.filter(item => item.is_festival)
   const streak = getLongestStreak(concertsSeen)
   return (
-    <section className="mb-4 grid grid-cols-4 gap-4">
+    <section
+      className={clsx(
+        'mb-4 grid gap-4',
+        festivalsSeen.length > 0 ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-3'
+      )}
+    >
       <h2 className="sr-only">Score</h2>
       <div className="rounded-lg bg-radial-gradient from-venom/50 px-2 py-6 text-center">
         <div className="text-[1.75rem] font-bold leading-none">{uniqueBandsSeen.length}</div>
@@ -56,11 +63,9 @@ export function Score({ uniqueBandsSeen, concertsSeen }: ScoreProps) {
         </div>
         Konzerte
       </div>
-      {concertsSeen.filter(item => item.is_festival).length > 0 && (
+      {festivalsSeen.length > 0 && (
         <div className="rounded-lg bg-radial-gradient from-purple/50 px-2 py-6 text-center">
-          <div className="text-[1.75rem] font-bold leading-none">
-            {concertsSeen.filter(item => item.is_festival).length}
-          </div>
+          <div className="text-[1.75rem] font-bold leading-none">{festivalsSeen.length}</div>
           Festivals
         </div>
       )}

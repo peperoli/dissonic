@@ -3,10 +3,7 @@
 import { PageWrapper } from '../layout/PageWrapper'
 import { useState } from 'react'
 import { Button } from '../Button'
-import { GenreChart } from '../concerts/GenreChart'
 import { CheckCircleIcon, UserPlusIcon } from '@heroicons/react/20/solid'
-import { TopBands } from './TopBands'
-import { TopLocations } from './TopLocations'
 import { ConcertsByYear } from './ConcertsByYear'
 import { Band, Location, Profile } from '../../types/types'
 import { useProfile } from '../../hooks/profiles/useProfile'
@@ -24,6 +21,10 @@ import { modalPaths } from '../shared/ModalProvider'
 import { FriendItem } from './FriendItem'
 import { getUniqueObjects } from '@/lib/getUniqueObjects'
 import { Edit, Lock } from 'lucide-react'
+import { ConcertStats } from '../concerts/ConcertStats'
+import { TopGrid } from './TopGrid'
+import { BandItem } from './BandItem'
+import { LocationItem } from './LocationItem'
 
 type ConcertListProps = {
   userId: string
@@ -89,16 +90,13 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
   const bands = bandsSeen?.map(item => item.band as Band) ?? []
   const uniqueBandsSeen = getUniqueObjects(bandsSeen?.map(item => item.band) ?? [])
   const concertsSeen = getUniqueObjects(bandsSeen?.map(item => item.concert) ?? [])
-  const festivalsSeen = getUniqueObjects(
-    bandsSeen?.filter(item => item.concert?.is_festival).map(item => item.concert) ?? []
-  )
 
   return (
     <PageWrapper>
       <main className="container grid gap-4">
         {profile ? (
-          <div>
-            <div className="mb-6 flex flex-wrap items-center gap-4">
+          <>
+            <section className="mb-6 flex flex-wrap items-center gap-4">
               <UserItem
                 user={profile}
                 description={isOwnProfile ? session?.user.email : ''}
@@ -120,7 +118,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                 />
               )}
               {isOwnProfile && (
-                <div className="flex gap-2 ml-auto">
+                <div className="ml-auto flex gap-2">
                   <Button
                     label="Profil bearbeiten"
                     onClick={() => setModal('edit-profile')}
@@ -139,10 +137,10 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                   />
                 </div>
               )}
-            </div>
+            </section>
             <Score uniqueBandsSeen={uniqueBandsSeen} concertsSeen={concertsSeen} />
-            <Tab.Group as="section" className="col-span-full">
-              <Tab.List className="mb-4 rounded-lg bg-slate-700 px-3">
+            <Tab.Group as="section">
+              <Tab.List as="nav" className="mb-4 rounded-lg bg-slate-700 px-3">
                 {['Statistik', 'Konzerte', 'Freunde'].map(item => (
                   <Tab className="relative rounded p-3" key={item}>
                     {({ selected }) => (
@@ -159,36 +157,29 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                   </Tab>
                 ))}
               </Tab.List>
-              <Tab.Panel className="grid grid-cols-3 gap-4">
+              <Tab.Panel className="grid gap-4">
                 {bandsSeen && (
-                  <TopBands
-                    bands={
-                      bandsSeen
-                        .filter(item => item.band != undefined)
-                        .map(item => item.band) as Band[]
-                    }
+                  <TopGrid
+                    headline="Top Bands"
+                    items={bandsSeen.filter(item => !!item.band).map(item => item.band) as Band[]}
+                    Item={BandItem}
                   />
                 )}
                 {bandsSeen && uniqueBandsSeen && (
-                  <div className="col-span-full rounded-lg bg-slate-800 p-6">
-                    <GenreChart
-                      bands={bands}
-                      uniqueBands={uniqueBandsSeen}
-                      profile={isOwnProfile ? null : profile}
-                    />
-                  </div>
+                  <ConcertStats bands={bands} uniqueBands={uniqueBandsSeen} />
                 )}
-                <div className="col-span-full rounded-lg bg-slate-800 p-6">
+                <div className="rounded-lg bg-slate-800 p-6">
                   <ConcertsByYear userId={profile.id} />
                 </div>
                 {concertsSeen && (
-                  <TopLocations
-                    locations={
+                  <TopGrid
+                    headline="Top Locations"
+                    items={
                       concertsSeen
-                        .filter(item => item.location != undefined)
+                        .filter(item => !!item.location)
                         .map(item => item.location) as Location[]
                     }
-                    username={profile.username}
+                    Item={LocationItem}
                   />
                 )}
               </Tab.Panel>
@@ -212,7 +203,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                 )}
               </Tab.Panel>
             </Tab.Group>
-          </div>
+          </>
         ) : (
           <div>Bitte melde dich an.</div>
         )}

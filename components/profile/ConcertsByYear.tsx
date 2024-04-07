@@ -27,7 +27,7 @@ export const ConcertsByYear = ({ userId }: ConcertsByYearProps) => {
   const months = Array.from({ length: 12 }, (_, i) => 0 + i)
   const yearItems = [
     { id: -1, name: 'Alle' },
-    ...years.map(year => ({
+    ...[...years].reverse().map(year => ({
       id: year,
       name: year.toString(),
     })),
