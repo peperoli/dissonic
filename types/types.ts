@@ -89,7 +89,7 @@ export type AddLocation = TablesInsert<'locations'>
 export type Country = { id: number; iso2: string }
 
 export type Profile = Tables<'profiles'> & {
-  friends?: [{ count: number }]
+  friends?: { count: number }[]
 }
 
 export type AddProfile = TablesInsert<'profiles'>

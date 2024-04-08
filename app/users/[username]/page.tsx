@@ -4,22 +4,21 @@ import { createClient } from '../../../utils/supabase/server'
 import { Profile } from '../../../types/types'
 import { notFound } from 'next/navigation'
 
-async function fetchData(username: string): Promise<{ profile: Profile | null }> {
+async function fetchData(username: string) {
   const supabase = createClient(cookies())
 
-  try {
-    const { data: profile, error } = await supabase
-      .from('profiles')
-      .select('*, friends!receiver_id(count)')
-      .eq('username', username)
-      .eq('friends.pending', true)
-      .single()
+  const { data: profile, error } = await supabase
+    .from('profiles')
+    .select('*, friends!receiver_id(count)')
+    .eq('username', username)
+    .eq('friends.pending', true)
+    .single()
 
-    // @ts-expect-error
-    return { profile }
-  } catch (error) {
-    return { profile: null }
+  if (error) {
+    throw error
   }
+
+  return { profile }
 }
 
 type PageProps = {

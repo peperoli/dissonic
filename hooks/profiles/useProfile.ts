@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Profile } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 
-const fetchProfile = async (userId: string | null, username?: string | null): Promise<Profile> => {
+const fetchProfile = async (userId: string | null, username?: string | null) => {
   let query = supabase
     .from('profiles')
     .select('*, friends!receiver_id(count)')
@@ -22,7 +22,6 @@ const fetchProfile = async (userId: string | null, username?: string | null): Pr
     throw error
   }
 
-  // @ts-expect-error
   return data
 }
 
