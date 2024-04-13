@@ -178,7 +178,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                   />
                 )}
                 {bandsSeen && (
-                  <section className="grid grid-cols-2 gap-4 rounded-lg bg-slate-800 p-4 md:p-6">
+                  <section className="grid md:grid-cols-2 gap-4 rounded-lg bg-slate-800 p-4 md:p-6">
                     <PieChart
                       data={[
                         {

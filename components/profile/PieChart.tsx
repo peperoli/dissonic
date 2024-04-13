@@ -59,8 +59,8 @@ const Sector = ({ name, value, percentage, angle, index, totalAngle }: SectorPro
   const d = describeSector(RADIUS, RADIUS, RADIUS, totalAngle, angle + totalAngle)
   const props = {
     ref,
-    onMouseOver: () => setOpen(true),
-    onMouseLeave: () => setOpen(false),
+    onPointerOver: () => setOpen(true),
+    onPointerLeave: () => setOpen(false),
     className: fillColors[index],
   }
   return (
