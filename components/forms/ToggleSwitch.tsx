@@ -24,7 +24,7 @@ export const ToggleSwitch = ({ label, checked, onChange }: ToggleSwitchProps) =>
         <span
           className={clsx(
             'block size-4 rounded-full duration-200',
-            checked ? 'translate-x-3 bg-slate-850' : 'scale-75 bg-slate-300'
+            checked ? 'translate-x-[calc(0.75rem+2px)] bg-slate-850' : 'scale-75 bg-slate-300'
           )}
         />
       </span>

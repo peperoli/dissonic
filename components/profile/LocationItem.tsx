@@ -9,7 +9,7 @@ type LocationItemProps = {
 
 export const LocationItem = ({ topItem }: LocationItemProps) => {
   return (
-    <Link href={`/bands/${topItem.id}`} className="block">
+    <Link href={`/locations/${topItem.id}`} className="block">
       <div className="relative flex aspect-square flex-shrink-0 items-center justify-center rounded-2xl bg-slate-750">
         <MapPin className="size-8 text-slate-300" />
       </div>

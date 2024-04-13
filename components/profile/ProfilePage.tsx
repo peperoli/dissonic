@@ -25,6 +25,8 @@ import { ConcertStats } from '../concerts/ConcertStats'
 import { TopGrid } from './TopGrid'
 import { BandItem } from './BandItem'
 import { LocationItem } from './LocationItem'
+import { StatusBanner } from '../forms/StatusBanner'
+import { PieChart } from './PieChart'
 
 type ConcertListProps = {
   userId: string
@@ -37,13 +39,16 @@ function ConcertList({ userId }: ConcertListProps) {
     sort: { sort_by: 'date_start', sort_asc: false },
     size,
   })
+
+  if (!concerts) return <p className="text-sm text-slate-300">Lade ...</p>
+
+  if (concerts.data.length === 0) {
+    return <StatusBanner statusType="info" message="Blyat! Noch keine Konzerte vorhanden." />
+  }
+
   return (
     <>
-      {concerts ? (
-        concerts.data.map(concert => <ConcertCard concert={concert} key={concert.id} />)
-      ) : (
-        <p>Loading ...</p>
-      )}
+      {concerts?.data.map(concert => <ConcertCard concert={concert} key={concert.id} />)}
       <div className="flex flex-col items-center gap-2">
         <p className="text-sm text-slate-300">
           {concerts?.data.length} von {concerts?.count} Einträgen
@@ -158,6 +163,13 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                 ))}
               </Tab.List>
               <Tab.Panel className="grid gap-4">
+                {!bandsSeen && <p className="text-sm text-slate-300">Lade ...</p>}
+                {bandsSeen && bandsSeen.length === 0 && (
+                  <StatusBanner
+                    statusType="info"
+                    message="Blyat! Noch keine Statistik vorhanden."
+                  />
+                )}
                 {bandsSeen && (
                   <TopGrid
                     headline="Top Bands"
@@ -165,12 +177,35 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                     Item={BandItem}
                   />
                 )}
-                {bandsSeen && uniqueBandsSeen && (
+                {bandsSeen && (
+                  <section className="grid grid-cols-2 gap-4 rounded-lg bg-slate-800 p-4 md:p-6">
+                    <PieChart
+                      data={[
+                        {
+                          name: 'Konzerte',
+                          value: concertsSeen.filter(item => !item.is_festival).length,
+                        },
+                        {
+                          name: 'Festivals',
+                          value: concertsSeen.filter(item => item.is_festival).length,
+                        },
+                      ]}
+                    />
+                    <PieChart
+                      data={[
+                        { name: 'Einmal erlebte Bands', value: uniqueBandsSeen.length },
+                        {
+                          name: 'Mehrfach erlebte Bands',
+                          value: bandsSeen?.length - uniqueBandsSeen.length,
+                        },
+                      ]}
+                    />
+                  </section>
+                )}
+                {bandsSeen && bandsSeen.length > 0 && uniqueBandsSeen && (
                   <ConcertStats bands={bands} uniqueBands={uniqueBandsSeen} />
                 )}
-                <div className="rounded-lg bg-slate-800 p-6">
-                  <ConcertsByYear userId={profile.id} />
-                </div>
+                <ConcertsByYear userId={profile.id} />
                 {concertsSeen && (
                   <TopGrid
                     headline="Top Locations"
@@ -186,20 +221,23 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
               <Tab.Panel className="grid gap-4">
                 <ConcertList userId={profile.id} />
               </Tab.Panel>
-              <Tab.Panel className="grid grid-cols-2 gap-4">
+              <Tab.Panel>
                 {acceptedFriends && acceptedFriends.length > 0 ? (
-                  acceptedFriends.map(item => (
-                    <FriendItem
-                      key={item.sender.id + item.receiver.id}
-                      friend={item.sender.id === profile.id ? item.receiver : item.sender}
-                      profile={profile}
-                    />
-                  ))
+                  <div className="grid grid-cols-2 gap-4">
+                    {acceptedFriends.map(item => (
+                      <FriendItem
+                        key={item.sender.id + item.receiver.id}
+                        friend={item.sender.id === profile.id ? item.receiver : item.sender}
+                        profile={profile}
+                      />
+                    ))}
+                  </div>
                 ) : (
-                  <p className="col-span-full text-slate-300">
-                    {session?.user.id === profile.id ? 'Du hast' : `${profile.username} hat`} noch
-                    keine Konzertfreunde :/
-                  </p>
+                  <StatusBanner
+                    statusType="info"
+                    message={`${session?.user.id === profile.id ? 'Du hast' : profile.username + ' hat'} noch
+                  keine Konzertfreunde :/`}
+                  />
                 )}
               </Tab.Panel>
             </Tab.Group>

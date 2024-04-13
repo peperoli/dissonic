@@ -16,11 +16,12 @@ export const ConcertsByYear = ({ userId }: ConcertsByYearProps) => {
   const { data: bandsSeen } = useBandsSeen(userId)
   const [selectedUnit, setSelectedUnit] = useState('concerts')
   const [selectedYear, setSelectedYear] = useState<number>(-1)
-  const concerts = getUniqueObjects(bandsSeen?.map(band => band.concert) as Concert[])
-
-  if (!concerts) {
+  
+  if (!bandsSeen || bandsSeen.length === 0) {
     return null
   }
+  
+  const concerts = getUniqueObjects(bandsSeen.map(band => band.concert) as Concert[])
   const start = Math.min(...concerts?.map(concert => parseInt(concert.date_start.slice(0, 4))))
   const end = Math.max(...concerts?.map(concert => parseInt(concert.date_start.slice(0, 4))))
   const years = Array.from({ length: end - start + 1 }, (_, i) => start + i)
@@ -39,7 +40,7 @@ export const ConcertsByYear = ({ userId }: ConcertsByYearProps) => {
   const bandsPerYear = years.map(year => ({
     name: year.toString(),
     value:
-      bandsSeen?.filter(band => band.concert?.date_start.slice(0, 4) === year.toString()).length ||
+      bandsSeen.filter(band => band.concert?.date_start.slice(0, 4) === year.toString()).length ||
       0,
   }))
   const concertsPerMonth = months.map(month => ({
@@ -53,7 +54,7 @@ export const ConcertsByYear = ({ userId }: ConcertsByYearProps) => {
   const bandsPerMonth = months.map(month => ({
     name: getFullMonth(month),
     value:
-      bandsSeen?.filter(
+      bandsSeen.filter(
         band =>
           band.concert &&
           new Date(band.concert.date_start).getFullYear() === selectedYear &&
@@ -62,7 +63,7 @@ export const ConcertsByYear = ({ userId }: ConcertsByYearProps) => {
   }))
 
   return (
-    <div>
+    <div className="rounded-lg bg-slate-800 p-6">
       <h2>{`${selectedUnit === 'concerts' ? 'Konzerte' : 'Bands'} pro ${selectedYear === -1 ? 'Jahr' : 'Monat'}`}</h2>
       <div className="mb-4 flex gap-3">
         <SegmentedControl
