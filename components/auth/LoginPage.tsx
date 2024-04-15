@@ -60,13 +60,24 @@ export default function LoginPage() {
             label="Passwort"
           />
           <div className="flex items-center gap-4">
-            <Button type="submit" label="Anmelden" appearance="primary" loading={status === 'loading'} />
-            <Link href="/reset-password" className="text-sm font-bold text-venom hover:underline">Passwort vergessen?</Link>
+            <Button
+              type="submit"
+              label="Anmelden"
+              appearance="primary"
+              loading={status === 'loading'}
+            />
+            <Link href="/reset-password" className="text-sm font-bold text-venom hover:underline">
+              Passwort vergessen?
+            </Link>
           </div>
           {status === 'error' && (
             <StatusBanner
               statusType="error"
-              message={error instanceof AuthError ? errorMessages[error.message] : undefined}
+              message={
+                error instanceof AuthError
+                  ? errorMessages[error.message]
+                  : 'Es ist eine Fehler aufgetreten. Bitte versuche es erneut.'
+              }
             />
           )}
         </form>

@@ -65,7 +65,7 @@ export const ConcertsByYear = ({ userId }: ConcertsByYearProps) => {
   return (
     <div className="rounded-lg bg-slate-800 p-6">
       <h2>{`${selectedUnit === 'concerts' ? 'Konzerte' : 'Bands'} pro ${selectedYear === -1 ? 'Jahr' : 'Monat'}`}</h2>
-      <div className="mb-4 flex gap-3">
+      <div className="mb-4 flex flex-wrap gap-3">
         <SegmentedControl
           options={[
             { value: 'concerts', label: 'Konzerte' },
