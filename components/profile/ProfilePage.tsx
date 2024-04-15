@@ -20,13 +20,14 @@ import { parseAsStringLiteral, useQueryState } from 'nuqs'
 import { modalPaths } from '../shared/ModalProvider'
 import { FriendItem } from './FriendItem'
 import { getUniqueObjects } from '@/lib/getUniqueObjects'
-import { Edit, Lock } from 'lucide-react'
+import { Edit, Lock, Settings } from 'lucide-react'
 import { ConcertStats } from '../concerts/ConcertStats'
 import { TopGrid } from './TopGrid'
 import { BandItem } from './BandItem'
 import { LocationItem } from './LocationItem'
 import { StatusBanner } from '../forms/StatusBanner'
 import { PieChart } from './PieChart'
+import Link from 'next/link'
 
 type ConcertListProps = {
   userId: string
@@ -132,14 +133,13 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                     size="small"
                     appearance="tertiary"
                   />
-                  <Button
-                    label="Passwort ändern"
-                    onClick={() => setModal('edit-password')}
-                    icon={<Lock className="size-icon" />}
-                    contentType="icon"
-                    size="small"
-                    appearance="tertiary"
-                  />
+                  <Link
+                    href="/settings"
+                    aria-label="Einstellungen"
+                    className="btn btn-icon btn-small btn-tertiary"
+                  >
+                    <Settings className="size-icon" />
+                  </Link>
                 </div>
               )}
             </section>
@@ -178,7 +178,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                   />
                 )}
                 {bandsSeen && (
-                  <section className="grid md:grid-cols-2 gap-4 rounded-lg bg-slate-800 p-4 md:p-6">
+                  <section className="grid gap-4 rounded-lg bg-slate-800 p-4 md:grid-cols-2 md:p-6">
                     <PieChart
                       data={[
                         {

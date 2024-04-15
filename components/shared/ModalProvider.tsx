@@ -37,10 +37,6 @@ const DeleteLocationForm = dynamic(
 const ProfileForm = dynamic(() => import('../profile/Form').then(mod => mod.Form), {
   loading: () => <Loader />,
 })
-const PasswordForm = dynamic(
-  () => import('../profile/PasswordForm').then(mod => mod.PasswordForm),
-  { loading: () => <Loader /> }
-)
 const AddFriendForm = dynamic(
   () => import('../profile/AddFriendForm').then(mod => mod.AddFriendForm),
   { loading: () => <Loader /> }
@@ -62,7 +58,6 @@ export const modalPaths = [
   'edit-location',
   'delete-location',
   'edit-profile',
-  'edit-password',
   'add-friend',
   'delete-friend',
 ] as const
@@ -79,7 +74,6 @@ const modalComponents = {
   'edit-location': LocationForm,
   'delete-location': DeleteLocationForm,
   'edit-profile': ProfileForm,
-  'edit-password': PasswordForm,
   'add-friend': AddFriendForm,
   'delete-friend': RemoveFriendForm,
 } as const
