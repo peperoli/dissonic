@@ -9,7 +9,7 @@ import { Band, Location, Profile } from '../../types/types'
 import { useProfile } from '../../hooks/profiles/useProfile'
 import { useFriends } from '../../hooks/profiles/useFriends'
 import { useBandsSeen } from '../../hooks/bands/useBandsSeen'
-import { useSession } from '../../hooks/auth/useSession'
+import { useUser } from '../../hooks/auth/useUser'
 import { Tab } from '@headlessui/react'
 import clsx from 'clsx'
 import { useConcerts } from '../../hooks/concerts/useConcerts'
@@ -17,7 +17,7 @@ import { ConcertCard } from '../concerts/ConcertCard'
 import { Score } from './Score'
 import { UserItem } from '../shared/UserItem'
 import { parseAsStringLiteral, useQueryState } from 'nuqs'
-import { modalPaths } from '../shared/ModalProvider'
+import { modalPaths } from '../helpers/ModalProvider'
 import { FriendItem } from './FriendItem'
 import { getUniqueObjects } from '@/lib/getUniqueObjects'
 import { Edit, Lock, Settings } from 'lucide-react'
@@ -80,18 +80,18 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
     'modal',
     parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
   )
-  const { data: session } = useSession()
-  const isOwnProfile = session?.user.id === profile?.id
+  const user = useUser()
+  const isOwnProfile = user?.id === profile?.id
   const isFriend =
     isOwnProfile === false &&
     friends?.find(
       item =>
         item.pending === false &&
-        (item.sender.id === session?.user.id || item.receiver.id === session?.user.id)
+        (item.sender.id === user?.id || item.receiver.id === user?.id)
     ) != undefined
   const isPending = friends?.find(
     item =>
-      item.pending && (item.sender.id === session?.user.id || item.receiver.id === session?.user.id)
+      item.pending && (item.sender.id === user?.id || item.receiver.id === user?.id)
   )
   const bands = bandsSeen?.map(item => item.band as Band) ?? []
   const uniqueBandsSeen = getUniqueObjects(bandsSeen?.map(item => item.band) ?? [])
@@ -105,7 +105,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
             <section className="mb-6 flex flex-wrap items-center gap-4">
               <UserItem
                 user={profile}
-                description={isOwnProfile ? session?.user.email : ''}
+                description={isOwnProfile ? user?.email : ''}
                 size="lg"
               />
               {isFriend && (
@@ -114,7 +114,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                   Freund
                 </p>
               )}
-              {!isFriend && session?.user.id !== profile.id && (
+              {!isFriend && user?.id !== profile.id && (
                 <Button
                   onClick={() => setModal('add-friend')}
                   label="Freund hinzufügen"
@@ -235,7 +235,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                 ) : (
                   <StatusBanner
                     statusType="info"
-                    message={`${session?.user.id === profile.id ? 'Du hast' : profile.username + ' hat'} noch
+                    message={`${user?.id === profile.id ? 'Du hast' : profile.username + ' hat'} noch
                   keine Konzertfreunde :/`}
                   />
                 )}

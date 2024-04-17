@@ -1,23 +1,17 @@
 'use client'
 
 import Link from 'next/link'
-import { Fragment } from 'react'
 import { PageWrapper } from '../layout/PageWrapper'
 import { Button } from '../Button'
 import { ConcertCard } from '../concerts/ConcertCard'
-import { Band, Location } from '../../types/types'
-import { useBand } from '../../hooks/bands/useBand'
+import { Location } from '../../types/types'
 import { useConcerts } from '../../hooks/concerts/useConcerts'
 import { notFound, usePathname, useRouter } from 'next/navigation'
-import { useSession } from '../../hooks/auth/useSession'
+import { useUser } from '../../hooks/auth/useUser'
 import { parseAsStringLiteral, useQueryState } from 'nuqs'
-import { modalPaths } from '../shared/ModalProvider'
-import { ArrowLeft, Edit, MapPin, MusicIcon, Trash } from 'lucide-react'
-import Image from 'next/image'
-import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
+import { modalPaths } from '../helpers/ModalProvider'
+import { ArrowLeft, Edit, MapPin, Trash } from 'lucide-react'
 import { UserItem } from '../shared/UserItem'
-import { useBandProfiles } from '@/hooks/bands/useBandProfiles'
-import { UserMusicIcon } from '../layout/UserMusicIcon'
 import { useLocation } from '@/hooks/locations/useLocation'
 import { useLocationProfiles } from '@/hooks/locations/useLocationProfiles'
 
@@ -43,7 +37,7 @@ export const LocationPage = ({
     'modal',
     parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
   )
-  const { data: session } = useSession()
+  const user = useUser()
   const { push } = useRouter()
   const pathname = usePathname()
   const regionNames = new Intl.DisplayNames('de', { type: 'region' })
@@ -72,7 +66,7 @@ export const LocationPage = ({
           <div className="flex gap-3">
             <Button
               onClick={
-                session
+                user
                   ? () => setModal('edit-location')
                   : () => push(`/login?redirect=${pathname}`)
               }
@@ -84,7 +78,7 @@ export const LocationPage = ({
             />
             <Button
               onClick={
-                session
+                user
                   ? () => setModal('delete-location')
                   : () => push(`/login?redirect=${pathname}`)
               }

@@ -1,7 +1,10 @@
-import { ModalProvider } from '@/components/shared/ModalProvider'
-import { TooltipProvider } from '@/components/shared/TooltipProvider'
+import { ModalProvider } from '@/components/helpers/ModalProvider'
+import { TooltipProvider } from '@/components/helpers/TooltipProvider'
+import { UserProvider } from '@/components/helpers/UserProvider'
+import { createClient } from '@/utils/supabase/server'
 import { Metadata, Viewport } from 'next'
 import { Albert_Sans } from 'next/font/google'
+import { cookies } from 'next/headers'
 import { ReactNode } from 'react'
 import { QueryProvider } from '../components/helpers/QueryProvider'
 import '../styles/globals.scss'
@@ -38,13 +41,32 @@ const albertSans = Albert_Sans({
   variable: '--font-albert-sans',
 })
 
+async function fetchUser() {
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser()
+
+  if (error) {
+    throw error
+  }
+
+  return user
+}
+
 export default async function RootLayout({ children }: { children: ReactNode }) {
+  const user = await fetchUser()
   return (
     <QueryProvider>
       <TooltipProvider>
-        <html lang="de-CH" className={`${albertSans.variable}`}>
-          <body className="bg-slate-850 text-slate-50">{children}</body>
-        </html>
+        <UserProvider value={user}>
+          <html lang="de-CH" className={`${albertSans.variable}`}>
+            <body className="bg-slate-850 text-slate-50">{children}</body>
+          </html>
+        </UserProvider>
         <ModalProvider />
       </TooltipProvider>
     </QueryProvider>

@@ -13,9 +13,9 @@ import { useConcertContext } from '../../hooks/concerts/useConcertContext'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { TextArea } from '../forms/TextArea'
 import { useProfile } from '../../hooks/profiles/useProfile'
-import { useSession } from '../../hooks/auth/useSession'
+import { useUser } from '../../hooks/auth/useUser'
 import { parseAsInteger, parseAsStringLiteral, useQueryState } from 'nuqs'
-import { modalPaths } from '../shared/ModalProvider'
+import { modalPaths } from '../helpers/ModalProvider'
 dayjs.extend(relativeTime)
 
 type EditCommentFormProps = {
@@ -82,7 +82,7 @@ interface CommentItemProps {
 }
 
 export const CommentItem = ({ comment }: CommentItemProps) => {
-  const { data: session } = useSession()
+  const user = useUser()
   const { data: profile } = useProfile(comment.user_id)
   const [edit, setEdit] = useState(false)
   const [_, setModal] = useQueryState(
@@ -131,14 +131,14 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
             </p>
           )}
           <div className="absolute -bottom-4 flex rounded-lg bg-slate-700">
-            {comment.reactions && session && (
+            {comment.reactions && user && (
               <ReactionControl
                 comment={comment}
                 reactions={comment.reactions}
-                user={session.user}
+                user={user}
               />
             )}
-            {comment.user_id === session?.user.id && !edit && (
+            {comment.user_id === user?.id && !edit && (
               <div className="hidden group-hover:flex">
                 <Button
                   onClick={() => setEdit(true)}

@@ -11,14 +11,14 @@ import { Band, ExtendedRes } from '../../types/types'
 import { useBands } from '../../hooks/bands/useBands'
 import { useDebounce } from '../../hooks/helpers/useDebounce'
 import { usePathname, useRouter } from 'next/navigation'
-import { useSession } from '../../hooks/auth/useSession'
+import { useUser } from '../../hooks/auth/useUser'
 import { StatusBanner } from '../forms/StatusBanner'
 import { CountryFilter } from './CountryFilter'
 import { GenreFilter } from './GenreFilter'
 import { BandTableRow } from './TableRow'
 import { parseAsArrayOf, parseAsInteger, parseAsStringLiteral, useQueryState } from 'nuqs'
 import Cookies from 'js-cookie'
-import { modalPaths } from '../shared/ModalProvider'
+import { modalPaths } from '../helpers/ModalProvider'
 import { Plus, RotateCcw } from 'lucide-react'
 
 interface BandsPageProps {
@@ -45,7 +45,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
     page: currentPage,
     size: perPage,
   })
-  const { data: session } = useSession()
+  const user = useUser()
   const [_, setModal] = useQueryState(
     'modal',
     parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
@@ -86,7 +86,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
           <div className="fixed bottom-0 right-0 m-4">
             <Button
               onClick={
-                session ? () => setModal('add-band') : () => push(`/login?redirect=${pathname}`)
+                user ? () => setModal('add-band') : () => push(`/login?redirect=${pathname}`)
               }
               label="Band hinzufügen"
               appearance="primary"
@@ -100,7 +100,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
           {isDesktop && (
             <Button
               onClick={
-                session ? () => setModal('add-band') : () => push(`/login?redirect=${pathname}`)
+                user ? () => setModal('add-band') : () => push(`/login?redirect=${pathname}`)
               }
               label="Band hinzufügen"
               appearance="primary"

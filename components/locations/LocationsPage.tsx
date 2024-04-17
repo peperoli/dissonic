@@ -13,9 +13,9 @@ import { useLocations } from '../../hooks/locations/useLocations'
 import { useDebounce } from '../../hooks/helpers/useDebounce'
 import { Pagination } from '../layout/Pagination'
 import { usePathname, useRouter } from 'next/navigation'
-import { useSession } from '../../hooks/auth/useSession'
+import { useUser } from '../../hooks/auth/useUser'
 import { parseAsInteger, parseAsStringLiteral, useQueryState } from 'nuqs'
-import { modalPaths } from '../shared/ModalProvider'
+import { modalPaths } from '../helpers/ModalProvider'
 import { StatusBanner } from '../forms/StatusBanner'
 
 interface LocationsPageProps {
@@ -37,7 +37,7 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
     parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
   )
   const isDesktop = useMediaQuery('(min-width: 768px)')
-  const { data: session } = useSession()
+  const user = useUser()
   const { push } = useRouter()
   const pathname = usePathname()
 
@@ -53,7 +53,7 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
           <div className="fixed bottom-0 right-0 m-4">
             <Button
               onClick={
-                session
+                user
                   ? () => setModal('add-location')
                   : () => push(`/login?redirect=${pathname}`)
               }
@@ -69,7 +69,7 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
           {isDesktop && (
             <Button
               onClick={
-                session
+                user
                   ? () => setModal('add-location')
                   : () => push(`/login?redirect=${pathname}`)
               }

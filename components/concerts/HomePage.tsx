@@ -13,7 +13,7 @@ import { YearsFilter } from './YearsFilter'
 import { FestivalRootFilter } from './FestivalRootFilter'
 import Cookies from 'js-cookie'
 import { usePathname, useRouter } from 'next/navigation'
-import { useSession } from '../../hooks/auth/useSession'
+import { useUser } from '../../hooks/auth/useUser'
 import { SegmentedControl } from '../controls/SegmentedControl'
 import { useProfile } from '../../hooks/profiles/useProfile'
 import {
@@ -29,14 +29,14 @@ import { useFriends } from '@/hooks/profiles/useFriends'
 import { Select } from '../forms/Select'
 import { FilterButton } from '../FilterButton'
 import useMediaQuery from '@/hooks/helpers/useMediaQuery'
-import { modalPaths } from '../shared/ModalProvider'
+import { modalPaths } from '../helpers/ModalProvider'
 
 type HomePageProps = {
   concerts: ExtendedRes<Concert[]>
 }
 
 export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
-  const { data: session } = useSession()
+  const user = useUser()
   const [size, setSize] = useQueryState('size', parseAsInteger.withDefault(25))
   const [selectedBands, setSelectedBands] = useQueryState('bands', parseAsArrayOf(parseAsInteger))
   const [selectedLocations, setSelectedLocations] = useQueryState(
@@ -48,11 +48,11 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
     'festivals',
     parseAsArrayOf(parseAsInteger)
   )
-  const [user] = useQueryState('user')
-  const { data: profile } = useProfile(null, user)
+  const [selectedUser] = useQueryState('user')
+  const { data: profile } = useProfile(null, selectedUser)
   const selectedUserId = user && profile?.id
   const [view, setView] = useState(Cookies.get('view') ?? 'global')
-  const { data: friends } = useFriends({ profileId: session?.user?.id, pending: false })
+  const { data: friends } = useFriends({ profileId: user?.id, pending: false })
   const sortBy = ['date_start'] as const
   const [sort, setSort] = useQueryStates({
     sort_by: parseAsStringLiteral(sortBy).withDefault('date_start'),
@@ -62,7 +62,7 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
 
   function getView() {
     if (selectedUserId) return [selectedUserId]
-    if (view === 'user' && session?.user) return [session.user.id]
+    if (view === 'user' && user) return [user?.id]
     if (view === 'friends' && friends)
       return [
         ...new Set([
@@ -108,7 +108,7 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
         <div className="fixed bottom-0 right-0 m-4 md:hidden">
           <Button
             onClick={
-              session ? () => setModal('add-concert') : () => push(`/login?redirect=${pathname}`)
+              user ? () => setModal('add-concert') : () => push(`/login?redirect=${pathname}`)
             }
             label="Konzert hinzufügen"
             appearance="primary"
@@ -120,7 +120,7 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
           <h1 className="mb-0">Konzerte</h1>
           <Button
             onClick={
-              session ? () => setModal('add-concert') : () => push(`/login?redirect=${pathname}`)
+              user ? () => setModal('add-concert') : () => push(`/login?redirect=${pathname}`)
             }
             label="Konzert hinzufügen"
             appearance="primary"
@@ -182,7 +182,7 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
               </FilterButton>
             </div>
           </div>
-          {session && (
+          {user && (
             <SegmentedControl
               options={[
                 { value: 'global', label: 'Alle', icon: Globe },

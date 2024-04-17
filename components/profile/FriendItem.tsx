@@ -5,10 +5,10 @@ import { useState, FC } from 'react'
 import { UserMinusIcon } from '@heroicons/react/20/solid'
 import { Profile } from '../../types/types'
 import { Button } from '../Button'
-import { useSession } from '../../hooks/auth/useSession'
+import { useUser } from '../../hooks/auth/useUser'
 import { UserItem } from '../shared/UserItem'
 import { parseAsStringLiteral, useQueryState } from 'nuqs'
-import { modalPaths } from '../shared/ModalProvider'
+import { modalPaths } from '../helpers/ModalProvider'
 
 type FriendItemProps = {
   friend: Profile
@@ -21,14 +21,14 @@ export const FriendItem = ({ friend, profile }: FriendItemProps) => {
     parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
   )
   const [__, setFriendId] = useQueryState('friendId', { history: 'push' })
-  const { data: session } = useSession()
+  const user = useUser()
 
   return (
     <div className="col-span-full flex items-center justify-between gap-3 rounded-lg bg-slate-800 p-4 md:col-span-1">
       <Link href={`/users/${friend.username}`}>
         <UserItem user={friend} />
       </Link>
-      {session?.user.id === profile.id && (
+      {user?.id === profile.id && (
         <Button
           label="Freund entfernen"
           onClick={() => {

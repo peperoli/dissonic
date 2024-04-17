@@ -5,7 +5,7 @@ import { PageWrapper } from '../layout/PageWrapper'
 import { FriendInvites } from './FriendInvites'
 import { FriendItem } from './FriendItem'
 import { useFriends } from '../../hooks/profiles/useFriends'
-import { useSession } from '../../hooks/auth/useSession'
+import { useUser } from '../../hooks/auth/useUser'
 import { Button } from '../Button'
 import { useRouter, usePathname } from 'next/navigation'
 
@@ -15,7 +15,7 @@ export interface FriendsPageProps {
 }
 
 export const FriendsPage = ({ profile, initialFriends }: FriendsPageProps) => {
-  const { data: session } = useSession()
+  const user = useUser()
   const { data: friends } = useFriends({ profileId: profile.id }, initialFriends)
   const acceptedFriends = friends?.filter(item => !item.pending)
   const { push } = useRouter()
@@ -24,9 +24,9 @@ export const FriendsPage = ({ profile, initialFriends }: FriendsPageProps) => {
     <PageWrapper>
       <main className="container">
         <h1>{profile.username}s Freunde</h1>
-        {session ? (
+        {user ? (
           <div className="grid grid-cols-2 gap-4">
-            {session.user.id === profile.id && friends && (
+            {user?.id === profile.id && friends && (
               <FriendInvites profile={profile} friends={friends} />
             )}
             {acceptedFriends && acceptedFriends.length > 0 ? (
@@ -39,7 +39,7 @@ export const FriendsPage = ({ profile, initialFriends }: FriendsPageProps) => {
               ))
             ) : (
               <p className="col-span-full text-slate-300">
-                {session?.user.id === profile.id ? 'Du hast' : `${profile.username} hat`} noch keine
+                {user?.id === profile.id ? 'Du hast' : `${profile.username} hat`} noch keine
                 Konzertfreunde :/
               </p>
             )}

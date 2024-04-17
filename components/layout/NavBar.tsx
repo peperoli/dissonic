@@ -8,14 +8,14 @@ import { useLogOut } from '../../hooks/auth/useLogOut'
 import { useProfile } from '../../hooks/profiles/useProfile'
 import { useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { useSession } from '../../hooks/auth/useSession'
+import { useUser } from '../../hooks/auth/useUser'
 import { UserItem } from '../shared/UserItem'
 import { BookUser, LogOut, User } from 'lucide-react'
 import clsx from 'clsx'
 
 export const NavBar = () => {
-  const { data: session } = useSession()
-  const { data: profile } = useProfile(session?.user.id ?? null)
+  const user = useUser()
+  const { data: profile } = useProfile(user?.id ?? null)
   const pendingInvites = (profile?.friends && profile.friends[0].count) || 0
   const logOutMutation = useLogOut()
   const queryClient = useQueryClient()

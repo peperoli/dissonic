@@ -2,7 +2,7 @@ import { Button } from '../Button'
 import { useEffect } from 'react'
 import { useAddFriend } from '../../hooks/profiles/useAddFriend'
 import { useQueryClient } from '@tanstack/react-query'
-import { useSession } from '@/hooks/auth/useSession'
+import { useUser } from '@/hooks/auth/useUser'
 import { usePathname } from 'next/navigation'
 import { useProfile } from '@/hooks/profiles/useProfile'
 
@@ -16,17 +16,17 @@ export const AddFriendForm = ({ close }: AddFriendFormProps) => {
   const { data: profile } = useProfile(null, username)
   const { mutate, status } = useAddFriend()
   const queryClient = useQueryClient()
-  const { data: session } = useSession()
+  const user = useUser()
 
   async function addFriend() {
-    if (session && profile) {
-      mutate({ sender_id: session.user.id, receiver_id: profile?.id })
+    if (user && profile) {
+      mutate({ sender_id: user?.id, receiver_id: profile?.id })
     }
   }
 
   useEffect(() => {
     if (status === 'success') {
-      queryClient.invalidateQueries(['friends', session?.user.id])
+      queryClient.invalidateQueries(['friends', user?.id])
       queryClient.invalidateQueries(['friends', profile?.id])
       close()
     }

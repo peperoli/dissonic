@@ -10,13 +10,13 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useConcertContext } from '../../hooks/concerts/useConcertContext'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { TextArea } from '../forms/TextArea'
-import { useSession } from '../../hooks/auth/useSession'
+import { useUser } from '../../hooks/auth/useUser'
 import { usePathname, useRouter } from 'next/navigation'
 dayjs.extend(relativeTime)
 
 export const Comments = () => {
   const { concert } = useConcertContext()
-  const { data: session } = useSession()
+  const user = useUser()
   const { register, watch, handleSubmit, reset } = useForm<Comment>()
   const { data: comments } = useComments(concert.id)
   const { mutate, status } = useAddComment()
@@ -25,8 +25,8 @@ export const Comments = () => {
   const pathname = usePathname()
 
   const onSubmit: SubmitHandler<Comment> = async formData => {
-    if (!session) return
-    mutate({ concert_id: concert.id, user_id: session?.user.id, content: formData.content })
+    if (!user) return
+    mutate({ concert_id: concert.id, user_id: user?.id, content: formData.content })
   }
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export const Comments = () => {
   return (
     <>
       <h2>Kommentare</h2>
-      {session ? (
+      {user ? (
         <>
           <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 mb-4">
             <TextArea

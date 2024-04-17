@@ -1,6 +1,6 @@
 import { Button } from '../Button'
 import { useProfile } from '@/hooks/profiles/useProfile'
-import { useSession } from '@/hooks/auth/useSession'
+import { useUser } from '@/hooks/auth/useUser'
 import { useQueryState } from 'nuqs'
 import { useDeleteFriend } from '@/hooks/profiles/useDeleteFriend'
 
@@ -11,12 +11,12 @@ type RemoveFriendFormProps = {
 export const RemoveFriendForm = ({ close }: RemoveFriendFormProps) => {
   const [friendId] = useQueryState('friendId')
   const { data: profile } = useProfile(friendId)
-  const { data: session } = useSession()
+  const user = useUser()
   const { mutate, isLoading } = useDeleteFriend()
 
   async function onSubmit() {
-    if (friendId && session?.user.id) {
-      mutate({ friendId, userId: session?.user.id })
+    if (friendId && user?.id) {
+      mutate({ friendId, userId: user?.id })
     }
   }
 

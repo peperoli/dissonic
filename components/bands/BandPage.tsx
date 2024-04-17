@@ -9,15 +9,15 @@ import { Band } from '../../types/types'
 import { useBand } from '../../hooks/bands/useBand'
 import { useConcerts } from '../../hooks/concerts/useConcerts'
 import { usePathname, useRouter } from 'next/navigation'
-import { useSession } from '../../hooks/auth/useSession'
 import { parseAsStringLiteral, useQueryState } from 'nuqs'
-import { modalPaths } from '../shared/ModalProvider'
+import { modalPaths } from '../helpers/ModalProvider'
 import { ArrowLeft, Edit, MapPin, MusicIcon, Trash } from 'lucide-react'
 import Image from 'next/image'
 import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 import { UserItem } from '../shared/UserItem'
 import { useBandProfiles } from '@/hooks/bands/useBandProfiles'
 import { UserMusicIcon } from '../layout/UserMusicIcon'
+import { useUser } from '@/hooks/auth/useUser'
 
 type BandPageProps = {
   initialBand: Band
@@ -36,7 +36,7 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
     'modal',
     parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
   )
-  const { data: session } = useSession()
+  const user = useUser()
   const { push } = useRouter()
   const pathname = usePathname()
   const regionNames = new Intl.DisplayNames('de', { type: 'region' })
@@ -67,7 +67,7 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
           <div className="flex gap-3">
             <Button
               onClick={
-                session ? () => setModal('edit-band') : () => push(`/login?redirect=${pathname}`)
+                user ? () => setModal('edit-band') : () => push(`/login?redirect=${pathname}`)
               }
               label="Bearbeiten"
               icon={<Edit className="size-icon" />}
@@ -77,7 +77,7 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
             />
             <Button
               onClick={
-                session ? () => setModal('delete-band') : () => push(`/login?redirect=${pathname}`)
+                user ? () => setModal('delete-band') : () => push(`/login?redirect=${pathname}`)
               }
               label="Löschen"
               icon={<Trash className="size-icon" />}

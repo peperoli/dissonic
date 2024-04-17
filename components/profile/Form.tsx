@@ -3,7 +3,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { useProfiles } from '../../hooks/profiles/useProfiles'
-import { useSession } from '../../hooks/auth/useSession'
+import { useUser } from '../../hooks/auth/useUser'
 import { EditProfile } from '../../types/types'
 import { Button } from '../Button'
 import { FileUpload } from '../forms/FileUpload'
@@ -34,7 +34,7 @@ export const Form = ({ close }: FormProps) => {
     mode: 'onChange',
   })
   const { data: profiles } = useProfiles()
-  const { data: session } = useSession()
+  const user = useUser()
   const editProfile = useEditProfile()
   const deleteFiles = useDeleteAvatar()
   const uploadAvatar = useUploadAvatar()
@@ -47,14 +47,14 @@ export const Form = ({ close }: FormProps) => {
   > = async formData => {
     const isFileInstance = formData.avatarFile instanceof File
     const avatarName = formData.avatarFile instanceof File ? formData.avatarFile.name : null
-    const avatarPath = avatarName ? `${session?.user.id}/${avatarName}` : profile?.avatar_path
+    const avatarPath = avatarName ? `${user?.id}/${avatarName}` : profile?.avatar_path
 
     if (profile?.avatar_path && (isFileInstance || !formData.avatarFile)) {
       deleteFiles.mutate(profile.avatar_path)
     }
 
     if (formData.avatarFile && isFileInstance) {
-      const path = `${session?.user.id}/${avatarName}`
+      const path = `${user?.id}/${avatarName}`
       uploadAvatar.mutate({ file: formData.avatarFile, path })
     }
 
@@ -63,7 +63,7 @@ export const Form = ({ close }: FormProps) => {
 
   useEffect(() => {
     if (editProfile.status === 'success') {
-      queryClient.invalidateQueries(['profile', session?.user.id])
+      queryClient.invalidateQueries(['profile', user?.id])
       dirtyFields.username ? push(`/users/${watch('username')}`) : close()
     }
   }, [editProfile.status])

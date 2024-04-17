@@ -8,7 +8,7 @@ import { Button } from '../Button'
 import { PageWrapper } from '../layout/PageWrapper'
 import { Comments } from './Comments'
 import { notFound, usePathname, useRouter } from 'next/navigation'
-import { useSession } from '../../hooks/auth/useSession'
+import { useUser } from '../../hooks/auth/useUser'
 import { UserItem } from '../shared/UserItem'
 import { BandList } from './BandList'
 import { ArrowLeft, Edit, MapPin, Trash } from 'lucide-react'
@@ -20,7 +20,7 @@ import { useBands } from '@/hooks/bands/useBands'
 import * as Tooltip from '@radix-ui/react-tooltip'
 import { ConcertStats } from './ConcertStats'
 import { parseAsStringLiteral, useQueryState } from 'nuqs'
-import { modalPaths } from '../shared/ModalProvider'
+import { modalPaths } from '../helpers/ModalProvider'
 import { useConcertProfiles } from '@/hooks/concerts/useConcertProfiles'
 import { Chip } from '../Chip'
 
@@ -60,7 +60,7 @@ type ConcertPageProps = {
 export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPageProps) => {
   const { data: concert } = useConcert(initialConcert, initialConcert.id)
   const { data: concertProfiles } = useConcertProfiles(initialConcert.id)
-  const { data: session } = useSession()
+  const user = useUser()
   const { data: spotifyArtist } = useSpotifyArtist(concert?.bands?.[0]?.spotify_artist_id)
   const [_, setModal] = useQueryState(
     'modal',
@@ -85,7 +85,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
             <div className="flex gap-3">
               <Button
                 onClick={
-                  session
+                  user
                     ? () => setModal('edit-concert')
                     : () => push(`/login?redirect=${pathname}`)
                 }
@@ -97,7 +97,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
               />
               <Button
                 onClick={
-                  session
+                  user
                     ? () => setModal('delete-concert')
                     : () => push(`/login?redirect=${pathname}`)
                 }
@@ -152,7 +152,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
             {concert.bands && (
               <BandList
                 bands={concert.bands}
-                bandsSeen={concert.bands_seen?.filter(item => item.user_id === session?.user.id)}
+                bandsSeen={concert.bands_seen?.filter(item => item.user_id === user?.id)}
                 concertId={concert.id}
               />
             )}

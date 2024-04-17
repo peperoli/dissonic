@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useAddBandsSeen } from '../../hooks/bands/useAddBandsSeen'
 import { useDeleteBandsSeen } from '../../hooks/bands/useDeleteBandsSeen'
 import { BandSeenToggle } from './BandSeenToggle'
-import { useSession } from '../../hooks/auth/useSession'
+import { useUser } from '../../hooks/auth/useUser'
 import Link from 'next/link'
 import { Button } from '../Button'
 import { usePathname, useRouter } from 'next/navigation'
@@ -24,7 +24,7 @@ export function BandList({ bands, bandsSeen, concertId }: BandListProps) {
   const [hideBandsSeenHint, setHideBandsSeenHint] = useState(
     Cookies.get('hideBandsSeenHint') ?? null
   )
-  const { data: session } = useSession()
+  const user = useUser()
   const addBandsSeen = useAddBandsSeen()
   const deleteBandsSeen = useDeleteBandsSeen()
   const isLoading = addBandsSeen.isLoading || deleteBandsSeen.isLoading
@@ -78,7 +78,7 @@ export function BandList({ bands, bandsSeen, concertId }: BandListProps) {
               bands.map(band => (
                 <BandSeenToggle
                   key={band.id}
-                  user={session?.user || null}
+                  user={user || null}
                   band={band}
                   selectedBandsSeen={selectedBandsSeen}
                   setSelectedBandsSeen={setSelectedBandsSeen}
@@ -120,7 +120,7 @@ export function BandList({ bands, bandsSeen, concertId }: BandListProps) {
           </>
         ) : (
           <Button
-            onClick={session ? () => setEditing(true) : () => push(`/signup?redirect=${pathname}`)}
+            onClick={user ? () => setEditing(true) : () => push(`/signup?redirect=${pathname}`)}
             label="Ich war dabei!"
             icon={
               hasBandsSeen ? (

@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Concert } from '../../types/types'
 import { useProfiles } from '../../hooks/profiles/useProfiles'
-import { useSession } from '../../hooks/auth/useSession'
+import { useUser } from '../../hooks/auth/useUser'
 import clsx from 'clsx'
 import useMediaQuery from '../../hooks/helpers/useMediaQuery'
 import { UserItem } from '../shared/UserItem'
@@ -18,12 +18,12 @@ interface ConcertCardProps {
 
 export const ConcertCard = ({ concert, nested }: ConcertCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
-  const { data: session } = useSession()
+  const user = useUser()
   const fanIds = new Set(concert?.bands_seen?.map(item => item.user_id))
   const { data: profiles } = useProfiles({ ids: [...fanIds] }, fanIds.size > 0)
   const router = useRouter()
   const bandsCount = concert.bands?.length || 0
-  const bandsSeen = concert.bands_seen?.filter(item => item.user_id === session?.user.id)
+  const bandsSeen = concert.bands_seen?.filter(item => item.user_id === user?.id)
   const isDesktop = useMediaQuery('(min-width: 768px)')
 
   function generateVisibleBandCount(threshold: number) {
