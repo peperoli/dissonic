@@ -1,7 +1,7 @@
 import { Button } from '../Button'
 import { useState, useEffect } from 'react'
 import dayjs from 'dayjs'
-import { PencilIcon, TrashIcon, UserIcon } from '@heroicons/react/20/solid'
+import { EditIcon, TrashIcon, UserIcon } from 'lucide-react'
 import Image from 'next/image'
 import { Comment } from '../../types/types'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -106,7 +106,7 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
             className="rounded-full object-cover"
           />
         ) : (
-          <UserIcon className="h-icon" />
+          <UserIcon className="size-icon" />
         )}
       </div>
       <div className={`mt-1.5${edit ? ' w-full' : ''}`}>
@@ -145,7 +145,7 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
                   contentType="icon"
                   label="Kommentar bearbeiten"
                   size="small"
-                  icon={<PencilIcon className="h-icon" />}
+                  icon={<EditIcon className="size-icon" />}
                 />
                 <Button
                   onClick={() => {
@@ -156,7 +156,7 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
                   label="Kommentar löschen"
                   size="small"
                   danger
-                  icon={<TrashIcon className="h-icon" />}
+                  icon={<TrashIcon className="size-icon" />}
                 />
               </div>
             )}

@@ -1,8 +1,8 @@
 import { useSpotifySearch } from '../../hooks/spotify/useSpotifySearch'
-import { CheckIcon, ChevronDownIcon, LinkIcon } from '@heroicons/react/20/solid'
 import Image from 'next/image'
 import { SpotifyArtist } from '../../types/types'
 import { Popover } from '@headlessui/react'
+import { Check, ChevronDown, LinkIcon } from 'lucide-react'
 
 interface SelectItemProps {
   item: SpotifyArtist
@@ -30,7 +30,7 @@ const SelectItem = ({ item, value, handleChange }: SelectItemProps) => {
             className="rounded-lg object-cover"
           />
         ) : (
-          <LinkIcon className="h-icon text-slate-300" />
+          <LinkIcon className="size-icon text-slate-300" />
         )}
       </div>
       <div className="grid">
@@ -40,7 +40,7 @@ const SelectItem = ({ item, value, handleChange }: SelectItemProps) => {
           {item.genres.length > 0 && <> &bull; {item.genres.join(', ')}</>}
         </div>
       </div>
-      {value === item.id && <CheckIcon className="ml-auto h-icon" />}
+      {value === item.id && <Check className="ml-auto size-icon" />}
     </label>
   )
 }
@@ -71,12 +71,12 @@ export const SpotifyArtistSelect = ({ bandName, value, onChange }: SpotifyArtist
                   className="rounded-lg object-cover"
                 />
               ) : (
-                <LinkIcon className="h-icon text-slate-300" />
+                <LinkIcon className="size-icon text-slate-300" />
               )}
             </span>
           )}
           <span>{value !== null ? selectedArtist?.name : 'Keine Verknüpfung'}</span>
-          <ChevronDownIcon className="ml-auto h-icon" />
+          <ChevronDown className="ml-auto size-icon" />
         </span>
       </Popover.Button>
       <Popover.Overlay className="fixed inset-0 bg-black opacity-30 md:hidden" />
@@ -96,7 +96,7 @@ export const SpotifyArtistSelect = ({ bandName, value, onChange }: SpotifyArtist
                   className="sr-only"
                 />
                 <span className="inline-flex h-10 items-center">Keine Verknüpfung</span>
-                {value === null && <CheckIcon className="ml-auto h-icon" />}
+                {value === null && <Check className="ml-auto size-icon" />}
               </label>
               {searchResults?.map(item => (
                 <SelectItem key={item.id} item={item} value={value} handleChange={handleChange} />

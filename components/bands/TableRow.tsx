@@ -26,7 +26,7 @@ export function BandTableRow({ band }: BandTableRowProps) {
             className="object-cover rounded-lg"
           />
         ) : (
-          <UserMusicIcon className="h-icon text-slate-300" />
+          <UserMusicIcon className="size-icon text-slate-300" />
         )}
       </div>
       <div className="md:flex items-center gap-4 w-full">

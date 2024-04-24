@@ -1,5 +1,5 @@
 import { Button } from '../Button'
-import { FaceSmileIcon } from '@heroicons/react/20/solid'
+import { SmilePlus } from 'lucide-react'
 import { Comment, Profile, Reaction } from '../../types/types'
 import { User } from '@supabase/supabase-js'
 import { Popover } from '@headlessui/react'
@@ -125,7 +125,7 @@ export const ReactionControl = ({ comment, reactions, user }: ReactionControlPro
       {comment.user_id !== user.id && (
         <Popover>
           <Popover.Button aria-label="Reagieren" className="btn btn-icon btn-small">
-            <FaceSmileIcon className="h-icon" />
+            <SmilePlus className="size-icon" />
           </Popover.Button>
           <Popover.Panel className="absolute left-1/2 z-10 mt-1 flex -translate-x-1/2 rounded-lg bg-slate-700 shadow-xl">
             {({ close }) => (

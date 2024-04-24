@@ -82,7 +82,9 @@ export type BandSeen = Tables<'j_bands_seen'> & {
 
 export type Genre = Tables<'genres'>
 
-export type Location = Tables<'locations'>
+export type Location = Tables<'locations'> & {
+  country?: Country | null
+}
 
 export type AddLocation = TablesInsert<'locations'>
 

@@ -1485,15 +1485,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@heroicons/react@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "@heroicons/react@npm:2.1.1"
-  peerDependencies:
-    react: ">= 16"
-  checksum: 10c0/c85f76d4ccb5bdad9e6ffaa62bfdcde1c1f9ebaf3287908a7be0994c2d0f6151b9017f6e41d0a1ec9ba1eb1c53ab88f30704b0d25c72adc59896882b0a60147e
-  languageName: node
-  linkType: hard
-
 "@humanwhocodes/config-array@npm:^0.10.5":
   version: 0.10.5
   resolution: "@humanwhocodes/config-array@npm:0.10.5"
@@ -2478,15 +2469,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@supabase/ssr@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@supabase/ssr@npm:0.1.0"
+"@supabase/ssr@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "@supabase/ssr@npm:0.3.0"
   dependencies:
     cookie: "npm:^0.5.0"
     ramda: "npm:^0.29.0"
   peerDependencies:
     "@supabase/supabase-js": ^2.33.1
-  checksum: 10c0/1ae3459cbdd06af01475dbeca7375dc2d5ac5e6534244ddfcc1fbdaae90af766a86fdc7ed660b9f205a9802265f0f04baeaab8801fd4d7cf1e74dc5218325bae
+  checksum: 10c0/c2e1df6b98b3cbb57c663771ea26b9afe2cf9037fde33d142d7552b740dcafe3110b5be8d15fc0c6612b8803176606fbab867235d745ee47d63d038511768dc6
   languageName: node
   linkType: hard
 
@@ -3673,10 +3664,9 @@ __metadata:
   dependencies:
     "@formkit/auto-animate": "npm:^0.8.1"
     "@headlessui/react": "npm:^1.7.18"
-    "@heroicons/react": "npm:^2.1.1"
     "@radix-ui/react-dialog": "npm:^1.0.2"
     "@radix-ui/react-tooltip": "npm:^1.0.7"
-    "@supabase/ssr": "npm:^0.1.0"
+    "@supabase/ssr": "npm:^0.3.0"
     "@supabase/supabase-js": "npm:^2.42.0"
     "@tanstack/react-query": "npm:^4.29.25"
     "@types/jest": "npm:^29.5.8"

@@ -1,4 +1,4 @@
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/20/solid'
+import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import clsx from 'clsx'
 import { forwardRef, HTMLInputTypeAttribute, useState } from 'react'
 import { FieldError } from 'react-hook-form'
@@ -40,9 +40,9 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
             onClick={() => setInputType(inputType === 'password' ? 'text' : 'password')}
             icon={
               inputType === 'password' ? (
-                <EyeIcon className="h-icon" />
+                <EyeIcon className="size-icon" />
               ) : (
-                <EyeSlashIcon className="h-icon" />
+                <EyeOffIcon className="size-icon" />
               )
             }
             contentType="icon"

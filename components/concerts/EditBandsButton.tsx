@@ -1,4 +1,4 @@
-import { PencilSquareIcon } from '@heroicons/react/20/solid'
+import { EditIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useBands } from '../../hooks/bands/useBands'
 import { useDebounce } from '../../hooks/helpers/useDebounce'
@@ -74,7 +74,7 @@ export const EditBandsButton = ({ value, onChange, error }: EditBandsButtonProps
               <div className="absolute inset-0 bg-gradient-to-t from-slate-750" />
             </div>
           </div>
-          <PencilSquareIcon className="h-icon flex-none text-slate-300" />
+          <EditIcon className="size-icon flex-none text-slate-300" />
         </button>
         {error && (
           <div className="mt-1 text-sm text-yellow">Bitte füge mindestens eine Band hinzu.</div>

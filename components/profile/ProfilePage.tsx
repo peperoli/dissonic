@@ -1,9 +1,7 @@
 'use client'
 
-import { PageWrapper } from '../layout/PageWrapper'
 import { useState } from 'react'
 import { Button } from '../Button'
-import { CheckCircleIcon, UserPlusIcon } from '@heroicons/react/20/solid'
 import { ConcertsByYear } from './ConcertsByYear'
 import { Band, Location, Profile } from '../../types/types'
 import { useProfile } from '../../hooks/profiles/useProfile'
@@ -20,7 +18,7 @@ import { parseAsStringLiteral, useQueryState } from 'nuqs'
 import { modalPaths } from '../shared/ModalProvider'
 import { FriendItem } from './FriendItem'
 import { getUniqueObjects } from '@/lib/getUniqueObjects'
-import { Edit, Lock, Settings } from 'lucide-react'
+import { Edit, Settings, CheckCircleIcon, UserPlusIcon } from 'lucide-react'
 import { ConcertStats } from '../concerts/ConcertStats'
 import { TopGrid } from './TopGrid'
 import { BandItem } from './BandItem'
@@ -98,154 +96,149 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
   const concertsSeen = getUniqueObjects(bandsSeen?.map(item => item.concert) ?? [])
 
   return (
-    <PageWrapper>
-      <main className="container grid gap-4">
-        {profile ? (
-          <>
-            <section className="mb-6 flex flex-wrap items-center gap-4">
-              <UserItem
-                user={profile}
-                description={isOwnProfile ? session?.user.email : ''}
-                size="lg"
+    <main className="container grid gap-4">
+      {profile ? (
+        <>
+          <section className="mb-6 flex flex-wrap items-center gap-4">
+            <UserItem
+              user={profile}
+              description={isOwnProfile ? session?.user.email : ''}
+              size="lg"
+            />
+            {isFriend && (
+              <p className="flex gap-2 text-slate-300">
+                <CheckCircleIcon className="size-icon" />
+                Freund
+              </p>
+            )}
+            {!isFriend && session?.user.id !== profile.id && (
+              <Button
+                onClick={() => setModal('add-friend')}
+                label="Freund hinzufügen"
+                contentType="icon"
+                icon={<UserPlusIcon className="size-icon" />}
+                disabled={!!isPending}
               />
-              {isFriend && (
-                <p className="flex gap-2 text-slate-300">
-                  <CheckCircleIcon className="h-icon" />
-                  Freund
-                </p>
-              )}
-              {!isFriend && session?.user.id !== profile.id && (
+            )}
+            {isOwnProfile && (
+              <div className="ml-auto flex gap-2">
                 <Button
-                  onClick={() => setModal('add-friend')}
-                  label="Freund hinzufügen"
+                  label="Profil bearbeiten"
+                  onClick={() => setModal('edit-profile')}
+                  icon={<Edit className="size-icon" />}
                   contentType="icon"
-                  icon={<UserPlusIcon className="h-icon" />}
-                  disabled={!!isPending}
+                  size="small"
+                  appearance="tertiary"
+                />
+                <Link
+                  href="/settings"
+                  aria-label="Einstellungen"
+                  className="btn btn-icon btn-small btn-tertiary"
+                >
+                  <Settings className="size-icon" />
+                </Link>
+              </div>
+            )}
+          </section>
+          <Score uniqueBandsSeen={uniqueBandsSeen} concertsSeen={concertsSeen} />
+          <Tab.Group as="section">
+            <Tab.List as="nav" className="mb-4 rounded-lg bg-slate-700 px-3">
+              {['Statistik', 'Konzerte', 'Freunde'].map(item => (
+                <Tab className="relative rounded p-3" key={item}>
+                  {({ selected }) => (
+                    <>
+                      {item}
+                      <span
+                        className={clsx(
+                          'absolute bottom-0 left-0 h-1 w-full rounded-t',
+                          selected ? 'bg-venom' : 'bg-transparent'
+                        )}
+                      />
+                    </>
+                  )}
+                </Tab>
+              ))}
+            </Tab.List>
+            <Tab.Panel className="grid gap-4">
+              {!bandsSeen && <p className="text-sm text-slate-300">Lade ...</p>}
+              {bandsSeen && bandsSeen.length === 0 && (
+                <StatusBanner statusType="info" message="Blyat! Noch keine Statistik vorhanden." />
+              )}
+              {bandsSeen && (
+                <TopGrid
+                  headline="Top Bands"
+                  items={bandsSeen.filter(item => !!item.band).map(item => item.band) as Band[]}
+                  Item={BandItem}
                 />
               )}
-              {isOwnProfile && (
-                <div className="ml-auto flex gap-2">
-                  <Button
-                    label="Profil bearbeiten"
-                    onClick={() => setModal('edit-profile')}
-                    icon={<Edit className="size-icon" />}
-                    contentType="icon"
-                    size="small"
-                    appearance="tertiary"
+              {bandsSeen && bandsSeen.length > 0 && (
+                <section className="grid gap-4 rounded-lg bg-slate-800 p-4 md:grid-cols-2 md:p-6">
+                  <PieChart
+                    data={[
+                      {
+                        name: 'Konzerte',
+                        value: concertsSeen.filter(item => !item.is_festival).length,
+                      },
+                      {
+                        name: 'Festivals',
+                        value: concertsSeen.filter(item => item.is_festival).length,
+                      },
+                    ]}
                   />
-                  <Link
-                    href="/settings"
-                    aria-label="Einstellungen"
-                    className="btn btn-icon btn-small btn-tertiary"
-                  >
-                    <Settings className="size-icon" />
-                  </Link>
-                </div>
+                  <PieChart
+                    data={[
+                      { name: 'Einmal erlebte Bands', value: uniqueBandsSeen.length },
+                      {
+                        name: 'Mehrfach erlebte Bands',
+                        value: bandsSeen?.length - uniqueBandsSeen.length,
+                      },
+                    ]}
+                  />
+                </section>
               )}
-            </section>
-            <Score uniqueBandsSeen={uniqueBandsSeen} concertsSeen={concertsSeen} />
-            <Tab.Group as="section">
-              <Tab.List as="nav" className="mb-4 rounded-lg bg-slate-700 px-3">
-                {['Statistik', 'Konzerte', 'Freunde'].map(item => (
-                  <Tab className="relative rounded p-3" key={item}>
-                    {({ selected }) => (
-                      <>
-                        {item}
-                        <span
-                          className={clsx(
-                            'absolute bottom-0 left-0 h-1 w-full rounded-t',
-                            selected ? 'bg-venom' : 'bg-transparent'
-                          )}
-                        />
-                      </>
-                    )}
-                  </Tab>
-                ))}
-              </Tab.List>
-              <Tab.Panel className="grid gap-4">
-                {!bandsSeen && <p className="text-sm text-slate-300">Lade ...</p>}
-                {bandsSeen && bandsSeen.length === 0 && (
-                  <StatusBanner
-                    statusType="info"
-                    message="Blyat! Noch keine Statistik vorhanden."
-                  />
-                )}
-                {bandsSeen && (
-                  <TopGrid
-                    headline="Top Bands"
-                    items={bandsSeen.filter(item => !!item.band).map(item => item.band) as Band[]}
-                    Item={BandItem}
-                  />
-                )}
-                {bandsSeen && (
-                  <section className="grid gap-4 rounded-lg bg-slate-800 p-4 md:grid-cols-2 md:p-6">
-                    <PieChart
-                      data={[
-                        {
-                          name: 'Konzerte',
-                          value: concertsSeen.filter(item => !item.is_festival).length,
-                        },
-                        {
-                          name: 'Festivals',
-                          value: concertsSeen.filter(item => item.is_festival).length,
-                        },
-                      ]}
+              {bandsSeen && bandsSeen.length > 0 && uniqueBandsSeen && (
+                <ConcertStats bands={bands} uniqueBands={uniqueBandsSeen} />
+              )}
+              <ConcertsByYear userId={profile.id} />
+              {concertsSeen && (
+                <TopGrid
+                  headline="Top Locations"
+                  items={
+                    concertsSeen
+                      .filter(item => !!item.location)
+                      .map(item => item.location) as Location[]
+                  }
+                  Item={LocationItem}
+                />
+              )}
+            </Tab.Panel>
+            <Tab.Panel className="grid gap-4">
+              <ConcertList userId={profile.id} />
+            </Tab.Panel>
+            <Tab.Panel>
+              {acceptedFriends && acceptedFriends.length > 0 ? (
+                <div className="grid grid-cols-2 gap-4">
+                  {acceptedFriends.map(item => (
+                    <FriendItem
+                      key={item.sender.id + item.receiver.id}
+                      friend={item.sender.id === profile.id ? item.receiver : item.sender}
+                      profile={profile}
                     />
-                    <PieChart
-                      data={[
-                        { name: 'Einmal erlebte Bands', value: uniqueBandsSeen.length },
-                        {
-                          name: 'Mehrfach erlebte Bands',
-                          value: bandsSeen?.length - uniqueBandsSeen.length,
-                        },
-                      ]}
-                    />
-                  </section>
-                )}
-                {bandsSeen && bandsSeen.length > 0 && uniqueBandsSeen && (
-                  <ConcertStats bands={bands} uniqueBands={uniqueBandsSeen} />
-                )}
-                <ConcertsByYear userId={profile.id} />
-                {concertsSeen && (
-                  <TopGrid
-                    headline="Top Locations"
-                    items={
-                      concertsSeen
-                        .filter(item => !!item.location)
-                        .map(item => item.location) as Location[]
-                    }
-                    Item={LocationItem}
-                  />
-                )}
-              </Tab.Panel>
-              <Tab.Panel className="grid gap-4">
-                <ConcertList userId={profile.id} />
-              </Tab.Panel>
-              <Tab.Panel>
-                {acceptedFriends && acceptedFriends.length > 0 ? (
-                  <div className="grid grid-cols-2 gap-4">
-                    {acceptedFriends.map(item => (
-                      <FriendItem
-                        key={item.sender.id + item.receiver.id}
-                        friend={item.sender.id === profile.id ? item.receiver : item.sender}
-                        profile={profile}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <StatusBanner
-                    statusType="info"
-                    message={`${session?.user.id === profile.id ? 'Du hast' : profile.username + ' hat'} noch
+                  ))}
+                </div>
+              ) : (
+                <StatusBanner
+                  statusType="info"
+                  message={`${session?.user.id === profile.id ? 'Du hast' : profile.username + ' hat'} noch
                   keine Konzertfreunde :/`}
-                  />
-                )}
-              </Tab.Panel>
-            </Tab.Group>
-          </>
-        ) : (
-          <div>Bitte melde dich an.</div>
-        )}
-      </main>
-    </PageWrapper>
+                />
+              )}
+            </Tab.Panel>
+          </Tab.Group>
+        </>
+      ) : (
+        <div>Bitte melde dich an.</div>
+      )}
+    </main>
   )
 }

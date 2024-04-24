@@ -18,9 +18,9 @@ export const StatusBanner = ({ statusType, message, className }: StatusBannerPro
         className
       )}
     >
-      {statusType === 'success' && <CheckCircle className="h-icon flex-none" />}
-      {statusType === 'error' && <AlertTriangle className="h-icon flex-none" />}
-      {statusType === 'info' && <InfoIcon className="h-icon flex-none" />}
+      {statusType === 'success' && <CheckCircle className="size-icon flex-none" />}
+      {statusType === 'error' && <AlertTriangle className="size-icon flex-none" />}
+      {statusType === 'info' && <InfoIcon className="size-icon flex-none" />}
       {message ?? 'Es ist ein Fehler aufgetreten.'}
     </div>
   )

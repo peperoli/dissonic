@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Button } from '../Button'
-import { PlusIcon } from '@heroicons/react/20/solid'
-import { PageWrapper } from '../layout/PageWrapper'
+import { PlusIcon } from 'lucide-react'
 import { Concert, ExtendedRes } from '../../types/types'
 import { useConcerts } from '../../hooks/concerts/useConcerts'
 import { ConcertCard } from './ConcertCard'
@@ -103,114 +102,109 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
     push(pathname, { scroll: false })
   }
   return (
-    <PageWrapper>
-      <main className="container">
-        <div className="fixed bottom-0 right-0 m-4 md:hidden">
-          <Button
-            onClick={
-              session ? () => setModal('add-concert') : () => push(`/login?redirect=${pathname}`)
-            }
-            label="Konzert hinzufügen"
-            appearance="primary"
-            contentType="icon"
-            icon={<Plus className="size-icon" />}
-          />
+    <main className="container">
+      <div className="fixed bottom-0 right-0 m-4 md:hidden">
+        <Button
+          onClick={
+            session ? () => setModal('add-concert') : () => push(`/login?redirect=${pathname}`)
+          }
+          label="Konzert hinzufügen"
+          appearance="primary"
+          contentType="icon"
+          icon={<Plus className="size-icon" />}
+        />
+      </div>
+      <div className="mb-6 hidden items-center justify-between md:flex">
+        <h1 className="mb-0">Konzerte</h1>
+        <Button
+          onClick={
+            session ? () => setModal('add-concert') : () => push(`/login?redirect=${pathname}`)
+          }
+          label="Konzert hinzufügen"
+          appearance="primary"
+          icon={<PlusIcon className="size-icon" />}
+          className="hidden md:block"
+        />
+      </div>
+      <section className="-mx-4 mb-4 grid gap-4 bg-radial-gradient from-blue/20 p-5 md:mx-auto md:rounded-2xl">
+        <div className="scrollbar-hidden -mx-4 flex gap-2 overflow-x-auto px-4 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible">
+          <BandFilter values={selectedBands} onSubmit={setSelectedBands} />
+          <LocationFilter values={selectedLocations} onSubmit={setSelectedLocations} />
+          <YearsFilter values={selectedYears} onSubmit={setSelectedYears} />
+          <FestivalRootFilter values={selectedFestivalRoots} onSubmit={setSelectedFestivalRoots} />
         </div>
-        <div className="mb-6 hidden items-center justify-between md:flex">
-          <h1 className="mb-0">Konzerte</h1>
-          <Button
-            onClick={
-              session ? () => setModal('add-concert') : () => push(`/login?redirect=${pathname}`)
-            }
-            label="Konzert hinzufügen"
-            appearance="primary"
-            icon={<PlusIcon className="size-icon" />}
-            className="hidden md:block"
-          />
-        </div>
-        <section className="-mx-4 mb-4 grid gap-4 bg-radial-gradient from-blue/20 p-5 md:mx-auto md:rounded-2xl">
-          <div className="scrollbar-hidden -mx-4 flex gap-2 overflow-x-auto px-4 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible">
-            <BandFilter values={selectedBands} onSubmit={setSelectedBands} />
-            <LocationFilter values={selectedLocations} onSubmit={setSelectedLocations} />
-            <YearsFilter values={selectedYears} onSubmit={setSelectedYears} />
-            <FestivalRootFilter
-              values={selectedFestivalRoots}
-              onSubmit={setSelectedFestivalRoots}
+        <div className="flex items-center gap-4">
+          <div className="my-1.5 text-sm text-slate-300">{concerts?.count}&nbsp;Einträge</div>
+          {(selectedBands ||
+            selectedLocations ||
+            selectedYears ||
+            selectedFestivalRoots ||
+            selectedUserId) && (
+            <Button
+              label="Zurücksetzen"
+              onClick={resetAll}
+              icon={<RotateCcw className="size-icon" />}
+              contentType={isDesktop ? 'text' : 'icon'}
+              size="small"
+              appearance="tertiary"
             />
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="my-1.5 text-sm text-slate-300">{concerts?.count}&nbsp;Einträge</div>
-            {(selectedBands ||
-              selectedLocations ||
-              selectedYears ||
-              selectedFestivalRoots ||
-              selectedUserId) && (
-              <Button
-                label="Zurücksetzen"
-                onClick={resetAll}
-                icon={<RotateCcw className="size-icon" />}
-                contentType={isDesktop ? 'text' : 'icon'}
-                size="small"
-                appearance="tertiary"
-              />
-            )}
-            <div className="ml-auto">
-              <FilterButton
-                label="Sortieren nach"
+          )}
+          <div className="ml-auto">
+            <FilterButton
+              label="Sortieren nach"
+              items={sortItems}
+              type="singleselect"
+              size="sm"
+              appearance="tertiary"
+              selectedId={sortItems.findIndex(
+                item => item.value === `${sort.sort_by},${sort.sort_asc}`
+              )}
+            >
+              <Select
+                name="sort"
                 items={sortItems}
-                type="singleselect"
-                size="sm"
-                appearance="tertiary"
-                selectedId={sortItems.findIndex(
+                value={sortItems.findIndex(
                   item => item.value === `${sort.sort_by},${sort.sort_asc}`
                 )}
-              >
-                <Select
-                  name="sort"
-                  items={sortItems}
-                  value={sortItems.findIndex(
-                    item => item.value === `${sort.sort_by},${sort.sort_asc}`
-                  )}
-                  onValueChange={value =>
-                    setSort({
-                      sort_by: sortItems[value].value.split(',')[0] as 'date_start',
-                      sort_asc: sortItems[value].value.split(',')[1] === 'true',
-                    })
-                  }
-                  searchable={false}
-                />
-              </FilterButton>
-            </div>
+                onValueChange={value =>
+                  setSort({
+                    sort_by: sortItems[value].value.split(',')[0] as 'date_start',
+                    sort_asc: sortItems[value].value.split(',')[1] === 'true',
+                  })
+                }
+                searchable={false}
+              />
+            </FilterButton>
           </div>
-          {session && (
-            <SegmentedControl
-              options={[
-                { value: 'global', label: 'Alle', icon: Globe },
-                { value: 'user', label: 'Du', icon: User },
-                { value: 'friends', label: 'Du & Freunde', icon: BookUser },
-              ]}
-              value={view}
-              onValueChange={handleView}
-            />
-          )}
-        </section>
-        <div className="grid gap-4">
-          {concerts?.data.map(concert => <ConcertCard concert={concert} key={concert.id} />)}
         </div>
-        <div className="flex flex-col items-center gap-2">
-          <p className="text-sm text-slate-300">
-            {concerts?.data.length} von {concerts?.count} Einträgen
-          </p>
-          {concerts?.data.length !== concerts?.count && (
-            <Button
-              label="Mehr anzeigen"
-              onClick={() => setSize(prev => prev + 25)}
-              loading={isFetching}
-              appearance="primary"
-            />
-          )}
-        </div>
-      </main>
-    </PageWrapper>
+        {session && (
+          <SegmentedControl
+            options={[
+              { value: 'global', label: 'Alle', icon: Globe },
+              { value: 'user', label: 'Du', icon: User },
+              { value: 'friends', label: 'Du & Freunde', icon: BookUser },
+            ]}
+            value={view}
+            onValueChange={handleView}
+          />
+        )}
+      </section>
+      <div className="grid gap-4">
+        {concerts?.data.map(concert => <ConcertCard concert={concert} key={concert.id} />)}
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <p className="text-sm text-slate-300">
+          {concerts?.data.length} von {concerts?.count} Einträgen
+        </p>
+        {concerts?.data.length !== concerts?.count && (
+          <Button
+            label="Mehr anzeigen"
+            onClick={() => setSize(prev => prev + 25)}
+            loading={isFetching}
+            appearance="primary"
+          />
+        )}
+      </div>
+    </main>
   )
 }

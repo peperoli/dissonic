@@ -1,3 +1,5 @@
+import { NavBar } from '@/components/layout/NavBar'
+import Navigation from '@/components/layout/Navigation'
 import { ModalProvider } from '@/components/shared/ModalProvider'
 import { TooltipProvider } from '@/components/shared/TooltipProvider'
 import { Metadata, Viewport } from 'next'
@@ -23,7 +25,7 @@ export const metadata: Metadata = {
       { url: '/favicon/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
       { url: '/favicon/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
     ],
-    apple: '/favicon/apple-touch-icon.png',
+    apple: '/favicon/apple-toucsize-icon.png',
     other: [{ rel: 'mask-icon', url: '/favicon/safari-pinned-tab.svg', color: '#1f282e' }],
   },
 }
@@ -43,7 +45,13 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <QueryProvider>
       <TooltipProvider>
         <html lang="de-CH" className={`${albertSans.variable}`}>
-          <body className="bg-slate-850 text-slate-50">{children}</body>
+          <body className="bg-slate-850 text-slate-50">
+            <NavBar />
+            <div className="md:flex">
+              <Navigation />
+              {children}
+            </div>
+          </body>
         </html>
         <ModalProvider />
       </TooltipProvider>

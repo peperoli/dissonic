@@ -1,4 +1,4 @@
-import { ExclamationTriangleIcon } from '@heroicons/react/20/solid'
+import { AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { useConcerts } from '../../hooks/concerts/useConcerts'
@@ -180,7 +180,7 @@ export const Form = ({ close, isNew }: FormProps) => {
         {isSimilar && (
           <div className="rounded-lg bg-yellow/10 p-4">
             <div className="flex items-center gap-4 text-yellow">
-              <ExclamationTriangleIcon className="h-icon flex-none" />
+              <AlertTriangle className="size-icon flex-none" />
               <p>
                 <strong>Achtung:</strong>{' '}
                 {similarConcerts.length === 1 ? 'Ein Konzert' : 'Folgende Konzerte'} mit ähnlichen

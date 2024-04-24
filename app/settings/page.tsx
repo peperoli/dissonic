@@ -1,7 +1,6 @@
 import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
-import { notFound, redirect } from 'next/navigation'
-import { PageWrapper } from '@/components/layout/PageWrapper'
+import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { PasswordForm } from '@/components/profile/PasswordForm'
@@ -34,20 +33,18 @@ export default async function Page() {
   const { profile } = await fetchData()
 
   return (
-    <PageWrapper>
-      <main className="container-sm">
-        <Link href={`/users/${profile.username}`} className="btn btn-small btn-tertiary mb-2">
-          <ArrowLeft className="size-icon" />
-          Zurück zum Profil
-        </Link>
-        <h1>Konto-Einstellungen</h1>
-        <div className="rounded-lg bg-slate-800 p-6 mb-4">
-          <PasswordForm />
-        </div>
-        <div className="rounded-lg bg-slate-800 p-6">
-          <EmailForm />
-        </div>
-      </main>
-    </PageWrapper>
+    <main className="container-sm">
+      <Link href={`/users/${profile.username}`} className="btn btn-small btn-tertiary mb-2">
+        <ArrowLeft className="size-icon" />
+        Zurück zum Profil
+      </Link>
+      <h1>Konto-Einstellungen</h1>
+      <div className="mb-4 rounded-lg bg-slate-800 p-6">
+        <PasswordForm />
+      </div>
+      <div className="rounded-lg bg-slate-800 p-6">
+        <EmailForm />
+      </div>
+    </main>
   )
 }

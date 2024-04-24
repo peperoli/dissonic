@@ -8,7 +8,7 @@ async function fetchData(): Promise<ExtendedRes<Location[]>> {
 
   const { data, count, error } = await supabase
     .from('locations')
-    .select('*', { count: 'estimated' })
+    .select('*, country:countries(id, iso2)', { count: 'estimated' })
     .range(0, 24)
     .order('name')
 

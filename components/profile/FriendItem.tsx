@@ -1,8 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, FC } from 'react'
-import { UserMinusIcon } from '@heroicons/react/20/solid'
+import { UserMinusIcon } from 'lucide-react'
 import { Profile } from '../../types/types'
 import { Button } from '../Button'
 import { useSession } from '../../hooks/auth/useSession'
@@ -36,7 +35,7 @@ export const FriendItem = ({ friend, profile }: FriendItemProps) => {
             setFriendId(friend.id)
           }}
           contentType="icon"
-          icon={<UserMinusIcon className="h-icon" />}
+          icon={<UserMinusIcon className="size-icon" />}
           size="small"
           danger
         />

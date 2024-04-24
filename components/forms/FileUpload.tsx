@@ -1,4 +1,4 @@
-import { ArrowUpTrayIcon, XMarkIcon } from '@heroicons/react/20/solid'
+import { UploadIcon, X } from 'lucide-react'
 import clsx from 'clsx'
 import Image from 'next/legacy/image'
 import { ChangeEvent, DragEvent, useState } from 'react'
@@ -77,7 +77,7 @@ export const FileUpload = ({ label, name, value, onChange }: FileUploadProps) =>
               <div className="absolute -right-2 -top-2 rounded-lg shadow-lg">
                 <Button
                   onClick={() => onChange(null)}
-                  icon={<XMarkIcon className="h-icon" />}
+                  icon={<X className="size-icon" />}
                   label="Entfernen"
                   contentType="icon"
                   size="small"
@@ -85,8 +85,8 @@ export const FileUpload = ({ label, name, value, onChange }: FileUploadProps) =>
               </div>
             </>
           ) : (
-            <ArrowUpTrayIcon
-              className={clsx('h-8 text-slate-300', dragActive && 'pointer-events-none')}
+            <UploadIcon
+              className={clsx('size-8 text-slate-300', dragActive && 'pointer-events-none')}
             />
           )}
         </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Band, BandSeen } from '../../types/types'
 import { useQueryClient } from '@tanstack/react-query'
 import { useAddBandsSeen } from '../../hooks/bands/useAddBandsSeen'
@@ -8,9 +8,9 @@ import { useSession } from '../../hooks/auth/useSession'
 import Link from 'next/link'
 import { Button } from '../Button'
 import { usePathname, useRouter } from 'next/navigation'
-import { LightBulbIcon, PencilSquareIcon, PlusIcon, XMarkIcon } from '@heroicons/react/20/solid'
 import clsx from 'clsx'
 import Cookies from 'js-cookie'
+import { Edit, Lightbulb, Plus, X } from 'lucide-react'
 
 type BandListProps = {
   bands: Band[]
@@ -59,7 +59,7 @@ export function BandList({ bands, bandsSeen, concertId }: BandListProps) {
         <>
           {!hideBandsSeenHint && (
             <div className="flex gap-3 w-full mb-4 p-4 rounded-lg bg-slate-700">
-              <LightBulbIcon className="h-icon flex-none text-yellow" />
+              <Lightbulb className="size-icon flex-none text-yellow" />
               <p>Markiere Bands, die du an diesem Konzert erlebt hast.</p>
               <button
                 onClick={() => {
@@ -69,7 +69,7 @@ export function BandList({ bands, bandsSeen, concertId }: BandListProps) {
                 aria-label="Hinweis verbergen"
                 className="w-6 h-6 grid place-content-center flex-none ml-auto rounded-md hover:bg-slate-600"
               >
-                <XMarkIcon className="h-icon" />
+                <X className="size-icon" />
               </button>
             </div>
           )}
@@ -124,9 +124,9 @@ export function BandList({ bands, bandsSeen, concertId }: BandListProps) {
             label="Ich war dabei!"
             icon={
               hasBandsSeen ? (
-                <PencilSquareIcon className="h-icon" />
+                <Edit className="size-icon" />
               ) : (
-                <PlusIcon className="h-icon" />
+                <Plus className="size-icon" />
               )
             }
             appearance={hasBandsSeen ? 'secondary' : 'primary'}
