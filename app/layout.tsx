@@ -1,5 +1,6 @@
+import { Footer } from '@/components/layout/Footer'
 import { NavBar } from '@/components/layout/NavBar'
-import Navigation from '@/components/layout/Navigation'
+import { Navigation } from '@/components/layout/Navigation'
 import { ModalProvider } from '@/components/shared/ModalProvider'
 import { TooltipProvider } from '@/components/shared/TooltipProvider'
 import { Metadata, Viewport } from 'next'
@@ -45,12 +46,13 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <QueryProvider>
       <TooltipProvider>
         <html lang="de-CH" className={`${albertSans.variable}`}>
-          <body className="bg-slate-850 text-slate-50">
+          <body className="flex flex-col min-h-screen text-white bg-slate-850">
             <NavBar />
             <div className="md:flex">
               <Navigation />
               {children}
             </div>
+            <Footer />
           </body>
         </html>
         <ModalProvider />

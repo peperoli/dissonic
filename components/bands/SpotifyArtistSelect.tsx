@@ -57,7 +57,7 @@ export const SpotifyArtistSelect = ({ bandName, value, onChange }: SpotifyArtist
 
   return (
     <Popover className="relative">
-      <Popover.Button className="w-full rounded-lg border border-slate-500 bg-slate-750 px-4 pb-3 pt-1 text-left accent-slate-50">
+      <Popover.Button className="w-full rounded-lg border border-slate-500 bg-slate-750 px-4 pb-3 pt-1 text-left accent-white">
         <span className="mb-2 inline-block w-max text-xs text-slate-300">Spotify-Verknüpfung</span>
         <span className="flex items-center gap-3">
           {value !== null && (

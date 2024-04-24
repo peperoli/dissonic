@@ -9,7 +9,7 @@
     textarea,
     select,
     .form-input {
-      @apply block w-full px-4 pt-5 pb-1 rounded-lg border bg-slate-750 accent-slate-50;
+      @apply block w-full px-4 pt-5 pb-1 rounded-lg border bg-slate-750 accent-white;
 
       &::placeholder {
         @apply text-slate-300;

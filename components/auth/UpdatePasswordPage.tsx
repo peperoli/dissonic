@@ -31,7 +31,7 @@ export function UpdatePasswordPage() {
   return (
     <main className="container-sm">
       <h1>Neues Passwort setzen</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5 rounded-lg bg-slate-800 p-6">
         <TextField
           {...register('password', {
             required: true,

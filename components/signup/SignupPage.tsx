@@ -21,31 +21,37 @@ export const SignupPage = () => {
   const error = signUp.error as AuthError | PostgrestError
   return (
     <main className="container-sm">
-      <h1>
-        <span className="text-[1.5em]">Willkommen,</span>
-        <br />
-        geschätzter Fan von Live-Musik!
-      </h1>
-      <p className="mb-2">Ein Dissonic-Konto ermöglicht dir folgende Funktionen:</p>
-      <ul className="mb-6">
-        <li className="flex items-center gap-4">
-          <CheckIcon className="size-icon flex-shrink-0 text-slate-300" />
-          Konzerte, Bands und Locations eintragen und aktualisieren
-        </li>
-        <li className="flex items-center gap-4">
-          <CheckIcon className="size-icon flex-shrink-0 text-slate-300" />
-          Deine Konzert-Historie und Statistiken einsehen
-        </li>
-        <li className="flex items-center gap-4">
-          <CheckIcon className="size-icon flex-shrink-0 text-slate-300" />
-          Bands markieren, die du live erlebt hast
-        </li>
-        <li className="flex items-center gap-4">
-          <CheckIcon className="size-icon flex-shrink-0 text-slate-300" />
-          Konzerte kommentieren und auf Kommentare reagieren
-        </li>
-      </ul>
-      {signUp.status !== 'success' && <Form onSubmit={onSubmit} status={signUp.status} />}
+      <section className="rounded-2xl bg-radial-gradient from-venom/50 p-8">
+        <h1>
+          <span className="text-[1.5em]">Willkommen,</span>
+          <br />
+          geschätzter Fan von Live-Musik!
+        </h1>
+        <p className="mb-2">Ein Dissonic-Konto ermöglicht dir folgende Funktionen:</p>
+        <ul className="mb-6">
+          <li className="flex items-center gap-4">
+            <CheckIcon className="size-icon flex-shrink-0 text-slate-300" />
+            Konzerte, Bands und Locations eintragen und aktualisieren
+          </li>
+          <li className="flex items-center gap-4">
+            <CheckIcon className="size-icon flex-shrink-0 text-slate-300" />
+            Deine Konzert-Historie und Statistiken einsehen
+          </li>
+          <li className="flex items-center gap-4">
+            <CheckIcon className="size-icon flex-shrink-0 text-slate-300" />
+            Bands markieren, die du live erlebt hast
+          </li>
+          <li className="flex items-center gap-4">
+            <CheckIcon className="size-icon flex-shrink-0 text-slate-300" />
+            Konzerte kommentieren und auf Kommentare reagieren
+          </li>
+        </ul>
+      </section>
+      {signUp.status !== 'success' && (
+        <section className="bg-slate-800 rounded-lg p-6">
+          <Form onSubmit={onSubmit} status={signUp.status} />
+        </section>
+      )}
       {signUp.status === 'error' && (
         <StatusBanner
           statusType="error"
@@ -64,8 +70,8 @@ export const SignupPage = () => {
           className="mt-6"
         />
       )}
-      <h3 className="mt-10">Hast du bereits ein Konto?</h3>
-      <Button label="Anmelden" onClick={() => push('/login')} size="small" appearance="secondary" />
+      <h2 className="mt-10">Hast du bereits ein Konto?</h2>
+      <Button label="Anmelden" onClick={() => push('/login')} appearance="secondary" />
     </main>
   )
 }

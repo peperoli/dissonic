@@ -40,7 +40,7 @@ export default function LoginPage() {
   return (
     <main className="container-sm">
       <h1>Anmelden &amp; Konzerte eintragen</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5 p-6 rounded-lg bg-radial-gradient from-blue/20">
         <TextField
           {...register('email', {
             required: true,

@@ -48,7 +48,7 @@ export const NavBar = () => {
     },
   ]
   return (
-    <nav className="flex items-center justify-between p-4 md:px-12 md:py-8">
+    <nav className="container-fluid flex items-center justify-between">
       <Link href="/">
         <Logo />
       </Link>

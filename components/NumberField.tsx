@@ -22,7 +22,7 @@ export const NumberField: FC<NumberFieldProps> = ({ id, unit, min, max, value, s
         onBlur={event => onBlur(event)}
         onChange={event => setValue(Number(event.target.value))}
         style={{ MozAppearance: 'textfield' }}
-        className="block w-full m-0 pl-4 pr-12 py-3 rounded-lg border border-slate-500 bg-slate-700 accent-slate-50 appearance-none"
+        className="block w-full m-0 pl-4 pr-12 py-3 rounded-lg border border-slate-500 bg-slate-700 accent-white appearance-none"
       />
       <span className='absolute right-0 px-4 self-center text-slate-300 pointer-events-none'>{unit}</span>
     </div>

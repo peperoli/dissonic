@@ -14,9 +14,7 @@ async function fetchData() {
     error,
   } = await supabase.auth.getUser()
 
-  if (error) throw error
-
-  if (!user) redirect('/login?redirect=/settings')
+  if (error || !user) redirect('/login?redirect=/settings')
 
   const { data: profile, error: profileError } = await supabase
     .from('profiles')

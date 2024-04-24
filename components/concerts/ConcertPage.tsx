@@ -128,7 +128,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
               <ConcertDate date={new Date(concert.date_start)} isFirst contrast />
               {concert.date_end && concert.date_end !== concert.date_start && (
                 <>
-                  <div className="w-2 border-t border-slate-50/20 md:w-4" />
+                  <div className="w-2 border-t border-white/20 md:w-4" />
                   <ConcertDate date={new Date(concert.date_end)} contrast />
                 </>
               )}

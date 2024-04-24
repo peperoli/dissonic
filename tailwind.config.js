@@ -18,8 +18,8 @@ module.exports = {
       blue: {
         DEFAULT: '#75C8F0',
       },
+      white: '#F0F3F5',
       slate: {
-        50: '#F0F3F5',
         300: '#A3B8C2',
         500: '#668899',
         600: '#516D7B',

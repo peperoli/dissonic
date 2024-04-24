@@ -15,8 +15,8 @@ export const ConcertDate = ({ date, isFirst, contrast }: ConcertDateProps) => {
         clsx(
           contrast
             ? isFirst
-              ? 'bg-slate-50/20 group-hover:bg-slate-50/30 backdrop-blur-lg'
-              : 'border border-slate-50/20 backdrop-blur-lg'
+              ? 'bg-white/20 group-hover:bg-white/30 backdrop-blur-lg'
+              : 'border border-white/20 backdrop-blur-lg'
             : isFirst
               ? 'bg-slate-700 group-hover:bg-slate-600'
               : 'border border-slate-700'

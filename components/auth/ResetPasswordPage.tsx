@@ -29,7 +29,7 @@ export function ResetPasswordPage() {
         Zurück
       </Link>
       <h1>Passwort zurücksetzen</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5 rounded-lg bg-slate-800 p-6">
         <TextField
           {...register('email', {
             required: true,
