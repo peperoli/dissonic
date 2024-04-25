@@ -88,7 +88,7 @@ export const NavBar = () => {
         </Menu>
       ) : (
         <div className="flex gap-4">
-          <Link href="/signup" className="btn btn-tertiary">
+          <Link href="/signup" className="btn btn-tertiary max-md:hidden">
             Registrieren
           </Link>
           <Link href={`/login?redirect=${pathname}`} className="btn btn-secondary">

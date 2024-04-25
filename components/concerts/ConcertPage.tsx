@@ -106,11 +106,11 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
             />
           </div>
         </div>
-        <section
+        <header
           className={clsx(
             'relative overflow-hidden rounded-2xl',
             concert.festival_root_id
-              ? 'aspect-2/1 bg-purple'
+              ? 'aspect-4/3 bg-purple md:aspect-2/1'
               : 'aspect-square bg-venom md:aspect-4/3'
           )}
         >
@@ -144,7 +144,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
               {concert.location?.name}, {concert.location?.city}
             </p>
           </div>
-        </section>
+        </header>
         <section className="rounded-lg bg-slate-800 p-4 md:p-6">
           <h2>Lineup</h2>
           {concert.bands && (

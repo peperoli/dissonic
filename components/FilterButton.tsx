@@ -71,10 +71,10 @@ export const FilterButton = ({
                   {items
                     ?.filter(item => props.submittedValues?.includes(item.id))
                     .map((item, index) => (
-                      <li key={item.id}>
+                      <span key={item.id}>
                         {item.name}
                         {index + 1 < count && <>,&nbsp;</>}
-                      </li>
+                      </span>
                     ))}
                 </TruncatedList>
               )}

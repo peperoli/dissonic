@@ -78,7 +78,7 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
           />
         </div>
       </div>
-      <section className="flex flex-col gap-5 rounded-2xl bg-radial-gradient from-blue/20 p-6 md:flex-row">
+      <header className="flex flex-col gap-5 rounded-2xl bg-radial-gradient from-blue/20 p-6 md:flex-row">
         <div className="relative grid aspect-square w-full flex-none place-content-center rounded-lg bg-slate-750 md:w-56">
           {spotifyArtist?.images[0] ? (
             <Image
@@ -128,7 +128,7 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
             )}
           </div>
         </div>
-      </section>
+      </header>
       {bandProfiles && bandProfiles.length > 0 && (
         <section className="rounded-lg bg-slate-800 p-4 md:p-6">
           <h2>Community</h2>
