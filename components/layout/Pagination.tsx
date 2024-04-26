@@ -1,4 +1,4 @@
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 import { Button } from '../Button'
 
 interface PaginationProps {
@@ -35,14 +35,14 @@ export const Pagination = ({ entriesCount, currentPage, onChange, perPage }: Pag
             onClick={() => onChange(currentPage - 1)}
             contentType="icon"
             label="Vorherige Seite"
-            icon={<ChevronLeftIcon className="h-icon" />}
+            icon={<ChevronLeftIcon className="size-icon" />}
             disabled={currentPage <= 1}
           />
           <Button
             onClick={() => onChange(currentPage + 1)}
             contentType="icon"
             label="Nächste Seite"
-            icon={<ChevronRightIcon className="h-icon" />}
+            icon={<ChevronRightIcon className="size-icon" />}
             disabled={currentPage >= pagesCount}
           />
         </div>

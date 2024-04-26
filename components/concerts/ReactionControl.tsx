@@ -1,5 +1,5 @@
 import { Button } from '../Button'
-import { FaceSmileIcon } from '@heroicons/react/20/solid'
+import { SmilePlus } from 'lucide-react'
 import { Comment, Profile, Reaction } from '../../types/types'
 import { User } from '@supabase/supabase-js'
 import { Popover } from '@headlessui/react'
@@ -72,7 +72,7 @@ export const ReactionToggle = ({
         {...props}
       />
       {users && users.length > 0 && (
-        <div className="absolute hidden peer-hover:block -top-1 left-1/2 -translate-x-1/2 -translate-y-full px-1.5 py-0.5 rounded text-center text-xs bg-slate-900">
+        <div className="absolute -top-1 left-1/2 hidden -translate-x-1/2 -translate-y-full rounded bg-slate-900 px-1.5 py-0.5 text-center text-xs peer-hover:block">
           {users.map(item => item.username).join(', ')}
         </div>
       )}
@@ -112,7 +112,7 @@ export const ReactionControl = ({ comment, reactions, user }: ReactionControlPro
     <div className="flex">
       {reactionCounts.map(reaction => (
         <ReactionToggle
-          label={String(reaction.count)}
+          label={reaction.count > 1 ? String(reaction.count) : ''}
           type={reaction.type}
           commentId={comment.id}
           user={user}
@@ -125,9 +125,9 @@ export const ReactionControl = ({ comment, reactions, user }: ReactionControlPro
       {comment.user_id !== user.id && (
         <Popover>
           <Popover.Button aria-label="Reagieren" className="btn btn-icon btn-small">
-            <FaceSmileIcon className="h-icon" />
+            <SmilePlus className="size-icon" />
           </Popover.Button>
-          <Popover.Panel className="absolute flex left-1/2 mt-1 rounded-lg bg-slate-700 shadow-xl -translate-x-1/2 z-10">
+          <Popover.Panel className="absolute left-1/2 z-10 mt-1 flex -translate-x-1/2 rounded-lg bg-slate-700 shadow-xl">
             {({ close }) => (
               <>
                 {Object.keys(reactionIcons).map(key => (

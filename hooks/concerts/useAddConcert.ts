@@ -8,6 +8,7 @@ const addConcert = async (concert: AddConcert): Promise<Concert> => {
     .insert({
       name: concert.name,
       is_festival: concert.is_festival,
+      festival_root_id: concert.festival_root_id,
       date_start: concert.date_start,
       date_end: concert.date_end,
       location_id: concert.location_id,

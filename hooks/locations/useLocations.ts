@@ -3,15 +3,22 @@ import { useQuery } from '@tanstack/react-query'
 import { getPagination } from '@/lib/getPagination'
 import { ExtendedRes, Location, LocationFetchOptions } from '@/types/types'
 
-async function fetchLocations(options?: LocationFetchOptions): Promise<ExtendedRes<Location[]>> {
-  let query = supabase.from('locations').select('*', { count: 'estimated' })
+async function fetchLocations(options?: LocationFetchOptions) {
+  let query = supabase
+    .from('locations')
+    .select('*, country:countries(id, iso2)', { count: 'estimated' })
 
-  if (options?.filter?.search) {
+  if (options?.search) {
+    // @ts-expect-error
     query = supabase.rpc(
       'search_locations',
-      { search_string: options.filter.search },
+      { search_string: options.search },
       { count: 'estimated' }
     )
+  }
+
+  if (options?.ids && options.ids.length > 0) {
+    query = query.in('id', options.ids)
   }
 
   const { count: initialCount, error: countError } = await query
@@ -36,7 +43,7 @@ async function fetchLocations(options?: LocationFetchOptions): Promise<ExtendedR
 }
 
 export const useLocations = (
-  initialLocations?: ExtendedRes<Location[]>,
+  initialLocations?: ExtendedRes<Location[]> | null,
   options?: LocationFetchOptions
 ) => {
   return useQuery(['locations', JSON.stringify(options)], () => fetchLocations(options), {

@@ -1,13 +1,13 @@
 import clsx from 'clsx'
-import { forwardRef, HTMLAttributes } from 'react'
-import { SpinnerIcon } from './layout/SpinnerIcon'
+import { forwardRef, HTMLAttributes, ReactElement } from 'react'
+import { Loader2 } from 'lucide-react'
 
 type ButtonProps = {
   type?: 'button' | 'submit' | 'reset' | undefined
   label: string
   appearance?: 'primary' | 'secondary' | 'tertiary'
   contentType?: 'text' | 'icon'
-  icon?: JSX.Element | string
+  icon?: ReactElement | string
   loading?: boolean
   disabled?: boolean
   size?: 'small' | 'medium'
@@ -48,10 +48,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         )}
         {...props}
       >
-        {loading && <SpinnerIcon className="absolute h-icon animate-spin" />}
+        {loading && <Loader2 className="absolute size-icon animate-spin" />}
         <span className={clsx('flex gap-2 items-center', loading && 'opacity-0')}>
           {icon}
-          <span className={`${contentType === 'icon' ? ' sr-only ' : ''}`}>{label}</span>
+          {label !== '' && <span className={`${contentType === 'icon' ? ' sr-only ' : ''}`}>{label}</span>}
         </span>
       </button>
     )

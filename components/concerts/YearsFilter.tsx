@@ -17,7 +17,7 @@ const YearsRangeSlider = ({ ...props }: YearsRangeSliderProps) => {
 
   if (!concertYears || concertYears.length === 0 || isLoading) {
     return (
-      <div className="flex items-center justify-center w-full h-56">
+      <div className="flex h-56 w-full items-center justify-center">
         <SpinnerIcon className="h-8 animate-spin" />
       </div>
     )
@@ -26,19 +26,24 @@ const YearsRangeSlider = ({ ...props }: YearsRangeSliderProps) => {
 }
 
 interface YearsFilterProps {
-  value: number[] | null
+  values: number[] | null
   onSubmit: (value: number[]) => void
 }
 
-export const YearsFilter = ({ value, onSubmit }: YearsFilterProps) => {
-  const [selectedOptions, setSelectedOptions] = useState(value ?? [])
-  const count = value?.[1] && value?.[0] ? value[1] - value[0] + 1 : 0
+export const YearsFilter = ({ values: submittedValues, onSubmit }: YearsFilterProps) => {
+  const [selectedOptions, setSelectedOptions] = useState(submittedValues ?? [])
 
   useEffect(() => {
-    setSelectedOptions(value ?? [])
-  }, [value])
+    setSelectedOptions(submittedValues ?? [])
+  }, [submittedValues])
   return (
-    <FilterButton name="Jahre" selectedOptions={selectedOptions} onSubmit={onSubmit} count={count}>
+    <FilterButton
+      label="Jahr"
+      type="range"
+      selectedIds={selectedOptions}
+      submittedValues={submittedValues}
+      onSubmit={onSubmit}
+    >
       <YearsRangeSlider selectedOptions={selectedOptions} setSelectedOptions={setSelectedOptions} />
     </FilterButton>
   )

@@ -1,49 +1,48 @@
 import { useEffect, useState } from 'react'
 import { FilterButton } from './../FilterButton'
-import { MultiSelect } from './../MultiSelect'
 import { useBands } from './../../hooks/bands/useBands'
+import { Select } from '../forms/Select'
 
 type BandMultiSelectProps = {
-  selectedOptions: number[]
-  setSelectedOptions: (value: number[]) => void
+  values: number[]
+  onValuesChange: (value: number[]) => void
 }
 
-const BandMultiSelect = ({ selectedOptions, setSelectedOptions }: BandMultiSelectProps) => {
+const BandMultiSelect = ({ ...props }: BandMultiSelectProps) => {
   const { data: bands, isLoading } = useBands()
   return (
-    <div className="relative h-full">
-      <MultiSelect
-        name="bands"
-        options={bands?.data}
-        isLoading={isLoading}
-        selectedOptions={selectedOptions}
-        setSelectedOptions={setSelectedOptions}
-        alwaysOpen
-        fullHeight
-      />
-    </div>
+    <Select
+      name="band"
+      items={bands?.data}
+      isLoading={isLoading}
+      multiple
+      fixedHeight
+      {...props}
+    />
   )
 }
 
 type BandFilterProps = {
-  value: number[] | null
+  values: number[] | null
   onSubmit: (value: number[]) => void
 }
 
-export const BandFilter = ({ value, onSubmit }: BandFilterProps) => {
-  const [selectedIds, setSelectedIds] = useState<number[]>(value ?? [])
+export const BandFilter = ({ values: submittedValues, onSubmit }: BandFilterProps) => {
+  const { data: bands } = useBands(null, { ids: submittedValues })
+  const [selectedIds, setSelectedIds] = useState<number[]>(submittedValues ?? [])
 
   useEffect(() => {
-    setSelectedIds(value ?? [])
-  }, [value])
+    setSelectedIds(submittedValues ?? [])
+  }, [submittedValues])
   return (
     <FilterButton
-      name="Bands"
+      label="Band"
+      items={bands?.data}
+      selectedIds={selectedIds}
+      submittedValues={submittedValues}
       onSubmit={onSubmit}
-      selectedOptions={selectedIds}
-      count={value?.length ?? 0}
     >
-      <BandMultiSelect selectedOptions={selectedIds} setSelectedOptions={setSelectedIds} />
+      <BandMultiSelect values={selectedIds} onValuesChange={setSelectedIds} />
     </FilterButton>
   )
 }

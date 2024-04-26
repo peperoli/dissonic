@@ -2,25 +2,23 @@ import * as Dialog from '@radix-ui/react-dialog'
 import clsx from 'clsx'
 import { Dispatch, FC, ReactNode, SetStateAction } from 'react'
 
-interface ModalProps {
-  isOpen: boolean
-  setIsOpen: Dispatch<SetStateAction<boolean>>
+type ModalProps = {
   children: ReactNode
   fullHeight?: boolean
-}
+} & Dialog.DialogProps
 
-export const Modal: FC<ModalProps> = ({ isOpen, setIsOpen, children, fullHeight }) => {
+export const Modal = ({ children, fullHeight, ...props }: ModalProps) => {
   return (
-    <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog.Root {...props}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black/75 z-50" />
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/75" />
         <Dialog.Content
           className={clsx(
-            'fixed flex justify-center inset-0 overflow-auto z-50',
+            'fixed inset-0 z-50 flex justify-center overflow-auto',
             !fullHeight && 'items-start'
           )}
         >
-          <div className="mx-auto w-full max-w-lg min-h-full md:min-h-0 md:m-16 p-6 md:p-8 md:rounded-lg bg-slate-800">
+          <div className="mx-auto min-h-full w-full max-w-lg bg-slate-800 p-6 md:m-16 md:min-h-0 md:rounded-lg md:p-8">
             {children}
           </div>
         </Dialog.Content>

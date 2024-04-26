@@ -16,10 +16,10 @@ module.exports = {
       purple: '#C462F1',
       deepPurple: '#661881',
       blue: {
-        300: '#75C8F0',
+        DEFAULT: '#75C8F0',
       },
+      white: '#F0F3F5',
       slate: {
-        50: '#F0F3F5',
         300: '#A3B8C2',
         500: '#668899',
         600: '#516D7B',
@@ -42,6 +42,7 @@ module.exports = {
     },
     extend: {
       spacing: {
+        13: '3.25rem',
         15: '3.75rem',
         22: '5.5rem',
       },
@@ -51,9 +52,19 @@ module.exports = {
       height: {
         'icon': '1.33em',
       },
+      size: {
+        'icon': '1.25em',
+      },
       minHeight: {
         96: '24rem',
       },
+      aspectRatio: {
+        '2/1': '2 / 1',
+        '4/3': '4 / 3',
+      },
+      backgroundImage: {
+        'radial-gradient': 'radial-gradient(80% 100% at top, var(--tw-gradient-stops))',
+      }
     },
   },
   plugins: [],

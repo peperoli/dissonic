@@ -1,13 +1,11 @@
 'use client'
 
-import { UserIcon } from '@heroicons/react/20/solid'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import { Friend, Profile } from '../../types/types'
 import supabase from '../../utils/supabase/client'
 import { Button } from '../Button'
-import { useAvatar } from '../../hooks/profiles/useAvatar'
+import { UserItem } from '../shared/UserItem'
 
 type InviteItemType = {
   inviteData: Friend
@@ -17,7 +15,6 @@ type InviteItemType = {
 const InviteItem = ({ inviteData, type }: InviteItemType) => {
   const [invite, setInvite] = useState<Friend | null>(inviteData)
   const profile = type === 'sent' ? invite?.receiver : invite?.sender
-  const { data: avatarUrl } = useAvatar(profile?.avatar_path)
 
   async function cancelInvite() {
     if (!invite) return
@@ -68,23 +65,8 @@ const InviteItem = ({ inviteData, type }: InviteItemType) => {
   if (invite && profile) {
     return (
       <div className="flex flex-wrap items-center gap-2 md:gap-4">
-        <Link
-          href={`/users/${profile.username}`}
-          className="flex items-center gap-2 basis-full md:basis-auto"
-        >
-          <div className="relative flex-shrink-0 flex justify-center items-center w-8 h-8 rounded-full bg-blue-300">
-            {avatarUrl ? (
-              <Image
-                src={avatarUrl}
-                alt="Profilbild"
-                fill={true}
-                className="rounded-full object-cover"
-              />
-            ) : (
-              <UserIcon className="h-icon text-slate-850" />
-            )}
-          </div>
-          {profile.username}
+        <Link href={`/users/${profile.username}`}>
+          <UserItem user={profile} />
         </Link>
         <div className="flex gap-2 md:ml-auto">
           {type === 'sent' ? (
@@ -92,7 +74,12 @@ const InviteItem = ({ inviteData, type }: InviteItemType) => {
           ) : (
             <>
               <Button onClick={cancelInvite} label="Ablehnen" size="small" />
-              <Button onClick={confirmInvite} label="Bestätigen" size="small" appearance="primary" />
+              <Button
+                onClick={confirmInvite}
+                label="Bestätigen"
+                size="small"
+                appearance="primary"
+              />
             </>
           )}
         </div>
@@ -112,9 +99,9 @@ export const FriendInvites = ({ profile, friends }: IFriendInvites) => {
   const sentInvites = friends.filter(item => item.pending && item.sender.id === profile.id)
   const receivedInvites = friends.filter(item => item.pending && item.receiver.id === profile.id)
   return (
-    <div className="col-span-full p-6 rounded-lg bg-slate-800">
+    <div className="col-span-full rounded-lg bg-slate-800 p-6">
       <h2 className="sr-only">Freundschaftsanfragen</h2>
-      <div className="grid gap-4 mb-6">
+      <div className="mb-6 grid gap-4">
         <h3 className="text-slate-300">Empfangene Anfragen</h3>
         {receivedInvites.length > 0 ? (
           receivedInvites.map(item => (

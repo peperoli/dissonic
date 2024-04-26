@@ -1,49 +1,48 @@
 import { useEffect, useState } from 'react'
 import { FilterButton } from './../FilterButton'
-import { MultiSelect } from './../MultiSelect'
 import { useLocations } from './../../hooks/locations/useLocations'
+import { Select } from '../forms/Select'
 
 type LocationMultiSelectProps = {
-  selectedOptions: number[]
-  setSelectedOptions: (value: number[]) => void
+  values: number[]
+  onValuesChange: (value: number[]) => void
 }
 
-const LocationMultiSelect = ({ selectedOptions, setSelectedOptions }: LocationMultiSelectProps) => {
+const LocationMultiSelect = ({ ...props }: LocationMultiSelectProps) => {
   const { data: locations, isLoading } = useLocations()
   return (
-    <div className="relative h-full">
-      <MultiSelect
-        name="locations"
-        options={locations?.data}
-        isLoading={isLoading}
-        selectedOptions={selectedOptions}
-        setSelectedOptions={setSelectedOptions}
-        alwaysOpen
-        fullHeight
-      />
-    </div>
+    <Select
+      name="location"
+      items={locations?.data}
+      isLoading={isLoading}
+      multiple
+      fixedHeight
+      {...props}
+    />
   )
 }
 
 type LocationFilterProps = {
-  value: number[] | null
+  values: number[] | null
   onSubmit: (value: number[]) => void
 }
 
-export const LocationFilter = ({ value, onSubmit }: LocationFilterProps) => {
-  const [selectedIds, setSelectedIds] = useState(value ?? [])
+export const LocationFilter = ({ values: submittedValues, onSubmit }: LocationFilterProps) => {
+  const { data: locations } = useLocations(null, { ids: submittedValues })
+  const [selectedIds, setSelectedIds] = useState(submittedValues ?? [])
 
   useEffect(() => {
-    setSelectedIds(value ?? [])
-  }, [value])
+    setSelectedIds(submittedValues ?? [])
+  }, [submittedValues])
   return (
     <FilterButton
-      name="Locations"
-      selectedOptions={selectedIds}
-      count={value?.length ?? 0}
+      label="Location"
+      items={locations?.data}
+      selectedIds={selectedIds}
+      submittedValues={submittedValues}
       onSubmit={onSubmit}
     >
-      <LocationMultiSelect selectedOptions={selectedIds} setSelectedOptions={setSelectedIds} />
+      <LocationMultiSelect values={selectedIds} onValuesChange={setSelectedIds} />
     </FilterButton>
   )
 }

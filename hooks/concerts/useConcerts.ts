@@ -6,18 +6,21 @@ const fetchConcerts = async (options?: ConcertFetchOptions) => {
   let query = supabase.from('concerts').select(
     `id,
       bands!j_concert_bands(id),
-      bands_count:j_concert_bands(count),
       bands_seen:j_bands_seen(user_id)`,
     { count: 'estimated' }
   )
 
-  if (options?.filter?.locations && options.filter.locations.length > 0) {
-    query = query.in('location_id', options.filter.locations)
+  if (options?.locations && options.locations.length > 0) {
+    query = query.in('location_id', options.locations)
   }
 
-  if (options?.filter?.years && options.filter.years.length > 0) {
-    query = query.gte('date_start', `${options.filter.years[0]}-01-01`)
-    query = query.lte('date_start', `${options.filter.years[1]}-12-31`)
+  if (options?.years && options.years.length > 0) {
+    query = query.gte('date_start', `${options.years[0]}-01-01`)
+    query = query.lte('date_start', `${options.years[1]}-12-31`)
+  }
+
+  if (options?.festivalRoots && options.festivalRoots.length > 0) {
+    query = query.in('festival_root_id', options.festivalRoots)
   }
 
   const { data: initalFilteredConcerts, error: countError } = await query
@@ -28,33 +31,23 @@ const fetchConcerts = async (options?: ConcertFetchOptions) => {
 
   let filteredConcerts = initalFilteredConcerts
 
-  if (options?.filter?.bands && options.filter.bands.length > 0) {
+  if (options?.bands && options.bands.length > 0) {
     filteredConcerts = filteredConcerts?.filter(concert =>
-      concert.bands.some(band => options.filter?.bands?.includes(band.id))
+      concert.bands.some(band => options.bands?.includes(band.id))
     )
   }
 
-  if (options?.filter?.bandsSeenUser) {
+  if (options?.bandsSeenUsers && options.bandsSeenUsers.length > 0) {
     filteredConcerts = filteredConcerts?.filter(concert =>
-      concert.bands_seen.some(band => options.filter?.bandsSeenUser === band.user_id)
+      concert.bands_seen.some(band => options.bandsSeenUsers?.includes(band.user_id))
     )
-  }
-
-  if (options?.filter?.bandCount) {
-    filteredConcerts = filteredConcerts?.filter(item => {
-      // @ts-ignore
-      const count = item.bands_count[0].count
-      !options?.filter?.bandCount ||
-        (Array.isArray(item.bands_count) &&
-          count >= options.filter.bandCount[0] &&
-          count <= options?.filter?.bandCount[1])
-    })
   }
 
   let filteredQuery = supabase
     .from('concerts')
     .select(
       `*,
+      festival_root:festival_roots(name),
       location:locations(*),
       bands:j_concert_bands(*, ...bands(*)),
       bands_seen:j_bands_seen(band_id, user_id)`,

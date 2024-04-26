@@ -1,10 +1,10 @@
 import clsx from 'clsx'
-import { ChangeEventHandler, ReactElement } from 'react'
+import { LucideIcon } from 'lucide-react'
 
 type SegmentedControlProps = {
-  options: { value: string; label: string; icon: ReactElement }[]
+  options: { value: string; label: string; icon?: LucideIcon }[]
   value: string
-  onValueChange: ChangeEventHandler<HTMLInputElement>
+  onValueChange: (value: string) => void
   iconOnly?: boolean
 }
 
@@ -15,26 +15,20 @@ export function SegmentedControl({
   iconOnly,
 }: SegmentedControlProps) {
   return (
-    <fieldset className="flex p-1 rounded-lg bg-slate-800">
+    <fieldset className="flex w-full rounded-lg bg-slate-750 p-1 md:w-fit">
       {options.map(option => (
-        <label
+        <button
+          type="button"
+          onClick={() => onValueChange(option.value)}
           className={clsx(
-            'flex items-center gap-2 min-h-[2rem] px-2 py-1 rounded-md focus-within:outline',
-            option.value === value ? 'text-slate-50 bg-slate-700 shadow-lg' : 'text-slate-300'
+            'flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-md px-2 py-1 md:w-fit md:flex-none',
+            option.value === value ? 'bg-slate-700 text-white shadow-lg' : 'text-slate-300'
           )}
           key={option.value}
         >
-          {option.icon}
+          {option.icon && <option.icon className="size-icon" />}
           <span className={clsx(iconOnly && 'sr-only')}>{option.label}</span>
-          <input
-            type="radio"
-            name={option.value}
-            value={option.value}
-            onChange={onValueChange}
-            checked={option.value === value}
-            className="sr-only"
-          />
-        </label>
+        </button>
       ))}
     </fieldset>
   )

@@ -1,129 +1,105 @@
-import Link from 'next/link'
-import { MapPinIcon } from '@heroicons/react/20/solid'
-import { useRouter } from 'next/navigation'
 import { Concert } from '../../types/types'
 import { useProfiles } from '../../hooks/profiles/useProfiles'
 import { useSession } from '../../hooks/auth/useSession'
 import clsx from 'clsx'
 import useMediaQuery from '../../hooks/helpers/useMediaQuery'
-import { UserItem } from './UserItem'
-import { useState } from 'react'
-
-type ConcertDateProps = {
-  date: Date
-  isFirst?: boolean
-}
-
-const ConcertDate = ({ date, isFirst }: ConcertDateProps) => {
-  const isCurrentYear = date.getFullYear() === new Date().getFullYear()
-  return (
-    <div
-      className={clsx(
-        'relative flex-none flex flex-col justify-center items-center w-16 aspect-square border border-slate-700 rounded-lg transition duration-200',
-        clsx(isFirst && 'bg-slate-700 group-hover:bg-slate-600')
-      )}
-    >
-      <div className={clsx('flex items-center', isCurrentYear ? 'flex-col' : 'gap-1')}>
-        <span className="font-bold">{date.toLocaleDateString('de-CH', { day: 'numeric' })}</span>
-        <span className="text-sm">{date.toLocaleDateString('de-CH', { month: 'short' })}</span>
-      </div>
-      {!isCurrentYear && <span className="text-sm">{date.getFullYear()}</span>}
-    </div>
-  )
-}
+import { UserItem } from '../shared/UserItem'
+import { MouseEvent, useState } from 'react'
+import { ConcertDate } from './ConcertDate'
+import { MapPin } from 'lucide-react'
+import { Chip } from '../Chip'
+import { TruncatedList } from 'react-truncate-list'
+import { useRouter } from 'next/navigation'
 
 interface ConcertCardProps {
   concert: Concert
+  nested?: boolean
 }
 
-export const ConcertCard = ({ concert }: ConcertCardProps) => {
+export const ConcertCard = ({ concert, nested }: ConcertCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const { data: session } = useSession()
   const fanIds = new Set(concert?.bands_seen?.map(item => item.user_id))
-  const { data: profiles } = useProfiles({ ids: [...fanIds] })
-  const router = useRouter()
-  const bandsCount = concert.bands?.length || 0
+  const { data: profiles } = useProfiles({ ids: [...fanIds] }, fanIds.size > 0)
   const bandsSeen = concert.bands_seen?.filter(item => item.user_id === session?.user.id)
   const isDesktop = useMediaQuery('(min-width: 768px)')
+  const router = useRouter()
 
-  function generateVisibleBandCount(threshold: number) {
-    let charCount = concert.bands?.[0]?.name.length || 0
-    let index = 1
-
-    for (index; index < bandsCount; index++) {
-      charCount += concert.bands?.[index]?.name.length || 0
-      if (charCount > threshold) {
-        break
-      }
-    }
-
-    return index
+  function expand(event: MouseEvent) {
+    event.stopPropagation()
+    setIsExpanded(true)
   }
 
-  const visibleBandCount = generateVisibleBandCount(
-    (isDesktop ? 40 : 20) * (concert.is_festival ? 2 : 1)
-  )
   return (
     <div
       onClick={() => router.push(`/concerts/${concert.id}`)}
-      className="flex group gap-4 p-5 rounded-2xl bg-slate-800 hover:cursor-pointer"
+      className={clsx(
+        'group flex gap-4 rounded-2xl p-5 hover:cursor-pointer',
+        nested ? 'bg-slate-750' : 'bg-slate-800'
+      )}
     >
       <div className="flex flex-col items-center">
         <ConcertDate date={new Date(concert.date_start)} isFirst />
         {concert.date_end && concert.date_end !== concert.date_start && (
           <>
-            <div className="h-2 md:h-4 border-l border-slate-700" />
+            <div className="h-2 border-l border-slate-700 md:h-4" />
             <ConcertDate date={new Date(concert.date_end)} />
           </>
         )}
       </div>
-      <div>
-        {concert.name && (
-          <div className="w-fit mb-2 px-3 py-1 rounded-full font-bold text-sm text-slate-850 bg-purple">
-            {concert.name}
+      <div className="w-full">
+        {(concert.festival_root || concert.name) && (
+          <div className="mb-2">
+            <Chip
+              label={
+                concert.festival_root
+                  ? concert.festival_root.name + ' ' + new Date(concert.date_start).getFullYear()
+                  : concert.name ?? ''
+              }
+              size="sm"
+              color={concert.festival_root ? 'purple' : 'blue'}
+            />
           </div>
         )}
-        <div className="flex flex-wrap items-center gap-2 mb-2">
-          {concert.bands &&
-            concert.bands.slice(0, isExpanded ? undefined : visibleBandCount).map((band, index) => (
-              <li role="presentation" className="flex gap-2" key={band.id}>
-                <Link
-                  href={`/bands/${band.id}`}
-                  onClick={event => event.stopPropagation()}
-                  className={clsx(
-                    'hover:underline',
-                    bandsSeen?.find(bandSeen => band.id === bandSeen.band_id) && 'text-venom'
-                  )}
-                >
-                  {band.name}
-                </Link>
-                {index + 1 !== concert.bands?.length ? (
-                  <span className="text-slate-300">&bull;</span>
-                ) : null}
-              </li>
-            ))}
-          {bandsCount > visibleBandCount && (
+        <TruncatedList
+          renderTruncator={({ hiddenItemsCount }) => (
             <button
-              onClick={event => {
-                setIsExpanded(prev => !prev)
-                event?.stopPropagation()
-              }}
-              className="px-1.5 rounded-md text-slate-300 bg-slate-700"
-            >
-              {isExpanded ? 'Weniger' : `+${bandsCount - visibleBandCount}`}
-            </button>
+              onClick={expand}
+              className="rounded-md bg-slate-700 px-1.5 font-bold text-slate-300 hover:bg-slate-600"
+            >{`+${hiddenItemsCount}`}</button>
           )}
-        </div>
-        <div className="flex gap-4 w-full mb-2">
-          <div className="inline-flex items-center text-sm">
-            <MapPinIcon className="h-icon mr-2 text-slate-300" />
+          className={clsx(
+            'mb-2 flex w-full flex-wrap items-center gap-x-2 gap-y-1',
+            !isExpanded && (concert.is_festival ? 'max-h-13' : 'max-h-6')
+          )}
+        >
+          {concert.bands?.map((band, index) => (
+            <div className="flex gap-2" key={band.id}>
+              <div
+                onClick={event => event.stopPropagation()}
+                className={clsx(
+                  'font-bold',
+                  bandsSeen?.find(bandSeen => band.id === bandSeen.band_id) && 'text-venom'
+                )}
+              >
+                {band.name}
+              </div>
+              {index + 1 !== concert.bands?.length && (
+                <span className="text-slate-300">&bull;</span>
+              )}
+            </div>
+          ))}
+        </TruncatedList>
+        <div className="mb-2 flex w-full gap-4">
+          <div className="flex items-center gap-2 text-sm">
+            <MapPin className="size-icon text-slate-300" />
             {concert.location?.name}
           </div>
         </div>
         {profiles && (
           <div className="flex flex-wrap gap-2 md:gap-x-4">
             {profiles.map(item => (
-              <UserItem profile={item} usernameIsHidden={!isDesktop} key={item.id} />
+              <UserItem user={item} size="sm" usernameIsHidden={!isDesktop} key={item.id} />
             ))}
           </div>
         )}

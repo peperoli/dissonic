@@ -1,5 +1,5 @@
-import { CheckCircleIcon, ExclamationCircleIcon, InformationCircleIcon } from '@heroicons/react/20/solid'
 import clsx from 'clsx'
+import { AlertTriangle, CheckCircle, InfoIcon } from 'lucide-react'
 
 type StatusBannerProps = {
   statusType: 'success' | 'error' | 'info'
@@ -18,9 +18,9 @@ export const StatusBanner = ({ statusType, message, className }: StatusBannerPro
         className
       )}
     >
-      {statusType === 'success' && <CheckCircleIcon className="h-icon flex-none" />}
-      {statusType === 'error' && <ExclamationCircleIcon className="h-icon flex-none" />}
-      {statusType === 'info' && <InformationCircleIcon className="h-icon flex-none" />}
+      {statusType === 'success' && <CheckCircle className="size-icon flex-none" />}
+      {statusType === 'error' && <AlertTriangle className="size-icon flex-none" />}
+      {statusType === 'info' && <InfoIcon className="size-icon flex-none" />}
       {message ?? 'Es ist ein Fehler aufgetreten.'}
     </div>
   )

@@ -4,19 +4,18 @@ import Link from 'next/link'
 import Logo from './Logo'
 import { Menu } from '@headlessui/react'
 import { usePathname, useRouter } from 'next/navigation'
-import { ArrowRightStartOnRectangleIcon, UserGroupIcon, UserIcon } from '@heroicons/react/20/solid'
-import Image from 'next/image'
 import { useLogOut } from '../../hooks/auth/useLogOut'
 import { useProfile } from '../../hooks/profiles/useProfile'
-import { useAvatar } from '../../hooks/profiles/useAvatar'
 import { useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useSession } from '../../hooks/auth/useSession'
+import { UserItem } from '../shared/UserItem'
+import { BookUser, LogOut, User } from 'lucide-react'
+import clsx from 'clsx'
 
 export const NavBar = () => {
   const { data: session } = useSession()
   const { data: profile } = useProfile(session?.user.id ?? null)
-  const { data: avatarUrl } = useAvatar(profile?.avatar_path)
   const pendingInvites = (profile?.friends && profile.friends[0].count) || 0
   const logOutMutation = useLogOut()
   const queryClient = useQueryClient()
@@ -29,79 +28,73 @@ export const NavBar = () => {
       push('/login')
     }
   }, [logOutMutation.status])
+
+  const menuItems = [
+    {
+      label: 'Profil',
+      icon: User,
+      href: `/users/${profile?.username}`,
+    },
+    {
+      label: 'Freunde',
+      icon: BookUser,
+      href: `/users/${profile?.username}/friends`,
+      badge: pendingInvites,
+    },
+    {
+      label: 'Abmelden',
+      icon: LogOut,
+      onClick: () => logOutMutation.mutate(),
+    },
+  ]
   return (
-    <nav className="flex justify-between items-center p-4 md:px-12 md:py-8">
+    <nav className="container-fluid flex items-center justify-between">
       <Link href="/">
         <Logo />
       </Link>
       {profile ? (
         <Menu as="div" className="relative">
-          <Menu.Button className="flex items-center gap-3 cursor-pointer group">
-            {profile.username}
-            <div className="relative flex justify-center items-center w-10 h-10 rounded-full bg-blue-300 ring-4 ring-transparent group-hover:ring-slate-600">
-              {avatarUrl ? (
-                <Image
-                  src={avatarUrl}
-                  alt="Profile picture"
-                  fill={true}
-                  className="rounded-full object-cover"
-                />
-              ) : (
-                <UserIcon className="h-icon text-slate-850" />
-              )}
-            </div>
+          <Menu.Button>
+            <UserItem user={profile} avatarRight />
           </Menu.Button>
-          <Menu.Items className="absolute w-40 right-0 mt-1 p-2 rounded-lg bg-slate-600 shadow-lg z-30">
-            <Menu.Item>
-              {({ active }) => (
-                <button
-                  onClick={() => push(`/users/${profile.username}`)}
-                  className={`flex items-center gap-2 w-full px-2 py-1 rounded${
-                    active ? ' bg-slate-500' : ''
-                  }`}
-                >
-                  <UserIcon className="h-icon text-slate-300" />
-                  Profil
-                </button>
-              )}
-            </Menu.Item>
-            <Menu.Item>
-              {({ active }) => (
-                <button
-                  onClick={() => push(`/users/${profile.username}/friends`)}
-                  className={`flex items-center gap-2 w-full px-2 py-1 rounded${
-                    active ? ' bg-slate-500' : ''
-                  }`}
-                >
-                  <UserGroupIcon className="h-icon text-slate-300" />
-                  Freunde
-                  {pendingInvites > 0 && (
-                    <div className="flex justify-center items-center px-2 py-0.5 rounded font-bold text-[0.625rem] text-slate-850 bg-venom  shadow-shine shadow-venom/50">
-                      {pendingInvites}
-                    </div>
+          <Menu.Items className="absolute right-0 z-30 mt-1 w-40 rounded-lg bg-slate-700 p-2 shadow-xl">
+            {menuItems.map((item, index) => {
+              const ConditionalWrapper = item.href ? Link : 'button'
+              const Icon = item.icon
+              return (
+                <Menu.Item key={index}>
+                  {({ active }) => (
+                    <ConditionalWrapper
+                      href={item.href!}
+                      onClick={item.onClick}
+                      className={clsx(
+                        'flex w-full items-center gap-2 rounded px-2 py-1',
+                        active && 'bg-slate-600'
+                      )}
+                    >
+                      <Icon className="size-icon text-slate-300" />
+                      {item.label}
+                      {!!item.badge && item.badge > 0 && (
+                        <span className="min-w-4 rounded bg-venom px-1 text-center text-sm text-slate-850">
+                          {item.badge}
+                        </span>
+                      )}
+                    </ConditionalWrapper>
                   )}
-                </button>
-              )}
-            </Menu.Item>
-            <Menu.Item>
-              {({ active }) => (
-                <button
-                  className={`flex items-center gap-2 w-full px-2 py-1 rounded text-left${
-                    active ? ' bg-slate-500' : ''
-                  }`}
-                  onClick={() => logOutMutation.mutate()}
-                >
-                  <ArrowRightStartOnRectangleIcon className="h-icon text-slate-300" />
-                  Abmelden
-                </button>
-              )}
-            </Menu.Item>
+                </Menu.Item>
+              )
+            })}
           </Menu.Items>
         </Menu>
       ) : (
-        <Link href={`/login?redirect=${pathname}`} className="btn btn-secondary">
-          Anmelden
-        </Link>
+        <div className="flex gap-4">
+          <Link href="/signup" className="btn btn-tertiary max-md:hidden">
+            Registrieren
+          </Link>
+          <Link href={`/login?redirect=${pathname}`} className="btn btn-secondary">
+            Anmelden
+          </Link>
+        </div>
       )}
     </nav>
   )

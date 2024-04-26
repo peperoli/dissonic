@@ -8,16 +8,21 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
     .from('bands')
     .select('id, genres(id)', { count: 'estimated' })
 
-  if (options?.filter?.search) {
+  if (options?.search) {
     // @ts-expect-error
     filterQuery = supabase.rpc(
       'search_bands',
-      { search_string: options.filter.search },
+      { search_string: options.search },
       { count: 'estimated' }
     )
   }
-  if (options?.filter?.countries && options.filter.countries.length > 0) {
-    filterQuery = filterQuery.in('country_id', options.filter.countries)
+
+  if (options?.ids && options.ids.length > 0) {
+    filterQuery = filterQuery.in('id', options.ids)
+  }
+
+  if (options?.countries && options.countries.length > 0) {
+    filterQuery = filterQuery.in('country_id', options.countries)
   }
 
   const { data: initialFilteredBands, count: initialCount, error: countError } = await filterQuery
@@ -30,9 +35,9 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
 
   let filteredBands = initialFilteredBands
 
-  if (options?.filter?.genres && options.filter.genres.length > 0) {
+  if (options?.genres && options.genres.length > 0) {
     filteredBands = filteredBands?.filter(band =>
-      band.genres.some(genre => options.filter?.genres?.includes(genre.id))
+      band.genres.some(genre => options.genres?.includes(genre.id))
     )
   }
 
@@ -54,7 +59,7 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
   return { data, count }
 }
 
-export const useBands = (initialBands?: ExtendedRes<Band[]>, options?: BandFetchOptions, enabled: boolean = true) => {
+export const useBands = (initialBands?: ExtendedRes<Band[]> | null, options?: BandFetchOptions, enabled: boolean = true) => {
   return useQuery(['bands', JSON.stringify(options)], () => fetchBands(options), {
     initialData: initialBands,
     keepPreviousData: true,

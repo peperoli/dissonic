@@ -1,13 +1,13 @@
 import {
-  ArrowRightEndOnRectangleIcon,
-  ArrowsUpDownIcon,
+  ImportIcon,
+  ArrowDownUpIcon,
   CheckIcon,
-  LightBulbIcon,
-  MagnifyingGlassIcon,
+  LightbulbIcon,
+  SearchIcon,
   PlusCircleIcon,
   XCircleIcon,
-  XMarkIcon,
-} from '@heroicons/react/20/solid'
+  XIcon,
+} from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
 import { useSpotifyArtist } from '../../hooks/spotify/useSpotifyArtist'
@@ -27,18 +27,14 @@ type InsertHereProps = {
 
 const InsertHere = ({ reorderItems, isDown }: InsertHereProps) => {
   return (
-    <div className="relative flex justify-center items-center">
-      <hr className="w-full mx-2 my-0 border-t border-slate-500" />
+    <div className="relative flex items-center justify-center">
+      <hr className="mx-2 my-0 w-full border-t border-slate-500" />
       <Button
         onClick={reorderItems}
         label="Hier einfügen"
         contentType="icon"
         size="small"
-        icon={
-          <ArrowRightEndOnRectangleIcon
-            className={clsx('h-icon', isDown ? 'rotate-90' : '-rotate-90')}
-          />
-        }
+        icon={<ImportIcon className={clsx('size-icon', !isDown && 'rotate-180')} />}
         appearance="secondary"
         className="absolute"
       />
@@ -73,11 +69,11 @@ const ListItem = ({
       )}
       <li
         className={clsx(
-          'group flex items-center gap-4 p-2 rounded-lg',
+          'group flex items-center gap-4 rounded-lg p-2',
           selectedToReorder && 'bg-venom/10'
         )}
       >
-        <div className="relative grid place-content-center w-11 h-11 flex-none rounded-lg bg-slate-750">
+        <div className="relative grid h-11 w-11 flex-none place-content-center rounded-lg bg-slate-750">
           {spotifyArtist?.images?.[2] ? (
             <Image
               src={spotifyArtist.images[2].url}
@@ -87,7 +83,7 @@ const ListItem = ({
               className="rounded-lg object-cover"
             />
           ) : (
-            <UserMusicIcon className="h-icon text-slate-300" />
+            <UserMusicIcon className="size-icon text-slate-300" />
           )}
         </div>
         <div className="w-full">
@@ -98,7 +94,7 @@ const ListItem = ({
         </div>
         <div
           className={clsx(
-            'flex flex-none md:opacity-0 group-hover:opacity-100 group-focus-within:opacity-100',
+            'flex flex-none group-focus-within:opacity-100 group-hover:opacity-100 md:opacity-0',
             selectedItemToReorder !== null && 'invisible'
           )}
         >
@@ -106,14 +102,14 @@ const ListItem = ({
             onClick={removeItem}
             label="Eintrag entfernen"
             contentType="icon"
-            icon={<XCircleIcon className="h-icon text-red" />}
+            icon={<XCircleIcon className="size-icon text-red" />}
             appearance="tertiary"
           />
           <Button
             onClick={selectItemToReorder}
             label="Eintrag verschieben"
             contentType="icon"
-            icon={<ArrowsUpDownIcon className="h-icon" />}
+            icon={<ArrowDownUpIcon className="size-icon" />}
             appearance="tertiary"
           />
         </div>
@@ -144,11 +140,11 @@ const SearchResult = ({ band, selected, addItem }: SearchResultProps) => {
       onClick={addItem}
       disabled={selected}
       className={clsx(
-        'p-2 rounded-lg flex gap-4 text-left hover:bg-slate-700',
+        'flex gap-4 rounded-lg p-2 text-left hover:bg-slate-700',
         selected && 'pointer-events-none'
       )}
     >
-      <div className="relative grid place-content-center w-11 h-11 flex-none rounded-lg bg-slate-750">
+      <div className="relative grid h-11 w-11 flex-none place-content-center rounded-lg bg-slate-750">
         {spotifyArtist?.images?.[2] ? (
           <Image
             src={spotifyArtist.images[2].url}
@@ -158,7 +154,7 @@ const SearchResult = ({ band, selected, addItem }: SearchResultProps) => {
             className="rounded-lg object-cover"
           />
         ) : (
-          <UserMusicIcon className="h-icon text-slate-300" />
+          <UserMusicIcon className="size-icon text-slate-300" />
         )}
       </div>
       <div className="w-full">
@@ -169,7 +165,7 @@ const SearchResult = ({ band, selected, addItem }: SearchResultProps) => {
       </div>
       {selected ? (
         <div className="btn btn-icon">
-          <CheckIcon className="h-icon text-slate-300" />
+          <CheckIcon className="size-icon text-slate-300" />
         </div>
       ) : (
         <div
@@ -177,7 +173,7 @@ const SearchResult = ({ band, selected, addItem }: SearchResultProps) => {
           aria-label="Eintrag hinzufügen"
           className="btn btn-icon btn-tertiary flex-none"
         >
-          <PlusCircleIcon className="h-icon text-venom" />
+          <PlusCircleIcon className="size-icon text-venom" />
         </div>
       )}
     </button>
@@ -215,7 +211,7 @@ export const ListManager = ({
     setSelectedItemToReorder(null)
   }
   return (
-    <div className="relative flex flex-col h-full">
+    <div className="relative flex h-full flex-col">
       <div className={clsx('absolute', selectedItemToReorder !== null && 'invisible')}>
         <h3>Bands hinzufügen</h3>
         <p className="text-sm text-slate-300">
@@ -224,32 +220,30 @@ export const ListManager = ({
       </div>
       <div
         className={clsx(
-          'p-4 flex items-center gap-4 rounded-lg bg-slate-750 text-sm',
+          'flex items-center gap-4 rounded-lg bg-slate-750 p-4 text-sm',
           selectedItemToReorder === null && 'invisible'
         )}
       >
-        <LightBulbIcon className="h-icon flex-none text-yellow" />
+        <LightbulbIcon className="size-icon flex-none text-yellow" />
         Auf ein Ziel klicken, um den Eintrag zu verschieben.
         <Button
           onClick={() => setSelectedItemToReorder(null)}
           label="Abbrechen"
           contentType="icon"
-          icon={<XMarkIcon className="h-icon" />}
+          icon={<XIcon className="size-icon" />}
           size="small"
           className="flex-none"
         />
       </div>
       <div className="h-full overflow-auto">
         {search === '' ? (
-          <ul ref={animationParent} className="grid content-start my-2 py-4">
+          <ul ref={animationParent} className="my-2 grid content-start py-4">
             {listItems.map((listItem, index) => (
               <ListItem
                 key={listItem.id}
                 band={listItem}
                 index={index}
-                removeItem={() =>
-                  setListItems(listItems.filter(item => item.id !== listItem.id))
-                }
+                removeItem={() => setListItems(listItems.filter(item => item.id !== listItem.id))}
                 selectedItemToReorder={selectedItemToReorder}
                 selectItemToReorder={() => setSelectedItemToReorder(index)}
                 reorderItems={reorderItems}
@@ -275,20 +269,24 @@ export const ListManager = ({
           </div>
         )}
       </div>
-      <div className="flex gap-4 mt-auto">
-        <div className="relative flex items-center w-full">
-          <MagnifyingGlassIcon className="absolute pointer-events-none h-icon ml-4 text-slate-300" />
+      <div className="mt-auto flex gap-4">
+        <div className="relative flex w-full items-center">
+          <SearchIcon className="pointer-events-none absolute ml-4 size-icon text-slate-300" />
           <input
             type="search"
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Bands hinzufügen"
-            className="block w-full pl-12 pr-4 py-2 border rounded-lg border-slate-500 bg-slate-750"
+            className="block w-full rounded-lg border border-slate-500 bg-slate-750 py-2 pl-12 pr-4"
           />
-          {search &&  (
+          {search && (
             <button onClick={() => setSearch('')} className="btn btn-icon absolute right-0">
               <span className="sr-only">Suche zurücksetzen</span>
-              {fetchStatus === 'fetching' ? <SpinnerIcon className="h-icon animate-spin" /> : <XMarkIcon className="h-icon" />}
+              {fetchStatus === 'fetching' ? (
+                <SpinnerIcon className="size-icon animate-spin" />
+              ) : (
+                <XIcon className="size-icon" />
+              )}
             </button>
           )}
         </div>

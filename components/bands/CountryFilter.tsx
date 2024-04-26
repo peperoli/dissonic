@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { FilterButton } from './../FilterButton'
-import { MultiSelect } from './../MultiSelect'
 import { useCountries } from './../../hooks/useCountries'
+import { Select } from '../forms/Select'
 
 type CountryMultiSelectProps = {
   selectedOptions: number[]
@@ -12,39 +12,39 @@ const CountryMultiSelect = ({ selectedOptions, setSelectedOptions }: CountryMult
   const { data: countries, isLoading } = useCountries()
   const regionNames = new Intl.DisplayNames('de', { type: 'region' })
   return (
-    <div className="relative h-full">
-      <MultiSelect
-        name="Länder"
-        options={countries?.map(item => ({
-          id: item.id,
-          name: regionNames.of(item.iso2) ?? 'FEHLER',
-        }))}
-        isLoading={isLoading}
-        selectedOptions={selectedOptions}
-        setSelectedOptions={setSelectedOptions}
-        alwaysOpen
-        fullHeight
-      />
-    </div>
+    <Select
+      name="Land"
+      items={countries?.map(item => ({
+        id: item.id,
+        name: regionNames.of(item.iso2) ?? item.iso2,
+      }))}
+      isLoading={isLoading}
+      multiple
+      values={selectedOptions}
+      onValuesChange={setSelectedOptions}
+      fixedHeight
+    />
   )
 }
 
 type CountryFilterProps = {
-  value: number[] | null
+  values: number[] | null
   onSubmit: (value: number[]) => void
 }
 
-export const CountryFilter = ({ value, onSubmit }: CountryFilterProps) => {
-  const [selectedIds, setSelectedIds] = useState(value ?? [])
+export const CountryFilter = ({ values: submittedValues, onSubmit }: CountryFilterProps) => {
+  const { data: countries } = useCountries({ ids: submittedValues })
+  const [selectedIds, setSelectedIds] = useState(submittedValues ?? [])
 
   useEffect(() => {
-    setSelectedIds(value ?? [])
-  }, [value])
+    setSelectedIds(submittedValues ?? [])
+  }, [submittedValues])
   return (
     <FilterButton
-      name="Länder"
-      selectedOptions={selectedIds}
-      count={value?.length ?? 0}
+      label="Land"
+      items={countries?.map(country => ({ id: country.id, name: country.iso2 }))}
+      selectedIds={selectedIds}
+      submittedValues={submittedValues}
       onSubmit={onSubmit}
     >
       <CountryMultiSelect selectedOptions={selectedIds} setSelectedOptions={setSelectedIds} />

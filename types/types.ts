@@ -1,4 +1,4 @@
-import { Database } from './supabase'
+import { Tables, TablesInsert, TablesUpdate } from './supabase'
 
 export interface ExtendedRes<TData> {
   data: TData
@@ -6,105 +6,104 @@ export interface ExtendedRes<TData> {
 }
 
 export interface ConcertFetchOptions {
-  filter?: {
-    bands?: number[] | null
-    locations?: number[] | null
-    years?: number[] | null
-    bandCount?: number[] | null
-    bandsSeenUser?: string
-  }
+  bands?: number[] | null
+  locations?: number[] | null
+  years?: number[] | null
+  festivalRoots?: number[] | null
+  bandsSeenUsers?: string[] | null
   sort?: { sort_by: 'date_start'; sort_asc: boolean }
   size?: number
 }
 
 export type BandFetchOptions = {
-  filter?: {
-    countries?: number[] | null
-    genres?: number[] | null
-    search?: string
-  }
+  ids?: number[] | null
+  countries?: number[] | null
+  genres?: number[] | null
+  search?: string
   size?: number
   page?: number
 }
 
 export type LocationFetchOptions = {
-  filter: {
-    search?: string
-  }
+  ids?: number[] | null
+  search?: string
   size?: number
   page?: number
 }
 
-export type Concert = Database['public']['Tables']['concerts']['Row'] & {
+export type Concert = Tables<'concerts'> & {
+  festival_root?: { name: string } | null
   location?: Location | null
   bands?: Band[]
   bands_seen?: BandSeen[]
 }
 
-export type AddConcert = Database['public']['Tables']['concerts']['Insert'] & {
+export type AddConcert = TablesInsert<'concerts'> & {
   bands?: Band[]
 }
 
-export type EditConcert = Database['public']['Tables']['concerts']['Update'] & {
+export type EditConcert = TablesUpdate<'concerts'> & {
   bands?: Band[]
 }
 
-export type Comment = Database['public']['Tables']['comments']['Row'] & {
+export type Comment = Tables<'comments'> & {
   reactions?: Reaction[]
 }
 
-export type AddComment = Database['public']['Tables']['comments']['Insert']
+export type AddComment = TablesInsert<'comments'>
 
-export type EditComment = Database['public']['Tables']['comments']['Update']
+export type EditComment = TablesUpdate<'comments'>
 
-export type Reaction = Database['public']['Tables']['reactions']['Row'] & { user: Profile | null }
+export type Reaction = Tables<'reactions'> & { user: Profile | null }
 
-export type AddReaction = Database['public']['Tables']['reactions']['Insert']
+export type AddReaction = TablesInsert<'reactions'>
 
-export type EditReaction = Database['public']['Tables']['reactions']['Update']
+export type EditReaction = TablesUpdate<'reactions'>
 
-export type Band = Database['public']['Tables']['bands']['Row'] & {
+export type Band = Tables<'bands'> & {
   country?: Country | null
   genres: Genre[]
   concerts?: Concert[]
   item_index?: number | null
 }
 
-export type AddBand = Database['public']['Tables']['bands']['Insert'] & {
+export type AddBand = TablesInsert<'bands'> & {
   genres: Genre[]
 }
 
-export type EditBand = Database['public']['Tables']['bands']['Update'] & {
+export type EditBand = TablesUpdate<'bands'> & {
   genres: Genre[]
 }
 
-export type BandSeen = Database['public']['Tables']['j_bands_seen']['Row'] & {
+export type BandSeen = Tables<'j_bands_seen'> & {
   band?: Band | null
   concert?: Concert | null
 }
 
-export type Genre = Database['public']['Tables']['genres']['Row']
+export type Genre = Tables<'genres'>
 
-export type Location = Database['public']['Tables']['locations']['Row']
+export type Location = Tables<'locations'> & {
+  country?: Country | null
+}
 
-export type AddLocation = Database['public']['Tables']['locations']['Insert']
+export type AddLocation = TablesInsert<'locations'>
 
 export type Country = { id: number; iso2: string }
 
-export type Profile = Database['public']['Tables']['profiles']['Row'] & {
-  friends?: [{ count: number }]
+export type Profile = Tables<'profiles'> & {
+  friends?: { count: number }[]
 }
 
-export type AddProfile = Database['public']['Tables']['profiles']['Insert']
+export type AddProfile = TablesInsert<'profiles'>
 
-export type EditProfile = Database['public']['Tables']['profiles']['Update']
+export type EditProfile = TablesUpdate<'profiles'>
 
-export type Friend = Database['public']['Tables']['friends']['Row'] & {
+export type Friend = Tables<'friends'> & {
   sender: Profile
   receiver: Profile
 }
 
-export type AddFriend = Database['public']['Tables']['friends']['Insert']
+export type AddFriend = TablesInsert<'friends'>
 
 export type ListItem<IdType = number> = {
   id: IdType
@@ -124,4 +123,12 @@ export type SpotifyArtist = {
     url: string
     width: number
   }[]
+  genres: string[]
+  followers: {
+    href: string | null
+    total: number
+  }
+  external_urls: {
+    spotify: string
+  }
 }

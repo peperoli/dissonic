@@ -1,32 +1,43 @@
 import { useBands } from '../../hooks/bands/useBands'
-import { AddBand, EditBand } from '../../types/types'
+import { AddBand } from '../../types/types'
 import { Button } from '../Button'
-import { MultiSelect } from '../MultiSelect'
 import { SpotifyArtistSelect } from './SpotifyArtistSelect'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { TextField } from '../forms/TextField'
-import { Select } from '../forms/controlled/Select'
+import { SelectField } from '../forms/SelectField'
 import { useCountries } from '../../hooks/useCountries'
 import { useGenres } from '../../hooks/useGenres'
+import { useBand } from '@/hooks/bands/useBand'
+import { usePathname } from 'next/navigation'
+import { useAddBand } from '@/hooks/bands/useAddBand'
+import { useEditBand } from '@/hooks/bands/useEditBand'
+import { ChevronDown } from 'lucide-react'
+import { Disclosure } from '@headlessui/react'
+import { Fragment } from 'react'
+import clsx from 'clsx'
 
 interface FormProps {
-  defaultValues?: EditBand
-  onSubmit: SubmitHandler<AddBand> | SubmitHandler<EditBand>
-  status: 'idle' | 'loading' | 'error' | 'success'
+  isNew?: boolean
   close: () => void
 }
 
-export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
+export const Form = ({ isNew, close }: FormProps) => {
+  const pathname = usePathname()
+  const bandId = !isNew ? pathname.split('/').pop() : null
+  const { data: band } = useBand(parseInt(bandId!))
   const {
     register,
     control,
     watch,
     handleSubmit,
     formState: { dirtyFields, errors },
-  } = useForm<AddBand>({ defaultValues: defaultValues })
+  } = useForm<AddBand>({ defaultValues: band })
   const { data: bands } = useBands()
   const { data: countries } = useCountries()
   const { data: genres } = useGenres()
+  const addBand = useAddBand()
+  const editBand = useEditBand()
+  const { status } = isNew ? addBand : editBand
   const regExp = new RegExp(watch('name'), 'i')
   const similarBands =
     bands?.data.filter(item =>
@@ -37,8 +48,17 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
     ) || []
   const isSimilar = dirtyFields.name && watch('name')?.length >= 3 && similarBands.length > 0
   const regionNames = new Intl.DisplayNames(['de'], { type: 'region' })
+
+  const onSubmit: SubmitHandler<AddBand> = async function (formData) {
+    if (isNew) {
+      addBand.mutate(formData)
+    } else {
+      editBand.mutate(formData)
+    }
+  }
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+      <h2 className="mb-0">{isNew ? 'Band hinzufügen' : 'Band bearbeiten'}</h2>
       <TextField
         {...register('name', { required: true })}
         error={errors.name}
@@ -48,46 +68,47 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
       {isSimilar && (
         <div className="mt-2">
           <p className="text-red">Vorsicht, diese Band könnte schon vorhanden sein:</p>
-          <ul className="list-disc list-inside text-slate-300">
+          <ul className="list-inside list-disc text-slate-300">
             {similarBands.map(band => (
               <li key={band.id}>{band.name}</li>
             ))}
           </ul>
         </div>
       )}
-      {countries && (
-        <Controller
-          name="country_id"
-          control={control}
-          rules={{ required: true }}
-          render={({ field: { value, onChange } }) => (
-            <Select
-              value={value ?? null}
-              onValueChange={onChange}
-              options={countries.map(item => ({
-                id: item.id,
-                name: regionNames.of(item.iso2) ?? item.iso2,
-              }))}
-              error={errors.country_id}
-              label="Land"
-            />
-          )}
-        />
-      )}
-      {genres && (
-        <Controller
-          name="genres"
-          control={control}
-          render={({ field: { value = [], onChange } }) => (
-            <MultiSelect
-              name="genres"
-              options={genres}
-              selectedOptions={value.map(item => item.id)}
-              setSelectedOptions={value => onChange(genres.filter(item => value.includes(item.id)))}
-            />
-          )}
-        />
-      )}
+      <Controller
+        name="country_id"
+        control={control}
+        rules={{ required: true }}
+        render={({ field: { value = null, onChange } }) => (
+          <SelectField
+            name="country_id"
+            value={value}
+            onValueChange={onChange}
+            items={countries?.map(item => ({
+              id: item.id,
+              name: regionNames.of(item.iso2) ?? item.iso2,
+            }))}
+            error={errors.country_id}
+            label="Land"
+          />
+        )}
+      />
+      <Controller
+        name="genres"
+        control={control}
+        render={({ field: { value = [], onChange } }) => (
+          <SelectField
+            name="genres"
+            items={genres}
+            multiple
+            values={value.map(item => item.id)}
+            onValuesChange={value =>
+              onChange(genres?.filter(item => value.includes(item.id)) ?? [])
+            }
+            label="Genres"
+          />
+        )}
+      />
       <Controller
         name="spotify_artist_id"
         control={control}
@@ -95,7 +116,26 @@ export const Form = ({ defaultValues, onSubmit, status, close }: FormProps) => {
           <SpotifyArtistSelect bandName={watch('name')} value={value} onChange={onChange} />
         )}
       />
-      <div className="sticky md:static bottom-0 flex md:justify-end gap-4 [&>*]:flex-1 py-4 md:pb-0 bg-slate-800 z-10 md:z-0">
+      <Disclosure>
+        <Disclosure.Panel>
+          <TextField
+            {...register('youtube_url')}
+            label="YouTube-Kanal (optional)"
+            placeholder="https://youtube.com/channel/UC4BSeEq7XNtihGqI309vhYg"
+          />
+        </Disclosure.Panel>
+        <Disclosure.Button as={Fragment}>
+          {({ open }) => (
+            <Button
+              label={open ? 'Weniger anzeigen' : 'Mehr anzeigen'}
+              icon={<ChevronDown className={clsx('size-icon', open && 'rotate-180')} />}
+              size="small"
+              appearance="tertiary"
+            />
+          )}
+        </Disclosure.Button>
+      </Disclosure>
+      <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:static md:z-0 md:justify-end md:pb-0 [&>*]:flex-1">
         <Button onClick={close} label="Abbrechen" />
         <Button
           type="submit"

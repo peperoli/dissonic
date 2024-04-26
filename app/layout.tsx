@@ -1,3 +1,8 @@
+import { Footer } from '@/components/layout/Footer'
+import { NavBar } from '@/components/layout/NavBar'
+import { Navigation } from '@/components/layout/Navigation'
+import { ModalProvider } from '@/components/shared/ModalProvider'
+import { TooltipProvider } from '@/components/shared/TooltipProvider'
 import { Metadata, Viewport } from 'next'
 import { Albert_Sans } from 'next/font/google'
 import { ReactNode } from 'react'
@@ -39,9 +44,19 @@ const albertSans = Albert_Sans({
 export default async function RootLayout({ children }: { children: ReactNode }) {
   return (
     <QueryProvider>
-      <html lang="de-CH" className={`${albertSans.variable}`}>
-        <body className="text-slate-50 bg-slate-850">{children}</body>
-      </html>
+      <TooltipProvider>
+        <html lang="de-CH" className={`${albertSans.variable}`}>
+          <body className="flex flex-col min-h-screen text-white bg-slate-850">
+            <NavBar />
+            <div className="md:flex">
+              <Navigation />
+              {children}
+            </div>
+            <Footer />
+          </body>
+        </html>
+        <ModalProvider />
+      </TooltipProvider>
     </QueryProvider>
   )
 }
