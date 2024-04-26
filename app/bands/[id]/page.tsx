@@ -1,8 +1,19 @@
 import { BandPage } from '../../../components/bands/BandPage'
 import { cookies } from 'next/headers'
 import { createClient } from '../../../utils/supabase/server'
+import supabase from '../../../utils/supabase/client'
 
-const fetchData = async(params: { id: string }) => {
+export async function generateStaticParams() {
+  const { data: bands, error } = await supabase.from('bands').select('id')
+
+  if (error) {
+    throw error
+  }
+
+  return bands?.map(band => ({ id: band.id.toString() }))
+}
+
+async function fetchData(params: { id: string }) {
   const supabase = createClient(cookies())
 
   const { data, error } = await supabase

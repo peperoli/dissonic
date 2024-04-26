@@ -2,10 +2,19 @@ import { ConcertPage } from '../../../components/concerts/ConcertPage'
 import { Concert } from '../../../types/types'
 import { cookies } from 'next/headers'
 import { createClient } from '../../../utils/supabase/server'
+import supabase from '../../../utils/supabase/client'
 
-export const revalidate = 60
+export async function generateStaticParams() {
+  const { data: concerts, error } = await supabase.from('concerts').select('id')
 
-const fetchConcert = async (concertId: string) => {
+  if (error) {
+    throw error
+  }
+
+  return concerts?.map(concert => ({ id: concert.id }))
+}
+
+async function fetchConcert(concertId: string) {
   const supabase = createClient(cookies())
 
   const { data, error } = await supabase
@@ -32,6 +41,9 @@ export default async function Page({ params }: { params: { id: string } }) {
   const concert = await fetchConcert(params.id)
   const cookieStore = cookies()
   return (
-    <ConcertPage initialConcert={concert} concertQueryState={cookieStore.get('concertQueryState')?.value} />
+    <ConcertPage
+      initialConcert={concert}
+      concertQueryState={cookieStore.get('concertQueryState')?.value}
+    />
   )
 }

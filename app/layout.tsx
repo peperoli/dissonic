@@ -5,11 +5,9 @@ import { ModalProvider } from '@/components/shared/ModalProvider'
 import { TooltipProvider } from '@/components/shared/TooltipProvider'
 import { Metadata, Viewport } from 'next'
 import { Albert_Sans } from 'next/font/google'
-import { ReactNode } from 'react'
+import { ReactNode, Suspense } from 'react'
 import { QueryProvider } from '../components/helpers/QueryProvider'
 import '../styles/globals.scss'
-
-export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Dissonic',
@@ -46,7 +44,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <QueryProvider>
       <TooltipProvider>
         <html lang="de-CH" className={`${albertSans.variable}`}>
-          <body className="flex flex-col min-h-screen text-white bg-slate-850">
+          <body className="flex min-h-screen flex-col bg-slate-850 text-white">
             <NavBar />
             <div className="md:flex">
               <Navigation />
@@ -55,7 +53,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             <Footer />
           </body>
         </html>
-        <ModalProvider />
+        <Suspense>
+          <ModalProvider />
+        </Suspense>
       </TooltipProvider>
     </QueryProvider>
   )

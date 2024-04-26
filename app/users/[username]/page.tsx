@@ -1,8 +1,18 @@
 import { ProfilePage } from '../../../components/profile/ProfilePage'
 import { cookies } from 'next/headers'
 import { createClient } from '../../../utils/supabase/server'
-import { Profile } from '../../../types/types'
+import supabase from '../../../utils/supabase/client'
 import { notFound } from 'next/navigation'
+
+export async function generateStaticParams() {
+  const { data: profiles, error } = await supabase.from('profiles').select('username')
+
+  if (error) {
+    throw error
+  }
+
+  return profiles?.map(profile => ({ username: profile.username }))
+}
 
 async function fetchData(username: string) {
   const supabase = createClient(cookies())
