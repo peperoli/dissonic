@@ -12,7 +12,8 @@ const addReaction = async (reaction: AddReaction) => {
 
 export const useAddReaction = (reaction: AddReaction, concertId: string) => {
   const queryClient = useQueryClient()
-  return useMutation(() => addReaction(reaction), {
-    onSuccess: () => queryClient.invalidateQueries(['comments', concertId]),
+  return useMutation({
+    mutationFn: () => addReaction(reaction),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['comments', concertId] }),
   })
 }

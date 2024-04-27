@@ -13,9 +13,10 @@ const deleteBand = async (bandId: number) => {
 export const useDeleteBand = () => {
   const queryClient = useQueryClient()
   const router = useRouter()
-  return useMutation(deleteBand, {
+  return useMutation({
+    mutationFn: deleteBand,
     onSuccess: () => {
-      queryClient.invalidateQueries(['bands'])
+      queryClient.invalidateQueries({ queryKey: ['bands'] })
       router.push('/bands')
     },
   })

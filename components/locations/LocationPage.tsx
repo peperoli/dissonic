@@ -23,7 +23,7 @@ export const LocationPage = ({
   location: initialLocation,
   locationQueryState,
 }: LocationPageProps) => {
-  const { data: location, isLoading: locationIsLoading } = useLocation(
+  const { data: location, isPending: locationIsLoading } = useLocation(
     initialLocation.id,
     initialLocation
   )

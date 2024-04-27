@@ -22,7 +22,5 @@ async function deleteBandsSeen(bandsSeen: BandSeen[]) {
 }
 
 export function useDeleteBandsSeen() {
-  return useMutation(deleteBandsSeen, {
-    onError: error => console.error(error),
-  })
+  return useMutation({ mutationFn: deleteBandsSeen, onError: error => console.error(error) })
 }

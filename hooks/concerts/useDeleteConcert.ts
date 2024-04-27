@@ -13,9 +13,11 @@ const deleteConcert = async (concertId: string) => {
 export const useDeleteConcert = () => {
   const queryClient = useQueryClient()
   const router = useRouter()
-  return useMutation(deleteConcert, {
+  return useMutation({
+    mutationFn: deleteConcert,
+    onError: error => console.error(error),
     onSuccess: () => {
-      queryClient.invalidateQueries(['concerts'])
+      queryClient.invalidateQueries({ queryKey: ['concerts'] })
       router.push('/')
     },
   })

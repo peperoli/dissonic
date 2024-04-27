@@ -15,7 +15,8 @@ const deleteReaction = async (commentId: number, userId: string) => {
 
 export const useDeleteReaction = (commentId: number, userId: string, concertId: string) => {
   const queryClient = useQueryClient()
-  return useMutation(() => deleteReaction(commentId, userId), {
-    onSuccess: () => queryClient.invalidateQueries(['comments', concertId]),
+  return useMutation({
+    mutationFn: () => deleteReaction(commentId, userId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['comments', concertId] }),
   })
 }

@@ -10,19 +10,19 @@ type YearsRangeSliderProps = {
 }
 
 const YearsRangeSlider = ({ ...props }: YearsRangeSliderProps) => {
-  const { data: concertDates, isLoading } = useConcertDates()
+  const { data: concertDates, isPending } = useConcertDates()
   const concertYears = concertDates
     ?.map(item => item.date_start && new Date(item.date_start).getFullYear())
     .filter(item => typeof item === 'number') as number[] | undefined
 
-  if (!concertYears || concertYears.length === 0 || isLoading) {
+  if (!concertYears || concertYears.length === 0 || isPending) {
     return (
       <div className="flex h-56 w-full items-center justify-center">
         <SpinnerIcon className="h-8 animate-spin" />
       </div>
     )
   }
-  return <RangeSliderWrapper unit="Jahr" options={concertYears} isLoading={isLoading} {...props} />
+  return <RangeSliderWrapper unit="Jahr" options={concertYears} isLoading={isPending} {...props} />
 }
 
 interface YearsFilterProps {

@@ -9,7 +9,7 @@ interface DeleteLocationFormProps {
 export const DeleteLocationForm = ({ close }: DeleteLocationFormProps) => {
   const pathname = usePathname()
   const bandId = pathname.split('/').pop()
-  const { mutate, isLoading } = useDeleteLocation()
+  const { mutate, isPending } = useDeleteLocation()
 
   return (
     <>
@@ -22,7 +22,7 @@ export const DeleteLocationForm = ({ close }: DeleteLocationFormProps) => {
           onClick={() => mutate(parseInt(bandId!))}
           appearance="primary"
           danger
-          loading={isLoading}
+          loading={isPending}
         />
       </div>
     </>

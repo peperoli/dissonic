@@ -16,8 +16,9 @@ const addFestivalRoot = async (formData: TablesInsert<'festival_roots'>) => {
 
 export const useAddFestivalRoot = () => {
   const queryClient = useQueryClient()
-  return useMutation(addFestivalRoot, {
+  return useMutation({
+    mutationFn: addFestivalRoot,
     onError: error => console.error(error),
-    onSuccess: () => queryClient.invalidateQueries(['bands']),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['bands'] }),
   })
 }

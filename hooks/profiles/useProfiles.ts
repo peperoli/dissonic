@@ -19,7 +19,9 @@ const fetchProfiles = async (options?: { ids?: string[] }): Promise<Profile[]> =
 }
 
 export const useProfiles = (options?: { ids?: string[] }, enabled?: boolean) => {
-  return useQuery(['profiles', JSON.stringify(options)], () => fetchProfiles(options), {
+  return useQuery({
+    queryKey: ['profiles', JSON.stringify(options)],
+    queryFn: () => fetchProfiles(options),
     enabled: enabled === undefined || enabled,
   })
 }

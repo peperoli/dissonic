@@ -9,12 +9,12 @@ type BandMultiSelectProps = {
 }
 
 const BandMultiSelect = ({ ...props }: BandMultiSelectProps) => {
-  const { data: bands, isLoading } = useBands()
+  const { data: bands, isPending } = useBands()
   return (
     <Select
       name="band"
       items={bands?.data}
-      isLoading={isLoading}
+      isLoading={isPending}
       multiple
       fixedHeight
       {...props}
@@ -28,7 +28,7 @@ type BandFilterProps = {
 }
 
 export const BandFilter = ({ values: submittedValues, onSubmit }: BandFilterProps) => {
-  const { data: bands } = useBands(null, { ids: submittedValues })
+  const { data: bands } = useBands(undefined, { ids: submittedValues })
   const [selectedIds, setSelectedIds] = useState<number[]>(submittedValues ?? [])
 
   useEffect(() => {

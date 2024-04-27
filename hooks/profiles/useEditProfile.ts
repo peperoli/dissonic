@@ -6,7 +6,7 @@ const editProfile = async (newProfile: EditProfile) => {
   if (!newProfile.id) {
     throw new Error('Profile ID is required')
   }
-  
+
   const { error: profileError } = await supabase
     .from('profiles')
     .update({
@@ -21,5 +21,5 @@ const editProfile = async (newProfile: EditProfile) => {
 }
 
 export const useEditProfile = () => {
-  return useMutation(editProfile, { onError: error => console.error(error) })
+  return useMutation({ mutationFn: editProfile, onError: error => console.error(error) })
 }

@@ -15,5 +15,5 @@ const retrieveSession = async () => {
 }
 
 export const useSession = () => {
-  return useQuery(['session'], retrieveSession)
+  return useQuery({ queryKey: ['session'], queryFn: retrieveSession })
 }

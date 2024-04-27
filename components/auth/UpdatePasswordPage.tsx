@@ -50,7 +50,7 @@ export function UpdatePasswordPage() {
             type="submit"
             label="Speichern"
             appearance="primary"
-            loading={status === 'loading'}
+            loading={status === 'pending'}
           />
         </div>
         {status === 'error' && (

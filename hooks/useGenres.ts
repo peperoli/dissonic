@@ -19,5 +19,8 @@ const fetchGenres = async (options?: { ids: number[] | null }): Promise<Genre[]>
 }
 
 export const useGenres = (options?: { ids: number[] | null }) => {
-  return useQuery(['genres', JSON.stringify(options)], () => fetchGenres(options))
+  return useQuery({
+    queryKey: ['genres', JSON.stringify(options)],
+    queryFn: () => fetchGenres(options),
+  })
 }

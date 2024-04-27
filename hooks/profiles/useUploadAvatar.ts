@@ -13,5 +13,5 @@ const uploadAvatar = async (avatar: { file: Blob; path: string }) => {
 }
 
 export const useUploadAvatar = () => {
-  return useMutation(uploadAvatar, { onError: error => console.error(error) })
+  return useMutation({ mutationFn: uploadAvatar, onError: error => console.error(error) })
 }

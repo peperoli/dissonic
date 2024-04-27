@@ -31,7 +31,7 @@ export const Comments = () => {
 
   useEffect(() => {
     if (status === 'success') {
-      queryClient.invalidateQueries(['comments', concert.id])
+      queryClient.invalidateQueries({ queryKey: ['comments', concert.id] })
       reset()
     }
   }, [status])
@@ -40,7 +40,7 @@ export const Comments = () => {
       <h2>Kommentare</h2>
       {session ? (
         <>
-          <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 mb-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="mb-4 grid gap-4">
             <TextArea
               {...register('content')}
               label="Neuer Kommentar"
@@ -52,7 +52,7 @@ export const Comments = () => {
                 label="Kommentieren"
                 appearance="primary"
                 disabled={watch('content') === ''}
-                loading={status === 'loading'}
+                loading={status === 'pending'}
               />
             </div>
           </form>
@@ -68,7 +68,7 @@ export const Comments = () => {
         </>
       ) : (
         <>
-          <p className="text-sm text-slate-300 mb-4">
+          <p className="mb-4 text-sm text-slate-300">
             Melde dich an, um Kommentare zu schreiben und lesen.
           </p>
           <Button

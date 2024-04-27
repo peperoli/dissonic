@@ -30,7 +30,7 @@ type ConcertUserItemProps = {
 }
 
 const ConcertUserItem = ({ concert, user, count }: ConcertUserItemProps) => {
-  const { data: bands } = useBands(null, {
+  const { data: bands } = useBands(undefined, {
     ids: concert.bands_seen?.filter(item => item.user_id === user.id).map(item => item.band_id),
   })
   return (
@@ -57,7 +57,7 @@ type ConcertPageProps = {
 }
 
 export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPageProps) => {
-  const { data: concert } = useConcert(initialConcert, initialConcert.id)
+  const { data: concert } = useConcert(initialConcert.id, initialConcert)
   const { data: concertProfiles } = useConcertProfiles(initialConcert.id)
   const { data: session } = useSession()
   const { data: spotifyArtist } = useSpotifyArtist(concert?.bands?.[0]?.spotify_artist_id)

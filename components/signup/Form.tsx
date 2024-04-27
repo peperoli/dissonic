@@ -63,7 +63,7 @@ export const Form = ({ onSubmit, status }: FormProps) => {
           type="submit"
           label="Konto erstellen"
           appearance="primary"
-          loading={status === 'loading'}
+          loading={status === 'pending'}
         />
       </div>
     </form>

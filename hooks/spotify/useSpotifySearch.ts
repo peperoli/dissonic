@@ -26,7 +26,9 @@ const fetchSearch = async (
 
 export const useSpotifySearch = (bandName: string | null) => {
   const { data: token } = useSpotifyToken()
-  return useQuery(['spotifySearch', bandName], () => fetchSearch(token, bandName), {
+  return useQuery({
+    queryKey: ['spotifySearch', bandName],
+    queryFn: () => fetchSearch(token, bandName),
     enabled: !!token && !!bandName,
   })
 }

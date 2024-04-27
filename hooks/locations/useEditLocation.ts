@@ -27,10 +27,11 @@ const editLocation = async (formData: TablesInsert<'locations'>) => {
 export const useEditLocation = () => {
   const queryClient = useQueryClient()
   const [_, setModal] = useQueryState('modal', { history: 'push' })
-  return useMutation(editLocation, {
+  return useMutation({
+    mutationFn: editLocation,
     onError: error => console.error(error),
     onSuccess: () => {
-      queryClient.invalidateQueries(['location'])
+      queryClient.invalidateQueries({ queryKey: ['location'] })
       setModal(null)
     },
   })

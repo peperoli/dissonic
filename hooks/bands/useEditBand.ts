@@ -68,10 +68,11 @@ const editBand = async (newBand: EditBand) => {
 export const useEditBand = () => {
   const queryClient = useQueryClient()
   const [_, setModal] = useQueryState('modal', { history: 'push' })
-  return useMutation(editBand, {
+  return useMutation({
+    mutationFn: editBand,
     onError: error => console.error(error),
     onSuccess: () => {
-      queryClient.invalidateQueries(['bands'])
+      queryClient.invalidateQueries({ queryKey: ['band'] })
       setModal(null)
     },
   })

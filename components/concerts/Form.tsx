@@ -27,7 +27,7 @@ type FormProps = {
 export const Form = ({ close, isNew }: FormProps) => {
   const pathname = usePathname()
   const concertId = !isNew ? pathname.split('/').pop() : null
-  const { data: concert } = useConcert(null, concertId ?? null)
+  const { data: concert } = useConcert(concertId ?? null)
   const today = new Date().toISOString().split('T')[0]
   const {
     register,
@@ -215,7 +215,7 @@ export const Form = ({ close, isNew }: FormProps) => {
             type="submit"
             label="Speichern"
             appearance="primary"
-            loading={status === 'loading'}
+            loading={status === 'pending'}
           />
         </div>
       </form>

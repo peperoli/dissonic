@@ -10,5 +10,5 @@ const deleteAvatar = async (path: string) => {
 }
 
 export const useDeleteAvatar = () => {
-  return useMutation(deleteAvatar, { onError: error => console.error(error) })
+  return useMutation({ mutationFn: deleteAvatar, onError: error => console.error(error) })
 }

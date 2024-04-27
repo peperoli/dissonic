@@ -25,8 +25,9 @@ export const useBandsSeen = (userId?: string) => {
   const { data: session } = useSession()
   const { data: user } = useUser(session?.access_token)
   const profileId = userId ?? user?.id
-  return useQuery(['bandsSeen', profileId], () => fetchBandsSeen(profileId!), {
+  return useQuery({
+    queryKey: ['bandsSeen', profileId],
+    queryFn: () => fetchBandsSeen(profileId!),
     enabled: !!profileId,
-    onError: error => console.error(error),
   })
 }

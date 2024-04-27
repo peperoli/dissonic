@@ -6,7 +6,7 @@ const editReaction = async (reaction: EditReaction) => {
   if (!reaction.comment_id || !reaction.user_id) {
     throw new Error('Comment ID and User ID are required')
   }
-  
+
   const { error } = await supabase
     .from('reactions')
     .update(reaction)
@@ -20,7 +20,8 @@ const editReaction = async (reaction: EditReaction) => {
 
 export const useEditReaction = (reaction: EditReaction, concertId: string) => {
   const queryClient = useQueryClient()
-  return useMutation(() => editReaction(reaction), {
-    onSuccess: () => queryClient.invalidateQueries(['comments', concertId]),
+  return useMutation({
+    mutationFn: () => editReaction(reaction),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['comments', concertId] }),
   })
 }

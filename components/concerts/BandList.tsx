@@ -27,7 +27,7 @@ export function BandList({ bands, bandsSeen, concertId }: BandListProps) {
   const { data: session } = useSession()
   const addBandsSeen = useAddBandsSeen()
   const deleteBandsSeen = useDeleteBandsSeen()
-  const isLoading = addBandsSeen.isLoading || deleteBandsSeen.isLoading
+  const isPending = addBandsSeen.isPending || deleteBandsSeen.isPending
   const isSuccess = addBandsSeen.isSuccess && deleteBandsSeen.isSuccess
   const queryClient = useQueryClient()
   const { push } = useRouter()
@@ -50,7 +50,7 @@ export function BandList({ bands, bandsSeen, concertId }: BandListProps) {
   useEffect(() => {
     if (isSuccess) {
       setEditing(false)
-      queryClient.invalidateQueries(['concert', concertId])
+      queryClient.invalidateQueries({ queryKey: ['concert', concertId] })
     }
   }, [addBandsSeen.status, deleteBandsSeen.status])
   return (
@@ -58,7 +58,7 @@ export function BandList({ bands, bandsSeen, concertId }: BandListProps) {
       {editing ? (
         <>
           {!hideBandsSeenHint && (
-            <div className="flex gap-3 w-full mb-4 p-4 rounded-lg bg-slate-700">
+            <div className="mb-4 flex w-full gap-3 rounded-lg bg-slate-700 p-4">
               <Lightbulb className="size-icon flex-none text-yellow" />
               <p>Markiere Bands, die du an diesem Konzert erlebt hast.</p>
               <button
@@ -67,7 +67,7 @@ export function BandList({ bands, bandsSeen, concertId }: BandListProps) {
                   Cookies.set('hideBandsSeenHint', 'yes', { expires: 365, sameSite: 'strict' })
                 }}
                 aria-label="Hinweis verbergen"
-                className="w-6 h-6 grid place-content-center flex-none ml-auto rounded-md hover:bg-slate-600"
+                className="ml-auto grid h-6 w-6 flex-none place-content-center rounded-md hover:bg-slate-600"
               >
                 <X className="size-icon" />
               </button>
@@ -107,14 +107,14 @@ export function BandList({ bands, bandsSeen, concertId }: BandListProps) {
             ))}
         </ul>
       )}
-      <div className="flex gap-4 mt-6">
+      <div className="mt-6 flex gap-4">
         {editing ? (
           <>
             <Button
               onClick={updateBandsSeen}
               label="Speichern"
               appearance="primary"
-              loading={isLoading}
+              loading={isPending}
             />
             <Button onClick={() => setEditing(false)} label="Abbrechen" />
           </>
@@ -122,13 +122,7 @@ export function BandList({ bands, bandsSeen, concertId }: BandListProps) {
           <Button
             onClick={session ? () => setEditing(true) : () => push(`/signup?redirect=${pathname}`)}
             label="Ich war dabei!"
-            icon={
-              hasBandsSeen ? (
-                <Edit className="size-icon" />
-              ) : (
-                <Plus className="size-icon" />
-              )
-            }
+            icon={hasBandsSeen ? <Edit className="size-icon" /> : <Plus className="size-icon" />}
             appearance={hasBandsSeen ? 'secondary' : 'primary'}
             size={hasBandsSeen ? 'small' : 'medium'}
           />

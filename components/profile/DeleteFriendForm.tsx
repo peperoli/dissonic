@@ -12,7 +12,7 @@ export const RemoveFriendForm = ({ close }: RemoveFriendFormProps) => {
   const [friendId] = useQueryState('friendId')
   const { data: profile } = useProfile(friendId)
   const { data: session } = useSession()
-  const { mutate, isLoading } = useDeleteFriend()
+  const { mutate, isPending } = useDeleteFriend()
 
   async function onSubmit() {
     if (friendId && session?.user.id) {
@@ -32,7 +32,7 @@ export const RemoveFriendForm = ({ close }: RemoveFriendFormProps) => {
           label="Entfernen"
           onClick={onSubmit}
           appearance="primary"
-          loading={isLoading}
+          loading={isPending}
           danger
         />
       </div>

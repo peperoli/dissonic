@@ -17,7 +17,9 @@ const downloadAvatar = async (avatarPath?: string | null) => {
 }
 
 export const useAvatar = (avatarPath?: string | null) => {
-  return useQuery(['avatar', avatarPath], () => downloadAvatar(avatarPath), {
+  return useQuery({
+    queryKey: ['avatar', avatarPath],
+    queryFn: () => downloadAvatar(avatarPath),
     enabled: !!avatarPath,
   })
 }

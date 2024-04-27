@@ -25,7 +25,8 @@ const fetchLocationProfiles = async (locationId: number) => {
 
   const data = responses
     .map(res => ({
-      profile: bandsSeen.find(item => item.user_id === res.data?.[0].bands_seen[0].user_id)?.profile,
+      profile: bandsSeen.find(item => item.user_id === res.data?.[0].bands_seen[0].user_id)
+        ?.profile,
       count: res.count,
     }))
     .filter(item => item.profile && item.count) as { profile: Profile; count: number }[]
@@ -34,7 +35,8 @@ const fetchLocationProfiles = async (locationId: number) => {
 }
 
 export const useLocationProfiles = (locationId: number) => {
-  return useQuery(['locationProfiles', locationId], () => fetchLocationProfiles(locationId), {
-    onError: error => console.error(error),
+  return useQuery({
+    queryKey: ['locationProfiles', locationId],
+    queryFn: () => fetchLocationProfiles(locationId),
   })
 }

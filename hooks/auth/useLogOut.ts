@@ -12,7 +12,8 @@ async function logOut() {
 export function useLogOut() {
   const queryClient = useQueryClient()
 
-  return useMutation(logOut, {
+  return useMutation({
+    mutationFn: logOut,
     onSuccess: () => {
       queryClient.removeQueries()
     },

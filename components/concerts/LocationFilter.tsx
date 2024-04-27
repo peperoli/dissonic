@@ -9,12 +9,12 @@ type LocationMultiSelectProps = {
 }
 
 const LocationMultiSelect = ({ ...props }: LocationMultiSelectProps) => {
-  const { data: locations, isLoading } = useLocations()
+  const { data: locations, isPending } = useLocations()
   return (
     <Select
       name="location"
       items={locations?.data}
-      isLoading={isLoading}
+      isLoading={isPending}
       multiple
       fixedHeight
       {...props}
@@ -28,7 +28,7 @@ type LocationFilterProps = {
 }
 
 export const LocationFilter = ({ values: submittedValues, onSubmit }: LocationFilterProps) => {
-  const { data: locations } = useLocations(null, { ids: submittedValues })
+  const { data: locations } = useLocations(undefined, { ids: submittedValues })
   const [selectedIds, setSelectedIds] = useState(submittedValues ?? [])
 
   useEffect(() => {

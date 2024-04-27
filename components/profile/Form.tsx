@@ -63,7 +63,7 @@ export const Form = ({ close }: FormProps) => {
 
   useEffect(() => {
     if (editProfile.status === 'success') {
-      queryClient.invalidateQueries(['profile', session?.user.id])
+      queryClient.invalidateQueries({ queryKey: ['profile', session?.user.id] })
       dirtyFields.username ? push(`/users/${watch('username')}`) : close()
     }
   }, [editProfile.status])
@@ -94,7 +94,7 @@ export const Form = ({ close }: FormProps) => {
           label="Speichern"
           appearance="primary"
           disabled={Object.keys(errors).length > 0}
-          loading={editProfile.isLoading || deleteFiles.isLoading}
+          loading={editProfile.isPending || deleteFiles.isPending}
         />
       </div>
     </form>

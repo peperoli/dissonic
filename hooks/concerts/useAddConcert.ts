@@ -20,15 +20,13 @@ const addConcert = async (concert: AddConcert): Promise<Concert> => {
     throw addConcertError
   }
 
-  const { error: addBandsError } = await supabase
-    .from('j_concert_bands')
-    .insert(
-      concert.bands?.map((item, index) => ({
-        concert_id: newConcert.id,
-        band_id: item.id,
-        item_index: index,
-      })) ?? []
-    )
+  const { error: addBandsError } = await supabase.from('j_concert_bands').insert(
+    concert.bands?.map((item, index) => ({
+      concert_id: newConcert.id,
+      band_id: item.id,
+      item_index: index,
+    })) ?? []
+  )
 
   if (addBandsError) {
     throw addBandsError
@@ -38,5 +36,5 @@ const addConcert = async (concert: AddConcert): Promise<Concert> => {
 }
 
 export const useAddConcert = () => {
-  return useMutation(addConcert, { onError: error => console.error(error) })
+  return useMutation({ mutationFn: addConcert, onError: error => console.error(error) })
 }

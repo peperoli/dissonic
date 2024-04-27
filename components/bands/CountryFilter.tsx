@@ -9,7 +9,7 @@ type CountryMultiSelectProps = {
 }
 
 const CountryMultiSelect = ({ selectedOptions, setSelectedOptions }: CountryMultiSelectProps) => {
-  const { data: countries, isLoading } = useCountries()
+  const { data: countries, isPending } = useCountries()
   const regionNames = new Intl.DisplayNames('de', { type: 'region' })
   return (
     <Select
@@ -18,7 +18,7 @@ const CountryMultiSelect = ({ selectedOptions, setSelectedOptions }: CountryMult
         id: item.id,
         name: regionNames.of(item.iso2) ?? item.iso2,
       }))}
-      isLoading={isLoading}
+      isLoading={isPending}
       multiple
       values={selectedOptions}
       onValuesChange={setSelectedOptions}

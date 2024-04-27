@@ -1,12 +1,10 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { Band, ExtendedRes, BandFetchOptions } from '@/types/types'
 import { getPagination } from '@/lib/getPagination'
 import supabase from '@/utils/supabase/client'
 
 const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[]>> => {
-  let filterQuery = supabase
-    .from('bands')
-    .select('id, genres(id)', { count: 'estimated' })
+  let filterQuery = supabase.from('bands').select('id, genres(id)', { count: 'estimated' })
 
   if (options?.search) {
     // @ts-expect-error
@@ -31,7 +29,7 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
     throw countError
   }
 
-  const [from, to] = getPagination(options?.page ?? 0, options?.size ?? 24, initialCount ?? 0)
+  const [from, to] = getPagination(options?.page ?? 0, options?.size ?? 25, initialCount ?? 0)
 
   let filteredBands = initialFilteredBands
 
@@ -59,10 +57,15 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
   return { data, count }
 }
 
-export const useBands = (initialBands?: ExtendedRes<Band[]> | null, options?: BandFetchOptions, enabled: boolean = true) => {
-  return useQuery(['bands', JSON.stringify(options)], () => fetchBands(options), {
-    placeholderData: initialBands,
-    keepPreviousData: true,
-    enabled
+export const useBands = (
+  initialBands?: ExtendedRes<Band[]>,
+  options?: BandFetchOptions,
+  enabled: boolean = true
+) => {
+  return useQuery({
+    queryKey: ['bands', JSON.stringify(options)],
+    queryFn: () => fetchBands(options),
+    placeholderData: previousData => keepPreviousData(previousData || initialBands),
+    enabled,
   })
 }

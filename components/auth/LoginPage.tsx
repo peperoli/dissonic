@@ -62,7 +62,7 @@ export default function LoginPage() {
             type="submit"
             label="Anmelden"
             appearance="primary"
-            loading={status === 'loading'}
+            loading={status === 'pending'}
           />
           <Link href="/reset-password" className="text-sm font-bold text-venom hover:underline">
             Passwort vergessen?

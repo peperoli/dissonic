@@ -65,7 +65,7 @@ export const FestivalRootForm = ({ close }: FestivalRootFormProps) => {
           type="submit"
           label="Speichern"
           appearance="primary"
-          loading={status === 'loading'}
+          loading={status === 'pending'}
         />
       </div>
     </form>

@@ -16,5 +16,9 @@ const fetchComments = async (concertId: string): Promise<Comment[]> => {
 }
 
 export const useComments = (concertId: string) => {
-  return useQuery(['comments', concertId], () => fetchComments(concertId), { enabled: !!concertId })
+  return useQuery({
+    queryKey: ['comments', concertId],
+    queryFn: () => fetchComments(concertId),
+    enabled: !!concertId,
+  })
 }

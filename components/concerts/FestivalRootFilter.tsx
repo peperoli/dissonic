@@ -9,12 +9,12 @@ type FestivalRootSelectProps = {
 }
 
 const FestivalRootSelect = ({ ...props }: FestivalRootSelectProps) => {
-  const { data: festivalRoots, isLoading } = useFestivalRoots()
+  const { data: festivalRoots, isPending } = useFestivalRoots()
   return (
     <Select
       name="festivalRoot"
       items={festivalRoots}
-      isLoading={isLoading}
+      isLoading={isPending}
       multiple
       fixedHeight
       {...props}

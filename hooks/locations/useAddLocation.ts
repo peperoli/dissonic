@@ -14,10 +14,11 @@ const addLocation = async (location: AddLocation) => {
 export const useAddLocation = () => {
   const queryClient = useQueryClient()
   const [_, setModal] = useQueryState('modal', { history: 'push' })
-  return useMutation(addLocation, {
+  return useMutation({
+    mutationFn: addLocation,
     onError: error => console.error(error),
     onSuccess: () => {
-      queryClient.invalidateQueries(['locations'])
+      queryClient.invalidateQueries({ queryKey: ['locations'] })
       setModal(null)
     },
   })

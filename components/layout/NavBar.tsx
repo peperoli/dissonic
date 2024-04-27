@@ -24,7 +24,7 @@ export const NavBar = () => {
 
   useEffect(() => {
     if (logOutMutation.status === 'success') {
-      queryClient.invalidateQueries(['user'])
+      queryClient.invalidateQueries({ queryKey: ['user'] })
       push('/login')
     }
   }, [logOutMutation.status])

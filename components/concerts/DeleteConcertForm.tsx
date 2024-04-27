@@ -9,7 +9,7 @@ type DeleteConcertFormProps = {
 export const DeleteConcertForm = ({ close }: DeleteConcertFormProps) => {
   const pathname = usePathname()
   const concertId = pathname.split('/').pop()
-  const { mutate, isLoading } = useDeleteConcert()
+  const { mutate, isPending } = useDeleteConcert()
   return (
     <>
       <h2>Konzert löschen</h2>
@@ -21,7 +21,7 @@ export const DeleteConcertForm = ({ close }: DeleteConcertFormProps) => {
           onClick={() => mutate(concertId!)}
           appearance="primary"
           danger
-          loading={isLoading}
+          loading={isPending}
         />
       </div>
     </>

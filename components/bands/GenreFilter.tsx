@@ -9,12 +9,12 @@ type GenreMultiSelectProps = {
 }
 
 const GenreMultiSelect = ({ selectedOptions, setSelectedOptions }: GenreMultiSelectProps) => {
-  const { data: genres, isLoading } = useGenres()
+  const { data: genres, isPending } = useGenres()
   return (
     <Select
       name="Genre"
       items={genres}
-      isLoading={isLoading}
+      isLoading={isPending}
       multiple
       values={selectedOptions}
       onValuesChange={setSelectedOptions}

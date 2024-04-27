@@ -45,7 +45,7 @@ const EditCommentForm = ({ comment, setEdit }: EditCommentFormProps) => {
 
   useEffect(() => {
     if (status === 'success') {
-      queryClient.invalidateQueries(['comments', concert.id])
+      queryClient.invalidateQueries({ queryKey: ['comments', concert.id] })
       setEdit(false)
       reset()
     }
@@ -68,7 +68,7 @@ const EditCommentForm = ({ comment, setEdit }: EditCommentFormProps) => {
           type="submit"
           label="Speichern"
           appearance="primary"
-          loading={status === 'loading'}
+          loading={status === 'pending'}
           disabled={!dirtyFields.new_content || watch('new_content') === ''}
           size="small"
         />

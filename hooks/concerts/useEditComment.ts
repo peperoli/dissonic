@@ -6,7 +6,7 @@ const editComment = async (comment: EditComment) => {
   if (!comment.id) {
     throw new Error('Comment ID is required')
   }
-  
+
   const { error } = await supabase.from('comments').update(comment).eq('id', comment.id)
 
   if (error) {
@@ -15,5 +15,5 @@ const editComment = async (comment: EditComment) => {
 }
 
 export const useEditComment = () => {
-  return useMutation(editComment, { onError: error => console.error(error) })
+  return useMutation({ mutationFn: editComment, onError: error => console.error(error) })
 }

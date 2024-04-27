@@ -12,8 +12,9 @@ const addFriend = async (friend: AddFriend) => {
 
 export const useAddFriend = () => {
   const queryClient = useQueryClient()
-  return useMutation(addFriend, {
+  return useMutation({
+    mutationFn: addFriend,
     onError: error => console.error(error),
-    onSuccess: () => queryClient.invalidateQueries(['profile']),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['profile'] }),
   })
 }

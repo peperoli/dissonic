@@ -18,5 +18,5 @@ const fetchToken = async (): Promise<string> => {
 }
 
 export const useSpotifyToken = () => {
-  return useQuery(['spotifyAccessToken'], fetchToken)
+  return useQuery({ queryKey: ['spotifyAccessToken'], queryFn: fetchToken })
 }

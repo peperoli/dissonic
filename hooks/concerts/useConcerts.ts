@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { Concert, ConcertFetchOptions, ExtendedRes } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 
@@ -77,8 +77,9 @@ export const useConcerts = (
   initialConcerts?: ExtendedRes<Concert[]>,
   options?: ConcertFetchOptions
 ) => {
-  return useQuery(['concerts', JSON.stringify(options)], () => fetchConcerts(options), {
-    placeholderData: initialConcerts,
-    keepPreviousData: true,
+  return useQuery({
+    queryKey: ['concerts', JSON.stringify(options)],
+    queryFn: () => fetchConcerts(options),
+    placeholderData: previousData => keepPreviousData(previousData || initialConcerts),
   })
 }

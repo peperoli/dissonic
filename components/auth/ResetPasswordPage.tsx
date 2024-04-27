@@ -46,7 +46,7 @@ export function ResetPasswordPage() {
             type="submit"
             label="Bestätigen"
             appearance="primary"
-            loading={status === 'loading'}
+            loading={status === 'pending'}
           />
         </div>
         {status === 'error' && (

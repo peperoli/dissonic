@@ -26,8 +26,8 @@ export const AddFriendForm = ({ close }: AddFriendFormProps) => {
 
   useEffect(() => {
     if (status === 'success') {
-      queryClient.invalidateQueries(['friends', session?.user.id])
-      queryClient.invalidateQueries(['friends', profile?.id])
+      queryClient.invalidateQueries({ queryKey: ['friends', session?.user.id] })
+      queryClient.invalidateQueries({ queryKey: ['friends', profile?.id] })
       close()
     }
   }, [status])
@@ -35,8 +35,8 @@ export const AddFriendForm = ({ close }: AddFriendFormProps) => {
     <>
       <h2>Freund hizufügen</h2>
       <p>
-        Willst du <span className="italic">{profile?.username || 'diesem Fan'}</span> eine Freundschaftsanfrage
-        schicken?
+        Willst du <span className="italic">{profile?.username || 'diesem Fan'}</span> eine
+        Freundschaftsanfrage schicken?
       </p>
       <div className="flex gap-4 pt-5 [&>*]:flex-1">
         <Button label="Abbrechen" onClick={close} />
@@ -44,7 +44,7 @@ export const AddFriendForm = ({ close }: AddFriendFormProps) => {
           label="Hinzufügen"
           onClick={addFriend}
           appearance="primary"
-          loading={status === 'loading'}
+          loading={status === 'pending'}
         />
       </div>
     </>

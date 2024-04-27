@@ -16,5 +16,5 @@ const fetchUser = async (): Promise<User | null> => {
 }
 
 export function useUser(jwt?: string) {
-  return useQuery(['user'], fetchUser, { enabled: !!jwt })
+  return useQuery({ queryKey: ['user'], queryFn: fetchUser, enabled: !!jwt })
 }

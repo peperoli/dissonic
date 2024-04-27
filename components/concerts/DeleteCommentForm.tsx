@@ -8,7 +8,7 @@ interface DeleteCommentFormProps {
 
 export const DeleteCommentForm = ({ close }: DeleteCommentFormProps) => {
   const [commentId] = useQueryState('commentId', parseAsInteger)
-  const { mutate, isLoading } = useDeleteComment()
+  const { mutate, isPending } = useDeleteComment()
 
   async function onSubmit() {
     if (commentId) {
@@ -27,7 +27,7 @@ export const DeleteCommentForm = ({ close }: DeleteCommentFormProps) => {
           onClick={onSubmit}
           appearance="primary"
           danger
-          loading={isLoading}
+          loading={isPending}
         />
       </div>
     </>

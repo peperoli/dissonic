@@ -13,9 +13,10 @@ const deleteLocation = async (locationId: number) => {
 export const useDeleteLocation = () => {
   const queryClient = useQueryClient()
   const router = useRouter()
-  return useMutation(deleteLocation, {
+  return useMutation({
+    mutationFn: deleteLocation,
     onSuccess: () => {
-      queryClient.invalidateQueries(['locations'])
+      queryClient.invalidateQueries({ queryKey: ['locations'] })
       router.push('/locations')
     },
   })

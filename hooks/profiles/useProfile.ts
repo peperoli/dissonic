@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Profile } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 
-const fetchProfile = async (userId: string | null, username?: string | null) => {
+const fetchProfile = async (userId: string | null, username?: string | null): Promise<Profile> => {
   let query = supabase
     .from('profiles')
     .select('*, friends!receiver_id(count)')
@@ -25,8 +25,14 @@ const fetchProfile = async (userId: string | null, username?: string | null) => 
   return data
 }
 
-export const useProfile = (userId: string | null, username?: string | null, initialProfile?: Profile) => {
-  return useQuery(['profile', userId], () => fetchProfile(userId, username), {
+export const useProfile = (
+  userId: string | null,
+  username?: string | null,
+  initialProfile?: Profile
+) => {
+  return useQuery({
+    queryKey: ['profile', userId],
+    queryFn: () => fetchProfile(userId, username),
     enabled: !!(userId || username),
     placeholderData: initialProfile,
   })

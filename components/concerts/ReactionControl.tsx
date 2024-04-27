@@ -63,9 +63,9 @@ export const ReactionToggle = ({
         icon={reactionIcons[type]}
         size="small"
         loading={
-          addReaction.status === 'loading' ||
-          editReaction.status === 'loading' ||
-          deleteReaction.status === 'loading'
+          addReaction.status === 'pending' ||
+          editReaction.status === 'pending' ||
+          deleteReaction.status === 'pending'
         }
         className={clsx('peer', isSelected && '!bg-slate-500')}
         key={type}

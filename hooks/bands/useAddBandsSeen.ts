@@ -11,7 +11,5 @@ async function addBandsSeen(bandsSeen: BandSeen[]) {
 }
 
 export function useAddBandsSeen() {
-  return useMutation(addBandsSeen, {
-    onError: error => console.error(error),
-  })
+  return useMutation({ mutationFn: addBandsSeen, onError: error => console.error(error) })
 }

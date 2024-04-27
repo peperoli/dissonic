@@ -12,5 +12,5 @@ async function resetPassword(email: string) {
 }
 
 export function useResetPassword() {
-  return useMutation(resetPassword, { onError: error => console.error(error) })
+  return useMutation({ mutationFn: resetPassword, onError: error => console.error(error) })
 }

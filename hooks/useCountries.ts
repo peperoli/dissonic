@@ -23,5 +23,8 @@ const fetchCountries = async (options?: { ids?: number[] | null }) => {
 }
 
 export const useCountries = (options?: { ids?: number[] | null }) => {
-  return useQuery(['countries', JSON.stringify(options)], () => fetchCountries(options))
+  return useQuery({
+    queryKey: ['countries', JSON.stringify(options)],
+    queryFn: () => fetchCountries(options),
+  })
 }
