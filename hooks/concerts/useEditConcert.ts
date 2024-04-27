@@ -1,6 +1,7 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EditConcert } from '@/types/types'
 import supabase from '@/utils/supabase/client'
+import { useQueryState } from 'nuqs'
 
 const editConcert = async (newConcert: EditConcert) => {
   if (!newConcert.id) {
@@ -42,15 +43,13 @@ const editConcert = async (newConcert: EditConcert) => {
         item => !newConcert.bands?.find(item2 => item.id === item2.id)
       )
 
-      const { error: addBandsError } = await supabase
-        .from('j_concert_bands')
-        .insert(
-          addBands?.map((item, index) => ({
-            concert_id: newConcert.id!,
-            band_id: item.id,
-            item_index: index,
-          })) ?? []
-        )
+      const { error: addBandsError } = await supabase.from('j_concert_bands').insert(
+        addBands?.map((item, index) => ({
+          concert_id: newConcert.id!,
+          band_id: item.id,
+          item_index: index,
+        })) ?? []
+      )
 
       if (addBandsError) {
         throw addBandsError
@@ -73,12 +72,15 @@ const editConcert = async (newConcert: EditConcert) => {
           .from('j_bands_seen')
           .select('*', { count: 'estimated' })
           .eq('concert_id', newConcert.id)
-          .in('band_id', deleteBands.map(item => item.id))
+          .in(
+            'band_id',
+            deleteBands.map(item => item.id)
+          )
 
         if (count && count > 0) {
           throw new Error('Cannot remove bands. Some bands have been marked as seen by users.')
         }
-          
+
         const { error: deleteBandsError } = await supabase
           .from('j_concert_bands')
           .delete()
@@ -101,5 +103,13 @@ const editConcert = async (newConcert: EditConcert) => {
 }
 
 export const useEditConcert = () => {
-  return useMutation(editConcert, { onError: error => console.error(error) })
+  const queryClient = useQueryClient()
+  const [_, setModal] = useQueryState('modal', { history: 'push' })
+  return useMutation(editConcert, {
+    onError: error => console.error(error),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['concerts'])
+      setModal(null)
+    },
+  })
 }
