@@ -28,9 +28,9 @@ async function fetchFriends(options?: Options): Promise<Friend[]> {
   return data
 }
 
-export function useFriends(options?: Options, initialData?: Friend[]) {
+export function useFriends(options?: Options, initialFriends?: Friend[]) {
   return useQuery(['friends', JSON.stringify(options)], () => fetchFriends(options), {
-    initialData,
+    placeholderData: initialFriends,
     onError: error => console.error(error),
   })
 }

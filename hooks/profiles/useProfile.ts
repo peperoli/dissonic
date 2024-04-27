@@ -28,6 +28,6 @@ const fetchProfile = async (userId: string | null, username?: string | null) => 
 export const useProfile = (userId: string | null, username?: string | null, initialProfile?: Profile) => {
   return useQuery(['profile', userId], () => fetchProfile(userId, username), {
     enabled: !!(userId || username),
-    initialData: initialProfile,
+    placeholderData: initialProfile,
   })
 }

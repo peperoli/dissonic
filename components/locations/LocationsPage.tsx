@@ -25,7 +25,10 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
   const [query, setQuery] = useState('')
   const debounceQuery = useDebounce(query, 200)
   const perPage = 25
-  const [currentPage, setCurrentPage] = useQueryState('page', parseAsInteger.withDefault(1))
+  const [currentPage, setCurrentPage] = useQueryState(
+    'page',
+    parseAsInteger.withDefault(1).withOptions({ scroll: true })
+  )
   const { data: locations } = useLocations(initialLocations, {
     search: debounceQuery,
     page: currentPage,

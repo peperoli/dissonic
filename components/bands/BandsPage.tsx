@@ -26,7 +26,10 @@ interface BandsPageProps {
 
 export const BandsPage = ({ initialBands }: BandsPageProps) => {
   const perPage = 25
-  const [currentPage, setCurrentPage] = useQueryState('page', parseAsInteger.withDefault(1))
+  const [currentPage, setCurrentPage] = useQueryState(
+    'page',
+    parseAsInteger.withDefault(1).withOptions({ scroll: true })
+  )
   const [selectedCountries, setSelectedCountries] = useQueryState(
     'countries',
     parseAsArrayOf(parseAsInteger)

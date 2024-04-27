@@ -22,7 +22,7 @@ export const Pagination = ({ entriesCount, currentPage, onChange, perPage }: Pag
           pages.map((item, idx) => (
             <Button
               key={idx}
-              onClick={() => onChange(item)}
+              onClick={() => onChange(item + 1)}
               label={String(item + 1)}
               size="small"
               appearance={item === currentPage - 1 ? 'primary' : undefined}

@@ -78,7 +78,7 @@ export const useConcerts = (
   options?: ConcertFetchOptions
 ) => {
   return useQuery(['concerts', JSON.stringify(options)], () => fetchConcerts(options), {
-    initialData: initialConcerts,
+    placeholderData: initialConcerts,
     keepPreviousData: true,
   })
 }

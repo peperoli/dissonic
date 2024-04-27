@@ -47,7 +47,7 @@ export const useLocations = (
   options?: LocationFetchOptions
 ) => {
   return useQuery(['locations', JSON.stringify(options)], () => fetchLocations(options), {
-    initialData: initialLocations,
+    placeholderData: initialLocations,
     keepPreviousData: true,
   })
 }

@@ -28,7 +28,7 @@ const fetchConcert = async (concertId: string | null) => {
 
 export const useConcert = (initialConcert: Concert | null, concertId: string | null) => {
   return useQuery(['concert', concertId], () => fetchConcert(concertId), {
-    initialData: initialConcert,
+    placeholderData: initialConcert,
     enabled: !!concertId,
   })
 }
