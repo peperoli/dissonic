@@ -1,5 +1,5 @@
 import { getCounts } from '@/lib/getCounts'
-import { Band, Genre, Country } from '@/types/types'
+import { Band } from '@/types/types'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import clsx from 'clsx'
 import { useState } from 'react'
@@ -52,8 +52,8 @@ export const ConcertStats = ({ bands, uniqueBands }: ConcertStatsProps) => {
       : bands.map(band => band.genres).flat(1)
   const countries =
     hasUniqueBands && !showAll
-      ? uniqueBands.filter(band => !!band.country).map(band => band.country as Country)
-      : bands.filter(band => !!band.country).map(band => band.country as Country)
+      ? uniqueBands.map(band => band.country).filter(country => !!country)
+      : bands.map(band => band.country).filter(country => !!country)
   const regionNames = new Intl.DisplayNames('de', { type: 'region' })
   const genreCounts = getCounts(genres).sort((a, b) => b.count - a.count)
   const countryCounts = getCounts(
@@ -62,7 +62,7 @@ export const ConcertStats = ({ bands, uniqueBands }: ConcertStatsProps) => {
       ...country,
     }))
   ).sort((a, b) => b.count - a.count)
-  
+
   return (
     <section className="rounded-lg bg-slate-800 p-4 md:p-6">
       <h2>Genres & Länder</h2>

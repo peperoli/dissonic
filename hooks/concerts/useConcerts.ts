@@ -53,7 +53,7 @@ const fetchConcerts = async (options?: ConcertFetchOptions) => {
       bands_seen:j_bands_seen(band_id, user_id)`,
       { count: 'estimated' }
     )
-    .in('id', filteredConcerts.map(id => id.id) as string[])
+    .in('id', filteredConcerts.map(id => id.id))
 
   if (options?.size) {
     filteredQuery = filteredQuery.range(0, options.size - 1)

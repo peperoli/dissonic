@@ -42,7 +42,7 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
   let query = supabase
     .from('bands')
     .select('*, country:countries(id, iso2), genres(*)', { count: 'estimated' })
-    .in('id', filteredBands?.map(item => item.id) as number[])
+    .in('id', filteredBands?.map(item => item.id))
 
   if (options?.page || options?.size) {
     query = query.range(from, to)

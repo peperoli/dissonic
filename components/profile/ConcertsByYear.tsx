@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Concert } from '../../types/types'
 import { BarChart } from '../BarChart'
 import { SegmentedControl } from '../controls/SegmentedControl'
 import { useBandsSeen } from '@/hooks/bands/useBandsSeen'
@@ -21,7 +20,7 @@ export const ConcertsByYear = ({ userId }: ConcertsByYearProps) => {
     return null
   }
   
-  const concerts = getUniqueObjects(bandsSeen.map(band => band.concert) as Concert[])
+  const concerts = getUniqueObjects(bandsSeen.map(band => band.concert))
   const start = Math.min(...concerts?.map(concert => parseInt(concert.date_start.slice(0, 4))))
   const end = Math.max(...concerts?.map(concert => parseInt(concert.date_start.slice(0, 4))))
   const years = Array.from({ length: end - start + 1 }, (_, i) => start + i)

@@ -73,6 +73,7 @@ export const Form = ({ close, isNew }: FormProps) => {
 
     if (!defaultLocationId) return
 
+    // @ts-expect-error
     setValue('location_id', defaultLocationId)
   }, [festivalRootId])
 
@@ -146,7 +147,7 @@ export const Form = ({ close, isNew }: FormProps) => {
               error={errors.date_end}
               type="date"
               label="Enddatum"
-              grouped='end'
+              grouped="end"
             />
           )}
         </div>

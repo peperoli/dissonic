@@ -116,17 +116,19 @@ export const LocationPage = ({
           <h2>Community</h2>
           <div className="flex flex-wrap gap-4">
             {locationProfiles
-              .sort((a, b) => b.count - a.count)
+              .sort((a, b) => (a.count && b.count ? b.count - a.count : 0))
               .map((item, index) => (
                 <Link
-                  href={`/users/${item.profile.username}`}
+                  href={`/users/${item.profile?.username}`}
                   className="group/user-item"
                   key={index}
                 >
-                  <UserItem
-                    user={item.profile}
-                    description={`${item.count} Konzert${item.count > 1 ? 'e' : ''}`}
-                  />
+                  {item.profile && (
+                    <UserItem
+                      user={item.profile}
+                      description={`${item.count} Konzert${item.count && item.count > 1 ? 'e' : ''}`}
+                    />
+                  )}
                 </Link>
               ))}
           </div>

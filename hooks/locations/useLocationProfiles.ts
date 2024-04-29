@@ -29,7 +29,7 @@ const fetchLocationProfiles = async (locationId: number) => {
         ?.profile,
       count: res.count,
     }))
-    .filter(item => item.profile && item.count) as { profile: Profile; count: number }[]
+    .filter(item => item.profile && item.count)
 
   return data
 }

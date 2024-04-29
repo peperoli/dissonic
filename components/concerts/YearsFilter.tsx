@@ -13,7 +13,7 @@ const YearsRangeSlider = ({ ...props }: YearsRangeSliderProps) => {
   const { data: concertDates, isPending } = useConcertDates()
   const concertYears = concertDates
     ?.map(item => item.date_start && new Date(item.date_start).getFullYear())
-    .filter(item => typeof item === 'number') as number[] | undefined
+    .filter(item => typeof item === 'number')
 
   if (!concertYears || concertYears.length === 0 || isPending) {
     return (

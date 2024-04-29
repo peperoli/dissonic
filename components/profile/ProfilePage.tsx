@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Button } from '../Button'
 import { ConcertsByYear } from './ConcertsByYear'
-import { Band, Location, Profile } from '../../types/types'
+import { Profile } from '../../types/types'
 import { useProfile } from '../../hooks/profiles/useProfile'
 import { useFriends } from '../../hooks/profiles/useFriends'
 import { useBandsSeen } from '../../hooks/bands/useBandsSeen'
@@ -91,7 +91,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
     item =>
       item.pending && (item.sender.id === session?.user.id || item.receiver.id === session?.user.id)
   )
-  const bands = bandsSeen?.map(item => item.band as Band) ?? []
+  const bands = bandsSeen?.map(item => item.band).filter(item => !!item) ?? []
   const uniqueBandsSeen = getUniqueObjects(bandsSeen?.map(item => item.band) ?? [])
   const concertsSeen = getUniqueObjects(bandsSeen?.map(item => item.concert) ?? [])
 
@@ -167,7 +167,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
               {bandsSeen && (
                 <TopGrid
                   headline="Top Bands"
-                  items={bandsSeen.filter(item => !!item.band).map(item => item.band) as Band[]}
+                  items={bandsSeen.map(item => item.band).filter(item => !!item)}
                   Item={BandItem}
                 />
               )}
@@ -203,11 +203,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
               {concertsSeen && (
                 <TopGrid
                   headline="Top Locations"
-                  items={
-                    concertsSeen
-                      .filter(item => !!item.location)
-                      .map(item => item.location) as Location[]
-                  }
+                  items={concertsSeen.map(item => item.location).filter(item => !!item)}
                   Item={LocationItem}
                 />
               )}
