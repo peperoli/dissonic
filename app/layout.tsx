@@ -4,7 +4,7 @@ import { Navigation } from '@/components/layout/Navigation'
 import { ModalProvider } from '@/components/shared/ModalProvider'
 import { TooltipProvider } from '@/components/shared/TooltipProvider'
 import { Metadata, Viewport } from 'next'
-import { Albert_Sans } from 'next/font/google'
+import { Albert_Sans, Fira_Code } from 'next/font/google'
 import { ReactNode, Suspense } from 'react'
 import { QueryProvider } from '../components/helpers/QueryProvider'
 import '../styles/globals.scss'
@@ -39,11 +39,18 @@ const albertSans = Albert_Sans({
   variable: '--font-albert-sans',
 })
 
+const firaCode = Fira_Code({
+  weight: '400',
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-fira-code',
+})
+
 export default async function RootLayout({ children }: { children: ReactNode }) {
   return (
     <QueryProvider>
       <TooltipProvider>
-        <html lang="de-CH" className={`${albertSans.variable}`}>
+        <html lang="de-CH" className={`${albertSans.variable} ${firaCode.variable}`}>
           <body className="flex min-h-screen flex-col bg-slate-850 text-white">
             <NavBar />
             <div className="md:flex">

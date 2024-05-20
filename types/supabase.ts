@@ -270,7 +270,21 @@ export type Database = {
             foreignKeyName: "friends_receiver_id_fkey"
             columns: ["receiver_id"]
             isOneToOne: false
+            referencedRelation: "profile_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "friends_receiver_id_fkey"
+            columns: ["receiver_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "friends_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profile_stats"
             referencedColumns: ["id"]
           },
           {
@@ -363,6 +377,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_j_bands_seen_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profile_stats"
             referencedColumns: ["id"]
           },
           {
@@ -515,6 +536,13 @@ export type Database = {
             foreignKeyName: "reactions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "profile_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -522,7 +550,25 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      profile_stats: {
+        Row: {
+          avatar_path: string | null
+          band_count: number | null
+          concert_count: number | null
+          created_at: string | null
+          id: string | null
+          username: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       gtrgm_compress: {

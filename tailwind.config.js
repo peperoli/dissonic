@@ -7,6 +7,7 @@ module.exports = {
   theme: {
     fontFamily: {
       sans: ['var(--font-albert-sans)'],
+      mono: ['var(--font-fira-code)'],
     },
     colors: {
       venom: {

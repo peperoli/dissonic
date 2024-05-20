@@ -9,7 +9,10 @@ const withPWA = require('next-pwa')({
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    remotePatterns: [{ protocol: 'https', hostname: 'i.scdn.co' }],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'i.scdn.co' },
+      { protocol: 'https', hostname: 'saehmgtoacwmofqbbaff.supabase.co' },
+    ],
   },
   swcMinify: true,
 }
