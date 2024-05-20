@@ -57,31 +57,31 @@ export type Database = {
       comments: {
         Row: {
           concert_id: string
-          content: Json | null
-          created_at: string | null
+          content: string | null
+          created_at: string
           edited_at: string | null
           id: number
           user_id: string
         }
         Insert: {
           concert_id: string
-          content?: Json | null
-          created_at?: string | null
+          content?: string | null
+          created_at?: string
           edited_at?: string | null
           id?: number
           user_id: string
         }
         Update: {
           concert_id?: string
-          content?: Json | null
-          created_at?: string | null
+          content?: string | null
+          created_at?: string
           edited_at?: string | null
           id?: number
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "public_comments_concert_id_fkey"
+            foreignKeyName: "comments_concert_id_fkey"
             columns: ["concert_id"]
             isOneToOne: false
             referencedRelation: "concerts"
@@ -352,17 +352,17 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "j_bands_seen_concert_id_fkey"
+            columns: ["concert_id"]
+            isOneToOne: false
+            referencedRelation: "concerts"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "j_bands_seen_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "public_j_bands_seen_concert_id_fkey"
-            columns: ["concert_id"]
-            isOneToOne: false
-            referencedRelation: "concerts"
             referencedColumns: ["id"]
           },
           {
@@ -399,7 +399,7 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "public_j_concert_bands_concert_id_fkey"
+            foreignKeyName: "j_concert_bands_concert_id_fkey"
             columns: ["concert_id"]
             isOneToOne: false
             referencedRelation: "concerts"

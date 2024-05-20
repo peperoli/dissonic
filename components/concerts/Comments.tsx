@@ -1,8 +1,6 @@
 import { Button } from '../Button'
 import { useEffect } from 'react'
-import dayjs from 'dayjs'
 import { Comment } from '../../types/types'
-import relativeTime from 'dayjs/plugin/relativeTime'
 import { useComments } from '../../hooks/concerts/useComments'
 import { useAddComment } from '../../hooks/concerts/useAddComment'
 import { CommentItem } from './Comment'
@@ -12,7 +10,6 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 import { TextArea } from '../forms/TextArea'
 import { useSession } from '../../hooks/auth/useSession'
 import { usePathname, useRouter } from 'next/navigation'
-dayjs.extend(relativeTime)
 
 export const Comments = () => {
   const { concert } = useConcertContext()

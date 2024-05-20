@@ -1,10 +1,8 @@
 import { Button } from '../Button'
 import { useState, useEffect } from 'react'
-import dayjs from 'dayjs'
 import { EditIcon, TrashIcon, UserIcon } from 'lucide-react'
 import Image from 'next/image'
 import { Comment } from '../../types/types'
-import relativeTime from 'dayjs/plugin/relativeTime'
 import { useAvatar } from '../../hooks/profiles/useAvatar'
 import { useEditComment } from '../../hooks/concerts/useEditComment'
 import { useQueryClient } from '@tanstack/react-query'
@@ -16,7 +14,7 @@ import { useProfile } from '../../hooks/profiles/useProfile'
 import { useSession } from '../../hooks/auth/useSession'
 import { parseAsInteger, parseAsStringLiteral, useQueryState } from 'nuqs'
 import { modalPaths } from '../shared/ModalProvider'
-dayjs.extend(relativeTime)
+import { getRelativeTime } from '@/lib/getRelativeTime'
 
 type EditCommentFormProps = {
   comment: Comment
@@ -31,11 +29,11 @@ const EditCommentForm = ({ comment, setEdit }: EditCommentFormProps) => {
     handleSubmit,
     formState: { dirtyFields },
     reset,
-  } = useForm({ defaultValues: { new_content: JSON.stringify(comment.content) } })
+  } = useForm({ defaultValues: { new_content: comment.content } })
   const { mutate, status } = useEditComment()
   const queryClient = useQueryClient()
 
-  const onSubmit: SubmitHandler<{ new_content: string }> = async formData => {
+  const onSubmit: SubmitHandler<{ new_content: string | null }> = async formData => {
     mutate({
       id: comment.id,
       content: formData.new_content,
@@ -93,7 +91,7 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
     'commentId',
     parseAsInteger.withOptions({ history: 'push' })
   )
-  const createdAt = comment.created_at && new Date(comment.created_at)
+  const createdAt = new Date(comment.created_at)
   const { data: avatar } = useAvatar(profile?.avatar_path)
   return (
     <div className="group flex gap-4">
@@ -114,21 +112,15 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
           {profile?.username}
           <span className="text-slate-300">
             {' • '}
-            {dayjs(createdAt).fromNow()}
+            {getRelativeTime(comment.edited_at || createdAt, 'de-CH')}
+            {comment.edited_at && ' bearbeitet'}
           </span>
         </div>
         <div className="relative flex gap-4 rounded-lg rounded-tl-none bg-slate-850 p-4 pb-6">
           {edit ? (
             <EditCommentForm comment={comment} setEdit={setEdit} />
           ) : (
-            <p className="whitespace-pre-line text-sm">
-              <>
-                {comment.content}
-                {comment.edited_at ? (
-                  <span className="block text-slate-300">(bearbeitet)</span>
-                ) : null}
-              </>
-            </p>
+            <p className="whitespace-pre-line break-words text-sm">{comment.content}</p>
           )}
           <div className="absolute -bottom-4 flex rounded-lg bg-slate-700">
             {comment.reactions && session && (
