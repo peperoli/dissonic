@@ -109,18 +109,18 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
         <header
           className={clsx(
             'relative overflow-hidden rounded-2xl',
-            concert.festival_root_id
+            concert.is_festival
               ? 'aspect-4/3 bg-purple md:aspect-2/1'
               : 'aspect-square bg-venom md:aspect-4/3'
           )}
         >
-          {!concert.festival_root_id && spotifyArtist?.images[0] && (
+          {!concert.is_festival && spotifyArtist?.images[0] && (
             <Image src={spotifyArtist.images[0].url} alt="" fill className="object-cover" />
           )}
           <div
             className={clsx(
               'absolute inset-0 bg-radial-gradient from-transparent to-slate-850',
-              !concert.festival_root_id && spotifyArtist?.images[0] && 'via-transparent'
+              !concert.is_festival && spotifyArtist?.images[0] && 'via-transparent'
             )}
           />
           <div className="relative grid size-full content-end justify-start p-4 md:p-6">
@@ -135,10 +135,18 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
             </div>
             {(concert.name || concert.is_festival) && (
               <div className="mb-2">
-                <Chip label={concert.name || 'Festival'} size="sm" color="blue" />
+                <Chip
+                  label={concert.is_festival ? 'Festival' : concert.name!}
+                  size="sm"
+                  color={concert.is_festival ? 'purple' : 'blue'}
+                />
               </div>
             )}
-            <h1 className="mb-2">{concert.bands?.[0]?.name}</h1>
+            <h1 className="mb-2">
+              {concert.festival_root
+                ? `${concert.festival_root?.name} ${new Date(concert.date_start).getFullYear()}`
+                : concert.bands?.[0]?.name}
+            </h1>
             <p className="h2 mb-0 flex items-center gap-3">
               <MapPin className="size-icon text-slate-300" />
               {concert.location?.name}, {concert.location?.city}
@@ -147,13 +155,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
         </header>
         <section className="rounded-lg bg-slate-800 p-4 md:p-6">
           <h2>Lineup</h2>
-          {concert.bands && (
-            <BandList
-              bands={concert.bands}
-              bandsSeen={concert.bands_seen?.filter(item => item.user_id === session?.user.id)}
-              concertId={concert.id}
-            />
-          )}
+          {concert.bands && <BandList concert={concert} />}
         </section>
         {concertProfiles && concertProfiles.length > 0 && (
           <section className="rounded-lg bg-slate-800 p-4 md:p-6">

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Band, BandSeen } from '../../types/types'
+import { BandSeen, Concert } from '../../types/types'
 import { useQueryClient } from '@tanstack/react-query'
 import { useAddBandsSeen } from '../../hooks/bands/useAddBandsSeen'
 import { useDeleteBandsSeen } from '../../hooks/bands/useDeleteBandsSeen'
@@ -13,12 +13,11 @@ import Cookies from 'js-cookie'
 import { Edit, Lightbulb, Plus, X } from 'lucide-react'
 
 type BandListProps = {
-  bands: Band[]
-  bandsSeen?: BandSeen[]
-  concertId: string
+  concert: Concert
 }
 
-export function BandList({ bands, bandsSeen, concertId }: BandListProps) {
+export function BandList({ concert }: BandListProps) {
+  const bandsSeen = concert.bands_seen?.filter(item => item.user_id === session?.user.id)
   const [editing, setEditing] = useState(false)
   const [selectedBandsSeen, setSelectedBandsSeen] = useState<BandSeen[]>(bandsSeen ?? [])
   const [hideBandsSeenHint, setHideBandsSeenHint] = useState(
@@ -50,7 +49,7 @@ export function BandList({ bands, bandsSeen, concertId }: BandListProps) {
   useEffect(() => {
     if (isSuccess) {
       setEditing(false)
-      queryClient.invalidateQueries({ queryKey: ['concert', concertId] })
+      queryClient.invalidateQueries({ queryKey: ['concert', concert.id] })
     }
   }, [addBandsSeen.status, deleteBandsSeen.status])
   return (
@@ -74,8 +73,7 @@ export function BandList({ bands, bandsSeen, concertId }: BandListProps) {
             </div>
           )}
           <div className="flex flex-wrap gap-2">
-            {bands &&
-              bands.map(band => (
+            {concert.bands?.map(band => (
                 <BandSeenToggle
                   key={band.id}
                   user={session?.user || null}
@@ -88,8 +86,7 @@ export function BandList({ bands, bandsSeen, concertId }: BandListProps) {
         </>
       ) : (
         <ul className="flex flex-wrap gap-x-2 gap-y-1">
-          {bands &&
-            bands.map((band, index) => (
+          {concert.bands?.map((band, index) => (
               <li role="presentation" className="flex gap-2" key={band.id}>
                 <Link
                   href={`/bands/${band.id}`}
@@ -100,14 +97,14 @@ export function BandList({ bands, bandsSeen, concertId }: BandListProps) {
                 >
                   {band.name}
                 </Link>
-                {index + 1 !== bands?.length ? (
+                {index + 1 !== concert.bands?.length ? (
                   <span className="text-slate-300">&bull;</span>
                 ) : null}
               </li>
             ))}
         </ul>
       )}
-      <div className="mt-6 flex gap-4">
+      <div className="mt-6 flex flex-wrap items-center gap-4">
         {editing ? (
           <>
             <Button
@@ -119,13 +116,19 @@ export function BandList({ bands, bandsSeen, concertId }: BandListProps) {
             <Button onClick={() => setEditing(false)} label="Abbrechen" />
           </>
         ) : (
-          <Button
-            onClick={session ? () => setEditing(true) : () => push(`/signup?redirect=${pathname}`)}
-            label="Ich war dabei!"
-            icon={hasBandsSeen ? <Edit className="size-icon" /> : <Plus className="size-icon" />}
-            appearance={hasBandsSeen ? 'secondary' : 'primary'}
-            size={hasBandsSeen ? 'small' : 'medium'}
-          />
+          <>
+            <Button
+              onClick={
+                session ? () => setEditing(true) : () => push(`/signup?redirect=${pathname}`)
+              }
+              label="Ich war dabei!"
+              icon={hasBandsSeen ? <Edit className="size-icon" /> : <Plus className="size-icon" />}
+              appearance={hasBandsSeen ? 'secondary' : 'primary'}
+              size={hasBandsSeen ? 'small' : 'medium'}
+              disabled={new Date(concert.date_start) > new Date()}
+            />
+            <p className="text-sm text-slate-300">Dieses Konzert liegt in der Zukunft.</p>
+          </>
         )}
       </div>
     </section>

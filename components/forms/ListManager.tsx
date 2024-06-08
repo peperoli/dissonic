@@ -9,7 +9,7 @@ import {
   XIcon,
 } from 'lucide-react'
 import Image from 'next/image'
-import { useState } from 'react'
+import { forwardRef, KeyboardEvent, useEffect, useRef, useState } from 'react'
 import { useSpotifyArtist } from '../../hooks/spotify/useSpotifyArtist'
 import { ReorderableListItem } from '../../types/types'
 import { Button } from '../Button'
@@ -128,57 +128,64 @@ const ListItem = ({
 
 type SearchResultProps = {
   band: ReorderableListItem
+  index: number
   selected: boolean
   addItem: () => void
+  removeItem: () => void
+  handleKeyNavigation: (event: KeyboardEvent<HTMLButtonElement>, index: number) => void
 }
 
-const SearchResult = ({ band, selected, addItem }: SearchResultProps) => {
-  const { data: spotifyArtist } = useSpotifyArtist(band.spotify_artist_id)
-  const regionNames = new Intl.DisplayNames('de', { type: 'region' })
-  return (
-    <button
-      onClick={addItem}
-      disabled={selected}
-      className={clsx(
-        'flex gap-4 rounded-lg p-2 text-left hover:bg-slate-700',
-        selected && 'pointer-events-none'
-      )}
-    >
-      <div className="relative grid h-11 w-11 flex-none place-content-center rounded-lg bg-slate-750">
-        {spotifyArtist?.images?.[2] ? (
-          <Image
-            src={spotifyArtist.images[2].url}
-            alt={band.name}
-            fill
-            sizes="150px"
-            className="rounded-lg object-cover"
-          />
+const SearchResult = forwardRef<HTMLButtonElement, SearchResultProps>(
+  ({ band, index, selected, addItem, removeItem, handleKeyNavigation }, ref) => {
+    const { data: spotifyArtist } = useSpotifyArtist(band.spotify_artist_id)
+    const regionNames = new Intl.DisplayNames('de', { type: 'region' })
+    return (
+      <button
+        ref={ref}
+        onClick={selected ? removeItem : addItem}
+        onKeyDown={e => handleKeyNavigation(e, index)}
+        aria-label={selected ? 'Eintrage entfernen' : 'Eintrag hinzufügen'}
+        className={clsx('flex gap-4 rounded-lg p-2 text-left hover:bg-slate-700')}
+      >
+        <div className="relative grid h-11 w-11 flex-none place-content-center rounded-lg bg-slate-750">
+          {spotifyArtist?.images?.[2] ? (
+            <Image
+              src={spotifyArtist.images[2].url}
+              alt={band.name}
+              fill
+              sizes="150px"
+              className="rounded-lg object-cover"
+            />
+          ) : (
+            <UserMusicIcon className="size-icon text-slate-300" />
+          )}
+        </div>
+        <div className="w-full">
+          {band.name}
+          {band.country?.iso2 && (
+            <div className="text-sm text-slate-300">{regionNames.of(band.country.iso2)}</div>
+          )}
+        </div>
+        {selected ? (
+          <div className="flex flex-none">
+            <div className="btn btn-icon btn-tertiary">
+              <XCircleIcon className="size-icon text-red" />
+            </div>
+            <div className="btn btn-icon">
+              <CheckIcon className="size-icon text-slate-300" />
+            </div>
+          </div>
         ) : (
-          <UserMusicIcon className="size-icon text-slate-300" />
+          <div className="btn btn-icon btn-tertiary flex-none">
+            <PlusCircleIcon className="size-icon text-venom" />
+          </div>
         )}
-      </div>
-      <div className="w-full">
-        {band.name}
-        {band.country?.iso2 && (
-          <div className="text-sm text-slate-300">{regionNames.of(band.country.iso2)}</div>
-        )}
-      </div>
-      {selected ? (
-        <div className="btn btn-icon">
-          <CheckIcon className="size-icon text-slate-300" />
-        </div>
-      ) : (
-        <div
-          onClick={addItem}
-          aria-label="Eintrag hinzufügen"
-          className="btn btn-icon btn-tertiary flex-none"
-        >
-          <PlusCircleIcon className="size-icon text-venom" />
-        </div>
-      )}
-    </button>
-  )
-}
+      </button>
+    )
+  }
+)
+
+SearchResult.displayName = 'SearchResult'
 
 type ListManagerProps = {
   searchResults: ReorderableListItem[]
@@ -200,10 +207,43 @@ export const ListManager = ({
   const [listItems, setListItems] = useState(initialListItems)
   const [selectedItemToReorder, setSelectedItemToReorder] = useState<number | null>(null)
   const [animationParent] = useAutoAnimate()
+  const searchRef = useRef<HTMLInputElement>(null)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const itemsRef = useRef<(HTMLButtonElement | null)[]>([])
+
+  useEffect(() => {
+    itemsRef.current = itemsRef.current.slice(0, listItems.length)
+  }, [listItems.length])
+
+  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.key === 'ArrowDown') {
+      // Prevent default to avoid scrolling
+      event.preventDefault()
+      const firsItem = itemsRef.current[0]
+      firsItem?.focus()
+    }
+  }
+
+  function handleKeyNavigation(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    if (event.key === 'ArrowUp' && index > 0) {
+      itemsRef.current[index - 1]?.focus()
+    } else if (event.key === 'ArrowDown' && index < searchResults.length - 1) {
+      itemsRef.current[index + 1]?.focus()
+    }
+  }
 
   function addItem(searchResult: ReorderableListItem) {
     setListItems([...listItems, { ...searchResult, index: listItems.length }])
     setSearch('')
+    searchRef.current?.focus()
+    setTimeout(() => {
+      const scrollHeight = scrollContainerRef.current?.scrollHeight
+      scrollContainerRef.current?.scrollTo({ top: scrollHeight })
+    }, 50)
+  }
+
+  function removeItem(id: number) {
+    setListItems(listItems.filter(item => item.id !== id))
   }
 
   function reorderItems(start: number, end: number) {
@@ -235,47 +275,15 @@ export const ListManager = ({
           className="flex-none"
         />
       </div>
-      <div className="h-full overflow-auto">
-        {search === '' ? (
-          <ul ref={animationParent} className="my-2 grid content-start py-4">
-            {listItems.map((listItem, index) => (
-              <ListItem
-                key={listItem.id}
-                band={listItem}
-                index={index}
-                removeItem={() => setListItems(listItems.filter(item => item.id !== listItem.id))}
-                selectedItemToReorder={selectedItemToReorder}
-                selectItemToReorder={() => setSelectedItemToReorder(index)}
-                reorderItems={reorderItems}
-              />
-            ))}
-          </ul>
-        ) : (
-          <div className="grid content-start py-6">
-            {searchResults.length > 0 ? (
-              searchResults.map(searchResult => (
-                <SearchResult
-                  key={searchResult.id}
-                  band={searchResult}
-                  selected={!!listItems.find(item => searchResult.id === item.id)}
-                  addItem={() => addItem(searchResult)}
-                />
-              ))
-            ) : (
-              <div className="p-4 text-center text-sm text-slate-300">
-                {fetchStatus === 'fetching' ? 'Laden ...' : 'Keine Ergebnisse gefunden.'}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-      <div className="mt-auto flex gap-4">
+      <div className="order-last mt-auto flex gap-4 md:order-none md:mt-4">
         <div className="relative flex w-full items-center">
           <SearchIcon className="pointer-events-none absolute ml-4 size-icon text-slate-300" />
           <input
+            ref={searchRef}
             type="search"
             value={search}
             onChange={e => setSearch(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="Bands hinzufügen"
             className="block w-full rounded-lg border border-slate-500 bg-slate-750 py-2 pl-12 pr-4"
           />
@@ -291,6 +299,44 @@ export const ListManager = ({
           )}
         </div>
         <Button onClick={() => onSave(listItems)} label="Fertig" appearance="primary" />
+      </div>
+      <div ref={scrollContainerRef} className="h-full overflow-auto">
+        {search === '' ? (
+          <ul ref={animationParent} className="my-2 grid content-start py-4">
+            {listItems.map((listItem, index) => (
+              <ListItem
+                key={listItem.id}
+                band={listItem}
+                index={index}
+                removeItem={() => removeItem(listItem.id)}
+                selectedItemToReorder={selectedItemToReorder}
+                selectItemToReorder={() => setSelectedItemToReorder(index)}
+                reorderItems={reorderItems}
+              />
+            ))}
+          </ul>
+        ) : (
+          <div className="grid content-start py-6">
+            {searchResults.length > 0 ? (
+              searchResults.map((searchResult, index) => (
+                <SearchResult
+                  key={searchResult.id}
+                  ref={el => (itemsRef.current[index] = el)}
+                  band={searchResult}
+                  index={index}
+                  selected={!!listItems.find(item => searchResult.id === item.id)}
+                  handleKeyNavigation={handleKeyNavigation}
+                  addItem={() => addItem(searchResult)}
+                  removeItem={() => removeItem(searchResult.id)}
+                />
+              ))
+            ) : (
+              <div className="p-4 text-center text-sm text-slate-300">
+                {fetchStatus === 'fetching' ? 'Laden ...' : 'Keine Ergebnisse gefunden.'}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

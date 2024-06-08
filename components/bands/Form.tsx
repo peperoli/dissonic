@@ -15,6 +15,7 @@ import { ChevronDown } from 'lucide-react'
 import { Disclosure } from '@headlessui/react'
 import { Fragment } from 'react'
 import clsx from 'clsx'
+import { normalizeString } from '@/lib/normalizeString'
 
 interface FormProps {
   isNew?: boolean
@@ -38,7 +39,7 @@ export const Form = ({ isNew, close }: FormProps) => {
   const addBand = useAddBand()
   const editBand = useEditBand()
   const { status } = isNew ? addBand : editBand
-  const regExp = new RegExp(watch('name'), 'i')
+  const regExp = new RegExp(normalizeString(watch('name')), 'i')
   const similarBands =
     bands?.data.filter(item =>
       item.name
