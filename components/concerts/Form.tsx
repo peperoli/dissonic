@@ -47,7 +47,9 @@ export const Form = ({ close, isNew }: FormProps) => {
   const { data: concerts } = useConcerts()
   const { data: locations } = useLocations()
   const isFestival = watch('is_festival')
-  const { data: festivalRoots } = useFestivalRoots(isFestival)
+  const { data: festivalRoots } = useFestivalRoots(isFestival, {
+    sort: { sort_by: 'name', sort_asc: true },
+  })
   const festivalRootId = watch('festival_root_id')
 
   const similarConcerts = concerts?.data

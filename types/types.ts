@@ -1,11 +1,11 @@
 import { Tables, TablesInsert, TablesUpdate } from './supabase'
 
-export interface ExtendedRes<TData> {
+export type ExtendedRes<TData> = {
   data: TData
   count: number | null
 }
 
-export interface ConcertFetchOptions {
+export type ConcertFetchOptions = {
   bands?: number[] | null
   locations?: number[] | null
   years?: number[] | null
@@ -22,6 +22,11 @@ export type BandFetchOptions = {
   search?: string
   size?: number
   page?: number
+}
+
+export type FestivalRootFetchOptions = {
+  ids?: number[] | null
+  sort?: { sort_by: 'name'; sort_asc: boolean }
 }
 
 export type LocationFetchOptions = {

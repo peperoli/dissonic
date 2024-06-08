@@ -9,7 +9,9 @@ type FestivalRootSelectProps = {
 }
 
 const FestivalRootSelect = ({ ...props }: FestivalRootSelectProps) => {
-  const { data: festivalRoots, isPending } = useFestivalRoots()
+  const { data: festivalRoots, isPending } = useFestivalRoots(true, {
+    sort: { sort_by: 'name', sort_asc: true },
+  })
   return (
     <Select
       name="festivalRoot"
@@ -27,7 +29,10 @@ type FestivalRootFilterProps = {
   onSubmit: (value: number[]) => void
 }
 
-export const FestivalRootFilter = ({ values: submittedValues, onSubmit }: FestivalRootFilterProps) => {
+export const FestivalRootFilter = ({
+  values: submittedValues,
+  onSubmit,
+}: FestivalRootFilterProps) => {
   const { data: festivalRoots } = useFestivalRoots(null, { ids: submittedValues })
   const [selectedIds, setSelectedIds] = useState<number[]>(submittedValues ?? [])
 
