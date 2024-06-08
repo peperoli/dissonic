@@ -21,10 +21,11 @@ const NavLink = ({ link, name }: NavLinkProps) => {
 
 export function Navigation() {
 	return (
-		<nav className="sticky flex md:flex-col top-0 md:top-auto md:w-48 flex-none -ml-4 px-4 md:p-8 bg-slate-850 z-20 md:z-0">
+		<nav className="sticky flex md:flex-col top-0 md:top-auto md:w-48 flex-none -ml-4 px-4 md:p-8 bg-slate-850 z-20 md:z-0 overflow-auto">
 			<NavLink link="/" name="Konzerte" />
 			<NavLink link="/bands" name="Bands" />
 			<NavLink link="/locations" name="Locations" />
+			<NavLink link="/users" name="Fans" />
 		</nav>
 	)
 }

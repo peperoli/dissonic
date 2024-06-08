@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 import { ProfileStat } from 'app/users/page'
 import { getRelativeTime } from '@/lib/getRelativeTime'
+import { UserIcon } from 'lucide-react'
 
 function fetchAvatar(avatarPath: string | null) {
   if (!avatarPath) {
@@ -25,13 +26,11 @@ export const UserItem = ({ profileStat, index }: UserItemProps) => {
   const avatar = fetchAvatar(profileStat.avatar_path)
   return (
     <Link href={`/users/${profileStat.username}`} className="block">
-      <div className="relative grid aspect-square place-content-center rounded-full bg-slate-750">
+      <div className="relative grid aspect-square place-content-center rounded-full bg-blue">
         {avatar ? (
           <Image src={avatar} alt="" fill className="rounded-full object-cover" />
         ) : (
-          <div className="text-4xl md:text-5xl font-bold text-slate-300">
-            {profileStat.username?.[0].toUpperCase()}
-          </div>
+          <UserIcon className="size-12 md:size-16 text-slate-850" />
         )}
         <div className="absolute right-1 top-1 grid size-6 place-content-center rounded-full bg-slate-850 text-sm md:right-2 md:top-2">
           {index + 1}
