@@ -17,13 +17,13 @@ type BandListProps = {
 }
 
 export function BandList({ concert }: BandListProps) {
+  const { data: session } = useSession()
   const bandsSeen = concert.bands_seen?.filter(item => item.user_id === session?.user.id)
   const [editing, setEditing] = useState(false)
   const [selectedBandsSeen, setSelectedBandsSeen] = useState<BandSeen[]>(bandsSeen ?? [])
   const [hideBandsSeenHint, setHideBandsSeenHint] = useState(
     Cookies.get('hideBandsSeenHint') ?? null
   )
-  const { data: session } = useSession()
   const addBandsSeen = useAddBandsSeen()
   const deleteBandsSeen = useDeleteBandsSeen()
   const isPending = addBandsSeen.isPending || deleteBandsSeen.isPending
