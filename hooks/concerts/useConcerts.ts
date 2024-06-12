@@ -50,6 +50,7 @@ const fetchConcerts = async (options?: ConcertFetchOptions) => {
       festival_root:festival_roots(name),
       location:locations(*),
       bands:j_concert_bands(*, ...bands(*)),
+      bands_count:j_concert_bands(count),
       bands_seen:j_bands_seen(band_id, user_id)`,
       { count: 'estimated' }
     )
@@ -78,6 +79,7 @@ export const useConcerts = (
   options?: ConcertFetchOptions
 ) => {
   return useQuery({
+    enabled: false,
     queryKey: ['concerts', JSON.stringify(options)],
     queryFn: () => fetchConcerts(options),
     placeholderData: previousData => keepPreviousData(previousData || initialConcerts),

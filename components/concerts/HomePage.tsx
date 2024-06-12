@@ -52,7 +52,7 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
   const selectedUserId = user && profile?.id
   const [view, setView] = useState(Cookies.get('view') ?? 'global')
   const { data: friends } = useFriends({ profileId: session?.user?.id, pending: false })
-  const sortBy = ['date_start'] as const
+  const sortBy = ['date_start', 'bands_count'] as const
   const [sort, setSort] = useQueryStates({
     sort_by: parseAsStringLiteral(sortBy).withDefault('date_start'),
     sort_asc: parseAsBoolean.withDefault(false),
@@ -71,7 +71,7 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
       ]
   }
 
-  const { data: concerts, isFetching } = useConcerts(initialConcerts, {
+  const { data: concerts, isFetching, error } = useConcerts(initialConcerts, {
     bands: selectedBands,
     locations: selectedLocations,
     years: selectedYears,
@@ -80,12 +80,15 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
     sort,
     size,
   })
+  console.log(error)
   const { push } = useRouter()
   const pathname = usePathname()
   const queryStateString = window.location.search
   const sortItems = [
     { id: 0, value: 'date_start,false', name: 'Neuste' },
     { id: 1, value: 'date_start,true', name: 'Älteste' },
+    { id: 2, value: 'bands_count,true', name: 'Meiste Bands' },
+    { id: 3, value: 'bands_count,false', name: 'Wenigste Bands' },
   ]
   const isDesktop = useMediaQuery('(min-width: 768px)')
 

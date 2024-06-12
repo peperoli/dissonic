@@ -8,14 +8,11 @@ const fetchData = async () => {
   const supabase = createClient(cookieStore)
 
   const { data, count, error } = await supabase
-    .from('concerts')
+    .from('concerts_full')
     .select(
-      `*,
-      location:locations(*),
-      bands:j_concert_bands(*, ...bands(*, genres(*))),
-      bands_seen:j_bands_seen(band_id, user_id)`,
+      `*, bands:j_concert_bands(*, ...bands(*, genres(*)))`,
       { count: 'estimated' }
-    )
+    ) 
     .range(0, 24)
     .order('date_start', { ascending: false })
     .order('item_index', { referencedTable: 'j_concert_bands', ascending: true })
@@ -28,7 +25,26 @@ const fetchData = async () => {
   return { data, count }
 }
 
+async function fetchConcerts() {
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data, count, error } = await supabase
+    .from('concerts_full')
+    .select('*, bands:j_concert_bands(*, ...bands(*, genres(*)))', { count: 'estimated' })
+    .order('item_index', { referencedTable: 'j_concert_bands', ascending: true })
+    .order('bands_count', { ascending: false })
+
+  if (error) {
+    console.log(error)
+  }
+
+  return { data }
+}
+
 export default async function Page() {
   const concerts = await fetchData()
-  return <HomePage concerts={concerts} />
+  const data = await fetchConcerts()
+  return <HomePage concerts={data} />
+  return <pre>{JSON.stringify(data, null, 2)}</pre>
 }

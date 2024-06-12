@@ -11,7 +11,7 @@ export type ConcertFetchOptions = {
   years?: number[] | null
   festivalRoots?: number[] | null
   bandsSeenUsers?: string[] | null
-  sort?: { sort_by: 'date_start'; sort_asc: boolean }
+  sort?: { sort_by: 'date_start' | 'bands_count'; sort_asc: boolean }
   size?: number
 }
 

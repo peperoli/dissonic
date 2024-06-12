@@ -36,6 +36,7 @@ export function BandList({ concert }: BandListProps) {
   const selectedBandsSeenIds = selectedBandsSeen.map(bandSeen => bandSeen.band_id)
   const bandsToAdd = selectedBandsSeen.filter(item => !bandsSeenIds?.includes(item.band_id))
   const bandsToDelete = bandsSeen?.filter(item => !selectedBandsSeenIds.includes(item.band_id))
+  const isFutureConcert = new Date(concert.date_start) > new Date()
 
   async function updateBandsSeen() {
     addBandsSeen.mutate(bandsToAdd)
@@ -74,34 +75,34 @@ export function BandList({ concert }: BandListProps) {
           )}
           <div className="flex flex-wrap gap-2">
             {concert.bands?.map(band => (
-                <BandSeenToggle
-                  key={band.id}
-                  user={session?.user || null}
-                  band={band}
-                  selectedBandsSeen={selectedBandsSeen}
-                  setSelectedBandsSeen={setSelectedBandsSeen}
-                />
-              ))}
+              <BandSeenToggle
+                key={band.id}
+                user={session?.user || null}
+                band={band}
+                selectedBandsSeen={selectedBandsSeen}
+                setSelectedBandsSeen={setSelectedBandsSeen}
+              />
+            ))}
           </div>
         </>
       ) : (
         <ul className="flex flex-wrap gap-x-2 gap-y-1">
           {concert.bands?.map((band, index) => (
-              <li role="presentation" className="flex gap-2" key={band.id}>
-                <Link
-                  href={`/bands/${band.id}`}
-                  className={clsx(
-                    'font-bold hover:underline',
-                    bandsSeen?.find(bandSeen => band.id === bandSeen.band_id) && 'text-venom'
-                  )}
-                >
-                  {band.name}
-                </Link>
-                {index + 1 !== concert.bands?.length ? (
-                  <span className="text-slate-300">&bull;</span>
-                ) : null}
-              </li>
-            ))}
+            <li role="presentation" className="flex gap-2" key={band.id}>
+              <Link
+                href={`/bands/${band.id}`}
+                className={clsx(
+                  'font-bold hover:underline',
+                  bandsSeen?.find(bandSeen => band.id === bandSeen.band_id) && 'text-venom'
+                )}
+              >
+                {band.name}
+              </Link>
+              {index + 1 !== concert.bands?.length ? (
+                <span className="text-slate-300">&bull;</span>
+              ) : null}
+            </li>
+          ))}
         </ul>
       )}
       <div className="mt-6 flex flex-wrap items-center gap-4">
@@ -125,9 +126,11 @@ export function BandList({ concert }: BandListProps) {
               icon={hasBandsSeen ? <Edit className="size-icon" /> : <Plus className="size-icon" />}
               appearance={hasBandsSeen ? 'secondary' : 'primary'}
               size={hasBandsSeen ? 'small' : 'medium'}
-              disabled={new Date(concert.date_start) > new Date()}
+              disabled={isFutureConcert}
             />
-            <p className="text-sm text-slate-300">Dieses Konzert liegt in der Zukunft.</p>
+            {isFutureConcert && (
+              <p className="text-sm text-slate-300">Dieses Konzert liegt in der Zukunft.</p>
+            )}
           </>
         )}
       </div>
