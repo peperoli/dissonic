@@ -52,7 +52,7 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
   const selectedUserId = user && profile?.id
   const [view, setView] = useState(Cookies.get('view') ?? 'global')
   const { data: friends } = useFriends({ profileId: session?.user?.id, pending: false })
-  const sortBy = ['date_start'] as const
+  const sortBy = ['date_start', 'bands_count'] as const
   const [sort, setSort] = useQueryStates({
     sort_by: parseAsStringLiteral(sortBy).withDefault('date_start'),
     sort_asc: parseAsBoolean.withDefault(false),
@@ -86,6 +86,8 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
   const sortItems = [
     { id: 0, value: 'date_start,false', name: 'Neuste' },
     { id: 1, value: 'date_start,true', name: 'Älteste' },
+    { id: 2, value: 'bands_count,false', name: 'Meiste Bands' },
+    { id: 3, value: 'bands_count,true', name: 'Wenigste Bands' },
   ]
   const isDesktop = useMediaQuery('(min-width: 768px)')
 

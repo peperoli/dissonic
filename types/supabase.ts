@@ -87,6 +87,13 @@ export type Database = {
             referencedRelation: "concerts"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "comments_concert_id_fkey"
+            columns: ["concert_id"]
+            isOneToOne: false
+            referencedRelation: "concerts_full"
+            referencedColumns: ["id"]
+          },
         ]
       }
       concerts: {
@@ -373,6 +380,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "j_bands_seen_concert_id_fkey"
+            columns: ["concert_id"]
+            isOneToOne: false
+            referencedRelation: "concerts_full"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "j_bands_seen_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -424,6 +438,13 @@ export type Database = {
             columns: ["concert_id"]
             isOneToOne: false
             referencedRelation: "concerts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "j_concert_bands_concert_id_fkey"
+            columns: ["concert_id"]
+            isOneToOne: false
+            referencedRelation: "concerts_full"
             referencedColumns: ["id"]
           },
         ]
@@ -550,6 +571,54 @@ export type Database = {
       }
     }
     Views: {
+      concerts_full: {
+        Row: {
+          bands: Database["public"]["Tables"]["bands"]["Row"][] | null
+          bands_count: number | null
+          bands_seen:
+            | Database["public"]["Tables"]["j_bands_seen"]["Row"][]
+            | null
+          concert_bands:
+            | Database["public"]["Tables"]["j_concert_bands"]["Row"][]
+            | null
+          created_at: string | null
+          creator_id: string | null
+          date_end: string | null
+          date_start: string | null
+          festival_root:
+            | Database["public"]["Tables"]["festival_roots"]["Row"]
+            | null
+          festival_root_id: number | null
+          id: string | null
+          is_festival: boolean | null
+          location: Database["public"]["Tables"]["locations"]["Row"] | null
+          location_id: number | null
+          name: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "concerts_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_concerts_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_concerts_festival_root_id_fkey"
+            columns: ["festival_root_id"]
+            isOneToOne: false
+            referencedRelation: "festival_roots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profile_stats: {
         Row: {
           avatar_path: string | null
