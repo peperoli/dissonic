@@ -108,10 +108,8 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
         </div>
         <header
           className={clsx(
-            'relative overflow-hidden rounded-2xl',
-            concert.is_festival
-              ? 'aspect-4/3 bg-purple md:aspect-2/1'
-              : 'aspect-square bg-venom md:aspect-4/3'
+            'relative aspect-square overflow-hidden rounded-2xl',
+            concert.is_festival ? 'bg-purple md:aspect-2/1' : 'bg-venom md:aspect-4/3'
           )}
         >
           {!concert.is_festival && spotifyArtist?.images[0] && (
