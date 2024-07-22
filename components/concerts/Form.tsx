@@ -67,7 +67,7 @@ export const Form = ({ close, isNew }: FormProps) => {
   }, [status])
 
   useEffect(() => {
-    if (!festivalRootId) return
+    if (!festivalRootId || !isNew) return
 
     const defaultLocationId = festivalRoots?.find(
       item => item.id === festivalRootId
