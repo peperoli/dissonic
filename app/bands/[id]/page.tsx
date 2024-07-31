@@ -18,7 +18,12 @@ async function fetchData(params: { id: string }) {
 
   const { data, error } = await supabase
     .from('bands')
-    .select('*, country:countries(id, iso2, name), genres(*)')
+    .select(
+      `*,
+      country:countries(id, iso2, name),
+      genres(*),
+      creator:profiles!bands_creator_id_fkey(*)`
+    )
     .eq('id', params.id)
     .single()
 

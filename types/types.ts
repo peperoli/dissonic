@@ -41,6 +41,7 @@ export type Concert = Tables<'concerts'> & {
   location?: Location | null
   bands?: Band[]
   bands_seen?: BandSeen[]
+  creator?: { username: string } | null
 }
 
 export type AddConcert = TablesInsert<'concerts'> & {
@@ -70,6 +71,7 @@ export type Band = Tables<'bands'> & {
   genres: Genre[]
   concerts?: Concert[]
   item_index?: number | null
+  creator?: { username: string } | null
 }
 
 export type AddBand = TablesInsert<'bands'> & {
@@ -89,6 +91,7 @@ export type Genre = Tables<'genres'>
 
 export type Location = Tables<'locations'> & {
   country?: Country | null
+  creator?: { username: string } | null
 }
 
 export type AddLocation = TablesInsert<'locations'>

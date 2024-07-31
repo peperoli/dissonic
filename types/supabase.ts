@@ -46,6 +46,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "bands_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profile_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bands_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "public_bands_creator_id_fkey"
             columns: ["creator_id"]
             isOneToOne: false
@@ -98,7 +112,7 @@ export type Database = {
       }
       concerts: {
         Row: {
-          created_at: string | null
+          created_at: string
           creator_id: string | null
           date_end: string | null
           date_start: string
@@ -109,7 +123,7 @@ export type Database = {
           name: string | null
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           creator_id?: string | null
           date_end?: string | null
           date_start: string
@@ -120,7 +134,7 @@ export type Database = {
           name?: string | null
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           creator_id?: string | null
           date_end?: string | null
           date_start?: string
@@ -131,6 +145,20 @@ export type Database = {
           name?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "concerts_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profile_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "concerts_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "concerts_location_id_fkey"
             columns: ["location_id"]
@@ -482,6 +510,20 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "locations_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profile_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "locations_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "public_locations_country_id_fkey"
             columns: ["country_id"]
             isOneToOne: false
@@ -596,6 +638,20 @@ export type Database = {
           name: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "concerts_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "concerts_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profile_stats"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "concerts_location_id_fkey"
             columns: ["location_id"]

@@ -23,7 +23,8 @@ async function fetchConcert(concertId: string) {
       `*,
       location:locations(*),
       bands:j_concert_bands(*, ...bands(*, country:countries(id, iso2), genres(*))),
-      bands_seen:j_bands_seen(*)`
+      bands_seen:j_bands_seen(*),
+      creator:profiles!concerts_creator_id_fkey(*)`
     )
     .eq('id', concertId)
     .order('item_index', { referencedTable: 'j_concert_bands', ascending: true })

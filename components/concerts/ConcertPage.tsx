@@ -22,6 +22,7 @@ import { parseAsStringLiteral, useQueryState } from 'nuqs'
 import { modalPaths } from '../shared/ModalProvider'
 import { useConcertProfiles } from '@/hooks/concerts/useConcertProfiles'
 import { Chip } from '../Chip'
+import { MetaInfo } from '../shared/MetaInfo'
 
 type ConcertUserItemProps = {
   concert: Concert
@@ -176,6 +177,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
         <div className="rounded-lg bg-slate-800 p-4 md:p-6">
           <Comments />
         </div>
+        <MetaInfo createdAt={concert.created_at} creator={concert.creator} />
       </main>
     </ConcertContext.Provider>
   )

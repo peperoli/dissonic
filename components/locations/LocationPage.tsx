@@ -13,6 +13,7 @@ import { ArrowLeft, Edit, MapPin, Trash } from 'lucide-react'
 import { UserItem } from '../shared/UserItem'
 import { useLocation } from '@/hooks/locations/useLocation'
 import { useLocationProfiles } from '@/hooks/locations/useLocationProfiles'
+import { MetaInfo } from '../shared/MetaInfo'
 
 type LocationPageProps = {
   location: Location
@@ -139,6 +140,9 @@ export const LocationPage = ({
           <h2 className="mb-0">Konzerte @ {location.name}</h2>
           {concerts?.data.map(item => <ConcertCard key={item.id} concert={item} nested />)}
         </section>
+      )}
+      {(location.created_at || location.creator_id) && (
+        <MetaInfo createdAt={location.created_at} creator={location.creator} />
       )}
     </main>
   )

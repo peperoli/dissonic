@@ -5,7 +5,13 @@ import supabase from '@/utils/supabase/client'
 const fetchBand = async (bandId: number): Promise<Band> => {
   const { data, error } = await supabase
     .from('bands')
-    .select('*, country:countries(id, iso2), genres(*), concerts!j_concert_bands(*)')
+    .select(
+      `*,
+      country:countries(id, iso2),
+      genres(*),
+      concerts!j_concert_bands(*),
+      creator:profiles!bands_creator_id_fkey(*)`
+    )
     .eq('id', bandId)
     .single()
 

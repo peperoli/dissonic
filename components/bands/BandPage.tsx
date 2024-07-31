@@ -17,6 +17,7 @@ import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 import { UserItem } from '../shared/UserItem'
 import { useBandProfiles } from '@/hooks/bands/useBandProfiles'
 import { UserMusicIcon } from '../layout/UserMusicIcon'
+import { MetaInfo } from '../shared/MetaInfo'
 
 type BandPageProps = {
   initialBand: Band
@@ -155,6 +156,9 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
           <h2 className="mb-0">Konzerte mit {band.name}</h2>
           {concerts?.data.map(item => <ConcertCard key={item.id} concert={item} nested />)}
         </section>
+      )}
+      {(band.created_at || band.creator_id) && (
+        <MetaInfo createdAt={band.created_at} creator={band.creator} />
       )}
     </main>
   )
