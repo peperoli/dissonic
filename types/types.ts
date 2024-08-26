@@ -40,7 +40,7 @@ export type Concert = Tables<'concerts'> & {
   festival_root?: { name: string } | null
   location?: Location | null
   bands?: Band[]
-  bands_seen?: BandSeen[]
+  bands_seen?: (BandSeen | undefined)[]
   creator?: { username: string } | null
 }
 

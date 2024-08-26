@@ -19,9 +19,9 @@ interface ConcertCardProps {
 export const ConcertCard = ({ concert, nested }: ConcertCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const { data: session } = useSession()
-  const fanIds = new Set(concert?.bands_seen?.map(item => item.user_id))
+  const fanIds = new Set(concert?.bands_seen?.map(item => item?.user_id ?? ''))
   const { data: profiles } = useProfiles({ ids: [...fanIds] }, fanIds.size > 0)
-  const bandsSeen = concert.bands_seen?.filter(item => item.user_id === session?.user.id)
+  const bandsSeen = concert.bands_seen?.filter(item => item?.user_id === session?.user.id)
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const router = useRouter()
 
@@ -79,7 +79,7 @@ export const ConcertCard = ({ concert, nested }: ConcertCardProps) => {
                 onClick={event => event.stopPropagation()}
                 className={clsx(
                   'font-bold',
-                  bandsSeen?.find(bandSeen => band.id === bandSeen.band_id) && 'text-venom'
+                  bandsSeen?.find(bandSeen => band.id === bandSeen?.band_id) && 'text-venom'
                 )}
               >
                 {band.name}

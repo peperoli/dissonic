@@ -31,8 +31,9 @@ type ConcertUserItemProps = {
 }
 
 const ConcertUserItem = ({ concert, user, count }: ConcertUserItemProps) => {
+  const bandsSeen = concert.bands_seen?.filter(item => typeof item !== 'undefined')
   const { data: bands } = useBands(undefined, {
-    ids: concert.bands_seen?.filter(item => item.user_id === user.id).map(item => item.band_id),
+    ids: bandsSeen?.filter(item => item.user_id === user.id).map(item => item.band_id),
   })
   return (
     <Tooltip.Root>

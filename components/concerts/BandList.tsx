@@ -18,7 +18,7 @@ type BandListProps = {
 
 export function BandList({ concert }: BandListProps) {
   const { data: session } = useSession()
-  const bandsSeen = concert.bands_seen?.filter(item => item.user_id === session?.user.id)
+  const bandsSeen = concert.bands_seen?.filter(item => item?.user_id === session?.user.id).filter(item => typeof item !== 'undefined')
   const [editing, setEditing] = useState(false)
   const [selectedBandsSeen, setSelectedBandsSeen] = useState<BandSeen[]>(bandsSeen ?? [])
   const [hideBandsSeenHint, setHideBandsSeenHint] = useState(
@@ -32,10 +32,10 @@ export function BandList({ concert }: BandListProps) {
   const { push } = useRouter()
   const pathname = usePathname()
   const hasBandsSeen = bandsSeen && bandsSeen.length > 0
-  const bandsSeenIds = bandsSeen?.map(bandSeen => bandSeen.band_id)
+  const bandsSeenIds = bandsSeen?.map(bandSeen => bandSeen?.band_id)
   const selectedBandsSeenIds = selectedBandsSeen.map(bandSeen => bandSeen.band_id)
   const bandsToAdd = selectedBandsSeen.filter(item => !bandsSeenIds?.includes(item.band_id))
-  const bandsToDelete = bandsSeen?.filter(item => !selectedBandsSeenIds.includes(item.band_id))
+  const bandsToDelete = bandsSeen?.filter(item => !selectedBandsSeenIds.includes(item?.band_id ?? 0))
   const isFutureConcert = new Date(concert.date_start) > new Date()
 
   async function updateBandsSeen() {
@@ -93,7 +93,7 @@ export function BandList({ concert }: BandListProps) {
                 href={`/bands/${band.id}`}
                 className={clsx(
                   'font-bold hover:underline',
-                  bandsSeen?.find(bandSeen => band.id === bandSeen.band_id) && 'text-venom'
+                  bandsSeen?.find(bandSeen => band.id === bandSeen?.band_id) && 'text-venom'
                 )}
               >
                 {band.name}

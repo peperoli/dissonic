@@ -82,7 +82,11 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
   })
   const { push } = useRouter()
   const pathname = usePathname()
-  const queryStateString = window.location.search
+  let queryStateString = null
+
+  if (typeof window !== 'undefined') {
+    queryStateString = window.location.search
+  }
   const sortItems = [
     { id: 0, value: 'date_start,false', name: 'Neuste' },
     { id: 1, value: 'date_start,true', name: 'Älteste' },
@@ -92,7 +96,9 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
   const isDesktop = useMediaQuery('(min-width: 768px)')
 
   useEffect(() => {
-    Cookies.set('concertQueryState', queryStateString, { sameSite: 'strict' })
+    if (queryStateString) {
+      Cookies.set('concertQueryState', queryStateString, { sameSite: 'strict' })
+    }
   }, [queryStateString])
 
   function handleView(value: string) {
