@@ -11,7 +11,7 @@ import { LocationFilter } from './LocationFilter'
 import { YearsFilter } from './YearsFilter'
 import { FestivalRootFilter } from './FestivalRootFilter'
 import Cookies from 'js-cookie'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
 import { SegmentedControl } from '../controls/SegmentedControl'
 import { useProfile } from '../../hooks/profiles/useProfile'
@@ -82,11 +82,8 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
   })
   const { push } = useRouter()
   const pathname = usePathname()
-  let queryStateString = null
-
-  if (typeof window !== 'undefined') {
-    queryStateString = window.location.search
-  }
+  const searchParams = useSearchParams()
+  const queryStateString = searchParams.toString()
   const sortItems = [
     { id: 0, value: 'date_start,false', name: 'Neuste' },
     { id: 1, value: 'date_start,true', name: 'Älteste' },
@@ -97,7 +94,7 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
 
   useEffect(() => {
     if (queryStateString) {
-      Cookies.set('concertQueryState', queryStateString, { sameSite: 'strict' })
+      Cookies.set('concertQueryState', '?' + queryStateString, { sameSite: 'strict' })
     }
   }, [queryStateString])
 

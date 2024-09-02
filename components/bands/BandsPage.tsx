@@ -9,7 +9,7 @@ import { Pagination } from '../layout/Pagination'
 import { Band, ExtendedRes } from '../../types/types'
 import { useBands } from '../../hooks/bands/useBands'
 import { useDebounce } from '../../hooks/helpers/useDebounce'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
 import { StatusBanner } from '../forms/StatusBanner'
 import { CountryFilter } from './CountryFilter'
@@ -54,6 +54,8 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
   )
   const { push } = useRouter()
   const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const queryStateString = searchParams.toString()
 
   useEffect(() => {
     if (selectedCountries || selectedGenres || query) {
@@ -67,9 +69,8 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
 
   const isDesktop = useMediaQuery('(min-width: 768px)')
 
-  const queryStateString = window.location.search
   useEffect(() => {
-    Cookies.set('bandQueryState', queryStateString, { sameSite: 'strict' })
+    Cookies.set('bandQueryState', '?' + queryStateString, { sameSite: 'strict' })
   }, [queryStateString])
 
   if (!bands) {
