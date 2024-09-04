@@ -321,6 +321,7 @@ export const ListManager = ({
               searchResults.map((searchResult, index) => (
                 <SearchResult
                   key={searchResult.id}
+                  // @ts-ignore
                   ref={el => (itemsRef.current[index] = el)}
                   band={searchResult}
                   index={index}
