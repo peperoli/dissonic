@@ -52,13 +52,7 @@ export const Form = ({ close, isNew }: FormProps) => {
         placeholder="Hallenstadion"
       />
       <div className="grid grid-cols-3">
-        <TextField
-          {...register('zip_code', { required: true })}
-          error={errors.zip_code}
-          label="PLZ"
-          placeholder="3000"
-          grouped="start"
-        />
+        <TextField {...register('zip_code')} label="PLZ" placeholder="3000" grouped="start" />
         <div className="col-span-2">
           <TextField
             {...register('city', { required: true })}

@@ -31,7 +31,7 @@ export const FestivalRootForm = ({ close }: FestivalRootFormProps) => {
   }, [status])
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6">
-      <h2>Festival-Stamm hinzufügen</h2>
+      <h2>Festival-Serie hinzufügen</h2>
       <TextField
         {...register('name', { required: true })}
         error={formState.errors.name}
@@ -45,7 +45,7 @@ export const FestivalRootForm = ({ close }: FestivalRootFormProps) => {
         render={({ field: { value = null, onChange } }) => (
           <SelectField
             name="default_location_id"
-            items={locations?.data}
+            items={locations?.data.map(item => ({ id: item.id, name: `${item.name}, ${item.city}` }))}
             value={value}
             onValueChange={onChange}
             error={formState.errors.default_location_id}

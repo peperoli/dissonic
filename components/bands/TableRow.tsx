@@ -21,6 +21,7 @@ export function BandTableRow({ band }: BandTableRowProps) {
           <Image
             src={picture.url}
             alt={band.name}
+            unoptimized
             fill
             sizes="150px"
             className="object-cover rounded-lg"
@@ -34,7 +35,7 @@ export function BandTableRow({ band }: BandTableRowProps) {
         {band.country && (
           <div className="md:w-1/3 text-slate-300">{regionNames.of(band.country.iso2)}</div>
         )}
-        <div className="hidden md:block md:w-1/3 text-slate-300 whitespace-nowrap text-ellipsis overflow-hidden">
+        <div className="hidden md:[display:-webkit-box] md:w-1/3 text-sm line-clamp-2 text-slate-300">
           {band.genres?.map(item => item.name).join(' • ')}
         </div>
       </div>

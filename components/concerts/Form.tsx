@@ -117,12 +117,12 @@ export const Form = ({ close, isNew }: FormProps) => {
                   value={value}
                   onValueChange={onChange}
                   error={errors.festival_root_id}
-                  label="Festival-Stamm"
+                  label="Festival-Serie"
                 />
               )}
             />
             <div className="flex items-center">
-              <p className="text-slate-300">Festival-Stamm fehlt?</p>
+              <p className="text-slate-300">Festival-Serie fehlt?</p>
               <Button
                 onClick={() => setIsOpen(true)}
                 label="Hinzufügen"
@@ -174,7 +174,7 @@ export const Form = ({ close, isNew }: FormProps) => {
               name="location_id"
               value={value}
               onValueChange={onChange}
-              items={locations?.data.map(item => ({ id: item.id, name: item.name }))}
+              items={locations?.data.map(item => ({ id: item.id, name: `${item.name}, ${item.city}` }))}
               error={errors.location_id}
               label="Location"
             />
