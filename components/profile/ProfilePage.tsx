@@ -14,8 +14,7 @@ import { useConcerts } from '../../hooks/concerts/useConcerts'
 import { ConcertCard } from '../concerts/ConcertCard'
 import { Score } from './Score'
 import { UserItem } from '../shared/UserItem'
-import { parseAsStringLiteral, useQueryState } from 'nuqs'
-import { modalPaths } from '../shared/ModalProvider'
+import { useModal } from '../shared/ModalProvider'
 import { FriendItem } from './FriendItem'
 import { getUniqueObjects } from '@/lib/getUniqueObjects'
 import { Edit, Settings, CheckCircleIcon, UserPlusIcon } from 'lucide-react'
@@ -74,10 +73,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
   const { data: friends } = useFriends({ profileId: initialProfile.id })
   const acceptedFriends = friends?.filter(item => !item.pending)
   const { data: bandsSeen } = useBandsSeen(initialProfile.id)
-  const [_, setModal] = useQueryState(
-    'modal',
-    parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
-  )
+  const [_, setModal] = useModal()
   const { data: session } = useSession()
   const isOwnProfile = session?.user.id === profile?.id
   const isFriend =

@@ -5,7 +5,7 @@ import { Table } from '../Table'
 import { SearchField } from '../forms/SearchField'
 import { Button } from '../Button'
 import useMediaQuery from '../../hooks/helpers/useMediaQuery'
-import { Pagination } from '../layout/Pagination'
+import { Pagination, usePagination } from '../layout/Pagination'
 import { Band, ExtendedRes } from '../../types/types'
 import { useBands } from '../../hooks/bands/useBands'
 import { useDebounce } from '../../hooks/helpers/useDebounce'
@@ -15,9 +15,9 @@ import { StatusBanner } from '../forms/StatusBanner'
 import { CountryFilter } from './CountryFilter'
 import { GenreFilter } from './GenreFilter'
 import { BandTableRow } from './TableRow'
-import { parseAsArrayOf, parseAsInteger, parseAsStringLiteral, useQueryState } from 'nuqs'
+import { parseAsArrayOf, parseAsInteger, useQueryState } from 'nuqs'
 import Cookies from 'js-cookie'
-import { modalPaths } from '../shared/ModalProvider'
+import { useModal } from '../shared/ModalProvider'
 import { Plus, RotateCcw } from 'lucide-react'
 
 interface BandsPageProps {
@@ -26,10 +26,7 @@ interface BandsPageProps {
 
 export const BandsPage = ({ initialBands }: BandsPageProps) => {
   const perPage = 25
-  const [currentPage, setCurrentPage] = useQueryState(
-    'page',
-    parseAsInteger.withDefault(1).withOptions({ scroll: true })
-  )
+  const [currentPage, setCurrentPage] = usePagination()
   const [selectedCountries, setSelectedCountries] = useQueryState(
     'countries',
     parseAsArrayOf(parseAsInteger)
@@ -48,10 +45,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
     size: perPage,
   })
   const { data: session } = useSession()
-  const [_, setModal] = useQueryState(
-    'modal',
-    parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
-  )
+  const [_, setModal] = useModal()
   const { push } = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -135,12 +129,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
         ) : (
           bands.data.map(band => <BandTableRow key={band.id} band={band} />)
         )}
-        <Pagination
-          entriesCount={bands?.count ?? 0}
-          currentPage={currentPage}
-          onChange={setCurrentPage}
-          perPage={perPage}
-        />
+        <Pagination entriesCount={bands?.count ?? 0} perPage={perPage} />
       </Table>
     </main>
   )

@@ -78,11 +78,12 @@ const modalComponents = {
   'delete-friend': RemoveFriendForm,
 } as const
 
+export function useModal() {
+  return useQueryState('modal', parseAsStringLiteral(modalPaths).withOptions({ history: 'push' }))
+}
+
 export const ModalProvider = () => {
-  const [modal, setModal] = useQueryState(
-    'modal',
-    parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
-  )
+  const [modal, setModal] = useModal()
   const close = () => setModal(null)
   const ModalComponent = modal ? modalComponents[modal] : null
 

@@ -12,8 +12,8 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { TextArea } from '../forms/TextArea'
 import { useProfile } from '../../hooks/profiles/useProfile'
 import { useSession } from '../../hooks/auth/useSession'
-import { parseAsInteger, parseAsStringLiteral, useQueryState } from 'nuqs'
-import { modalPaths } from '../shared/ModalProvider'
+import { parseAsInteger, useQueryState } from 'nuqs'
+import { useModal } from '../shared/ModalProvider'
 import { getRelativeTime } from '@/lib/getRelativeTime'
 
 type EditCommentFormProps = {
@@ -83,10 +83,7 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
   const { data: session } = useSession()
   const { data: profile } = useProfile(comment.user_id)
   const [edit, setEdit] = useState(false)
-  const [_, setModal] = useQueryState(
-    'modal',
-    parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
-  )
+  const [_, setModal] = useModal()
   const [__, setCommentId] = useQueryState(
     'commentId',
     parseAsInteger.withOptions({ history: 'push' })

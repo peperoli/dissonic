@@ -18,8 +18,7 @@ import clsx from 'clsx'
 import { useBands } from '@/hooks/bands/useBands'
 import * as Tooltip from '@radix-ui/react-tooltip'
 import { ConcertStats } from './ConcertStats'
-import { parseAsStringLiteral, useQueryState } from 'nuqs'
-import { modalPaths } from '../shared/ModalProvider'
+import { useModal } from '../shared/ModalProvider'
 import { useConcertProfiles } from '@/hooks/concerts/useConcertProfiles'
 import { Chip } from '../Chip'
 import { MetaInfo } from '../shared/MetaInfo'
@@ -63,10 +62,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
   const { data: concertProfiles } = useConcertProfiles(initialConcert.id)
   const { data: session } = useSession()
   const { data: spotifyArtist } = useSpotifyArtist(concert?.bands?.[0]?.spotify_artist_id)
-  const [_, setModal] = useQueryState(
-    'modal',
-    parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
-  )
+  const [_, setModal] = useModal()
   const { push } = useRouter()
   const pathname = usePathname()
 

@@ -6,8 +6,8 @@ import { Profile } from '../../types/types'
 import { Button } from '../Button'
 import { useSession } from '../../hooks/auth/useSession'
 import { UserItem } from '../shared/UserItem'
-import { parseAsStringLiteral, useQueryState } from 'nuqs'
-import { modalPaths } from '../shared/ModalProvider'
+import { useQueryState } from 'nuqs'
+import { useModal } from '../shared/ModalProvider'
 
 type FriendItemProps = {
   friend: Profile
@@ -15,10 +15,7 @@ type FriendItemProps = {
 }
 
 export const FriendItem = ({ friend, profile }: FriendItemProps) => {
-  const [_, setModal] = useQueryState(
-    'modal',
-    parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
-  )
+  const [_, setModal] = useModal()
   const [__, setFriendId] = useQueryState('friendId', { history: 'push' })
   const { data: session } = useSession()
 

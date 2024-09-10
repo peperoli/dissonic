@@ -7,8 +7,7 @@ import { Location } from '../../types/types'
 import { useConcerts } from '../../hooks/concerts/useConcerts'
 import { notFound, usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
-import { parseAsStringLiteral, useQueryState } from 'nuqs'
-import { modalPaths } from '../shared/ModalProvider'
+import { useModal } from '../shared/ModalProvider'
 import { ArrowLeft, Edit, MapPin, Trash } from 'lucide-react'
 import { UserItem } from '../shared/UserItem'
 import { useLocation } from '@/hooks/locations/useLocation'
@@ -33,10 +32,7 @@ export const LocationPage = ({
     locations: [initialLocation.id],
     sort: { sort_by: 'date_start', sort_asc: false },
   })
-  const [_, setModal] = useQueryState(
-    'modal',
-    parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
-  )
+  const [_, setModal] = useModal()
   const { data: session } = useSession()
   const { push } = useRouter()
   const pathname = usePathname()

@@ -9,8 +9,7 @@ import { useBand } from '../../hooks/bands/useBand'
 import { useConcerts } from '../../hooks/concerts/useConcerts'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
-import { parseAsStringLiteral, useQueryState } from 'nuqs'
-import { modalPaths } from '../shared/ModalProvider'
+import { useModal } from '../shared/ModalProvider'
 import { ArrowLeft, Edit, MapPin, MusicIcon, Trash } from 'lucide-react'
 import Image from 'next/image'
 import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
@@ -32,10 +31,7 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
     bands: [initialBand.id],
     sort: { sort_by: 'date_start', sort_asc: false },
   })
-  const [_, setModal] = useQueryState(
-    'modal',
-    parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
-  )
+  const [_, setModal] = useModal()
   const { data: session } = useSession()
   const { push } = useRouter()
   const pathname = usePathname()

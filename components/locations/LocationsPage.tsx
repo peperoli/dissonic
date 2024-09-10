@@ -10,11 +10,10 @@ import useMediaQuery from '../../hooks/helpers/useMediaQuery'
 import { ExtendedRes, Location } from '../../types/types'
 import { useLocations } from '../../hooks/locations/useLocations'
 import { useDebounce } from '../../hooks/helpers/useDebounce'
-import { Pagination } from '../layout/Pagination'
+import { Pagination, usePagination } from '../layout/Pagination'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
-import { parseAsInteger, parseAsStringLiteral, useQueryState } from 'nuqs'
-import { modalPaths } from '../shared/ModalProvider'
+import { useModal } from '../shared/ModalProvider'
 import { StatusBanner } from '../forms/StatusBanner'
 
 interface LocationsPageProps {
@@ -25,19 +24,13 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
   const [query, setQuery] = useState('')
   const debounceQuery = useDebounce(query, 200)
   const perPage = 25
-  const [currentPage, setCurrentPage] = useQueryState(
-    'page',
-    parseAsInteger.withDefault(1).withOptions({ scroll: true })
-  )
+  const [currentPage, setCurrentPage] = usePagination()
   const { data: locations } = useLocations(initialLocations, {
     search: debounceQuery,
     page: currentPage,
     size: perPage,
   })
-  const [_, setModal] = useQueryState(
-    'modal',
-    parseAsStringLiteral(modalPaths).withOptions({ history: 'push' })
-  )
+  const [_, setModal] = useModal()
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const { data: session } = useSession()
   const { push } = useRouter()
@@ -102,12 +95,7 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
             </TableRow>
           ))
         )}
-        <Pagination
-          entriesCount={locations?.count ?? 0}
-          perPage={perPage}
-          currentPage={currentPage}
-          onChange={setCurrentPage}
-        />
+        <Pagination entriesCount={locations?.count ?? 0} perPage={perPage} />
       </Table>
     </main>
   )
