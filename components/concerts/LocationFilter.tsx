@@ -13,7 +13,7 @@ const LocationMultiSelect = ({ ...props }: LocationMultiSelectProps) => {
   return (
     <Select
       name="location"
-      items={locations?.data}
+      items={locations?.data.map(item => ({ id: item.id, name: `${item.name}, ${item.city}` }))}
       isLoading={isPending}
       multiple
       fixedHeight

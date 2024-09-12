@@ -132,6 +132,11 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
             {(concert.name || concert.is_festival) && (
               <div className="mb-2">
                 <Chip
+                  onClick={
+                    concert.festival_root_id
+                      ? () => push(`/?festivals=${concert.festival_root_id}`)
+                      : null
+                  }
                   label={concert.is_festival ? 'Festival' : concert.name!}
                   size="sm"
                   color={concert.is_festival ? 'purple' : 'blue'}
@@ -143,10 +148,13 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
                 ? `${concert.festival_root?.name} ${new Date(concert.date_start).getFullYear()}`
                 : concert.bands?.[0]?.name}
             </h1>
-            <p className="h2 mb-0 flex items-center gap-3">
+            <Link
+              href={`/locations/${concert.location_id}`}
+              className="h2 mb-0 flex items-center gap-3 hover:underline"
+            >
               <MapPin className="size-icon text-slate-300" />
               {concert.location?.name}, {concert.location?.city}
-            </p>
+            </Link>
           </div>
         </header>
         <section className="rounded-lg bg-slate-800 p-4 md:p-6">

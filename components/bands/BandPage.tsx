@@ -102,7 +102,11 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
               {band.genres &&
                 band.genres.map((genre, index) => (
                   <Fragment key={index}>
-                    <li>{genre.name}</li>
+                    <li>
+                      <Link href={`/bands?genres=${genre.id}`} className="hover:underline">
+                        {genre.name}
+                      </Link>
+                    </li>
                     {index + 1 !== band.genres?.length && <span>&bull;</span>}
                   </Fragment>
                 ))}
