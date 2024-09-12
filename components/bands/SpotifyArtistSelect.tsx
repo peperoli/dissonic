@@ -25,6 +25,7 @@ const SelectItem = ({ item, value, handleChange }: SelectItemProps) => {
           <Image
             src={item.images[2].url}
             alt={item.name}
+            unoptimized
             fill
             sizes="150px"
             className="rounded-lg object-cover"
