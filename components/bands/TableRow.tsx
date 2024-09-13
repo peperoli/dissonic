@@ -1,10 +1,10 @@
 'use client'
 
 import { TableRow } from '../TableRow'
-import { UserMusicIcon } from '../layout/UserMusicIcon'
 import { Band } from '../../types/types'
 import { useSpotifyArtist } from '../../hooks/spotify/useSpotifyArtist'
 import Image from 'next/image'
+import { Guitar } from 'lucide-react'
 
 type BandTableRowProps = {
   band: Band
@@ -27,7 +27,7 @@ export function BandTableRow({ band }: BandTableRowProps) {
             className="object-cover rounded-lg"
           />
         ) : (
-          <UserMusicIcon className="size-icon text-slate-300" />
+          <Guitar className="size-icon text-slate-300" />
         )}
       </div>
       <div className="md:flex items-center gap-4 w-full">

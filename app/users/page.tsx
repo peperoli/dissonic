@@ -1,3 +1,4 @@
+import { SpeedDial } from '@/components/layout/SpeedDial'
 import { SortSelect } from '@/components/users/SortSelect'
 import { UserItem } from '@/components/users/UserItem'
 import { Database } from '@/types/supabase'
@@ -45,6 +46,7 @@ export default async function Page({ searchParams }: PageProps) {
           <UserItem key={profileStat.id} profileStat={profileStat} index={index} />
         ))}
       </div>
+      <SpeedDial />
     </main>
   )
 }

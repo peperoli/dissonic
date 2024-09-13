@@ -7,13 +7,13 @@ import {
   PlusCircleIcon,
   XCircleIcon,
   XIcon,
+  Guitar,
 } from 'lucide-react'
 import Image from 'next/image'
 import { forwardRef, KeyboardEvent, useEffect, useRef, useState } from 'react'
 import { useSpotifyArtist } from '../../hooks/spotify/useSpotifyArtist'
 import { ReorderableListItem } from '../../types/types'
 import { Button } from '../Button'
-import { UserMusicIcon } from '../layout/UserMusicIcon'
 import clsx from 'clsx'
 import { reorderList } from '../../lib/reorderList'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
@@ -83,7 +83,7 @@ const ListItem = ({
               className="rounded-lg object-cover"
             />
           ) : (
-            <UserMusicIcon className="size-icon text-slate-300" />
+            <Guitar className="size-icon text-slate-300" />
           )}
         </div>
         <div className="w-full">
@@ -157,7 +157,7 @@ const SearchResult = forwardRef<HTMLButtonElement, SearchResultProps>(
               className="rounded-lg object-cover"
             />
           ) : (
-            <UserMusicIcon className="size-icon text-slate-300" />
+            <Guitar className="size-icon text-slate-300" />
           )}
         </div>
         <div className="w-full">

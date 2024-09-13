@@ -25,6 +25,7 @@ import { LocationItem } from './LocationItem'
 import { StatusBanner } from '../forms/StatusBanner'
 import { PieChart } from './PieChart'
 import Link from 'next/link'
+import { SpeedDial } from '../layout/SpeedDial'
 
 type ConcertListProps = {
   userId: string
@@ -231,6 +232,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
       ) : (
         <div>Bitte melde dich an.</div>
       )}
+      <SpeedDial />
     </main>
   )
 }

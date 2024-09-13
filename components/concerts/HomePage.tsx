@@ -23,12 +23,13 @@ import {
   useQueryState,
   useQueryStates,
 } from 'nuqs'
-import { BookUser, Globe, Plus, RotateCcw, User } from 'lucide-react'
+import { BookUser, Globe, RotateCcw, User } from 'lucide-react'
 import { useFriends } from '@/hooks/profiles/useFriends'
 import { Select } from '../forms/Select'
 import { FilterButton } from '../FilterButton'
 import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 import { modalPaths } from '../shared/ModalProvider'
+import { SpeedDial } from '../layout/SpeedDial'
 
 type HomePageProps = {
   concerts: ExtendedRes<Concert[]>
@@ -108,17 +109,6 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
   }
   return (
     <main className="container">
-      <div className="fixed bottom-0 right-0 m-4 md:hidden">
-        <Button
-          onClick={
-            session ? () => setModal('add-concert') : () => push(`/login?redirect=${pathname}`)
-          }
-          label="Konzert hinzufügen"
-          appearance="primary"
-          contentType="icon"
-          icon={<Plus className="size-icon" />}
-        />
-      </div>
       <div className="mb-6 hidden items-center justify-between md:flex">
         <h1 className="mb-0">Konzerte</h1>
         <Button
@@ -210,6 +200,7 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
           />
         )}
       </div>
+      <SpeedDial />
     </main>
   )
 }

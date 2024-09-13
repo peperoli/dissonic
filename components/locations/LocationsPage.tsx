@@ -15,6 +15,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
 import { useModal } from '../shared/ModalProvider'
 import { StatusBanner } from '../forms/StatusBanner'
+import { SpeedDial } from '../layout/SpeedDial'
 
 interface LocationsPageProps {
   initialLocations: ExtendedRes<Location[]>
@@ -44,31 +45,17 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
   }, [query])
   return (
     <main className="container-fluid">
-      {!isDesktop && (
-        <div className="fixed bottom-0 right-0 m-4">
-          <Button
-            onClick={
-              session ? () => setModal('add-location') : () => push(`/login?redirect=${pathname}`)
-            }
-            label="Location hinzufügen"
-            appearance="primary"
-            contentType="icon"
-            icon={<PlusIcon className="size-icon" />}
-          />
-        </div>
-      )}
       <div className="sr-only flex justify-between md:not-sr-only md:mb-6">
         <h1 className="mb-0">Locations</h1>
-        {isDesktop && (
-          <Button
-            onClick={
-              session ? () => setModal('add-location') : () => push(`/login?redirect=${pathname}`)
-            }
-            label="Location hinzufügen"
-            appearance="primary"
-            icon={<PlusIcon className="size-icon" />}
-          />
-        )}
+        <Button
+          onClick={
+            session ? () => setModal('add-location') : () => push(`/login?redirect=${pathname}`)
+          }
+          label="Location hinzufügen"
+          appearance="primary"
+          icon={<PlusIcon className="size-icon" />}
+          className="hidden md:block"
+        />
       </div>
       <Table>
         <SearchField
@@ -97,6 +84,7 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
         )}
         <Pagination entriesCount={locations?.count ?? 0} perPage={perPage} />
       </Table>
+      <SpeedDial />
     </main>
   )
 }

@@ -1,6 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import clsx from 'clsx'
-import { Dispatch, FC, ReactNode, SetStateAction } from 'react'
+import { ReactNode } from 'react'
 
 type ModalProps = {
   children: ReactNode

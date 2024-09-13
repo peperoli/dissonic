@@ -10,13 +10,13 @@ import { useConcerts } from '../../hooks/concerts/useConcerts'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
 import { useModal } from '../shared/ModalProvider'
-import { ArrowLeft, Edit, MapPin, MusicIcon, Trash } from 'lucide-react'
+import { ArrowLeft, Edit, Guitar, MapPin, MusicIcon, Trash } from 'lucide-react'
 import Image from 'next/image'
 import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 import { UserItem } from '../shared/UserItem'
 import { useBandProfiles } from '@/hooks/bands/useBandProfiles'
-import { UserMusicIcon } from '../layout/UserMusicIcon'
 import { MetaInfo } from '../shared/MetaInfo'
+import { SpeedDial } from '../layout/SpeedDial'
 
 type BandPageProps = {
   initialBand: Band
@@ -85,7 +85,7 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
               className="rounded-lg object-cover"
             />
           ) : (
-            <UserMusicIcon className="size-12 text-slate-300" />
+            <Guitar className="size-12 text-slate-300" />
           )}
         </div>
         <div>
@@ -160,6 +160,7 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
       {(band.created_at || band.creator_id) && (
         <MetaInfo createdAt={band.created_at} creator={band.creator} />
       )}
+      <SpeedDial />
     </main>
   )
 }

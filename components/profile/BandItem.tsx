@@ -3,7 +3,7 @@ import { ItemCount } from "@/lib/getCounts"
 import { Band } from "@/types/types"
 import Image from "next/legacy/image"
 import Link from "next/link"
-import { UserMusicIcon } from "../layout/UserMusicIcon"
+import { Guitar } from "lucide-react"
 
 type BandItemProps = {
   topItem: ItemCount & Band
@@ -11,7 +11,7 @@ type BandItemProps = {
 
 export const BandItem = ({ topItem }: BandItemProps) => {
   const { data } = useSpotifyArtist(topItem.spotify_artist_id)
-  const picture = data?.images[1]
+  const picture = data?.images?.[1]
   return (
     <Link href={`/bands/${topItem.id}`} className="block">
       <div className="relative flex aspect-square flex-shrink-0 items-center justify-center rounded-2xl bg-slate-750">
@@ -26,7 +26,7 @@ export const BandItem = ({ topItem }: BandItemProps) => {
             className="rounded-2xl"
           />
         ) : (
-          <UserMusicIcon className="h-8 text-slate-300" />
+          <Guitar className="h-8 text-slate-300" />
         )}
       </div>
       <div className="mt-2 overflow-hidden">

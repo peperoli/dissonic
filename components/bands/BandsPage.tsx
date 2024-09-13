@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { Table } from '../Table'
 import { SearchField } from '../forms/SearchField'
 import { Button } from '../Button'
-import useMediaQuery from '../../hooks/helpers/useMediaQuery'
 import { Pagination, usePagination } from '../layout/Pagination'
 import { Band, ExtendedRes } from '../../types/types'
 import { useBands } from '../../hooks/bands/useBands'
@@ -19,6 +18,7 @@ import { parseAsArrayOf, parseAsInteger, useQueryState } from 'nuqs'
 import Cookies from 'js-cookie'
 import { useModal } from '../shared/ModalProvider'
 import { Plus, RotateCcw } from 'lucide-react'
+import { SpeedDial } from '../layout/SpeedDial'
 
 interface BandsPageProps {
   initialBands: ExtendedRes<Band[]>
@@ -61,8 +61,6 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
     push(pathname, { scroll: false })
   }
 
-  const isDesktop = useMediaQuery('(min-width: 768px)')
-
   useEffect(() => {
     Cookies.set('bandQueryState', '?' + queryStateString, { sameSite: 'strict' })
   }, [queryStateString])
@@ -78,31 +76,15 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
   }
   return (
     <main className="container-fluid">
-      {!isDesktop && (
-        <div className="fixed bottom-0 right-0 m-4">
-          <Button
-            onClick={
-              session ? () => setModal('add-band') : () => push(`/login?redirect=${pathname}`)
-            }
-            label="Band hinzufügen"
-            appearance="primary"
-            contentType="icon"
-            icon={<Plus className="size-icon" />}
-          />
-        </div>
-      )}
       <div className="sr-only flex justify-between md:not-sr-only md:mb-6">
         <h1 className="mb-0">Bands</h1>
-        {isDesktop && (
-          <Button
-            onClick={
-              session ? () => setModal('add-band') : () => push(`/login?redirect=${pathname}`)
-            }
-            label="Band hinzufügen"
-            appearance="primary"
-            icon={<Plus className="size-icon" />}
-          />
-        )}
+        <Button
+          onClick={session ? () => setModal('add-band') : () => push(`/login?redirect=${pathname}`)}
+          label="Band hinzufügen"
+          appearance="primary"
+          icon={<Plus className="size-icon" />}
+          className="hidden md:block"
+        />
       </div>
       <Table>
         <div className="scrollbar-hidden -mx-4 flex gap-2 overflow-x-auto px-4 md:grid md:grid-cols-3 md:gap-4 md:overflow-visible">
@@ -131,6 +113,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
         )}
         <Pagination entriesCount={bands?.count ?? 0} perPage={perPage} />
       </Table>
+      <SpeedDial />
     </main>
   )
 }

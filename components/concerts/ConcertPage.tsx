@@ -22,6 +22,7 @@ import { useModal } from '../shared/ModalProvider'
 import { useConcertProfiles } from '@/hooks/concerts/useConcertProfiles'
 import { Chip } from '../Chip'
 import { MetaInfo } from '../shared/MetaInfo'
+import { SpeedDial } from '../layout/SpeedDial'
 
 type ConcertUserItemProps = {
   concert: Concert
@@ -183,6 +184,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
           <Comments />
         </div>
         <MetaInfo createdAt={concert.created_at} creator={concert.creator} />
+        <SpeedDial />
       </main>
     </ConcertContext.Provider>
   )

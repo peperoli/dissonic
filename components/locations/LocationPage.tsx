@@ -13,6 +13,7 @@ import { UserItem } from '../shared/UserItem'
 import { useLocation } from '@/hooks/locations/useLocation'
 import { useLocationProfiles } from '@/hooks/locations/useLocationProfiles'
 import { MetaInfo } from '../shared/MetaInfo'
+import { SpeedDial } from '../layout/SpeedDial'
 
 type LocationPageProps = {
   location: Location
@@ -140,6 +141,7 @@ export const LocationPage = ({
       {(location.created_at || location.creator_id) && (
         <MetaInfo createdAt={location.created_at} creator={location.creator} />
       )}
+      <SpeedDial />
     </main>
   )
 }
