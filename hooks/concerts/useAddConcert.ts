@@ -1,8 +1,10 @@
 import { useMutation } from '@tanstack/react-query'
-import { AddConcert, Concert } from '@/types/types'
+import { AddConcert } from '@/types/types'
 import supabase from '@/utils/supabase/client'
+import { useRouter } from 'next/navigation'
+import { useModal } from '@/components/shared/ModalProvider'
 
-const addConcert = async (concert: AddConcert): Promise<Concert> => {
+const addConcert = async (concert: AddConcert) => {
   const { data: newConcert, error: addConcertError } = await supabase
     .from('concerts')
     .insert({
@@ -32,9 +34,18 @@ const addConcert = async (concert: AddConcert): Promise<Concert> => {
     throw addBandsError
   }
 
-  return newConcert
+  return { concertId: newConcert.id }
 }
 
 export const useAddConcert = () => {
-  return useMutation({ mutationFn: addConcert, onError: error => console.error(error) })
+  const [_, setModal] = useModal()
+  const { push } = useRouter()
+  return useMutation({
+    mutationFn: addConcert,
+    onError: error => console.error(error),
+    onSuccess: ({concertId}) => {
+      setModal(null)
+      push(`/concerts/${concertId}`)
+    },
+  })
 }

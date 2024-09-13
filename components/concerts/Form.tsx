@@ -17,7 +17,7 @@ import { FestivalRootForm } from './FestivalRootForm'
 import { useAddConcert } from '@/hooks/concerts/useAddConcert'
 import { useConcert } from '@/hooks/concerts/useConcert'
 import { useEditConcert } from '@/hooks/concerts/useEditConcert'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 
 type FormProps = {
   isNew?: boolean
@@ -42,7 +42,6 @@ export const Form = ({ close, isNew }: FormProps) => {
   const addConcert = useAddConcert()
   const editConcert = useEditConcert()
   const { status } = isNew ? addConcert : editConcert
-  const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const { data: concerts } = useConcerts()
   const { data: locations } = useLocations()
@@ -59,12 +58,6 @@ export const Form = ({ close, isNew }: FormProps) => {
     )
     .filter(item => item.location?.id === Number(watch('location_id')))
   const isSimilar = isNew && similarConcerts && similarConcerts.length > 0
-
-  useEffect(() => {
-    if (isNew && status === 'success') {
-      router.push(`/concerts/${addConcert.data?.id}`)
-    }
-  }, [status])
 
   useEffect(() => {
     if (!festivalRootId || !isNew) return

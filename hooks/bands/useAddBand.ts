@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AddBand } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
+import { useRouter } from 'next/navigation'
 
 const addBand = async (band: AddBand) => {
   const { data: newBand, error: bandError } = await supabase
@@ -26,17 +27,21 @@ const addBand = async (band: AddBand) => {
   if (genresError) {
     throw genresError
   }
+
+  return { bandId: newBand.id }
 }
 
 export const useAddBand = () => {
   const queryClient = useQueryClient()
   const [_, setModal] = useQueryState('modal', { history: 'push' })
+  const { push } = useRouter()
   return useMutation({
     mutationFn: addBand,
     onError: error => console.error(error),
-    onSuccess: () => {
+    onSuccess: ({ bandId }) => {
       queryClient.invalidateQueries({ queryKey: ['bands'] })
       setModal(null)
+      push(`/bands/${bandId}`)
     },
   })
 }

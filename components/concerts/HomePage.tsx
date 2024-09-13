@@ -187,7 +187,7 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
       <div className="grid gap-4">
         {concerts?.data.map(concert => <ConcertCard concert={concert} key={concert.id} />)}
       </div>
-      <div className="flex flex-col items-center gap-2">
+      <div className="flex flex-col items-center gap-2 mt-4">
         <p className="text-sm text-slate-300">
           {concerts?.data.length} von {concerts?.count} Einträgen
         </p>
