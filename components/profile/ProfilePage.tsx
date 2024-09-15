@@ -70,7 +70,7 @@ type ProfilePageProps = {
 }
 
 export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
-  const { data: profile } = useProfile(initialProfile.id, null, initialProfile)
+  const { data: profile } = useProfile(null, initialProfile.username, initialProfile)
   const { data: friends } = useFriends({ profileId: initialProfile.id })
   const acceptedFriends = friends?.filter(item => !item.pending)
   const { data: bandsSeen } = useBandsSeen(initialProfile.id)

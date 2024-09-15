@@ -31,7 +31,7 @@ export const useProfile = (
   initialProfile?: Profile
 ) => {
   return useQuery({
-    queryKey: ['profile', userId],
+    queryKey: ['profile', userId || username],
     queryFn: () => fetchProfile(userId, username),
     enabled: !!(userId || username),
     placeholderData: initialProfile,
