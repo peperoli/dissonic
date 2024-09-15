@@ -39,7 +39,7 @@ export const Form = ({ close }: FormProps) => {
   const deleteFiles = useDeleteAvatar()
   const uploadAvatar = useUploadAvatar()
   const usernames = profiles?.map(item => item.username)
-  const queryClient = useQueryClient()
+  
   const { push } = useRouter()
 
   const onSubmit: SubmitHandler<
@@ -63,7 +63,6 @@ export const Form = ({ close }: FormProps) => {
 
   useEffect(() => {
     if (editProfile.status === 'success') {
-      queryClient.invalidateQueries({ queryKey: ['profile', session?.user.id] })
       dirtyFields.username ? push(`/users/${watch('username')}`) : close()
     }
   }, [editProfile.status])

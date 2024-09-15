@@ -5,9 +5,7 @@ import Image from 'next/image'
 import { Comment } from '../../types/types'
 import { useAvatar } from '../../hooks/profiles/useAvatar'
 import { useEditComment } from '../../hooks/concerts/useEditComment'
-import { useQueryClient } from '@tanstack/react-query'
 import { ReactionControl } from './ReactionControl'
-import { useConcertContext } from '../../hooks/concerts/useConcertContext'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { TextArea } from '../forms/TextArea'
 import { useProfile } from '../../hooks/profiles/useProfile'
@@ -15,6 +13,7 @@ import { useSession } from '../../hooks/auth/useSession'
 import { parseAsInteger, useQueryState } from 'nuqs'
 import { useModal } from '../shared/ModalProvider'
 import { getRelativeTime } from '@/lib/getRelativeTime'
+import clsx from 'clsx'
 
 type EditCommentFormProps = {
   comment: Comment
@@ -22,7 +21,6 @@ type EditCommentFormProps = {
 }
 
 const EditCommentForm = ({ comment, setEdit }: EditCommentFormProps) => {
-  const { concert } = useConcertContext()
   const {
     register,
     watch,
@@ -31,7 +29,6 @@ const EditCommentForm = ({ comment, setEdit }: EditCommentFormProps) => {
     reset,
   } = useForm({ defaultValues: { new_content: comment.content } })
   const { mutate, status } = useEditComment()
-  const queryClient = useQueryClient()
 
   const onSubmit: SubmitHandler<{ new_content: string | null }> = async formData => {
     mutate({
@@ -43,7 +40,6 @@ const EditCommentForm = ({ comment, setEdit }: EditCommentFormProps) => {
 
   useEffect(() => {
     if (status === 'success') {
-      queryClient.invalidateQueries({ queryKey: ['comments', concert.id] })
       setEdit(false)
       reset()
     }
@@ -104,7 +100,7 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
           <UserIcon className="size-icon" />
         )}
       </div>
-      <div className={`mt-1.5${edit ? ' w-full' : ''}`}>
+      <div className={clsx('mt-1.5', edit && 'w-full')}>
         <div className="mb-1 text-sm">
           {profile?.username}
           <span className="text-slate-300">

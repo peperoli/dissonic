@@ -6,7 +6,6 @@ import { SelectField } from '../forms/SelectField'
 import { TablesInsert } from '@/types/supabase'
 import { useAddFestivalRoot } from '@/hooks/concerts/useAddFestivalRoot'
 import { StatusBanner } from '../forms/StatusBanner'
-import { useEffect } from 'react'
 import { getErrorMessage } from '@/lib/getErrorMessage'
 
 interface FestivalRootFormProps {
@@ -24,11 +23,6 @@ export const FestivalRootForm = ({ close }: FestivalRootFormProps) => {
     mutate(data)
   }
 
-  useEffect(() => {
-    if (status === 'success') {
-      close()
-    }
-  }, [status])
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6">
       <h2>Festival-Serie hinzufügen</h2>
@@ -45,7 +39,10 @@ export const FestivalRootForm = ({ close }: FestivalRootFormProps) => {
         render={({ field: { value = null, onChange } }) => (
           <SelectField
             name="default_location_id"
-            items={locations?.data.map(item => ({ id: item.id, name: `${item.name}, ${item.city}` }))}
+            items={locations?.data.map(item => ({
+              id: item.id,
+              name: `${item.name}, ${item.city}`,
+            }))}
             value={value}
             onValueChange={onChange}
             error={formState.errors.default_location_id}

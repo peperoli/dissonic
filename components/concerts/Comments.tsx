@@ -4,7 +4,6 @@ import { Comment } from '../../types/types'
 import { useComments } from '../../hooks/concerts/useComments'
 import { useAddComment } from '../../hooks/concerts/useAddComment'
 import { CommentItem } from './Comment'
-import { useQueryClient } from '@tanstack/react-query'
 import { useConcertContext } from '../../hooks/concerts/useConcertContext'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { TextArea } from '../forms/TextArea'
@@ -17,7 +16,6 @@ export const Comments = () => {
   const { register, watch, handleSubmit, reset } = useForm<Comment>()
   const { data: comments } = useComments(concert.id)
   const { mutate, status } = useAddComment()
-  const queryClient = useQueryClient()
   const { push } = useRouter()
   const pathname = usePathname()
 
@@ -28,7 +26,6 @@ export const Comments = () => {
 
   useEffect(() => {
     if (status === 'success') {
-      queryClient.invalidateQueries({ queryKey: ['comments', concert.id] })
       reset()
     }
   }, [status])

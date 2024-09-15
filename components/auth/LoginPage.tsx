@@ -1,6 +1,5 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useSignIn } from '../../hooks/auth/useSignIn'
@@ -21,18 +20,12 @@ export default function LoginPage() {
     resetField,
   } = useForm<SignInFormData>()
   const { mutate, status, error } = useSignIn()
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const redirect = searchParams.get('redirect')
 
   const onSubmit: SubmitHandler<SignInFormData> = async formData => {
     mutate(formData)
   }
 
   useEffect(() => {
-    if (status === 'success') {
-      router.push(redirect ? redirect : '/')
-    }
     if (status === 'error') {
       resetField('password')
     }
@@ -40,7 +33,10 @@ export default function LoginPage() {
   return (
     <main className="container-sm">
       <h1>Anmelden &amp; Konzerte eintragen</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5 p-6 rounded-lg bg-radial-gradient from-blue/20">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="grid gap-5 rounded-lg bg-radial-gradient from-blue/20 p-6"
+      >
         <TextField
           {...register('email', {
             required: true,
@@ -81,12 +77,9 @@ export default function LoginPage() {
       </form>
       <h3 className="mt-10">Hast du noch gar kein Konto?</h3>
       <p className="mb-4">Dann nichts wie los!</p>
-      <Button
-        label="Registrieren"
-        onClick={() => router.push('/signup')}
-        size="small"
-        appearance="secondary"
-      />
+      <Link href="/signup" className="btn btn-small btn-secondary">
+        Registrieren
+      </Link>
     </main>
   )
 }
