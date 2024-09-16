@@ -42,7 +42,7 @@ export const SpeedDial = () => {
             }
             className="flex items-center gap-2"
           >
-            <div className="rounded-lg border border-slate-800 bg-slate-850 p-2 text-sm font-semibold shadow-lg">
+            <div className="rounded-lg border border-slate-800 bg-slate-850 p-2 text-sm font-bold shadow-lg">
               Location hinzufügen
             </div>
             <div className="btn btn-icon btn-primary">
@@ -60,7 +60,7 @@ export const SpeedDial = () => {
             }
             className="flex items-center gap-2"
           >
-            <div className="rounded-lg border border-slate-800 bg-slate-850 p-2 text-sm font-semibold shadow-lg">
+            <div className="rounded-lg border border-slate-800 bg-slate-850 p-2 text-sm font-bold shadow-lg">
               Band hinzufügen
             </div>
 
@@ -79,7 +79,7 @@ export const SpeedDial = () => {
             }
             className="flex items-center gap-2"
           >
-            <div className="rounded-lg border border-slate-800 bg-slate-850 p-2 text-sm font-semibold shadow-lg">
+            <div className="rounded-lg border border-slate-800 bg-slate-850 p-2 text-sm font-bold shadow-lg">
               Konzert hinzufügen
             </div>
             <div className="btn btn-icon btn-primary">

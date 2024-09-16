@@ -25,7 +25,7 @@ export function getRelativeTime(date: string | number | Date, locale: Intl.Local
       if (Math.abs(diffMinutes) >= 1) {
         return rtf.format(Math.round(diffMinutes), 'minute')
       } else {
-        return rtf.format(Math.round(diff * 60), 'second')
+        return rtf.format(Math.round(diff / 1000), 'second')
       }
     }
   }
