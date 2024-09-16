@@ -12,7 +12,21 @@ export function getRelativeTime(date: string | number | Date, locale: Intl.Local
     return rtf.format(Math.round(diffDays / 365.25), 'year')
   } else if (Math.abs(diffDays) >= 30.44) {
     return rtf.format(Math.round(diffDays / 30.44), 'month')
-  } else {
+  } else if (Math.abs(diffDays) >= 1) {
     return rtf.format(Math.round(diffDays), 'day')
+  } else {
+    const diffHours = diff * (1 / (1000 * 60 * 60))
+
+    if (Math.abs(diffHours) >= 1) {
+      return rtf.format(Math.round(diffHours), 'hour')
+    } else {
+      const diffMinutes = diff * (1 / (1000 * 60))
+
+      if (Math.abs(diffMinutes) >= 1) {
+        return rtf.format(Math.round(diffMinutes), 'minute')
+      } else {
+        return rtf.format(Math.round(diff * 60), 'second')
+      }
+    }
   }
 }
