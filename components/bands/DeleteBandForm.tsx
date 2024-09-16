@@ -12,8 +12,7 @@ export const DeleteBandForm = ({ close }: DeleteBandFormProps) => {
   const { mutate, isPending } = useDeleteBand()
 
   return (
-    <>
-      <h2>Band löschen</h2>
+    <div>
       <p>Willst du diese Band wirklich unwiderruflich löschen?</p>
       <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:justify-end [&>*]:flex-1">
         <Button label="Abbrechen" onClick={close} />
@@ -25,6 +24,6 @@ export const DeleteBandForm = ({ close }: DeleteBandFormProps) => {
           loading={isPending}
         />
       </div>
-    </>
+    </div>
   )
 }

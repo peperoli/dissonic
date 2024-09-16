@@ -22,8 +22,7 @@ export const AddFriendForm = ({ close }: AddFriendFormProps) => {
   }
 
   return (
-    <>
-      <h2>Freund hizufügen</h2>
+    <div>
       <p>
         Willst du <span className="italic">{profile?.username || 'diesem Fan'}</span> eine
         Freundschaftsanfrage schicken?
@@ -37,6 +36,6 @@ export const AddFriendForm = ({ close }: AddFriendFormProps) => {
           loading={status === 'pending'}
         />
       </div>
-    </>
+    </div>
   )
 }

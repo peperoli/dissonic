@@ -59,7 +59,6 @@ export const Form = ({ isNew, close }: FormProps) => {
   }
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-      <h2 className="mb-0">{isNew ? 'Band hinzufügen' : 'Band bearbeiten'}</h2>
       <TextField
         {...register('name', { required: true })}
         error={errors.name}

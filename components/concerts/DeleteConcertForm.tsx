@@ -11,8 +11,7 @@ export const DeleteConcertForm = ({ close }: DeleteConcertFormProps) => {
   const concertId = pathname.split('/').pop()
   const { mutate, isPending } = useDeleteConcert()
   return (
-    <>
-      <h2>Konzert löschen</h2>
+    <div>
       <p>Willst du dieses Konzert wirklich löschen?</p>
       <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:justify-end [&>*]:flex-1">
         <Button label="Abbrechen" onClick={close} />
@@ -24,6 +23,6 @@ export const DeleteConcertForm = ({ close }: DeleteConcertFormProps) => {
           loading={isPending}
         />
       </div>
-    </>
+    </div>
   )
 }

@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
@@ -68,7 +67,6 @@ export const Form = ({ close }: FormProps) => {
   }, [editProfile.status])
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5">
-      <h2>Profil bearbeiten</h2>
       <Controller
         name="avatarFile"
         control={control}

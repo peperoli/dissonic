@@ -21,10 +21,9 @@ export const RemoveFriendForm = ({ close }: RemoveFriendFormProps) => {
   }
 
   return (
-    <>
-      <h2>Freund entfernen</h2>
+    <div>
       <p>
-        Willst du <span className="italic">{profile?.username}</span> als Freund entfernen?
+        Willst du <span className="italic">{profile?.username}</span> wirklich als Freund*in entfernen?
       </p>
       <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:justify-end [&>*]:flex-1">
         <Button label="Abbrechen" onClick={close} />
@@ -36,6 +35,6 @@ export const RemoveFriendForm = ({ close }: RemoveFriendFormProps) => {
           danger
         />
       </div>
-    </>
+    </div>
   )
 }

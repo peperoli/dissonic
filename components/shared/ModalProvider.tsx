@@ -4,6 +4,8 @@ import { Loader2 } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { parseAsStringLiteral, useQueryState } from 'nuqs'
 import Modal from '../Modal'
+import { ReactElement } from 'react'
+import { DialogTitle } from '@radix-ui/react-dialog'
 
 function Loader() {
   return <Loader2 className="size-8 animate-spin text-slate-300" />
@@ -62,20 +64,20 @@ export const modalPaths = [
   'delete-friend',
 ] as const
 
-const modalComponents = {
-  'add-concert': ConcertForm,
-  'edit-concert': ConcertForm,
-  'delete-concert': DeleteConcertForm,
-  'delete-comment': DeleteCommentForm,
-  'add-band': BandForm,
-  'edit-band': BandForm,
-  'delete-band': DeleteBandForm,
-  'add-location': LocationForm,
-  'edit-location': LocationForm,
-  'delete-location': DeleteLocationForm,
-  'edit-profile': ProfileForm,
-  'add-friend': AddFriendForm,
-  'delete-friend': RemoveFriendForm,
+const modals = {
+  'add-concert': { title: 'Konzert hinzufügen', component: ConcertForm },
+  'edit-concert': { title: 'Konzert bearbeiten', component: ConcertForm },
+  'delete-concert': { title: 'Konzert löschen', component: DeleteConcertForm },
+  'delete-comment': { title: 'Kommentar löschen', component: DeleteCommentForm },
+  'add-band': { title: 'Band hinzufügen', component: BandForm },
+  'edit-band': { title: 'Band bearbeiten', component: BandForm },
+  'delete-band': { title: 'Band löschen', component: DeleteBandForm },
+  'add-location': { title: 'Location hinzufügen', component: LocationForm },
+  'edit-location': { title: 'Location bearbeiten', component: LocationForm },
+  'delete-location': { title: 'Location löschen', component: DeleteLocationForm },
+  'edit-profile': { title: 'Profil bearbeiten', component: ProfileForm },
+  'add-friend': { title: 'Freund*in hinzufügen', component: AddFriendForm },
+  'delete-friend': { title: 'Freund*in entfernen', component: RemoveFriendForm },
 } as const
 
 export function useModal() {
@@ -85,15 +87,17 @@ export function useModal() {
 export const ModalProvider = () => {
   const [modal, setModal] = useModal()
   const close = () => setModal(null)
-  const ModalComponent = modal ? modalComponents[modal] : null
 
-  if (ModalComponent) {
-    return (
-      <Modal defaultOpen>
-        <ModalComponent isNew={modal?.startsWith('add')} close={close} />
-      </Modal>
-    )
+  if (!modal) {
+    return null
   }
 
-  return null
+  const ModalComponent = modals[modal].component
+
+  return (
+    <Modal defaultOpen>
+      <DialogTitle>{modals[modal].title}</DialogTitle>
+      <ModalComponent isNew={modal?.startsWith('add')} close={close} />
+    </Modal>
+  )
 }

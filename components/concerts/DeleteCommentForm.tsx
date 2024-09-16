@@ -17,8 +17,7 @@ export const DeleteCommentForm = ({ close }: DeleteCommentFormProps) => {
   }
 
   return (
-    <>
-      <h2>Kommentar löschen</h2>
+    <div>
       <p>Willst du diesen Kommentar wirklich löschen?</p>
       <div className="flex gap-4 mt-5 [&>*]:flex-1">
         <Button label="Abbrechen" onClick={close} />
@@ -30,6 +29,6 @@ export const DeleteCommentForm = ({ close }: DeleteCommentFormProps) => {
           loading={isPending}
         />
       </div>
-    </>
+    </div>
   )
 }

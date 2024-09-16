@@ -81,7 +81,6 @@ export const Form = ({ close, isNew }: FormProps) => {
   }
   return (
     <>
-      <h2 className="mb-8">{isNew ? 'Konzert hinzufügen' : 'Konzert bearbeiten'}</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <Controller
           name="is_festival"
