@@ -5,7 +5,7 @@ import { createClient } from '../utils/supabase/server'
 
 async function fetchData() {
   const cookieStore = cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createClient()
 
   const { data, count, error } = await supabase
     .from('concerts_full')

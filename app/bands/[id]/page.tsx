@@ -14,7 +14,7 @@ export async function generateStaticParams() {
 }
 
 async function fetchData(params: { id: string }) {
-  const supabase = createClient(cookies())
+  const supabase = createClient()
 
   const { data, error } = await supabase
     .from('bands')

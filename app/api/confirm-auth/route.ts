@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect('/signup')
   }
 
-  const supabase = createClient(cookieStore)
+  const supabase = createClient()
 
   const { error } = await supabase.auth.verifyOtp({
     type,

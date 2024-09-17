@@ -1,11 +1,9 @@
-import { FriendsPage } from '../../../../components/profile/FriendsPage'
-import { cookies } from 'next/headers'
-import React from 'react'
-import { createClient } from '../../../../utils/supabase/server'
+import { FriendsPage } from '../../../../components/profile/FriendsPage';
+import { createClient } from '../../../../utils/supabase/server';
 import { Friend, Profile } from '../../../../types/types';
 
 async function fetchData(username: string): Promise<{ profile: Profile; friends: Friend[] }> {
-  const supabase = createClient(cookies())
+  const supabase = createClient()
 
   const { data: profile, error: profileError } = await supabase
     .from('profiles')

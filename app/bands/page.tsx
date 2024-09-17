@@ -1,9 +1,8 @@
 import { BandsPage } from '../../components/bands/BandsPage'
-import { cookies } from 'next/headers'
 import { createClient } from '../../utils/supabase/server'
 
 const fetchData = async () => {
-  const supabase = createClient(cookies())
+  const supabase = createClient()
 
   const { data, count, error } = await supabase
     .from('bands')

@@ -14,8 +14,7 @@ export async function generateStaticParams() {
 }
 
 async function fetchData(params: { id: string }) {
-  const cookieStore = cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createClient()
 
   const { data, error } = await supabase
     .from('locations')

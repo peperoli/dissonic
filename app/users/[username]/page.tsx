@@ -1,5 +1,4 @@
 import { ProfilePage } from '../../../components/profile/ProfilePage'
-import { cookies } from 'next/headers'
 import { createClient } from '../../../utils/supabase/server'
 import supabase from '../../../utils/supabase/client'
 import { notFound } from 'next/navigation'
@@ -15,7 +14,7 @@ export async function generateStaticParams() {
 }
 
 async function fetchData(username: string) {
-  const supabase = createClient(cookies())
+  const supabase = createClient()
 
   const { data: profile, error } = await supabase
     .from('profiles')

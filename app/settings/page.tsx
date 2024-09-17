@@ -1,4 +1,3 @@
-import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
@@ -7,7 +6,7 @@ import { PasswordForm } from '@/components/profile/PasswordForm'
 import { EmailForm } from '@/components/profile/EmailForm'
 
 async function fetchData() {
-  const supabase = createClient(cookies())
+  const supabase = createClient()
 
   const {
     data: { user },

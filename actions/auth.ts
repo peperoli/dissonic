@@ -1,6 +1,5 @@
 'use server'
 
-import { cookies } from 'next/headers'
 import { createClient } from '../utils/supabase/server'
 
 export type SignInFormData = {
@@ -9,8 +8,7 @@ export type SignInFormData = {
 }
 
 export async function signIn(formData: SignInFormData) {
-  const cookieStore = cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createClient()
 
   const { error } = await supabase.auth.signInWithPassword(formData)
 
@@ -24,8 +22,7 @@ export type SignUpFormData = SignInFormData & {
 }
 
 export async function signUp(formData: SignUpFormData) {
-  const cookieStore = cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createClient()
 
   const { data, error } = await supabase.auth.signUp({
     ...formData,

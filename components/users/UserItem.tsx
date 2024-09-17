@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
-import { cookies } from 'next/headers'
 import { ProfileStat } from 'app/users/page'
 import { getRelativeTime } from '@/lib/getRelativeTime'
 import { UserIcon } from 'lucide-react'
@@ -11,7 +10,7 @@ function fetchAvatar(avatarPath: string | null) {
     return
   }
 
-  const supabase = createClient(cookies())
+  const supabase = createClient()
   const { data } = supabase.storage.from('avatars').getPublicUrl(avatarPath)
 
   return data.publicUrl

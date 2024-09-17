@@ -3,7 +3,6 @@ import { SortSelect } from '@/components/users/SortSelect'
 import { UserItem } from '@/components/users/UserItem'
 import { Database } from '@/types/supabase'
 import { createClient } from '@/utils/supabase/server'
-import { cookies } from 'next/headers'
 
 type SearchParams = {
   sort_by?: string
@@ -13,8 +12,7 @@ type SearchParams = {
 export type ProfileStat = Database['public']['Views']['profile_stats']['Row']
 
 async function fetchProfiles(options: SearchParams): Promise<ProfileStat[]> {
-  const cookieStore = cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createClient()
   const { data, error } = await supabase
     .from('profile_stats')
     .select('*')

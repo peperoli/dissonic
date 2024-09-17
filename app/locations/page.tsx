@@ -1,10 +1,9 @@
 import { LocationsPage } from '../../components/locations/LocationsPage'
 import { ExtendedRes, Location } from '../../types/types'
-import { cookies } from 'next/headers'
 import { createClient } from '../../utils/supabase/server'
 
 async function fetchData(): Promise<ExtendedRes<Location[]>> {
-  const supabase = createClient(cookies())
+  const supabase = createClient()
 
   const { data, count, error } = await supabase
     .from('locations')
