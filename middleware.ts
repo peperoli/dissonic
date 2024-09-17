@@ -4,7 +4,10 @@ import { updateSession } from './utils/supabase/middleware'
 export async function middleware(request: NextRequest) {
   const maintenanceMode = process.env.MAINTENANCE_MODE === 'true'
 
-  if (maintenanceMode && request.nextUrl.pathname !== '/maintenance') {
+  if (maintenanceMode) {
+    if (request.nextUrl.pathname === '/maintenance') {
+      return NextResponse.next()
+    }
     return NextResponse.redirect(new URL('/maintenance', request.url))
   }
 
