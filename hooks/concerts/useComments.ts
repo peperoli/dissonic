@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import { Comment } from '@/types/types'
+import { Comment, Concert } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 
-const fetchComments = async (concertId: string): Promise<Comment[]> => {
+const fetchComments = async (concertId: Concert['id']): Promise<Comment[]> => {
   const { data, error } = await supabase
     .from('comments')
     .select('*, reactions(*, user:profiles(*))')
@@ -15,7 +15,7 @@ const fetchComments = async (concertId: string): Promise<Comment[]> => {
   return data
 }
 
-export const useComments = (concertId: string) => {
+export const useComments = (concertId: Concert['id']) => {
   return useQuery({
     queryKey: ['comments', concertId],
     queryFn: () => fetchComments(concertId),

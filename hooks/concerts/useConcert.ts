@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Concert } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 
-const fetchConcert = async (concertId: string | null): Promise<Concert> => {
+const fetchConcert = async (concertId: Concert['id'] | null): Promise<Concert> => {
   if (!concertId) {
     throw new Error('concertId is required')
   }
@@ -28,7 +28,7 @@ const fetchConcert = async (concertId: string | null): Promise<Concert> => {
   return data
 }
 
-export const useConcert = (concertId: string | null, initialConcert?: Concert) => {
+export const useConcert = (concertId: Concert['id'] | null, initialConcert?: Concert) => {
   return useQuery({
     queryKey: ['concert', concertId],
     queryFn: () => fetchConcert(concertId),

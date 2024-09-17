@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import supabase from '@/utils/supabase/client'
-import { EditReaction } from '@/types/types'
+import { Concert, EditReaction } from '@/types/types'
 
 const editReaction = async (reaction: EditReaction) => {
   if (!reaction.comment_id || !reaction.user_id) {
@@ -18,7 +18,7 @@ const editReaction = async (reaction: EditReaction) => {
   }
 }
 
-export const useEditReaction = (reaction: EditReaction, concertId: string) => {
+export const useEditReaction = (reaction: EditReaction, concertId: Concert['id']) => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: () => editReaction(reaction),

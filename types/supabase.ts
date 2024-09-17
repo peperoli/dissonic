@@ -70,7 +70,7 @@ export type Database = {
       }
       comments: {
         Row: {
-          concert_id: string
+          concert_id: number
           content: string | null
           created_at: string
           edited_at: string | null
@@ -78,7 +78,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          concert_id: string
+          concert_id: number
           content?: string | null
           created_at?: string
           edited_at?: string | null
@@ -86,7 +86,7 @@ export type Database = {
           user_id: string
         }
         Update: {
-          concert_id?: string
+          concert_id?: number
           content?: string | null
           created_at?: string
           edited_at?: string | null
@@ -117,7 +117,7 @@ export type Database = {
           date_end: string | null
           date_start: string
           festival_root_id: number | null
-          id: string
+          id: number
           is_festival: boolean
           location_id: number
           name: string | null
@@ -128,7 +128,7 @@ export type Database = {
           date_end?: string | null
           date_start: string
           festival_root_id?: number | null
-          id?: string
+          id?: number
           is_festival?: boolean
           location_id: number
           name?: string | null
@@ -139,7 +139,7 @@ export type Database = {
           date_end?: string | null
           date_start?: string
           festival_root_id?: number | null
-          id?: string
+          id?: number
           is_festival?: boolean
           location_id?: number
           name?: string | null
@@ -184,28 +184,34 @@ export type Database = {
       }
       contributions: {
         Row: {
-          action: string
-          id: string
-          item: string
+          id: number
+          operation: string
+          ressource_id: number
+          ressource_type: string
           state_new: Json | null
           state_old: Json | null
-          timestamp: string | null
+          timestamp: string
+          user_id: string
         }
         Insert: {
-          action: string
-          id?: string
-          item: string
+          id?: number
+          operation: string
+          ressource_id: number
+          ressource_type: string
           state_new?: Json | null
           state_old?: Json | null
-          timestamp?: string | null
+          timestamp?: string
+          user_id: string
         }
         Update: {
-          action?: string
-          id?: string
-          item?: string
+          id?: number
+          operation?: string
+          ressource_id?: number
+          ressource_type?: string
           state_new?: Json | null
           state_old?: Json | null
-          timestamp?: string | null
+          timestamp?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -379,17 +385,17 @@ export type Database = {
       j_bands_seen: {
         Row: {
           band_id: number
-          concert_id: string
+          concert_id: number
           user_id: string
         }
         Insert: {
           band_id: number
-          concert_id: string
+          concert_id: number
           user_id: string
         }
         Update: {
           band_id?: number
-          concert_id?: string
+          concert_id?: number
           user_id?: string
         }
         Relationships: [
@@ -440,17 +446,17 @@ export type Database = {
       j_concert_bands: {
         Row: {
           band_id: number
-          concert_id: string
+          concert_id: number
           item_index: number | null
         }
         Insert: {
           band_id: number
-          concert_id: string
+          concert_id: number
           item_index?: number | null
         }
         Update: {
           band_id?: number
-          concert_id?: string
+          concert_id?: number
           item_index?: number | null
         }
         Relationships: [
@@ -631,7 +637,7 @@ export type Database = {
             | Database["public"]["Tables"]["festival_roots"]["Row"]
             | null
           festival_root_id: number | null
-          id: string | null
+          id: number | null
           is_festival: boolean | null
           location: Database["public"]["Tables"]["locations"]["Row"] | null
           location_id: number | null
@@ -781,6 +787,7 @@ export type Database = {
         | "Oceania"
         | "North America"
         | "South America"
+      ressources: "concerts" | "bands" | "locations"
     }
     CompositeTypes: {
       [_ in never]: never

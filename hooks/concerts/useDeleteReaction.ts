@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import supabase from '@/utils/supabase/client'
+import { Concert } from '@/types/types'
 
 const deleteReaction = async (commentId: number, userId: string) => {
   const { error } = await supabase
@@ -13,7 +14,7 @@ const deleteReaction = async (commentId: number, userId: string) => {
   }
 }
 
-export const useDeleteReaction = (commentId: number, userId: string, concertId: string) => {
+export const useDeleteReaction = (commentId: number, userId: string, concertId: Concert['id']) => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: () => deleteReaction(commentId, userId),

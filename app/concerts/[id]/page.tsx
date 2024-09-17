@@ -11,10 +11,10 @@ export async function generateStaticParams() {
     throw error
   }
 
-  return concerts?.map(concert => ({ id: concert.id }))
+  return concerts?.map(concert => ({ id: concert.id.toString() }))
 }
 
-async function fetchConcert(concertId: string) {
+async function fetchConcert(concertId: Concert['id']) {
   const supabase = createClient()
 
   const { data, error } = await supabase
@@ -39,7 +39,7 @@ async function fetchConcert(concertId: string) {
 }
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const concert = await fetchConcert(params.id)
+  const concert = await fetchConcert(parseInt(params.id))
   const cookieStore = cookies()
   return (
     <ConcertPage

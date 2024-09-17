@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import supabase from '@/utils/supabase/client'
-import { Profile } from '@/types/types'
+import { Concert, Profile } from '@/types/types'
 
 const fetchConcertProfiles = async (
-  concertId: string
+  concertId: Concert['id']
 ): Promise<{ profile: Profile; count: number }[]> => {
   const { data, error } = await supabase
     .from('j_bands_seen')
@@ -18,7 +18,7 @@ const fetchConcertProfiles = async (
   return data
 }
 
-export const useConcertProfiles = (concertId: string) => {
+export const useConcertProfiles = (concertId: Concert['id']) => {
   return useQuery({
     queryKey: ['bandsSeen', concertId],
     queryFn: () => fetchConcertProfiles(concertId),

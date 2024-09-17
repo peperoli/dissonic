@@ -17,7 +17,7 @@ export const DeleteConcertForm = ({ close }: DeleteConcertFormProps) => {
         <Button label="Abbrechen" onClick={close} />
         <Button
           label="Löschen"
-          onClick={() => mutate(concertId!)}
+          onClick={() => mutate(parseInt(concertId!))}
           appearance="primary"
           danger
           loading={isPending}
