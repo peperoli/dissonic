@@ -1,10 +1,8 @@
 import { ContributionItem } from '@/components/contributions/ContributionItem'
 import { createClient } from '@/utils/supabase/server'
-import { cookies } from 'next/headers'
 
 async function fetchData() {
-  const cookieStore = cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createClient()
 
   const { data, error } = await supabase
     .from('contributions')

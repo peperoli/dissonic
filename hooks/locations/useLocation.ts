@@ -16,11 +16,11 @@ async function fetchLocation(id: number): Promise<Location> {
   return data
 }
 
-export function useLocation(id: number, initialLocation?: Location) {
+export function useLocation(id: number, initialLocation?: Location | null, enabled?: boolean) {
   return useQuery({
     queryKey: ['location', id],
     queryFn: () => fetchLocation(id),
-    enabled: !!id,
-    placeholderData: initialLocation,
+    placeholderData: initialLocation || undefined,
+    enabled: enabled !== false,
   })
 }
