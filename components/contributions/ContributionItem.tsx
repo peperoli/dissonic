@@ -41,7 +41,10 @@ export const ContributionItem = ({ contribution }: { contribution: Tables<'contr
     }
 
     if (!ressource.festival_root) {
-      return `${ressource.bands?.slice(0, 2).join(', ')} @ ${ressource.location?.name}`
+      return `${ressource.bands
+        ?.map(band => band.name)
+        .slice(0, 3)
+        .join(', ')} @ ${ressource.location?.name}`
     }
 
     return `${ressource.festival_root?.name} ${new Date(ressource.date_start).getFullYear()}`
