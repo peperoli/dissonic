@@ -15,12 +15,13 @@ export const Chip = ({ label, onClick, size = 'md', count, color = 'secondary' }
       type={onClick ? 'button' : undefined}
       onClick={onClick ?? undefined}
       className={clsx(
-        'flex w-fit items-center justify-center gap-2 border-2 hover:underline disabled:cursor-not-allowed disabled:opacity-30',
+        'flex w-fit items-center justify-center gap-2 border-2 disabled:cursor-not-allowed disabled:opacity-30',
         size === 'md' && 'rounded-3xl px-4 py-1',
         size === 'sm' && 'rounded-2xl px-3 py-0.5 text-sm',
         color === 'secondary' && 'border-slate-500 text-white',
         color === 'purple' && 'border-purple/50 text-purple',
-        color === 'blue' && 'border-blue/50 text-blue'
+        color === 'blue' && 'border-blue/50 text-blue',
+        onClick && 'hover:underline',
       )}
     >
       {label}
