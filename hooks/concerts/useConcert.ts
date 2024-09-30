@@ -4,7 +4,7 @@ import supabase from '@/utils/supabase/client'
 
 const fetchConcert = async (concertId: Concert['id'] | null): Promise<Concert> => {
   if (!concertId) {
-    throw new Error('concertId is required')
+    throw new Error('Concert-ID is missing.')
   }
 
   const { data, error } = await supabase

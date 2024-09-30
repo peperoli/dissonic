@@ -183,7 +183,12 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
         <div className="rounded-lg bg-slate-800 p-4 md:p-6">
           <Comments />
         </div>
-        <MetaInfo createdAt={concert.created_at} creator={concert.creator} />
+        <MetaInfo
+          createdAt={concert.created_at}
+          creator={concert.creator}
+          ressourceType="concerts"
+          ressourceId={concert.id}
+        />
         <SpeedDial />
       </main>
     </ConcertContext.Provider>

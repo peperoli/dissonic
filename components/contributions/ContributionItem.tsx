@@ -31,9 +31,13 @@ export const ContributionItem = ({ contribution }: { contribution: Tables<'contr
     locations: 'Location',
   } as { [key: string]: string }
 
-  function getRessourceName(ressource: Band | Concert | Location | undefined) {
+  function getRessourceName(ressource: Band | Concert | Location | undefined, ressourceType: Tables<'contributions'>['ressource_type']) {
     if (!ressource) {
       return null
+    }
+
+    if (ressourceType !== 'concerts') {
+      return ressource.name
     }
 
     if (!('festival_root' in ressource)) {
@@ -88,7 +92,7 @@ export const ContributionItem = ({ contribution }: { contribution: Tables<'contr
           {operationLabels[operation]} {ressourceTypeLabels[ressource_type]}
         </span>
         <Link href={`/${ressource_type}/${ressource_id}`} className="hover:underline">
-          {getRessourceName(concert || band || location)}{' '}
+          {getRessourceName(concert || band || location, ressource_type)}{' '}
           <span className="text-slate-300">(ID: {ressource_id})</span>
         </Link>
         <span className="ml-auto text-slate-300">{getRelativeTime(timestamp, 'de-CH')}</span>

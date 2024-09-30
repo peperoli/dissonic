@@ -36,6 +36,12 @@ export type LocationFetchOptions = {
   page?: number
 }
 
+export type ContributionFetchOptions = {
+  size?: string
+  ressourceType?: 'concerts' | 'bands' | 'locations'
+  ressourceId?: string
+}
+
 export type Concert = Tables<'concerts'> & {
   festival_root?: { name: string } | null
   location?: Location | null

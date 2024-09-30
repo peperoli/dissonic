@@ -186,7 +186,7 @@ export type Database = {
         Row: {
           id: number
           operation: string
-          ressource_id: number
+          ressource_id: number | null
           ressource_type: string
           state_new: Json | null
           state_old: Json | null
@@ -196,7 +196,7 @@ export type Database = {
         Insert: {
           id?: number
           operation: string
-          ressource_id: number
+          ressource_id?: number | null
           ressource_type: string
           state_new?: Json | null
           state_old?: Json | null
@@ -206,7 +206,7 @@ export type Database = {
         Update: {
           id?: number
           operation?: string
-          ressource_id?: number
+          ressource_id?: number | null
           ressource_type?: string
           state_new?: Json | null
           state_old?: Json | null
@@ -779,6 +779,8 @@ export type Database = {
       }
     }
     Enums: {
+      bands_type: "bands"
+      concerts_type: "concerts"
       continents:
         | "Africa"
         | "Antarctica"
@@ -787,6 +789,7 @@ export type Database = {
         | "Oceania"
         | "North America"
         | "South America"
+      locations_type: "locations"
       ressources: "concerts" | "bands" | "locations"
     }
     CompositeTypes: {

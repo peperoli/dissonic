@@ -139,7 +139,12 @@ export const LocationPage = ({
         </section>
       )}
       {(location.created_at || location.creator_id) && (
-        <MetaInfo createdAt={location.created_at} creator={location.creator} />
+        <MetaInfo
+          createdAt={location.created_at}
+          creator={location.creator}
+          ressourceType="locations"
+          ressourceId={location.id}
+        />
       )}
       <SpeedDial />
     </main>
