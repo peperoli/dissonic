@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
 import { ProfileStat } from 'app/users/page'
-import { getRelativeTime } from '@/lib/getRelativeTime'
+import { getRelativeTimeFormatOptions } from '@/lib/relativeTime'
 import { UserIcon } from 'lucide-react'
 
 function fetchAvatar(avatarPath: string | null) {
@@ -23,6 +23,10 @@ type UserItemProps = {
 
 export const UserItem = ({ profileStat, index }: UserItemProps) => {
   const avatar = fetchAvatar(profileStat.avatar_path)
+  const rtf = new Intl.RelativeTimeFormat('de-CH', { numeric: 'always', style: 'short' })
+  const formatOptions = getRelativeTimeFormatOptions(profileStat.created_at!)
+  const relativeTimeParts = rtf.formatToParts(...formatOptions)
+
   return (
     <Link href={`/users/${profileStat.username}`} className="block">
       <div className="relative grid aspect-square place-content-center rounded-full bg-blue">
@@ -42,7 +46,9 @@ export const UserItem = ({ profileStat, index }: UserItemProps) => {
           <br />
           {profileStat.band_count} Bands
           <br />
-          {profileStat.created_at && getRelativeTime(profileStat.created_at, 'de-CH')}
+          {profileStat.created_at && (
+            <span>{`seit ${relativeTimeParts[1].value}${relativeTimeParts[2].value}`}</span>
+          )}
         </div>
       </div>
     </Link>
