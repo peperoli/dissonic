@@ -1,20 +1,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { createClient } from '@/utils/supabase/server'
 import { ProfileStat } from 'app/users/page'
 import { getRelativeTimeFormatOptions } from '@/lib/relativeTime'
 import { UserIcon } from 'lucide-react'
-
-function fetchAvatar(avatarPath: string | null) {
-  if (!avatarPath) {
-    return
-  }
-
-  const supabase = createClient()
-  const { data } = supabase.storage.from('avatars').getPublicUrl(avatarPath)
-
-  return data.publicUrl
-}
+import { getAssetUrl } from '@/lib/getAssetUrl'
 
 type UserItemProps = {
   profileStat: ProfileStat
@@ -22,18 +11,21 @@ type UserItemProps = {
 }
 
 export const UserItem = ({ profileStat, index }: UserItemProps) => {
-  const avatar = fetchAvatar(profileStat.avatar_path)
-  const rtf = new Intl.RelativeTimeFormat('de-CH', { numeric: 'always', style: 'short' })
-  const formatOptions = getRelativeTimeFormatOptions(profileStat.created_at!)
-  const relativeTimeParts = rtf.formatToParts(...formatOptions)
+  const avatarUrl = getAssetUrl(profileStat.avatar_path)
 
   return (
     <Link href={`/users/${profileStat.username}`} className="block">
       <div className="relative grid aspect-square place-content-center rounded-full bg-blue">
-        {avatar ? (
-          <Image src={avatar} alt="" fill className="rounded-full object-cover" />
+        {avatarUrl ? (
+          <Image
+            src={avatarUrl}
+            alt={`${profileStat.username}'s Avatar`}
+            sizes="300px"
+            fill
+            className="rounded-full object-cover"
+          />
         ) : (
-          <UserIcon className="size-12 md:size-16 text-slate-850" />
+          <UserIcon className="size-12 text-slate-850 md:size-16" />
         )}
         <div className="absolute right-1 top-1 grid size-6 place-content-center rounded-full bg-slate-850 text-sm md:right-2 md:top-2">
           {index + 1}

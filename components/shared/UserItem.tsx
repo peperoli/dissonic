@@ -1,9 +1,9 @@
 import React from 'react'
 import { Profile } from '../../types/types'
 import Image from 'next/image'
-import { useAvatar } from '../../hooks/profiles/useAvatar'
 import { User } from 'lucide-react'
 import clsx from 'clsx'
+import { getAssetUrl } from '@/lib/getAssetUrl'
 
 type UserItemProps = {
   user: Profile
@@ -20,7 +20,7 @@ export const UserItem = ({
   usernameIsHidden,
   avatarRight = false,
 }: UserItemProps) => {
-  const { data: avatar } = useAvatar(user.avatar_path)
+  const avatarUrl = getAssetUrl(user.avatar_path)
   const ConditionalTag = size === 'lg' ? 'h1' : 'div'
   return (
     <div
@@ -33,14 +33,20 @@ export const UserItem = ({
     >
       <div
         className={clsx(
-          'bg-blue relative flex flex-none items-center justify-center rounded-full',
+          'relative flex flex-none items-center justify-center rounded-full bg-blue',
           size === 'lg' && 'size-20',
           size === 'md' && 'size-10',
           size === 'sm' && 'size-5'
         )}
       >
-        {avatar?.url ? (
-          <Image src={avatar?.url} alt="Avatar" fill={true} className="rounded-full object-cover" />
+        {avatarUrl ? (
+          <Image
+            src={avatarUrl}
+            alt={`${user.username}'s Avatar`}
+            sizes="200px"
+            fill
+            className="rounded-full object-cover"
+          />
         ) : (
           <User
             className={clsx(
@@ -60,7 +66,7 @@ export const UserItem = ({
           size === 'sm' && 'mx-2 text-sm'
         )}
       >
-        <ConditionalTag className='mb-0'>{user.username}</ConditionalTag>
+        <ConditionalTag className="mb-0">{user.username}</ConditionalTag>
         {description && <div className="-mt-1 text-sm text-slate-300">{description}</div>}
       </div>
     </div>

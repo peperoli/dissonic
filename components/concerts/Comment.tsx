@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react'
 import { EditIcon, TrashIcon, UserIcon } from 'lucide-react'
 import Image from 'next/image'
 import { Comment } from '../../types/types'
-import { useAvatar } from '../../hooks/profiles/useAvatar'
 import { useEditComment } from '../../hooks/concerts/useEditComment'
 import { ReactionControl } from './ReactionControl'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -14,6 +13,7 @@ import { parseAsInteger, useQueryState } from 'nuqs'
 import { useModal } from '../shared/ModalProvider'
 import { getRelativeTime } from '@/lib/relativeTime'
 import clsx from 'clsx'
+import { getAssetUrl } from '@/lib/getAssetUrl'
 
 type EditCommentFormProps = {
   comment: Comment
@@ -85,13 +85,13 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
     parseAsInteger.withOptions({ history: 'push' })
   )
   const createdAt = new Date(comment.created_at)
-  const { data: avatar } = useAvatar(profile?.avatar_path)
+  const avatarUrl = getAssetUrl(profile?.avatar_path)
   return (
     <div className="group flex gap-4">
       <div className="relative flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue text-slate-850">
-        {avatar?.url ? (
+        {avatarUrl ? (
           <Image
-            src={avatar?.url}
+            src={avatarUrl}
             alt="Profile picture"
             fill={true}
             className="rounded-full object-cover"
