@@ -12,6 +12,9 @@ type UserItemProps = {
 
 export const UserItem = ({ profileStat, index }: UserItemProps) => {
   const avatarUrl = getAssetUrl(profileStat.avatar_path)
+  const rtf = new Intl.RelativeTimeFormat('de-CH', { numeric: 'always', style: 'short' })
+  const formatOptions = getRelativeTimeFormatOptions(profileStat.created_at!)
+  const relativeTimeParts = rtf.formatToParts(...formatOptions)
 
   return (
     <Link href={`/users/${profileStat.username}`} className="block">
