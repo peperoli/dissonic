@@ -4,7 +4,7 @@ import supabase from '@/utils/supabase/client'
 
 const fetchConcert = async (concertId: Concert['id'] | null): Promise<Concert> => {
   if (!concertId) {
-    throw new Error('concertId is required')
+    throw new Error('Concert-ID is missing.')
   }
 
   const { data, error } = await supabase
@@ -28,11 +28,11 @@ const fetchConcert = async (concertId: Concert['id'] | null): Promise<Concert> =
   return data
 }
 
-export const useConcert = (concertId: Concert['id'] | null, initialConcert?: Concert) => {
+export const useConcert = (concertId: Concert['id'] | null, initialConcert?: Concert | null, enabled?: boolean) => {
   return useQuery({
     queryKey: ['concert', concertId],
     queryFn: () => fetchConcert(concertId),
-    placeholderData: initialConcert,
-    enabled: !!concertId,
+    placeholderData: initialConcert || undefined,
+    enabled: !!concertId && enabled !== false,
   })
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { FilterButton } from './../FilterButton'
-import { useGenres } from './../../hooks/useGenres'
+import { useGenres } from '../../hooks/genres/useGenres'
 import { Select } from '../forms/Select'
 
 type GenreMultiSelectProps = {

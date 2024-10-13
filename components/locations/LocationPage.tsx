@@ -138,9 +138,12 @@ export const LocationPage = ({
           {concerts?.data.map(item => <ConcertCard key={item.id} concert={item} nested />)}
         </section>
       )}
-      {(location.created_at || location.creator_id) && (
-        <MetaInfo createdAt={location.created_at} creator={location.creator} />
-      )}
+      <MetaInfo
+        createdAt={location.created_at}
+        creator={location.creator}
+        ressourceType="locations"
+        ressourceId={location.id}
+      />
       <SpeedDial />
     </main>
   )

@@ -11,7 +11,7 @@ import { useProfile } from '../../hooks/profiles/useProfile'
 import { useSession } from '../../hooks/auth/useSession'
 import { parseAsInteger, useQueryState } from 'nuqs'
 import { useModal } from '../shared/ModalProvider'
-import { getRelativeTime } from '@/lib/getRelativeTime'
+import { getRelativeTime } from '@/lib/relativeTime'
 import clsx from 'clsx'
 import { getAssetUrl } from '@/lib/getAssetUrl'
 

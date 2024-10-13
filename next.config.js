@@ -15,6 +15,15 @@ const nextConfig = {
     ],
   },
   swcMinify: true,
+  redirects: async () => {
+    return [
+      {
+        source: '/concerts',
+        destination: '/',
+        permanent: true,
+      },
+    ]
+  }
 }
 
 module.exports = withPWA(nextConfig)

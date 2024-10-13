@@ -34,8 +34,12 @@ const editBand = async (newBand: EditBand) => {
     }
 
     try {
-      const addGenres: Genre[] = newBand.genres.filter(item => !oldBand.genres.includes(item))
-      const deleteGenres: Genre[] = oldBand.genres.filter(item => !newBand.genres.includes(item))
+      const addGenres: Genre[] = newBand.genres.filter(
+        item => !oldBand.genres.find(item2 => item.id === item2.id)
+      )
+      const deleteGenres: Genre[] = oldBand.genres.filter(
+        item => !newBand.genres.find(item2 => item.id === item2.id)
+      )
 
       const { error: deleteGenresError } = await supabase
         .from('j_band_genres')

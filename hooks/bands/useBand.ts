@@ -2,7 +2,11 @@ import { useQuery } from '@tanstack/react-query'
 import { Band } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 
-const fetchBand = async (bandId: number): Promise<Band> => {
+const fetchBand = async (bandId: number | null): Promise<Band> => {
+  if (!bandId) {
+    throw new Error('Band-ID is missing.')
+  }
+
   const { data, error } = await supabase
     .from('bands')
     .select(
@@ -22,11 +26,11 @@ const fetchBand = async (bandId: number): Promise<Band> => {
   return data
 }
 
-export const useBand = (id: number, initialBand?: Band) => {
+export const useBand = (id: number | null, initialBand?: Band | null, enabled?: boolean) => {
   return useQuery({
     queryKey: ['band', id],
     queryFn: () => fetchBand(id),
-    placeholderData: initialBand,
-    enabled: !!id,
+    placeholderData: initialBand || undefined,
+    enabled: !!id && enabled !== false,
   })
 }
