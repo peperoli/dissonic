@@ -100,6 +100,8 @@ const editConcert = async (newConcert: EditConcert) => {
   } catch (error) {
     throw error
   }
+
+  return { concertId: newConcert.id }
 }
 
 export const useEditConcert = () => {
@@ -108,8 +110,9 @@ export const useEditConcert = () => {
   return useMutation({
     mutationFn: editConcert,
     onError: error => console.error(error),
-    onSuccess: () => {
+    onSuccess: ({ concertId }) => {
       queryClient.invalidateQueries({ queryKey: ['concert'] })
+      queryClient.invalidateQueries({ queryKey: ['contributions-count', 'concerts', concertId] })
       setModal(null)
     },
   })

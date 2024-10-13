@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { Genre } from '../types/types'
-import supabase from '../utils/supabase/client'
+import { Genre } from '../../types/types'
+import supabase from '../../utils/supabase/client'
 
 const fetchGenres = async (options?: { ids: number[] | null }): Promise<Genre[]> => {
   let query = supabase.from('genres').select('*').order('name')

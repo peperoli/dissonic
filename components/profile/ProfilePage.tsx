@@ -26,6 +26,7 @@ import { StatusBanner } from '../forms/StatusBanner'
 import { PieChart } from './PieChart'
 import Link from 'next/link'
 import { SpeedDial } from '../layout/SpeedDial'
+import { useContributionsCount } from '@/hooks/contributions/useContributionsCount'
 
 type ConcertListProps = {
   userId: string
@@ -74,6 +75,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
   const { data: friends } = useFriends({ profileId: initialProfile.id })
   const acceptedFriends = friends?.filter(item => !item.pending)
   const { data: bandsSeen } = useBandsSeen(initialProfile.id)
+  const { data: contributionsCount } = useContributionsCount({ userId: initialProfile.id })
   const [_, setModal] = useModal()
   const { data: session } = useSession()
   const isOwnProfile = session?.user.id === profile?.id
@@ -155,6 +157,12 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                   )}
                 </Tab>
               ))}
+              {!!contributionsCount && (
+                <Link href={`/contributions?userId=${profile.id}`} className="relative rounded p-3">
+                  Bearbeitungen
+                  <span className="absolute bottom-0 left-0 h-1 w-full rounded-t bg-transparent" />
+                </Link>
+              )}
             </Tab.List>
             <Tab.Panel className="grid gap-4">
               {!bandsSeen && <p className="text-sm text-slate-300">Lade ...</p>}

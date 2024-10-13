@@ -39,7 +39,8 @@ export type LocationFetchOptions = {
 export type ContributionFetchOptions = {
   size?: string
   ressourceType?: 'concerts' | 'bands' | 'locations'
-  ressourceId?: string
+  ressourceId?: string,
+  userId?: string
 }
 
 export type Concert = Tables<'concerts'> & {

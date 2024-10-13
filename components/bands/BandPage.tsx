@@ -157,14 +157,12 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
           {concerts?.data.map(item => <ConcertCard key={item.id} concert={item} nested />)}
         </section>
       )}
-      {(band.created_at || band.creator_id) && (
-        <MetaInfo
-          createdAt={band.created_at}
-          creator={band.creator}
-          ressourceType="bands"
-          ressourceId={band.id}
-        />
-      )}
+      <MetaInfo
+        createdAt={band.created_at}
+        creator={band.creator}
+        ressourceType="bands"
+        ressourceId={band.id}
+      />
       <SpeedDial />
     </main>
   )

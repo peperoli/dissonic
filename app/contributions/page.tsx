@@ -5,6 +5,12 @@ import { ContributionFetchOptions } from '@/types/types'
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 
+const relatedRessourceTypes = {
+  concerts: ['j_concert_bands'],
+  bands: ['j_concert_bands', 'j_band_genres'],
+  locations: []
+}
+
 async function fetchData({ searchParams }: { searchParams: ContributionFetchOptions }) {
   const supabase = createClient()
 
@@ -15,11 +21,18 @@ async function fetchData({ searchParams }: { searchParams: ContributionFetchOpti
     .range(0, searchParams.size ? parseInt(searchParams.size) - 1 : 24)
 
   if (searchParams.ressourceType) {
-    query = query.eq('ressource_type', searchParams.ressourceType)
+    query = query.in('ressource_type', [
+      searchParams.ressourceType,
+      ...relatedRessourceTypes[searchParams.ressourceType],
+    ])
   }
 
   if (searchParams.ressourceId) {
     query = query.eq('ressource_id', searchParams.ressourceId)
+  }
+
+  if (searchParams.userId) {
+    query = query.eq('user_id', searchParams.userId)
   }
 
   const { data, count, error } = await query
@@ -60,13 +73,15 @@ export default async function ContributionsPage({
 
   return (
     <main className="container">
-      <h1>Mitwirkungen</h1>
+      <h1>Bearbeitungen</h1>
       {contributions.length === 0 && (
         <>
-          <p className="mb-4 text-slate-300">Keine Mitwirkungen für diese Ressource gefunden.</p>
+          <p className="mb-4 text-slate-300">
+            Keine Bearbeitungen für diese Ressource / diesen User gefunden.
+          </p>
           {(searchParams.size || searchParams.ressourceId || searchParams.ressourceType) && (
             <Link href="/contributions" className="btn btn-secondary btn-small">
-              Alle Mitwirkungen
+              Alle Bearbeitungen
             </Link>
           )}
         </>

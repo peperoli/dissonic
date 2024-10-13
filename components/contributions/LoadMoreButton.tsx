@@ -9,6 +9,12 @@ export function LoadMoreButton() {
     parseAsInteger.withDefault(25).withOptions({ shallow: false })
   )
   return (
-    <Button label="Mehr anzeigen" onClick={() => setSize(prev => prev + 25)} appearance="primary" />
+    <div className="flex justify-center">
+      <Button
+        label="Mehr anzeigen"
+        onClick={() => setSize(prev => prev + 25)}
+        appearance="primary"
+      />
+    </div>
   )
 }
