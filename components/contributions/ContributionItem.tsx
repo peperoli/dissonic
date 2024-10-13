@@ -9,7 +9,7 @@ import { getRelativeTime } from '@/lib/relativeTime'
 import { Tables, TablesInsert, TablesUpdate } from '@/types/supabase'
 import { Concert } from '@/types/types'
 import clsx from 'clsx'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, PenIcon, PlusIcon, TrashIcon } from 'lucide-react'
 import Link from 'next/link'
 import { ReactNode } from 'react'
 
@@ -187,24 +187,26 @@ const ContributionItemWrapper = ({
 
   return (
     <div className="rounded-lg bg-slate-800 p-4">
-      <div className="flex items-start gap-4">
+      <div className="flex gap-4 md:flex-row md:items-center">
         <div
           className={clsx(
-            'mr-1 rounded px-2 py-1 text-sm font-bold tracking-wider',
+            'grid size-10 flex-none place-content-center rounded',
             operation === 'INSERT' && 'bg-venom/10 text-venom',
             operation === 'UPDATE' && 'bg-blue/10 text-blue',
             operation === 'DELETE' && 'bg-red/10 text-red'
           )}
         >
-          {operation}
+          {operation === 'INSERT' && <PlusIcon className="size-icon" />}
+          {operation === 'UPDATE' && <PenIcon className="size-icon" />}
+          {operation === 'DELETE' && <TrashIcon className="size-icon" />}
         </div>
-        <div className="flex flex-wrap items-center gap-1">
+        <div className="flex flex-wrap items-center gap-x-1 text-sm">
           <Link href={`/users/${profile?.username}`} className="hover:underline">
             {profile?.username}
           </Link>
           {children}
         </div>
-        <span className="ml-auto whitespace-nowrap text-right text-sm text-slate-300">
+        <span className="whitespace-nowrap text-sm text-slate-300 md:ml-auto">
           {getRelativeTime(timestamp, 'de-CH')}
         </span>
       </div>

@@ -19,7 +19,7 @@ export const MetaInfo = ({ createdAt, creator, ressourceType, ressourceId }: Met
   }
 
   return (
-    <section className="flex items-center gap-3 rounded-lg bg-slate-800 p-4 text-sm text-slate-300 md:p-6">
+    <section className="flex flex-wrap items-center gap-3 rounded-lg bg-slate-800 p-4 text-sm text-slate-300 md:p-6">
       <InfoIcon className="size-icon" />
       {(createdAt || creator) && (
         <p>
