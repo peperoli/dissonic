@@ -386,16 +386,19 @@ export type Database = {
         Row: {
           band_id: number
           concert_id: number
+          created_at: string | null
           user_id: string
         }
         Insert: {
           band_id: number
           concert_id: number
+          created_at?: string | null
           user_id: string
         }
         Update: {
           band_id?: number
           concert_id?: number
+          created_at?: string | null
           user_id?: string
         }
         Relationships: [
