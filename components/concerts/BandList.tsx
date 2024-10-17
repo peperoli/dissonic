@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { BandSeen, Concert } from '../../types/types'
+import { Concert } from '@/types/types'
 import { useQueryClient } from '@tanstack/react-query'
 import { useAddBandsSeen } from '../../hooks/bands/useAddBandsSeen'
 import { useDeleteBandsSeen } from '../../hooks/bands/useDeleteBandsSeen'
@@ -11,6 +11,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import clsx from 'clsx'
 import Cookies from 'js-cookie'
 import { Edit, Lightbulb, Plus, X } from 'lucide-react'
+import { TablesInsert } from '@/types/supabase'
 
 type BandListProps = {
   concert: Concert
@@ -18,9 +19,13 @@ type BandListProps = {
 
 export function BandList({ concert }: BandListProps) {
   const { data: session } = useSession()
-  const bandsSeen = concert.bands_seen?.filter(item => item?.user_id === session?.user.id).filter(item => typeof item !== 'undefined')
+  const bandsSeen = concert.bands_seen
+    ?.filter(item => item?.user_id === session?.user.id)
+    .filter(item => typeof item !== 'undefined')
   const [editing, setEditing] = useState(false)
-  const [selectedBandsSeen, setSelectedBandsSeen] = useState<BandSeen[]>(bandsSeen ?? [])
+  const [selectedBandsSeen, setSelectedBandsSeen] = useState<TablesInsert<'j_bands_seen'>[]>(
+    bandsSeen ?? []
+  )
   const [hideBandsSeenHint, setHideBandsSeenHint] = useState(
     Cookies.get('hideBandsSeenHint') ?? null
   )
@@ -35,7 +40,9 @@ export function BandList({ concert }: BandListProps) {
   const bandsSeenIds = bandsSeen?.map(bandSeen => bandSeen?.band_id)
   const selectedBandsSeenIds = selectedBandsSeen.map(bandSeen => bandSeen.band_id)
   const bandsToAdd = selectedBandsSeen.filter(item => !bandsSeenIds?.includes(item.band_id))
-  const bandsToDelete = bandsSeen?.filter(item => !selectedBandsSeenIds.includes(item?.band_id ?? 0))
+  const bandsToDelete = bandsSeen?.filter(
+    item => !selectedBandsSeenIds.includes(item?.band_id ?? 0)
+  )
   const isFutureConcert = new Date(concert.date_start) > new Date()
 
   async function updateBandsSeen() {

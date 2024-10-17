@@ -15,6 +15,7 @@ export type CommentActivityItemT = Tables<'comments'> & {
 }
 
 export type BandSeenActivityItemT = Tables<'j_bands_seen'> & {
+  created_at: string
   user: Tables<'profiles'>
   band: Pick<Tables<'bands'>, 'id' | 'name'>
   concert: Concert
@@ -39,6 +40,7 @@ async function fetchData({ searchParams }: { searchParams: { size?: string } }) 
       count: 'estimated',
     })
     .order('created_at', { ascending: false })
+    .returns<CommentActivityItemT[]>()
 
   let bandsSeenQuery = supabase
     .from('j_bands_seen')
@@ -47,6 +49,7 @@ async function fetchData({ searchParams }: { searchParams: { size?: string } }) 
     })
     .not('created_at', 'is', null)
     .order('created_at', { ascending: false })
+    .returns<BandSeenActivityItemT[]>()
 
   const [commentsRes, bandsSeenRes] = await Promise.all([commentsQuery, bandsSeenQuery])
 
@@ -68,28 +71,26 @@ async function fetchData({ searchParams }: { searchParams: { size?: string } }) 
 
 export default async function ActivityPage({ searchParams }: { searchParams: { size?: string } }) {
   const { comments, commentsCount, bandsSeen, bandsSeenCount } = await fetchData({ searchParams })
-  const items = [...comments, ...bandsSeen]
-    .filter(item => !!item.created_at)
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+  const items = [...comments, ...bandsSeen].sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  )
   const itemsCount = (commentsCount || 0) + (bandsSeenCount || 0)
   const groupedItems = groupByDate(items)
 
   function groupByDate(items: ActivityItemT[]) {
-    return items
-      .filter(item => !!item.created_at)
-      .reduce<{ date: string; items: ActivityItemT[] }[]>((acc, item) => {
-        const date = new Date(item.created_at).toLocaleDateString('de-CH', {
-          weekday: 'short',
-          day: 'numeric',
-          month: 'short',
-          year: 'numeric',
-        })
-        if (!acc.find(group => group.date === date)) {
-          acc.push({ date, items: [] })
-        }
-        acc.find(group => group.date === date)?.items.push(item)
-        return acc
-      }, [])
+    return items.reduce<{ date: string; items: ActivityItemT[] }[]>((acc, item) => {
+      const date = new Date(item.created_at).toLocaleDateString('de-CH', {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      })
+      if (!acc.find(group => group.date === date)) {
+        acc.push({ date, items: [] })
+      }
+      acc.find(group => group.date === date)?.items.push(item)
+      return acc
+    }, [])
   }
 
   return (
