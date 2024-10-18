@@ -21,7 +21,12 @@ export type BandSeenActivityItemT = Tables<'j_bands_seen'> & {
   concert: Concert
 }
 
-export type ActivityItemT = CommentActivityItemT | BandSeenActivityItemT
+export type FriendAcitivityItemT = Tables<'friends'> & {
+  sender: Tables<'profiles'>
+  receiver: Tables<'profiles'>
+}
+
+export type ActivityItemT = CommentActivityItemT | BandSeenActivityItemT | FriendAcitivityItemT
 
 async function fetchData({ searchParams }: { searchParams: { size?: string } }) {
   const supabase = createClient()
@@ -34,7 +39,7 @@ async function fetchData({ searchParams }: { searchParams: { size?: string } }) 
     bands!j_concert_bands(id, name)
   `
 
-  let commentsQuery = supabase
+  const commentsQuery = supabase
     .from('comments')
     .select(`*, user:comments_user_id_fkey(*), concert:concerts(${concertCols})`, {
       count: 'estimated',
@@ -42,7 +47,7 @@ async function fetchData({ searchParams }: { searchParams: { size?: string } }) 
     .order('created_at', { ascending: false })
     .returns<CommentActivityItemT[]>()
 
-  let bandsSeenQuery = supabase
+  const bandsSeenQuery = supabase
     .from('j_bands_seen')
     .select(`*, user:profiles(*), band:bands(id, name), concert:concerts(${concertCols})`, {
       count: 'estimated',
@@ -51,7 +56,18 @@ async function fetchData({ searchParams }: { searchParams: { size?: string } }) 
     .order('created_at', { ascending: false })
     .returns<BandSeenActivityItemT[]>()
 
-  const [commentsRes, bandsSeenRes] = await Promise.all([commentsQuery, bandsSeenQuery])
+  const friendsQuery = supabase
+    .from('friends')
+    .select('*, sender:sender_id(*), receiver:receiver_id(*)', { count: 'estimated' })
+    .is('pending', false)
+    .order('created_at', { ascending: false })
+    .returns<FriendAcitivityItemT[]>()
+
+  const [commentsRes, bandsSeenRes, friendsRes] = await Promise.all([
+    commentsQuery,
+    bandsSeenQuery,
+    friendsQuery,
+  ])
 
   if (commentsRes.error) {
     throw commentsRes.error
@@ -61,26 +77,33 @@ async function fetchData({ searchParams }: { searchParams: { size?: string } }) 
     throw bandsSeenRes.error
   }
 
+  if (friendsRes.error) {
+    throw friendsRes.error
+  }
+
   return {
     comments: commentsRes.data,
-    commentsCount: commentsRes.count,
+    commentsCount: commentsRes.count || 0,
     bandsSeen: bandsSeenRes.data,
-    bandsSeenCount: bandsSeenRes.count,
+    bandsSeenCount: bandsSeenRes.count || 0,
+    friends: friendsRes.data,
+    friendsCount: friendsRes.count || 0,
   }
 }
 
 export default async function ActivityPage({ searchParams }: { searchParams: { size?: string } }) {
-  const { comments, commentsCount, bandsSeen, bandsSeenCount } = await fetchData({ searchParams })
-  const items = [...comments, ...bandsSeen].sort(
+  const { comments, commentsCount, bandsSeen, bandsSeenCount, friends, friendsCount } =
+    await fetchData({ searchParams })
+  const items = [...comments, ...bandsSeen, ...friends].sort(
     (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   )
-  const itemsCount = (commentsCount || 0) + (bandsSeenCount || 0)
+  const itemsCount = commentsCount + bandsSeenCount + friendsCount
   const groupedItems = groupByDate(items)
 
   function groupByDate(items: ActivityItemT[]) {
     return items.reduce<{ date: string; items: ActivityItemT[] }[]>((acc, item) => {
       const date = new Date(item.created_at).toLocaleDateString('de-CH', {
-        weekday: 'short',
+        weekday: 'long',
         day: 'numeric',
         month: 'short',
         year: 'numeric',

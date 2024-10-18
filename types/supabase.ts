@@ -59,13 +59,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "public_bands_creator_id_fkey"
-            columns: ["creator_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
         ]
       }
       comments: {
@@ -106,6 +99,20 @@ export type Database = {
             columns: ["concert_id"]
             isOneToOne: false
             referencedRelation: "concerts_full"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profile_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -160,17 +167,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "concerts_creator_id_fkey1"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profile_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "concerts_creator_id_fkey1"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "concerts_location_id_fkey"
             columns: ["location_id"]
             isOneToOne: false
             referencedRelation: "locations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "public_concerts_creator_id_fkey"
-            columns: ["creator_id"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
@@ -269,10 +283,17 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "public_festival_roots_creator_id_fkey"
+            foreignKeyName: "festival_roots_creator_id_fkey"
             columns: ["creator_id"]
             isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "profile_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "festival_roots_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
@@ -287,21 +308,21 @@ export type Database = {
       friends: {
         Row: {
           accepted_at: string | null
-          created_at: string | null
+          created_at: string
           pending: boolean
           receiver_id: string
           sender_id: string
         }
         Insert: {
           accepted_at?: string | null
-          created_at?: string | null
+          created_at?: string
           pending?: boolean
           receiver_id: string
           sender_id: string
         }
         Update: {
           accepted_at?: string | null
-          created_at?: string | null
+          created_at?: string
           pending?: boolean
           receiver_id?: string
           sender_id?: string
@@ -424,13 +445,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "j_bands_seen_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "public_j_bands_seen_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -539,13 +553,6 @@ export type Database = {
             referencedRelation: "countries"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "public_locations_creator_id_fkey"
-            columns: ["creator_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
         ]
       }
       profiles: {
@@ -567,15 +574,7 @@ export type Database = {
           id?: string
           username?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "profiles_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       reactions: {
         Row: {
@@ -662,17 +661,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "concerts_creator_id_fkey1"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "concerts_creator_id_fkey1"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profile_stats"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "concerts_location_id_fkey"
             columns: ["location_id"]
             isOneToOne: false
             referencedRelation: "locations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "public_concerts_creator_id_fkey"
-            columns: ["creator_id"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
@@ -693,15 +699,7 @@ export type Database = {
           id: string | null
           username: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "profiles_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Functions: {
@@ -881,4 +879,19 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
