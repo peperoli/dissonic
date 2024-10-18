@@ -30,16 +30,16 @@ function getConcertName(concert: {
 }
 
 const CommentItem = ({ activityItem }: { activityItem: CommentActivityItemT }) => {
-  const { user, concert } = activityItem
+  const { user, concert, created_at } = activityItem
   return (
     <div className="rounded-lg bg-slate-800 p-4">
       <ActivityItemLine
-        activityItem={activityItem}
         user={
           <Link href={`/users/${user.username}`} className="group/user-item">
             <UserItem user={user} usernameIsHidden />
           </Link>
         }
+        createdAt={created_at}
       >
         <Link href={`/users/${user.username}`} className="hover:underline">
           {user.username}
@@ -60,16 +60,16 @@ const CommentItem = ({ activityItem }: { activityItem: CommentActivityItemT }) =
 }
 
 const BandSeenItem = ({ activityItem }: { activityItem: BandSeenActivityItemT }) => {
-  const { user, band, concert } = activityItem
+  const { user, band, concert, created_at } = activityItem
   return (
     <div className="rounded-lg bg-slate-800 p-4">
       <ActivityItemLine
-        activityItem={activityItem}
         user={
           <Link href={`/users/${user.username}`} className="group/user-item">
             <UserItem user={user} usernameIsHidden />
           </Link>
         }
+        createdAt={created_at}
       >
         <Link href={`/users/${user.username}`} className="hover:underline">
           {user.username}
@@ -98,11 +98,10 @@ const BandSeenItem = ({ activityItem }: { activityItem: BandSeenActivityItemT })
 }
 
 const FriendItem = ({ activityItem }: { activityItem: FriendAcitivityItemT }) => {
-  const { sender, receiver } = activityItem
+  const { sender, receiver, accepted_at } = activityItem
   return (
     <div className="rounded-lg bg-slate-800 p-4">
       <ActivityItemLine
-        activityItem={activityItem}
         user={
           <div className="flex">
             {[sender, receiver].map(user => (
@@ -112,6 +111,7 @@ const FriendItem = ({ activityItem }: { activityItem: FriendAcitivityItemT }) =>
             ))}
           </div>
         }
+        createdAt={accepted_at}
       >
         <Link href={`/users/${sender.username}`} className="hover:underline">
           {sender.username}
@@ -127,24 +127,21 @@ const FriendItem = ({ activityItem }: { activityItem: FriendAcitivityItemT }) =>
 }
 
 const ActivityItemLine = ({
-  activityItem,
+  createdAt,
   user,
   children,
 }: {
-  activityItem: ActivityItemT
+  createdAt: string
   user: ReactNode
   children: ReactNode
 }) => {
-  const { created_at } = activityItem
   return (
     <div className="flex items-center gap-4 text-sm">
       {user}
       <div className="flex flex-wrap gap-x-1">{children}</div>
-      {created_at && (
-        <div className="ml-auto whitespace-nowrap text-slate-300">
-          {getRelativeTime(created_at, 'de-CH')}
-        </div>
-      )}
+      <div className="ml-auto whitespace-nowrap text-slate-300">
+        {getRelativeTime(createdAt, 'de-CH')}
+      </div>
     </div>
   )
 }

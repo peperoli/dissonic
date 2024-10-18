@@ -22,6 +22,7 @@ export type BandSeenActivityItemT = Tables<'j_bands_seen'> & {
 }
 
 export type FriendAcitivityItemT = Tables<'friends'> & {
+  accepted_at: string
   sender: Tables<'profiles'>
   receiver: Tables<'profiles'>
 }
