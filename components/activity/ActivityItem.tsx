@@ -1,9 +1,4 @@
-import type {
-  BandSeenActivityItemT,
-  CommentActivityItemT,
-  ActivityItemT,
-  FriendAcitivityItemT,
-} from 'app/activity/page'
+import type { ActivityItemT } from 'app/activity/page'
 import { UserItem } from '../shared/UserItem'
 import Link from 'next/link'
 import { getRelativeTime } from '@/lib/relativeTime'
@@ -29,7 +24,7 @@ function getConcertName(concert: {
   }
 }
 
-const CommentItem = ({ activityItem }: { activityItem: CommentActivityItemT }) => {
+const CommentItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
   const { user, concert, created_at } = activityItem
   return (
     <div className="rounded-lg bg-slate-800 p-4">
@@ -45,9 +40,9 @@ const CommentItem = ({ activityItem }: { activityItem: CommentActivityItemT }) =
           {user.username}
         </Link>
         <span className="text-slate-300">kommentierte</span>
-        <Link href={`/concerts/${concert.id}`} className="hover:underline">
+        <Link href={`/concerts/${concert?.id}`} className="hover:underline">
           {getConcertName(concert)}&nbsp;
-          <span className="text-xs text-slate-300">(ID: {concert.id})</span>
+          <span className="text-xs text-slate-300">(ID: {concert?.id})</span>
         </Link>
       </ActivityItemLine>
       {activityItem.content && (
@@ -59,7 +54,7 @@ const CommentItem = ({ activityItem }: { activityItem: CommentActivityItemT }) =
   )
 }
 
-const BandSeenItem = ({ activityItem }: { activityItem: BandSeenActivityItemT }) => {
+const BandSeenItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
   const { user, band, concert, created_at } = activityItem
   return (
     <div className="rounded-lg bg-slate-800 p-4">
@@ -97,24 +92,24 @@ const BandSeenItem = ({ activityItem }: { activityItem: BandSeenActivityItemT })
   )
 }
 
-const FriendItem = ({ activityItem }: { activityItem: FriendAcitivityItemT }) => {
-  const { sender, receiver, accepted_at } = activityItem
+const FriendItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
+  const { user, receiver, created_at } = activityItem
   return (
     <div className="rounded-lg bg-slate-800 p-4">
       <ActivityItemLine
         user={
           <div className="flex">
-            {[sender, receiver].map(user => (
+            {[user, receiver].map(user => (
               <Link href={`/users/${user.username}`} className="group/user-item">
                 <UserItem user={user} usernameIsHidden />
               </Link>
             ))}
           </div>
         }
-        createdAt={accepted_at}
+        createdAt={created_at}
       >
-        <Link href={`/users/${sender.username}`} className="hover:underline">
-          {sender.username}
+        <Link href={`/users/${user.username}`} className="hover:underline">
+          {user.username}
         </Link>
         <span className="text-slate-300">und</span>
         <Link href={`/users/${receiver.username}`} className="hover:underline">
@@ -147,11 +142,11 @@ const ActivityItemLine = ({
 }
 
 export const ActivityItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
-  if ('content' in activityItem) {
+  if (activityItem.type === 'comments') {
     return <CommentItem activityItem={activityItem} />
-  } else if ('band_id' in activityItem) {
+  } else if (activityItem.type === 'j_bands_seen') {
     return <BandSeenItem activityItem={activityItem} />
-  } else if ('sender_id' in activityItem) {
+  } else if (activityItem.type === 'friends') {
     return <FriendItem activityItem={activityItem} />
   }
 }

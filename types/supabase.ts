@@ -621,6 +621,17 @@ export type Database = {
       }
     }
     Views: {
+      activity: {
+        Row: {
+          band: Database["public"]["Tables"]["bands"]["Row"] | null
+          concert: Database["public"]["Tables"]["concerts"]["Row"] | null
+          created_at: string | null
+          receiver: Database["public"]["Tables"]["profiles"]["Row"] | null
+          type: string | null
+          user: Database["public"]["Tables"]["profiles"]["Row"] | null
+        }
+        Relationships: []
+      }
       concerts_full: {
         Row: {
           bands: Database["public"]["Tables"]["bands"]["Row"][] | null

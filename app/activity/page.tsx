@@ -1,6 +1,7 @@
 import { ActivityItem } from '@/components/activity/ActivityItem'
+import { TypeFilter, typeItems } from '@/components/activity/TypeFilter'
 import { LoadMoreButton } from '@/components/contributions/LoadMoreButton'
-import { Tables } from '@/types/supabase'
+import { Database, Tables } from '@/types/supabase'
 import { createClient } from '@/utils/supabase/server'
 
 type Concert = Pick<Tables<'concerts'>, 'id' | 'name' | 'date_start'> & {
@@ -9,97 +10,43 @@ type Concert = Pick<Tables<'concerts'>, 'id' | 'name' | 'date_start'> & {
   bands: Pick<Tables<'bands'>, 'id' | 'name'>[]
 }
 
-export type CommentActivityItemT = Tables<'comments'> & {
+export type ActivityItemT = Database['public']['Views']['activity']['Row'] & {
   user: Tables<'profiles'>
-  concert: Concert
-}
-
-export type BandSeenActivityItemT = Tables<'j_bands_seen'> & {
   created_at: string
-  user: Tables<'profiles'>
-  band: Pick<Tables<'bands'>, 'id' | 'name'>
-  concert: Concert
 }
 
-export type FriendAcitivityItemT = Tables<'friends'> & {
-  accepted_at: string
-  sender: Tables<'profiles'>
-  receiver: Tables<'profiles'>
-}
-
-export type ActivityItemT = CommentActivityItemT | BandSeenActivityItemT | FriendAcitivityItemT
-
-async function fetchData({ searchParams }: { searchParams: { size?: string } }) {
+async function fetchData({ searchParams }: { searchParams: { size?: string; type?: string } }) {
   const supabase = createClient()
-  const concertCols = `
-    id,
-    name,
-    date_start,
-    festival_root:festival_roots(id, name),
-    location:locations(id, name),
-    bands!j_concert_bands(id, name)
-  `
 
-  const commentsQuery = supabase
-    .from('comments')
-    .select(`*, user:comments_user_id_fkey(*), concert:concerts(${concertCols})`, {
-      count: 'estimated',
-    })
+  let query = supabase.from('activity').select('*', { count: 'estimated' }).eq('type', 'comments')
+
+  if (searchParams.type) {
+    query = query.in(
+      'type',
+      searchParams.type
+        .split(',')
+        .map(typeIndex => ['j_bands_seen', 'comments', 'friends'][parseInt(typeIndex)])
+    )
+  }
+
+  const { data, count, error } = await query
     .order('created_at', { ascending: false })
-    .returns<CommentActivityItemT[]>()
+    // .limit(searchParams.size ? parseInt(searchParams.size) : 25)
 
-  const bandsSeenQuery = supabase
-    .from('j_bands_seen')
-    .select(`*, user:profiles(*), band:bands(id, name), concert:concerts(${concertCols})`, {
-      count: 'estimated',
-    })
-    .not('created_at', 'is', null)
-    .order('created_at', { ascending: false })
-    .returns<BandSeenActivityItemT[]>()
-
-  const friendsQuery = supabase
-    .from('friends')
-    .select('*, sender:sender_id(*), receiver:receiver_id(*)', { count: 'estimated' })
-    .is('pending', false)
-    .order('created_at', { ascending: false })
-    .returns<FriendAcitivityItemT[]>()
-
-  const [commentsRes, bandsSeenRes, friendsRes] = await Promise.all([
-    commentsQuery,
-    bandsSeenQuery,
-    friendsQuery,
-  ])
-
-  if (commentsRes.error) {
-    throw commentsRes.error
+  if (error) {
+    throw error
   }
 
-  if (bandsSeenRes.error) {
-    throw bandsSeenRes.error
-  }
-
-  if (friendsRes.error) {
-    throw friendsRes.error
-  }
-
-  return {
-    comments: commentsRes.data,
-    commentsCount: commentsRes.count || 0,
-    bandsSeen: bandsSeenRes.data,
-    bandsSeenCount: bandsSeenRes.count || 0,
-    friends: friendsRes.data,
-    friendsCount: friendsRes.count || 0,
-  }
+  return { data, count }
 }
 
-export default async function ActivityPage({ searchParams }: { searchParams: { size?: string } }) {
-  const { comments, commentsCount, bandsSeen, bandsSeenCount, friends, friendsCount } =
-    await fetchData({ searchParams })
-  const items = [...comments, ...bandsSeen, ...friends].sort(
-    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-  )
-  const itemsCount = commentsCount + bandsSeenCount + friendsCount
-  const groupedItems = groupByDate(items)
+export default async function ActivityPage({
+  searchParams,
+}: {
+  searchParams: { size?: string; type?: string }
+}) {
+  const { data, count } = await fetchData({ searchParams })
+  const groupedItems = groupByDate(data)
 
   function groupByDate(items: ActivityItemT[]) {
     return items.reduce<{ date: string; items: ActivityItemT[] }[]>((acc, item) => {
@@ -120,8 +67,9 @@ export default async function ActivityPage({ searchParams }: { searchParams: { s
   return (
     <main className="container">
       <h1>Aktivität</h1>
-      {items.length === 0 && (
-        <p className="mb-4 text-slate-300">Keine Aktivität für diesen User gefunden.</p>
+      <TypeFilter />
+      {data.length === 0 && (
+        <p className="mb-4 text-slate-300">Keine Aktivität gefunden.</p>
       )}
       <div className="grid gap-6">
         {groupedItems.map(group => (
@@ -134,7 +82,7 @@ export default async function ActivityPage({ searchParams }: { searchParams: { s
             </ul>
           </section>
         ))}
-        {items.length !== itemsCount && <LoadMoreButton />}
+        {data.length !== count && <LoadMoreButton />}
       </div>
     </main>
   )
