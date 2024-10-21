@@ -1,37 +1,30 @@
 import { ActivityItem } from '@/components/activity/ActivityItem'
-import { TypeFilter, typeItems } from '@/components/activity/TypeFilter'
+import { ActivityTypeFilter } from '@/components/activity/ActivityTypeFilter'
 import { LoadMoreButton } from '@/components/contributions/LoadMoreButton'
 import { Database, Tables } from '@/types/supabase'
 import { createClient } from '@/utils/supabase/server'
-
-type Concert = Pick<Tables<'concerts'>, 'id' | 'name' | 'date_start'> & {
-  festival_root: Pick<Tables<'festival_roots'>, 'id' | 'name'>
-  location: Pick<Tables<'locations'>, 'id' | 'name'>
-  bands: Pick<Tables<'bands'>, 'id' | 'name'>[]
-}
 
 export type ActivityItemT = Database['public']['Views']['activity']['Row'] & {
   user: Tables<'profiles'>
   created_at: string
 }
 
-async function fetchData({ searchParams }: { searchParams: { size?: string; type?: string } }) {
+async function fetchData({
+  searchParams,
+}: {
+  searchParams: { size?: string; activityType?: string }
+}) {
   const supabase = createClient()
 
-  let query = supabase.from('activity').select('*', { count: 'estimated' }).eq('type', 'comments')
+  let query = supabase.from('activity').select('*', { count: 'estimated' })
 
-  if (searchParams.type) {
-    query = query.in(
-      'type',
-      searchParams.type
-        .split(',')
-        .map(typeIndex => ['j_bands_seen', 'comments', 'friends'][parseInt(typeIndex)])
-    )
+  if (searchParams.activityType && searchParams.activityType !== 'all') {
+    query = query.eq('type', searchParams.activityType)
   }
 
   const { data, count, error } = await query
     .order('created_at', { ascending: false })
-    // .limit(searchParams.size ? parseInt(searchParams.size) : 25)
+    .limit(searchParams.size ? parseInt(searchParams.size) : 25)
 
   if (error) {
     throw error
@@ -43,10 +36,10 @@ async function fetchData({ searchParams }: { searchParams: { size?: string; type
 export default async function ActivityPage({
   searchParams,
 }: {
-  searchParams: { size?: string; type?: string }
+  searchParams: { size?: string; activityType?: string }
 }) {
   const { data, count } = await fetchData({ searchParams })
-  const groupedItems = groupByDate(data)
+  const groupedItems = groupByDate(data as ActivityItemT[])
 
   function groupByDate(items: ActivityItemT[]) {
     return items.reduce<{ date: string; items: ActivityItemT[] }[]>((acc, item) => {
@@ -67,11 +60,9 @@ export default async function ActivityPage({
   return (
     <main className="container">
       <h1>Aktivität</h1>
-      <TypeFilter />
-      {data.length === 0 && (
-        <p className="mb-4 text-slate-300">Keine Aktivität gefunden.</p>
-      )}
       <div className="grid gap-6">
+        <ActivityTypeFilter />
+        {data.length === 0 && <p className="mb-4 text-slate-300">Keine Aktivität gefunden.</p>}
         {groupedItems.map(group => (
           <section key={group.date}>
             <h2 className="h3">{group.date}</h2>

@@ -625,6 +625,7 @@ export type Database = {
         Row: {
           band: Database["public"]["Tables"]["bands"]["Row"] | null
           concert: Database["public"]["Tables"]["concerts"]["Row"] | null
+          content: string | null
           created_at: string | null
           receiver: Database["public"]["Tables"]["profiles"]["Row"] | null
           type: string | null

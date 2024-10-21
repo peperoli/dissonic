@@ -1,31 +1,30 @@
+'use client'
+
 import type { ActivityItemT } from 'app/activity/page'
 import { UserItem } from '../shared/UserItem'
 import Link from 'next/link'
 import { getRelativeTime } from '@/lib/relativeTime'
 import { ReactNode } from 'react'
+import { useConcert } from '@/hooks/concerts/useConcert'
+import { Concert } from '@/types/types'
 
-function getConcertName(concert: {
-  name: string | null
-  date_start: string
-  festival_root: { name: string } | null
-  bands: { name: string }[] | null
-  location: { name: string } | null
-  [key: string]: any
-}) {
+function getConcertName(concert: Concert | undefined) {
+  if (!concert) {
+    return null
+  }
+
   if (concert.festival_root) {
     return `${concert.festival_root.name} ${new Date(concert.date_start).getFullYear()}`
   } else if (concert.name) {
     return concert.name
   } else {
-    return `${concert.bands
-      ?.map(band => band.name)
-      .slice(0, 3)
-      .join(', ')} @ ${concert.location?.name}`
+    return `${concert.bands?.map(band => band.name).join(', ')} @ ${concert.location?.name}`
   }
 }
 
 const CommentItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
-  const { user, concert, created_at } = activityItem
+  const { user, created_at } = activityItem
+  const { data: concert } = useConcert(activityItem.concert?.id ?? null, null, { bandsSize: 3 })
   return (
     <div className="rounded-lg bg-slate-800 p-4">
       <ActivityItemLine
@@ -41,7 +40,8 @@ const CommentItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
         </Link>
         <span className="text-slate-300">kommentierte</span>
         <Link href={`/concerts/${concert?.id}`} className="hover:underline">
-          {getConcertName(concert)}&nbsp;
+          {getConcertName(concert)}
+          &nbsp;
           <span className="text-xs text-slate-300">(ID: {concert?.id})</span>
         </Link>
       </ActivityItemLine>
@@ -55,7 +55,8 @@ const CommentItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
 }
 
 const BandSeenItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
-  const { user, band, concert, created_at } = activityItem
+  const { user, band, created_at } = activityItem
+  const { data: concert } = useConcert(activityItem.concert?.id ?? null, null, { bandsSize: 3 })
   return (
     <div className="rounded-lg bg-slate-800 p-4">
       <ActivityItemLine
@@ -70,23 +71,25 @@ const BandSeenItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
           {user.username}
         </Link>
         <span className="text-slate-300">erlebte</span>
-        <Link href={`/bands/${band.id}`} className="hover:underline">
-          {band.name}
+        <Link href={`/bands/${band?.id}`} className="hover:underline">
+          {band?.name}
         </Link>
         <span className="text-slate-300">am Konzert</span>
-        <Link href={`/concerts/${concert.id}`} className="hover:underline">
+        <Link href={`/concerts/${concert?.id}`} className="hover:underline">
           {getConcertName(concert)}&nbsp;
-          <span className="text-xs text-slate-300">(ID: {concert.id})</span>
+          <span className="text-xs text-slate-300">(ID: {concert?.id})</span>
         </Link>
-        <span className="text-slate-300">
-          am{' '}
-          {new Date(concert.date_start).toLocaleDateString('de-CH', {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric',
-          })}
-        </span>
+        {concert?.date_start && (
+          <span className="text-slate-300">
+            am{' '}
+            {new Date(concert.date_start).toLocaleDateString('de-CH', {
+              weekday: 'long',
+              day: 'numeric',
+              month: 'short',
+              year: 'numeric',
+            })}
+          </span>
+        )}
       </ActivityItemLine>
     </div>
   )
@@ -99,11 +102,13 @@ const FriendItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
       <ActivityItemLine
         user={
           <div className="flex">
-            {[user, receiver].map(user => (
-              <Link href={`/users/${user.username}`} className="group/user-item">
-                <UserItem user={user} usernameIsHidden />
-              </Link>
-            ))}
+            {[user, receiver]
+              .filter(user => !!user)
+              .map(user => (
+                <Link href={`/users/${user.username}`} className="group/user-item">
+                  <UserItem user={user} usernameIsHidden />
+                </Link>
+              ))}
           </div>
         }
         createdAt={created_at}
@@ -112,8 +117,8 @@ const FriendItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
           {user.username}
         </Link>
         <span className="text-slate-300">und</span>
-        <Link href={`/users/${receiver.username}`} className="hover:underline">
-          {receiver.username}
+        <Link href={`/users/${receiver?.username}`} className="hover:underline">
+          {receiver?.username}
         </Link>
         <span className="text-slate-300">sind jetzt befreundet</span>
       </ActivityItemLine>
@@ -131,7 +136,7 @@ const ActivityItemLine = ({
   children: ReactNode
 }) => {
   return (
-    <div className="flex items-center gap-4 text-sm">
+    <div className="flex md:items-center gap-4 text-sm">
       {user}
       <div className="flex flex-wrap gap-x-1">{children}</div>
       <div className="ml-auto whitespace-nowrap text-slate-300">
