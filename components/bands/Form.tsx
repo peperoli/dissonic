@@ -25,14 +25,14 @@ interface FormProps {
 export const Form = ({ isNew, close }: FormProps) => {
   const pathname = usePathname()
   const bandId = !isNew ? pathname.split('/').pop() : null
-  const { data: band } = useBand(parseInt(bandId!))
+  const { data: band } = useBand(bandId ? parseInt(bandId) : null)
   const {
     register,
     control,
     watch,
     handleSubmit,
     formState: { dirtyFields, errors },
-  } = useForm<AddBand>({ defaultValues: band })
+  } = useForm<AddBand>({ defaultValues: isNew ? { genres: [] } : band })
   const { data: bands } = useBands()
   const { data: countries } = useCountries()
   const { data: genres } = useGenres()

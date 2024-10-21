@@ -15,7 +15,7 @@ async function fetchContributionsCount({
 }: {
   ressourceType?: ContributionFetchOptions['ressourceType']
   ressourceId?: number
-  userId?: ContributionFetchOptions['userId']
+  userId?: ContributionFetchOptions['userId'] | null
 }) {
   let query = supabase.from('contributions').select('*', { count: 'estimated', head: true })
 
@@ -47,7 +47,7 @@ export function useContributionsCount({
 }: {
   ressourceType?: ContributionFetchOptions['ressourceType']
   ressourceId?: number
-  userId?: ContributionFetchOptions['userId']
+  userId?: ContributionFetchOptions['userId'] | null
 }) {
   return useQuery({
     queryKey: ['contributions-count', ressourceType, ressourceId, userId],

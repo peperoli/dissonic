@@ -1,7 +1,6 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AddConcert } from '@/types/types'
 import supabase from '@/utils/supabase/client'
-import { useRouter } from 'next/navigation'
 import { useModal } from '@/components/shared/ModalProvider'
 
 const addConcert = async (concert: AddConcert) => {
@@ -39,13 +38,13 @@ const addConcert = async (concert: AddConcert) => {
 
 export const useAddConcert = () => {
   const [_, setModal] = useModal()
-  const { push } = useRouter()
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: addConcert,
     onError: error => console.error(error),
-    onSuccess: ({concertId}) => {
+    onSuccess: () => {
       setModal(null)
-      push(`/concerts/${concertId}`)
+      queryClient.invalidateQueries({ queryKey: ['concerts'] })
     },
   })
 }

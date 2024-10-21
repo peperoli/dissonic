@@ -64,6 +64,8 @@ const editBand = async (newBand: EditBand) => {
     } catch (error) {
       throw error
     }
+
+    return { bandId: newBand.id }
   } catch (error) {
     throw error
   }
@@ -75,8 +77,11 @@ export const useEditBand = () => {
   return useMutation({
     mutationFn: editBand,
     onError: error => console.error(error),
-    onSuccess: () => {
+    onSuccess: ({ bandId }) => {
       queryClient.invalidateQueries({ queryKey: ['band'] })
+      queryClient.invalidateQueries({
+        queryKey: ['contributions-count', 'bands', bandId, null],
+      })
       setModal(null)
     },
   })

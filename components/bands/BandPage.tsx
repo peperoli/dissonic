@@ -96,11 +96,11 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
               {regionNames.of(band.country.iso2)}
             </div>
           )}
-          <div className="mb-5 flex items-center gap-4">
-            <MusicIcon className="size-icon flex-none text-slate-300" />
-            <ul className="flex flex-wrap gap-x-2">
-              {band.genres &&
-                band.genres.map((genre, index) => (
+          {band.genres.length > 0 && (
+            <div className="mb-5 flex items-center gap-4">
+              <MusicIcon className="size-icon flex-none text-slate-300" />
+              <ul className="flex flex-wrap gap-x-2">
+                {band.genres.map((genre, index) => (
                   <Fragment key={index}>
                     <li>
                       <Link href={`/bands?genres=${genre.id}`} className="hover:underline">
@@ -110,8 +110,9 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
                     {index + 1 !== band.genres?.length && <span>&bull;</span>}
                   </Fragment>
                 ))}
-            </ul>
-          </div>
+              </ul>
+            </div>
+          )}
           <div className="flex flex-wrap gap-2">
             {band.youtube_url && (
               <Link href={band.youtube_url} target="_blank" className="btn btn-small btn-secondary">
