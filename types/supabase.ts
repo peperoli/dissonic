@@ -630,6 +630,7 @@ export type Database = {
           receiver: Database["public"]["Tables"]["profiles"]["Row"] | null
           type: string | null
           user: Database["public"]["Tables"]["profiles"]["Row"] | null
+          user_id: string[] | null
         }
         Relationships: []
       }

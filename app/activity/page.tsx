@@ -3,6 +3,7 @@ import { ActivityTypeFilter } from '@/components/activity/ActivityTypeFilter'
 import { LoadMoreButton } from '@/components/contributions/LoadMoreButton'
 import { Database, Tables } from '@/types/supabase'
 import { createClient } from '@/utils/supabase/server'
+import { redirect } from 'next/navigation'
 
 export type ActivityItemT = Database['public']['Views']['activity']['Row'] & {
   user: Tables<'profiles'>
@@ -15,6 +16,15 @@ async function fetchData({
   searchParams: { size?: string; activityType?: string }
 }) {
   const supabase = createClient()
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser()
+
+  if (userError || !user) {
+    redirect('/login?redirect=/settings')
+  }
 
   let query = supabase.from('activity').select('*', { count: 'estimated' })
 
