@@ -105,7 +105,7 @@ const FriendItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
             {[user, receiver]
               .filter(user => !!user)
               .map(user => (
-                <Link href={`/users/${user.username}`} className="group/user-item">
+                <Link key={user.id} href={`/users/${user.username}`} className="group/user-item">
                   <UserItem user={user} usernameIsHidden />
                 </Link>
               ))}
@@ -136,7 +136,7 @@ const ActivityItemLine = ({
   children: ReactNode
 }) => {
   return (
-    <div className="flex md:items-center gap-4 text-sm">
+    <div className="flex gap-4 text-sm md:items-center">
       {user}
       <div className="flex flex-wrap gap-x-1">{children}</div>
       <div className="ml-auto whitespace-nowrap text-slate-300">
