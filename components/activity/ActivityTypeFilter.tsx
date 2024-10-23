@@ -1,13 +1,14 @@
 'use client'
 
 import { useQueryState } from 'nuqs'
-import { SegmentedControl } from '../controls/SegmentedControl'
+import { FilterButton } from '../FilterButton'
+import { Select } from '../forms/Select'
 
 export const activityTypeItems = [
-  { value: 'all', label: 'Alle' },
-  { value: 'j_bands_seen', label: 'Erlebte Bands' },
-  { value: 'comments', label: 'Kommentare' },
-  { value: 'friends', label: 'Freunde' },
+  { id: 0, value: 'all', name: 'Alle' },
+  { id: 1, value: 'j_bands_seen', name: 'Erlebte Bands' },
+  { id: 2, value: 'comments', name: 'Kommentare' },
+  { id: 3, value: 'friends', name: 'Freundesaktionen' },
 ]
 
 export const ActivityTypeFilter = () => {
@@ -16,10 +17,19 @@ export const ActivityTypeFilter = () => {
     shallow: false,
   })
   return (
-    <SegmentedControl
-      options={activityTypeItems}
-      value={selectedActivityType}
-      onValueChange={setSelectedActivityType}
-    />
+    <FilterButton
+      label="Aktivitätstyp"
+      items={activityTypeItems}
+      type="singleselect"
+      selectedId={activityTypeItems.findIndex(item => item.value === selectedActivityType)}
+    >
+      <Select
+        name="sort"
+        items={activityTypeItems}
+        value={activityTypeItems.findIndex(item => item.value === selectedActivityType)}
+        onValueChange={value => setSelectedActivityType(activityTypeItems[value].value)}
+        searchable={false}
+      />
+    </FilterButton>
   )
 }

@@ -36,6 +36,13 @@ export type LocationFetchOptions = {
   page?: number
 }
 
+export type ActivityFetchOptions = {
+  size?: number
+  activityType?: 'all' | 'j_bands_seen' | 'comments' | 'friends'
+  user?: string
+  view?: 'friends' | 'user'
+}
+
 export type ContributionFetchOptions = {
   size?: string
   ressourceType?: 'concerts' | 'bands' | 'locations'

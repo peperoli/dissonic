@@ -1,7 +1,9 @@
 import { ActivityItem } from '@/components/activity/ActivityItem'
 import { ActivityTypeFilter } from '@/components/activity/ActivityTypeFilter'
+import { ViewFilter } from '@/components/activity/ViewFilter'
 import { LoadMoreButton } from '@/components/contributions/LoadMoreButton'
 import { Database, Tables } from '@/types/supabase'
+import { ActivityFetchOptions } from '@/types/types'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 
@@ -13,7 +15,7 @@ export type ActivityItemT = Database['public']['Views']['activity']['Row'] & {
 async function fetchData({
   searchParams,
 }: {
-  searchParams: { size?: string; activityType?: string }
+  searchParams: Exclude<ActivityFetchOptions, 'size'> & { size?: string }
 }) {
   const supabase = createClient()
 
@@ -23,13 +25,38 @@ async function fetchData({
   } = await supabase.auth.getUser()
 
   if (userError || !user) {
-    redirect('/login?redirect=/settings')
+    redirect('/login?redirect=/activity')
   }
 
   let query = supabase.from('activity').select('*', { count: 'estimated' })
 
   if (searchParams.activityType && searchParams.activityType !== 'all') {
     query = query.eq('type', searchParams.activityType)
+  }
+
+  if (searchParams.user) {
+    query = query.contains('user_id', searchParams.user.split(','))
+  }
+
+  if ((!searchParams.view || searchParams.view === 'friends') && !searchParams.user) {
+    const { data: friends, error: friendsError } = await supabase
+      .from('friends')
+      .select('*')
+      .or(`sender_id.eq.${user.id}, receiver_id.eq.${user.id}`)
+      .eq('pending', false)
+
+    if (friendsError) {
+      throw friendsError
+    }
+
+    const friendIds = new Set([
+      ...friends.map(friend => friend.sender_id),
+      ...friends.map(friend => friend.receiver_id),
+    ])
+
+    query = query.containedBy('user_id', [...friendIds])
+  } else if (searchParams.view === 'user') {
+    query = query.contains('user_id', [user.id])
   }
 
   const { data, count, error } = await query
@@ -46,7 +73,7 @@ async function fetchData({
 export default async function ActivityPage({
   searchParams,
 }: {
-  searchParams: { size?: string; activityType?: string }
+  searchParams: Exclude<ActivityFetchOptions, 'size'> & { size?: string }
 }) {
   const { data, count } = await fetchData({ searchParams })
   const groupedItems = groupByDate(data as ActivityItemT[])
@@ -71,7 +98,10 @@ export default async function ActivityPage({
     <main className="container">
       <h1>Aktivität</h1>
       <div className="grid gap-6">
-        <ActivityTypeFilter />
+        <div className="flex flex-col gap-4 md:flex-row">
+          {!searchParams.user && <ViewFilter />}
+          <ActivityTypeFilter />
+        </div>
         {data.length === 0 && <p className="mb-4 text-slate-300">Keine Aktivität gefunden.</p>}
         {groupedItems.map(group => (
           <section key={group.date}>

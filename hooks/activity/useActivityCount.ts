@@ -9,7 +9,6 @@ async function fetchActivityCount(userId?: string) {
   }
 
   const { count, error } = await query
-  console.log(count, error)
 
   if (error) {
     throw error

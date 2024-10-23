@@ -161,7 +161,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                   </Tab>
                 ))}
                 {!!activityCount && (
-                  <Link href={`/activity?userId=${profile.id}`} className="relative rounded p-3">
+                  <Link href={`/activity?user=${profile.id}`} className="relative rounded p-3">
                     Aktivität
                     <span className="absolute bottom-0 left-0 h-1 w-full rounded-t bg-transparent" />
                   </Link>
