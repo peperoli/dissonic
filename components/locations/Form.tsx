@@ -5,7 +5,7 @@ import { TextField } from '../forms/TextField'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { SelectField } from '../forms/SelectField'
 import { useCountries } from '@/hooks/useCountries'
-import { Disclosure } from '@headlessui/react'
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
 import { ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
 import { Fragment } from 'react'
@@ -81,14 +81,14 @@ export const Form = ({ close, isNew }: FormProps) => {
         )}
       />
       <Disclosure>
-        <Disclosure.Panel>
+        <DisclosurePanel>
           <TextField
             {...register('website')}
             label="Website (optional)"
             placeholder="https://hallenstadion.ch/"
           />
-        </Disclosure.Panel>
-        <Disclosure.Button as={Fragment}>
+        </DisclosurePanel>
+        <DisclosureButton as={Fragment}>
           {({ open }) => (
             <Button
               label={open ? 'Weniger anzeigen' : 'Mehr anzeigen'}
@@ -97,7 +97,7 @@ export const Form = ({ close, isNew }: FormProps) => {
               appearance="tertiary"
             />
           )}
-        </Disclosure.Button>
+        </DisclosureButton>
       </Disclosure>
       <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:justify-end [&>*]:flex-1">
         <Button onClick={close} label="Abbrechen" />

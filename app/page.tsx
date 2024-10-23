@@ -3,7 +3,7 @@ import { Concert } from '../types/types'
 import { createClient } from '../utils/supabase/server'
 
 async function fetchData() {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, count, error } = await supabase
     .from('concerts_full')

@@ -14,7 +14,7 @@ export async function generateStaticParams() {
 }
 
 async function fetchData(params: { id: string }) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('locations')
@@ -29,9 +29,10 @@ async function fetchData(params: { id: string }) {
   return data
 }
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const location = await fetchData(params)
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   return (
     <LocationPage
       location={location}

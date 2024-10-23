@@ -12,7 +12,7 @@ const relatedRessourceTypes = {
 }
 
 async function fetchData({ searchParams }: { searchParams: ContributionFetchOptions }) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   let query = supabase
     .from('contributions')
@@ -44,11 +44,12 @@ async function fetchData({ searchParams }: { searchParams: ContributionFetchOpti
   return { data, count }
 }
 
-export default async function ContributionsPage({
-  searchParams,
-}: {
-  searchParams: ContributionFetchOptions
-}) {
+export default async function ContributionsPage(
+  props: {
+    searchParams: Promise<ContributionFetchOptions>
+  }
+) {
+  const searchParams = await props.searchParams;
   const { data: contributions, count: contributionsCount } = await fetchData({ searchParams })
   const groupedContributions = groupByDate(contributions)
 

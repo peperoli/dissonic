@@ -1,7 +1,7 @@
 import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 import { getCounts, ItemCount } from '@/lib/getCounts'
 import { Band, Location } from '@/types/types'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, JSX } from 'react'
 import { Button } from '../Button'
 
 type TopGridProps = {

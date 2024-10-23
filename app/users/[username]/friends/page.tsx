@@ -3,7 +3,7 @@ import { createClient } from '../../../../utils/supabase/server';
 import { Friend, Profile } from '../../../../types/types';
 
 async function fetchData(username: string): Promise<{ profile: Profile; friends: Friend[] }> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data: profile, error: profileError } = await supabase
     .from('profiles')
@@ -29,12 +29,13 @@ async function fetchData(username: string): Promise<{ profile: Profile; friends:
 }
 
 type PageProps = {
-  params: {
+  params: Promise<{
     username: string
-  }
+  }>
 }
 
-export default async function Page({ params }: PageProps) {
+export default async function Page(props: PageProps) {
+  const params = await props.params;
   const { profile, friends } = await fetchData(params.username)
   return <FriendsPage profile={profile} initialFriends={friends} />
 }

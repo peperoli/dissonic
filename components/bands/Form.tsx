@@ -12,7 +12,7 @@ import { usePathname } from 'next/navigation'
 import { useAddBand } from '@/hooks/bands/useAddBand'
 import { useEditBand } from '@/hooks/bands/useEditBand'
 import { ChevronDown } from 'lucide-react'
-import { Disclosure } from '@headlessui/react'
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
 import { Fragment } from 'react'
 import clsx from 'clsx'
 import { normalizeString } from '@/lib/normalizeString'
@@ -117,14 +117,14 @@ export const Form = ({ isNew, close }: FormProps) => {
         )}
       />
       <Disclosure>
-        <Disclosure.Panel>
+        <DisclosurePanel>
           <TextField
             {...register('youtube_url')}
             label="YouTube-Kanal (optional)"
             placeholder="https://youtube.com/channel/UC4BSeEq7XNtihGqI309vhYg"
           />
-        </Disclosure.Panel>
-        <Disclosure.Button as={Fragment}>
+        </DisclosurePanel>
+        <DisclosureButton as={Fragment}>
           {({ open }) => (
             <Button
               label={open ? 'Weniger anzeigen' : 'Mehr anzeigen'}
@@ -133,7 +133,7 @@ export const Form = ({ isNew, close }: FormProps) => {
               appearance="tertiary"
             />
           )}
-        </Disclosure.Button>
+        </DisclosureButton>
       </Disclosure>
       <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:static md:z-0 md:justify-end md:pb-0 [&>*]:flex-1">
         <Button onClick={close} label="Abbrechen" />

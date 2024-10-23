@@ -14,7 +14,7 @@ export async function generateStaticParams() {
 }
 
 async function fetchData(username: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data: profile, error } = await supabase
     .from('profiles')
@@ -31,12 +31,13 @@ async function fetchData(username: string) {
 }
 
 type PageProps = {
-  params: {
+  params: Promise<{
     username: string
-  }
+  }>
 }
 
-export default async function Page({ params }: PageProps) {
+export default async function Page(props: PageProps) {
+  const params = await props.params;
   const { profile } = await fetchData(params.username)
 
   if (!profile) notFound()

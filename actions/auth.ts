@@ -8,7 +8,7 @@ export type SignInFormData = {
 }
 
 export async function signIn(formData: SignInFormData) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { error } = await supabase.auth.signInWithPassword(formData)
 
@@ -22,7 +22,7 @@ export type SignUpFormData = SignInFormData & {
 }
 
 export async function signUp(formData: SignUpFormData) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase.auth.signUp({
     ...formData,

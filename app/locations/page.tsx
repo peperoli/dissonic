@@ -3,7 +3,7 @@ import { ExtendedRes, Location } from '../../types/types'
 import { createClient } from '../../utils/supabase/server'
 
 async function fetchData(): Promise<ExtendedRes<Location[]>> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, count, error } = await supabase
     .from('locations')
