@@ -1,7 +1,7 @@
 import { useSpotifySearch } from '../../hooks/spotify/useSpotifySearch'
 import Image from 'next/image'
 import { SpotifyArtist } from '../../types/types'
-import { Popover } from '@headlessui/react'
+import { Popover, PopoverBackdrop, PopoverButton, PopoverPanel } from '@headlessui/react'
 import { Check, ChevronDown, LinkIcon } from 'lucide-react'
 import { Button } from '../Button'
 import { useState } from 'react'
@@ -61,7 +61,7 @@ export const SpotifyArtistSelect = ({ bandName, value, onChange }: SpotifyArtist
 
   return (
     <Popover className="relative">
-      <Popover.Button className="w-full rounded-lg border border-slate-500 bg-slate-750 px-4 pb-3 pt-1 text-left accent-white">
+      <PopoverButton className="w-full rounded-lg border border-slate-500 bg-slate-750 px-4 pb-3 pt-1 text-left accent-white">
         <span className="mb-2 inline-block w-max text-xs text-slate-300">Spotify-Verknüpfung</span>
         <span className="flex items-center gap-3">
           {value !== null && (
@@ -82,9 +82,9 @@ export const SpotifyArtistSelect = ({ bandName, value, onChange }: SpotifyArtist
           <span>{value !== null ? selectedArtist?.name : 'Keine Verknüpfung'}</span>
           <ChevronDown className="ml-auto size-icon" />
         </span>
-      </Popover.Button>
-      <Popover.Overlay className="fixed inset-0 bg-black opacity-30 md:hidden" />
-      <Popover.Panel className="fixed inset-8 z-20 overflow-auto rounded-lg bg-slate-700 p-2 md:absolute md:inset-auto md:mt-1 md:max-h-72 md:w-full">
+      </PopoverButton>
+      <PopoverBackdrop className="fixed inset-0 bg-black opacity-30 md:hidden" />
+      <PopoverPanel className="fixed inset-8 z-20 overflow-auto rounded-lg bg-slate-700 p-2 md:absolute md:inset-auto md:mt-1 md:max-h-72 md:w-full">
         {({ close }) => {
           function handleChange(value: string | null) {
             onChange(value)
@@ -106,19 +106,21 @@ export const SpotifyArtistSelect = ({ bandName, value, onChange }: SpotifyArtist
                 <SelectItem key={item.id} item={item} value={value} handleChange={handleChange} />
               ))}
               <div className="mt-2 flex justify-center">
-                <Button
-                  onClick={() => setLimit(prev => prev + 10)}
-                  label="Mehr anzeigen"
-                  size="small"
-                  appearance="primary"
-                  loading={isLoading}
-                  disabled={limit >= 50}
-                />
+                {!!searchResults?.length && (
+                  <Button
+                    onClick={() => setLimit(prev => prev + 10)}
+                    label="Mehr anzeigen"
+                    size="small"
+                    appearance="primary"
+                    loading={isLoading}
+                    disabled={limit >= 50}
+                  />
+                )}
               </div>
             </>
           )
         }}
-      </Popover.Panel>
+      </PopoverPanel>
     </Popover>
   )
 }

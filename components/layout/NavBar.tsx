@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Logo from './Logo'
-import { Menu } from '@headlessui/react'
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useLogOut } from '../../hooks/auth/useLogOut'
 import { useProfile } from '../../hooks/profiles/useProfile'
@@ -54,22 +54,22 @@ export const NavBar = () => {
       </Link>
       {profile ? (
         <Menu as="div" className="relative">
-          <Menu.Button>
+          <MenuButton>
             <UserItem user={profile} avatarRight />
-          </Menu.Button>
-          <Menu.Items className="absolute right-0 z-30 mt-1 w-40 rounded-lg bg-slate-700 p-2 shadow-xl">
+          </MenuButton>
+          <MenuItems className="absolute right-0 z-30 mt-1 w-40 rounded-lg bg-slate-700 p-2 shadow-xl">
             {menuItems.map((item, index) => {
               const ConditionalWrapper = item.href ? Link : 'button'
               const Icon = item.icon
               return (
-                <Menu.Item key={index}>
-                  {({ active }) => (
+                <MenuItem key={index}>
+                  {({ focus }) => (
                     <ConditionalWrapper
                       href={item.href!}
                       onClick={item.onClick}
                       className={clsx(
                         'flex w-full items-center gap-2 rounded px-2 py-1',
-                        active && 'bg-slate-600'
+                        focus && 'bg-slate-600'
                       )}
                     >
                       <Icon className="size-icon text-slate-300" />
@@ -81,10 +81,10 @@ export const NavBar = () => {
                       )}
                     </ConditionalWrapper>
                   )}
-                </Menu.Item>
+                </MenuItem>
               )
             })}
-          </Menu.Items>
+          </MenuItems>
         </Menu>
       ) : (
         <div className="flex gap-4">

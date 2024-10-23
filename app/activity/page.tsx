@@ -17,7 +17,7 @@ async function fetchData({
 }: {
   searchParams: Exclude<ActivityFetchOptions, 'size'> & { size?: string }
 }) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const {
     data: { user },
@@ -70,11 +70,12 @@ async function fetchData({
   return { data, count }
 }
 
-export default async function ActivityPage({
-  searchParams,
-}: {
-  searchParams: Exclude<ActivityFetchOptions, 'size'> & { size?: string }
-}) {
+export default async function ActivityPage(
+  props: {
+    searchParams: Promise<Exclude<ActivityFetchOptions, 'size'> & { size?: string }>
+  }
+) {
+  const searchParams = await props.searchParams;
   const { data, count } = await fetchData({ searchParams })
   const groupedItems = groupByDate(data as ActivityItemT[])
 

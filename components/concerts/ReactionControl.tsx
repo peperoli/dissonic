@@ -2,7 +2,7 @@ import { Button } from '../Button'
 import { SmilePlus } from 'lucide-react'
 import { Comment, Profile, Reaction } from '../../types/types'
 import { User } from '@supabase/supabase-js'
-import { Popover } from '@headlessui/react'
+import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
 import { useAddReaction } from '../../hooks/concerts/useAddReaction'
 import { useEditReaction } from '../../hooks/concerts/useEditReaction'
 import { useDeleteReaction } from '../../hooks/concerts/useDeleteReaction'
@@ -124,10 +124,10 @@ export const ReactionControl = ({ comment, reactions, user }: ReactionControlPro
       ))}
       {comment.user_id !== user.id && (
         <Popover>
-          <Popover.Button aria-label="Reagieren" className="btn btn-icon btn-small">
+          <PopoverButton aria-label="Reagieren" className="btn btn-icon btn-small">
             <SmilePlus className="size-icon" />
-          </Popover.Button>
-          <Popover.Panel className="absolute left-1/2 z-10 mt-1 flex -translate-x-1/2 rounded-lg bg-slate-700 shadow-xl">
+          </PopoverButton>
+          <PopoverPanel className="absolute left-1/2 z-10 mt-1 flex -translate-x-1/2 rounded-lg bg-slate-700 shadow-xl">
             {({ close }) => (
               <>
                 {Object.keys(reactionIcons).map(key => (
@@ -145,7 +145,7 @@ export const ReactionControl = ({ comment, reactions, user }: ReactionControlPro
                 ))}
               </>
             )}
-          </Popover.Panel>
+          </PopoverPanel>
         </Popover>
       )}
     </div>

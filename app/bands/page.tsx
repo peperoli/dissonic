@@ -2,7 +2,7 @@ import { BandsPage } from '../../components/bands/BandsPage'
 import { createClient } from '../../utils/supabase/server'
 
 const fetchData = async () => {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, count, error } = await supabase
     .from('bands')

@@ -15,7 +15,7 @@ export async function generateStaticParams() {
 }
 
 async function fetchConcert(concertId: Concert['id']) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('concerts')
@@ -38,9 +38,10 @@ async function fetchConcert(concertId: Concert['id']) {
   return data
 }
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const concert = await fetchConcert(parseInt(params.id))
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   return (
     <ConcertPage
       initialConcert={concert}

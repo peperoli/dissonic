@@ -12,7 +12,7 @@ type SearchParams = {
 export type ProfileStat = Database['public']['Views']['profile_stats']['Row']
 
 async function fetchProfiles(options: SearchParams): Promise<ProfileStat[]> {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data, error } = await supabase
     .from('profile_stats')
     .select('*')
@@ -29,7 +29,8 @@ type PageProps = {
   searchParams: SearchParams
 }
 
-export default async function Page({ searchParams }: PageProps) {
+export default async function Page(props: PageProps) {
+  const searchParams = await props.searchParams;
   const profileStats = await fetchProfiles(searchParams)
   return (
     <main className="container">

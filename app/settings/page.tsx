@@ -6,7 +6,7 @@ import { PasswordForm } from '@/components/profile/PasswordForm'
 import { EmailForm } from '@/components/profile/EmailForm'
 
 async function fetchData() {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const {
     data: { user },

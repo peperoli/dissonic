@@ -8,7 +8,7 @@ import { useProfile } from '../../hooks/profiles/useProfile'
 import { useFriends } from '../../hooks/profiles/useFriends'
 import { useBandsSeen } from '../../hooks/bands/useBandsSeen'
 import { useSession } from '../../hooks/auth/useSession'
-import { Tab } from '@headlessui/react'
+import { Tab, TabGroup, TabList, TabPanel } from '@headlessui/react'
 import clsx from 'clsx'
 import { useConcerts } from '../../hooks/concerts/useConcerts'
 import { ConcertCard } from '../concerts/ConcertCard'
@@ -142,9 +142,9 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
             )}
           </section>
           <Score uniqueBandsSeen={uniqueBandsSeen} concertsSeen={concertsSeen} />
-          <Tab.Group as="section" className="grid">
+          <TabGroup as="section" className="grid">
             <div className="mb-4 overflow-x-auto rounded-lg bg-slate-700 px-3">
-              <Tab.List as="nav" className="flex">
+              <TabList as="nav" className="flex">
                 {['Statistik', 'Konzerte', 'Freunde'].map(item => (
                   <Tab className="relative rounded p-3" key={item}>
                     {({ selected }) => (
@@ -175,9 +175,9 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                     <span className="absolute bottom-0 left-0 h-1 w-full rounded-t bg-transparent" />
                   </Link>
                 )}
-              </Tab.List>
+              </TabList>
             </div>
-            <Tab.Panel className="grid gap-4">
+            <TabPanel className="grid gap-4">
               {!bandsSeen && <p className="text-sm text-slate-300">Lade ...</p>}
               {bandsSeen && bandsSeen.length === 0 && (
                 <StatusBanner statusType="info" message="Blyat! Noch keine Statistik vorhanden." />
@@ -225,11 +225,11 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                   Item={LocationItem}
                 />
               )}
-            </Tab.Panel>
-            <Tab.Panel className="grid gap-4">
+            </TabPanel>
+            <TabPanel className="grid gap-4">
               <ConcertList userId={profile.id} />
-            </Tab.Panel>
-            <Tab.Panel>
+            </TabPanel>
+            <TabPanel>
               {acceptedFriends && acceptedFriends.length > 0 ? (
                 <div className="grid grid-cols-2 gap-4">
                   {acceptedFriends.map(item => (
@@ -247,8 +247,8 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                   keine Konzertfreunde :/`}
                 />
               )}
-            </Tab.Panel>
-          </Tab.Group>
+            </TabPanel>
+          </TabGroup>
         </>
       ) : (
         <div>Bitte melde dich an.</div>
