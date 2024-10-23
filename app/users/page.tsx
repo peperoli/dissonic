@@ -25,17 +25,13 @@ async function fetchProfiles(options: SearchParams): Promise<ProfileStat[]> {
   return data
 }
 
-type PageProps = {
-  searchParams: SearchParams
-}
-
-export default async function Page(props: PageProps) {
-  const searchParams = await props.searchParams;
+export default async function Page(props: { searchParams: Promise<SearchParams> }) {
+  const searchParams = await props.searchParams
   const profileStats = await fetchProfiles(searchParams)
   return (
     <main className="container">
       <h1>Fans</h1>
-      <div className="-mx-4 grid grid-cols-3 md:grid-cols-4 gap-4 bg-radial-gradient from-blue/20 via-slate-800 to-slate-800 p-6 md:m-0 md:rounded-2xl">
+      <div className="-mx-4 grid grid-cols-3 gap-4 bg-radial-gradient from-blue/20 via-slate-800 to-slate-800 p-6 md:m-0 md:grid-cols-4 md:rounded-2xl">
         <div className="col-span-full">
           <div className="w-fit">
             <SortSelect />
