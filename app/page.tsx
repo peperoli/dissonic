@@ -1,10 +1,8 @@
 import { HomePage } from '../components/concerts/HomePage'
 import { Concert } from '../types/types'
-import { cookies } from 'next/headers'
 import { createClient } from '../utils/supabase/server'
 
 async function fetchData() {
-  const cookieStore = cookies()
   const supabase = createClient()
 
   const { data, count, error } = await supabase

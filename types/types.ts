@@ -36,6 +36,13 @@ export type LocationFetchOptions = {
   page?: number
 }
 
+export type ActivityFetchOptions = {
+  size?: number
+  activityType?: 'all' | 'j_bands_seen' | 'comments' | 'friends'
+  user?: string
+  view?: 'friends' | 'user'
+}
+
 export type ContributionFetchOptions = {
   size?: string
   ressourceType?: 'concerts' | 'bands' | 'locations'
@@ -47,7 +54,7 @@ export type Concert = Tables<'concerts'> & {
   festival_root?: { name: string } | null
   location?: Location | null
   bands?: Band[]
-  bands_seen?: (BandSeen | undefined)[]
+  bands_seen?: Tables<'j_bands_seen'>[]
   creator?: { username: string } | null
 }
 

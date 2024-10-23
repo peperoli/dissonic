@@ -25,6 +25,7 @@ export function Navigation() {
 			<NavLink link="/" name="Konzerte" />
 			<NavLink link="/bands" name="Bands" />
 			<NavLink link="/locations" name="Locations" />
+			<NavLink link="/activity" name="Aktivität" />
 			<NavLink link="/users" name="Fans" />
 		</nav>
 	)

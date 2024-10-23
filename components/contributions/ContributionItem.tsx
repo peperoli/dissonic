@@ -32,26 +32,23 @@ const ressourceTypeLabels = {
   locations: 'Location',
 } as { [key: string]: string }
 
+function getConcertName(concert: Concert | undefined) {
+  if (!concert) {
+    return null
+  }
+
+  if (concert.festival_root) {
+    return `${concert.festival_root.name} ${new Date(concert.date_start).getFullYear()}`
+  } else if (concert.name) {
+    return concert.name
+  } else {
+    return `${concert.bands?.map(band => band.name).join(', ')} @ ${concert.location?.name}`
+  }
+}
+
 const ConcertContributionItem = ({ contribution }: { contribution: Tables<'contributions'> }) => {
   const { operation, ressource_type, ressource_id } = contribution
-  const { data: concert } = useConcert(ressource_id)
-
-  function getConcertName(ressource: Concert | undefined) {
-    if (!ressource) {
-      return null
-    }
-
-    if (ressource.festival_root) {
-      return `${ressource.festival_root.name} ${new Date(ressource.date_start).getFullYear()}`
-    } else if (ressource.name) {
-      return ressource.name
-    } else {
-      return `${ressource.bands
-        ?.map(band => band.name)
-        .slice(0, 3)
-        .join(', ')} @ ${ressource.location?.name}`
-    }
-  }
+  const { data: concert } = useConcert(ressource_id, null, { bandsSize: 3 })
 
   return (
     <ContributionItemWrapper contribution={contribution}>
@@ -103,7 +100,7 @@ const ConcertBandContributionItem = ({
   contribution: Tables<'contributions'>
 }) => {
   const { operation, ressource_id, state_old, state_new } = contribution
-  const { data: concert } = useConcert(ressource_id, null)
+  const { data: concert } = useConcert(ressource_id, null, { bandsSize: 3 })
   const bandId = state_new
     ? typeof state_new === 'object' && 'band_id' in state_new
       ? Number(state_new.band_id)
@@ -122,7 +119,7 @@ const ConcertBandContributionItem = ({
       </Link>
       <span className="text-slate-300">{operationLabel[1]} Konzert</span>
       <Link href={`/concerts/${concert?.id}`} className="hover:underline">
-        {concert?.name} <span className="text-slate-300">(ID: {concert?.id})</span>
+        {getConcertName(concert)} <span className="text-slate-300">(ID: {concert?.id})</span>
       </Link>
       {operationLabel[2] && <span className="text-slate-300">{operationLabel[2]}</span>}
     </ContributionItemWrapper>
@@ -211,7 +208,7 @@ const ContributionItemWrapper = ({
         </span>
       </div>
       {changes.length > 0 && (
-        <div className="mt-2 rounded border border-slate-700 p-2">
+        <div className="mt-2 rounded border border-slate-700 p-2 text-sm">
           {changes.map(change => (
             <div key={change.key} className="flex flex-wrap items-center gap-1">
               <strong>{change.key}:</strong>

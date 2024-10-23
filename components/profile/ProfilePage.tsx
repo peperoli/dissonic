@@ -27,6 +27,7 @@ import { PieChart } from './PieChart'
 import Link from 'next/link'
 import { SpeedDial } from '../layout/SpeedDial'
 import { useContributionsCount } from '@/hooks/contributions/useContributionsCount'
+import { useActivityCount } from '@/hooks/activity/useActivityCount'
 
 type ConcertListProps = {
   userId: string
@@ -76,6 +77,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
   const acceptedFriends = friends?.filter(item => !item.pending)
   const { data: bandsSeen } = useBandsSeen(initialProfile.id)
   const { data: contributionsCount } = useContributionsCount({ userId: initialProfile.id })
+  const { data: activityCount } = useActivityCount({ userId: initialProfile.id })
   const [_, setModal] = useModal()
   const { data: session } = useSession()
   const isOwnProfile = session?.user.id === profile?.id
@@ -141,7 +143,7 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
           </section>
           <Score uniqueBandsSeen={uniqueBandsSeen} concertsSeen={concertsSeen} />
           <Tab.Group as="section" className="grid">
-            <div className="overflow-x-auto mb-4 rounded-lg bg-slate-700 px-3">
+            <div className="mb-4 overflow-x-auto rounded-lg bg-slate-700 px-3">
               <Tab.List as="nav" className="flex">
                 {['Statistik', 'Konzerte', 'Freunde'].map(item => (
                   <Tab className="relative rounded p-3" key={item}>
@@ -158,6 +160,12 @@ export const ProfilePage = ({ initialProfile }: ProfilePageProps) => {
                     )}
                   </Tab>
                 ))}
+                {!!activityCount && (
+                  <Link href={`/activity?user=${profile.id}`} className="relative rounded p-3">
+                    Aktivität
+                    <span className="absolute bottom-0 left-0 h-1 w-full rounded-t bg-transparent" />
+                  </Link>
+                )}
                 {!!contributionsCount && (
                   <Link
                     href={`/contributions?userId=${profile.id}`}

@@ -1,12 +1,12 @@
 import { User } from '@supabase/supabase-js'
 import { Dispatch, SetStateAction } from 'react'
-import { Band, BandSeen } from '../../types/types'
 import { useConcertContext } from '../../hooks/concerts/useConcertContext'
+import { Tables, TablesInsert } from '@/types/supabase'
 
 interface BandSeenToggleProps {
-  band: Band
-  selectedBandsSeen: BandSeen[]
-  setSelectedBandsSeen: Dispatch<SetStateAction<BandSeen[]>>
+  band: Tables<'bands'>
+  selectedBandsSeen: TablesInsert<'j_bands_seen'>[]
+  setSelectedBandsSeen: Dispatch<SetStateAction<TablesInsert<'j_bands_seen'>[]>>
   user: User | null
 }
 

@@ -3,6 +3,8 @@ import Image from 'next/image'
 import { SpotifyArtist } from '../../types/types'
 import { Popover } from '@headlessui/react'
 import { Check, ChevronDown, LinkIcon } from 'lucide-react'
+import { Button } from '../Button'
+import { useState } from 'react'
 
 interface SelectItemProps {
   item: SpotifyArtist
@@ -53,7 +55,8 @@ interface SpotifyArtistSelectProps {
 }
 
 export const SpotifyArtistSelect = ({ bandName, value, onChange }: SpotifyArtistSelectProps) => {
-  const { data: searchResults } = useSpotifySearch(bandName)
+  const [limit, setLimit] = useState(10)
+  const { data: searchResults, isLoading } = useSpotifySearch(bandName, { limit })
   const selectedArtist = searchResults?.find(item => item.id === value)
 
   return (
@@ -102,6 +105,16 @@ export const SpotifyArtistSelect = ({ bandName, value, onChange }: SpotifyArtist
               {searchResults?.map(item => (
                 <SelectItem key={item.id} item={item} value={value} handleChange={handleChange} />
               ))}
+              <div className="mt-2 flex justify-center">
+                <Button
+                  onClick={() => setLimit(prev => prev + 10)}
+                  label="Mehr anzeigen"
+                  size="small"
+                  appearance="primary"
+                  loading={isLoading}
+                  disabled={limit >= 50}
+                />
+              </div>
             </>
           )
         }}

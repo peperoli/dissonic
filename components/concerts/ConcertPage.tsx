@@ -59,7 +59,7 @@ type ConcertPageProps = {
 }
 
 export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPageProps) => {
-  const { data: concert } = useConcert(initialConcert.id, initialConcert)
+  const { data: concert } = useConcert(initialConcert.id, { placeholderData: initialConcert })
   const { data: concertProfiles } = useConcertProfiles(initialConcert.id)
   const { data: session } = useSession()
   const { data: spotifyArtist } = useSpotifyArtist(concert?.bands?.[0]?.spotify_artist_id)

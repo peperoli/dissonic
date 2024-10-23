@@ -176,8 +176,8 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
           <SegmentedControl
             options={[
               { value: 'global', label: 'Alle', icon: Globe },
+              { value: 'friends', label: 'Freunde', icon: BookUser },
               { value: 'user', label: 'Du', icon: User },
-              { value: 'friends', label: 'Du & Freunde', icon: BookUser },
             ]}
             value={view}
             onValueChange={handleView}
