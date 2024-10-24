@@ -7,7 +7,8 @@ import { Metadata, Viewport } from 'next'
 import { Albert_Sans, Fira_Code } from 'next/font/google'
 import { ReactNode, Suspense } from 'react'
 import { QueryProvider } from '../components/helpers/QueryProvider'
-import { Analytics } from "@vercel/analytics/react"
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import '../styles/globals.scss'
 
 export const metadata: Metadata = {
@@ -60,6 +61,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             </div>
             <Footer />
             <Analytics />
+            <SpeedInsights />
           </body>
         </html>
         <Suspense>
