@@ -1,4 +1,4 @@
-import { ActivityItem } from '@/components/activity/ActivityItem'
+import { ActivityGroup } from '@/components/activity/ActivityGroup'
 import { ActivityTypeFilter } from '@/components/activity/ActivityTypeFilter'
 import { ViewFilter } from '@/components/activity/ViewFilter'
 import { LoadMoreButton } from '@/components/contributions/LoadMoreButton'
@@ -70,27 +70,48 @@ async function fetchData({
   return { data, count }
 }
 
-export default async function ActivityPage(
-  props: {
-    searchParams: Promise<Exclude<ActivityFetchOptions, 'size'> & { size?: string }>
-  }
-) {
-  const searchParams = await props.searchParams;
+export default async function ActivityPage(props: {
+  searchParams: Promise<Exclude<ActivityFetchOptions, 'size'> & { size?: string }>
+}) {
+  const searchParams = await props.searchParams
   const { data, count } = await fetchData({ searchParams })
-  const groupedItems = groupByDate(data as ActivityItemT[])
+  const groupedItems = groupByDateAndTime(data as ActivityItemT[])
 
-  function groupByDate(items: ActivityItemT[]) {
-    return items.reduce<{ date: string; items: ActivityItemT[] }[]>((acc, item) => {
+  function groupByDateAndTime(items: ActivityItemT[]) {
+    type DateGroup<T> = { date: string; items: T[] }
+    type TimeGroup<T> = {
+      time: number
+      userId: string | null
+      concertId: number | null
+      items: T[]
+    }
+
+    return items.reduce<DateGroup<TimeGroup<ActivityItemT>>[]>((acc, item) => {
       const date = new Date(item.created_at).toLocaleDateString('de-CH', {
         weekday: 'long',
         day: 'numeric',
         month: 'short',
         year: 'numeric',
       })
-      if (!acc.find(group => group.date === date)) {
-        acc.push({ date, items: [] })
+      const time = new Date(item.created_at).getTime()
+      const userId = item.user_id?.[0] ?? null
+      const concertId = item.concert?.id ?? null
+
+      let dateGroup = acc.find(group => group.date === date)
+      if (!dateGroup) {
+        dateGroup = { date, items: [] }
+        acc.push(dateGroup)
       }
-      acc.find(group => group.date === date)?.items.push(item)
+
+      let timeGroup = dateGroup.items.find(
+        group => group.time === time && group.userId === userId && group.concertId === concertId
+      )
+      if (!timeGroup) {
+        timeGroup = { time, userId, concertId, items: [] }
+        dateGroup.items.push(timeGroup)
+      }
+
+      timeGroup.items.push(item)
       return acc
     }, [])
   }
@@ -104,12 +125,12 @@ export default async function ActivityPage(
           <ActivityTypeFilter />
         </div>
         {data.length === 0 && <p className="mb-4 text-slate-300">Keine Aktivität gefunden.</p>}
-        {groupedItems.map(group => (
-          <section key={group.date}>
-            <h2 className="h3">{group.date}</h2>
+        {groupedItems.map(dateGroup => (
+          <section key={dateGroup.date}>
+            <h2 className="h3">{dateGroup.date}</h2>
             <ul className="grid gap-2">
-              {group.items.map((item, index) => (
-                <ActivityItem key={index} activityItem={item} />
+              {dateGroup.items.map(timeGroup => (
+                <ActivityGroup key={timeGroup.time} timeGroup={timeGroup} />
               ))}
             </ul>
           </section>

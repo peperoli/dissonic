@@ -1,8 +1,9 @@
 'use client'
 
 import { useBand } from '@/hooks/bands/useBand'
+import { useBands } from '@/hooks/bands/useBands'
 import { useConcert } from '@/hooks/concerts/useConcert'
-import { useGenre } from '@/hooks/genres/useGenre'
+import { useGenres } from '@/hooks/genres/useGenres'
 import { useLocation } from '@/hooks/locations/useLocation'
 import { useProfile } from '@/hooks/profiles/useProfile'
 import { getRelativeTime } from '@/lib/relativeTime'
@@ -12,6 +13,7 @@ import clsx from 'clsx'
 import { ArrowRight, PenIcon, PlusIcon, TrashIcon } from 'lucide-react'
 import Link from 'next/link'
 import { ReactNode } from 'react'
+import { CommaSeperatedList } from '../helpers/CommaSeperatedList'
 
 type State = TablesInsert<'bands'> | TablesUpdate<'bands'> | null
 
@@ -26,69 +28,64 @@ const relationOperationLabels = {
   DELETE: ['entfernte', 'von'],
 } as { [key: string]: string[] }
 
-const ressourceTypeLabels = {
-  concerts: 'Konzert',
-  bands: 'Band',
-  locations: 'Location',
-} as { [key: string]: string }
-
 function getConcertName(concert: Concert | undefined) {
   if (!concert) {
     return null
   }
 
+  const date = new Date(concert.date_start).toLocaleDateString('de-CH', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
+
   if (concert.festival_root) {
     return `${concert.festival_root.name} ${new Date(concert.date_start).getFullYear()}`
   } else if (concert.name) {
-    return concert.name
+    return `${concert.name} ${date}`
   } else {
-    return `${concert.bands?.map(band => band.name).join(', ')} @ ${concert.location?.name}`
+    return `${concert.bands?.map(band => band.name).join(', ')} | ${concert.location?.name} | ${date}`
   }
 }
 
 const ConcertContributionItem = ({ contribution }: { contribution: Tables<'contributions'> }) => {
-  const { operation, ressource_type, ressource_id } = contribution
-  const { data: concert } = useConcert(ressource_id, null, { bandsSize: 3 })
+  const { operation, ressource_id } = contribution
+  const { data: concert } = useConcert(ressource_id, null, { bandsSize: 1 })
 
   return (
     <ContributionItemWrapper contribution={contribution}>
-      <span className="text-slate-300">
-        {operationLabels[operation]} {ressourceTypeLabels[ressource_type]}
-      </span>
+      <span className="text-slate-300">{operationLabels[operation]}</span>
       <Link href={`/concerts/${ressource_id}`} className="hover:underline">
-        {getConcertName(concert)} <span className="text-slate-300">(ID: {ressource_id})</span>
+        {getConcertName(concert) || `ID: ${ressource_id}`}
       </Link>
     </ContributionItemWrapper>
   )
 }
 
 const BandContributionItem = ({ contribution }: { contribution: Tables<'contributions'> }) => {
-  const { operation, ressource_type, ressource_id } = contribution
+  const { operation, ressource_id } = contribution
   const { data: band } = useBand(ressource_id)
 
   return (
     <ContributionItemWrapper contribution={contribution}>
-      <span className="text-slate-300">
-        {operationLabels[operation]} {ressourceTypeLabels[ressource_type]}
-      </span>
+      <span className="text-slate-300">{operationLabels[operation]}</span>
       <Link href={`/bands/${ressource_id}`} className="hover:underline">
-        {band?.name} <span className="text-slate-300">(ID: {ressource_id})</span>
+        {band?.name || `ID: ${ressource_id}`}
       </Link>
     </ContributionItemWrapper>
   )
 }
 
 const LocationContributionItem = ({ contribution }: { contribution: Tables<'contributions'> }) => {
-  const { operation, ressource_type, ressource_id } = contribution
+  const { operation, ressource_id } = contribution
   const { data: location } = useLocation(ressource_id)
 
   return (
     <ContributionItemWrapper contribution={contribution}>
-      <span className="text-slate-300">
-        {operationLabels[operation]} {ressourceTypeLabels[ressource_type]}
-      </span>
+      <span className="text-slate-300">{operationLabels[operation]}</span>
       <Link href={`/locations/${ressource_id}`} className="hover:underline">
-        {location?.name} <span className="text-slate-300">(ID: {ressource_id})</span>
+        {location?.name || `ID: ${ressource_id}`}
       </Link>
     </ContributionItemWrapper>
   )
@@ -96,58 +93,57 @@ const LocationContributionItem = ({ contribution }: { contribution: Tables<'cont
 
 const ConcertBandContributionItem = ({
   contribution,
+  bandIds,
 }: {
   contribution: Tables<'contributions'>
+  bandIds: Tables<'bands'>['id'][] | undefined
 }) => {
-  const { operation, ressource_id, state_old, state_new } = contribution
-  const { data: concert } = useConcert(ressource_id, null, { bandsSize: 3 })
-  const bandId = state_new
-    ? typeof state_new === 'object' && 'band_id' in state_new
-      ? Number(state_new.band_id)
-      : null
-    : typeof state_old === 'object' && !!state_old && 'band_id' in state_old
-      ? Number(state_old.band_id)
-      : null
-  const { data: band } = useBand(bandId)
+  const { operation, ressource_id } = contribution
+  const { data: concert } = useConcert(ressource_id, null, { bandsSize: 1 })
+  const { data: bands } = useBands(undefined, { ids: bandIds })
   const operationLabel = relationOperationLabels[operation]
 
   return (
     <ContributionItemWrapper contribution={contribution}>
       <span className="text-slate-300">{operationLabel[0]} Band</span>
-      <Link href={`/bands/${band?.id}`} className="hover:underline">
-        {band?.name} <span className="text-slate-300">(ID: {band?.id})</span>
-      </Link>
-      <span className="text-slate-300">{operationLabel[1]} Konzert</span>
+      <CommaSeperatedList>
+        {bands?.data.map(band => (
+          <Link key={band.id} href={`/bands/${band.id}`} className="hover:underline">
+            {band.name || `ID: ${band.id}`}
+          </Link>
+        ))}
+      </CommaSeperatedList>
+      <span className="text-slate-300">{operationLabel[1]}</span>
       <Link href={`/concerts/${concert?.id}`} className="hover:underline">
-        {getConcertName(concert)} <span className="text-slate-300">(ID: {concert?.id})</span>
+        {getConcertName(concert) || `ID: ${ressource_id}`}
       </Link>
       {operationLabel[2] && <span className="text-slate-300">{operationLabel[2]}</span>}
     </ContributionItemWrapper>
   )
 }
 
-const BandGenreContributionItem = ({ contribution }: { contribution: Tables<'contributions'> }) => {
-  const { operation, ressource_id, state_old, state_new } = contribution
+const BandGenreContributionItem = ({
+  contribution,
+  genreIds,
+}: {
+  contribution: Tables<'contributions'>
+  genreIds: Tables<'genres'>['id'][] | undefined
+}) => {
+  const { operation, ressource_id } = contribution
   const { data: band } = useBand(ressource_id, null)
-  const genreId = state_new
-    ? typeof state_new === 'object' && 'genre_id' in state_new
-      ? Number(state_new.genre_id)
-      : null
-    : typeof state_old === 'object' && !!state_old && 'genre_id' in state_old
-      ? Number(state_old.genre_id)
-      : null
-  const { data: genre } = useGenre(genreId)
+
+  const { data: genres } = useGenres({ ids: genreIds ?? [] })
   const operationLabel = relationOperationLabels[operation]
 
   return (
     <ContributionItemWrapper contribution={contribution}>
-      <span className="text-slate-300">{operationLabel[0]} Genre</span>
-      <span>
-        {genre?.name} <span className="text-slate-300">(ID: {genre?.id})</span>
-      </span>
-      <span className="text-slate-300">{operationLabel[1]} Band</span>
+      <span className="text-slate-300">{operationLabel[0]}</span>
+      <CommaSeperatedList>
+        {genres?.map(genre => <span key={genre.id}>{genre.name || `ID: ${genre.id}`}</span>)}
+      </CommaSeperatedList>
+      <span className="text-slate-300">{operationLabel[1]}</span>
       <Link href={`/bands/${band?.id}`} className="hover:underline">
-        {band?.name} <span className="text-slate-300">(ID: {band?.id})</span>
+        {band?.name || `ID: ${ressource_id}`}
       </Link>
       {operationLabel[2] && <span className="text-slate-300">{operationLabel[2]}</span>}
     </ContributionItemWrapper>
@@ -225,7 +221,15 @@ const ContributionItemWrapper = ({
   )
 }
 
-export const ContributionItem = ({ contribution }: { contribution: Tables<'contributions'> }) => {
+export const ContributionItem = ({
+  contribution,
+  bandIds,
+  genreIds,
+}: {
+  contribution: Tables<'contributions'>
+  bandIds?: Tables<'bands'>['id'][]
+  genreIds?: Tables<'genres'>['id'][]
+}) => {
   if (contribution.ressource_type === 'concerts') {
     return <ConcertContributionItem contribution={contribution} />
   } else if (contribution.ressource_type === 'bands') {
@@ -233,9 +237,9 @@ export const ContributionItem = ({ contribution }: { contribution: Tables<'contr
   } else if (contribution.ressource_type === 'locations') {
     return <LocationContributionItem contribution={contribution} />
   } else if (contribution.ressource_type === 'j_concert_bands') {
-    return <ConcertBandContributionItem contribution={contribution} />
+    return <ConcertBandContributionItem contribution={contribution} bandIds={bandIds} />
   } else if (contribution.ressource_type === 'j_band_genres') {
-    return <BandGenreContributionItem contribution={contribution} />
+    return <BandGenreContributionItem contribution={contribution} genreIds={genreIds} />
   } else {
     return <p>Ressource nicht gefunden.</p>
   }

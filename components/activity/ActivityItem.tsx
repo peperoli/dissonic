@@ -4,27 +4,36 @@ import type { ActivityItemT } from 'app/activity/page'
 import { UserItem } from '../shared/UserItem'
 import Link from 'next/link'
 import { getRelativeTime } from '@/lib/relativeTime'
-import { ReactNode } from 'react'
+import { Fragment, ReactNode } from 'react'
 import { useConcert } from '@/hooks/concerts/useConcert'
 import { Concert } from '@/types/types'
+import { Tables } from '@/types/supabase'
+import { CommaSeperatedList } from '../helpers/CommaSeperatedList'
 
 function getConcertName(concert: Concert | undefined) {
   if (!concert) {
     return null
   }
 
+  const date = new Date(concert.date_start).toLocaleDateString('de-CH', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
+
   if (concert.festival_root) {
     return `${concert.festival_root.name} ${new Date(concert.date_start).getFullYear()}`
   } else if (concert.name) {
-    return concert.name
+    return `${concert.name} | ${date}`
   } else {
-    return `${concert.bands?.map(band => band.name).join(', ')} @ ${concert.location?.name}`
+    return `${concert.bands?.map(band => band.name).join(', ')} | ${concert.location?.name} | ${date}`
   }
 }
 
 const CommentItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
   const { user, created_at } = activityItem
-  const { data: concert } = useConcert(activityItem.concert?.id ?? null, null, { bandsSize: 3 })
+  const { data: concert } = useConcert(activityItem.concert?.id ?? null, null, { bandsSize: 1 })
   return (
     <div className="rounded-lg bg-slate-800 p-4">
       <ActivityItemLine
@@ -40,9 +49,7 @@ const CommentItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
         </Link>
         <span className="text-slate-300">kommentierte</span>
         <Link href={`/concerts/${concert?.id}`} className="hover:underline">
-          {getConcertName(concert)}
-          &nbsp;
-          <span className="text-xs text-slate-300">(ID: {concert?.id})</span>
+          {getConcertName(concert) || `ID: ${concert?.id}`}
         </Link>
       </ActivityItemLine>
       {activityItem.content && (
@@ -54,9 +61,15 @@ const CommentItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
   )
 }
 
-const BandSeenItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
-  const { user, band, created_at } = activityItem
-  const { data: concert } = useConcert(activityItem.concert?.id ?? null, null, { bandsSize: 3 })
+const BandSeenItem = ({
+  activityItem,
+  bands,
+}: {
+  activityItem: ActivityItemT
+  bands: Tables<'bands'>[] | undefined
+}) => {
+  const { user, created_at } = activityItem
+  const { data: concert } = useConcert(activityItem.concert?.id ?? null, null, { bandsSize: 1 })
   return (
     <div className="rounded-lg bg-slate-800 p-4">
       <ActivityItemLine
@@ -71,25 +84,17 @@ const BandSeenItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
           {user.username}
         </Link>
         <span className="text-slate-300">erlebte</span>
-        <Link href={`/bands/${band?.id}`} className="hover:underline">
-          {band?.name}
-        </Link>
+        <CommaSeperatedList>
+          {bands?.map(band => (
+            <Link key={band.id} href={`/bands/${band?.id}`} className="hover:underline">
+              {band?.name}
+            </Link>
+          ))}
+        </CommaSeperatedList>
         <span className="text-slate-300">am Konzert</span>
         <Link href={`/concerts/${concert?.id}`} className="hover:underline">
-          {getConcertName(concert)}&nbsp;
-          <span className="text-xs text-slate-300">(ID: {concert?.id})</span>
+          {getConcertName(concert) || `ID: ${concert?.id}`}
         </Link>
-        {concert?.date_start && (
-          <span className="text-slate-300">
-            am{' '}
-            {new Date(concert.date_start).toLocaleDateString('de-CH', {
-              weekday: 'long',
-              day: 'numeric',
-              month: 'short',
-              year: 'numeric',
-            })}
-          </span>
-        )}
       </ActivityItemLine>
     </div>
   )
@@ -146,11 +151,17 @@ const ActivityItemLine = ({
   )
 }
 
-export const ActivityItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
+export const ActivityItem = ({
+  activityItem,
+  bands,
+}: {
+  activityItem: ActivityItemT
+  bands?: Tables<'bands'>[]
+}) => {
   if (activityItem.type === 'comments') {
     return <CommentItem activityItem={activityItem} />
   } else if (activityItem.type === 'j_bands_seen') {
-    return <BandSeenItem activityItem={activityItem} />
+    return <BandSeenItem activityItem={activityItem} bands={bands} />
   } else if (activityItem.type === 'friends') {
     return <FriendItem activityItem={activityItem} />
   }
