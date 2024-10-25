@@ -2,6 +2,7 @@ import { BandPage } from '../../../components/bands/BandPage'
 import { cookies } from 'next/headers'
 import { createClient } from '../../../utils/supabase/server'
 import supabase from '../../../utils/supabase/client'
+import { notFound } from 'next/navigation'
 
 export async function generateStaticParams() {
   const { data: bands, error } = await supabase.from('bands').select('id')
@@ -28,6 +29,10 @@ async function fetchData(params: { id: string }) {
     .single()
 
   if (error) {
+    if (error.code === 'PGRST116') {
+      notFound()
+    }
+    
     throw error
   }
 
@@ -35,7 +40,7 @@ async function fetchData(params: { id: string }) {
 }
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
-  const params = await props.params;
+  const params = await props.params
   const band = await fetchData(params)
   const cookieStore = await cookies()
   return <BandPage initialBand={band} bandQueryState={cookieStore.get('bandQueryState')?.value} />

@@ -16,9 +16,9 @@ import { ReorderableListItem } from '../../types/types'
 import { Button } from '../Button'
 import clsx from 'clsx'
 import { reorderList } from '../../lib/reorderList'
-import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { FetchStatus } from '@tanstack/react-query'
 import { SpinnerIcon } from '../layout/SpinnerIcon'
+import { Reorder } from 'framer-motion'
 
 type InsertHereProps = {
   reorderItems: () => void
@@ -67,7 +67,10 @@ const ListItem = ({
       {selectedItemToReorder !== null && !selectedToReorder && index === 0 && (
         <InsertHere reorderItems={() => reorderItems(selectedItemToReorder, index)} />
       )}
-      <li
+      <Reorder.Item
+        value={band}
+        dragListener={false}
+        // @ts-expect-error
         className={clsx(
           'group flex items-center gap-4 rounded-lg p-2',
           selectedToReorder && 'bg-venom/10'
@@ -113,7 +116,7 @@ const ListItem = ({
             appearance="tertiary"
           />
         </div>
-      </li>
+      </Reorder.Item>
       {selectedItemToReorder !== null &&
         !selectedToReorder &&
         selectedItemToReorder !== index + 1 && (
@@ -206,7 +209,6 @@ export const ListManager = ({
 }: ListManagerProps) => {
   const [listItems, setListItems] = useState(initialListItems)
   const [selectedItemToReorder, setSelectedItemToReorder] = useState<number | null>(null)
-  const [animationParent] = useAutoAnimate()
   const searchRef = useRef<HTMLInputElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const itemsRef = useRef<(HTMLButtonElement | null)[]>([])
@@ -302,7 +304,13 @@ export const ListManager = ({
       </div>
       <div ref={scrollContainerRef} className="h-full overflow-auto">
         {search === '' ? (
-          <ul ref={animationParent} className="my-2 grid content-start py-4">
+          <Reorder.Group
+            values={listItems}
+            onReorder={setListItems}
+            axis="y"
+            // @ts-expect-error
+            className="my-2 grid h-[calc(100%-1rem)] content-start py-4"
+          >
             {listItems.map((listItem, index) => (
               <ListItem
                 key={listItem.id}
@@ -314,7 +322,7 @@ export const ListManager = ({
                 reorderItems={reorderItems}
               />
             ))}
-          </ul>
+          </Reorder.Group>
         ) : (
           <div className="grid content-start py-6">
             {searchResults.length > 0 ? (
