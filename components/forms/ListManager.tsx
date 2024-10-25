@@ -8,8 +8,6 @@ import {
   XCircleIcon,
   XIcon,
   Guitar,
-  GripVertical,
-  GripVerticalIcon,
 } from 'lucide-react'
 import Image from 'next/image'
 import { forwardRef, KeyboardEvent, useEffect, useRef, useState } from 'react'
@@ -20,8 +18,7 @@ import clsx from 'clsx'
 import { reorderList } from '../../lib/reorderList'
 import { FetchStatus } from '@tanstack/react-query'
 import { SpinnerIcon } from '../layout/SpinnerIcon'
-import { motion, Reorder, useDragControls } from 'framer-motion'
-import useMediaQuery from '@/hooks/helpers/useMediaQuery'
+import { Reorder } from 'framer-motion'
 
 type InsertHereProps = {
   reorderItems: () => void
@@ -62,9 +59,7 @@ const ListItem = ({
   selectedItemToReorder,
   reorderItems,
 }: ListItemProps) => {
-  const controls = useDragControls()
   const { data: spotifyArtist } = useSpotifyArtist(band.spotify_artist_id)
-  const isDesktop = useMediaQuery('(min-width: 768px)')
   const regionNames = new Intl.DisplayNames('de', { type: 'region' })
   const selectedToReorder = selectedItemToReorder === index
   return (
@@ -75,7 +70,6 @@ const ListItem = ({
       <Reorder.Item
         value={band}
         dragListener={false}
-        dragControls={controls}
         // @ts-expect-error
         className={clsx(
           'group flex items-center gap-4 rounded-lg p-2',
@@ -114,23 +108,13 @@ const ListItem = ({
             icon={<XCircleIcon className="size-icon text-red" />}
             appearance="tertiary"
           />
-          {isDesktop ? (
-            <Button
-              onClick={selectItemToReorder}
-              label="Eintrag verschieben"
-              contentType="icon"
-              icon={<ArrowDownUpIcon className="size-icon" />}
-              appearance="tertiary"
-            />
-          ) : (
-            <Button
-              onPointerDown={e => controls.start(e)}
-              label="Eintrag verschieben"
-              contentType="icon"
-              icon={<GripVerticalIcon className="size-icon text-slate-300" />}
-              appearance="tertiary"
-            />
-          )}
+          <Button
+            onClick={selectItemToReorder}
+            label="Eintrag verschieben"
+            contentType="icon"
+            icon={<ArrowDownUpIcon className="size-icon" />}
+            appearance="tertiary"
+          />
         </div>
       </Reorder.Item>
       {selectedItemToReorder !== null &&
