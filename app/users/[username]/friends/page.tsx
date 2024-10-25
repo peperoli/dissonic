@@ -1,6 +1,7 @@
 import { FriendsPage } from '../../../../components/profile/FriendsPage';
 import { createClient } from '../../../../utils/supabase/server';
 import { Friend, Profile } from '../../../../types/types';
+import { notFound } from 'next/navigation';
 
 async function fetchData(username: string): Promise<{ profile: Profile; friends: Friend[] }> {
   const supabase = await createClient()
@@ -12,6 +13,10 @@ async function fetchData(username: string): Promise<{ profile: Profile; friends:
     .single()
 
   if (profileError) {
+    if (profileError.code === 'PGRST116') {
+      notFound()
+    }
+
     throw profileError
   }
 

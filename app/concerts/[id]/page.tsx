@@ -3,6 +3,7 @@ import { Concert } from '../../../types/types'
 import { cookies } from 'next/headers'
 import { createClient } from '../../../utils/supabase/server'
 import supabase from '../../../utils/supabase/client'
+import { notFound } from 'next/navigation'
 
 export async function generateStaticParams() {
   const { data: concerts, error } = await supabase.from('concerts').select('id')
@@ -32,6 +33,10 @@ async function fetchConcert(concertId: Concert['id']) {
     .single()
 
   if (error) {
+    if (error.code === 'PGRST116') {
+      notFound()
+    }
+
     throw error
   }
 

@@ -24,6 +24,10 @@ async function fetchData(username: string) {
     .single()
 
   if (error) {
+    if (error.code === 'PGRST116') {
+      notFound()
+    }
+
     throw error
   }
 
@@ -37,10 +41,8 @@ type PageProps = {
 }
 
 export default async function Page(props: PageProps) {
-  const params = await props.params;
+  const params = await props.params
   const { profile } = await fetchData(params.username)
-
-  if (!profile) notFound()
 
   return <ProfilePage initialProfile={profile} />
 }

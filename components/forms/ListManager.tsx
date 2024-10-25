@@ -16,7 +16,6 @@ import { ReorderableListItem } from '../../types/types'
 import { Button } from '../Button'
 import clsx from 'clsx'
 import { reorderList } from '../../lib/reorderList'
-import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { FetchStatus } from '@tanstack/react-query'
 import { SpinnerIcon } from '../layout/SpinnerIcon'
 
@@ -206,7 +205,6 @@ export const ListManager = ({
 }: ListManagerProps) => {
   const [listItems, setListItems] = useState(initialListItems)
   const [selectedItemToReorder, setSelectedItemToReorder] = useState<number | null>(null)
-  const [animationParent] = useAutoAnimate()
   const searchRef = useRef<HTMLInputElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const itemsRef = useRef<(HTMLButtonElement | null)[]>([])
@@ -302,7 +300,7 @@ export const ListManager = ({
       </div>
       <div ref={scrollContainerRef} className="h-full overflow-auto">
         {search === '' ? (
-          <ul ref={animationParent} className="my-2 grid content-start py-4">
+          <ul className="my-2 grid content-start py-4">
             {listItems.map((listItem, index) => (
               <ListItem
                 key={listItem.id}

@@ -2,6 +2,7 @@ import { cookies } from 'next/headers'
 import { createClient } from '../../../utils/supabase/server'
 import supabase from '../../../utils/supabase/client'
 import { LocationPage } from '@/components/locations/LocationPage'
+import { notFound } from 'next/navigation'
 
 export async function generateStaticParams() {
   const { data: locations, error } = await supabase.from('locations').select('id')
@@ -23,6 +24,10 @@ async function fetchData(params: { id: string }) {
     .single()
 
   if (error) {
+    if (error.code === 'PGRST116') {
+      notFound()
+    }
+
     throw error
   }
 
