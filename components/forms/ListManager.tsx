@@ -302,15 +302,14 @@ export const ListManager = ({
         </div>
         <Button onClick={() => onSave(listItems)} label="Fertig" appearance="primary" />
       </div>
-      <div ref={scrollContainerRef} className="h-full overflow-y-auto">
+      <div ref={scrollContainerRef} className="h-full overflow-auto">
         {search === '' ? (
           <Reorder.Group
             values={listItems}
             onReorder={setListItems}
             axis="y"
-            layoutScroll
             // @ts-expect-error
-            className="my-2 grid h-full content-start py-4"
+            className="my-2 grid h-[calc(100%-1rem)] content-start py-4"
           >
             {listItems.map((listItem, index) => (
               <ListItem
