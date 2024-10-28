@@ -53,7 +53,7 @@ const CommentItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
         </Link>
       </ActivityItemLine>
       {activityItem.content && (
-        <div className="ml-16 mt-2 whitespace-pre-line rounded border border-slate-700 p-2 text-sm">
+        <div className="ml-16 mt-2 whitespace-pre-line break-words rounded border border-slate-700 p-2 text-sm">
           {activityItem.content}
         </div>
       )}

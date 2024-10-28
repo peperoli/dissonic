@@ -63,4 +63,9 @@
   .clip-rounded-t {
     clip-path: inset(0 0 0 0 round 5px 5px 0 0);
   }
+
+  .break-words {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
 }

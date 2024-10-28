@@ -1,7 +1,6 @@
 import { Button } from '../Button'
 import { useState, useEffect } from 'react'
-import { EditIcon, TrashIcon, UserIcon } from 'lucide-react'
-import Image from 'next/image'
+import { EditIcon, TrashIcon } from 'lucide-react'
 import { Comment } from '../../types/types'
 import { useEditComment } from '../../hooks/concerts/useEditComment'
 import { ReactionControl } from './ReactionControl'
@@ -13,7 +12,8 @@ import { parseAsInteger, useQueryState } from 'nuqs'
 import { useModal } from '../shared/ModalProvider'
 import { getRelativeTime } from '@/lib/relativeTime'
 import clsx from 'clsx'
-import { getAssetUrl } from '@/lib/getAssetUrl'
+import { UserItem } from '../shared/UserItem'
+import Link from 'next/link'
 
 type EditCommentFormProps = {
   comment: Comment
@@ -85,24 +85,14 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
     parseAsInteger.withOptions({ history: 'push' })
   )
   const createdAt = new Date(comment.created_at)
-  const avatarUrl = getAssetUrl(profile?.avatar_path)
   return (
-    <div className="group flex gap-4">
-      <div className="relative flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue text-slate-850">
-        {avatarUrl ? (
-          <Image
-            src={avatarUrl}
-            alt="Profile picture"
-            fill={true}
-            className="rounded-full object-cover"
-          />
-        ) : (
-          <UserIcon className="size-icon" />
-        )}
-      </div>
-      <div className={clsx('mt-1.5', edit && 'w-full')}>
+    <div className="group flex gap-2">
+      <div>{profile && <UserItem user={profile} usernameIsHidden size="sm" />}</div>
+      <div className={clsx('mt-1', edit && 'w-full')}>
         <div className="mb-1 text-sm">
-          {profile?.username}
+          <Link href={`/users/${profile?.username}`} className="hover:underline">
+            {profile?.username}
+          </Link>
           <span className="text-slate-300">
             {' • '}
             {getRelativeTime(comment.edited_at || createdAt, 'de-CH')}
