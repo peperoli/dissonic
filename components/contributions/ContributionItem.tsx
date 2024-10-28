@@ -19,7 +19,7 @@ type State = TablesInsert<'bands'> | TablesUpdate<'bands'> | null
 
 const operationLabels = {
   INSERT: 'erstellte',
-  UPDATE: 'aktualisierte',
+  UPDATE: 'bearbeitete',
   DELETE: 'löschte',
 } as { [key: string]: string }
 
@@ -43,7 +43,7 @@ function getConcertName(concert: Concert | undefined) {
   if (concert.festival_root) {
     return `${concert.festival_root.name} ${new Date(concert.date_start).getFullYear()}`
   } else if (concert.name) {
-    return `${concert.name} ${date}`
+    return `${concert.name} | ${date}`
   } else {
     return `${concert.bands?.map(band => band.name).join(', ')} | ${concert.location?.name} | ${date}`
   }

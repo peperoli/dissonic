@@ -61,7 +61,7 @@ async function fetchData({
 
   const { data, count, error } = await query
     .order('created_at', { ascending: false })
-    .limit(searchParams.size ? parseInt(searchParams.size) : 25)
+    .limit(searchParams.size ? parseInt(searchParams.size) : 50)
 
   if (error) {
     throw error

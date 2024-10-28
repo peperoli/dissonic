@@ -19,7 +19,7 @@ async function fetchData({ searchParams }: { searchParams: ContributionFetchOpti
     .from('contributions')
     .select('*', { count: 'estimated' })
     .order('timestamp', { ascending: false })
-    .limit(searchParams.size ? parseInt(searchParams.size) : 25)
+    .limit(searchParams.size ? parseInt(searchParams.size) : 50)
 
   if (searchParams.ressourceType) {
     query = query.in('ressource_type', [
