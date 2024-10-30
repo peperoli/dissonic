@@ -1,7 +1,11 @@
+'use client'
+
+import { useBandsSeen } from '@/hooks/bands/useBandsSeen'
+import { getUniqueObjects } from '@/lib/getUniqueObjects'
 import * as Tooltip from '@radix-ui/react-tooltip'
 import clsx from 'clsx'
-import { Info } from 'lucide-react'
-import { Band, Concert } from '../../types/types'
+import { Info, Loader2Icon } from 'lucide-react'
+import { Concert } from '../../types/types'
 
 const MONTH_MS = 1000 * 60 * 60 * 24 * 30.44
 
@@ -37,14 +41,21 @@ function getLongestStreak(concerts: Concert[]) {
     : null
 }
 
-type ScoreProps = {
-  uniqueBandsSeen: Band[]
-  concertsSeen: Concert[]
-}
-
-export function Score({ uniqueBandsSeen, concertsSeen }: ScoreProps) {
+export function Score({ profileId }: { profileId: string }) {
+  const { data: bandsSeen, status: bandsSeenStatus } = useBandsSeen(profileId)
+  const uniqueBandsSeen = getUniqueObjects(bandsSeen?.map(item => item.band) ?? [])
+  const concertsSeen = getUniqueObjects(bandsSeen?.map(item => item.concert) ?? [])
   const festivalsSeen = concertsSeen.filter(item => item.is_festival)
   const streak = getLongestStreak(concertsSeen)
+
+  if (bandsSeenStatus === 'pending') {
+    return (
+      <div className="grid h-24 w-full animate-pulse place-content-center rounded-lg bg-slate-800">
+        <Loader2Icon className="size-icon animate-spin" />
+      </div>
+    )
+  }
+
   return (
     <section
       className={clsx(

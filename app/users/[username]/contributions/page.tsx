@@ -1,54 +1,51 @@
 import { ContributionGroup } from '@/components/contributions/ContributionGroup'
 import { LoadMoreButton } from '@/components/contributions/LoadMoreButton'
 import { Tables } from '@/types/supabase'
-import { ContributionFetchOptions } from '@/types/types'
 import { createClient } from '@/utils/supabase/server'
-import Link from 'next/link'
 
-const relatedRessourceTypes = {
-  concerts: ['j_concert_bands'],
-  bands: ['j_concert_bands', 'j_band_genres'],
-  locations: [],
-}
-
-async function fetchData({ searchParams }: { searchParams: ContributionFetchOptions }) {
+async function fetchData({
+  params,
+  searchParams,
+}: {
+  params: { username: string }
+  searchParams: { size?: string }
+}) {
   const supabase = await createClient()
 
-  let query = supabase
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('username', params.username)
+    .single()
+
+  if (profileError) {
+    throw profileError
+  }
+
+  const { data, count, error } = await supabase
     .from('contributions')
     .select('*', { count: 'estimated' })
     .order('timestamp', { ascending: false })
+    .eq('user_id', profile.id)
     .limit(searchParams.size ? parseInt(searchParams.size) : 50)
-
-  if (searchParams.ressourceType) {
-    query = query.in('ressource_type', [
-      searchParams.ressourceType,
-      ...relatedRessourceTypes[searchParams.ressourceType],
-    ])
-  }
-
-  if (searchParams.ressourceId) {
-    query = query.eq('ressource_id', searchParams.ressourceId)
-  }
-
-  if (searchParams.userId) {
-    query = query.eq('user_id', searchParams.userId)
-  }
-
-  const { data, count, error } = await query
 
   if (error) {
     throw error
   }
 
-  return { data, count }
+  return { contributions: data, contributionsCount: count }
 }
 
 export default async function ContributionsPage(props: {
-  searchParams: Promise<ContributionFetchOptions>
+  params: Promise<{ username: string }>
+  searchParams: Promise<{ size?: string }>
 }) {
+  const params = await props.params
   const searchParams = await props.searchParams
-  const { data: contributions, count: contributionsCount } = await fetchData({ searchParams })
+  const { contributions, contributionsCount } = await fetchData({
+    params,
+    searchParams,
+  })
   const groupedContributions = groupByDateAndTime(contributions)
 
   function groupByDateAndTime(items: Tables<'contributions'>[]) {
@@ -97,33 +94,21 @@ export default async function ContributionsPage(props: {
   }
 
   return (
-    <main className="container">
-      <h1>Bearbeitungen</h1>
+    <section className="grid gap-6">
       {contributions.length === 0 && (
-        <>
-          <p className="mb-4 text-slate-300">
-            Keine Bearbeitungen für diese Ressource / diesen User gefunden.
-          </p>
-          {(searchParams.size || searchParams.ressourceId || searchParams.ressourceType) && (
-            <Link href="/contributions" className="btn btn-secondary btn-small">
-              Alle Bearbeitungen
-            </Link>
-          )}
-        </>
+        <p className="mb-4 text-slate-300">Keine Bearbeitungen für diesen User gefunden.</p>
       )}
-      <div className="grid gap-6">
-        {groupedContributions.map(dateGroup => (
-          <section key={dateGroup.date}>
-            <h2 className="h3">{dateGroup.date}</h2>
-            <ul className="grid gap-2">
-              {dateGroup.items.map(timeGroup => (
-                <ContributionGroup key={timeGroup.time} timeGroup={timeGroup} />
-              ))}
-            </ul>
-          </section>
-        ))}
-        {contributions.length !== contributionsCount && <LoadMoreButton />}
-      </div>
-    </main>
+      {groupedContributions.map(dateGroup => (
+        <section key={dateGroup.date}>
+          <h2 className="h3">{dateGroup.date}</h2>
+          <ul className="grid gap-2">
+            {dateGroup.items.map(timeGroup => (
+              <ContributionGroup key={timeGroup.time} timeGroup={timeGroup} />
+            ))}
+          </ul>
+        </section>
+      ))}
+      {contributions.length !== contributionsCount && <LoadMoreButton />}
+    </section>
   )
 }

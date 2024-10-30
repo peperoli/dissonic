@@ -10,21 +10,23 @@ import { useQueryState } from 'nuqs'
 import { useModal } from '../shared/ModalProvider'
 
 type FriendItemProps = {
-  friend: Profile
-  profile: Profile
+  friend: Profile | null
+  profileId: string
 }
 
-export const FriendItem = ({ friend, profile }: FriendItemProps) => {
+export const FriendItem = ({ friend, profileId }: FriendItemProps) => {
   const [_, setModal] = useModal()
   const [__, setFriendId] = useQueryState('friendId', { history: 'push' })
   const { data: session } = useSession()
+
+  if (!friend) return null
 
   return (
     <div className="col-span-full flex items-center justify-between gap-3 rounded-lg bg-slate-800 p-4 md:col-span-1">
       <Link href={`/users/${friend.username}`}>
         <UserItem user={friend} />
       </Link>
-      {session?.user.id === profile.id && (
+      {session?.user.id === profileId && (
         <Button
           label="Freund entfernen"
           onClick={() => {

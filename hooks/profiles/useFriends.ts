@@ -8,7 +8,11 @@ type Options = {
 }
 
 async function fetchFriends(options?: Options): Promise<Friend[]> {
-  let query = supabase.from('friends').select('*, sender:sender_id(*), receiver:receiver_id(*)')
+  let query = supabase.from('friends').select(
+    `*,
+    sender:profiles!friends_sender_id_fkey(*),
+    receiver:profiles!friends_receiver_id_fkey(*)`
+  )
 
   if (options?.profileId) {
     query = query.or(`sender_id.eq.${options.profileId}, receiver_id.eq.${options.profileId}`)
@@ -24,7 +28,6 @@ async function fetchFriends(options?: Options): Promise<Friend[]> {
     throw error
   }
 
-  // @ts-expect-error
   return data
 }
 

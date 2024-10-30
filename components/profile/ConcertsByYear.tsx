@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { BarChart } from '../BarChart'
 import { SegmentedControl } from '../controls/SegmentedControl'
@@ -8,11 +10,11 @@ import { Select } from '../forms/Select'
 import { FilterButton } from '../FilterButton'
 
 type ConcertsByYearProps = {
-  userId: string
+  profileId: string
 }
 
-export const ConcertsByYear = ({ userId }: ConcertsByYearProps) => {
-  const { data: bandsSeen } = useBandsSeen(userId)
+export const ConcertsByYear = ({ profileId }: ConcertsByYearProps) => {
+  const { data: bandsSeen } = useBandsSeen(profileId)
   const [selectedUnit, setSelectedUnit] = useState('concerts')
   const [selectedYear, setSelectedYear] = useState<number>(-1)
   
