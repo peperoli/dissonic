@@ -11,17 +11,17 @@ async function fetchData(username: string) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const { data: profile, error } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('id')
     .eq('username', username)
     .single()
 
-  if (error) {
-    throw error
+  if (profileError) {
+    throw profileError
   }
 
-  const { data: friends } = await supabase
+  const { data: friends, error: friendsError } = await supabase
     .from('friends')
     .select(
       `*,
@@ -29,6 +29,10 @@ async function fetchData(username: string) {
       receiver:profiles!friends_receiver_id_fkey(*)`
     )
     .or(`sender_id.eq.${profile.id}, receiver_id.eq.${profile.id}`)
+
+  if (friendsError) {
+    throw friendsError
+  }
 
   return { user, profile, friends }
 }
@@ -66,14 +70,14 @@ const FriendInvites = ({ profileId, friends }: { profileId: string; friends: Fri
 export default async function Page({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params
   const { user, profile, friends } = await fetchData(username)
-  const acceptedFriends = friends?.filter(item => !item.pending)
+  const acceptedFriends = friends.filter(item => !item.pending)
   const isOwnProfile = user?.id === profile.id
 
   if (isOwnProfile && !friends) {
     return <StatusBanner statusType="info" message="Du hast noch keine Konzertfreunde :/" />
   }
 
-  if (!isOwnProfile && !acceptedFriends?.length) {
+  if (!isOwnProfile && !acceptedFriends.length) {
     return (
       <StatusBanner statusType="info" message={`${username} hat noch keine Konzertfreunde :/`} />
     )
@@ -81,8 +85,8 @@ export default async function Page({ params }: { params: Promise<{ username: str
 
   return (
     <section className="grid grid-cols-2 gap-4">
-      {isOwnProfile && <FriendInvites profileId={profile.id} friends={friends!} />}
-      {acceptedFriends?.map(item => (
+      {isOwnProfile && <FriendInvites profileId={profile.id} friends={friends} />}
+      {acceptedFriends.map(item => (
         <FriendItem
           key={`${item.sender_id}-${item.receiver_id}`}
           friend={item.sender_id === profile.id ? item.receiver : item.sender}
