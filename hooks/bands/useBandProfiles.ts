@@ -4,17 +4,16 @@ import { Profile } from '@/types/types'
 
 const fetchBandProfiles = async (
   bandId: number
-): Promise<{ profile: Profile; count: number }[]> => {
+): Promise<{ profile: Profile | null; count: number }[]> => {
   const { data, error } = await supabase
     .from('j_bands_seen')
-    .select('profile:user_id(*), concert_id.count()')
+    .select('profile:profiles(*), concert_id.count()')
     .eq('band_id', bandId)
 
   if (error) {
     throw error
   }
 
-  // @ts-expect-error
   return data
 }
 

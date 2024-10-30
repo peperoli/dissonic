@@ -136,15 +136,16 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
           <h2>Community</h2>
           <div className="flex flex-wrap gap-4">
             {bandProfiles
+              .filter(item => !!item.profile)
               .sort((a, b) => b.count - a.count)
               .map(item => (
                 <Link
-                  href={`/users/${item.profile.username}`}
+                  href={`/users/${item.profile?.username}`}
                   className="group/user-item"
-                  key={item.profile.id}
+                  key={item.profile?.id}
                 >
                   <UserItem
-                    user={item.profile}
+                    user={item.profile!}
                     description={`${item.count} Konzert${item.count > 1 ? 'e' : ''}`}
                   />
                 </Link>

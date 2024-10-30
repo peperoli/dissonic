@@ -167,13 +167,14 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
             <h2>Fans</h2>
             <div className="flex flex-wrap gap-4">
               {concertProfiles
+                .filter(item => !!item.profile)
                 .sort((a, b) => b.count - a.count)
                 .map(item => (
                   <ConcertUserItem
                     concert={concert}
-                    user={item.profile}
+                    user={item.profile!}
                     count={item.count}
-                    key={item.profile.id}
+                    key={item.profile?.id}
                   />
                 ))}
             </div>

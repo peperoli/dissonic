@@ -121,8 +121,8 @@ export type AddProfile = TablesInsert<'profiles'>
 export type EditProfile = TablesUpdate<'profiles'>
 
 export type Friend = Tables<'friends'> & {
-  sender: Profile
-  receiver: Profile
+  sender: Profile | null
+  receiver: Profile | null
 }
 
 export type AddFriend = TablesInsert<'friends'>
