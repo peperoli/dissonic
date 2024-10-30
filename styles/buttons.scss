@@ -36,6 +36,10 @@
 
 		&.btn-tertiary {
 			@apply font-bold text-white bg-transparent hover:bg-slate-700;
+
+			&.btn-danger {
+				@apply text-red;
+			}
 		}
 
 		&.btn-filter {
