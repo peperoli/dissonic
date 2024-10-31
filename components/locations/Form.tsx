@@ -9,7 +9,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react
 import { ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
 import { Fragment } from 'react'
-import { usePathname } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { useLocation } from '@/hooks/locations/useLocation'
 import { useEditLocation } from '@/hooks/locations/useEditLocation'
 
@@ -19,9 +19,8 @@ interface FormProps {
 }
 
 export const Form = ({ close, isNew }: FormProps) => {
-  const pathname = usePathname()
-  const locationId = !isNew ? pathname.split('/').pop() : null
-  const { data: location } = useLocation(parseInt(locationId!))
+  const { id: locationId } = useParams<{ id?: string }>()
+  const { data: location } = useLocation(locationId ? parseInt(locationId) : null)
   const {
     register,
     control,
@@ -51,7 +50,12 @@ export const Form = ({ close, isNew }: FormProps) => {
         placeholder="Hallenstadion"
       />
       <div className="grid grid-cols-3">
-        <TextField {...register('zip_code')} label="PLZ (optional)" placeholder="3000" grouped="start" />
+        <TextField
+          {...register('zip_code')}
+          label="PLZ (optional)"
+          placeholder="3000"
+          grouped="start"
+        />
         <div className="col-span-2">
           <TextField
             {...register('city', { required: true })}

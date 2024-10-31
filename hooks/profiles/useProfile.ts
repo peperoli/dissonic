@@ -10,9 +10,7 @@ const fetchProfile = async (userId: string | null, username?: string | null): Pr
 
   if (userId) {
     query = query.eq('id', userId)
-  }
-
-  if (username) {
+  } else if (username) {
     query = query.eq('username', username)
   }
 

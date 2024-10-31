@@ -8,7 +8,7 @@ import { SelectField } from '../forms/SelectField'
 import { useCountries } from '../../hooks/useCountries'
 import { useGenres } from '../../hooks/genres/useGenres'
 import { useBand } from '@/hooks/bands/useBand'
-import { usePathname } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { useAddBand } from '@/hooks/bands/useAddBand'
 import { useEditBand } from '@/hooks/bands/useEditBand'
 import { ChevronDown } from 'lucide-react'
@@ -23,8 +23,7 @@ interface FormProps {
 }
 
 export const Form = ({ isNew, close }: FormProps) => {
-  const pathname = usePathname()
-  const bandId = !isNew ? pathname.split('/').pop() : null
+  const { id: bandId } = useParams<{ id?: string }>()
   const { data: band } = useBand(bandId ? parseInt(bandId) : null)
   const {
     register,

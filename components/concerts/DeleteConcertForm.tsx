@@ -1,5 +1,5 @@
 import { Button } from '../Button'
-import { usePathname } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { useDeleteConcert } from '@/hooks/concerts/useDeleteConcert'
 
 type DeleteConcertFormProps = {
@@ -7,8 +7,7 @@ type DeleteConcertFormProps = {
 }
 
 export const DeleteConcertForm = ({ close }: DeleteConcertFormProps) => {
-  const pathname = usePathname()
-  const concertId = pathname.split('/').pop()
+  const { id: concertId } = useParams<{ id?: string }>()
   const { mutate, isPending } = useDeleteConcert()
   return (
     <div>
@@ -17,7 +16,7 @@ export const DeleteConcertForm = ({ close }: DeleteConcertFormProps) => {
         <Button label="Abbrechen" onClick={close} />
         <Button
           label="Löschen"
-          onClick={() => mutate(parseInt(concertId!))}
+          onClick={() => (concertId ? mutate(parseInt(concertId)) : null)}
           appearance="primary"
           danger
           loading={isPending}

@@ -17,7 +17,7 @@ import { FestivalRootForm } from './FestivalRootForm'
 import { useAddConcert } from '@/hooks/concerts/useAddConcert'
 import { useConcert } from '@/hooks/concerts/useConcert'
 import { useEditConcert } from '@/hooks/concerts/useEditConcert'
-import { usePathname } from 'next/navigation'
+import { useParams } from 'next/navigation'
 
 type FormProps = {
   isNew?: boolean
@@ -25,8 +25,7 @@ type FormProps = {
 }
 
 export const Form = ({ close, isNew }: FormProps) => {
-  const pathname = usePathname()
-  const concertId = !isNew ? pathname.split('/').pop() : null
+  const { id: concertId } = useParams<{id?: string}>()
   const { data: concert } = useConcert(concertId ? parseInt(concertId) : null)
   const today = new Date().toISOString().split('T')[0]
   const {

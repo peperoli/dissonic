@@ -1,5 +1,5 @@
 import { useDeleteLocation } from '@/hooks/locations/useDeleteLocation'
-import { usePathname } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { Button } from '../Button'
 
 interface DeleteLocationFormProps {
@@ -7,8 +7,7 @@ interface DeleteLocationFormProps {
 }
 
 export const DeleteLocationForm = ({ close }: DeleteLocationFormProps) => {
-  const pathname = usePathname()
-  const bandId = pathname.split('/').pop()
+  const { id: bandId } = useParams<{ id?: string }>()
   const { mutate, isPending } = useDeleteLocation()
 
   return (
@@ -18,7 +17,7 @@ export const DeleteLocationForm = ({ close }: DeleteLocationFormProps) => {
         <Button label="Abbrechen" onClick={close} />
         <Button
           label="Löschen"
-          onClick={() => mutate(parseInt(bandId!))}
+          onClick={() => (bandId ? mutate(parseInt(bandId)) : null)}
           appearance="primary"
           danger
           loading={isPending}

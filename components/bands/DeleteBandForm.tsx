@@ -1,5 +1,5 @@
 import { useDeleteBand } from '@/hooks/bands/useDeleteBand'
-import { usePathname } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { Button } from '../Button'
 
 interface DeleteBandFormProps {
@@ -7,8 +7,7 @@ interface DeleteBandFormProps {
 }
 
 export const DeleteBandForm = ({ close }: DeleteBandFormProps) => {
-  const pathname = usePathname()
-  const bandId = pathname.split('/').pop()
+  const { id: bandId } = useParams<{ id?: string }>()
   const { mutate, isPending } = useDeleteBand()
 
   return (
@@ -18,7 +17,7 @@ export const DeleteBandForm = ({ close }: DeleteBandFormProps) => {
         <Button label="Abbrechen" onClick={close} />
         <Button
           label="Löschen"
-          onClick={() => mutate(parseInt(bandId!))}
+          onClick={() => (bandId ? mutate(parseInt(bandId)) : null)}
           appearance="primary"
           danger
           loading={isPending}

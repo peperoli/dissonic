@@ -1,4 +1,4 @@
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { useProfiles } from '../../hooks/profiles/useProfiles'
@@ -12,15 +12,15 @@ import { useDeleteAvatar } from '@/hooks/files/useDeleteAvatar'
 import { useProfile } from '@/hooks/profiles/useProfile'
 import { useUploadAvatar } from '@/hooks/profiles/useUploadAvatar'
 import { useAvatar } from '@/hooks/profiles/useAvatar'
+import { useUser } from '@/hooks/auth/useUser'
 
 type FormProps = {
   close: () => void
 }
 
 export const Form = ({ close }: FormProps) => {
-  const pathname = usePathname()
-  const username = pathname.split('/').pop()
-  const { data: profile } = useProfile(null, username)
+  const { data: user } = useUser()
+  const { data: profile } = useProfile(user?.id ?? null)
   const { data: avatar } = useAvatar(profile?.avatar_path)
   const {
     register,
@@ -38,7 +38,7 @@ export const Form = ({ close }: FormProps) => {
   const deleteFiles = useDeleteAvatar()
   const uploadAvatar = useUploadAvatar()
   const usernames = profiles?.map(item => item.username)
-  
+
   const { push } = useRouter()
 
   const onSubmit: SubmitHandler<

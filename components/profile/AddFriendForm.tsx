@@ -1,16 +1,15 @@
-import { Button } from '../Button'
-import { useAddFriend } from '../../hooks/profiles/useAddFriend'
 import { useSession } from '@/hooks/auth/useSession'
-import { usePathname } from 'next/navigation'
 import { useProfile } from '@/hooks/profiles/useProfile'
+import { useParams } from 'next/navigation'
+import { useAddFriend } from '../../hooks/profiles/useAddFriend'
+import { Button } from '../Button'
 
 type AddFriendFormProps = {
   close: () => void
 }
 
 export const AddFriendForm = ({ close }: AddFriendFormProps) => {
-  const pathname = usePathname()
-  const username = pathname.split('/').pop()
+  const { username } = useParams<{ username?: string }>()
   const { data: profile } = useProfile(null, username)
   const { mutate, status } = useAddFriend()
   const { data: session } = useSession()
@@ -24,7 +23,7 @@ export const AddFriendForm = ({ close }: AddFriendFormProps) => {
   return (
     <div>
       <p>
-        Willst du <span className="italic">{profile?.username || 'diesem Fan'}</span> eine
+        Willst du <strong>{profile?.username || 'diesem Fan'}</strong> eine
         Freundschaftsanfrage schicken?
       </p>
       <div className="flex gap-4 pt-5 [&>*]:flex-1">
