@@ -6,23 +6,15 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { useAnimate, useDragControls, useMotionValue } from 'framer-motion'
 import Link from 'next/link'
 import { useRef, useState } from 'react'
-import { Concert, Profile } from '../../types/types'
+import { Band, Profile } from '../../types/types'
 import { MotionDiv } from '../helpers/motion'
 import { UserItem } from '../shared/UserItem'
+import { useBandProfiles } from '@/hooks/bands/useBandProfiles'
+import { useBandsSeen } from '@/hooks/bands/useBandsSeen'
 
-export function ConcertUserItem({
-  concert,
-  user,
-  count,
-}: {
-  concert: Concert
-  user: Profile
-  count: number
-}) {
-  const bandsSeenIds = concert.bands_seen
-    ?.filter(item => item.user_id === user.id)
-    .map(item => item.band_id)
-  const bands = concert.bands?.filter(item => bandsSeenIds?.includes(item.id))
+function BandUserItem({ band, profile, count }: { band: Band; profile: Profile; count: number }) {
+  const { data: bandsSeen } = useBandsSeen({ userId: profile.id, bandId: band.id })
+  const concerts = bandsSeen?.map(item => item.concert).filter(concert => !!concert)
   const [isOpen, setIsOpen] = useState(false)
   const [scope, animate] = useAnimate()
   const modalRef = useRef<HTMLDivElement | null>(null)
@@ -44,7 +36,10 @@ export function ConcertUserItem({
   return (
     <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
       <Dialog.Trigger className="group/user-item text-left">
-        <UserItem user={user} description={count ? `${count} Band${count > 1 ? 's' : ''}` : null} />
+        <UserItem
+          user={profile}
+          description={`${count} ${count > 1 ? 'Konzerte' : 'Konzert'}`}
+        />
       </Dialog.Trigger>
       <Dialog.Overlay asChild>
         <MotionDiv
@@ -83,27 +78,31 @@ export function ConcertUserItem({
               </div>
               <div className="sr-only mb-4 mt-8 flex items-start justify-between gap-4">
                 <Dialog.Title className="mb-0">
-                  {user.username} hat {count} Band(s) am Konzert {getConcertName(concert)} gesehen
+                  {profile.username} hat {count} Konzert(e) mit {band.name} gesehen
                 </Dialog.Title>
               </div>
               <div className="mb-4 flex items-center justify-between">
                 <UserItem
-                  user={user}
-                  description={count ? `${count} Band${count > 1 ? 's' : ''}` : null}
+                  user={profile}
+                  description={`${count} ${count > 1 ? 'Konzerte' : 'Konzert'}`}
                 />
-                <Link href={`/users/${user.username}`} className="btn btn-secondary btn-small">
+                <Link href={`/users/${profile.username}`} className="btn btn-secondary btn-small">
                   Profil anzeigen
                 </Link>
               </div>
               <div className="relative -mb-6 overflow-y-auto pb-6">
                 <ul className="grid gap-2">
-                  {bands?.sort((a,b) => a.name.localeCompare(b.name)).map(item => (
-                    <li key={item.id}>
-                      <Link href={`/bands/${item.id}`} className="font-bold hover:underline">
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
+                  {concerts
+                    ?.sort(
+                      (a, b) => new Date(b.date_start).getTime() - new Date(a.date_start).getTime()
+                    )
+                    .map(item => (
+                      <li key={item.id}>
+                        <Link href={`/concerts/${item.id}`} className="font-bold hover:underline">
+                          {getConcertName(item)}
+                        </Link>
+                      </li>
+                    ))}
                 </ul>
               </div>
             </MotionDiv>
@@ -111,5 +110,36 @@ export function ConcertUserItem({
         </MotionDiv>
       </Dialog.Overlay>
     </Dialog.Root>
+  )
+}
+
+export function BandCommunity({ band }: { band: Band }) {
+  const { data: bandProfiles, status: bandProfilesStatus } = useBandProfiles(band.id)
+
+  if (bandProfilesStatus === 'pending') {
+    return <p>Lade ...</p>
+  }
+
+  if (bandProfiles?.length === 0 || bandProfilesStatus === 'error') {
+    return null
+  }
+
+  return (
+    <section className="rounded-lg bg-slate-800 p-4 md:p-6">
+      <h2>Community</h2>
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+        {bandProfiles
+          .filter(item => !!item.profile)
+          .sort((a, b) => b.count - a.count)
+          .map(item => (
+            <BandUserItem
+              profile={item.profile!}
+              count={item.count}
+              band={band}
+              key={item.profile?.id}
+            />
+          ))}
+      </div>
+    </section>
   )
 }

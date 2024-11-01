@@ -1,6 +1,14 @@
-import { Concert } from "@/types/types"
+import { Tables } from '@/types/supabase'
 
-export function getConcertName(concert: Concert | undefined) {
+export function getConcertName(
+  concert:
+    | (Tables<'concerts'> & {
+        festival_root?: { name: string } | null
+        bands?: Tables<'bands'>[] | null
+        location?: Tables<'locations'> | null
+      })
+    | undefined
+) {
   if (!concert) {
     return null
   }

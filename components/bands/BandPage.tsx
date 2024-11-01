@@ -13,10 +13,9 @@ import { useModal } from '../shared/ModalProvider'
 import { ArrowLeft, Edit, Guitar, MapPin, MusicIcon, Trash } from 'lucide-react'
 import Image from 'next/image'
 import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
-import { UserItem } from '../shared/UserItem'
-import { useBandProfiles } from '@/hooks/bands/useBandProfiles'
 import { MetaInfo } from '../shared/MetaInfo'
 import { SpeedDial } from '../layout/SpeedDial'
+import { BandCommunity } from './BandCommunity'
 
 type BandPageProps = {
   initialBand: Band
@@ -26,7 +25,6 @@ type BandPageProps = {
 export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
   const { data: band, isPending: bandIsLoading } = useBand(initialBand.id, initialBand)
   const { data: spotifyArtist } = useSpotifyArtist(band?.spotify_artist_id)
-  const { data: bandProfiles } = useBandProfiles(initialBand.id)
   const { data: concerts } = useConcerts(undefined, {
     bands: [initialBand.id],
     sort: { sort_by: 'date_start', sort_asc: false },
@@ -131,31 +129,12 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
           </div>
         </div>
       </header>
-      {bandProfiles && bandProfiles.length > 0 && (
-        <section className="rounded-lg bg-slate-800 p-4 md:p-6">
-          <h2>Community</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {bandProfiles
-              .filter(item => !!item.profile)
-              .sort((a, b) => b.count - a.count)
-              .map(item => (
-                <Link
-                  href={`/users/${item.profile?.username}`}
-                  className="group/user-item"
-                  key={item.profile?.id}
-                >
-                  <UserItem
-                    user={item.profile!}
-                    description={`${item.count} Konzert${item.count > 1 ? 'e' : ''}`}
-                  />
-                </Link>
-              ))}
-          </div>
-        </section>
-      )}
+      <BandCommunity band={band} />
       {concerts?.data && concerts.data.length > 0 && (
         <section className="grid gap-4 rounded-lg bg-slate-800 p-4 md:p-6">
-          <h2 className="mb-0">{concerts.data.length} Konzert(e) mit {band.name}</h2>
+          <h2 className="mb-0">
+            {concerts.data.length} Konzert(e) mit {band.name}
+          </h2>
           {concerts?.data.map(item => <ConcertCard key={item.id} concert={item} nested />)}
         </section>
       )}

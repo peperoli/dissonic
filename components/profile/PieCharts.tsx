@@ -5,7 +5,7 @@ import { PieChart } from './PieChart'
 import { getUniqueObjects } from '@/lib/getUniqueObjects'
 
 export function PieCharts({ profileId }: { profileId: string }) {
-  const { data: bandsSeen, status: bandsSeenStatus } = useBandsSeen(profileId)
+  const { data: bandsSeen, status: bandsSeenStatus } = useBandsSeen({ userId: profileId })
   const concertsSeen = getUniqueObjects(bandsSeen?.map(item => item.concert) ?? [])
   const uniqueBandsSeen = getUniqueObjects(bandsSeen?.map(item => item.band) ?? [])
 

@@ -5,7 +5,7 @@ import { TopGrid } from './TopGrid'
 import { BandItem } from './BandItem'
 
 export function TopBands({ profileId }: { profileId: string }) {
-  const { data: bandsSeen, status: bandsSeenStatus } = useBandsSeen(profileId)
+  const { data: bandsSeen, status: bandsSeenStatus } = useBandsSeen({ userId: profileId })
 
   if (bandsSeenStatus === 'pending') {
     return <p className="text-sm text-slate-300">Lade ...</p>

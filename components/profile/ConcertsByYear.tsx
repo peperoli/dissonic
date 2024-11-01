@@ -14,14 +14,14 @@ type ConcertsByYearProps = {
 }
 
 export const ConcertsByYear = ({ profileId }: ConcertsByYearProps) => {
-  const { data: bandsSeen } = useBandsSeen(profileId)
+  const { data: bandsSeen } = useBandsSeen({ userId: profileId })
   const [selectedUnit, setSelectedUnit] = useState('concerts')
   const [selectedYear, setSelectedYear] = useState<number>(-1)
-  
+
   if (!bandsSeen || bandsSeen.length === 0) {
     return null
   }
-  
+
   const concerts = getUniqueObjects(bandsSeen.map(band => band.concert))
   const start = Math.min(...concerts?.map(concert => parseInt(concert.date_start.slice(0, 4))))
   const end = Math.max(...concerts?.map(concert => parseInt(concert.date_start.slice(0, 4))))
