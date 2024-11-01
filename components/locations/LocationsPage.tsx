@@ -32,7 +32,6 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
     size: perPage,
   })
   const [_, setModal] = useModal()
-  const isDesktop = useMediaQuery('(min-width: 768px)')
   const { data: session } = useSession()
   const { push } = useRouter()
   const pathname = usePathname()

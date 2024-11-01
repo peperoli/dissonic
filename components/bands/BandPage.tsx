@@ -134,7 +134,7 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
       {bandProfiles && bandProfiles.length > 0 && (
         <section className="rounded-lg bg-slate-800 p-4 md:p-6">
           <h2>Community</h2>
-          <div className="flex flex-wrap gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {bandProfiles
               .filter(item => !!item.profile)
               .sort((a, b) => b.count - a.count)
@@ -153,9 +153,9 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
           </div>
         </section>
       )}
-      {concerts?.data && concerts?.data?.length > 0 && (
+      {concerts?.data && concerts.data.length > 0 && (
         <section className="grid gap-4 rounded-lg bg-slate-800 p-4 md:p-6">
-          <h2 className="mb-0">Konzerte mit {band.name}</h2>
+          <h2 className="mb-0">{concerts.data.length} Konzert(e) mit {band.name}</h2>
           {concerts?.data.map(item => <ConcertCard key={item.id} concert={item} nested />)}
         </section>
       )}

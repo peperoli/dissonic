@@ -20,7 +20,7 @@ export function ConcertList({ profileId }: { profileId: string }) {
   if (status === 'pending') return <p className="text-sm text-slate-300">Lade ...</p>
 
   if (concerts?.data.length === 0) {
-    return null
+    return <p className="text-slate-300">Keine Konzerte gefunden.</p>
   }
 
   return (

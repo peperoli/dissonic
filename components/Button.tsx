@@ -11,6 +11,7 @@ type ButtonProps = {
   loading?: boolean
   disabled?: boolean
   size?: 'small' | 'medium'
+  block?: boolean
   danger?: boolean
 } & HTMLAttributes<HTMLButtonElement>
 
@@ -25,6 +26,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       loading,
       disabled,
       size = 'medium',
+      block,
       danger,
       className,
       ...props
@@ -43,6 +45,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           appearance === 'tertiary' && 'btn-tertiary',
           contentType === 'icon' && 'btn-icon',
           size === 'small' && 'btn-small',
+          block && 'btn-block',
           danger && 'btn-danger',
           className
         )}

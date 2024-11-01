@@ -3,55 +3,24 @@
 import Link from 'next/link'
 import { useConcert } from '../../hooks/concerts/useConcert'
 import { ConcertContext } from '../../hooks/concerts/useConcertContext'
-import { Concert, Profile } from '../../types/types'
+import { Concert } from '../../types/types'
 import { Button } from '../Button'
 import { Comments } from './Comments'
 import { notFound, usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
-import { UserItem } from '../shared/UserItem'
 import { BandList } from './BandList'
 import { ArrowLeft, Edit, MapPin, Trash } from 'lucide-react'
 import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 import Image from 'next/image'
 import { ConcertDate } from './ConcertDate'
 import clsx from 'clsx'
-import { useBands } from '@/hooks/bands/useBands'
-import * as Tooltip from '@radix-ui/react-tooltip'
 import { ConcertStats } from './ConcertStats'
 import { useModal } from '../shared/ModalProvider'
 import { useConcertProfiles } from '@/hooks/concerts/useConcertProfiles'
 import { Chip } from '../Chip'
 import { MetaInfo } from '../shared/MetaInfo'
 import { SpeedDial } from '../layout/SpeedDial'
-
-type ConcertUserItemProps = {
-  concert: Concert
-  user: Profile
-  count: number
-}
-
-const ConcertUserItem = ({ concert, user, count }: ConcertUserItemProps) => {
-  const bandsSeen = concert.bands_seen?.filter(item => typeof item !== 'undefined')
-  const { data: bands } = useBands(undefined, {
-    ids: bandsSeen?.filter(item => item.user_id === user.id).map(item => item.band_id),
-  })
-  return (
-    <Tooltip.Root>
-      <Tooltip.Trigger asChild>
-        <Link href={`/users/${user.username}`} className="group/user-item" key={user.id}>
-          <UserItem
-            user={user}
-            description={count ? `${count} Band${count > 1 ? 's' : ''}` : null}
-          />
-        </Link>
-      </Tooltip.Trigger>
-      <Tooltip.Content className="z-10 rounded-lg border border-slate-800 bg-slate-850 p-2 text-sm shadow-lg">
-        <Tooltip.Arrow className="fill-slate-850" />
-        <ul>{bands?.data.map(item => <li key={item.id}>{item.name}</li>)}</ul>
-      </Tooltip.Content>
-    </Tooltip.Root>
-  )
-}
+import { ConcertUserItem } from './ConcertUserItem'
 
 type ConcertPageProps = {
   initialConcert: Concert
@@ -165,7 +134,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
         {concertProfiles && concertProfiles.length > 0 && (
           <section className="rounded-lg bg-slate-800 p-4 md:p-6">
             <h2>Fans</h2>
-            <div className="flex flex-wrap gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {concertProfiles
                 .filter(item => !!item.profile)
                 .sort((a, b) => b.count - a.count)

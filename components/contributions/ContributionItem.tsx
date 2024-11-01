@@ -8,12 +8,12 @@ import { useLocation } from '@/hooks/locations/useLocation'
 import { useProfile } from '@/hooks/profiles/useProfile'
 import { getRelativeTime } from '@/lib/relativeTime'
 import { Tables, TablesInsert, TablesUpdate } from '@/types/supabase'
-import { Concert } from '@/types/types'
 import clsx from 'clsx'
 import { ArrowRight, PenIcon, PlusIcon, TrashIcon } from 'lucide-react'
 import Link from 'next/link'
 import { ReactNode } from 'react'
 import { CommaSeperatedList } from '../helpers/CommaSeperatedList'
+import { getConcertName } from '@/lib/getConcertName'
 
 type State = TablesInsert<'bands'> | TablesUpdate<'bands'> | null
 
@@ -27,27 +27,6 @@ const relationOperationLabels = {
   INSERT: ['fügte', 'zu', 'hinzu'],
   DELETE: ['entfernte', 'von'],
 } as { [key: string]: string[] }
-
-function getConcertName(concert: Concert | undefined) {
-  if (!concert) {
-    return null
-  }
-
-  const date = new Date(concert.date_start).toLocaleDateString('de-CH', {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
-
-  if (concert.festival_root) {
-    return `${concert.festival_root.name} ${new Date(concert.date_start).getFullYear()}`
-  } else if (concert.name) {
-    return `${concert.name} | ${date}`
-  } else {
-    return `${concert.bands?.map(band => band.name).join(', ')} | ${concert.location?.name} | ${date}`
-  }
-}
 
 const ConcertContributionItem = ({ contribution }: { contribution: Tables<'contributions'> }) => {
   const { operation, ressource_id } = contribution

@@ -86,7 +86,7 @@ export function Score({ profileId }: { profileId: string }) {
             {Math.ceil(streak.diff / MONTH_MS + 1)}
           </div>
           <div className="flex justify-center gap-1">
-            max. Streak
+            längste Serie
             <Tooltip.Root>
               <Tooltip.Trigger>
                 <Info className="size-4" />

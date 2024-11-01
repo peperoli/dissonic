@@ -2,6 +2,10 @@
 	.btn {
 		@apply inline-flex justify-center items-center gap-2 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed;
 
+		&.btn-block {
+			@apply w-full;
+		}
+
 		&:not(.btn-icon) {
 			@apply px-5 py-3 md:px-4 md:py-2;
 

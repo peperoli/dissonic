@@ -54,7 +54,7 @@ export const ConcertCard = ({ concert, nested }: ConcertCardProps) => {
               label={
                 concert.festival_root
                   ? concert.festival_root.name + ' ' + new Date(concert.date_start).getFullYear()
-                  : concert.name ?? ''
+                  : (concert.name ?? '')
               }
               size="sm"
               color={concert.festival_root ? 'purple' : 'blue'}
@@ -97,10 +97,13 @@ export const ConcertCard = ({ concert, nested }: ConcertCardProps) => {
           </div>
         </div>
         {profiles && (
-          <div className="flex flex-wrap gap-2 md:gap-x-4">
-            {profiles.map(item => (
+          <div className="flex max-h-6 w-full items-center gap-2 md:gap-x-4">
+            {profiles.slice(0, 3).map(item => (
               <UserItem user={item} size="sm" usernameIsHidden={!isDesktop} key={item.id} />
             ))}
+            {profiles.length > 3 && (
+              <span className="text-sm text-slate-300">+{profiles.length - 3}</span>
+            )}
           </div>
         )}
       </div>
