@@ -14,7 +14,7 @@ const fetchBandsSeen = async (options: {
       concert:concerts(
         *,
         festival_root:festival_roots(*),
-        bands!j_concert_bands(*),
+        bands:j_concert_bands(*, ...bands(*)),
         location:locations(*)
       )`
     )
@@ -29,7 +29,7 @@ const fetchBandsSeen = async (options: {
     query.eq('concert.location_id', options.locationId)
   }
 
-  const { data, error } = await query
+  const { data, error } = await query.order('item_index', { referencedTable: 'concert.bands' })
 
   if (error) {
     throw error

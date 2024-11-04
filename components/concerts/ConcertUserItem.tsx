@@ -6,9 +6,44 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { useAnimate, useDragControls, useMotionValue } from 'framer-motion'
 import Link from 'next/link'
 import { useRef, useState } from 'react'
-import { Concert, Profile } from '../../types/types'
+import { Band, Concert, Profile } from '../../types/types'
 import { MotionDiv } from '../helpers/motion'
 import { UserItem } from '../shared/UserItem'
+import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
+import Image from 'next/image'
+import { GuitarIcon } from 'lucide-react'
+
+function BandItem({ band }: { band: Band }) {
+  const { data: spotifyArtist } = useSpotifyArtist(band.spotify_artist_id)
+  const regionNames = new Intl.DisplayNames('de', { type: 'region' })
+
+  return (
+    <Link
+      href={`/bands/${band.id}`}
+      className="flex gap-4 rounded-lg p-2 text-left hover:bg-slate-700"
+    >
+      <div className="relative grid h-11 w-11 flex-none place-content-center rounded-lg bg-slate-750">
+        {spotifyArtist?.images?.[2] ? (
+          <Image
+            src={spotifyArtist.images[2].url}
+            alt={band.name}
+            fill
+            sizes="150px"
+            className="rounded-lg object-cover"
+          />
+        ) : (
+          <GuitarIcon className="size-icon text-slate-300" />
+        )}
+      </div>
+      <div className="w-full">
+        {band.name}
+        {band.country?.iso2 && (
+          <div className="text-sm text-slate-300">{regionNames.of(band.country.iso2)}</div>
+        )}
+      </div>
+    </Link>
+  )
+}
 
 export function ConcertUserItem({
   concert,
@@ -72,21 +107,21 @@ export function ConcertUserItem({
               dragListener={false}
               dragConstraints={{ top: 0, bottom: 0 }}
               dragElastic={{ top: 0.5, bottom: 0.5 }}
-              className="flex h-[75vh] w-full flex-col content-start bg-slate-800 p-6 md:h-fit md:max-h-full md:max-w-sm md:rounded-lg md:p-8"
+              className="flex h-[75vh] w-full flex-col content-start bg-slate-800 p-6 md:h-fit md:max-h-full md:max-w-md md:rounded-lg md:p-8"
             >
-              <div className="mb-6 flex w-full justify-center bg-slate-800 md:hidden">
-                <button
-                  aria-label="Griff"
-                  onPointerDown={e => controls.start(e)}
-                  className="h-2 w-12 cursor-grab touch-none rounded bg-slate-500 active:cursor-grabbing"
-                />
-              </div>
+              <button
+                aria-label="Griff"
+                onPointerDown={e => controls.start(e)}
+                className="mb-6 flex w-full cursor-grab touch-none justify-center bg-slate-800 active:cursor-grabbing md:hidden"
+              >
+                <div className="h-2 w-12 rounded bg-slate-500" />
+              </button>
               <div className="sr-only mb-4 mt-8 flex items-start justify-between gap-4">
                 <Dialog.Title className="mb-0">
                   {user.username} hat {count} Band(s) am Konzert {getConcertName(concert)} gesehen
                 </Dialog.Title>
               </div>
-              <div className="mb-4 flex items-center justify-between">
+              <div className="flex items-center justify-between border-b border-slate-700 pb-4">
                 <UserItem
                   user={user}
                   description={count ? `${count} Band${count > 1 ? 's' : ''}` : null}
@@ -95,15 +130,15 @@ export function ConcertUserItem({
                   Profil anzeigen
                 </Link>
               </div>
-              <div className="relative -mb-6 overflow-y-auto pb-6">
-                <ul className="grid gap-2">
-                  {bands?.sort((a,b) => a.name.localeCompare(b.name)).map(item => (
-                    <li key={item.id}>
-                      <Link href={`/bands/${item.id}`} className="font-bold hover:underline">
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
+              <div className="relative -mb-6 overflow-y-auto pb-6 pt-4 md:-mb-8 md:pb-8">
+                <ul className="grid">
+                  {bands
+                    ?.sort((a, b) => a.name.localeCompare(b.name))
+                    .map(item => (
+                      <li key={item.id}>
+                        <BandItem band={item} />
+                      </li>
+                    ))}
                 </ul>
               </div>
             </MotionDiv>

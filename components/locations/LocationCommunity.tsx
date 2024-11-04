@@ -1,18 +1,73 @@
 'use client'
 
 import useMediaQuery from '@/hooks/helpers/useMediaQuery'
-import { getConcertName } from '@/lib/getConcertName'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useAnimate, useDragControls, useMotionValue } from 'framer-motion'
 import Link from 'next/link'
 import { useRef, useState } from 'react'
-import { Band, Location, Profile } from '../../types/types'
+import { Location, Profile } from '../../types/types'
 import { MotionDiv } from '../helpers/motion'
 import { UserItem } from '../shared/UserItem'
-import { useBandProfiles } from '@/hooks/bands/useBandProfiles'
 import { useBandsSeen } from '@/hooks/bands/useBandsSeen'
 import { useLocationProfiles } from '@/hooks/locations/useLocationProfiles'
 import { getUniqueObjects } from '@/lib/getUniqueObjects'
+import Image from 'next/image'
+import { CalendarIcon } from 'lucide-react'
+import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
+import { Tables } from '@/types/supabase'
+
+function ConcertItem({
+  concert,
+}: {
+  concert: Tables<'concerts'> & {
+    festival_root: { name: string } | null
+    bands: Tables<'bands'>[] | null
+    location: Tables<'locations'> | null
+  }
+}) {
+  const { data: spotifyArtist } = useSpotifyArtist(concert.bands?.[0]?.spotify_artist_id)
+  const dateStart = new Date(concert.date_start)
+  const dateEnd = concert.date_end ? new Date(concert.date_end) : null
+  const isSameYear = dateStart.getFullYear() === dateEnd?.getFullYear()
+  const concertDate = dateEnd
+    ? `${dateStart.toLocaleDateString('de-CH', {
+        day: 'numeric',
+        month: 'numeric',
+        year: isSameYear ? undefined : 'numeric',
+      })} bis ${dateEnd.toLocaleDateString()}`
+    : dateStart.toLocaleDateString()
+  return (
+    <Link href={`/concerts/${concert.id}`} className="flex gap-4 rounded-lg p-2 hover:bg-slate-700">
+      <div className="relative grid size-16 flex-none place-content-center rounded-lg bg-slate-750">
+        {spotifyArtist?.images[2] ? (
+          <Image
+            src={spotifyArtist?.images[2].url}
+            alt={concert.bands?.[0]?.name ?? ''}
+            fill
+            sizes="150px"
+            className="rounded-lg object-cover"
+          />
+        ) : (
+          <CalendarIcon className="size-icon text-slate-300" />
+        )}
+      </div>
+      <div className="">
+        <p className="truncate font-bold">
+          {concert.festival_root?.name ||
+            concert.name ||
+            concert.bands
+              ?.slice(0, 3)
+              .map(band => band.name)
+              .join(', ')}
+        </p>
+        <p className="text-sm">{concertDate}</p>
+        <p className="text-sm text-slate-300">
+          {concert.location?.name}, {concert.location?.city}
+        </p>
+      </div>
+    </Link>
+  )
+}
 
 function LocationUserItem({
   location,
@@ -48,10 +103,7 @@ function LocationUserItem({
   return (
     <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
       <Dialog.Trigger className="group/user-item text-left">
-        <UserItem
-          user={profile}
-          description={`${count} ${count > 1 ? 'Konzerte' : 'Konzert'}`}
-        />
+        <UserItem user={profile} description={`${count} ${count > 1 ? 'Konzerte' : 'Konzert'}`} />
       </Dialog.Trigger>
       <Dialog.Overlay asChild>
         <MotionDiv
@@ -79,21 +131,21 @@ function LocationUserItem({
               dragListener={false}
               dragConstraints={{ top: 0, bottom: 0 }}
               dragElastic={{ top: 0.5, bottom: 0.5 }}
-              className="flex h-[75vh] w-full flex-col content-start bg-slate-800 p-6 md:h-fit md:max-h-full md:max-w-sm md:rounded-lg md:p-8"
+              className="flex h-[75vh] w-full flex-col content-start bg-slate-800 p-6 md:h-fit md:max-h-full md:max-w-md md:rounded-lg md:p-8"
             >
-              <div className="mb-6 flex w-full justify-center bg-slate-800 md:hidden">
-                <button
-                  aria-label="Griff"
-                  onPointerDown={e => controls.start(e)}
-                  className="h-2 w-12 cursor-grab touch-none rounded bg-slate-500 active:cursor-grabbing"
-                />
-              </div>
+              <button
+                aria-label="Griff"
+                onPointerDown={e => controls.start(e)}
+                className="mb-6 flex w-full cursor-grab touch-none justify-center bg-slate-800 active:cursor-grabbing md:hidden"
+              >
+                <div className="h-2 w-12 rounded bg-slate-500" />
+              </button>
               <div className="sr-only mb-4 mt-8 flex items-start justify-between gap-4">
                 <Dialog.Title className="mb-0">
                   {profile.username} hat {count} Konzert(e) @ {location.name} gesehen
                 </Dialog.Title>
               </div>
-              <div className="mb-4 flex items-center justify-between">
+              <div className="flex items-center justify-between border-b border-slate-700 pb-4">
                 <UserItem
                   user={profile}
                   description={`${count} ${count > 1 ? 'Konzerte' : 'Konzert'}`}
@@ -102,17 +154,15 @@ function LocationUserItem({
                   Profil anzeigen
                 </Link>
               </div>
-              <div className="relative -mb-6 overflow-y-auto pb-6">
-                <ul className="grid gap-2">
+              <div className="relative -mb-6 overflow-y-auto pb-6 pt-4 md:pb-8">
+                <ul className="grid">
                   {concerts
                     ?.sort(
                       (a, b) => new Date(b.date_start).getTime() - new Date(a.date_start).getTime()
                     )
                     .map(item => (
                       <li key={item.id}>
-                        <Link href={`/concerts/${item.id}`} className="font-bold hover:underline">
-                          {getConcertName(item)}
-                        </Link>
+                        <ConcertItem concert={item} />
                       </li>
                     ))}
                 </ul>
