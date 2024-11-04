@@ -46,7 +46,7 @@ export type ActivityFetchOptions = {
 export type ContributionFetchOptions = {
   size?: string
   ressourceType?: 'concerts' | 'bands' | 'locations'
-  ressourceId?: string,
+  ressourceId?: string
   userId?: string
 }
 

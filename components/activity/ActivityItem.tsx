@@ -4,32 +4,11 @@ import type { ActivityItemT } from 'app/activity/page'
 import { UserItem } from '../shared/UserItem'
 import Link from 'next/link'
 import { getRelativeTime } from '@/lib/relativeTime'
-import { Fragment, ReactNode } from 'react'
+import { ReactNode } from 'react'
 import { useConcert } from '@/hooks/concerts/useConcert'
-import { Concert } from '@/types/types'
 import { Tables } from '@/types/supabase'
 import { CommaSeperatedList } from '../helpers/CommaSeperatedList'
-
-function getConcertName(concert: Concert | undefined) {
-  if (!concert) {
-    return null
-  }
-
-  const date = new Date(concert.date_start).toLocaleDateString('de-CH', {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
-
-  if (concert.festival_root) {
-    return `${concert.festival_root.name} ${new Date(concert.date_start).getFullYear()}`
-  } else if (concert.name) {
-    return `${concert.name} | ${date}`
-  } else {
-    return `${concert.bands?.map(band => band.name).join(', ')} | ${concert.location?.name} | ${date}`
-  }
-}
+import { getConcertName } from '@/lib/getConcertName'
 
 const CommentItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
   const { user, created_at } = activityItem

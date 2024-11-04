@@ -1,16 +1,35 @@
 import { useQuery } from '@tanstack/react-query'
-import { BandSeen } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 
-const fetchBandsSeen = async (profileId: string): Promise<BandSeen[]> => {
-  const { data, error } = await supabase
+const fetchBandsSeen = async (options: {
+  userId: string
+  bandId?: number
+  locationId?: number
+}) => {
+  const query = supabase
     .from('j_bands_seen')
     .select(
       `*,
       band:bands(*, genres(*), country:countries(id, iso2)),
-      concert:concerts(*, location:locations(*))`
+      concert:concerts(
+        *,
+        festival_root:festival_roots(*),
+        bands:j_concert_bands(*, ...bands(*)),
+        location:locations(*)
+      )`
     )
-    .eq('user_id', profileId)
+    .eq('user_id', options.userId)
+    .limit(3, { referencedTable: 'bands' })
+
+  if (options.bandId) {
+    query.eq('band_id', options.bandId)
+  }
+
+  if (options.locationId) {
+    query.eq('concert.location_id', options.locationId)
+  }
+
+  const { data, error } = await query.order('item_index', { referencedTable: 'concert.bands' })
 
   if (error) {
     throw error
@@ -19,9 +38,9 @@ const fetchBandsSeen = async (profileId: string): Promise<BandSeen[]> => {
   return data
 }
 
-export const useBandsSeen = (profileId: string) => {
+export const useBandsSeen = (options: { userId: string; bandId?: number; locationId?: number }) => {
   return useQuery({
-    queryKey: ['bandsSeen', profileId],
-    queryFn: () => fetchBandsSeen(profileId),
+    queryKey: ['bandsSeen', JSON.stringify(options)],
+    queryFn: () => fetchBandsSeen(options),
   })
 }

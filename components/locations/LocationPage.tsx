@@ -9,11 +9,10 @@ import { notFound, usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
 import { useModal } from '../shared/ModalProvider'
 import { ArrowLeft, Edit, MapPin, Trash } from 'lucide-react'
-import { UserItem } from '../shared/UserItem'
 import { useLocation } from '@/hooks/locations/useLocation'
-import { useLocationProfiles } from '@/hooks/locations/useLocationProfiles'
 import { MetaInfo } from '../shared/MetaInfo'
 import { SpeedDial } from '../layout/SpeedDial'
+import { LocationCommunity } from './LocationCommunity'
 
 type LocationPageProps = {
   location: Location
@@ -28,7 +27,6 @@ export const LocationPage = ({
     initialLocation.id,
     initialLocation
   )
-  const { data: locationProfiles } = useLocationProfiles(initialLocation.id)
   const { data: concerts } = useConcerts(undefined, {
     locations: [initialLocation.id],
     sort: { sort_by: 'date_start', sort_asc: false },
@@ -109,32 +107,12 @@ export const LocationPage = ({
           </div>
         </div>
       </header>
-      {locationProfiles && locationProfiles.length > 0 && (
-        <section className="rounded-lg bg-slate-800 p-4 md:p-6">
-          <h2>Community</h2>
-          <div className="flex flex-wrap gap-4">
-            {locationProfiles
-              .sort((a, b) => (a.count && b.count ? b.count - a.count : 0))
-              .map((item, index) => (
-                <Link
-                  href={`/users/${item.profile?.username}`}
-                  className="group/user-item"
-                  key={index}
-                >
-                  {item.profile && (
-                    <UserItem
-                      user={item.profile}
-                      description={`${item.count} Konzert${item.count && item.count > 1 ? 'e' : ''}`}
-                    />
-                  )}
-                </Link>
-              ))}
-          </div>
-        </section>
-      )}
-      {concerts?.data && concerts?.data?.length > 0 && (
+      <LocationCommunity location={location} />
+      {concerts?.data && concerts.data.length > 0 && (
         <section className="grid gap-4 rounded-lg bg-slate-800 p-4 md:p-6">
-          <h2 className="mb-0">Konzerte @ {location.name}</h2>
+          <h2 className="mb-0">
+            {concerts.data.length} Konzert(e) @ {location.name}
+          </h2>
           {concerts?.data.map(item => <ConcertCard key={item.id} concert={item} nested />)}
         </section>
       )}

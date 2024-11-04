@@ -68,18 +68,13 @@ export const InviteItem = ({ inviteData, type }: InviteItemType) => {
         <Link href={`/users/${profile.username}`}>
           <UserItem user={profile} />
         </Link>
-        <div className="flex gap-2 md:ml-auto">
+        <div className="flex w-full gap-2 md:ml-auto md:w-fit">
           {type === 'sent' ? (
-            <Button onClick={cancelInvite} label="Anfrage zurückziehen" size="small" />
+            <Button onClick={cancelInvite} label="Anfrage zurückziehen" size="small" block />
           ) : (
             <>
-              <Button onClick={cancelInvite} label="Ablehnen" size="small" />
-              <Button
-                onClick={confirmInvite}
-                label="Bestätigen"
-                size="small"
-                appearance="primary"
-              />
+              <Button onClick={cancelInvite} label="Ablehnen" size="small" block danger />
+              <Button onClick={confirmInvite} label="Bestätigen" size="small" block />
             </>
           )}
         </div>
@@ -89,5 +84,3 @@ export const InviteItem = ({ inviteData, type }: InviteItemType) => {
 
   return null
 }
-
-

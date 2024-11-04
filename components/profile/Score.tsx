@@ -5,11 +5,11 @@ import { getUniqueObjects } from '@/lib/getUniqueObjects'
 import * as Tooltip from '@radix-ui/react-tooltip'
 import clsx from 'clsx'
 import { Info, Loader2Icon } from 'lucide-react'
-import { Concert } from '../../types/types'
+import { Tables } from '@/types/supabase'
 
 const MONTH_MS = 1000 * 60 * 60 * 24 * 30.44
 
-function getLongestStreak(concerts: Concert[]) {
+function getLongestStreak(concerts: Tables<'concerts'>[]) {
   const sortedConcerts = concerts.sort(
     (a, b) => new Date(a.date_start).getTime() - new Date(b.date_start).getTime()
   )
@@ -42,7 +42,7 @@ function getLongestStreak(concerts: Concert[]) {
 }
 
 export function Score({ profileId }: { profileId: string }) {
-  const { data: bandsSeen, status: bandsSeenStatus } = useBandsSeen(profileId)
+  const { data: bandsSeen, status: bandsSeenStatus } = useBandsSeen({ userId: profileId })
   const uniqueBandsSeen = getUniqueObjects(bandsSeen?.map(item => item.band) ?? [])
   const concertsSeen = getUniqueObjects(bandsSeen?.map(item => item.concert) ?? [])
   const festivalsSeen = concertsSeen.filter(item => item.is_festival)
@@ -86,7 +86,7 @@ export function Score({ profileId }: { profileId: string }) {
             {Math.ceil(streak.diff / MONTH_MS + 1)}
           </div>
           <div className="flex justify-center gap-1">
-            max. Streak
+            längste Serie
             <Tooltip.Root>
               <Tooltip.Trigger>
                 <Info className="size-4" />

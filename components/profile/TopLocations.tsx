@@ -6,7 +6,7 @@ import { LocationItem } from './LocationItem'
 import { getUniqueObjects } from '@/lib/getUniqueObjects'
 
 export function TopLocations({ profileId }: { profileId: string }) {
-  const { data: bandsSeen, status: bandsSeenStatus } = useBandsSeen(profileId)
+  const { data: bandsSeen, status: bandsSeenStatus } = useBandsSeen({ userId: profileId })
   const concertsSeen = getUniqueObjects(bandsSeen?.map(item => item.concert) ?? [])
 
   if (bandsSeenStatus === 'pending') {
