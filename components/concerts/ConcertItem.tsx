@@ -24,8 +24,8 @@ export function ConcertItem({
         day: 'numeric',
         month: 'numeric',
         year: isSameYear ? undefined : 'numeric',
-      })} bis ${dateEnd.toLocaleDateString()}`
-    : dateStart.toLocaleDateString()
+      })} bis ${dateEnd.toLocaleDateString('de-CH')}`
+    : dateStart.toLocaleDateString('de-CH')
   return (
     <Link href={`/concerts/${concert.id}`} className="flex gap-4 rounded-lg p-2 hover:bg-slate-700">
       <div className="relative grid size-16 flex-none place-content-center rounded-lg bg-slate-750">

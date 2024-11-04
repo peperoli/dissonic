@@ -54,12 +54,12 @@ export function Drawer({ children, trigger }: { children: ReactNode; trigger: Re
               dragListener={false}
               dragConstraints={{ top: 0, bottom: 0 }}
               dragElastic={{ top: 0, bottom: 1 }}
-              className="flex h-[75vh] w-full flex-col content-start bg-slate-800 p-6 md:h-fit md:max-h-full md:max-w-md md:rounded-lg md:p-8"
+              className="flex h-[75vh] w-full flex-col content-start bg-slate-800 px-6 pb-6 md:h-fit md:max-h-full md:max-w-md md:rounded-lg md:p-8"
             >
               <button
                 aria-label="Griff"
                 onPointerDown={e => controls.start(e)}
-                className="mb-6 flex w-full cursor-grab touch-none justify-center bg-slate-800 active:cursor-grabbing md:hidden"
+                className="flex w-full cursor-grab touch-none justify-center py-6 active:cursor-grabbing md:hidden"
               >
                 <div className="h-2 w-12 rounded bg-slate-500" />
               </button>
