@@ -16,11 +16,10 @@ import { ConcertDate } from './ConcertDate'
 import clsx from 'clsx'
 import { ConcertStats } from './ConcertStats'
 import { useModal } from '../shared/ModalProvider'
-import { useConcertProfiles } from '@/hooks/concerts/useConcertProfiles'
 import { Chip } from '../Chip'
 import { MetaInfo } from '../shared/MetaInfo'
 import { SpeedDial } from '../layout/SpeedDial'
-import { ConcertUserItem } from './ConcertUserItem'
+import { ConcertCommunity } from './ConcertCommunity'
 
 type ConcertPageProps = {
   initialConcert: Concert
@@ -29,7 +28,6 @@ type ConcertPageProps = {
 
 export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPageProps) => {
   const { data: concert } = useConcert(initialConcert.id, { placeholderData: initialConcert })
-  const { data: concertProfiles } = useConcertProfiles(initialConcert.id)
   const { data: session } = useSession()
   const { data: spotifyArtist } = useSpotifyArtist(concert?.bands?.[0]?.spotify_artist_id)
   const [_, setModal] = useModal()
@@ -131,24 +129,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
           <h2>Lineup</h2>
           {concert.bands && <BandList concert={concert} />}
         </section>
-        {concertProfiles && concertProfiles.length > 0 && (
-          <section className="rounded-lg bg-slate-800 p-4 md:p-6">
-            <h2>Fans</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {concertProfiles
-                .filter(item => !!item.profile)
-                .sort((a, b) => b.count - a.count)
-                .map(item => (
-                  <ConcertUserItem
-                    concert={concert}
-                    user={item.profile!}
-                    count={item.count}
-                    key={item.profile?.id}
-                  />
-                ))}
-            </div>
-          </section>
-        )}
+        <ConcertCommunity concert={concert} />
         {concert.bands && <ConcertStats bands={concert.bands} />}
         <div className="rounded-lg bg-slate-800 p-4 md:p-6">
           <Comments />

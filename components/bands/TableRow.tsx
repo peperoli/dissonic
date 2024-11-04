@@ -16,7 +16,7 @@ export function BandTableRow({ band }: BandTableRowProps) {
   const regionNames = new Intl.DisplayNames('de', { type: 'region' })
   return (
     <TableRow key={band.id} href={`/bands/${band.id}`}>
-      <div className="relative flex-shrink-0 flex justify-center items-center w-10 h-10 rounded-lg bg-slate-750">
+      <div className="relative flex-shrink-0 flex justify-center items-center w-11 h-11 rounded-lg bg-slate-750">
         {picture ? (
           <Image
             src={picture.url}
