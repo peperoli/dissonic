@@ -1,7 +1,6 @@
 'use client'
 
 import { getConcertName } from '@/lib/getConcertName'
-import * as Dialog from '@radix-ui/react-dialog'
 import Link from 'next/link'
 import { Band, Concert, Profile } from '../../types/types'
 import { UserItem } from '../shared/UserItem'
@@ -9,7 +8,7 @@ import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 import Image from 'next/image'
 import { GuitarIcon } from 'lucide-react'
 import { useConcertProfiles } from '@/hooks/concerts/useConcertProfiles'
-import { Drawer } from '../shared/Drawer'
+import { Drawer, DrawerTitle, DrawerTrigger } from '../shared/Drawer'
 
 function BandItem({ band }: { band: Band }) {
   const { data: spotifyArtist } = useSpotifyArtist(band.spotify_artist_id)
@@ -60,18 +59,18 @@ function ConcertUserItem({
   return (
     <Drawer
       trigger={
-        <Dialog.Trigger className="group/user-item text-left">
+        <DrawerTrigger className="group/user-item text-left">
           <UserItem
             user={profile}
             description={count ? `${count} Band${count > 1 ? 's' : ''}` : null}
           />
-        </Dialog.Trigger>
+        </DrawerTrigger>
       }
     >
       <div className="sr-only mb-4 mt-8 flex items-start justify-between gap-4">
-        <Dialog.Title className="mb-0">
+        <DrawerTitle className="mb-0">
           {profile.username} hat {count} Band(s) am Konzert {getConcertName(concert)} gesehen
-        </Dialog.Title>
+        </DrawerTitle>
       </div>
       <div className="flex items-center justify-between border-b border-slate-700 pb-4">
         <UserItem
@@ -110,7 +109,7 @@ export function ConcertCommunity({ concert }: { concert: Concert }) {
 
   return (
     <section className="rounded-lg bg-slate-800 p-4 md:p-6">
-      <h2>Community</h2>
+      <h2>Fans</h2>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
         {concertProfiles
           .filter(item => !!item.profile)

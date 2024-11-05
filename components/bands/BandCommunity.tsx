@@ -1,13 +1,12 @@
 'use client'
 
-import * as Dialog from '@radix-ui/react-dialog'
 import Link from 'next/link'
 import { Band, Profile } from '../../types/types'
 import { UserItem } from '../shared/UserItem'
 import { useBandProfiles } from '@/hooks/bands/useBandProfiles'
 import { useBandsSeen } from '@/hooks/bands/useBandsSeen'
 import { ConcertItem } from '../concerts/ConcertItem'
-import { Drawer } from '../shared/Drawer'
+import { Drawer, DrawerTitle, DrawerTrigger } from '../shared/Drawer'
 
 function BandUserItem({ band, profile, count }: { band: Band; profile: Profile; count: number }) {
   const { data: bandsSeen } = useBandsSeen({ userId: profile.id, bandId: band.id })
@@ -16,14 +15,14 @@ function BandUserItem({ band, profile, count }: { band: Band; profile: Profile; 
   return (
     <Drawer
       trigger={
-        <Dialog.Trigger className="group/user-item text-left">
+        <DrawerTrigger className="group/user-item text-left">
           <UserItem user={profile} description={`${count} ${count > 1 ? 'Konzerte' : 'Konzert'}`} />
-        </Dialog.Trigger>
+        </DrawerTrigger>
       }
     >
-      <Dialog.Title className="sr-only">
+      <DrawerTitle className="sr-only">
         {profile.username} hat {count} Konzert(e) mit {band.name} gesehen
-      </Dialog.Title>
+      </DrawerTitle>
       <div className="flex items-center justify-between border-b border-slate-700 pb-4">
         <UserItem user={profile} description={`${count} ${count > 1 ? 'Konzerte' : 'Konzert'}`} />
         <Link href={`/users/${profile.username}`} className="btn btn-secondary btn-small">
@@ -58,7 +57,7 @@ export function BandCommunity({ band }: { band: Band }) {
 
   return (
     <section className="rounded-lg bg-slate-800 p-4 md:p-6">
-      <h2>Community</h2>
+      <h2>Fans</h2>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
         {bandProfiles
           .filter(item => !!item.profile)

@@ -1,6 +1,5 @@
 'use client'
 
-import * as Dialog from '@radix-ui/react-dialog'
 import Link from 'next/link'
 import { Location, Profile } from '../../types/types'
 import { UserItem } from '../shared/UserItem'
@@ -8,7 +7,7 @@ import { useBandsSeen } from '@/hooks/bands/useBandsSeen'
 import { useLocationProfiles } from '@/hooks/locations/useLocationProfiles'
 import { getUniqueObjects } from '@/lib/getUniqueObjects'
 import { ConcertItem } from '../concerts/ConcertItem'
-import { Drawer } from '../shared/Drawer'
+import { Drawer, DrawerTitle, DrawerTrigger } from '../shared/Drawer'
 
 function LocationUserItem({
   location,
@@ -27,14 +26,14 @@ function LocationUserItem({
   return (
     <Drawer
       trigger={
-        <Dialog.Trigger className="group/user-item text-left">
+        <DrawerTrigger className="group/user-item text-left">
           <UserItem user={profile} description={`${count} ${count > 1 ? 'Konzerte' : 'Konzert'}`} />
-        </Dialog.Trigger>
+        </DrawerTrigger>
       }
     >
-      <Dialog.Title className="sr-only">
+      <DrawerTitle className="sr-only">
         {profile.username} hat {count} Konzert(e) @ {location.name} gesehen
-      </Dialog.Title>
+      </DrawerTitle>
       <div className="flex items-center justify-between border-b border-slate-700 pb-4">
         <UserItem user={profile} description={`${count} ${count > 1 ? 'Konzerte' : 'Konzert'}`} />
         <Link href={`/users/${profile.username}`} className="btn btn-secondary btn-small">
@@ -71,7 +70,7 @@ export function LocationCommunity({ location }: { location: Location }) {
 
   return (
     <section className="rounded-lg bg-slate-800 p-4 md:p-6">
-      <h2>Community</h2>
+      <h2>Fans</h2>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
         {locationProfiles
           .filter(item => !!item.profile && !!item.count)
