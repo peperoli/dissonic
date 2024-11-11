@@ -10,6 +10,8 @@ import { QueryProvider } from '../components/helpers/QueryProvider'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import '../styles/globals.scss'
+import { getLocale, getMessages } from 'next-intl/server'
+import { NextIntlClientProvider } from 'next-intl'
 
 export const metadata: Metadata = {
   title: 'Dissonic',
@@ -49,17 +51,22 @@ const firaCode = Fira_Code({
 })
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
+  const locale = await getLocale()
+  const messages = await getMessages()
+
   return (
     <QueryProvider>
       <TooltipProvider>
-        <html lang="de-CH" className={`${albertSans.variable} ${firaCode.variable}`}>
+        <html lang={locale} className={`${albertSans.variable} ${firaCode.variable}`}>
           <body className="flex min-h-screen flex-col bg-slate-850 text-white">
-            <NavBar />
-            <div className="md:flex">
-              <Navigation />
-              {children}
-            </div>
-            <Footer />
+            <NextIntlClientProvider messages={messages}>
+              <NavBar />
+              <div className="md:flex">
+                <Navigation />
+                {children}
+              </div>
+              <Footer />
+            </NextIntlClientProvider>
             <Analytics />
             <SpeedInsights />
           </body>

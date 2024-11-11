@@ -12,6 +12,7 @@ import { useSession } from '../../hooks/auth/useSession'
 import { UserItem } from '../shared/UserItem'
 import { BookUser, LogOut, User } from 'lucide-react'
 import clsx from 'clsx'
+import { useTranslations } from 'next-intl'
 
 export const NavBar = () => {
   const { data: session } = useSession()
@@ -21,6 +22,7 @@ export const NavBar = () => {
   const queryClient = useQueryClient()
   const { push } = useRouter()
   const pathname = usePathname()
+  const t = useTranslations('NavBar')
 
   useEffect(() => {
     if (logOutMutation.status === 'success') {
@@ -31,18 +33,18 @@ export const NavBar = () => {
 
   const menuItems = [
     {
-      label: 'Profil',
+      label: t('profile'),
       icon: User,
       href: `/users/${profile?.username}`,
     },
     {
-      label: 'Freunde',
+      label: t('friends'),
       icon: BookUser,
       href: `/users/${profile?.username}/friends`,
       badge: pendingInvites,
     },
     {
-      label: 'Abmelden',
+      label: t('logout'),
       icon: LogOut,
       onClick: () => logOutMutation.mutate(),
     },
@@ -89,10 +91,10 @@ export const NavBar = () => {
       ) : (
         <div className="flex gap-4">
           <Link href="/signup" className="btn btn-tertiary max-md:hidden">
-            Registrieren
+            {t('signUp')}
           </Link>
           <Link href={`/login?redirect=${pathname}`} className="btn btn-secondary">
-            Anmelden
+            {t('login')}
           </Link>
         </div>
       )}

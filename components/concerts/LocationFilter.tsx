@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { FilterButton } from './../FilterButton'
 import { useLocations } from './../../hooks/locations/useLocations'
 import { Select } from '../forms/Select'
+import { useTranslations } from 'next-intl'
 
 type LocationMultiSelectProps = {
   values: number[]
@@ -30,13 +31,14 @@ type LocationFilterProps = {
 export const LocationFilter = ({ values: submittedValues, onSubmit }: LocationFilterProps) => {
   const { data: locations } = useLocations(undefined, { ids: submittedValues })
   const [selectedIds, setSelectedIds] = useState(submittedValues ?? [])
+  const t = useTranslations('LocationFilter')
 
   useEffect(() => {
     setSelectedIds(submittedValues ?? [])
   }, [submittedValues])
   return (
     <FilterButton
-      label="Location"
+      label={t('location')}
       items={locations?.data}
       selectedIds={selectedIds}
       submittedValues={submittedValues}

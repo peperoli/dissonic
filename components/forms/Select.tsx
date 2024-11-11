@@ -6,6 +6,7 @@ import { RadioGroup } from './RadioGroup'
 import { SearchField } from './SearchField'
 import { Loader2 } from 'lucide-react'
 import clsx from 'clsx'
+import { useTranslations } from 'next-intl'
 
 export type SelectProps = {
   name: string
@@ -27,6 +28,7 @@ export const Select = ({
 }: SelectProps) => {
   const [query, setQuery] = useState('')
   const searchRef = useRef<HTMLInputElement>(null)
+  const t = useTranslations('Select')
   const regExp = new RegExp(normalizeString(query), 'iu')
   const filteredOptions = items?.filter(item => normalizeString(item.name).match(regExp))
 
@@ -62,7 +64,7 @@ export const Select = ({
               )
             ) : (
               <div className="p-2 text-slate-300">
-                Versuchs mal mit einem vernünftigen Suchbegriff.
+                {t('tryUsingASensibleSearchTerm')}
               </div>
             )}
           </>

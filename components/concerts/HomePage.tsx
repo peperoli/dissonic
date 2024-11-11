@@ -30,6 +30,7 @@ import { FilterButton } from '../FilterButton'
 import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 import { modalPaths } from '../shared/ModalProvider'
 import { SpeedDial } from '../layout/SpeedDial'
+import { useTranslations } from 'next-intl'
 
 type HomePageProps = {
   concerts: ExtendedRes<Concert[]>
@@ -84,6 +85,8 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
   const { push } = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const isDesktop = useMediaQuery('(min-width: 768px)')
+  const t = useTranslations('HomePage')
   const queryStateString = searchParams.toString()
   const sortItems = [
     { id: 0, value: 'date_start,false', name: 'Neuste' },
@@ -91,7 +94,6 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
     { id: 2, value: 'bands_count,false', name: 'Meiste Bands' },
     { id: 3, value: 'bands_count,true', name: 'Wenigste Bands' },
   ]
-  const isDesktop = useMediaQuery('(min-width: 768px)')
 
   useEffect(() => {
     if (queryStateString) {
@@ -110,12 +112,12 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
   return (
     <main className="container">
       <div className="mb-6 hidden items-center justify-between md:flex">
-        <h1 className="mb-0">Konzerte</h1>
+        <h1 className="mb-0">{t('concerts')}</h1>
         <Button
           onClick={
             session ? () => setModal('add-concert') : () => push(`/login?redirect=${pathname}`)
           }
-          label="Konzert hinzufügen"
+          label={t('addConcert')}
           appearance="primary"
           icon={<PlusIcon className="size-icon" />}
           className="hidden md:block"
@@ -129,14 +131,16 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
           <FestivalRootFilter values={selectedFestivalRoots} onSubmit={setSelectedFestivalRoots} />
         </div>
         <div className="flex items-center gap-4">
-          <div className="my-1.5 text-sm text-slate-300">{concerts?.count}&nbsp;Einträge</div>
+          <div className="my-1.5 text-sm text-slate-300">
+            {t('nItems', { count: concerts?.count })}
+          </div>
           {(selectedBands ||
             selectedLocations ||
             selectedYears ||
             selectedFestivalRoots ||
             selectedUserId) && (
             <Button
-              label="Zurücksetzen"
+              label={t('reset')}
               onClick={resetAll}
               icon={<RotateCcw className="size-icon" />}
               contentType={isDesktop ? 'text' : 'icon'}
@@ -146,7 +150,7 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
           )}
           <div className="ml-auto">
             <FilterButton
-              label="Sortieren nach"
+              label={t('sortBy')}
               items={sortItems}
               type="singleselect"
               size="sm"
@@ -175,9 +179,9 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
         {session && (
           <SegmentedControl
             options={[
-              { value: 'global', label: 'Alle', icon: Globe },
-              { value: 'friends', label: 'Freunde', icon: BookUser },
-              { value: 'user', label: 'Du', icon: User },
+              { value: 'global', label: t('all'), icon: Globe },
+              { value: 'friends', label: t('friends'), icon: BookUser },
+              { value: 'user', label: t('you'), icon: User },
             ]}
             value={view}
             onValueChange={handleView}
@@ -187,9 +191,9 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
       <div className="grid gap-4">
         {concerts?.data.map(concert => <ConcertCard concert={concert} key={concert.id} />)}
       </div>
-      <div className="flex flex-col items-center gap-2 mt-4">
+      <div className="mt-4 flex flex-col items-center gap-2">
         <p className="text-sm text-slate-300">
-          {concerts?.data.length} von {concerts?.count} Einträgen
+          {t('nOfNItems', { count: concerts?.data.length, total: concerts?.count })}
         </p>
         {concerts?.data.length !== concerts?.count && (
           <Button

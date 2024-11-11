@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { FilterButton } from './../FilterButton'
 import { useBands } from './../../hooks/bands/useBands'
 import { Select } from '../forms/Select'
+import { useTranslations } from 'next-intl'
 
 type BandMultiSelectProps = {
   values: number[]
@@ -30,13 +31,14 @@ type BandFilterProps = {
 export const BandFilter = ({ values: submittedValues, onSubmit }: BandFilterProps) => {
   const { data: bands } = useBands(undefined, { ids: submittedValues })
   const [selectedIds, setSelectedIds] = useState<number[]>(submittedValues ?? [])
+  const t = useTranslations('BandFilter')
 
   useEffect(() => {
     setSelectedIds(submittedValues ?? [])
   }, [submittedValues])
   return (
     <FilterButton
-      label="Band"
+      label={t("band")}
       items={bands?.data}
       selectedIds={selectedIds}
       submittedValues={submittedValues}

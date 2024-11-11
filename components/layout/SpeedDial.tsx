@@ -8,6 +8,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import * as Dialog from '@radix-ui/react-dialog'
 import { GuitarPlusIcon } from './GuitarPlusIcon'
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 
 export const SpeedDial = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -15,6 +16,7 @@ export const SpeedDial = () => {
   const [_, setModal] = useModal()
   const { push } = useRouter()
   const pathname = usePathname()
+  const t = useTranslations('SpeedDial')
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
@@ -43,7 +45,7 @@ export const SpeedDial = () => {
             className="flex items-center gap-2"
           >
             <div className="rounded-lg border border-slate-800 bg-slate-850 p-2 text-sm font-bold shadow-lg">
-              Location hinzufügen
+              {t('addLocation')}
             </div>
             <div className="btn btn-icon btn-primary">
               <MapPinPlus className="size-icon" />
@@ -61,9 +63,8 @@ export const SpeedDial = () => {
             className="flex items-center gap-2"
           >
             <div className="rounded-lg border border-slate-800 bg-slate-850 p-2 text-sm font-bold shadow-lg">
-              Band hinzufügen
+              {t('addBand')}
             </div>
-
             <div className="btn btn-icon btn-primary">
               <GuitarPlusIcon className="size-icon" />
             </div>
@@ -80,7 +81,7 @@ export const SpeedDial = () => {
             className="flex items-center gap-2"
           >
             <div className="rounded-lg border border-slate-800 bg-slate-850 p-2 text-sm font-bold shadow-lg">
-              Konzert hinzufügen
+              {t('addConcert')}
             </div>
             <div className="btn btn-icon btn-primary">
               <CalendarPlus className="size-icon" />

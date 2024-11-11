@@ -1,0 +1,65 @@
+{
+  "NavBar": {
+    "profile": "Profile",
+    "friends": "Friends",
+    "logout": "Logout",
+    "signUp": "Sign up",
+    "login": "Login"
+  },
+  "Navigation": {
+    "concerts": "Concerts",
+    "bands": "Bands",
+    "locations": "Locations",
+    "activity": "Activity",
+    "fans": "Fans"
+  },
+  "SpeedDial": {
+    "addLocation": "Add location",
+    "addBand": "Add band",
+    "addConcert": "Add concert"
+  },
+  "Footer": {
+    "githubRepository": "Github Repository",
+    "feedback": "Feedback"
+  },
+  "LanguageSelect": {
+    "language": "Language"
+  },
+  "HomePage": {
+    "concerts": "Concerts",
+    "addConcert": "Add concert",
+    "nItems": "{count} items",
+    "sortBy": "Sort by",
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "mostBands": "Most bands",
+    "leastBands": "Least bands",
+    "all": "All",
+    "friends": "Friends",
+    "you": "You",
+    "nOfNItems": "{count} of {total} items",
+    "showMore": "Show more"
+  },
+  "BandFilter": {
+    "band": "Band"
+  },
+  "LocationFilter": {
+    "location": "Location"
+  },
+  "YearsFilter": {
+    "year": "Year"
+  },
+  "FestivalRootFilter": {
+    "festival": "Festival"
+  },
+  "FilterButton": {
+    "save": "Save",
+    "close": "Close"
+  },
+  "Select": {
+    "tryUsingASensibleSearchTerm": "Try using a sensible search term."
+  },
+  "SearchField": {
+    "search": "Search ..."
+  }
+}
