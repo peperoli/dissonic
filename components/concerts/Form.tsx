@@ -18,6 +18,8 @@ import { useAddConcert } from '@/hooks/concerts/useAddConcert'
 import { useConcert } from '@/hooks/concerts/useConcert'
 import { useEditConcert } from '@/hooks/concerts/useEditConcert'
 import { useParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { ConcertItem } from './ConcertItem'
 
 type FormProps = {
   isNew?: boolean
@@ -25,7 +27,7 @@ type FormProps = {
 }
 
 export const Form = ({ close, isNew }: FormProps) => {
-  const { id: concertId } = useParams<{id?: string}>()
+  const { id: concertId } = useParams<{ id?: string }>()
   const { data: concert } = useConcert(concertId ? parseInt(concertId) : null)
   const today = new Date().toISOString().split('T')[0]
   const {
@@ -36,7 +38,7 @@ export const Form = ({ close, isNew }: FormProps) => {
     handleSubmit,
     formState: { errors },
   } = useForm<AddConcert>({
-    defaultValues: concert ?? { is_festival: false, date_start: today },
+    defaultValues: isNew ? { is_festival: false, date_start: today } : concert,
   })
   const addConcert = useAddConcert()
   const editConcert = useEditConcert()
@@ -48,6 +50,7 @@ export const Form = ({ close, isNew }: FormProps) => {
   const { data: festivalRoots } = useFestivalRoots(isFestival, {
     sort: { sort_by: 'name', sort_asc: true },
   })
+  const t = useTranslations('ConcertForm')
   const festivalRootId = watch('festival_root_id')
 
   const similarConcerts = concerts?.data
@@ -87,8 +90,8 @@ export const Form = ({ close, isNew }: FormProps) => {
           render={({ field: { value, onChange } }) => (
             <SegmentedControl
               options={[
-                { value: 'false', label: 'Konzert' },
-                { value: 'true', label: 'Festival' },
+                { value: 'false', label: t('concert') },
+                { value: 'true', label: t('festival') },
               ]}
               value={String(value)}
               onValueChange={value => onChange(value === 'true')}
@@ -108,15 +111,15 @@ export const Form = ({ close, isNew }: FormProps) => {
                   value={value}
                   onValueChange={onChange}
                   error={errors.festival_root_id}
-                  label="Festival-Serie"
+                  label={t('festivalRoot')}
                 />
               )}
             />
             <div className="flex items-center">
-              <p className="text-slate-300">Festival-Serie fehlt?</p>
+              <p className="text-slate-300">{t('festivalRootMissing')}</p>
               <Button
                 onClick={() => setIsOpen(true)}
-                label="Hinzufügen"
+                label={t('add')}
                 icon={<Plus className="size-small" />}
                 size="small"
                 appearance="tertiary"
@@ -124,14 +127,18 @@ export const Form = ({ close, isNew }: FormProps) => {
             </div>
           </>
         ) : (
-          <TextField {...register('name')} label="Name (optional)" placeholder="Greenfield" />
+          <TextField
+            {...register('name')}
+            label={`${t('name')} ${'(optional)'}`}
+            placeholder="Greenfield"
+          />
         )}
         <div className="flex">
           <TextField
             {...register('date_start', { required: true })}
             error={errors.date_start}
             type="date"
-            label={isFestival ? 'Startdatum' : 'Datum'}
+            label={isFestival ? t('startDate') : t('date')}
             grouped={isFestival ? 'start' : undefined}
           />
           {isFestival && (
@@ -139,7 +146,7 @@ export const Form = ({ close, isNew }: FormProps) => {
               {...register('date_end', { required: true })}
               error={errors.date_end}
               type="date"
-              label="Enddatum"
+              label={t('endDate')}
               grouped="end"
             />
           )}
@@ -165,9 +172,12 @@ export const Form = ({ close, isNew }: FormProps) => {
               name="location_id"
               value={value}
               onValueChange={onChange}
-              items={locations?.data.map(item => ({ id: item.id, name: `${item.name}, ${item.city}` }))}
+              items={locations?.data.map(item => ({
+                id: item.id,
+                name: `${item.name}, ${item.city}`,
+              }))}
               error={errors.location_id}
-              label="Location"
+              label={t('location')}
             />
           )}
         />
@@ -175,11 +185,7 @@ export const Form = ({ close, isNew }: FormProps) => {
           <div className="rounded-lg bg-yellow/10 p-4">
             <div className="flex items-center gap-4 text-yellow">
               <AlertTriangle className="size-icon flex-none" />
-              <p>
-                <strong>Achtung:</strong>{' '}
-                {similarConcerts.length === 1 ? 'Ein Konzert' : 'Folgende Konzerte'} mit ähnlichen
-                Eigenschaften {similarConcerts.length === 1 ? 'existiert' : 'existieren'} bereits:
-              </p>
+              <p>{t('duplicateConcertWarning', { count: similarConcerts.length })}</p>
             </div>
             <div className="mt-4 grid gap-2">
               {similarConcerts.map(item => (
@@ -204,10 +210,10 @@ export const Form = ({ close, isNew }: FormProps) => {
           </div>
         )}
         <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:static md:justify-end md:pb-0 [&>*]:flex-1">
-          <Button onClick={close} label="Abbrechen" />
+          <Button onClick={close} label={t('cancel')} />
           <Button
             type="submit"
-            label="Speichern"
+            label={t('save')}
             appearance="primary"
             loading={status === 'pending'}
           />

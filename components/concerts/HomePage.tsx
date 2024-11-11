@@ -132,7 +132,7 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
         </div>
         <div className="flex items-center gap-4">
           <div className="my-1.5 text-sm text-slate-300">
-            {t('nItems', { count: concerts?.count })}
+            {t('nEntries', { count: concerts?.count })}
           </div>
           {(selectedBands ||
             selectedLocations ||
@@ -193,7 +193,7 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
       </div>
       <div className="mt-4 flex flex-col items-center gap-2">
         <p className="text-sm text-slate-300">
-          {t('nOfNItems', { count: concerts?.data.length, total: concerts?.count })}
+          {t('nOfNEntries', { count: concerts?.data.length, total: concerts?.count })}
         </p>
         {concerts?.data.length !== concerts?.count && (
           <Button

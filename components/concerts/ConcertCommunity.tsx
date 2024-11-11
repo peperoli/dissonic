@@ -9,6 +9,7 @@ import Image from 'next/image'
 import { GuitarIcon } from 'lucide-react'
 import { useConcertProfiles } from '@/hooks/concerts/useConcertProfiles'
 import { Drawer, DrawerTitle, DrawerTrigger } from '../shared/Drawer'
+import { useTranslations } from 'next-intl'
 
 function BandItem({ band }: { band: Band }) {
   const { data: spotifyArtist } = useSpotifyArtist(band.spotify_artist_id)
@@ -51,6 +52,7 @@ function ConcertUserItem({
   profile: Profile
   count: number
 }) {
+  const t = useTranslations('ConcertCommunity')
   const bandsSeenIds = concert.bands_seen
     ?.filter(item => item.user_id === profile.id)
     .map(item => item.band_id)
@@ -60,25 +62,26 @@ function ConcertUserItem({
     <Drawer
       trigger={
         <DrawerTrigger className="group/user-item text-left">
-          <UserItem
-            user={profile}
-            description={count ? `${count} Band${count > 1 ? 's' : ''}` : null}
-          />
+          <UserItem user={profile} description={t('nBands', { count })} />
         </DrawerTrigger>
       }
     >
       <div className="sr-only mb-4 mt-8 flex items-start justify-between gap-4">
         <DrawerTitle className="mb-0">
-          {profile.username} hat {count} Band(s) am Konzert {getConcertName(concert)} gesehen
+          {t('uHasSeenNBandsAtConcertX', {
+            username: profile.username,
+            count,
+            concert: getConcertName(concert),
+          })}
         </DrawerTitle>
       </div>
       <div className="flex items-center justify-between border-b border-slate-700 pb-4">
         <UserItem
           user={profile}
-          description={count ? `${count} Band${count > 1 ? 's' : ''}` : null}
+          description={t('nBands', { count })}
         />
         <Link href={`/users/${profile.username}`} className="btn btn-secondary btn-small">
-          Profil anzeigen
+          {t('showProfile')}
         </Link>
       </div>
       <div className="relative -mb-6 overflow-y-auto pb-6 pt-4 md:-mb-8 md:pb-8">
@@ -98,6 +101,7 @@ function ConcertUserItem({
 
 export function ConcertCommunity({ concert }: { concert: Concert }) {
   const { data: concertProfiles, status: concertProfilesStatus } = useConcertProfiles(concert.id)
+  const t = useTranslations('ConcertCommunity')
 
   if (concertProfilesStatus === 'pending') {
     return <p>Lade ...</p>
@@ -109,7 +113,7 @@ export function ConcertCommunity({ concert }: { concert: Concert }) {
 
   return (
     <section className="rounded-lg bg-slate-800 p-4 md:p-6">
-      <h2>Fans</h2>
+      <h2>{t('fans')}</h2>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
         {concertProfiles
           .filter(item => !!item.profile)

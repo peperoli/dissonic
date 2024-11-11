@@ -1,0 +1,168 @@
+{
+  "NavBar": {
+    "profile": "Profile",
+    "friends": "Friends",
+    "logout": "Logout",
+    "signUp": "Sign up",
+    "login": "Login"
+  },
+  "Navigation": {
+    "concerts": "Concerts",
+    "bands": "Bands",
+    "locations": "Locations",
+    "activity": "Activity",
+    "fans": "Fans"
+  },
+  "SpeedDial": {
+    "speedDial": "Speed dial",
+    "addLocation": "Add location",
+    "addBand": "Add band",
+    "addConcert": "Add concert"
+  },
+  "Footer": {
+    "githubRepository": "Github Repository",
+    "feedback": "Feedback"
+  },
+  "LanguageSelect": {
+    "language": "Language"
+  },
+  "ModalProvider": {
+    "addConcert": "Add concert",
+    "editConcert": "Edit concert",
+    "deleteConcert": "Delete concert",
+    "deleteComment": "Delete comment",
+    "addBand": "Add band",
+    "editBand": "Edit band",
+    "deleteBand": "Delete band",
+    "addLocation": "Add location",
+    "editLocation": "Edit location",
+    "deleteLocation": "Delete location",
+    "editProfile": "Edit profile",
+    "addFriend": "Add friend",
+    "removeFriend": "Remove friend"
+  },
+  "HomePage": {
+    "concerts": "Concerts",
+    "addConcert": "Add concert",
+    "nEntries": "{count} entries",
+    "sortBy": "Sort by",
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "mostBands": "Most bands",
+    "leastBands": "Least bands",
+    "all": "All",
+    "friends": "Friends",
+    "you": "You",
+    "nOfNEntries": "{count} of {total} entries",
+    "showMore": "Show more"
+  },
+  "BandFilter": {
+    "band": "Band"
+  },
+  "LocationFilter": {
+    "location": "Location"
+  },
+  "YearsFilter": {
+    "year": "Year"
+  },
+  "FestivalRootFilter": {
+    "festival": "Festival"
+  },
+  "FilterButton": {
+    "save": "Save",
+    "close": "Close"
+  },
+  "Select": {
+    "tryUsingASensibleSearchTerm": "Try using a sensible search term."
+  },
+  "SearchField": {
+    "search": "Search ..."
+  },
+  "ConcertPage": {
+    "concerts": "Concerts",
+    "edit": "Edit",
+    "delete": "Delete",
+    "lineup": "Lineup"
+  },
+  "BandList": {
+    "iWasThere": "I was there!",
+    "chooseBandsYouHaveSeenAtThisConcert": "Choose bands you have seen at this concert.",
+    "hideHint": "Hide hint",
+    "save": "Save",
+    "cancel": "Cancel",
+    "thisConcertIsInTheFuture": "This concert is in the future."
+  },
+  "ConcertCommunity": {
+    "fans": "Fans",
+    "nBands": "{count, plural, =1 {# band} other {# bands}}",
+    "uHasSeenNBandsAtConcertX": "{username} has seen {count, plural, =1 {# Band} other {# Bands}} at concert {concert}",
+    "showProfile": "Show profile"
+  },
+  "ConcertStats": {
+    "genresAndCountries": "Genres and countries",
+    "includeRepeatedlySeenBands": "Include repeatedly seen bands",
+    "showAll": "Show all",
+    "showLess": "Show less"
+  },
+  "Comments": {
+    "comments": "Comments",
+    "addComment": "Add comment",
+    "whatDoYouThinkAboutThisConcert": "What do you think about this concert?",
+    "comment": "Comment",
+    "noCommentsYet": "No comments yet. You can take the first step.",
+    "loginToSeeAndAddComments": "Login to see and add comments.",
+    "login": "Login"
+  },
+  "Comment": {
+    "edited": "edited",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "MetaInfo": {
+    "createdAtDByU": "Created at {date} by <link>{username}</link>",
+    "nContributions": "{count, plural, =1 {# contribution} other {# contributions}}"
+  },
+  "ConcertForm": {
+    "concert": "Concert",
+    "festival": "Festival",
+    "name": "Name",
+    "festivalRoot": "Festival series",
+    "festivalRootMissing": "Festival series missing?",
+    "add": "Add",
+    "date": "Date",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "location": "Location",
+    "duplicateConcertWarning": "{count, plural, =1 {There is already a similar concert:} other {There are already # similar concerts:}}",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "TextField": {
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "pleaseFillOutThisField": "Please fill out this field."
+  },
+  "SelectField": {
+    "choose": "Choose ...",
+    "pleaseSelectAnOption": "Please select an option.",
+    "save": "Save"
+  },
+  "EditBandsButton": {
+    "choose": "Choose ...",
+    "pleaseSelectAtLeastOneBand": "Please select at least one band."
+  },
+  "ListManager": {
+    "addBands": "Add bands",
+    "orderBandsByBilling": "Order bands by billing.",
+    "clickOnATargetToMoveTheEntry": "Click on a target to move the entry.",
+    "cancelReorder": "Cancel reorder",
+    "searchBands": "Search bands ...",
+    "resetSearch": "Reset search",
+    "done": "Done",
+    "loading": "Loading ...",
+    "noResultsFound": "No results found.",
+    "addEntry": "Add entry",
+    "removeEntry": "Remove entry",
+    "reorderEntry": "Reorder entry"
+  }
+}

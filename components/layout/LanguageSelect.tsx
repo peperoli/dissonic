@@ -10,10 +10,9 @@ export const LanguageSelect = () => {
   const t = useTranslations('LanguageSelect')
   const locale = useLocale()
   const languageItems: ListItem[] = [
-    { id: 0, name: 'English', locale: 'en' },
+    { id: 0, name: 'English', locale: 'en-CH' },
     { id: 1, name: 'Deutsch', locale: 'de-CH' },
   ]
-  console.log('locale', locale)
 
   return (
     <FilterButton

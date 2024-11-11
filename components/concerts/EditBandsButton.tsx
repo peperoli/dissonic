@@ -7,6 +7,7 @@ import { ListManager } from '../forms/ListManager'
 import Modal from '../Modal'
 import clsx from 'clsx'
 import { TruncatedList } from 'react-truncate-list'
+import { useTranslations } from 'next-intl'
 
 type BandsListManagerProps = {
   initialListItems: ReorderableListItem[]
@@ -41,6 +42,7 @@ type EditBandsButtonProps = {
 
 export const EditBandsButton = ({ value, onChange, error }: EditBandsButtonProps) => {
   const [isOpen, setIsOpen] = useState(false)
+  const t = useTranslations('EditBandsButton')
 
   function onSave(items: ReorderableListItem[]) {
     onChange(items)
@@ -76,13 +78,13 @@ export const EditBandsButton = ({ value, onChange, error }: EditBandsButtonProps
                 ))}
               </TruncatedList>
             ) : (
-              <div className="text-slate-300">Bands hinzufügen</div>
+              <div className="text-slate-300">{t('choose')}</div>
             )}
           </div>
           <EditIcon className="size-icon flex-none" />
         </button>
         {error && (
-          <div className="mt-1 text-sm text-yellow">Bitte füge mindestens eine Band hinzu.</div>
+          <div className="mt-1 text-sm text-yellow">{t('pleaseSelectAtLeastOneBand')}</div>
         )}
       </div>
       <Modal open={isOpen} onOpenChange={setIsOpen} fullHeight>

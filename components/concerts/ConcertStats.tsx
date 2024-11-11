@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { Button } from '../Button'
 import { Chip } from '../Chip'
 import { ToggleSwitch } from '../forms/ToggleSwitch'
+import { useTranslations } from 'next-intl'
 
 type BarProps = {
   item: {
@@ -44,6 +45,7 @@ export const ConcertStats = ({ bands, uniqueBands }: ConcertStatsProps) => {
   const [showAll, setShowAll] = useState(false)
   const [visibleItems, setVisibleItems] = useState(10)
   const [animationParent] = useAutoAnimate()
+  const t = useTranslations('ConcertStats')
   const hasUniqueBands =
     uniqueBands && uniqueBands.length > 0 && uniqueBands.length !== bands.length
   const genres =
@@ -69,11 +71,11 @@ export const ConcertStats = ({ bands, uniqueBands }: ConcertStatsProps) => {
 
   return (
     <section className="rounded-lg bg-slate-800 p-4 md:p-6">
-      <h2>Genres & Länder</h2>
+      <h2>{t('genresAndCountries')}</h2>
       {hasUniqueBands && (
         <div className="mb-5">
           <ToggleSwitch
-            label="Mehrfach erlebte Bands einschliessen"
+            label={t('includeRepeatedlySeenBands')}
             checked={showAll}
             onChange={setShowAll}
           />
@@ -109,10 +111,10 @@ export const ConcertStats = ({ bands, uniqueBands }: ConcertStatsProps) => {
           {visibleItems === 10 ? (
             <Button
               onClick={() => setVisibleItems(Math.max(genreCounts.length, countryCounts.length))}
-              label="Mehr anzeigen"
+              label={t('showAll')}
             />
           ) : (
-            <Button onClick={() => setVisibleItems(10)} label="Weniger anzeigen" />
+            <Button onClick={() => setVisibleItems(10)} label={t('showLess')} />
           )}
         </div>
       )}

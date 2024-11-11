@@ -33,6 +33,7 @@ export const SpeedDial = () => {
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-slate-800/90" />
         <Dialog.Content className="fixed bottom-0 right-0 z-50 flex flex-col items-end justify-end gap-4 p-4">
+          <Dialog.Title className="sr-only">{t('speedDial')}</Dialog.Title>
           <button
             onClick={
               session

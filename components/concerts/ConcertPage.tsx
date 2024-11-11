@@ -20,6 +20,7 @@ import { Chip } from '../Chip'
 import { MetaInfo } from '../shared/MetaInfo'
 import { SpeedDial } from '../layout/SpeedDial'
 import { ConcertCommunity } from './ConcertCommunity'
+import { useTranslations } from 'next-intl'
 
 type ConcertPageProps = {
   initialConcert: Concert
@@ -33,6 +34,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
   const [_, setModal] = useModal()
   const { push } = useRouter()
   const pathname = usePathname()
+  const t = useTranslations('ConcertPage')
 
   if (!concert) {
     notFound()
@@ -44,14 +46,14 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
         <div className="flex items-center justify-between">
           <Link href={`/${concertQueryState ?? ''}`} className="btn btn-small btn-tertiary">
             <ArrowLeft className="size-icon" />
-            Zurück zur Übersicht
+            {t('concerts')}
           </Link>
           <div className="flex gap-3">
             <Button
               onClick={
                 session ? () => setModal('edit-concert') : () => push(`/login?redirect=${pathname}`)
               }
-              label="Bearbeiten"
+              label={t('edit')}
               icon={<Edit className="size-icon" />}
               contentType="icon"
               size="small"
@@ -63,7 +65,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
                   ? () => setModal('delete-concert')
                   : () => push(`/login?redirect=${pathname}`)
               }
-              label="Löschen"
+              label={t('delete')}
               icon={<Trash className="size-icon" />}
               contentType="icon"
               danger
@@ -126,7 +128,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
           </div>
         </header>
         <section className="rounded-lg bg-slate-800 p-4 md:p-6">
-          <h2>Lineup</h2>
+          <h2>{t('lineup')}</h2>
           {concert.bands && <BandList concert={concert} />}
         </section>
         <ConcertCommunity concert={concert} />

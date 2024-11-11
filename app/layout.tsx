@@ -66,14 +66,14 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
                 {children}
               </div>
               <Footer />
+              <Suspense>
+                <ModalProvider />
+              </Suspense>
             </NextIntlClientProvider>
             <Analytics />
             <SpeedInsights />
           </body>
         </html>
-        <Suspense>
-          <ModalProvider />
-        </Suspense>
       </TooltipProvider>
     </QueryProvider>
   )

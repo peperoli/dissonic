@@ -12,6 +12,7 @@ import clsx from 'clsx'
 import Cookies from 'js-cookie'
 import { Edit, Lightbulb, Plus, X } from 'lucide-react'
 import { TablesInsert } from '@/types/supabase'
+import { useTranslations } from 'next-intl'
 
 type BandListProps = {
   concert: Concert
@@ -36,6 +37,7 @@ export function BandList({ concert }: BandListProps) {
   const queryClient = useQueryClient()
   const { push } = useRouter()
   const pathname = usePathname()
+  const t = useTranslations('BandList')
   const hasBandsSeen = bandsSeen && bandsSeen.length > 0
   const bandsSeenIds = bandsSeen?.map(bandSeen => bandSeen?.band_id)
   const selectedBandsSeenIds = selectedBandsSeen.map(bandSeen => bandSeen.band_id)
@@ -67,13 +69,13 @@ export function BandList({ concert }: BandListProps) {
           {!hideBandsSeenHint && (
             <div className="mb-4 flex w-full gap-3 rounded-lg bg-slate-700 p-4">
               <Lightbulb className="size-icon flex-none text-yellow" />
-              <p>Markiere Bands, die du an diesem Konzert erlebt hast.</p>
+              <p>{t('chooseBandsYouHaveSeenAtThisConcert')}</p>
               <button
                 onClick={() => {
                   setHideBandsSeenHint('yes')
                   Cookies.set('hideBandsSeenHint', 'yes', { expires: 365, sameSite: 'strict' })
                 }}
-                aria-label="Hinweis verbergen"
+                aria-label={t('hideHint')}
                 className="ml-auto grid h-6 w-6 flex-none place-content-center rounded-md hover:bg-slate-600"
               >
                 <X className="size-icon" />
@@ -117,11 +119,11 @@ export function BandList({ concert }: BandListProps) {
           <>
             <Button
               onClick={updateBandsSeen}
-              label="Speichern"
+              label={t('save')}
               appearance="primary"
               loading={isPending}
             />
-            <Button onClick={() => setEditing(false)} label="Abbrechen" />
+            <Button onClick={() => setEditing(false)} label={t('cancel')} />
           </>
         ) : (
           <>
@@ -129,14 +131,14 @@ export function BandList({ concert }: BandListProps) {
               onClick={
                 session ? () => setEditing(true) : () => push(`/signup?redirect=${pathname}`)
               }
-              label="Ich war dabei!"
+              label={t('iWasThere')}
               icon={hasBandsSeen ? <Edit className="size-icon" /> : <Plus className="size-icon" />}
               appearance={hasBandsSeen ? 'secondary' : 'primary'}
               size={hasBandsSeen ? 'small' : 'medium'}
               disabled={isFutureConcert}
             />
             {isFutureConcert && (
-              <p className="text-sm text-slate-300">Dieses Konzert liegt in der Zukunft.</p>
+              <p className="text-sm text-slate-300">{t('thisConcertIsInTheFuture')}</p>
             )}
           </>
         )}

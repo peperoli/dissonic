@@ -14,6 +14,7 @@
     "fans": "Fans"
   },
   "SpeedDial": {
+    "speedDial": "Speed dial",
     "addLocation": "Lokal hinzufügen",
     "addBand": "Band hinzufügen",
     "addConcert": "Konzert hinzufügen"
@@ -25,10 +26,25 @@
   "LanguageSelect": {
     "language": "Sprache"
   },
+  "ModalProvider": {
+    "addConcert": "Konzerthinzufügen",
+    "editConcert": "Konzert bearbeiten",
+    "deleteConcert": "Konzert löschen",
+    "deleteComment": "Kommentar löschen",
+    "addBand": "Band hinzufügen",
+    "editBand": "Band bearbeiten",
+    "deleteBand": "Band löschen",
+    "addLocation": "Lokal hinzufügen",
+    "editLocation": "Lokal bearbeiten",
+    "deleteLocation": "Lokal löschen",
+    "editProfile": "Profil bearbeiten",
+    "addFriend": "Freund*in hinzufügen",
+    "removeFriend": "Freund*in entfernen"
+  },
   "HomePage": {
     "concerts": "Konzerte",
     "addConcert": "Konzerte hinzufügen",
-    "nItems": "{count} Einträge",
+    "nEntries": "{count} Einträge",
     "sortBy": "Sortieren nach",
     "newest": "Neueste",
     "oldest": "Älteste",
@@ -37,7 +53,7 @@
     "all": "Alle",
     "friends": "Freunde",
     "you": "Du",
-    "nOfNItems": "{count} von {total} Einträgen",
+    "nOfNEntries": "{count} von {total} Einträgen",
     "showMore": "Mehr anzeigen"
   },
   "BandFilter": {
@@ -61,5 +77,92 @@
   },
   "SearchField": {
     "search": "Suchen ..."
+  },
+  "ConcertPage": {
+    "concerts": "Konzerte",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "lineup": "Lineup"
+  },
+  "BandList": {
+    "iWasThere": "Ich war dabei!",
+    "chooseBandsYouHaveSeenAtThisConcert": "Wähle Bands, die du an diesem Konzert erlebt hast.",
+    "hideHint": "Hinweis ausblenden",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "thisConcertIsInTheFuture": "Dieses Konzert liegt in der Zukunft."
+  },
+  "ConcertCommunity": {
+    "fans": "Fans",
+    "nBands": "{count, plural, =1 {# Band} other {# Bands}}",
+    "uHasSeenNBandsAtConcertX": "{username} hat {count, plural, =1 {# Band} other {# Bands}} am Konzert {concert} gesehen",
+    "showProfile": "Profil anzeigen"
+  },
+  "ConcertStats": {
+    "genresAndCountries": "Genres und Länder",
+    "includeRepeatedlySeenBands": "Mehrfach gesehene Bands einschliessen",
+    "showAll": "Alles anzeigen",
+    "showLess": "Weniger anzeigen"
+  },
+  "Comments": {
+    "comments": "Kommentare",
+    "addComment": "Kommentar hinzufügen",
+    "whatDoYouThinkAboutThisConcert": "Was ist dir von diesem Konzert in Erinnerung geblieben?",
+    "comment": "Kommentieren",
+    "noCommentsYet": "Noch keine Kommentare vorhanden. Du kannst den ersten Schritt machen.",
+    "loginToSeeAndAddComments": "Melde dich an, um Kommentare zu sehen und schreiben.",
+    "login": "Anmelden"
+  },
+  "Comment": {
+    "edited": "bearbeitet",
+    "edit": "Bearbeiten",
+    "delete": "Löschen"
+  },
+  "MetaInfo": {
+    "createdAtDByU": "Erstellt am {date} von <link>{username}</link>",
+    "nContributions": "{count, plural, =1 {# Bearbeitung} other {# Bearbeitungen}}"
+  },
+  "ConcertForm": {
+    "concert": "Konzert",
+    "festival": "Festival",
+    "name": "Name",
+    "festivalRoot": "Festival-Serie",
+    "festivalRootMissing": "Festival-Serie fehlt?",
+    "add": "Hinzufügen",
+    "date": "Datum",
+    "startDate": "Startdatum",
+    "endDate": "Enddatum",
+    "location": "Lokal",
+    "duplicateConcertWarning": "{count, plural, =1 {Es existiert bereits ein ähnliches Konzert:} other {Es existieren bereits # ähnliche Konzerte:}}",
+    "cancel": "Abbrechen",
+    "save": "Speichern"
+  },
+  "TextField": {
+    "showPassword": "Passwort anzeigen",
+    "hidePassword": "Passwort verbergen",
+    "pleaseFillOutThisField": "Bitte fülle dieses Feld aus."
+  },
+  "SelectField": {
+    "choose": "Wählen ...",
+    "pleaseSelectAnOption": "Bitte wähle eine Option aus.",
+    "save": "Speicher"
+  },
+  "EditBandsButton": {
+    "choose": "Wählen ...",
+    "pleaseSelectAtLeastOneBand": "Bitte wähle mindestens eine Band aus."
+  },
+  "ListManager": {
+    "addBands": "Bands hinzufügen",
+    "orderBandsByBilling": "Ordne Bands nach der Reihefolge des Lineups.",
+    "clickOnATargetToMoveTheEntry": "Klicke auf ein Ziel, um den Eintrag zu verschieben.",
+    "cancelReorder": "Verschieben abbrechen",
+    "searchBands": "Bands suchen ...",
+    "resetSearch": "Suche zurücksetzen",
+    "done": "Fertig",
+    "loading": "Laden ...",
+    "noResultsFound": "Keine Resultate gefunden.",
+    "addEntry": "Eintrag hinzufügen",
+    "removeEntry": "Eintrag entfernen",
+    "reorderEntry": "Eintrag verschieben"
   }
 }

@@ -6,6 +6,7 @@ import { ChevronDown, Loader2 } from 'lucide-react'
 import { TruncatedList } from 'react-truncate-list'
 import * as Dialog from '@radix-ui/react-dialog'
 import useMediaQuery from '@/hooks/helpers/useMediaQuery'
+import { useTranslations } from 'next-intl'
 
 type SelectFieldProps = {
   label: string
@@ -15,8 +16,9 @@ type SelectFieldProps = {
 export const SelectField = ({ label, items, error, ...props }: SelectFieldProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const isDesktop = useMediaQuery('(min-width: 768px)')
+  const t = useTranslations('SelectField')
 
-  function getLabel() {
+  function getValue() {
     if (!items) return <Loader2 className="size-icon animate-spin" />
 
     if (!props.multiple && props.value) return items?.find(item => item.id === props.value)?.name
@@ -41,7 +43,7 @@ export const SelectField = ({ label, items, error, ...props }: SelectFieldProps)
       )
     }
 
-    return 'Bitte wählen ...'
+    return <span className="text-slate-300">{t('choose')}</span>
   }
 
   useEffect(() => {
@@ -58,15 +60,17 @@ export const SelectField = ({ label, items, error, ...props }: SelectFieldProps)
               error ? 'border-yellow' : 'border-slate-500'
             )}
           >
-            {getLabel()}
+            {getValue()}
           </div>
           <label>{label}</label>
           <ChevronDown className="pointer-events-none absolute right-[18px] top-[18px] size-icon" />
         </Dialog.Trigger>
-        {error && <div className="mt-1 text-sm text-yellow">Bitte wähle eine Option aus.</div>}
+        {error && <div className="mt-1 text-sm text-yellow">{t('pleaseSelectAnOption')}</div>}
         <Dialog.Content className="fixed inset-0 z-20 flex min-w-full flex-col overflow-hidden bg-slate-700 p-4 shadow-xl md:absolute md:inset-auto md:mt-1 md:rounded-lg">
           <Select items={items} {...props} />
-          {'values' in props && <Dialog.Close className="btn btn-primary">Übernehmen</Dialog.Close>}
+          {'values' in props && (
+            <Dialog.Close className="btn btn-primary">{t('save')}</Dialog.Close>
+          )}
         </Dialog.Content>
       </Dialog.Root>
     </div>
