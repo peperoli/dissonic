@@ -26,6 +26,7 @@ export type BandFetchOptions = {
 
 export type FestivalRootFetchOptions = {
   ids?: number[] | null
+  search?: string
   sort?: { sort_by: 'name'; sort_asc: boolean }
 }
 
@@ -50,10 +51,15 @@ export type ContributionFetchOptions = {
   userId?: string
 }
 
+export type QueryOptions<T> = {
+  placeholderData?: T
+  enabled?: boolean
+}
+
 export type Concert = Tables<'concerts'> & {
-  festival_root?: { name: string } | null
-  location?: Location | null
-  bands?: Band[]
+  festival_root: { name: string } | null
+  location: Location | null
+  bands: Band[]
   bands_seen?: Tables<'j_bands_seen'>[]
   creator?: { username: string } | null
 }
@@ -64,6 +70,10 @@ export type AddConcert = TablesInsert<'concerts'> & {
 
 export type EditConcert = TablesUpdate<'concerts'> & {
   bands?: Band[]
+}
+
+export type FestivalRoot = Tables<'festival_roots'> & {
+  default_location?: Tables<'locations'> | null
 }
 
 export type Comment = Tables<'comments'> & {
@@ -83,7 +93,7 @@ export type EditReaction = TablesUpdate<'reactions'>
 export type Band = Tables<'bands'> & {
   country?: Country | null
   genres: Genre[]
-  concerts?: Concert[]
+  concerts?: Tables<'concerts'>[] | null
   item_index?: number | null
   creator?: { username: string } | null
 }

@@ -37,7 +37,8 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
   )
   const [query, setQuery] = useState('')
   const debounceQuery = useDebounce(query, 200)
-  const { data: bands } = useBands(initialBands, {
+  const { data: bands } = useBands({
+    placeholderData: initialBands,
     countries: selectedCountries,
     genres: selectedGenres,
     search: debounceQuery,

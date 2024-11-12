@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { Concert, ConcertFetchOptions, ExtendedRes } from '@/types/types'
+import { Concert, ConcertFetchOptions, ExtendedRes, QueryOptions } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 
 const fetchConcerts = async (options?: ConcertFetchOptions) => {
@@ -46,7 +46,10 @@ const fetchConcerts = async (options?: ConcertFetchOptions) => {
   let filteredQuery = supabase
     .from('concerts_full')
     .select('*, bands:j_concert_bands(*, ...bands(*, genres(*)))', { count: 'estimated' })
-    .in('id', filteredConcerts.map(id => id.id))
+    .in(
+      'id',
+      filteredConcerts.map(id => id.id)
+    )
 
   if (options?.size) {
     filteredQuery = filteredQuery.range(0, options.size - 1)
@@ -67,12 +70,13 @@ const fetchConcerts = async (options?: ConcertFetchOptions) => {
 }
 
 export const useConcerts = (
-  initialConcerts?: ExtendedRes<Concert[]>,
-  options?: ConcertFetchOptions
+  options: ConcertFetchOptions & QueryOptions<ExtendedRes<Concert[]>> = {}
 ) => {
+  const { placeholderData, enabled, ...fetchOptions } = options
   return useQuery({
-    queryKey: ['concerts', JSON.stringify(options)],
-    queryFn: () => fetchConcerts(options),
-    placeholderData: previousData => keepPreviousData(previousData || initialConcerts),
+    queryKey: ['concerts', JSON.stringify(fetchOptions)],
+    queryFn: () => fetchConcerts(fetchOptions),
+    enabled: enabled !== false,
+    placeholderData: previousData => keepPreviousData(previousData || placeholderData),
   })
 }

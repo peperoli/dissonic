@@ -11,7 +11,7 @@ export function ConcertList({ profileId }: { profileId: string }) {
     data: concerts,
     status,
     fetchStatus,
-  } = useConcerts(undefined, {
+  } = useConcerts({
     bandsSeenUsers: [profileId],
     sort: { sort_by: 'date_start', sort_asc: false },
     size,

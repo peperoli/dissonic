@@ -11,11 +11,11 @@ import { useBand } from '@/hooks/bands/useBand'
 import { useParams } from 'next/navigation'
 import { useAddBand } from '@/hooks/bands/useAddBand'
 import { useEditBand } from '@/hooks/bands/useEditBand'
-import { ChevronDown } from 'lucide-react'
+import { AlertTriangle, ChevronDown } from 'lucide-react'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
 import { Fragment } from 'react'
 import clsx from 'clsx'
-import { normalizeString } from '@/lib/normalizeString'
+import { BandItem } from './BandItem'
 
 interface FormProps {
   isNew?: boolean
@@ -31,22 +31,18 @@ export const Form = ({ isNew, close }: FormProps) => {
     watch,
     handleSubmit,
     formState: { dirtyFields, errors },
-  } = useForm<AddBand>({ defaultValues: isNew ? { genres: [] } : band })
-  const { data: bands } = useBands()
+  } = useForm<AddBand>({ defaultValues: isNew ? { name: '', genres: [] } : band })
+  const name = watch('name')
+  const { data: similarBands } = useBands({
+    enabled: name.length >= 3,
+    search: name,
+  })
   const { data: countries } = useCountries()
   const { data: genres } = useGenres()
   const addBand = useAddBand()
   const editBand = useEditBand()
   const { status } = isNew ? addBand : editBand
-  const regExp = new RegExp(normalizeString(watch('name')), 'i')
-  const similarBands =
-    bands?.data.filter(item =>
-      item.name
-        ?.normalize('NFD')
-        .replace(/\p{Diacritic}/gu, '')
-        .match(regExp)
-    ) || []
-  const isSimilar = dirtyFields.name && watch('name')?.length >= 3 && similarBands.length > 0
+  const isSimilar = !!(dirtyFields.name && similarBands?.count)
   const regionNames = new Intl.DisplayNames(['de'], { type: 'region' })
 
   const onSubmit: SubmitHandler<AddBand> = async function (formData) {
@@ -65,11 +61,19 @@ export const Form = ({ isNew, close }: FormProps) => {
         placeholder="Beatles"
       />
       {isSimilar && (
-        <div className="mt-2">
-          <p className="text-red">Vorsicht, diese Band könnte schon vorhanden sein:</p>
-          <ul className="list-inside list-disc text-slate-300">
-            {similarBands.map(band => (
-              <li key={band.id}>{band.name}</li>
+        <div className="rounded-lg bg-yellow/10 p-4">
+          <div className="flex items-center gap-4 text-yellow">
+            <AlertTriangle className="size-icon flex-none" />
+            <p>
+              <strong>Achtung:</strong> {similarBands.count === 1 ? 'Eine Band' : 'Folgende Bands'}{' '}
+              mit ähnlichem Namen {similarBands.count === 1 ? 'existiert' : 'existieren'} bereits:
+            </p>
+          </div>
+          <ul className="mt-4 grid">
+            {similarBands.data.map(item => (
+              <li key={item.id}>
+                <BandItem band={item} />
+              </li>
             ))}
           </ul>
         </div>

@@ -16,11 +16,10 @@ type BandsListManagerProps = {
 const BandsListManager = ({ initialListItems, onSave }: BandsListManagerProps) => {
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebounce(search, 200)
-  const { data: bands, fetchStatus } = useBands(
-    undefined,
-    { search: debouncedSearch },
-    !!debouncedSearch
-  )
+  const { data: bands, fetchStatus } = useBands({
+    enabled: !!debouncedSearch,
+    search: debouncedSearch,
+  })
   return (
     <ListManager
       search={search}
@@ -64,7 +63,7 @@ export const EditBandsButton = ({ value, onChange, error }: EditBandsButtonProps
                 renderTruncator={({ hiddenItemsCount }) => (
                   <span className="text-sm font-bold text-slate-300">+{hiddenItemsCount}</span>
                 )}
-                className="max-h-13 flex flex-wrap items-start gap-1"
+                className="flex max-h-13 flex-wrap items-start gap-1"
               >
                 {value.map(item => (
                   <div

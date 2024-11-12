@@ -25,7 +25,7 @@ type BandPageProps = {
 export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
   const { data: band, isPending: bandIsLoading } = useBand(initialBand.id, initialBand)
   const { data: spotifyArtist } = useSpotifyArtist(band?.spotify_artist_id)
-  const { data: concerts } = useConcerts(undefined, {
+  const { data: concerts } = useConcerts({
     bands: [initialBand.id],
     sort: { sort_by: 'date_start', sort_asc: false },
   })

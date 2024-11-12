@@ -297,7 +297,7 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "public_festival_roots_default_location_id_fkey"
+            foreignKeyName: "festival_roots_default_location_id_fkey"
             columns: ["default_location_id"]
             isOneToOne: false
             referencedRelation: "locations"
@@ -663,20 +663,13 @@ export type Database = {
             foreignKeyName: "concerts_creator_id_fkey"
             columns: ["creator_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "profile_stats"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "concerts_creator_id_fkey"
             columns: ["creator_id"]
             isOneToOne: false
-            referencedRelation: "profile_stats"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "concerts_creator_id_fkey1"
-            columns: ["creator_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -685,6 +678,13 @@ export type Database = {
             columns: ["creator_id"]
             isOneToOne: false
             referencedRelation: "profile_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "concerts_creator_id_fkey1"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
@@ -760,6 +760,12 @@ export type Database = {
           youtube_url: string | null
         }[]
       }
+      search_festival_roots: {
+        Args: {
+          search_string: string
+        }
+        Returns: Database["public"]["CompositeTypes"]["festival_root"][]
+      }
       search_locations: {
         Args: {
           search_string: string
@@ -793,6 +799,8 @@ export type Database = {
       }
     }
     Enums: {
+      app_permission: "channels.delete" | "messages.delete"
+      app_role: "admin" | "moderator"
       bands_type: "bands"
       concerts_type: "concerts"
       continents:
@@ -807,7 +815,15 @@ export type Database = {
       ressources: "concerts" | "bands" | "locations"
     }
     CompositeTypes: {
-      [_ in never]: never
+      festival_root: {
+        id: number | null
+        created_at: string | null
+        creator_id: string | null
+        name: string | null
+        default_location_id: number | null
+        website: string | null
+        default_location: unknown
+      }
     }
   }
 }

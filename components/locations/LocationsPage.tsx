@@ -26,7 +26,8 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
   const debounceQuery = useDebounce(query, 200)
   const perPage = 25
   const [currentPage, setCurrentPage] = usePagination()
-  const { data: locations } = useLocations(initialLocations, {
+  const { data: locations } = useLocations({
+    placeholderData: initialLocations,
     search: debounceQuery,
     page: currentPage,
     size: perPage,

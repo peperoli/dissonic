@@ -72,7 +72,8 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
       ]
   }
 
-  const { data: concerts, isFetching } = useConcerts(initialConcerts, {
+  const { data: concerts, isFetching } = useConcerts({
+    placeholderData: initialConcerts,
     bands: selectedBands,
     locations: selectedLocations,
     years: selectedYears,
@@ -187,7 +188,7 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
       <div className="grid gap-4">
         {concerts?.data.map(concert => <ConcertCard concert={concert} key={concert.id} />)}
       </div>
-      <div className="flex flex-col items-center gap-2 mt-4">
+      <div className="mt-4 flex flex-col items-center gap-2">
         <p className="text-sm text-slate-300">
           {concerts?.data.length} von {concerts?.count} Einträgen
         </p>

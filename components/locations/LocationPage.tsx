@@ -27,7 +27,7 @@ export const LocationPage = ({
     initialLocation.id,
     initialLocation
   )
-  const { data: concerts } = useConcerts(undefined, {
+  const { data: concerts } = useConcerts({
     locations: [initialLocation.id],
     sort: { sort_by: 'date_start', sort_asc: false },
   })

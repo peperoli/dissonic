@@ -18,6 +18,7 @@ import { useAddConcert } from '@/hooks/concerts/useAddConcert'
 import { useConcert } from '@/hooks/concerts/useConcert'
 import { useEditConcert } from '@/hooks/concerts/useEditConcert'
 import { useParams } from 'next/navigation'
+import { ConcertItem } from './ConcertItem'
 
 type FormProps = {
   isNew?: boolean
@@ -25,7 +26,7 @@ type FormProps = {
 }
 
 export const Form = ({ close, isNew }: FormProps) => {
-  const { id: concertId } = useParams<{id?: string}>()
+  const { id: concertId } = useParams<{ id?: string }>()
   const { data: concert } = useConcert(concertId ? parseInt(concertId) : null)
   const today = new Date().toISOString().split('T')[0]
   const {
@@ -42,21 +43,25 @@ export const Form = ({ close, isNew }: FormProps) => {
   const editConcert = useEditConcert()
   const { status } = isNew ? addConcert : editConcert
   const [isOpen, setIsOpen] = useState(false)
-  const { data: concerts } = useConcerts()
+  const dateStart = watch('date_start')
+  const bands = watch('bands')
+  const locationId = watch('location_id')
+  const { data: similarConcerts } = useConcerts({
+    enabled: !!(dateStart && bands?.length && locationId),
+    years: dateStart
+      ? [new Date(dateStart).getFullYear(), new Date(dateStart).getFullYear()]
+      : null,
+    bands: bands?.map(item => item.id),
+    locations: locationId ? [locationId] : null,
+  })
   const { data: locations } = useLocations()
   const isFestival = watch('is_festival')
-  const { data: festivalRoots } = useFestivalRoots(isFestival, {
+  const { data: festivalRoots } = useFestivalRoots({
+    enabled: isFestival,
     sort: { sort_by: 'name', sort_asc: true },
   })
   const festivalRootId = watch('festival_root_id')
-
-  const similarConcerts = concerts?.data
-    .filter(item => item.date_start === watch('date_start'))
-    .filter(item =>
-      item.bands?.find(band => watch('bands')?.find(selectedBand => band.id === selectedBand.id))
-    )
-    .filter(item => item.location?.id === Number(watch('location_id')))
-  const isSimilar = isNew && similarConcerts && similarConcerts.length > 0
+  const isSimilar = !!(isNew && similarConcerts?.count)
 
   useEffect(() => {
     if (!festivalRootId || !isNew) return
@@ -67,7 +72,6 @@ export const Form = ({ close, isNew }: FormProps) => {
 
     if (!defaultLocationId) return
 
-    // @ts-expect-error
     setValue('location_id', defaultLocationId)
   }, [festivalRootId])
 
@@ -165,7 +169,10 @@ export const Form = ({ close, isNew }: FormProps) => {
               name="location_id"
               value={value}
               onValueChange={onChange}
-              items={locations?.data.map(item => ({ id: item.id, name: `${item.name}, ${item.city}` }))}
+              items={locations?.data.map(item => ({
+                id: item.id,
+                name: `${item.name}, ${item.city}`,
+              }))}
               error={errors.location_id}
               label="Location"
             />
@@ -177,30 +184,17 @@ export const Form = ({ close, isNew }: FormProps) => {
               <AlertTriangle className="size-icon flex-none" />
               <p>
                 <strong>Achtung:</strong>{' '}
-                {similarConcerts.length === 1 ? 'Ein Konzert' : 'Folgende Konzerte'} mit ähnlichen
-                Eigenschaften {similarConcerts.length === 1 ? 'existiert' : 'existieren'} bereits:
+                {similarConcerts.count === 1 ? 'Ein Konzert' : 'Folgende Konzerte'} mit ähnlichen
+                Eigenschaften {similarConcerts.count === 1 ? 'existiert' : 'existieren'} bereits:
               </p>
             </div>
-            <div className="mt-4 grid gap-2">
-              {similarConcerts.map(item => (
-                <Link
-                  key={item.id}
-                  href={`/concerts/${item.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block rounded-md bg-slate-800 px-4 py-2 shadow-lg hover:bg-slate-750"
-                >
-                  <div>{new Date(item.date_start).toLocaleDateString('de-CH')}</div>
-                  <div className="font-bold">
-                    {item.bands
-                      ?.slice(0, 10)
-                      .map(band => band.name)
-                      .join(', ')}
-                  </div>
-                  <div>@ {item.location?.name}</div>
-                </Link>
+            <ul className="mt-4 grid">
+              {similarConcerts.data.map(item => (
+                <li key={item.id}>
+                  <ConcertItem concert={item} />
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         )}
         <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:static md:justify-end md:pb-0 [&>*]:flex-1">
