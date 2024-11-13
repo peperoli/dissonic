@@ -73,7 +73,8 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
       ]
   }
 
-  const { data: concerts, isFetching } = useConcerts(initialConcerts, {
+  const { data: concerts, isFetching } = useConcerts({
+    placeholderData: initialConcerts,
     bands: selectedBands,
     locations: selectedLocations,
     years: selectedYears,

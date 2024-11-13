@@ -1,7 +1,7 @@
 import supabase from '@/utils/supabase/client'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { getPagination } from '@/lib/getPagination'
-import { ExtendedRes, Location, LocationFetchOptions } from '@/types/types'
+import { ExtendedRes, Location, LocationFetchOptions, QueryOptions } from '@/types/types'
 
 async function fetchLocations(options?: LocationFetchOptions): Promise<ExtendedRes<Location[]>> {
   let query = supabase
@@ -43,12 +43,13 @@ async function fetchLocations(options?: LocationFetchOptions): Promise<ExtendedR
 }
 
 export const useLocations = (
-  initialLocations?: ExtendedRes<Location[]>,
-  options?: LocationFetchOptions
+  options: LocationFetchOptions & QueryOptions<ExtendedRes<Location[]>> = {}
 ) => {
+  const { placeholderData, enabled, ...fetchOptions } = options
   return useQuery({
-    queryKey: ['locations', JSON.stringify(options)],
-    queryFn: () => fetchLocations(options),
-    placeholderData: previousData => keepPreviousData(previousData || initialLocations),
+    queryKey: ['locations', JSON.stringify(fetchOptions)],
+    queryFn: () => fetchLocations(fetchOptions),
+    placeholderData: previousData => keepPreviousData(previousData || placeholderData),
+    enabled: enabled !== false,
   })
 }

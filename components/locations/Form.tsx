@@ -6,12 +6,14 @@ import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { SelectField } from '../forms/SelectField'
 import { useCountries } from '@/hooks/useCountries'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
-import { ChevronDown } from 'lucide-react'
+import { AlertTriangleIcon, ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
 import { Fragment } from 'react'
 import { useParams } from 'next/navigation'
 import { useLocation } from '@/hooks/locations/useLocation'
 import { useEditLocation } from '@/hooks/locations/useEditLocation'
+import { useLocations } from '@/hooks/locations/useLocations'
+import { LocationItem } from './LocationItem'
 
 interface FormProps {
   close: () => void
@@ -24,13 +26,22 @@ export const Form = ({ close, isNew }: FormProps) => {
   const {
     register,
     control,
+    watch,
     handleSubmit,
-    formState: { errors },
-  } = useForm<AddLocation>({ defaultValues: location || {} })
+    formState: { dirtyFields, errors },
+  } = useForm<AddLocation>({
+    defaultValues: isNew ? { name: '', zip_code: '', city: '' } : location,
+  })
+  const name = watch('name')
+  const { data: similarLocations } = useLocations({
+    enabled: name.length >= 3,
+    search: name,
+  })
   const addLocation = useAddLocation()
   const editLocation = useEditLocation()
   const { status } = isNew ? addLocation : editLocation
   const { data: countries } = useCountries()
+  const isSimilar = !!(dirtyFields.name && similarLocations?.count)
   const regionNames = new Intl.DisplayNames(['de'], { type: 'region' })
 
   const onSubmit: SubmitHandler<AddLocation> = async function (formData) {
@@ -49,6 +60,25 @@ export const Form = ({ close, isNew }: FormProps) => {
         label="Name"
         placeholder="Hallenstadion"
       />
+      {isSimilar && (
+        <div className="rounded-lg bg-yellow/10 p-4">
+          <div className="flex items-center gap-4 text-yellow">
+            <AlertTriangleIcon className="size-icon flex-none" />
+            <p>
+              <strong>Achtung:</strong>{' '}
+              {similarLocations.count === 1 ? 'Eine Location' : 'Folgende Locations'} mit ähnlichem Namen{' '}
+              {similarLocations.count === 1 ? 'existiert' : 'existieren'} bereits:
+            </p>
+          </div>
+          <ul className="mt-4 grid">
+            {similarLocations.data.map(item => (
+              <li key={item.id}>
+                <LocationItem location={item} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       <div className="grid grid-cols-3">
         <TextField
           {...register('zip_code')}

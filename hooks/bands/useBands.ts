@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { Band, ExtendedRes, BandFetchOptions } from '@/types/types'
+import { Band, ExtendedRes, BandFetchOptions, QueryOptions } from '@/types/types'
 import { getPagination } from '@/lib/getPagination'
 import supabase from '@/utils/supabase/client'
 
@@ -42,7 +42,10 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
   let query = supabase
     .from('bands')
     .select('*, country:countries(id, iso2), genres(*)', { count: 'estimated' })
-    .in('id', filteredBands?.map(item => item.id))
+    .in(
+      'id',
+      filteredBands?.map(item => item.id)
+    )
 
   if (options?.page || options?.size) {
     query = query.range(from, to)
@@ -57,15 +60,12 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
   return { data, count }
 }
 
-export const useBands = (
-  initialBands?: ExtendedRes<Band[]>,
-  options?: BandFetchOptions,
-  enabled: boolean = true
-) => {
+export const useBands = (options: BandFetchOptions & QueryOptions<ExtendedRes<Band[]>> = {}) => {
+  const { placeholderData, enabled, ...fetchOptions } = options
   return useQuery({
-    queryKey: ['bands', JSON.stringify(options)],
-    queryFn: () => fetchBands(options),
-    placeholderData: previousData => keepPreviousData(previousData || initialBands),
-    enabled,
+    queryKey: ['bands', JSON.stringify(fetchOptions)],
+    queryFn: () => fetchBands(fetchOptions),
+    placeholderData: previousData => keepPreviousData(previousData || placeholderData),
+    enabled: enabled !== false,
   })
 }

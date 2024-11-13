@@ -79,7 +79,7 @@ const ConcertBandContributionItem = ({
 }) => {
   const { operation, ressource_id } = contribution
   const { data: concert } = useConcert(ressource_id, null, { bandsSize: 1 })
-  const { data: bands } = useBands(undefined, { ids: bandIds })
+  const { data: bands } = useBands({ ids: bandIds })
   const operationLabel = relationOperationLabels[operation]
 
   return (

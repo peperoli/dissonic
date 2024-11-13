@@ -29,7 +29,7 @@ type BandFilterProps = {
 }
 
 export const BandFilter = ({ values: submittedValues, onSubmit }: BandFilterProps) => {
-  const { data: bands } = useBands(undefined, { ids: submittedValues })
+  const { data: bands } = useBands({ ids: submittedValues })
   const [selectedIds, setSelectedIds] = useState<number[]>(submittedValues ?? [])
   const t = useTranslations('BandFilter')
 

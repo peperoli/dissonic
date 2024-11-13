@@ -44,22 +44,26 @@ export const Form = ({ close, isNew }: FormProps) => {
   const editConcert = useEditConcert()
   const { status } = isNew ? addConcert : editConcert
   const [isOpen, setIsOpen] = useState(false)
-  const { data: concerts } = useConcerts()
+  const dateStart = watch('date_start')
+  const bands = watch('bands')
+  const locationId = watch('location_id')
+  const { data: similarConcerts } = useConcerts({
+    enabled: !!(dateStart && bands?.length && locationId),
+    years: dateStart
+      ? [new Date(dateStart).getFullYear(), new Date(dateStart).getFullYear()]
+      : null,
+    bands: bands?.map(item => item.id),
+    locations: locationId ? [locationId] : null,
+  })
   const { data: locations } = useLocations()
   const isFestival = watch('is_festival')
-  const { data: festivalRoots } = useFestivalRoots(isFestival, {
+  const { data: festivalRoots } = useFestivalRoots({
+    enabled: isFestival,
     sort: { sort_by: 'name', sort_asc: true },
   })
   const t = useTranslations('ConcertForm')
   const festivalRootId = watch('festival_root_id')
-
-  const similarConcerts = concerts?.data
-    .filter(item => item.date_start === watch('date_start'))
-    .filter(item =>
-      item.bands?.find(band => watch('bands')?.find(selectedBand => band.id === selectedBand.id))
-    )
-    .filter(item => item.location?.id === Number(watch('location_id')))
-  const isSimilar = isNew && similarConcerts && similarConcerts.length > 0
+  const isSimilar = !!(isNew && similarConcerts?.count)
 
   useEffect(() => {
     if (!festivalRootId || !isNew) return
@@ -70,7 +74,6 @@ export const Form = ({ close, isNew }: FormProps) => {
 
     if (!defaultLocationId) return
 
-    // @ts-expect-error
     setValue('location_id', defaultLocationId)
   }, [festivalRootId])
 
@@ -185,28 +188,15 @@ export const Form = ({ close, isNew }: FormProps) => {
           <div className="rounded-lg bg-yellow/10 p-4">
             <div className="flex items-center gap-4 text-yellow">
               <AlertTriangle className="size-icon flex-none" />
-              <p>{t('duplicateConcertWarning', { count: similarConcerts.length })}</p>
+              <p>{t('duplicateConcertWarning', { count: similarConcerts.count })}</p>
             </div>
-            <div className="mt-4 grid gap-2">
-              {similarConcerts.map(item => (
-                <Link
-                  key={item.id}
-                  href={`/concerts/${item.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block rounded-md bg-slate-800 px-4 py-2 shadow-lg hover:bg-slate-750"
-                >
-                  <div>{new Date(item.date_start).toLocaleDateString('de-CH')}</div>
-                  <div className="font-bold">
-                    {item.bands
-                      ?.slice(0, 10)
-                      .map(band => band.name)
-                      .join(', ')}
-                  </div>
-                  <div>@ {item.location?.name}</div>
-                </Link>
+            <ul className="mt-4 grid">
+              {similarConcerts.data.map(item => (
+                <li key={item.id}>
+                  <ConcertItem concert={item} />
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         )}
         <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:static md:justify-end md:pb-0 [&>*]:flex-1">
