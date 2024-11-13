@@ -49,7 +49,7 @@
     "newest": "Newest",
     "oldest": "Oldest",
     "mostBands": "Most bands",
-    "leastBands": "Least bands",
+    "fewestBands": "Fewest bands",
     "all": "All",
     "friends": "Friends",
     "you": "You",
@@ -165,6 +165,11 @@
     "removeEntry": "Remove entry",
     "reorderEntry": "Reorder entry"
   },
+  "DeleteConcertForm": {
+    "doYouReallyWantToDeleteThisConcert": "Do you really want to delete this concert?",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
   "BandsPage": {
     "bands": "Bands",
     "addBand": "Add band",
@@ -211,5 +216,48 @@
     "noLink": "No link",
     "showMore": "Show more",
     "nFollowers": "{count, plural, =1 {# follower} other {# followers}}"
+  },
+  "DeleteBandForm": {
+    "doYouReallyWantToDeleteThisBand": "Do you really want to delete this band?",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "LocationsPage": {
+    "locations": "Locations",
+    "addLocation": "Add location",
+    "searchLocation": "Search location ...",
+    "nEntries": "{count, plural, =1 {# entry} other {# entries}}",
+    "noEntriesFound": "No entries found."
+  },
+  "LocationPage": {
+    "locations": "Locations",
+    "edit": "Edit",
+    "delete": "Delete",
+    "website": "Website",
+    "nConcertsAtX": "{count, plural, =1 {# concert} other {# concerts}} @ {location}"
+  },
+  "LocationCommunity": {
+    "fans": "Fans",
+    "nConcerts": "{count, plural, =1 {# concert} other {# concerts}}",
+    "uHasSeenNConcertsAtX": "{username} has seen {count, plural, =1 {# concert} other {# concerts}} @ {location}",
+    "showProfile": "Show profile"
+  },
+  "LocationForm": {
+    "name": "Name",
+    "duplicateLocationWarning": "{count, plural, =1 {There is already a similar location:} other {There are already # similar locations:}}",
+    "zipCode": "ZIP Code",
+    "city": "City",
+    "country": "Country",
+    "showMore": "Show more",
+    "showLess": "Show less",
+    "website": "Website",
+    "optional": "(optional)",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "DeleteLocationForm": {
+    "doYouReallyWantToDeleteThisLocation": "Do you really want to delete this location?",
+    "cancel": "Cancel",
+    "delete": "Delete"
   }
 }

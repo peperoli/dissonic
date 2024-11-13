@@ -14,6 +14,7 @@ import { useLocation } from '@/hooks/locations/useLocation'
 import { useEditLocation } from '@/hooks/locations/useEditLocation'
 import { useLocations } from '@/hooks/locations/useLocations'
 import { LocationItem } from './LocationItem'
+import { useLocale, useTranslations } from 'next-intl'
 
 interface FormProps {
   close: () => void
@@ -41,8 +42,10 @@ export const Form = ({ close, isNew }: FormProps) => {
   const editLocation = useEditLocation()
   const { status } = isNew ? addLocation : editLocation
   const { data: countries } = useCountries()
+  const t = useTranslations('LocationForm')
+  const locale = useLocale()
   const isSimilar = !!(dirtyFields.name && similarLocations?.count)
-  const regionNames = new Intl.DisplayNames(['de'], { type: 'region' })
+  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
 
   const onSubmit: SubmitHandler<AddLocation> = async function (formData) {
     if (isNew) {
@@ -57,18 +60,14 @@ export const Form = ({ close, isNew }: FormProps) => {
       <TextField
         {...register('name', { required: true })}
         error={errors.name}
-        label="Name"
+        label={t('name')}
         placeholder="Hallenstadion"
       />
       {isSimilar && (
         <div className="rounded-lg bg-yellow/10 p-4">
           <div className="flex items-center gap-4 text-yellow">
             <AlertTriangleIcon className="size-icon flex-none" />
-            <p>
-              <strong>Achtung:</strong>{' '}
-              {similarLocations.count === 1 ? 'Eine Location' : 'Folgende Locations'} mit ähnlichem Namen{' '}
-              {similarLocations.count === 1 ? 'existiert' : 'existieren'} bereits:
-            </p>
+            <p>{t('duplicateLocationWarning', { count: similarLocations.count })}</p>
           </div>
           <ul className="mt-4 grid">
             {similarLocations.data.map(item => (
@@ -82,7 +81,7 @@ export const Form = ({ close, isNew }: FormProps) => {
       <div className="grid grid-cols-3">
         <TextField
           {...register('zip_code')}
-          label="PLZ (optional)"
+          label={t('zipCode')}
           placeholder="3000"
           grouped="start"
         />
@@ -90,7 +89,7 @@ export const Form = ({ close, isNew }: FormProps) => {
           <TextField
             {...register('city', { required: true })}
             error={errors.city}
-            label="Ort"
+            label={t('city')}
             placeholder="Zürich"
             grouped="end"
           />
@@ -110,7 +109,7 @@ export const Form = ({ close, isNew }: FormProps) => {
               name: regionNames.of(item.iso2) ?? item.iso2,
             }))}
             error={errors.country_id}
-            label="Land"
+            label={t('country')}
           />
         )}
       />
@@ -118,14 +117,14 @@ export const Form = ({ close, isNew }: FormProps) => {
         <DisclosurePanel>
           <TextField
             {...register('website')}
-            label="Website (optional)"
+            label={`${t('website')} ${t('optional')}`}
             placeholder="https://hallenstadion.ch/"
           />
         </DisclosurePanel>
         <DisclosureButton as={Fragment}>
           {({ open }) => (
             <Button
-              label={open ? 'Weniger anzeigen' : 'Mehr anzeigen'}
+              label={open ? t('showLess') : t('showMore')}
               icon={<ChevronDown className={clsx('size-icon', open && 'rotate-180')} />}
               size="small"
               appearance="tertiary"
@@ -134,10 +133,10 @@ export const Form = ({ close, isNew }: FormProps) => {
         </DisclosureButton>
       </Disclosure>
       <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:justify-end [&>*]:flex-1">
-        <Button onClick={close} label="Abbrechen" />
+        <Button onClick={close} label={t('cancel')} />
         <Button
           type="submit"
-          label="Speichern"
+          label={t('save')}
           appearance="primary"
           loading={status === 'pending'}
         />

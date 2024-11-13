@@ -90,10 +90,10 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
   const t = useTranslations('HomePage')
   const queryStateString = searchParams.toString()
   const sortItems = [
-    { id: 0, value: 'date_start,false', name: 'Neuste' },
-    { id: 1, value: 'date_start,true', name: 'Älteste' },
-    { id: 2, value: 'bands_count,false', name: 'Meiste Bands' },
-    { id: 3, value: 'bands_count,true', name: 'Wenigste Bands' },
+    { id: 0, value: 'date_start,false', name: t('newest') },
+    { id: 1, value: 'date_start,true', name: t('oldest') },
+    { id: 2, value: 'bands_count,false', name: t('mostBands') },
+    { id: 3, value: 'bands_count,true', name: t('fewestBands') },
   ]
 
   useEffect(() => {

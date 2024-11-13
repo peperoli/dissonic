@@ -49,7 +49,7 @@
     "newest": "Neueste",
     "oldest": "Älteste",
     "mostBands": "Meiste Bands",
-    "leastBands": "Wenigste Bands",
+    "fewestBands": "Wenigste Bands",
     "all": "Alle",
     "friends": "Freunde",
     "you": "Du",
@@ -165,6 +165,11 @@
     "removeEntry": "Eintrag entfernen",
     "reorderEntry": "Eintrag verschieben"
   },
+  "DeleteConcertForm": {
+    "doYouReallyWantToDeleteThisConcert": "Willst du dieses Konzert wirklich löschen?",
+    "cancel": "Abbrechen",
+    "delete": "Löschen"
+  },
   "BandsPage": {
     "bands": "Bands",
     "addBand": "Band hinzufügen",
@@ -211,5 +216,48 @@
     "noLink": "Keine Verknüpfung",
     "showMore": "Mehr anzeigen",
     "nFollowers": "{count, plural, =1 {# Follower} other {# Follower}}"
+  },
+  "DeleteBandForm": {
+    "doYouReallyWantToDeleteThisBand": "Willst du diese Band wirklich löschen?",
+    "cancel": "Abbrechen",
+    "delete": "Löschen"
+  },
+  "LocationsPage": {
+    "locations": "Lokale",
+    "addLocation": "Lokal hinzufügen",
+    "searchLocation": "Lokal suchen ...",
+    "nEntries": "{count, plural, =1 {# Eintrag} other {# Einträge}}",
+    "noEntriesFound": "Keine Einträge gefunden."
+  },
+  "LocationPage": {
+    "locations": "Lokale",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "website": "Website",
+    "nConcertsAtX": "{count, plural, =1 {# Konzert} other {# Konzerte}} @ {location}"
+  },
+  "LocationCommunity": {
+    "fans": "Fans",
+    "nConcerts": "{count, plural, =1 {# Konzert} other {# Konzerte}}",
+    "uHasSeenNConcertsAtX": "{username} hat {count, plural, =1 {# Konzert} other {# Konzerte}} @ {location} gesehen",
+    "showProfile": "Profil anzeigen"
+  },
+  "LocationForm": {
+    "name": "Name",
+    "duplicateLocationWarning": "{count, plural, =1 {Es existiert bereits ein ähnliches Lokal:} other {Es existieren bereits # ähnliche Lokale:}}",
+    "zipCode": "PLZ",
+    "city": "Stadt",
+    "country": "Land",
+    "showMore": "Mehr anzeigen",
+    "showLess": "Weniger anzeigen",
+    "website": "Website",
+    "optional": "(optional)",
+    "cancel": "Abbrechen",
+    "save": "Speichern"
+  },
+  "DeleteLocationForm": {
+    "doYouReallyWantToDeleteThisLocation": "Willst du dieses Lokal wirklich löschen?",
+    "cancel": "Abbrechen",
+    "delete": "Löschen"
   }
 }

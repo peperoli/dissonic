@@ -67,6 +67,7 @@ export const SelectField = ({ label, items, error, ...props }: SelectFieldProps)
         </Dialog.Trigger>
         {error && <div className="mt-1 text-sm text-yellow">{t('pleaseSelectAnOption')}</div>}
         <Dialog.Content className="fixed inset-0 z-20 flex min-w-full flex-col overflow-hidden bg-slate-700 p-4 shadow-xl md:absolute md:inset-auto md:mt-1 md:rounded-lg">
+          <Dialog.Title className="sr-only">{label}</Dialog.Title>
           <Select items={items} {...props} />
           {'values' in props && (
             <Dialog.Close className="btn btn-primary">{t('save')}</Dialog.Close>

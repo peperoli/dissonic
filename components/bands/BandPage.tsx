@@ -7,7 +7,7 @@ import { ConcertCard } from '../concerts/ConcertCard'
 import { Band } from '../../types/types'
 import { useBand } from '../../hooks/bands/useBand'
 import { useConcerts } from '../../hooks/concerts/useConcerts'
-import { usePathname, useRouter } from 'next/navigation'
+import { notFound, usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
 import { useModal } from '../shared/ModalProvider'
 import { ArrowLeft, Edit, Guitar, MapPin, MusicIcon, Trash } from 'lucide-react'
@@ -39,7 +39,7 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
   const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
 
   if (!band) {
-    return <p>{t('bandNotFound')}</p>
+    notFound()
   }
   return (
     <main className="container grid gap-4">
