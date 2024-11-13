@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { Button } from '../Button'
 import { Chip } from '../Chip'
 import { ToggleSwitch } from '../forms/ToggleSwitch'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 
 type BarProps = {
   item: {
@@ -46,6 +46,7 @@ export const ConcertStats = ({ bands, uniqueBands }: ConcertStatsProps) => {
   const [visibleItems, setVisibleItems] = useState(10)
   const [animationParent] = useAutoAnimate()
   const t = useTranslations('ConcertStats')
+  const locale = useLocale()
   const hasUniqueBands =
     uniqueBands && uniqueBands.length > 0 && uniqueBands.length !== bands.length
   const genres =
@@ -56,7 +57,7 @@ export const ConcertStats = ({ bands, uniqueBands }: ConcertStatsProps) => {
     hasUniqueBands && !showAll
       ? uniqueBands.map(band => band.country).filter(country => !!country)
       : bands.map(band => band.country).filter(country => !!country)
-  const regionNames = new Intl.DisplayNames('de', { type: 'region' })
+  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
   const genreCounts = getCounts(genres).sort((a, b) => b.count - a.count)
   const countryCounts = getCounts(
     countries.map(country => ({

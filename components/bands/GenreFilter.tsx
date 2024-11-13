@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { FilterButton } from './../FilterButton'
 import { useGenres } from '../../hooks/genres/useGenres'
 import { Select } from '../forms/Select'
+import { useTranslations } from 'next-intl'
 
 type GenreMultiSelectProps = {
   selectedOptions: number[]
@@ -31,13 +32,14 @@ type GenreFilterProps = {
 export const GenreFilter = ({ values: submittedValues, onSubmit }: GenreFilterProps) => {
   const { data: genres } = useGenres({ ids: submittedValues })
   const [selectedIds, setSelectedIds] = useState(submittedValues ?? [])
+  const t = useTranslations('GenreFilter')
 
   useEffect(() => {
     setSelectedIds(submittedValues ?? [])
   }, [submittedValues])
   return (
     <FilterButton
-      label="Genre"
+      label={t('genre')}
       items={genres}
       selectedIds={selectedIds}
       submittedValues={submittedValues}

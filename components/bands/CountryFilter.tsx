@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { FilterButton } from './../FilterButton'
 import { useCountries } from './../../hooks/useCountries'
 import { Select } from '../forms/Select'
+import { useLocale, useTranslations } from 'next-intl'
 
 type CountryMultiSelectProps = {
   selectedOptions: number[]
@@ -10,7 +11,8 @@ type CountryMultiSelectProps = {
 
 const CountryMultiSelect = ({ selectedOptions, setSelectedOptions }: CountryMultiSelectProps) => {
   const { data: countries, isPending } = useCountries()
-  const regionNames = new Intl.DisplayNames('de', { type: 'region' })
+  const locale = useLocale()
+  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
   return (
     <Select
       name="Land"
@@ -35,13 +37,14 @@ type CountryFilterProps = {
 export const CountryFilter = ({ values: submittedValues, onSubmit }: CountryFilterProps) => {
   const { data: countries } = useCountries({ ids: submittedValues })
   const [selectedIds, setSelectedIds] = useState(submittedValues ?? [])
+  const t = useTranslations('CountryFilter')
 
   useEffect(() => {
     setSelectedIds(submittedValues ?? [])
   }, [submittedValues])
   return (
     <FilterButton
-      label="Land"
+      label={t('country')}
       items={countries?.map(country => ({ id: country.id, name: country.iso2 }))}
       selectedIds={selectedIds}
       submittedValues={submittedValues}

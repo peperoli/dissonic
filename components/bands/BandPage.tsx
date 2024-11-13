@@ -16,6 +16,7 @@ import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 import { MetaInfo } from '../shared/MetaInfo'
 import { SpeedDial } from '../layout/SpeedDial'
 import { BandCommunity } from './BandCommunity'
+import { useLocale, useTranslations } from 'next-intl'
 
 type BandPageProps = {
   initialBand: Band
@@ -23,7 +24,7 @@ type BandPageProps = {
 }
 
 export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
-  const { data: band, isPending: bandIsLoading } = useBand(initialBand.id, initialBand)
+  const { data: band } = useBand(initialBand.id, initialBand)
   const { data: spotifyArtist } = useSpotifyArtist(band?.spotify_artist_id)
   const { data: concerts } = useConcerts({
     bands: [initialBand.id],
@@ -33,28 +34,26 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
   const { data: session } = useSession()
   const { push } = useRouter()
   const pathname = usePathname()
-  const regionNames = new Intl.DisplayNames('de', { type: 'region' })
-
-  if (bandIsLoading) {
-    return <p>Lade...</p>
-  }
+  const t = useTranslations('BandPage')
+  const locale = useLocale()
+  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
 
   if (!band) {
-    return <p>Band nicht gefunden</p>
+    return <p>{t('bandNotFound')}</p>
   }
   return (
     <main className="container grid gap-4">
       <div className="flex items-center justify-between">
         <Link href={`/bands${bandQueryState ?? ''}`} className="btn btn-small btn-tertiary">
           <ArrowLeft className="size-icon" />
-          Zurück zur Übersicht
+          {t('bands')}
         </Link>
         <div className="flex gap-3">
           <Button
             onClick={
               session ? () => setModal('edit-band') : () => push(`/login?redirect=${pathname}`)
             }
-            label="Bearbeiten"
+            label={t('edit')}
             icon={<Edit className="size-icon" />}
             contentType="icon"
             size="small"
@@ -64,7 +63,7 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
             onClick={
               session ? () => setModal('delete-band') : () => push(`/login?redirect=${pathname}`)
             }
-            label="Löschen"
+            label={t('delete')}
             icon={<Trash className="size-icon" />}
             contentType="icon"
             danger
@@ -133,7 +132,7 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
       {concerts?.data && concerts.data.length > 0 && (
         <section className="grid gap-4 rounded-lg bg-slate-800 p-4 md:p-6">
           <h2 className="mb-0">
-            {concerts.data.length} Konzert(e) mit {band.name}
+            {t('nConcertsWithX', { count: concerts.data.length, band: band.name })}
           </h2>
           {concerts?.data.map(item => <ConcertCard key={item.id} concert={item} nested />)}
         </section>

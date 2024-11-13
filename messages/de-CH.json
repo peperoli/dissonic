@@ -164,5 +164,52 @@
     "addEntry": "Eintrag hinzufügen",
     "removeEntry": "Eintrag entfernen",
     "reorderEntry": "Eintrag verschieben"
+  },
+  "BandsPage": {
+    "bands": "Bands",
+    "addBand": "Band hinzufügen",
+    "searchBand": "Band suchen ...",
+    "nEntries": "{count, plural, =1 {# Eintrag} other {# Einträge}}",
+    "noEntriesFound": "Keine Einträge gefunden."
+  },
+  "CountryFilter": {
+    "country": "Land"
+  },
+  "GenreFilter": {
+    "genre": "Genre"
+  },
+  "Pagination": {
+    "nEntries": "{count, plural, =1 {# Eintrag} other {# Einträge}}",
+    "previousPage": "Vorherige Seite",
+    "nextPage": "Nächste Seite"
+  },
+  "BandPage": {
+    "bands": "Bands",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "nConcertsWithX": "{count, plural, =1 {# Konzert} other {# Konzerte}} mit {band}"
+  },
+  "BandCommunity": {
+    "fans": "Fans",
+    "loading": "Laden ...",
+    "nConcerts": "{count, plural, =1 {# Konzert} other {# Konzerte}}",
+    "uHasSeenNConcertsWithX": "{username} hat {count, plural, =1 {# Konzert} other {# Konzerte}} mit {band} gesehen",
+    "showProfile": "Profil anzeigen"
+  },
+  "BandForm": {
+    "name": "Name",
+    "duplicateBandsWarning": "{count, plural, =1 {Es existiert bereits eine ähnliche Band:} other {Es existieren bereits # ähnliche Bands:}}",
+    "country": "Land",
+    "genres": "Genres",
+    "youtubeChannel": "YouTube-Channel",
+    "showMore": "Mehr anzeigen",
+    "showLess": "Weniger anzeigen",
+    "optional": "(optional)"
+  },
+  "SpotifyArtistSelect": {
+    "spotifyLink": "Spotify-Verknüpfung",
+    "noLink": "Keine Verknüpfung",
+    "showMore": "Mehr anzeigen",
+    "nFollowers": "{count, plural, =1 {# Follower} other {# Follower}}"
   }
 }

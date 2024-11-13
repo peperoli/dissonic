@@ -13,12 +13,13 @@ import { useSession } from '../../hooks/auth/useSession'
 import { StatusBanner } from '../forms/StatusBanner'
 import { CountryFilter } from './CountryFilter'
 import { GenreFilter } from './GenreFilter'
-import { BandTableRow } from './TableRow'
+import { BandTableRow } from './BandTableRow'
 import { parseAsArrayOf, parseAsInteger, useQueryState } from 'nuqs'
 import Cookies from 'js-cookie'
 import { useModal } from '../shared/ModalProvider'
 import { Plus, RotateCcw } from 'lucide-react'
 import { SpeedDial } from '../layout/SpeedDial'
+import { useTranslations } from 'next-intl'
 
 interface BandsPageProps {
   initialBands: ExtendedRes<Band[]>
@@ -50,6 +51,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
   const { push } = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const t = useTranslations('BandsPage')
   const queryStateString = searchParams.toString()
 
   useEffect(() => {
@@ -78,10 +80,10 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
   return (
     <main className="container-fluid">
       <div className="sr-only flex justify-between md:not-sr-only md:mb-6">
-        <h1 className="mb-0">Bands</h1>
+        <h1 className="mb-0">{t('bands')}</h1>
         <Button
           onClick={session ? () => setModal('add-band') : () => push(`/login?redirect=${pathname}`)}
-          label="Band hinzufügen"
+          label={t('addBand')}
           appearance="primary"
           icon={<Plus className="size-icon" />}
           className="hidden md:block"
@@ -89,17 +91,17 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
       </div>
       <Table>
         <div className="scrollbar-hidden -mx-4 flex gap-2 overflow-x-auto px-4 md:grid md:grid-cols-3 md:gap-4 md:overflow-visible">
-          <SearchField name="searchBands" placeholder="Bands" query={query} setQuery={setQuery} />
+          <SearchField name="searchBands" placeholder={t('searchBand')} query={query} setQuery={setQuery} />
           <CountryFilter values={selectedCountries} onSubmit={setSelectedCountries} />
           <GenreFilter values={selectedGenres} onSubmit={setSelectedGenres} />
         </div>
         <div className="flex items-center gap-4">
           <div className="my-4 text-sm text-slate-300">
-            {bands?.count}&nbsp;{bands?.count === 1 ? 'Eintrag' : 'Einträge'}
+            {t('nEntries', { count: bands?.count })}
           </div>
           {(selectedCountries || selectedGenres) && (
             <Button
-              label="Zurücksetzen"
+              label={t('reset')}
               onClick={resetAll}
               icon={<RotateCcw className="size-icon text-slate-300" />}
               size="small"
@@ -108,7 +110,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
           )}
         </div>
         {bands.data.length === 0 ? (
-          <StatusBanner statusType="info" message="Blyat! Keine Einträge gefunden." />
+          <StatusBanner statusType="info" message={t('noEntriesFound')} />
         ) : (
           bands.data.map(band => <BandTableRow key={band.id} band={band} />)
         )}

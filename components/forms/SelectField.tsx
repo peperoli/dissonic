@@ -34,10 +34,10 @@ export const SelectField = ({ label, items, error, ...props }: SelectFieldProps)
           {items
             ?.filter(item => props.values.includes(item.id))
             .map((item, index) => (
-              <li key={item.id} className="whitespace-nowrap">
+              <div key={item.id} className="whitespace-nowrap">
                 {item.name}
                 {index + 1 < props.values.length && <>,&nbsp;</>}
-              </li>
+              </div>
             ))}
         </TruncatedList>
       )

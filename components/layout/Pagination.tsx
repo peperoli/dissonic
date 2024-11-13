@@ -1,6 +1,7 @@
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 import { Button } from '../Button'
 import { parseAsInteger, useQueryState } from 'nuqs'
+import { useTranslations } from 'next-intl'
 
 interface PaginationProps {
   entriesCount: number
@@ -13,12 +14,13 @@ export function usePagination() {
 
 export const Pagination = ({ entriesCount, perPage }: PaginationProps) => {
   const [currentPage, setCurrentPage] = usePagination()
+  const t = useTranslations('Pagination')
   const pagesCount = Math.ceil(entriesCount / perPage)
   const pages = Array.from(Array(pagesCount).keys())
   return (
     <div className="mt-4 flex items-center justify-between gap-4">
       <div className="text-sm text-slate-300">
-        {entriesCount}&nbsp;{entriesCount === 1 ? 'Eintrag' : 'Einträge'}
+        {t('nEntries', { count: entriesCount })}
       </div>
       <div className="hidden gap-2 md:flex">
         {pagesCount > 1 &&
@@ -38,14 +40,14 @@ export const Pagination = ({ entriesCount, perPage }: PaginationProps) => {
           <Button
             onClick={() => setCurrentPage(currentPage - 1)}
             contentType="icon"
-            label="Vorherige Seite"
+            label={t('previousPage')}
             icon={<ChevronLeftIcon className="size-icon" />}
             disabled={currentPage <= 1}
           />
           <Button
             onClick={() => setCurrentPage(currentPage + 1)}
             contentType="icon"
-            label="Nächste Seite"
+            label={t('nextPage')}
             icon={<ChevronRightIcon className="size-icon" />}
             disabled={currentPage >= pagesCount}
           />
