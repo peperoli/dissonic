@@ -3,6 +3,7 @@ import { getCounts, ItemCount } from '@/lib/getCounts'
 import { Band, Location } from '@/types/types'
 import { useEffect, useState, JSX } from 'react'
 import { Button } from '../Button'
+import { useTranslations } from 'next-intl'
 
 type TopGridProps = {
   headline: string
@@ -20,6 +21,7 @@ type TopGridProps = {
 export const TopGrid = ({ headline, items, Item }: TopGridProps) => {
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const [visibleItems, setVisibleItems] = useState(9)
+  const t = useTranslations('TopGrid')
   const itemCounts = getCounts<Band | Location>(items).filter(item => item.count > 1)
 
   useEffect(() => {
@@ -52,9 +54,9 @@ export const TopGrid = ({ headline, items, Item }: TopGridProps) => {
         {itemCounts.length >= (isDesktop ? 8 : 9) && (
           <div className="mt-6 flex justify-center">
             {visibleItems < itemCounts.length ? (
-              <Button onClick={() => setVisibleItems(itemCounts.length)} label="Mehr anzeigen" />
+              <Button onClick={() => setVisibleItems(itemCounts.length)} label={t('showMore')} />
             ) : (
-              <Button onClick={() => setVisibleItems(8)} label="Weniger anzeigen" />
+              <Button onClick={() => setVisibleItems(8)} label={t('showLess')} />
             )}
           </div>
         )}

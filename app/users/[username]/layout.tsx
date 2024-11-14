@@ -6,6 +6,7 @@ import { ToggleFriendButton } from '@/components/profile/ToggleFriendButton'
 import { UserItem } from '@/components/shared/UserItem'
 import { createClient } from '@/utils/supabase/server'
 import { CheckCircleIcon, Settings } from 'lucide-react'
+import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ReactNode } from 'react'
@@ -42,7 +43,7 @@ async function fetchData(username: string) {
   return { profile, user, friend }
 }
 
-export default async function Layout({
+export default async function ProfileLayout({
   children,
   params,
 }: Readonly<{
@@ -51,14 +52,15 @@ export default async function Layout({
 }>) {
   const { username } = await params
   const { profile, user, friend } = await fetchData(username)
+  const t = await getTranslations('ProfileLayout')
   const isOwnProfile = profile.id === user?.id
 
   const tabs = [
-    { href: `/users/${username}/stats`, label: 'Statistik' },
-    { href: `/users/${username}/concerts`, label: 'Konzerte' },
-    { href: `/users/${username}/friends`, label: 'Freunde' },
-    { href: `/users/${username}/activity`, label: 'Aktivität' },
-    { href: `/users/${username}/contributions`, label: 'Bearbeitungen' },
+    { href: `/users/${username}/stats`, label: t('stats') },
+    { href: `/users/${username}/concerts`, label: t('concerts') },
+    { href: `/users/${username}/friends`, label: t('friends') },
+    { href: `/users/${username}/activity`, label: t('activity') },
+    { href: `/users/${username}/contributions`, label: t('contributions') },
   ]
   return (
     <main className="container grid gap-4">
@@ -67,7 +69,7 @@ export default async function Layout({
         {friend && !friend?.pending && (
           <p className="flex gap-2 text-slate-300">
             <CheckCircleIcon className="size-icon" />
-            Freund
+            {t('friend')}
           </p>
         )}
         {!isOwnProfile && <ToggleFriendButton friend={friend} />}
@@ -76,7 +78,7 @@ export default async function Layout({
             <EditProfileButton />
             <Link
               href="/settings"
-              aria-label="Einstellungen"
+              aria-label={t('settings')}
               className="btn btn-icon btn-small btn-tertiary"
             >
               <Settings className="size-icon" />

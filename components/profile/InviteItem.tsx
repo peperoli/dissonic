@@ -6,6 +6,7 @@ import { Friend } from '../../types/types'
 import supabase from '../../utils/supabase/client'
 import { Button } from '../Button'
 import { UserItem } from '../shared/UserItem'
+import { useTranslations } from 'next-intl'
 
 type InviteItemType = {
   inviteData: Friend
@@ -14,6 +15,7 @@ type InviteItemType = {
 
 export const InviteItem = ({ inviteData, type }: InviteItemType) => {
   const [invite, setInvite] = useState<Friend | null>(inviteData)
+  const t = useTranslations('InviteItem')
   const profile = type === 'sent' ? invite?.receiver : invite?.sender
 
   async function cancelInvite() {
@@ -70,11 +72,11 @@ export const InviteItem = ({ inviteData, type }: InviteItemType) => {
         </Link>
         <div className="flex w-full gap-2 md:ml-auto md:w-fit">
           {type === 'sent' ? (
-            <Button onClick={cancelInvite} label="Anfrage zurückziehen" size="small" block />
+            <Button onClick={cancelInvite} label={t('cancelInvite')} size="small" block />
           ) : (
             <>
-              <Button onClick={cancelInvite} label="Ablehnen" size="small" block danger />
-              <Button onClick={confirmInvite} label="Bestätigen" size="small" block />
+              <Button onClick={cancelInvite} label={t('reject')} size="small" block danger />
+              <Button onClick={confirmInvite} label={t('accept')} size="small" block />
             </>
           )}
         </div>

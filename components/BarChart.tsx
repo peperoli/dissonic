@@ -2,6 +2,7 @@
 
 import * as Tooltip from '@radix-ui/react-tooltip'
 import clsx from 'clsx'
+import { useTranslations } from 'next-intl'
 
 const ASPECT_RATIO = 4 / 1
 const GAP = 1
@@ -21,7 +22,7 @@ type BarProps = {
   length: number
   datasetIndex: number
   datasetAmount: number
-  unit: [string, string]
+  unit: string
   color: 'venom' | 'blue' | 'purple'
 }
 
@@ -36,6 +37,7 @@ const Bar = ({
   unit,
   color,
 }: BarProps) => {
+  const t = useTranslations('BarChart')
   const width = ((100 / length - GAP) * ASPECT_RATIO) / datasetAmount
   const height = (value / max) * 100 || 1
   const x = (100 / length) * index * ASPECT_RATIO + datasetIndex * (width + GAP_SMALL)
@@ -54,7 +56,7 @@ const Bar = ({
       <Tooltip.Portal>
         <Tooltip.Content className="z-10 rounded-lg border border-slate-800 bg-slate-850 p-2 text-sm shadow-lg">
           <strong>
-            {value} {value === 1 ? unit[0] : unit[1]}
+            {t(unit, { count: value })}
           </strong>
           <br />
           {name}
@@ -65,7 +67,7 @@ const Bar = ({
 }
 
 type DataSet = {
-  unit: [string, string]
+  unit: string
   color: 'venom' | 'blue' | 'purple'
   data: { name: string; value: number }[]
 }

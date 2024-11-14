@@ -8,6 +8,7 @@ import { getUniqueObjects } from '@/lib/getUniqueObjects'
 import { getFullMonth } from '@/lib/getFullMonth'
 import { Select } from '../forms/Select'
 import { FilterButton } from '../FilterButton'
+import { useTranslations } from 'next-intl'
 
 type ConcertsByYearProps = {
   profileId: string
@@ -17,6 +18,7 @@ export const ConcertsByYear = ({ profileId }: ConcertsByYearProps) => {
   const { data: bandsSeen } = useBandsSeen({ userId: profileId })
   const [selectedUnit, setSelectedUnit] = useState('concerts')
   const [selectedYear, setSelectedYear] = useState<number>(-1)
+  const t = useTranslations('ConcertsByYear')
 
   if (!bandsSeen || bandsSeen.length === 0) {
     return null
@@ -28,7 +30,7 @@ export const ConcertsByYear = ({ profileId }: ConcertsByYearProps) => {
   const years = Array.from({ length: end - start + 1 }, (_, i) => start + i)
   const months = Array.from({ length: 12 }, (_, i) => 0 + i)
   const yearItems = [
-    { id: -1, name: 'Alle' },
+    { id: -1, name: t('allTime') },
     ...[...years].reverse().map(year => ({
       id: year,
       name: year.toString(),
@@ -65,19 +67,29 @@ export const ConcertsByYear = ({ profileId }: ConcertsByYearProps) => {
 
   return (
     <div className="rounded-lg bg-slate-800 p-6">
-      <h2>{`${selectedUnit === 'concerts' ? 'Konzerte' : 'Bands'} pro ${selectedYear === -1 ? 'Jahr' : 'Monat'}`}</h2>
+      <h2>
+        {t('unitPerTimeUnit', {
+          unit: selectedUnit,
+          timeUnit: selectedYear === -1 ? 'year' : 'month',
+        })}
+      </h2>
       <div className="mb-4 flex flex-wrap gap-3">
         <SegmentedControl
           options={[
-            { value: 'concerts', label: 'Konzerte' },
-            { value: 'bands', label: 'Bands' },
+            { value: 'concerts', label: t('concerts') },
+            { value: 'bands', label: t('bands') },
           ]}
           value={selectedUnit}
           onValueChange={setSelectedUnit}
         />
-        <FilterButton type="singleselect" label="Jahr" items={yearItems} selectedId={selectedYear}>
+        <FilterButton
+          type="singleselect"
+          label={t('timeFrame')}
+          items={yearItems}
+          selectedId={selectedYear}
+        >
           <Select
-            name="Jahr"
+            name="timeFrame"
             searchable={false}
             items={yearItems}
             value={selectedYear}
@@ -89,12 +101,12 @@ export const ConcertsByYear = ({ profileId }: ConcertsByYearProps) => {
         datasets={[
           selectedUnit === 'concerts'
             ? {
-                unit: ['Konzert', 'Konzerte'],
+                unit: 'nConcerts',
                 color: 'venom',
                 data: selectedYear === -1 ? concertsPerYear : concertsPerMonth,
               }
             : {
-                unit: ['Band', 'Bands'],
+                unit: 'nBands',
                 color: 'blue',
                 data: selectedYear === -1 ? bandsPerYear : bandsPerMonth,
               },

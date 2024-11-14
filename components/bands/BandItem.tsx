@@ -5,10 +5,12 @@ import { Band } from '../../types/types'
 import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 import Image from 'next/image'
 import { GuitarIcon } from 'lucide-react'
+import { useLocale } from 'next-intl'
 
 export function BandItem({ band }: { band: Band }) {
   const { data: spotifyArtist } = useSpotifyArtist(band.spotify_artist_id)
-  const regionNames = new Intl.DisplayNames('de', { type: 'region' })
+  const locale = useLocale()
+  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
 
   return (
     <Link

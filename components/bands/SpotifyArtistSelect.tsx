@@ -15,8 +15,7 @@ interface SelectItemProps {
 
 const SelectItem = ({ item, value, handleChange }: SelectItemProps) => {
   const t = useTranslations('SpotifyArtistSelect')
-  const locale = useLocale()
-  const formatter = new Intl.NumberFormat('de-CH')
+
   return (
     <label className="flex w-full items-center gap-3 rounded-lg p-2 focus-within:bg-slate-600 hover:bg-slate-600">
       <input

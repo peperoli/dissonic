@@ -9,11 +9,12 @@ import Image from 'next/image'
 import { GuitarIcon } from 'lucide-react'
 import { useConcertProfiles } from '@/hooks/concerts/useConcertProfiles'
 import { Drawer, DrawerTitle, DrawerTrigger } from '../shared/Drawer'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 
 function BandItem({ band }: { band: Band }) {
   const { data: spotifyArtist } = useSpotifyArtist(band.spotify_artist_id)
-  const regionNames = new Intl.DisplayNames('de', { type: 'region' })
+  const locale = useLocale()
+  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
 
   return (
     <Link

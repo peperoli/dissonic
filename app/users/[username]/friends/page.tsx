@@ -3,6 +3,7 @@ import { FriendItem } from '@/components/profile/FriendItem'
 import { InviteItem } from '@/components/profile/InviteItem'
 import { Friend } from '@/types/types'
 import { createClient } from '@/utils/supabase/server'
+import { getTranslations } from 'next-intl/server'
 
 async function fetchData(username: string) {
   const supabase = await createClient()
@@ -37,30 +38,31 @@ async function fetchData(username: string) {
   return { user, profile, friends }
 }
 
-const FriendInvites = ({ profileId, friends }: { profileId: string; friends: Friend[] }) => {
+async function FriendInvites ({ profileId, friends }: { profileId: string; friends: Friend[] }) {
+  const t = await getTranslations('FriendsPage')
   const sentInvites = friends.filter(item => item.pending && item.sender_id === profileId)
   const receivedInvites = friends.filter(item => item.pending && item.receiver_id === profileId)
   return (
     <div className="col-span-full rounded-lg bg-slate-800 p-6">
-      <h2 className="sr-only">Freundschaftsanfragen</h2>
+      <h2 className="sr-only">{t('friendInvites')}</h2>
       <div className="mb-6 grid gap-4">
-        <h3>Empfangene Anfragen</h3>
+        <h3>{t('incomingInvites')}</h3>
         {receivedInvites.length > 0 ? (
           receivedInvites.map(item => (
             <InviteItem key={item.sender_id} inviteData={item} type="received" />
           ))
         ) : (
-          <p className="text-sm text-slate-300">Du hast keine ausstehende Anfragen.</p>
+          <p className="text-sm text-slate-300">{t('youHaveNoIncomingInvites')}</p>
         )}
       </div>
       <div className="grid gap-4">
-        <h3>Gesendete Anfragen</h3>
+        <h3>{t('outgoingInvites')}</h3>
         {sentInvites.length > 0 ? (
           sentInvites.map(item => (
             <InviteItem key={item.receiver_id} inviteData={item} type="sent" />
           ))
         ) : (
-          <p className="text-sm text-slate-300">Du hast keine ausstehende Anfragen.</p>
+          <p className="text-sm text-slate-300">{t('youHaveNoOutgoingInvites')}</p>
         )}
       </div>
     </div>

@@ -259,5 +259,99 @@
     "doYouReallyWantToDeleteThisLocation": "Do you really want to delete this location?",
     "cancel": "Cancel",
     "delete": "Delete"
+  },
+  "ProfileLayout": {
+    "friend": "Friend",
+    "settings": "Settings",
+    "stats": "Stats",
+    "concerts": "Concerts",
+    "friends": "Friends",
+    "activity": "Activity",
+    "contributions": "Contributions"
+  },
+  "ToggleFriendButton": {
+    "addFriend": "Add friend",
+    "removeFriend": "Remove friend"
+  },
+  "EditProfileButton": {
+    "editProfile": "Edit profile"
+  },
+  "Score": {
+    "score": "Score",
+    "bands": "Bands",
+    "concerts": "Concerts",
+    "festivals": "Festivals",
+    "longestStreak": "Longest streak",
+    "dToD": "{startDate} to {endDate}",
+    "minOneConcertPerMonth": "Minimum one concert per month"
+  },
+  "TopBands": {
+    "loading": "Loading ...",
+    "topBands": "Top bands",
+    "nConcerts": "{count, plural, =1 {# concert} other {# concerts}}"
+  },
+  "TopGrid": {
+    "showMore": "Show more",
+    "showLess": "Show less"
+  },
+  "PieCharts": {
+    "concerts": "Concerts",
+    "festivals": "Festivals",
+    "bandsSeenOnce": "Bands seen once",
+    "bandsSeenMultipleTimes": "Bands seen multiple times"
+  },
+  "ConcertsByYear": {
+    "unitPerTimeUnit": "{unit, select, concerts {concerts} other {bands}} pro {timeUnit, select, year {year} other {months}}",
+    "concerts": "Concerts",
+    "bands": "Bands",
+    "timeFrame": "Time frame",
+    "allTime": "All time"
+  },
+  "BarChart": {
+    "nConcerts": "{count, plural, =1 {# concert} other {# concerts}}",
+    "nBands": "{count, plural, =1 {# band} other {# bands}}"
+  },
+  "TopLocations": {
+    "loading": "Loading ...",
+    "topLocations": "Top locations",
+    "nConcerts": "{count, plural, =1 {# concert} other {# concerts}}"
+  },
+  "FriendsPage": {
+    "friendInvites": "Friend invites",
+    "incomingInvites": "Incoming invites",
+    "youHaveNoIncomingInvites": "You have no incoming invites.",
+    "outgoingInvites": "Outgoing invites",
+    "youHaveNoOutgoingInvites": "You have no outgoing invites."
+  },
+  "InviteItem": {
+    "cancelInvite": "Cancel invite",
+    "reject": "Reject",
+    "accept": "Accept"
+  },
+  "FriendItem": {
+    "removeFriend": "Remove friend"
+  },
+  "RemoveFriendForm": {
+    "removeFriendQuestion": "Do you really want to remove {username} as friend?"
+  },
+  "SettingsPage": {
+    "profile": "Profile",
+    "accountSettings": "Account settings"
+  },
+  "PasswordForm": {
+    "changePassword": "Change password",
+    "newPassword": "New password",
+    "save": "Save",
+    "errorMessage": "An error has occurred. Please try again.",
+    "successMessage": "You will shortly receive an e-mail in which you can confirm the change."
+  },
+  "EmailForm": {
+    "changeEmail": "Change e-mail",
+    "yourAccountIsConnectedWithThisEmailAddress": "Your account is connected with this e-mail address.",
+    "newEmail": "New e-mail",
+    "pleaseEnterAValidEmailAddress": "Please enter a valid e-mail address.",
+    "save": "Save",
+    "errorMessage": "An error has occurred. Please try again.",
+    "successMessage": "You will shortly receive an e-mail in which you can confirm the change."
   }
 }

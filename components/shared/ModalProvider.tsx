@@ -45,7 +45,7 @@ const AddFriendForm = dynamic(
   { loading: () => <Loader /> }
 )
 const RemoveFriendForm = dynamic(
-  () => import('../profile/DeleteFriendForm').then(mod => mod.RemoveFriendForm),
+  () => import('../profile/RemoveFriendForm').then(mod => mod.RemoveFriendForm),
   { loading: () => <Loader /> }
 )
 

@@ -8,6 +8,7 @@ import { useEditUser } from '../../hooks/auth/useEditUser'
 import { Button } from '../Button'
 import { StatusBanner } from '../forms/StatusBanner'
 import { TextField } from '../forms/TextField'
+import { useTranslations } from 'next-intl'
 
 type FormFields = {
   email: string
@@ -20,28 +21,29 @@ export const EmailForm = () => {
     formState: { errors },
   } = useForm<FormFields>()
   const { mutate, status, error } = useEditUser()
+  const t = useTranslations('EmailForm')
 
   const onSubmit: SubmitHandler<FormFields> = async formData => {
     mutate(formData)
   }
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5">
-      <h2 className="mb-0">E-Mail ändern</h2>
-      <p className="text-slate-300">Mit dieser E-Mail-Adresse ist dein Konto verknüpft.</p>
+      <h2 className="mb-0">{t('changeEmail')}</h2>
+      <p className="text-slate-300">{t('yourAccountIsConnectedWithThisEmailAddress')}</p>
       <TextField
         {...register('email', {
           required: true,
-          pattern: { value: emailRegex, message: 'Bitte gib eine gültige E-Mail-Adresse ein.' },
+          pattern: { value: emailRegex, message: t('pleaseEnterAValidEmailAddress') },
         })}
         error={errors.email}
         type="email"
-        label="E-Mail"
+        label={t('newEmail')}
         placeholder="william@delos.com"
       />
       <div className="flex justify-end">
         <Button
           type="submit"
-          label="Speichern"
+          label={t('save')}
           appearance="primary"
           loading={status === 'pending'}
         />
@@ -49,19 +51,10 @@ export const EmailForm = () => {
       {status === 'error' && (
         <StatusBanner
           statusType="error"
-          message={
-            error instanceof AuthError
-              ? errorMessages[error.message]
-              : 'Es ist eine Fehler aufgetreten. Bitte versuche es erneut.'
-          }
+          message={error instanceof AuthError ? errorMessages[error.message] : t('errorMessage')}
         />
       )}
-      {status === 'success' && (
-        <StatusBanner
-          statusType="success"
-          message="Du erhältst in Kürze eine E-Mail, in der du die Änderung bestätigen kannst."
-        />
-      )}
+      {status === 'success' && <StatusBanner statusType="success" message={t('successMessage')} />}
     </form>
   )
 }

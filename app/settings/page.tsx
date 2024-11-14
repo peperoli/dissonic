@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { PasswordForm } from '@/components/profile/PasswordForm'
 import { EmailForm } from '@/components/profile/EmailForm'
+import { getTranslations } from 'next-intl/server'
 
 async function fetchData() {
   const supabase = await createClient()
@@ -26,16 +27,17 @@ async function fetchData() {
   return { profile }
 }
 
-export default async function Page() {
+export default async function SettingsPage() {
   const { profile } = await fetchData()
+  const t = await getTranslations('SettingsPage')
 
   return (
     <main className="container-sm">
       <Link href={`/users/${profile.username}`} className="btn btn-small btn-tertiary mb-2">
         <ArrowLeft className="size-icon" />
-        Zurück zum Profil
+        {t('profile')}
       </Link>
-      <h1>Konto-Einstellungen</h1>
+      <h1>{t('accountSettings')}</h1>
       <div className="mb-4 rounded-lg bg-slate-800 p-6">
         <PasswordForm />
       </div>
