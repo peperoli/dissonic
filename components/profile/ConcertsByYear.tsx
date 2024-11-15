@@ -8,7 +8,7 @@ import { getUniqueObjects } from '@/lib/getUniqueObjects'
 import { getFullMonth } from '@/lib/getFullMonth'
 import { Select } from '../forms/Select'
 import { FilterButton } from '../FilterButton'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 
 type ConcertsByYearProps = {
   profileId: string
@@ -19,6 +19,7 @@ export const ConcertsByYear = ({ profileId }: ConcertsByYearProps) => {
   const [selectedUnit, setSelectedUnit] = useState('concerts')
   const [selectedYear, setSelectedYear] = useState<number>(-1)
   const t = useTranslations('ConcertsByYear')
+  const locale = useLocale()
 
   if (!bandsSeen || bandsSeen.length === 0) {
     return null
@@ -47,7 +48,7 @@ export const ConcertsByYear = ({ profileId }: ConcertsByYearProps) => {
       0,
   }))
   const concertsPerMonth = months.map(month => ({
-    name: getFullMonth(month),
+    name: getFullMonth(month, locale),
     value: concerts.filter(
       concert =>
         new Date(concert.date_start).getFullYear() === selectedYear &&
@@ -55,7 +56,7 @@ export const ConcertsByYear = ({ profileId }: ConcertsByYearProps) => {
     ).length,
   }))
   const bandsPerMonth = months.map(month => ({
-    name: getFullMonth(month),
+    name: getFullMonth(month, locale),
     value:
       bandsSeen.filter(
         band =>

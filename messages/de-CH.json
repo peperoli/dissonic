@@ -334,6 +334,17 @@
   "RemoveFriendForm": {
     "removeFriendQuestion": "Willst du {username} wirklich als Freund*in entfernen?"
   },
+  "ProfileForm": {
+    "profilePicture": "Profilbild",
+    "username": "Benutzername",
+    "usernameTakenError": "Dieser Benutzername ist bereits vergeben. Probiere, kreativ zu sein.",
+    "cancel": "Abbrechen",
+    "save": "Speichern"
+  },
+  "FileUpload": {
+    "remove": "Entfernen",
+    "dragOrBrowseFile": "Datei hinziehen oder <span>durchsuchen</span>"
+  },
   "SettingsPage": {
     "profile": "Profil",
     "accountSettings": "Kontoeinstellungen"
@@ -353,5 +364,58 @@
     "save": "Speichern",
     "errorMessage": "Es ist ein Fehler aufgetreten. Bitte versuche es erneut.",
     "successMessage": "Du erhältst in Kürze eine E-Mail, in dem du die Änderung bestätigen kannst."
+  },
+  "UsersPage": {
+    "fans": "Fans"
+  },
+  "SortSelect": {
+    "sortBy": "Sortieren nach",
+    "mostConcerts": "Meiste Konzerte",
+    "fewestConcerts": "Wenigste Konzerte",
+    "mostBands": "Meiste Bands",
+    "fewestBands": "Wenigste Bands",
+    "newest": "Neueste",
+    "oldest": "Älteste"
+  },
+  "UserItem": {
+    "nConcerts": "{count, plural, =1 {# Konzert} other {# Konzerte}}",
+    "nBands": "{count, plural, =1 {# Band} other {# Bands}}"
+  },
+  "ActivityPage": {
+    "activity": "Aktivität",
+    "noEntriesFound": "Keine Einträge gefunden."
+  },
+  "ViewFilter": {
+    "friends": "Freunde",
+    "you": "Du"
+  },
+  "ActivityTypeFilter": {
+    "activityType": "Aktivitätstyp",
+    "all": "Alle",
+    "bandsSeen": "Gesehene Bands",
+    "comments": "Kommentare",
+    "friendActions": "Freundesaktionen"
+  },
+  "ActivityItem": {
+    "userCommentedOnConcert": "<user></user> kommentierte Konzert <concert></concert>",
+    "userSawBandsAtConcert": "<user></user> sah <bands></bands> am Konzert <concert></concert>",
+    "user1AndUser2AreNowFriends": "<user1></user1> und <user2></user2> sind jetzt befreundet"
+  },
+  "CommaSeperatedList": {
+    "and": "und"
+  },
+  "LoadMoreButton": {
+    "showMore": "Mehr anzeigen"
+  },
+  "ContributionsPage": {
+    "contributions": "Bearbeitungen",
+    "noEntriesFound": "Keine Einträge gefunden."
+  },
+  "ContributionItem": {
+    "userContributedToConcert": "<user></user> {operation, select, INSERT {erstellte} UPDATE {bearbeitete} DELETE {löschte} other {Übersetzungsfehler}} <concert></concert>",
+    "userContributedToBand": "<user></user> {operation, select, INSERT {erstellte} UPDATE {bearbeitete} DELETE {löschte} other {Übersetzungsfehler}} <band></band>",
+    "userContributedToLocation": "<user></user> {operation, select, INSERT {erstellte} UPDATE {bearbeitete} DELETE {löschte} other {Übersetzungsfehler}} <location></location>",
+    "userContributedToConcertBands": "<user></user> {operation, select, INSERT {fügte <bands></bands> zu <concert></concert> hinzu} DELETE {entfernte <bands></bands> von <concert></concert>} other {Übersetzungsfehler}}",
+    "userContributedToBandGenres": "<user></user> {operation, select, INSERT {fügte <genres></genres> zu <band></band> hinzu} DELETE {entfernte <genres></genres> von <band></band>} other {Übersetzungsfehler}}"
   }
 }

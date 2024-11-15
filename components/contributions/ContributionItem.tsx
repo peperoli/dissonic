@@ -13,59 +13,99 @@ import { ArrowRight, PenIcon, PlusIcon, TrashIcon } from 'lucide-react'
 import Link from 'next/link'
 import { ReactNode } from 'react'
 import { CommaSeperatedList } from '../helpers/CommaSeperatedList'
-import { getConcertName } from '@/lib/getConcertName'
+import { useLocale, useTranslations } from 'next-intl'
+import { Profile } from '@/types/types'
+import { useConcertName } from '@/hooks/helpers/useConcertName'
 
 type State = TablesInsert<'bands'> | TablesUpdate<'bands'> | null
 
-const operationLabels = {
-  INSERT: 'erstellte',
-  UPDATE: 'bearbeitete',
-  DELETE: 'löschte',
-} as { [key: string]: string }
-
-const relationOperationLabels = {
-  INSERT: ['fügte', 'zu', 'hinzu'],
-  DELETE: ['entfernte', 'von'],
-} as { [key: string]: string[] }
-
-const ConcertContributionItem = ({ contribution }: { contribution: Tables<'contributions'> }) => {
+const ConcertContributionItem = ({
+  contribution,
+  profile,
+}: {
+  contribution: Tables<'contributions'>
+  profile: Profile
+}) => {
   const { operation, ressource_id } = contribution
   const { data: concert } = useConcert(ressource_id, null, { bandsSize: 1 })
+  const t = useTranslations('ContributionItem')
+  const concertName = useConcertName(concert)
 
   return (
     <ContributionItemWrapper contribution={contribution}>
-      <span className="text-slate-300">{operationLabels[operation]}</span>
-      <Link href={`/concerts/${ressource_id}`} className="hover:underline">
-        {getConcertName(concert) || `ID: ${ressource_id}`}
-      </Link>
+      {t.rich('userContributedToConcert', {
+        user: () => (
+          <Link href={`/profiles/${profile.id}`} className="text-white hover:underline">
+            {profile.username}
+          </Link>
+        ),
+        operation,
+        concert: () => (
+          <Link href={`/concerts/${ressource_id}`} className="text-white hover:underline">
+            {concertName || `ID: ${ressource_id}`}
+          </Link>
+        ),
+      })}
     </ContributionItemWrapper>
   )
 }
 
-const BandContributionItem = ({ contribution }: { contribution: Tables<'contributions'> }) => {
+const BandContributionItem = ({
+  contribution,
+  profile,
+}: {
+  contribution: Tables<'contributions'>
+  profile: Profile
+}) => {
   const { operation, ressource_id } = contribution
   const { data: band } = useBand(ressource_id)
+  const t = useTranslations('ContributionItem')
 
   return (
     <ContributionItemWrapper contribution={contribution}>
-      <span className="text-slate-300">{operationLabels[operation]}</span>
-      <Link href={`/bands/${ressource_id}`} className="hover:underline">
-        {band?.name || `ID: ${ressource_id}`}
-      </Link>
+      {t.rich('userContributedToBand', {
+        user: () => (
+          <Link href={`/profiles/${profile.id}`} className="text-white hover:underline">
+            {profile.username}
+          </Link>
+        ),
+        operation,
+        band: () => (
+          <Link href={`/bands/${ressource_id}`} className="text-white hover:underline">
+            {band?.name || `ID: ${ressource_id}`}
+          </Link>
+        ),
+      })}
     </ContributionItemWrapper>
   )
 }
 
-const LocationContributionItem = ({ contribution }: { contribution: Tables<'contributions'> }) => {
+const LocationContributionItem = ({
+  contribution,
+  profile,
+}: {
+  contribution: Tables<'contributions'>
+  profile: Profile
+}) => {
   const { operation, ressource_id } = contribution
   const { data: location } = useLocation(ressource_id)
+  const t = useTranslations('ContributionItem')
 
   return (
     <ContributionItemWrapper contribution={contribution}>
-      <span className="text-slate-300">{operationLabels[operation]}</span>
-      <Link href={`/locations/${ressource_id}`} className="hover:underline">
-        {location?.name || `ID: ${ressource_id}`}
-      </Link>
+      {t.rich('userContributedToLocation', {
+        user: () => (
+          <Link href={`/profiles/${profile.id}`} className="text-white hover:underline">
+            {profile.username}
+          </Link>
+        ),
+        operation,
+        location: () => (
+          <Link href={`/locations/${ressource_id}`} className="text-white hover:underline">
+            {location?.name || `ID: ${ressource_id}`}
+          </Link>
+        ),
+      })}
     </ContributionItemWrapper>
   )
 }
@@ -73,30 +113,42 @@ const LocationContributionItem = ({ contribution }: { contribution: Tables<'cont
 const ConcertBandContributionItem = ({
   contribution,
   bandIds,
+  profile,
 }: {
   contribution: Tables<'contributions'>
   bandIds: Tables<'bands'>['id'][] | undefined
+  profile: Profile
 }) => {
   const { operation, ressource_id } = contribution
   const { data: concert } = useConcert(ressource_id, null, { bandsSize: 1 })
   const { data: bands } = useBands({ ids: bandIds })
-  const operationLabel = relationOperationLabels[operation]
+  const t = useTranslations('ContributionItem')
+  const concertName = useConcertName(concert)
 
   return (
     <ContributionItemWrapper contribution={contribution}>
-      <span className="text-slate-300">{operationLabel[0]} Band</span>
-      <CommaSeperatedList>
-        {bands?.data.map(band => (
-          <Link key={band.id} href={`/bands/${band.id}`} className="hover:underline">
-            {band.name || `ID: ${band.id}`}
+      {t.rich('userContributedToConcertBands', {
+        user: () => (
+          <Link href={`/profiles/${profile.id}`} className="text-white hover:underline">
+            {profile.username}
           </Link>
-        ))}
-      </CommaSeperatedList>
-      <span className="text-slate-300">{operationLabel[1]}</span>
-      <Link href={`/concerts/${concert?.id}`} className="hover:underline">
-        {getConcertName(concert) || `ID: ${ressource_id}`}
-      </Link>
-      {operationLabel[2] && <span className="text-slate-300">{operationLabel[2]}</span>}
+        ),
+        operation,
+        bands: () => (
+          <CommaSeperatedList>
+            {bands?.data.map(band => (
+              <Link key={band.id} href={`/bands/${band.id}`} className="text-white hover:underline">
+                {band.name || `ID: ${band.id}`}
+              </Link>
+            ))}
+          </CommaSeperatedList>
+        ),
+        concert: () => (
+          <Link href={`/concerts/${concert?.id}`} className="text-white hover:underline">
+            {concertName || `ID: ${ressource_id}`}
+          </Link>
+        ),
+      })}
     </ContributionItemWrapper>
   )
 }
@@ -104,27 +156,41 @@ const ConcertBandContributionItem = ({
 const BandGenreContributionItem = ({
   contribution,
   genreIds,
+  profile,
 }: {
   contribution: Tables<'contributions'>
   genreIds: Tables<'genres'>['id'][] | undefined
+  profile: Profile
 }) => {
   const { operation, ressource_id } = contribution
   const { data: band } = useBand(ressource_id, null)
-
   const { data: genres } = useGenres({ ids: genreIds ?? [] })
-  const operationLabel = relationOperationLabels[operation]
+  const t = useTranslations('ContributionItem')
 
   return (
     <ContributionItemWrapper contribution={contribution}>
-      <span className="text-slate-300">{operationLabel[0]}</span>
-      <CommaSeperatedList>
-        {genres?.map(genre => <span key={genre.id}>{genre.name || `ID: ${genre.id}`}</span>)}
-      </CommaSeperatedList>
-      <span className="text-slate-300">{operationLabel[1]}</span>
-      <Link href={`/bands/${band?.id}`} className="hover:underline">
-        {band?.name || `ID: ${ressource_id}`}
-      </Link>
-      {operationLabel[2] && <span className="text-slate-300">{operationLabel[2]}</span>}
+      {t.rich('userContributedToBandGenres', {
+        user: () => (
+          <Link href={`/profiles/${profile.id}`} className="text-white hover:underline">
+            {profile.username}
+          </Link>
+        ),
+        operation,
+        genres: () => (
+          <CommaSeperatedList>
+            {genres?.map(genre => (
+              <span key={genre.id} className="text-white">
+                {genre.name || `ID: ${genre.id}`}
+              </span>
+            ))}
+          </CommaSeperatedList>
+        ),
+        band: () => (
+          <Link href={`/bands/${band?.id}`} className="text-white hover:underline">
+            {band?.name || `ID: ${ressource_id}`}
+          </Link>
+        ),
+      })}
     </ContributionItemWrapper>
   )
 }
@@ -136,8 +202,8 @@ const ContributionItemWrapper = ({
   contribution: Tables<'contributions'>
   children?: ReactNode
 }) => {
-  const { operation, user_id, timestamp, state_old, state_new } = contribution
-  const { data: profile } = useProfile(user_id)
+  const { operation, timestamp, state_old, state_new } = contribution
+  const locale = useLocale()
 
   function findChanges(oldState: State, newState: State) {
     if (!oldState || !newState) {
@@ -172,26 +238,21 @@ const ContributionItemWrapper = ({
           {operation === 'UPDATE' && <PenIcon className="size-icon" />}
           {operation === 'DELETE' && <TrashIcon className="size-icon" />}
         </div>
-        <div className="flex flex-wrap items-center gap-x-1 text-sm">
-          <Link href={`/users/${profile?.username}`} className="hover:underline">
-            {profile?.username}
-          </Link>
-          {children}
-        </div>
+        <div className="flex flex-wrap items-center gap-x-1 text-sm text-slate-300">{children}</div>
         <span className="whitespace-nowrap text-sm text-slate-300 md:ml-auto">
-          {getRelativeTime(timestamp, 'de-CH')}
+          {getRelativeTime(timestamp, locale)}
         </span>
       </div>
       {changes.length > 0 && (
         <div className="mt-2 rounded border border-slate-700 p-2 text-sm">
           {changes.map(change => (
             <div key={change.key} className="flex flex-wrap items-center gap-1">
-              <strong>{change.key}:</strong>
-              <span className="rounded bg-red/10 px-1 text-red">{JSON.stringify(change.old)}</span>
+              <code>{change.key}:</code>
+              <code className="rounded bg-red/10 px-1 text-red">{JSON.stringify(change.old)}</code>
               <ArrowRight className="size-icon text-slate-300" />
-              <span className="rounded bg-venom/10 px-1 text-venom">
+              <code className="rounded bg-venom/10 px-1 text-venom">
                 {JSON.stringify(change.new)}
-              </span>
+              </code>
             </div>
           ))}
         </div>
@@ -209,17 +270,36 @@ export const ContributionItem = ({
   bandIds?: Tables<'bands'>['id'][]
   genreIds?: Tables<'genres'>['id'][]
 }) => {
+  const { user_id } = contribution
+  const { data: profile } = useProfile(user_id)
+
+  if (!profile) {
+    return null
+  }
+
   if (contribution.ressource_type === 'concerts') {
-    return <ConcertContributionItem contribution={contribution} />
+    return <ConcertContributionItem contribution={contribution} profile={profile} />
   } else if (contribution.ressource_type === 'bands') {
-    return <BandContributionItem contribution={contribution} />
+    return <BandContributionItem contribution={contribution} profile={profile} />
   } else if (contribution.ressource_type === 'locations') {
-    return <LocationContributionItem contribution={contribution} />
+    return <LocationContributionItem contribution={contribution} profile={profile} />
   } else if (contribution.ressource_type === 'j_concert_bands') {
-    return <ConcertBandContributionItem contribution={contribution} bandIds={bandIds} />
+    return (
+      <ConcertBandContributionItem
+        contribution={contribution}
+        profile={profile}
+        bandIds={bandIds}
+      />
+    )
   } else if (contribution.ressource_type === 'j_band_genres') {
-    return <BandGenreContributionItem contribution={contribution} genreIds={genreIds} />
+    return (
+      <BandGenreContributionItem
+        contribution={contribution}
+        profile={profile}
+        genreIds={genreIds}
+      />
+    )
   } else {
-    return <p>Ressource nicht gefunden.</p>
+    return null
   }
 }

@@ -2,6 +2,7 @@ import { ActivityGroup } from '@/components/activity/ActivityGroup'
 import { LoadMoreButton } from '@/components/contributions/LoadMoreButton'
 import { Database, Tables } from '@/types/supabase'
 import { createClient } from '@/utils/supabase/server'
+import { getLocale } from 'next-intl/server'
 
 export type ActivityItemT = Database['public']['Views']['activity']['Row'] & {
   user: Tables<'profiles'>
@@ -48,6 +49,7 @@ export default async function ActivityPage(props: {
   const params = await props.params
   const searchParams = await props.searchParams
   const { data, count } = await fetchData({ params, searchParams })
+  const locale = await getLocale()
   const groupedItems = groupByDateAndTime(data as ActivityItemT[])
 
   function groupByDateAndTime(items: ActivityItemT[]) {
@@ -60,7 +62,7 @@ export default async function ActivityPage(props: {
     }
 
     return items.reduce<DateGroup<TimeGroup<ActivityItemT>>[]>((acc, item) => {
-      const date = new Date(item.created_at).toLocaleDateString('de-CH', {
+      const date = new Date(item.created_at).toLocaleDateString(locale, {
         weekday: 'long',
         day: 'numeric',
         month: 'short',

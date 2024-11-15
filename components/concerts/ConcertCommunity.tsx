@@ -1,6 +1,5 @@
 'use client'
 
-import { getConcertName } from '@/lib/getConcertName'
 import Link from 'next/link'
 import { Band, Concert, Profile } from '../../types/types'
 import { UserItem } from '../shared/UserItem'
@@ -10,6 +9,7 @@ import { GuitarIcon } from 'lucide-react'
 import { useConcertProfiles } from '@/hooks/concerts/useConcertProfiles'
 import { Drawer, DrawerTitle, DrawerTrigger } from '../shared/Drawer'
 import { useLocale, useTranslations } from 'next-intl'
+import { useConcertName } from '@/hooks/helpers/useConcertName'
 
 function BandItem({ band }: { band: Band }) {
   const { data: spotifyArtist } = useSpotifyArtist(band.spotify_artist_id)
@@ -72,7 +72,7 @@ function ConcertUserItem({
           {t('uHasSeenNBandsAtConcertX', {
             username: profile.username,
             count,
-            concert: getConcertName(concert),
+            concert: useConcertName(concert),
           })}
         </DrawerTitle>
       </div>

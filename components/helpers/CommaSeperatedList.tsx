@@ -1,9 +1,11 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { ReactNode, useState } from 'react'
 
 export const CommaSeperatedList = ({ children }: { children?: ReactNode[] }) => {
   const [visibleChildren, setVisibleChildren] = useState(3)
+  const t = useTranslations('CommaSeperatedList')
   return (
     <>
       {children?.slice(0, visibleChildren).map((child, index) => (
@@ -11,9 +13,9 @@ export const CommaSeperatedList = ({ children }: { children?: ReactNode[] }) => 
           {child}
           {index + 1 !== children.length &&
             (index + 2 === children.length ? (
-              <span className="text-slate-300">&nbsp;und</span>
+              <span>&nbsp;{t('and')}</span>
             ) : (
-              <span className="text-slate-300">,</span>
+              <span>,</span>
             ))}
         </div>
       ))}

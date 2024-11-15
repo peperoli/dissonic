@@ -334,6 +334,17 @@
   "RemoveFriendForm": {
     "removeFriendQuestion": "Do you really want to remove {username} as friend?"
   },
+  "ProfileForm": {
+    "profilePicture": "Profile picture",
+    "username": "Username",
+    "usernameTakenError": "This username is already taken. Try being more creative.",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "FileUpload": {
+    "remove": "Remove",
+    "dragOrBrowseFile": "Drag or <span>browse</span> file"
+  },
   "SettingsPage": {
     "profile": "Profile",
     "accountSettings": "Account settings"
@@ -353,5 +364,58 @@
     "save": "Save",
     "errorMessage": "An error has occurred. Please try again.",
     "successMessage": "You will shortly receive an e-mail in which you can confirm the change."
+  },
+  "UsersPage": {
+    "fans": "Fans"
+  },
+  "SortSelect": {
+    "sortBy": "Sort by",
+    "mostConcerts": "Most concerts",
+    "fewestConcerts": "Fewest concerts",
+    "mostBands": "Most bands",
+    "fewestBands": "Fewest bands",
+    "newest": "Newest",
+    "oldest": "Oldest"
+  },
+  "UserItem": {
+    "nConcerts": "{count, plural, =1 {# concert} other {# concerts}}",
+    "nBands": "{count, plural, =1 {# band} other {# bands}}"
+  },
+  "ActivityPage": {
+    "activity": "Activity",
+    "noEntriesFound": "No entries found."
+  },
+  "ViewFilter": {
+    "friends": "Friends",
+    "you": "You"
+  },
+  "ActivityTypeFilter": {
+    "activityType": "Activity type",
+    "all": "All",
+    "bandsSeen": "Bands seen",
+    "comments": "Comments",
+    "friendActions": "Friend actions"
+  },
+  "ActivityItem": {
+    "userCommentedOnConcert": "<user></user> commented on concert <concert></concert>",
+    "userSawBandsAtConcert": "<user></user> saw <bands></bands> at concert <concert></concert>",
+    "user1AndUser2AreNowFriends": "<user1></user1> and <user2></user2> are now friends"
+  },
+  "CommaSeperatedList": {
+    "and": "and"
+  },
+  "LoadMoreButton": {
+    "showMore": "Show more"
+  },
+  "ContributionsPage": {
+    "contributions": "Contributions",
+    "noEntriesFound": "No entries found."
+  },
+  "ContributionItem": {
+    "userContributedToConcert": "<user></user> {operation, select, INSERT {created} UPDATE {updated} DELETE {deleted} other {translation error}} <concert></concert>",
+    "userContributedToBand": "<user></user> {operation, select, INSERT {created} UPDATE {updated} DELETE {deleted} other {translation error}} <band></band>",
+    "userContributedToLocation": "<user></user> {operation, select, INSERT {created} UPDATE {updated} DELETE {deleted} other {translation error}} <location></location>",
+    "userContributedToConcertBands": "<user></user> {operation, select, INSERT {added <bands></bands> to <concert></concert>} DELETE {removed <bands></bands> from <concert></concert>} other {translation error}}",
+    "userContributedToBandGenres": "<user></user> {operation, select, INSERT {added <genres></genres> to <band></band>} DELETE {removed <genres></genres> from <band></band>} other {translation error}}"
   }
 }

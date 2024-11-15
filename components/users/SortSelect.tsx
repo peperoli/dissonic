@@ -3,6 +3,7 @@
 import { parseAsBoolean, parseAsStringLiteral, useQueryStates } from 'nuqs'
 import { Select } from '../forms/Select'
 import { FilterButton } from '../FilterButton'
+import { useTranslations } from 'next-intl'
 
 export const SortSelect = () => {
   const sortBy = ['username', 'concert_count', 'band_count', 'created_at'] as const
@@ -13,17 +14,18 @@ export const SortSelect = () => {
     },
     { shallow: false }
   )
+  const t = useTranslations('SortSelect')
   const sortItems = [
-    { id: 0, value: 'concert_count,false', name: 'Meiste Konzerte' },
-    { id: 1, value: 'concert_count,true', name: 'Wenigste Konzerte' },
-    { id: 2, value: 'band_count,false', name: 'Meiste Bands' },
-    { id: 3, value: 'band_count,true', name: 'Wenigste Bands' },
-    { id: 4, value: 'created_at,false', name: 'Neuste' },
-    { id: 5, value: 'created_at,true', name: 'Älteste' },
+    { id: 0, value: 'concert_count,false', name: t('mostConcerts') },
+    { id: 1, value: 'concert_count,true', name: t('fewestConcerts') },
+    { id: 2, value: 'band_count,false', name: t('mostBands') },
+    { id: 3, value: 'band_count,true', name: t('fewestBands') },
+    { id: 4, value: 'created_at,false', name: t('newest') },
+    { id: 5, value: 'created_at,true', name: t('oldest') },
   ]
   return (
     <FilterButton
-      label="Sortieren nach"
+      label={t('sortBy')}
       items={sortItems}
       type="singleselect"
       selectedId={sortItems.findIndex(item => item.value === `${sort.sort_by},${sort.sort_asc}`)}
