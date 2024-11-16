@@ -25,7 +25,7 @@ export const PasswordForm = () => {
       <TextField
         {...register('password', {
           required: true,
-          minLength: { value: 10, message: 'Das Passwort muss mindestens 10 Zeichen enthalten.' },
+          minLength: { value: 12, message: t('passwordLengthError') },
         })}
         error={errors.password}
         label={t('newPassword')}

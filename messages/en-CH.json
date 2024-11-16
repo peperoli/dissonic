@@ -41,6 +41,52 @@
     "addFriend": "Add friend",
     "removeFriend": "Remove friend"
   },
+  "SignupPage": {
+    "welcome": "<span>Welcome</span>, dear fan of live music!",
+    "aDissonicAccountGivesYouTheFollowingFeatures": "A Dissonic account gives you the following features:",
+    "trackBandsAndConcertsYouHaveExperiencedLive": "Track bands and concerts you have experienced live",
+    "seeYourConcertHistoryAndStatistics": "See your concert history and statistics",
+    "commentOnConcertsAndReactToComments": "Comment on concerts and react to comments",
+    "contributeConcertsBandsAndLocations": "Contribute to concerts, bands and locations",
+    "emailAlreadyInUseError": "Error: This e-mail address is already in use.",
+    "successMessage": "Success! You will shortly receive an e-mail in which you can confirm your registration.",
+    "doYouHavAnAccountAlready": "Do you have an account already?",
+    "login": "Login"
+  },
+  "SignupForm": {
+    "email": "E-mail",
+    "usernameLengthError": "The username must be between 4 and 16 characters long.",
+    "usernamePatternError": "The username must only contain letters, numbers, underscores and periods.",
+    "username": "Username",
+    "usernameTakenError": "This username is already taken. Try being creative.",
+    "password": "Password",
+    "passwordLengthError": "The password must be at least 12 characters long.",
+    "createAccount": "Create account"
+  },
+  "LoginPage": {
+    "loginToTrackConcerts": "Login to track concerts",
+    "email": "E-mail",
+    "emailPatternError": "Please enter a valid e-mail address.",
+    "password": "Password",
+    "login": "Login",
+    "forgotPassword": "Forgot password?",
+    "youDontHaveAnAccountYet": "You don't have an account yet?",
+    "letsGetStarted": "Then let's get started!",
+    "signUp": "Sign up"
+  },
+  "ResetPasswordPage": {
+    "login": "Login",
+    "resetPassword": "Reset password",
+    "email": "E-mail",
+    "emailPatternError": "Please enter a valid e-mail address.",
+    "resetPasswordSuccess": "Success! You will shortly receive an e-mail in which you can reset your password."
+  },
+  "UpdatePasswordPage": {
+    "updatePassword": "Update password",
+    "newPassword": "New password",
+    "passwordLengthError": "The password must be at least 12 characters long.",
+    "updatePasswordSuccess": "Success! You can now login with your new password."
+  },
   "HomePage": {
     "concerts": "Concerts",
     "addConcert": "Add concert",
@@ -337,7 +383,7 @@
   "ProfileForm": {
     "profilePicture": "Profile picture",
     "username": "Username",
-    "usernameTakenError": "This username is already taken. Try being more creative.",
+    "usernameTakenError": "This username is already taken. Try being creative.",
     "cancel": "Cancel",
     "save": "Save"
   },
@@ -352,6 +398,7 @@
   "PasswordForm": {
     "changePassword": "Change password",
     "newPassword": "New password",
+    "passwordLengthError": "The password must be at least 12 characters long.",
     "save": "Save",
     "errorMessage": "An error has occurred. Please try again.",
     "successMessage": "You will shortly receive an e-mail in which you can confirm the change."

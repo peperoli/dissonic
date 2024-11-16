@@ -41,6 +41,52 @@
     "addFriend": "Freund*in hinzufügen",
     "removeFriend": "Freund*in entfernen"
   },
+  "SignupPage": {
+    "welcome": "<span>Willkommen</span>, geschätzter Fan von Live-Musik!",
+    "aDissonicAccountGivesYouTheFollowingFeatures": "Ein Dissonic-Konto ermöglicht dir folgende Funktionen:",
+    "trackBandsAndConcertsYouHaveExperiencedLive": "Tracke Bands und Konzerte, die du live erlebt hast",
+    "seeYourConcertHistoryAndStatistics": "Sieh deine Konzert-Historie und Statistiken",
+    "commentOnConcertsAndReactToComments": "Kommentiere Konzerte und reagiere auf Kommentare",
+    "contributeConcertsBandsAndLocations": "Erstelle und bearbeite Konzerte, Bands und Lokale",
+    "emailAlreadyInUseError": "Fehler: Diese E-Mail-Adresse wird bereits verwendet.",
+    "successMessage": "Erfolgreich! Bestätige deine E-Mail-Adresse, um dein Benutzerkonto zu aktivieren.",
+    "doYouHavAnAccountAlready": "Hast du bereits ein Konto?",
+    "login": "Anmelden"
+  },
+  "SignupForm": {
+    "email": "E-Mail",
+    "usernameLengthError": "Der Benutzername muss zwischen 4 und 16 Zeichen enthalten.",
+    "usernamePatternError": "Nur Buchstaben, Zahlen, Punkte und Understriche sind erlaubt.",
+    "username": "Benutzername",
+    "usernameTakenError": "Dieser Benutzername ist bereits vergeben. Probiere, kreativ zu sein.",
+    "password": "Passwort",
+    "passwordLengthError": "Das Passwort muss mindestens 12 Zeichen lang sein.",
+    "createAccount": "Konto erstellen"
+  },
+  "LoginPage": {
+    "loginToTrackConcerts": "Anmelden, um Konzerte zu tracken",
+    "email": "E-Mail",
+    "emailPatternError": "Bitte gib eine gültige E-Mail-Adresse ein.",
+    "password": "Passwort",
+    "login": "Anmelden",
+    "forgotPassword": "Passwort vergessen?",
+    "youDontHaveAnAccountYet": "Du hast noch kein Konto?",
+    "letsGetStarted": "Dann nichts wie los!",
+    "signUp": "Registrieren"
+  },
+  "ResetPasswordPage": {
+    "login": "Anmelden",
+    "resetPassword": "Passwort zurücksetzen",
+    "email": "E-Mail",
+    "emailPatternError": "Bitte gib eine gültige E-Mail-Adresse ein.",
+    "resetPasswordSuccess": "Erfolgreich! Du erhältst in Kürze eine E-Mail, in dem du das Passwort zurücksetzen kannst."
+  },
+  "UpdatePasswordPage": {
+    "updatePassword": "Passwort aktualisieren",
+    "newPassword": "Neues Passwort",
+    "passwordLengthError": "Das Passwort muss mindestens 12 Zeichen lang sein.",
+    "updatePasswordSuccess": "Erfolgreich! Du kannst dich jetzt mit deinem neuen Passwort anmelden."
+  },
   "HomePage": {
     "concerts": "Konzerte",
     "addConcert": "Konzerte hinzufügen",
@@ -352,6 +398,7 @@
   "PasswordForm": {
     "changePassword": "Passwort ändern",
     "newPassword": "Neues Passwort",
+    "passwordLengthError": "Das Passwort muss mindestens 12 Zeichen lang sein.",
     "save": "Speichern",
     "errorMessage": "Es ist ein Fehler aufgetreten. Bitte versuche es erneut.",
     "successMessage": "Du erhältst in Kürze eine E-Mail, in dem du die Änderung bestätigen kannst."

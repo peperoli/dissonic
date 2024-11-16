@@ -5,6 +5,7 @@ import { usernameRegex } from '../../lib/usernameRegex'
 import { Button } from '../Button'
 import { TextField } from '../forms/TextField'
 import { SignUpFormData } from '../../actions/auth'
+import { useTranslations } from 'next-intl'
 
 type FormProps = {
   onSubmit: (data: SignUpFormData) => void
@@ -18,6 +19,7 @@ export const Form = ({ onSubmit, status }: FormProps) => {
     formState: { errors },
   } = useForm<SignUpFormData>({ mode: 'onChange' })
   const { data: profiles } = useProfiles()
+  const t = useTranslations('SignupForm')
   const usernames = profiles?.map(item => item.username)
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5">
@@ -25,43 +27,34 @@ export const Form = ({ onSubmit, status }: FormProps) => {
         {...register('email', { required: true })}
         error={errors.email}
         type="email"
-        label="E-Mail"
+        label={t('email')}
         placeholder="william@delos.com"
       />
       <TextField
         {...register('username', {
           required: true,
-          minLength: { value: 4, message: 'Benutzername muss mindestens 4 Zeichen enthalten.' },
-          maxLength: { value: 16, message: 'Benutzername darf maximal 16 Zeichen enthalten.' },
-          pattern: {
-            value: usernameRegex,
-            message: 'Nur Buchstaben, Zahlen, Punkt und Understrich sind erlaubt.',
-          },
-          validate: value =>
-            !usernames?.includes(value ?? '') ||
-            'Dieser Benutzername ist bereits vergeben, sei mal kreativ.',
+          minLength: { value: 4, message: t('usernameLengthError') },
+          maxLength: { value: 16, message: t('usernameLengthError') },
+          pattern: { value: usernameRegex, message: t('usernamePatternError') },
+          validate: value => !usernames?.includes(value ?? '') || t('usernameTakenError'),
         })}
         error={errors.username}
-        label="Benutzername"
-        placeholder=""
+        label={t('username')}
       />
       <TextField
         {...register('password', {
           required: true,
-          minLength: {
-            value: 10,
-            message: 'Das Passwort muss mindestens 10 Zeichen enthalten.',
-          },
+          minLength: { value: 12, message: t('passwordLengthError') },
         })}
         error={errors.password}
         type="password"
-        label="Passwort"
-        autoComplete='off'
+        label={t('password')}
+        autoComplete="off"
       />
       <div>
         <Button
           type="submit"
-          label="Konto erstellen"
+          label={t('createAccount')}
           appearance="primary"
           loading={status === 'pending'}
         />
