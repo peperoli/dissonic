@@ -5,7 +5,7 @@ export default getRequestConfig(async () => {
   const headersList = await headers()
   const cookieStore = await cookies()
   const languages = ['en', 'de']
-  const defaultLocale = 'de-CH'
+  const defaultLocale = 'en-CH'
   const languageHeader = headersList.get('Accept-Language')
   const matchingLanguage = languageHeader
     ?.split(',')
