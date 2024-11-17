@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import { forwardRef, HTMLInputTypeAttribute, useState } from 'react'
 import { FieldError } from 'react-hook-form'
 import { Button } from '../Button'
+import { useTranslations } from 'next-intl'
 
 type TextFieldProps = {
   name: string
@@ -17,6 +18,8 @@ type TextFieldProps = {
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
   ({ name, label, type = 'text', placeholder = '', error, grouped, ...props }, ref) => {
     const [inputType, setInputType] = useState(type)
+    const t = useTranslations('TextField')
+
     return (
       <div className="form-control">
         <input
@@ -29,14 +32,14 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
             type === 'password' && '!pr-14',
             error ? 'border-yellow' : 'border-slate-500',
             grouped === 'start' && '!rounded-r-none',
-            grouped === 'end' && '!rounded-l-none !border-l-transparent',
+            grouped === 'end' && '!rounded-l-none !border-l-transparent'
           )}
           {...props}
         />
         <label htmlFor={name}>{label}</label>
         {type === 'password' && (
           <Button
-            label={inputType === 'password' ? 'Passwort anzeigen' : 'Passwort verstecken'}
+            label={inputType === 'password' ? t('showPassword') : t('hidePassword')}
             onClick={() => setInputType(inputType === 'password' ? 'text' : 'password')}
             icon={
               inputType === 'password' ? (
@@ -46,13 +49,13 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
               )
             }
             contentType="icon"
-            size='small'
+            size="small"
             className="absolute right-0 m-[11px]"
           />
         )}
         {error && (
           <span className="mt-1 text-sm text-yellow">
-            {error.message || 'Bitte fülle dieses Feld aus.'}
+            {error.message || t('pleaseFillOutThisField')}
           </span>
         )}
       </div>

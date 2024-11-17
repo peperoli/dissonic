@@ -1,12 +1,17 @@
 import { Github, MessageSquareQuoteIcon } from 'lucide-react'
+import { LanguageSelect } from './LanguageSelect'
+import { useTranslations } from 'next-intl'
 
 export const Footer = () => {
+  const t = useTranslations('Footer')
+
   return (
     <footer className="container-fluid mt-auto flex flex-wrap items-center justify-center gap-2 pb-20">
+      <LanguageSelect />
       <a
         href="https://github.com/peperoli/dissonic"
         target="_blank"
-        aria-label="Github Repository"
+        aria-label={t('githubRepository')}
         className="btn btn-icon btn-small btn-tertiary"
       >
         <Github className="size-icon" />
@@ -16,7 +21,7 @@ export const Footer = () => {
         className="btn btn-small btn-tertiary"
       >
         <MessageSquareQuoteIcon className="size-icon" />
-        Feedback
+        {t('feedback')}
       </a>
       <div className="text-sm text-slate-300 md:ml-auto">
         made with {'<3 />'} by{' '}

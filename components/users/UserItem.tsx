@@ -1,9 +1,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { ProfileStat } from 'app/users/page'
-import { getRelativeTimeFormatOptions } from '@/lib/relativeTime'
+import { getRelativeTime } from '@/lib/relativeTime'
 import { UserIcon } from 'lucide-react'
 import { getAssetUrl } from '@/lib/getAssetUrl'
+import { useLocale, useTranslations } from 'next-intl'
 
 type UserItemProps = {
   profileStat: ProfileStat
@@ -11,10 +12,9 @@ type UserItemProps = {
 }
 
 export const UserItem = ({ profileStat, index }: UserItemProps) => {
+  const t = useTranslations('UserItem')
+  const locale = useLocale()
   const avatarUrl = getAssetUrl(profileStat.avatar_path)
-  const rtf = new Intl.RelativeTimeFormat('de-CH', { numeric: 'always', style: 'short' })
-  const formatOptions = getRelativeTimeFormatOptions(profileStat.created_at!)
-  const relativeTimeParts = rtf.formatToParts(...formatOptions)
 
   return (
     <Link href={`/users/${profileStat.username}`} className="block">
@@ -37,12 +37,12 @@ export const UserItem = ({ profileStat, index }: UserItemProps) => {
       <div className="mt-2 overflow-hidden">
         <h3 className="mb-0 truncate whitespace-nowrap text-base">{profileStat.username}</h3>
         <div className="text-sm text-slate-300">
-          {profileStat.concert_count} Konzerte
+          {t('nConcerts', { count: profileStat.concert_count })}
           <br />
-          {profileStat.band_count} Bands
+          {t('nBands', { count: profileStat.band_count })}
           <br />
           {profileStat.created_at && (
-            <span>{`seit ${relativeTimeParts[1].value}${relativeTimeParts[2].value}`}</span>
+            <span>{getRelativeTime(profileStat.created_at, locale)}</span>
           )}
         </div>
       </div>

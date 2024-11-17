@@ -1,0 +1,468 @@
+{
+  "NavBar": {
+    "profile": "Profile",
+    "friends": "Friends",
+    "logout": "Logout",
+    "signUp": "Sign up",
+    "login": "Login"
+  },
+  "Navigation": {
+    "concerts": "Concerts",
+    "bands": "Bands",
+    "locations": "Locations",
+    "activity": "Activity",
+    "fans": "Fans"
+  },
+  "SpeedDial": {
+    "speedDial": "Speed dial",
+    "addLocation": "Add location",
+    "addBand": "Add band",
+    "addConcert": "Add concert"
+  },
+  "Footer": {
+    "githubRepository": "Github Repository",
+    "feedback": "Feedback"
+  },
+  "LanguageSelect": {
+    "language": "Language"
+  },
+  "ModalProvider": {
+    "addConcert": "Add concert",
+    "editConcert": "Edit concert",
+    "deleteConcert": "Delete concert",
+    "deleteComment": "Delete comment",
+    "addBand": "Add band",
+    "editBand": "Edit band",
+    "deleteBand": "Delete band",
+    "addLocation": "Add location",
+    "editLocation": "Edit location",
+    "deleteLocation": "Delete location",
+    "editProfile": "Edit profile",
+    "addFriend": "Add friend",
+    "removeFriend": "Remove friend"
+  },
+  "SignupPage": {
+    "welcome": "<span>Welcome</span>, dear fan of live music!",
+    "aDissonicAccountGivesYouTheFollowingFeatures": "A Dissonic account gives you the following features:",
+    "trackBandsAndConcertsYouHaveExperiencedLive": "Track bands and concerts you have experienced live",
+    "seeYourConcertHistoryAndStatistics": "See your concert history and statistics",
+    "commentOnConcertsAndReactToComments": "Comment on concerts and react to comments",
+    "contributeConcertsBandsAndLocations": "Contribute to concerts, bands and locations",
+    "emailAlreadyInUseError": "Error: This e-mail address is already in use.",
+    "successMessage": "Success! You will shortly receive an e-mail in which you can confirm your registration.",
+    "doYouHavAnAccountAlready": "Do you have an account already?",
+    "login": "Login"
+  },
+  "SignupForm": {
+    "email": "E-mail",
+    "usernameLengthError": "The username must be between 4 and 16 characters long.",
+    "usernamePatternError": "The username must only contain letters, numbers, underscores and periods.",
+    "username": "Username",
+    "usernameTakenError": "This username is already taken. Try being creative.",
+    "password": "Password",
+    "passwordLengthError": "The password must be at least 12 characters long.",
+    "createAccount": "Create account"
+  },
+  "LoginPage": {
+    "loginToTrackConcerts": "Login to track concerts",
+    "email": "E-mail",
+    "emailPatternError": "Please enter a valid e-mail address.",
+    "password": "Password",
+    "login": "Login",
+    "forgotPassword": "Forgot password?",
+    "youDontHaveAnAccountYet": "You don't have an account yet?",
+    "letsGetStarted": "Then let's get started!",
+    "signUp": "Sign up"
+  },
+  "ResetPasswordPage": {
+    "login": "Login",
+    "resetPassword": "Reset password",
+    "email": "E-mail",
+    "emailPatternError": "Please enter a valid e-mail address.",
+    "resetPasswordSuccess": "Success! You will shortly receive an e-mail in which you can reset your password."
+  },
+  "UpdatePasswordPage": {
+    "updatePassword": "Update password",
+    "newPassword": "New password",
+    "passwordLengthError": "The password must be at least 12 characters long.",
+    "updatePasswordSuccess": "Success! You can now login with your new password."
+  },
+  "HomePage": {
+    "concerts": "Concerts",
+    "addConcert": "Add concert",
+    "nEntries": "{count} entries",
+    "sortBy": "Sort by",
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "mostBands": "Most bands",
+    "fewestBands": "Fewest bands",
+    "all": "All",
+    "friends": "Friends",
+    "you": "You",
+    "nOfNEntries": "{count} of {total} entries",
+    "showMore": "Show more"
+  },
+  "BandFilter": {
+    "band": "Band"
+  },
+  "LocationFilter": {
+    "location": "Location"
+  },
+  "YearsFilter": {
+    "year": "Year"
+  },
+  "FestivalRootFilter": {
+    "festival": "Festival"
+  },
+  "FilterButton": {
+    "save": "Save",
+    "close": "Close"
+  },
+  "Select": {
+    "tryUsingASensibleSearchTerm": "Try using a sensible search term."
+  },
+  "SearchField": {
+    "search": "Search ..."
+  },
+  "ConcertPage": {
+    "concerts": "Concerts",
+    "edit": "Edit",
+    "delete": "Delete",
+    "lineup": "Lineup"
+  },
+  "BandList": {
+    "iWasThere": "I was there!",
+    "chooseBandsYouHaveSeenAtThisConcert": "Choose bands you have seen at this concert.",
+    "hideHint": "Hide hint",
+    "save": "Save",
+    "cancel": "Cancel",
+    "thisConcertIsInTheFuture": "This concert is in the future."
+  },
+  "ConcertCommunity": {
+    "fans": "Fans",
+    "nBands": "{count, plural, =1 {# band} other {# bands}}",
+    "uHasSeenNBandsAtConcertX": "{username} has seen {count, plural, =1 {# Band} other {# Bands}} at concert {concert}",
+    "showProfile": "Show profile"
+  },
+  "ConcertStats": {
+    "genresAndCountries": "Genres and countries",
+    "includeRepeatedlySeenBands": "Include repeatedly seen bands",
+    "showAll": "Show all",
+    "showLess": "Show less"
+  },
+  "Comments": {
+    "comments": "Comments",
+    "addComment": "Add comment",
+    "whatDoYouThinkAboutThisConcert": "What do you think about this concert?",
+    "comment": "Comment",
+    "noCommentsYet": "No comments yet. You can take the first step.",
+    "loginToSeeAndAddComments": "Login to see and add comments.",
+    "login": "Login"
+  },
+  "Comment": {
+    "edited": "edited",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "MetaInfo": {
+    "createdAtDByU": "Created at {date} by <link>{username}</link>",
+    "nContributions": "{count, plural, =1 {# contribution} other {# contributions}}"
+  },
+  "ConcertForm": {
+    "concert": "Concert",
+    "festival": "Festival",
+    "name": "Name",
+    "festivalRoot": "Festival series",
+    "festivalRootMissing": "Festival series missing?",
+    "add": "Add",
+    "date": "Date",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "location": "Location",
+    "duplicateConcertWarning": "{count, plural, =1 {There is already a similar concert:} other {There are already # similar concerts:}}",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "TextField": {
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "pleaseFillOutThisField": "Please fill out this field."
+  },
+  "SelectField": {
+    "choose": "Choose ...",
+    "pleaseSelectAnOption": "Please select an option.",
+    "save": "Save"
+  },
+  "EditBandsButton": {
+    "choose": "Choose ...",
+    "pleaseSelectAtLeastOneBand": "Please select at least one band."
+  },
+  "ListManager": {
+    "addBands": "Add bands",
+    "orderBandsByBilling": "Order bands by billing.",
+    "clickOnATargetToMoveTheEntry": "Click on a target to move the entry.",
+    "cancelReorder": "Cancel reorder",
+    "searchBands": "Search bands ...",
+    "resetSearch": "Reset search",
+    "done": "Done",
+    "loading": "Loading ...",
+    "noResultsFound": "No results found.",
+    "addEntry": "Add entry",
+    "removeEntry": "Remove entry",
+    "reorderEntry": "Reorder entry"
+  },
+  "DeleteConcertForm": {
+    "doYouReallyWantToDeleteThisConcert": "Do you really want to delete this concert?",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "BandsPage": {
+    "bands": "Bands",
+    "addBand": "Add band",
+    "searchBand": "Search band ...",
+    "nEntries": "{count, plural, =1 {# entry} other {# entries}}",
+    "noEntriesFound": "No entries found."
+  },
+  "CountryFilter": {
+    "country": "Country"
+  },
+  "GenreFilter": {
+    "genre": "Genre"
+  },
+  "Pagination": {
+    "nEntries": "{count, plural, =1 {# entry} other {# entries}}",
+    "previousPage": "Previous page",
+    "nextPage": "Next page"
+  },
+  "BandPage": {
+    "bands": "Bands",
+    "edit": "Edit",
+    "delete": "Delete",
+    "nConcertsWithX": "{count, plural, =1 {# concert} other {# concerts}} with {band}"
+  },
+  "BandCommunity": {
+    "fans": "Fans",
+    "loading": "Loading ...",
+    "nConcerts": "{count, plural, =1 {# concert} other {# concerts}}",
+    "uHasSeenNConcertsWithX": "{username} has seen {count, plural, =1 {# concert} other {# concerts}} with {band}",
+    "showProfile": "Show profile"
+  },
+  "BandForm": {
+    "name": "Name",
+    "duplicateBandsWarning": "{count, plural, =1 {There is already a similar band:} other {There are already # similar bands:}}",
+    "country": "Country",
+    "genres": "Genres",
+    "youtubeChannel": "YouTube channel",
+    "showMore": "Show more",
+    "showLess": "Show less",
+    "optional": "(optional)"
+  },
+  "SpotifyArtistSelect": {
+    "spotifyLink": "Spotify link",
+    "noLink": "No link",
+    "showMore": "Show more",
+    "nFollowers": "{count, plural, =1 {# follower} other {# followers}}"
+  },
+  "DeleteBandForm": {
+    "doYouReallyWantToDeleteThisBand": "Do you really want to delete this band?",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "LocationsPage": {
+    "locations": "Locations",
+    "addLocation": "Add location",
+    "searchLocation": "Search location ...",
+    "nEntries": "{count, plural, =1 {# entry} other {# entries}}",
+    "noEntriesFound": "No entries found."
+  },
+  "LocationPage": {
+    "locations": "Locations",
+    "edit": "Edit",
+    "delete": "Delete",
+    "website": "Website",
+    "nConcertsAtX": "{count, plural, =1 {# concert} other {# concerts}} @ {location}"
+  },
+  "LocationCommunity": {
+    "fans": "Fans",
+    "nConcerts": "{count, plural, =1 {# concert} other {# concerts}}",
+    "uHasSeenNConcertsAtX": "{username} has seen {count, plural, =1 {# concert} other {# concerts}} @ {location}",
+    "showProfile": "Show profile"
+  },
+  "LocationForm": {
+    "name": "Name",
+    "duplicateLocationWarning": "{count, plural, =1 {There is already a similar location:} other {There are already # similar locations:}}",
+    "zipCode": "ZIP Code",
+    "city": "City",
+    "country": "Country",
+    "showMore": "Show more",
+    "showLess": "Show less",
+    "website": "Website",
+    "optional": "(optional)",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "DeleteLocationForm": {
+    "doYouReallyWantToDeleteThisLocation": "Do you really want to delete this location?",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "ProfileLayout": {
+    "friend": "Friend",
+    "settings": "Settings",
+    "stats": "Stats",
+    "concerts": "Concerts",
+    "friends": "Friends",
+    "activity": "Activity",
+    "contributions": "Contributions"
+  },
+  "ToggleFriendButton": {
+    "addFriend": "Add friend",
+    "removeFriend": "Remove friend"
+  },
+  "EditProfileButton": {
+    "editProfile": "Edit profile"
+  },
+  "Score": {
+    "score": "Score",
+    "bands": "Bands",
+    "concerts": "Concerts",
+    "festivals": "Festivals",
+    "longestStreak": "Longest streak",
+    "dToD": "{startDate} to {endDate}",
+    "minOneConcertPerMonth": "Minimum one concert per month"
+  },
+  "TopBands": {
+    "loading": "Loading ...",
+    "topBands": "Top bands",
+    "nConcerts": "{count, plural, =1 {# concert} other {# concerts}}"
+  },
+  "TopGrid": {
+    "showMore": "Show more",
+    "showLess": "Show less"
+  },
+  "PieCharts": {
+    "concerts": "Concerts",
+    "festivals": "Festivals",
+    "bandsSeenOnce": "Bands seen once",
+    "bandsSeenMultipleTimes": "Bands seen multiple times"
+  },
+  "ConcertsByYear": {
+    "unitPerTimeUnit": "{unit, select, concerts {concerts} other {bands}} pro {timeUnit, select, year {year} other {months}}",
+    "concerts": "Concerts",
+    "bands": "Bands",
+    "timeFrame": "Time frame",
+    "allTime": "All time"
+  },
+  "BarChart": {
+    "nConcerts": "{count, plural, =1 {# concert} other {# concerts}}",
+    "nBands": "{count, plural, =1 {# band} other {# bands}}"
+  },
+  "TopLocations": {
+    "loading": "Loading ...",
+    "topLocations": "Top locations",
+    "nConcerts": "{count, plural, =1 {# concert} other {# concerts}}"
+  },
+  "FriendsPage": {
+    "friendInvites": "Friend invites",
+    "incomingInvites": "Incoming invites",
+    "youHaveNoIncomingInvites": "You have no incoming invites.",
+    "outgoingInvites": "Outgoing invites",
+    "youHaveNoOutgoingInvites": "You have no outgoing invites."
+  },
+  "InviteItem": {
+    "cancelInvite": "Cancel invite",
+    "reject": "Reject",
+    "accept": "Accept"
+  },
+  "FriendItem": {
+    "removeFriend": "Remove friend"
+  },
+  "RemoveFriendForm": {
+    "removeFriendQuestion": "Do you really want to remove {username} as friend?"
+  },
+  "ProfileForm": {
+    "profilePicture": "Profile picture",
+    "username": "Username",
+    "usernameTakenError": "This username is already taken. Try being creative.",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "FileUpload": {
+    "remove": "Remove",
+    "dragOrBrowseFile": "Drag or <span>browse</span> file"
+  },
+  "SettingsPage": {
+    "profile": "Profile",
+    "accountSettings": "Account settings"
+  },
+  "PasswordForm": {
+    "changePassword": "Change password",
+    "newPassword": "New password",
+    "passwordLengthError": "The password must be at least 12 characters long.",
+    "save": "Save",
+    "errorMessage": "An error has occurred. Please try again.",
+    "successMessage": "You will shortly receive an e-mail in which you can confirm the change."
+  },
+  "EmailForm": {
+    "changeEmail": "Change e-mail",
+    "yourAccountIsConnectedWithThisEmailAddress": "Your account is connected with this e-mail address.",
+    "newEmail": "New e-mail",
+    "pleaseEnterAValidEmailAddress": "Please enter a valid e-mail address.",
+    "save": "Save",
+    "errorMessage": "An error has occurred. Please try again.",
+    "successMessage": "You will shortly receive an e-mail in which you can confirm the change."
+  },
+  "UsersPage": {
+    "fans": "Fans"
+  },
+  "SortSelect": {
+    "sortBy": "Sort by",
+    "mostConcerts": "Most concerts",
+    "fewestConcerts": "Fewest concerts",
+    "mostBands": "Most bands",
+    "fewestBands": "Fewest bands",
+    "newest": "Newest",
+    "oldest": "Oldest"
+  },
+  "UserItem": {
+    "nConcerts": "{count, plural, =1 {# concert} other {# concerts}}",
+    "nBands": "{count, plural, =1 {# band} other {# bands}}"
+  },
+  "ActivityPage": {
+    "activity": "Activity",
+    "noEntriesFound": "No entries found."
+  },
+  "ViewFilter": {
+    "friends": "Friends",
+    "you": "You"
+  },
+  "ActivityTypeFilter": {
+    "activityType": "Activity type",
+    "all": "All",
+    "bandsSeen": "Bands seen",
+    "comments": "Comments",
+    "friendActions": "Friend actions"
+  },
+  "ActivityItem": {
+    "userCommentedOnConcert": "<user></user> commented on concert <concert></concert>",
+    "userSawBandsAtConcert": "<user></user> saw <bands></bands> at concert <concert></concert>",
+    "user1AndUser2AreNowFriends": "<user1></user1> and <user2></user2> are now friends"
+  },
+  "CommaSeperatedList": {
+    "and": "and"
+  },
+  "LoadMoreButton": {
+    "showMore": "Show more"
+  },
+  "ContributionsPage": {
+    "contributions": "Contributions",
+    "noEntriesFound": "No entries found."
+  },
+  "ContributionItem": {
+    "userContributedToConcert": "<user></user> {operation, select, INSERT {created} UPDATE {updated} DELETE {deleted} other {translation error}} <concert></concert>",
+    "userContributedToBand": "<user></user> {operation, select, INSERT {created} UPDATE {updated} DELETE {deleted} other {translation error}} <band></band>",
+    "userContributedToLocation": "<user></user> {operation, select, INSERT {created} UPDATE {updated} DELETE {deleted} other {translation error}} <location></location>",
+    "userContributedToConcertBands": "<user></user> {operation, select, INSERT {added <bands></bands> to <concert></concert>} DELETE {removed <bands></bands> from <concert></concert>} other {translation error}}",
+    "userContributedToBandGenres": "<user></user> {operation, select, INSERT {added <genres></genres> to <band></band>} DELETE {removed <genres></genres> from <band></band>} other {translation error}}"
+  }
+}

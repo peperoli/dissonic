@@ -8,6 +8,7 @@ import { useSession } from '../../hooks/auth/useSession'
 import { UserItem } from '../shared/UserItem'
 import { useQueryState } from 'nuqs'
 import { useModal } from '../shared/ModalProvider'
+import { useTranslations } from 'next-intl'
 
 type FriendItemProps = {
   friend: Profile | null
@@ -18,6 +19,7 @@ export const FriendItem = ({ friend, profileId }: FriendItemProps) => {
   const [_, setModal] = useModal()
   const [__, setFriendId] = useQueryState('friendId', { history: 'push' })
   const { data: session } = useSession()
+  const t = useTranslations('FriendItem')
 
   if (!friend) return null
 
@@ -28,7 +30,7 @@ export const FriendItem = ({ friend, profileId }: FriendItemProps) => {
       </Link>
       {session?.user.id === profileId && (
         <Button
-          label="Freund entfernen"
+          label={t('removeFriend')}
           onClick={() => {
             setModal('delete-friend')
             setFriendId(friend.id)

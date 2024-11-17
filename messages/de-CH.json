@@ -1,0 +1,468 @@
+{
+  "NavBar": {
+    "profile": "Profil",
+    "friends": "Freunde",
+    "logout": "Abmelden",
+    "signUp": "Registrieren",
+    "login": "Anmelden"
+  },
+  "Navigation": {
+    "concerts": "Konzerte",
+    "bands": "Bands",
+    "locations": "Lokale",
+    "activity": "Aktivität",
+    "fans": "Fans"
+  },
+  "SpeedDial": {
+    "speedDial": "Speed dial",
+    "addLocation": "Lokal hinzufügen",
+    "addBand": "Band hinzufügen",
+    "addConcert": "Konzert hinzufügen"
+  },
+  "Footer": {
+    "githubRepository": "Github Repository",
+    "feedback": "Feedback"
+  },
+  "LanguageSelect": {
+    "language": "Sprache"
+  },
+  "ModalProvider": {
+    "addConcert": "Konzerthinzufügen",
+    "editConcert": "Konzert bearbeiten",
+    "deleteConcert": "Konzert löschen",
+    "deleteComment": "Kommentar löschen",
+    "addBand": "Band hinzufügen",
+    "editBand": "Band bearbeiten",
+    "deleteBand": "Band löschen",
+    "addLocation": "Lokal hinzufügen",
+    "editLocation": "Lokal bearbeiten",
+    "deleteLocation": "Lokal löschen",
+    "editProfile": "Profil bearbeiten",
+    "addFriend": "Freund*in hinzufügen",
+    "removeFriend": "Freund*in entfernen"
+  },
+  "SignupPage": {
+    "welcome": "<span>Willkommen</span>, geschätzter Fan von Live-Musik!",
+    "aDissonicAccountGivesYouTheFollowingFeatures": "Ein Dissonic-Konto ermöglicht dir folgende Funktionen:",
+    "trackBandsAndConcertsYouHaveExperiencedLive": "Tracke Bands und Konzerte, die du live erlebt hast",
+    "seeYourConcertHistoryAndStatistics": "Sieh deine Konzert-Historie und Statistiken",
+    "commentOnConcertsAndReactToComments": "Kommentiere Konzerte und reagiere auf Kommentare",
+    "contributeConcertsBandsAndLocations": "Erstelle und bearbeite Konzerte, Bands und Lokale",
+    "emailAlreadyInUseError": "Fehler: Diese E-Mail-Adresse wird bereits verwendet.",
+    "successMessage": "Erfolgreich! Bestätige deine E-Mail-Adresse, um dein Benutzerkonto zu aktivieren.",
+    "doYouHavAnAccountAlready": "Hast du bereits ein Konto?",
+    "login": "Anmelden"
+  },
+  "SignupForm": {
+    "email": "E-Mail",
+    "usernameLengthError": "Der Benutzername muss zwischen 4 und 16 Zeichen enthalten.",
+    "usernamePatternError": "Nur Buchstaben, Zahlen, Punkte und Understriche sind erlaubt.",
+    "username": "Benutzername",
+    "usernameTakenError": "Dieser Benutzername ist bereits vergeben. Probiere, kreativ zu sein.",
+    "password": "Passwort",
+    "passwordLengthError": "Das Passwort muss mindestens 12 Zeichen lang sein.",
+    "createAccount": "Konto erstellen"
+  },
+  "LoginPage": {
+    "loginToTrackConcerts": "Anmelden, um Konzerte zu tracken",
+    "email": "E-Mail",
+    "emailPatternError": "Bitte gib eine gültige E-Mail-Adresse ein.",
+    "password": "Passwort",
+    "login": "Anmelden",
+    "forgotPassword": "Passwort vergessen?",
+    "youDontHaveAnAccountYet": "Du hast noch kein Konto?",
+    "letsGetStarted": "Dann nichts wie los!",
+    "signUp": "Registrieren"
+  },
+  "ResetPasswordPage": {
+    "login": "Anmelden",
+    "resetPassword": "Passwort zurücksetzen",
+    "email": "E-Mail",
+    "emailPatternError": "Bitte gib eine gültige E-Mail-Adresse ein.",
+    "resetPasswordSuccess": "Erfolgreich! Du erhältst in Kürze eine E-Mail, in dem du das Passwort zurücksetzen kannst."
+  },
+  "UpdatePasswordPage": {
+    "updatePassword": "Passwort aktualisieren",
+    "newPassword": "Neues Passwort",
+    "passwordLengthError": "Das Passwort muss mindestens 12 Zeichen lang sein.",
+    "updatePasswordSuccess": "Erfolgreich! Du kannst dich jetzt mit deinem neuen Passwort anmelden."
+  },
+  "HomePage": {
+    "concerts": "Konzerte",
+    "addConcert": "Konzerte hinzufügen",
+    "nEntries": "{count} Einträge",
+    "sortBy": "Sortieren nach",
+    "newest": "Neueste",
+    "oldest": "Älteste",
+    "mostBands": "Meiste Bands",
+    "fewestBands": "Wenigste Bands",
+    "all": "Alle",
+    "friends": "Freunde",
+    "you": "Du",
+    "nOfNEntries": "{count} von {total} Einträgen",
+    "showMore": "Mehr anzeigen"
+  },
+  "BandFilter": {
+    "band": "Band"
+  },
+  "LocationFilter": {
+    "location": "Lokal"
+  },
+  "YearsFilter": {
+    "year": "Jahr"
+  },
+  "FestivalRootFilter": {
+    "festival": "Festival"
+  },
+  "FilterButton": {
+    "save": "Speichern",
+    "close": "Schliessen"
+  },
+  "Select": {
+    "tryUsingASensibleSearchTerm": "Versuche es mit einem sinnvollen Suchbegriff."
+  },
+  "SearchField": {
+    "search": "Suchen ..."
+  },
+  "ConcertPage": {
+    "concerts": "Konzerte",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "lineup": "Lineup"
+  },
+  "BandList": {
+    "iWasThere": "Ich war dabei!",
+    "chooseBandsYouHaveSeenAtThisConcert": "Wähle Bands, die du an diesem Konzert erlebt hast.",
+    "hideHint": "Hinweis ausblenden",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "thisConcertIsInTheFuture": "Dieses Konzert liegt in der Zukunft."
+  },
+  "ConcertCommunity": {
+    "fans": "Fans",
+    "nBands": "{count, plural, =1 {# Band} other {# Bands}}",
+    "uHasSeenNBandsAtConcertX": "{username} hat {count, plural, =1 {# Band} other {# Bands}} am Konzert {concert} gesehen",
+    "showProfile": "Profil anzeigen"
+  },
+  "ConcertStats": {
+    "genresAndCountries": "Genres und Länder",
+    "includeRepeatedlySeenBands": "Mehrfach gesehene Bands einschliessen",
+    "showAll": "Alles anzeigen",
+    "showLess": "Weniger anzeigen"
+  },
+  "Comments": {
+    "comments": "Kommentare",
+    "addComment": "Kommentar hinzufügen",
+    "whatDoYouThinkAboutThisConcert": "Was ist dir von diesem Konzert in Erinnerung geblieben?",
+    "comment": "Kommentieren",
+    "noCommentsYet": "Noch keine Kommentare vorhanden. Du kannst den ersten Schritt machen.",
+    "loginToSeeAndAddComments": "Melde dich an, um Kommentare zu sehen und schreiben.",
+    "login": "Anmelden"
+  },
+  "Comment": {
+    "edited": "bearbeitet",
+    "edit": "Bearbeiten",
+    "delete": "Löschen"
+  },
+  "MetaInfo": {
+    "createdAtDByU": "Erstellt am {date} von <link>{username}</link>",
+    "nContributions": "{count, plural, =1 {# Bearbeitung} other {# Bearbeitungen}}"
+  },
+  "ConcertForm": {
+    "concert": "Konzert",
+    "festival": "Festival",
+    "name": "Name",
+    "festivalRoot": "Festival-Serie",
+    "festivalRootMissing": "Festival-Serie fehlt?",
+    "add": "Hinzufügen",
+    "date": "Datum",
+    "startDate": "Startdatum",
+    "endDate": "Enddatum",
+    "location": "Lokal",
+    "duplicateConcertWarning": "{count, plural, =1 {Es existiert bereits ein ähnliches Konzert:} other {Es existieren bereits # ähnliche Konzerte:}}",
+    "cancel": "Abbrechen",
+    "save": "Speichern"
+  },
+  "TextField": {
+    "showPassword": "Passwort anzeigen",
+    "hidePassword": "Passwort verbergen",
+    "pleaseFillOutThisField": "Bitte fülle dieses Feld aus."
+  },
+  "SelectField": {
+    "choose": "Wählen ...",
+    "pleaseSelectAnOption": "Bitte wähle eine Option aus.",
+    "save": "Speicher"
+  },
+  "EditBandsButton": {
+    "choose": "Wählen ...",
+    "pleaseSelectAtLeastOneBand": "Bitte wähle mindestens eine Band aus."
+  },
+  "ListManager": {
+    "addBands": "Bands hinzufügen",
+    "orderBandsByBilling": "Ordne Bands nach der Reihefolge des Lineups.",
+    "clickOnATargetToMoveTheEntry": "Klicke auf ein Ziel, um den Eintrag zu verschieben.",
+    "cancelReorder": "Verschieben abbrechen",
+    "searchBands": "Bands suchen ...",
+    "resetSearch": "Suche zurücksetzen",
+    "done": "Fertig",
+    "loading": "Laden ...",
+    "noResultsFound": "Keine Resultate gefunden.",
+    "addEntry": "Eintrag hinzufügen",
+    "removeEntry": "Eintrag entfernen",
+    "reorderEntry": "Eintrag verschieben"
+  },
+  "DeleteConcertForm": {
+    "doYouReallyWantToDeleteThisConcert": "Willst du dieses Konzert wirklich löschen?",
+    "cancel": "Abbrechen",
+    "delete": "Löschen"
+  },
+  "BandsPage": {
+    "bands": "Bands",
+    "addBand": "Band hinzufügen",
+    "searchBand": "Band suchen ...",
+    "nEntries": "{count, plural, =1 {# Eintrag} other {# Einträge}}",
+    "noEntriesFound": "Keine Einträge gefunden."
+  },
+  "CountryFilter": {
+    "country": "Land"
+  },
+  "GenreFilter": {
+    "genre": "Genre"
+  },
+  "Pagination": {
+    "nEntries": "{count, plural, =1 {# Eintrag} other {# Einträge}}",
+    "previousPage": "Vorherige Seite",
+    "nextPage": "Nächste Seite"
+  },
+  "BandPage": {
+    "bands": "Bands",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "nConcertsWithX": "{count, plural, =1 {# Konzert} other {# Konzerte}} mit {band}"
+  },
+  "BandCommunity": {
+    "fans": "Fans",
+    "loading": "Laden ...",
+    "nConcerts": "{count, plural, =1 {# Konzert} other {# Konzerte}}",
+    "uHasSeenNConcertsWithX": "{username} hat {count, plural, =1 {# Konzert} other {# Konzerte}} mit {band} gesehen",
+    "showProfile": "Profil anzeigen"
+  },
+  "BandForm": {
+    "name": "Name",
+    "duplicateBandsWarning": "{count, plural, =1 {Es existiert bereits eine ähnliche Band:} other {Es existieren bereits # ähnliche Bands:}}",
+    "country": "Land",
+    "genres": "Genres",
+    "youtubeChannel": "YouTube-Channel",
+    "showMore": "Mehr anzeigen",
+    "showLess": "Weniger anzeigen",
+    "optional": "(optional)"
+  },
+  "SpotifyArtistSelect": {
+    "spotifyLink": "Spotify-Verknüpfung",
+    "noLink": "Keine Verknüpfung",
+    "showMore": "Mehr anzeigen",
+    "nFollowers": "{count, plural, =1 {# Follower} other {# Follower}}"
+  },
+  "DeleteBandForm": {
+    "doYouReallyWantToDeleteThisBand": "Willst du diese Band wirklich löschen?",
+    "cancel": "Abbrechen",
+    "delete": "Löschen"
+  },
+  "LocationsPage": {
+    "locations": "Lokale",
+    "addLocation": "Lokal hinzufügen",
+    "searchLocation": "Lokal suchen ...",
+    "nEntries": "{count, plural, =1 {# Eintrag} other {# Einträge}}",
+    "noEntriesFound": "Keine Einträge gefunden."
+  },
+  "LocationPage": {
+    "locations": "Lokale",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "website": "Website",
+    "nConcertsAtX": "{count, plural, =1 {# Konzert} other {# Konzerte}} @ {location}"
+  },
+  "LocationCommunity": {
+    "fans": "Fans",
+    "nConcerts": "{count, plural, =1 {# Konzert} other {# Konzerte}}",
+    "uHasSeenNConcertsAtX": "{username} hat {count, plural, =1 {# Konzert} other {# Konzerte}} @ {location} gesehen",
+    "showProfile": "Profil anzeigen"
+  },
+  "LocationForm": {
+    "name": "Name",
+    "duplicateLocationWarning": "{count, plural, =1 {Es existiert bereits ein ähnliches Lokal:} other {Es existieren bereits # ähnliche Lokale:}}",
+    "zipCode": "PLZ",
+    "city": "Stadt",
+    "country": "Land",
+    "showMore": "Mehr anzeigen",
+    "showLess": "Weniger anzeigen",
+    "website": "Website",
+    "optional": "(optional)",
+    "cancel": "Abbrechen",
+    "save": "Speichern"
+  },
+  "DeleteLocationForm": {
+    "doYouReallyWantToDeleteThisLocation": "Willst du dieses Lokal wirklich löschen?",
+    "cancel": "Abbrechen",
+    "delete": "Löschen"
+  },
+  "ProfileLayout": {
+    "friend": "Freund*in",
+    "settings": "Einstellungen",
+    "stats": "Statistiken",
+    "concerts": "Konzerte",
+    "friends": "Freunde",
+    "activity": "Aktivität",
+    "contributions": "Bearbeitungen"
+  },
+  "ToggleFriendButton": {
+    "addFriend": "Freund*in hinzufügen",
+    "removeFriend": "Freund*in entfernen"
+  },
+  "EditProfileButton": {
+    "editProfile": "Profil bearbeiten"
+  },
+  "Score": {
+    "score": "Punkte",
+    "bands": "Bands",
+    "concerts": "Konzerte",
+    "festivals": "Festivals",
+    "longestStreak": "Längste Serie",
+    "dToD": "{startDate} bis {endDate}",
+    "minOneConcertPerMonth": "Mindestens ein Konzert pro Monat"
+  },
+  "TopBands": {
+    "loading": "Laden ...",
+    "topBands": "Top Bands",
+    "nConcerts": "{count, plural, =1 {# Konzert} other {# Konzerte}}"
+  },
+  "TopGrid": {
+    "showMore": "Mehr anzeigen",
+    "showLess": "Weniger anzeigen"
+  },
+  "PieCharts": {
+    "concerts": "Konzerte",
+    "festivals": "Festivals",
+    "bandsSeenOnce": "Einmal gesehene Bands",
+    "bandsSeenMultipleTimes": "Mehrmals gesehene Bands"
+  },
+  "ConcertsByYear": {
+    "unitPerTimeUnit": "{unit, select, concerts {Konzerte} other {Bands}} pro {timeUnit, select, year {Jahr} other {Monat}}",
+    "concerts": "Konzerte",
+    "bands": "Bands",
+    "timeFrame": "Zeitraum",
+    "allTime": "Gesamt"
+  },
+  "BarChart": {
+    "nConcerts": "{count, plural, =1 {# Konzert} other {# Konzerte}}",
+    "nBands": "{count, plural, =1 {# Band} other {# Bands}}"
+  },
+  "TopLocations": {
+    "loading": "Laden ...",
+    "topLocations": "Top Lokale",
+    "nConcerts": "{count, plural, =1 {# Konzert} other {# Konzerte}}"
+  },
+  "FriendsPage": {
+    "friendInvites": "Freunschaftsanfragen",
+    "incomingInvites": "Eingehende Anfragen",
+    "youHaveNoIncomingInvites": "Du hast keine eingehenden Anfragen.",
+    "outgoingInvites": "Ausgehende Anfragen",
+    "youHaveNoOutgoingInvites": "Du hast keine ausgehenden Anfragen."
+  },
+  "InviteItem": {
+    "cancelInvite": "Anfrage zurückziehen",
+    "reject": "Ablehnen",
+    "accept": "Akzeptieren"
+  },
+  "FriendItem": {
+    "removeFriend": "Freund*in entfernen"
+  },
+  "RemoveFriendForm": {
+    "removeFriendQuestion": "Willst du {username} wirklich als Freund*in entfernen?"
+  },
+  "ProfileForm": {
+    "profilePicture": "Profilbild",
+    "username": "Benutzername",
+    "usernameTakenError": "Dieser Benutzername ist bereits vergeben. Probiere, kreativ zu sein.",
+    "cancel": "Abbrechen",
+    "save": "Speichern"
+  },
+  "FileUpload": {
+    "remove": "Entfernen",
+    "dragOrBrowseFile": "Datei hinziehen oder <span>durchsuchen</span>"
+  },
+  "SettingsPage": {
+    "profile": "Profil",
+    "accountSettings": "Kontoeinstellungen"
+  },
+  "PasswordForm": {
+    "changePassword": "Passwort ändern",
+    "newPassword": "Neues Passwort",
+    "passwordLengthError": "Das Passwort muss mindestens 12 Zeichen lang sein.",
+    "save": "Speichern",
+    "errorMessage": "Es ist ein Fehler aufgetreten. Bitte versuche es erneut.",
+    "successMessage": "Du erhältst in Kürze eine E-Mail, in dem du die Änderung bestätigen kannst."
+  },
+  "EmailForm": {
+    "changeEmail": "E-Mail ändern",
+    "yourAccountIsConnectedWithThisEmailAddress": "Dein Konto ist mit dieser E-Mail-Adresse verbunden.",
+    "newEmail": "Neue E-Mail",
+    "pleaseEnterAValidEmailAddress": "Bitte gib eine gültige E-Mail-Adresse ein.",
+    "save": "Speichern",
+    "errorMessage": "Es ist ein Fehler aufgetreten. Bitte versuche es erneut.",
+    "successMessage": "Du erhältst in Kürze eine E-Mail, in dem du die Änderung bestätigen kannst."
+  },
+  "UsersPage": {
+    "fans": "Fans"
+  },
+  "SortSelect": {
+    "sortBy": "Sortieren nach",
+    "mostConcerts": "Meiste Konzerte",
+    "fewestConcerts": "Wenigste Konzerte",
+    "mostBands": "Meiste Bands",
+    "fewestBands": "Wenigste Bands",
+    "newest": "Neueste",
+    "oldest": "Älteste"
+  },
+  "UserItem": {
+    "nConcerts": "{count, plural, =1 {# Konzert} other {# Konzerte}}",
+    "nBands": "{count, plural, =1 {# Band} other {# Bands}}"
+  },
+  "ActivityPage": {
+    "activity": "Aktivität",
+    "noEntriesFound": "Keine Einträge gefunden."
+  },
+  "ViewFilter": {
+    "friends": "Freunde",
+    "you": "Du"
+  },
+  "ActivityTypeFilter": {
+    "activityType": "Aktivitätstyp",
+    "all": "Alle",
+    "bandsSeen": "Gesehene Bands",
+    "comments": "Kommentare",
+    "friendActions": "Freundesaktionen"
+  },
+  "ActivityItem": {
+    "userCommentedOnConcert": "<user></user> kommentierte Konzert <concert></concert>",
+    "userSawBandsAtConcert": "<user></user> sah <bands></bands> am Konzert <concert></concert>",
+    "user1AndUser2AreNowFriends": "<user1></user1> und <user2></user2> sind jetzt befreundet"
+  },
+  "CommaSeperatedList": {
+    "and": "und"
+  },
+  "LoadMoreButton": {
+    "showMore": "Mehr anzeigen"
+  },
+  "ContributionsPage": {
+    "contributions": "Bearbeitungen",
+    "noEntriesFound": "Keine Einträge gefunden."
+  },
+  "ContributionItem": {
+    "userContributedToConcert": "<user></user> {operation, select, INSERT {erstellte} UPDATE {bearbeitete} DELETE {löschte} other {Übersetzungsfehler}} <concert></concert>",
+    "userContributedToBand": "<user></user> {operation, select, INSERT {erstellte} UPDATE {bearbeitete} DELETE {löschte} other {Übersetzungsfehler}} <band></band>",
+    "userContributedToLocation": "<user></user> {operation, select, INSERT {erstellte} UPDATE {bearbeitete} DELETE {löschte} other {Übersetzungsfehler}} <location></location>",
+    "userContributedToConcertBands": "<user></user> {operation, select, INSERT {fügte <bands></bands> zu <concert></concert> hinzu} DELETE {entfernte <bands></bands> von <concert></concert>} other {Übersetzungsfehler}}",
+    "userContributedToBandGenres": "<user></user> {operation, select, INSERT {fügte <genres></genres> zu <band></band> hinzu} DELETE {entfernte <genres></genres> von <band></band>} other {Übersetzungsfehler}}"
+  }
+}

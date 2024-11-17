@@ -30,7 +30,7 @@ export function getRelativeTimeFormatOptions(date: string | number | Date) {
 
 export function getRelativeTime(date: string | number | Date, locale: Intl.LocalesArgument) {
   const formatOptions = getRelativeTimeFormatOptions(date)
-  const rtf = new Intl.RelativeTimeFormat('de-CH', { numeric: 'auto', style: 'narrow' })
+  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto', style: 'narrow' })
 
   return rtf.format(...formatOptions)
 }

@@ -1,5 +1,6 @@
 import { useContributionsCount } from '@/hooks/contributions/useContributionsCount'
 import { InfoIcon } from 'lucide-react'
+import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
 
 type MetaInfoProps = {
@@ -13,25 +14,28 @@ type MetaInfoProps = {
 
 export const MetaInfo = ({ createdAt, creator, ressourceType, ressourceId }: MetaInfoProps) => {
   const { data: contributionsCount } = useContributionsCount({ ressourceType, ressourceId })
+  const t = useTranslations('MetaInfo')
+  const locale = useLocale()
 
-  if (!createdAt && !creator && !contributionsCount) {
+  if ((!createdAt || !creator) && !contributionsCount) {
     return null
   }
 
   return (
     <section className="flex flex-wrap items-center gap-3 rounded-lg bg-slate-800 p-4 text-sm text-slate-300 md:p-6">
       <InfoIcon className="size-icon" />
-      {(createdAt || creator) && (
+      {createdAt && creator && (
         <p>
-          Erstellt {createdAt && `am ${new Date(createdAt).toLocaleDateString('de-CH')}`}
-          {creator && (
-            <>
-              {' von '}
+          {t.rich('createdAtDByU', {
+            date: new Date(createdAt).toLocaleDateString(locale),
+            hasCreator: creator ? 'true' : 'false',
+            link: chunks => (
               <Link href={`/users/${creator.username}`} className="text-white hover:underline">
-                {creator.username}
+                {chunks}
               </Link>
-            </>
-          )}
+            ),
+            username: creator.username,
+          })}
         </p>
       )}
       {!!contributionsCount && (
@@ -39,7 +43,7 @@ export const MetaInfo = ({ createdAt, creator, ressourceType, ressourceId }: Met
           href={`/contributions?ressourceType=${ressourceType}&ressourceId=${ressourceId}`}
           className="hover:underline"
         >
-          {contributionsCount} {contributionsCount === 1 ? 'Bearbeitung' : 'Bearbeitungen'}
+          {t('nContributions', { count: contributionsCount })}
         </Link>
       )}
     </section>

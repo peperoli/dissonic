@@ -5,6 +5,7 @@ import { Popover, PopoverBackdrop, PopoverButton, PopoverPanel } from '@headless
 import { Check, ChevronDown, LinkIcon } from 'lucide-react'
 import { Button } from '../Button'
 import { useState } from 'react'
+import { useLocale, useTranslations } from 'next-intl'
 
 interface SelectItemProps {
   item: SpotifyArtist
@@ -13,7 +14,8 @@ interface SelectItemProps {
 }
 
 const SelectItem = ({ item, value, handleChange }: SelectItemProps) => {
-  const formatter = new Intl.NumberFormat('de-CH')
+  const t = useTranslations('SpotifyArtistSelect')
+
   return (
     <label className="flex w-full items-center gap-3 rounded-lg p-2 focus-within:bg-slate-600 hover:bg-slate-600">
       <input
@@ -39,7 +41,7 @@ const SelectItem = ({ item, value, handleChange }: SelectItemProps) => {
       <div className="grid">
         <div>{item.name}</div>
         <div className="truncate text-sm text-slate-300">
-          {formatter.format(item.followers.total)} Follower
+          {t('nFollowers', { count: item.followers.total })}
           {item.genres.length > 0 && <> &bull; {item.genres.join(', ')}</>}
         </div>
       </div>
@@ -57,12 +59,13 @@ interface SpotifyArtistSelectProps {
 export const SpotifyArtistSelect = ({ bandName, value, onChange }: SpotifyArtistSelectProps) => {
   const [limit, setLimit] = useState(10)
   const { data: searchResults, isLoading } = useSpotifySearch(bandName, { limit })
+  const t = useTranslations('SpotifyArtistSelect')
   const selectedArtist = searchResults?.find(item => item.id === value)
 
   return (
     <Popover className="relative">
       <PopoverButton className="w-full rounded-lg border border-slate-500 bg-slate-750 px-4 pb-3 pt-1 text-left accent-white">
-        <span className="mb-2 inline-block w-max text-xs text-slate-300">Spotify-Verknüpfung</span>
+        <span className="mb-2 inline-block w-max text-xs text-slate-300">{t('spotifyLink')}</span>
         <span className="flex items-center gap-3">
           {value !== null && (
             <span className="relative flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-slate-800">
@@ -79,7 +82,7 @@ export const SpotifyArtistSelect = ({ bandName, value, onChange }: SpotifyArtist
               )}
             </span>
           )}
-          <span>{value !== null ? selectedArtist?.name : 'Keine Verknüpfung'}</span>
+          <span>{value !== null ? selectedArtist?.name : t('noLink')}</span>
           <ChevronDown className="ml-auto size-icon" />
         </span>
       </PopoverButton>
@@ -99,7 +102,7 @@ export const SpotifyArtistSelect = ({ bandName, value, onChange }: SpotifyArtist
                   onChange={() => handleChange(null)}
                   className="sr-only"
                 />
-                <span className="inline-flex h-10 items-center">Keine Verknüpfung</span>
+                <span className="inline-flex h-10 items-center">{t('noLink')}</span>
                 {value === null && <Check className="ml-auto size-icon" />}
               </label>
               {searchResults?.map(item => (
@@ -109,7 +112,7 @@ export const SpotifyArtistSelect = ({ bandName, value, onChange }: SpotifyArtist
                 {!!searchResults?.length && (
                   <Button
                     onClick={() => setLimit(prev => prev + 10)}
-                    label="Mehr anzeigen"
+                    label={t('showMore')}
                     size="small"
                     appearance="primary"
                     loading={isLoading}

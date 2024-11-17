@@ -9,10 +9,12 @@ import { useRouter } from 'next/navigation'
 import { Form } from './Form'
 import { AuthError, PostgrestError } from '@supabase/supabase-js'
 import { SignUpFormData } from '../../actions/auth'
+import { useTranslations } from 'next-intl'
 
 export const SignupPage = () => {
   const signUp = useSignUp()
   const { push } = useRouter()
+  const t = useTranslations('SignupPage')
 
   const onSubmit: SubmitHandler<SignUpFormData> = async formData => {
     signUp.mutate(formData)
@@ -23,32 +25,32 @@ export const SignupPage = () => {
     <main className="container-sm">
       <section className="rounded-2xl bg-radial-gradient from-venom/50 p-8">
         <h1>
-          <span className="text-[1.5em]">Willkommen,</span>
-          <br />
-          geschätzter Fan von Live-Musik!
+          {t.rich('welcome', {
+            span: chunk => <span className="text-[1.5em]">{chunk}</span>,
+          })}
         </h1>
-        <p className="mb-2">Ein Dissonic-Konto ermöglicht dir folgende Funktionen:</p>
+        <p className="mb-2">{t('aDissonicAccountGivesYouTheFollowingFeatures')}</p>
         <ul className="mb-6">
           <li className="flex items-center gap-4">
             <CheckIcon className="size-icon flex-shrink-0 text-slate-300" />
-            Konzerte, Bands und Locations eintragen und aktualisieren
+            {t('trackBandsAndConcertsYouHaveExperiencedLive')}
           </li>
           <li className="flex items-center gap-4">
             <CheckIcon className="size-icon flex-shrink-0 text-slate-300" />
-            Deine Konzert-Historie und Statistiken einsehen
+            {t('seeYourConcertHistoryAndStatistics')}
           </li>
           <li className="flex items-center gap-4">
             <CheckIcon className="size-icon flex-shrink-0 text-slate-300" />
-            Bands markieren, die du live erlebt hast
+            {t('commentOnConcertsAndReactToComments')}
           </li>
           <li className="flex items-center gap-4">
             <CheckIcon className="size-icon flex-shrink-0 text-slate-300" />
-            Konzerte kommentieren und auf Kommentare reagieren
+            {t('contributeConcertsBandsAndLocations')}
           </li>
         </ul>
       </section>
       {signUp.status !== 'success' && (
-        <section className="bg-slate-800 rounded-lg p-6">
+        <section className="rounded-lg bg-slate-800 p-6">
           <Form onSubmit={onSubmit} status={signUp.status} />
         </section>
       )}
@@ -57,21 +59,17 @@ export const SignupPage = () => {
           statusType="error"
           message={
             'code' in error && error.code === '23505'
-              ? 'Fehler: Es existiert bereits ein Benutzer für diese E-Mail-Adresse.'
+              ? t('emailAlreadyInUseError')
               : errorMessages[error.message]
           }
           className="mt-6"
         />
       )}
       {signUp.status === 'success' && (
-        <StatusBanner
-          statusType="success"
-          message="Erfolgreich! Bestätige deine E-Mail-Adresse, um dein Benutzerkonto zu aktivieren."
-          className="mt-6"
-        />
+        <StatusBanner statusType="success" message={t('successMessage')} className="mt-6" />
       )}
-      <h2 className="mt-10">Hast du bereits ein Konto?</h2>
-      <Button label="Anmelden" onClick={() => push('/login')} appearance="secondary" />
+      <h2 className="mt-10">{t('doYouHavAnAccountAlready')}</h2>
+      <Button label={t('login')} onClick={() => push('/login')} appearance="secondary" />
     </main>
   )
 }

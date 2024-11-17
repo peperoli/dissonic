@@ -3,6 +3,7 @@ import { useConcertDates } from '../../hooks/concerts/useConcertDates'
 import { SpinnerIcon } from '../layout/SpinnerIcon'
 import { FilterButton } from './../FilterButton'
 import { RangeSliderWrapper } from './../RangeFilter'
+import { useTranslations } from 'next-intl'
 
 type YearsRangeSliderProps = {
   selectedOptions: number[]
@@ -11,6 +12,7 @@ type YearsRangeSliderProps = {
 
 const YearsRangeSlider = ({ ...props }: YearsRangeSliderProps) => {
   const { data: concertDates, isPending } = useConcertDates()
+  const t = useTranslations('YearsFilter')
   const concertYears = concertDates
     ?.map(item => item.date_start && new Date(item.date_start).getFullYear())
     .filter(item => typeof item === 'number')
@@ -22,7 +24,7 @@ const YearsRangeSlider = ({ ...props }: YearsRangeSliderProps) => {
       </div>
     )
   }
-  return <RangeSliderWrapper unit="Jahr" options={concertYears} isLoading={isPending} {...props} />
+  return <RangeSliderWrapper unit={t('year')} options={concertYears} isLoading={isPending} {...props} />
 }
 
 interface YearsFilterProps {
@@ -32,13 +34,14 @@ interface YearsFilterProps {
 
 export const YearsFilter = ({ values: submittedValues, onSubmit }: YearsFilterProps) => {
   const [selectedOptions, setSelectedOptions] = useState(submittedValues ?? [])
+  const t = useTranslations('YearsFilter')
 
   useEffect(() => {
     setSelectedOptions(submittedValues ?? [])
   }, [submittedValues])
   return (
     <FilterButton
-      label="Jahr"
+      label={t('year')}
       type="range"
       selectedIds={selectedOptions}
       submittedValues={submittedValues}

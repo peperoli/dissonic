@@ -3,6 +3,7 @@ import { LoadMoreButton } from '@/components/contributions/LoadMoreButton'
 import { Tables } from '@/types/supabase'
 import { ContributionFetchOptions } from '@/types/types'
 import { createClient } from '@/utils/supabase/server'
+import { getLocale, getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 
 const relatedRessourceTypes = {
@@ -49,6 +50,8 @@ export default async function ContributionsPage(props: {
 }) {
   const searchParams = await props.searchParams
   const { data: contributions, count: contributionsCount } = await fetchData({ searchParams })
+  const t = await getTranslations('ContributionsPage')
+  const locale = await getLocale()
   const groupedContributions = groupByDateAndTime(contributions)
 
   function groupByDateAndTime(items: Tables<'contributions'>[]) {
@@ -62,7 +65,7 @@ export default async function ContributionsPage(props: {
     }
 
     return items.reduce<DateGroup<TimeGroup<Tables<'contributions'>>>[]>((acc, item) => {
-      const date = new Date(item.timestamp).toLocaleDateString('de-CH', {
+      const date = new Date(item.timestamp).toLocaleDateString(locale, {
         weekday: 'long',
         day: 'numeric',
         month: 'short',
@@ -98,18 +101,9 @@ export default async function ContributionsPage(props: {
 
   return (
     <main className="container">
-      <h1>Bearbeitungen</h1>
+      <h1>{t('contributions')}</h1>
       {contributions.length === 0 && (
-        <>
-          <p className="mb-4 text-slate-300">
-            Keine Bearbeitungen für diese Ressource / diesen User gefunden.
-          </p>
-          {(searchParams.size || searchParams.ressourceId || searchParams.ressourceType) && (
-            <Link href="/contributions" className="btn btn-secondary btn-small">
-              Alle Bearbeitungen
-            </Link>
-          )}
-        </>
+        <p className="mb-4 text-slate-300">{t('noEntriesFound')}</p>
       )}
       <div className="grid gap-6">
         {groupedContributions.map(dateGroup => (

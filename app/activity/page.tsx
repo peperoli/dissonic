@@ -5,6 +5,7 @@ import { LoadMoreButton } from '@/components/contributions/LoadMoreButton'
 import { Database, Tables } from '@/types/supabase'
 import { ActivityFetchOptions } from '@/types/types'
 import { createClient } from '@/utils/supabase/server'
+import { getLocale, getTranslations } from 'next-intl/server'
 import { redirect } from 'next/navigation'
 
 export type ActivityItemT = Database['public']['Views']['activity']['Row'] & {
@@ -75,6 +76,8 @@ export default async function ActivityPage(props: {
 }) {
   const searchParams = await props.searchParams
   const { data, count } = await fetchData({ searchParams })
+  const t = await getTranslations('ActivityPage')
+  const locale = await getLocale()
   const groupedItems = groupByDateAndTime(data as ActivityItemT[])
 
   function groupByDateAndTime(items: ActivityItemT[]) {
@@ -87,7 +90,7 @@ export default async function ActivityPage(props: {
     }
 
     return items.reduce<DateGroup<TimeGroup<ActivityItemT>>[]>((acc, item) => {
-      const date = new Date(item.created_at).toLocaleDateString('de-CH', {
+      const date = new Date(item.created_at).toLocaleDateString(locale, {
         weekday: 'long',
         day: 'numeric',
         month: 'short',
@@ -118,13 +121,13 @@ export default async function ActivityPage(props: {
 
   return (
     <main className="container">
-      <h1>Aktivität</h1>
+      <h1>{t('activity')}</h1>
       <div className="grid gap-6">
         <div className="flex flex-col gap-4 md:flex-row">
           {!searchParams.user && <ViewFilter />}
           <ActivityTypeFilter />
         </div>
-        {data.length === 0 && <p className="mb-4 text-slate-300">Keine Aktivität gefunden.</p>}
+        {data.length === 0 && <p className="mb-4 text-slate-300">{t('noEntriesFound')}</p>}
         {groupedItems.map(dateGroup => (
           <section key={dateGroup.date}>
             <h2 className="h3">{dateGroup.date}</h2>

@@ -1,4 +1,5 @@
 import { Search, X } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { ChangeEvent, forwardRef } from 'react'
 
 type SearchFieldProps = {
@@ -9,10 +10,13 @@ type SearchFieldProps = {
 }
 
 export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
-  ({ name, placeholder = 'Suchen', query, setQuery }, ref) => {
+  ({ name, placeholder, query, setQuery }, ref) => {
+    const t = useTranslations('SearchField')
+
     function handleChange(event: ChangeEvent<HTMLInputElement>) {
       setQuery(event.target.value)
     }
+
     return (
       <div className="form-control">
         <Search className="absolute top-1/2 ml-3 size-icon -translate-y-1/2" />
@@ -21,7 +25,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
           type="search"
           name={name}
           id={name}
-          placeholder={placeholder}
+          placeholder={placeholder ?? t('search')}
           value={query}
           onChange={handleChange}
           className="min-w-48 !pl-10"

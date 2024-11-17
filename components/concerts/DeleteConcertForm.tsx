@@ -1,6 +1,7 @@
 import { Button } from '../Button'
 import { useParams } from 'next/navigation'
 import { useDeleteConcert } from '@/hooks/concerts/useDeleteConcert'
+import { useTranslations } from 'next-intl'
 
 type DeleteConcertFormProps = {
   close: () => void
@@ -9,13 +10,14 @@ type DeleteConcertFormProps = {
 export const DeleteConcertForm = ({ close }: DeleteConcertFormProps) => {
   const { id: concertId } = useParams<{ id?: string }>()
   const { mutate, isPending } = useDeleteConcert()
+  const t = useTranslations('DeleteConcertForm')
   return (
     <div>
-      <p>Willst du dieses Konzert wirklich löschen?</p>
+      <p>{t('doYouReallyWantToDeleteThisConcert')}</p>
       <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:justify-end [&>*]:flex-1">
-        <Button label="Abbrechen" onClick={close} />
+        <Button label={t('cancel')} onClick={close} />
         <Button
-          label="Löschen"
+          label={t('delete')}
           onClick={() => (concertId ? mutate(parseInt(concertId)) : null)}
           appearance="primary"
           danger

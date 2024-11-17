@@ -14,6 +14,7 @@ import { getRelativeTime } from '@/lib/relativeTime'
 import clsx from 'clsx'
 import { UserItem } from '../shared/UserItem'
 import Link from 'next/link'
+import { useLocale, useTranslations } from 'next-intl'
 
 type EditCommentFormProps = {
   comment: Comment
@@ -84,6 +85,8 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
     'commentId',
     parseAsInteger.withOptions({ history: 'push' })
   )
+  const t = useTranslations('Comment')
+  const locale = useLocale()
   const createdAt = new Date(comment.created_at)
   return (
     <div className="group flex gap-2">
@@ -95,8 +98,8 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
           </Link>
           <span className="text-slate-300">
             {' • '}
-            {getRelativeTime(comment.edited_at || createdAt, 'de-CH')}
-            {comment.edited_at && ' bearbeitet'}
+            {getRelativeTime(comment.edited_at || createdAt, locale)}
+            {comment.edited_at && ` ${t('edited')}`}
           </span>
         </div>
         <div className="relative flex gap-4 rounded-lg rounded-tl-none bg-slate-850 p-4 pb-6">
@@ -118,7 +121,7 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
                 <Button
                   onClick={() => setEdit(true)}
                   contentType="icon"
-                  label="Kommentar bearbeiten"
+                  label={t('edit')}
                   size="small"
                   icon={<EditIcon className="size-icon" />}
                 />
@@ -128,7 +131,7 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
                     setCommentId(comment.id)
                   }}
                   contentType="icon"
-                  label="Kommentar löschen"
+                  label={t('delete')}
                   size="small"
                   danger
                   icon={<TrashIcon className="size-icon" />}

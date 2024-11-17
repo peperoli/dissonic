@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import Image from 'next/legacy/image'
 import { ChangeEvent, DragEvent, useState } from 'react'
 import { Button } from '../Button'
+import { useTranslations } from 'next-intl'
 
 type FileUploadProps = {
   name: string
@@ -13,6 +14,7 @@ type FileUploadProps = {
 
 export const FileUpload = ({ label, name, value, onChange }: FileUploadProps) => {
   const [dragActive, setDragActive] = useState(false)
+  const t = useTranslations('FileUpload')
   const fileUrl = value ? URL.createObjectURL(value) : null
 
   const handleDrag = function (event: DragEvent<HTMLDivElement>) {
@@ -61,7 +63,7 @@ export const FileUpload = ({ label, name, value, onChange }: FileUploadProps) =>
         onDrop={handleDrop}
         className={clsx(
           'flex items-center gap-4 rounded-lg border-2 border-dashed bg-slate-750 p-4 peer-focus:border-venom',
-          dragActive ? ' border-solid border-venom' : ' border-slate-500'
+          dragActive ? 'border-solid border-venom' : 'border-slate-500'
         )}
       >
         <div className="relative grid aspect-square w-24 place-content-center rounded-lg bg-slate-850">
@@ -78,7 +80,7 @@ export const FileUpload = ({ label, name, value, onChange }: FileUploadProps) =>
                 <Button
                   onClick={() => onChange(null)}
                   icon={<X className="size-icon" />}
-                  label="Entfernen"
+                  label={t('remove')}
                   contentType="icon"
                   size="small"
                 />
@@ -91,9 +93,11 @@ export const FileUpload = ({ label, name, value, onChange }: FileUploadProps) =>
           )}
         </div>
         <p className={clsx(dragActive && 'pointer-events-none')}>
-          Datei hinziehen
-          <br />
-          oder <span className="cursor-pointer font-bold hover:text-venom">durchsuchen</span>
+          {t.rich('dragOrBrowseFile', {
+            span: chunk => (
+              <span className="cursor-pointer font-bold hover:text-venom">{chunk}</span>
+            ),
+          })}
         </p>
       </div>
     </label>

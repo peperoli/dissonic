@@ -5,6 +5,8 @@ const withPWA = require('next-pwa')({
   skipWaiting: true,
 })
 
+const withNextIntl = require('next-intl/plugin')()
+
 const nextConfig = {
   reactStrictMode: true,
   images: {
@@ -24,4 +26,4 @@ const nextConfig = {
   },
 }
 
-module.exports = withPWA(nextConfig)
+module.exports = withPWA(withNextIntl(nextConfig))

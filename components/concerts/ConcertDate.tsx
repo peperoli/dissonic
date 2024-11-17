@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import { useLocale } from 'next-intl'
 
 type ConcertDateProps = {
   date: Date
@@ -7,6 +8,7 @@ type ConcertDateProps = {
 }
 
 export const ConcertDate = ({ date, isFirst, contrast }: ConcertDateProps) => {
+  const locale = useLocale()
   const isCurrentYear = date.getFullYear() === new Date().getFullYear()
   return (
     <div
@@ -26,17 +28,17 @@ export const ConcertDate = ({ date, isFirst, contrast }: ConcertDateProps) => {
       {isCurrentYear ? (
         <>
           <span className="text-2xl font-bold leading-none">
-            {date.toLocaleDateString('de-CH', { day: 'numeric' })}
+            {date.toLocaleDateString(locale, { day: 'numeric' })}
           </span>
-          <span className="text-sm">{date.toLocaleDateString('de-CH', { month: 'short' })}</span>
+          <span className="text-sm">{date.toLocaleDateString(locale, { month: 'short' })}</span>
         </>
       ) : (
         <>
           <div className="flex gap-1">
             <span className="font-bold">
-              {date.toLocaleDateString('de-CH', { day: 'numeric' })}
+              {date.toLocaleDateString(locale, { day: 'numeric' })}
             </span>
-            <span>{date.toLocaleDateString('de-CH', { month: 'short' })}</span>
+            <span>{date.toLocaleDateString(locale, { month: 'short' })}</span>
           </div>
           <span className="text-sm">{date.getFullYear()}</span>
         </>

@@ -13,6 +13,7 @@ import { useProfile } from '@/hooks/profiles/useProfile'
 import { useUploadAvatar } from '@/hooks/profiles/useUploadAvatar'
 import { useAvatar } from '@/hooks/profiles/useAvatar'
 import { useUser } from '@/hooks/auth/useUser'
+import { useTranslations } from 'next-intl'
 
 type FormProps = {
   close: () => void
@@ -37,6 +38,7 @@ export const Form = ({ close }: FormProps) => {
   const editProfile = useEditProfile()
   const deleteFiles = useDeleteAvatar()
   const uploadAvatar = useUploadAvatar()
+  const t = useTranslations('ProfileForm')
   const usernames = profiles?.map(item => item.username)
 
   const { push } = useRouter()
@@ -70,7 +72,7 @@ export const Form = ({ close }: FormProps) => {
       <Controller
         name="avatarFile"
         control={control}
-        render={({ field }) => <FileUpload label="Profilbild" {...field} />}
+        render={({ field }) => <FileUpload label={t('profilePicture')} {...field} />}
       />
       <TextField
         {...register('username', {
@@ -78,17 +80,17 @@ export const Form = ({ close }: FormProps) => {
           validate: value =>
             value === profile?.username ||
             !usernames?.includes(value ?? '') ||
-            'Dieser Benutzername ist bereits vergeben, sei mal kreativ.',
+            t('usernameTakenError'),
         })}
         error={errors.username}
-        label="Benutzername"
+        label={t('username')}
         autoComplete="off"
       />
       <div className="flex gap-4 [&>*]:flex-1">
-        <Button onClick={close} label="Abbrechen" />
+        <Button onClick={close} label={t('cancel')} />
         <Button
           type="submit"
-          label="Speichern"
+          label={t('save')}
           appearance="primary"
           disabled={Object.keys(errors).length > 0}
           loading={editProfile.isPending || deleteFiles.isPending}

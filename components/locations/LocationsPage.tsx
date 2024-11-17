@@ -6,7 +6,6 @@ import { TableRow } from '../TableRow'
 import { useEffect, useState } from 'react'
 import { SearchField } from '../forms/SearchField'
 import { Button } from '../Button'
-import useMediaQuery from '../../hooks/helpers/useMediaQuery'
 import { ExtendedRes, Location } from '../../types/types'
 import { useLocations } from '../../hooks/locations/useLocations'
 import { useDebounce } from '../../hooks/helpers/useDebounce'
@@ -16,6 +15,7 @@ import { useSession } from '../../hooks/auth/useSession'
 import { useModal } from '../shared/ModalProvider'
 import { StatusBanner } from '../forms/StatusBanner'
 import { SpeedDial } from '../layout/SpeedDial'
+import { useLocale, useTranslations } from 'next-intl'
 
 interface LocationsPageProps {
   initialLocations: ExtendedRes<Location[]>
@@ -36,7 +36,9 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
   const { data: session } = useSession()
   const { push } = useRouter()
   const pathname = usePathname()
-  const regionNames = new Intl.DisplayNames('de', { type: 'region' })
+  const t = useTranslations('LocationsPage')
+  const locale = useLocale()
+  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
 
   useEffect(() => {
     if (query) {
@@ -46,12 +48,12 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
   return (
     <main className="container-fluid">
       <div className="sr-only flex justify-between md:not-sr-only md:mb-6">
-        <h1 className="mb-0">Locations</h1>
+        <h1 className="mb-0">{t('locations')}</h1>
         <Button
           onClick={
             session ? () => setModal('add-location') : () => push(`/login?redirect=${pathname}`)
           }
-          label="Location hinzufügen"
+          label={t('addLocation')}
           appearance="primary"
           icon={<PlusIcon className="size-icon" />}
           className="hidden md:block"
@@ -60,15 +62,15 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
       <Table>
         <SearchField
           name="searchLocations"
-          placeholder="Locations"
+          placeholder={t('searchLocation')}
           query={query}
           setQuery={setQuery}
         />
         <div className="my-4 text-sm text-slate-300">
-          {locations?.count}&nbsp;{locations?.count === 1 ? 'Eintrag' : 'Einträge'}
+          {t('nEntries', { count: locations?.count })}
         </div>
         {locations?.count === 0 ? (
-          <StatusBanner statusType="info" message="Blyat! Keine Einträge gefunden." />
+          <StatusBanner statusType="info" message={t('noEntriesFound')} />
         ) : (
           locations?.data.map(location => (
             <TableRow key={location.id} href={`/locations/${location.id}`}>

@@ -4,6 +4,7 @@ import { useSession } from '@/hooks/auth/useSession'
 import { useQueryState } from 'nuqs'
 import { useDeleteFriend } from '@/hooks/profiles/useDeleteFriend'
 import { useParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 
 type RemoveFriendFormProps = {
   close: () => void
@@ -15,6 +16,7 @@ export const RemoveFriendForm = ({ close }: RemoveFriendFormProps) => {
   const { data: profile } = useProfile(friendId, username)
   const { data: session } = useSession()
   const { mutate, isPending } = useDeleteFriend()
+  const t = useTranslations('RemoveFriendForm')
 
   async function onSubmit() {
     if (profile && session?.user) {
@@ -24,10 +26,7 @@ export const RemoveFriendForm = ({ close }: RemoveFriendFormProps) => {
 
   return (
     <div>
-      <p>
-        Willst du <strong>{profile?.username}</strong> wirklich als Freund*in
-        entfernen?
-      </p>
+      <p>{t('removeFriendQuestion', { username: profile?.username })}</p>
       <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:justify-end [&>*]:flex-1">
         <Button label="Abbrechen" onClick={close} />
         <Button

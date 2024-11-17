@@ -13,6 +13,7 @@ import { useLocation } from '@/hooks/locations/useLocation'
 import { MetaInfo } from '../shared/MetaInfo'
 import { SpeedDial } from '../layout/SpeedDial'
 import { LocationCommunity } from './LocationCommunity'
+import { useLocale, useTranslations } from 'next-intl'
 
 type LocationPageProps = {
   location: Location
@@ -23,10 +24,7 @@ export const LocationPage = ({
   location: initialLocation,
   locationQueryState,
 }: LocationPageProps) => {
-  const { data: location, isPending: locationIsLoading } = useLocation(
-    initialLocation.id,
-    initialLocation
-  )
+  const { data: location } = useLocation(initialLocation.id, initialLocation)
   const { data: concerts } = useConcerts({
     locations: [initialLocation.id],
     sort: { sort_by: 'date_start', sort_asc: false },
@@ -35,29 +33,30 @@ export const LocationPage = ({
   const { data: session } = useSession()
   const { push } = useRouter()
   const pathname = usePathname()
-  const regionNames = new Intl.DisplayNames('de', { type: 'region' })
+  const t = useTranslations('LocationPage')
+  const locale = useLocale()
+  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
   const mapSearchQuery = encodeURIComponent(
     [location?.name, location?.zip_code, location?.city].join(' ')
   )
 
-  if (locationIsLoading) {
-    return <p>Lade...</p>
+  if (!location) {
+    notFound()
   }
 
-  if (!location) notFound()
   return (
     <main className="container grid gap-4">
       <div className="flex items-center justify-between">
         <Link href={`/locations${locationQueryState ?? ''}`} className="btn btn-small btn-tertiary">
           <ArrowLeft className="size-icon" />
-          Zurück zur Übersicht
+          {t('locations')}
         </Link>
         <div className="flex gap-3">
           <Button
             onClick={
               session ? () => setModal('edit-location') : () => push(`/login?redirect=${pathname}`)
             }
-            label="Bearbeiten"
+            label={t('edit')}
             icon={<Edit className="size-icon" />}
             contentType="icon"
             size="small"
@@ -69,7 +68,7 @@ export const LocationPage = ({
                 ? () => setModal('delete-location')
                 : () => push(`/login?redirect=${pathname}`)
             }
-            label="Löschen"
+            label={t('delete')}
             icon={<Trash className="size-icon" />}
             contentType="icon"
             danger
@@ -94,7 +93,7 @@ export const LocationPage = ({
           <div className="flex flex-wrap gap-2">
             {location.website && (
               <Link href={location.website} target="_blank" className="btn btn-small btn-secondary">
-                Website
+                {t('website')}
               </Link>
             )}
             <Link
@@ -102,7 +101,7 @@ export const LocationPage = ({
               target="_blank"
               className="btn btn-small btn-secondary"
             >
-              Maps
+              Google Maps
             </Link>
           </div>
         </div>
@@ -111,7 +110,7 @@ export const LocationPage = ({
       {concerts?.data && concerts.data.length > 0 && (
         <section className="grid gap-4 rounded-lg bg-slate-800 p-4 md:p-6">
           <h2 className="mb-0">
-            {concerts.data.length} Konzert(e) @ {location.name}
+            {t('nConcertsAtX', { count: concerts.data.length, location: location.name })}
           </h2>
           {concerts?.data.map(item => <ConcertCard key={item.id} concert={item} nested />)}
         </section>

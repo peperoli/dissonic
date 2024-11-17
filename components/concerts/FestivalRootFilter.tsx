@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { FilterButton } from './../FilterButton'
 import { Select } from '../forms/Select'
 import { useFestivalRoots } from '../../hooks/concerts/useFestivalRoots'
+import { useTranslations } from 'next-intl'
 
 type FestivalRootSelectProps = {
   values: number[]
@@ -35,13 +36,14 @@ export const FestivalRootFilter = ({
 }: FestivalRootFilterProps) => {
   const { data: festivalRoots } = useFestivalRoots({ ids: submittedValues })
   const [selectedIds, setSelectedIds] = useState<number[]>(submittedValues ?? [])
+  const t = useTranslations('FestivalRootFilter')
 
   useEffect(() => {
     setSelectedIds(submittedValues ?? [])
   }, [submittedValues])
   return (
     <FilterButton
-      label="Festival"
+      label={t("festival")}
       items={festivalRoots}
       selectedIds={selectedIds}
       submittedValues={submittedValues}

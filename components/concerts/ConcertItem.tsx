@@ -5,6 +5,7 @@ import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 import Image from 'next/image'
 import { CalendarIcon } from 'lucide-react'
 import { Tables } from '@/types/supabase'
+import { useLocale } from 'next-intl'
 
 export function ConcertItem({
   concert,
@@ -16,16 +17,17 @@ export function ConcertItem({
   }
 }) {
   const { data: spotifyArtist } = useSpotifyArtist(concert.bands?.[0]?.spotify_artist_id)
+  const locale = useLocale()
   const dateStart = new Date(concert.date_start)
   const dateEnd = concert.date_end ? new Date(concert.date_end) : null
   const isSameYear = dateStart.getFullYear() === dateEnd?.getFullYear()
   const concertDate = dateEnd
-    ? `${dateStart.toLocaleDateString('de-CH', {
+    ? `${dateStart.toLocaleDateString(locale, {
         day: 'numeric',
         month: 'numeric',
         year: isSameYear ? undefined : 'numeric',
-      })} bis ${dateEnd.toLocaleDateString('de-CH')}`
-    : dateStart.toLocaleDateString('de-CH')
+      })} bis ${dateEnd.toLocaleDateString(locale)}`
+    : dateStart.toLocaleDateString(locale)
   return (
     <Link href={`/concerts/${concert.id}`} className="flex gap-4 rounded-lg p-2 hover:bg-slate-700">
       <div className="relative grid size-16 flex-none place-content-center rounded-lg bg-slate-750">

@@ -6,6 +6,7 @@ import { parseAsStringLiteral, useQueryState } from 'nuqs'
 import Modal from '../Modal'
 import { ReactElement } from 'react'
 import { DialogTitle } from '@radix-ui/react-dialog'
+import { useTranslations } from 'next-intl'
 
 function Loader() {
   return <Loader2 className="size-8 animate-spin text-slate-300" />
@@ -44,7 +45,7 @@ const AddFriendForm = dynamic(
   { loading: () => <Loader /> }
 )
 const RemoveFriendForm = dynamic(
-  () => import('../profile/DeleteFriendForm').then(mod => mod.RemoveFriendForm),
+  () => import('../profile/RemoveFriendForm').then(mod => mod.RemoveFriendForm),
   { loading: () => <Loader /> }
 )
 
@@ -64,21 +65,6 @@ export const modalPaths = [
   'delete-friend',
 ] as const
 
-const modals = {
-  'add-concert': { title: 'Konzert hinzufügen', component: ConcertForm },
-  'edit-concert': { title: 'Konzert bearbeiten', component: ConcertForm },
-  'delete-concert': { title: 'Konzert löschen', component: DeleteConcertForm },
-  'delete-comment': { title: 'Kommentar löschen', component: DeleteCommentForm },
-  'add-band': { title: 'Band hinzufügen', component: BandForm },
-  'edit-band': { title: 'Band bearbeiten', component: BandForm },
-  'delete-band': { title: 'Band löschen', component: DeleteBandForm },
-  'add-location': { title: 'Location hinzufügen', component: LocationForm },
-  'edit-location': { title: 'Location bearbeiten', component: LocationForm },
-  'delete-location': { title: 'Location löschen', component: DeleteLocationForm },
-  'edit-profile': { title: 'Profil bearbeiten', component: ProfileForm },
-  'add-friend': { title: 'Freund*in hinzufügen', component: AddFriendForm },
-  'delete-friend': { title: 'Freund*in entfernen', component: RemoveFriendForm },
-} as const
 
 export function useModal() {
   return useQueryState('modal', parseAsStringLiteral(modalPaths).withOptions({ history: 'push' }))
@@ -86,6 +72,22 @@ export function useModal() {
 
 export const ModalProvider = () => {
   const [modal, setModal] = useModal()
+  const t = useTranslations('ModalProvider')
+  const modals = {
+    'add-concert': { title: t('addConcert'), component: ConcertForm },
+    'edit-concert': { title: t('editConcert'), component: ConcertForm },
+    'delete-concert': { title: t('deleteConcert'), component: DeleteConcertForm },
+    'delete-comment': { title: t('deleteComment'), component: DeleteCommentForm },
+    'add-band': { title: t('addBand'), component: BandForm },
+    'edit-band': { title: t('editBand'), component: BandForm },
+    'delete-band': { title: t('deleteBand'), component: DeleteBandForm },
+    'add-location': { title: t('addLocation'), component: LocationForm },
+    'edit-location': { title: t('editLocation'), component: LocationForm },
+    'delete-location': { title: t('deleteLocation'), component: DeleteLocationForm },
+    'edit-profile': { title: t('editProfile'), component: ProfileForm },
+    'add-friend': { title: t('addFriend'), component: AddFriendForm },
+    'delete-friend': { title: t('removeFriend'), component: RemoveFriendForm },
+  } as const
   const close = () => setModal(null)
 
   if (!modal) {

@@ -11,6 +11,7 @@ import { StatusBanner } from './../forms/StatusBanner'
 import { emailRegex } from '../../lib/emailRegex'
 import Link from 'next/link'
 import { SignInFormData } from '../../actions/auth'
+import { useTranslations } from 'next-intl'
 
 export default function LoginPage() {
   const {
@@ -20,6 +21,7 @@ export default function LoginPage() {
     resetField,
   } = useForm<SignInFormData>()
   const { mutate, status, error } = useSignIn()
+  const t = useTranslations('LoginPage')
 
   const onSubmit: SubmitHandler<SignInFormData> = async formData => {
     mutate(formData)
@@ -32,7 +34,7 @@ export default function LoginPage() {
   }, [status])
   return (
     <main className="container-sm">
-      <h1>Anmelden &amp; Konzerte eintragen</h1>
+      <h1>{t('loginToTrackConcerts')}</h1>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="grid gap-5 rounded-lg bg-radial-gradient from-blue/20 p-6"
@@ -40,45 +42,41 @@ export default function LoginPage() {
         <TextField
           {...register('email', {
             required: true,
-            pattern: { value: emailRegex, message: 'Bitte gib eine E-Mail-Adresse ein.' },
+            pattern: { value: emailRegex, message: t('emailPatternError') },
           })}
           error={errors.email}
           type="email"
-          label="E-Mail"
+          label={t('email')}
           placeholder="william@delos.com"
         />
         <TextField
           {...register('password', { required: true })}
           error={errors.password}
           type="password"
-          label="Passwort"
+          label={t('password')}
         />
         <div className="flex items-center gap-4">
           <Button
             type="submit"
-            label="Anmelden"
+            label={t('login')}
             appearance="primary"
             loading={status === 'pending'}
           />
           <Link href="/reset-password" className="text-sm font-bold text-venom hover:underline">
-            Passwort vergessen?
+            {t('forgotPassword')}
           </Link>
         </div>
         {status === 'error' && (
           <StatusBanner
             statusType="error"
-            message={
-              error instanceof AuthError
-                ? errorMessages[error.message]
-                : 'Es ist eine Fehler aufgetreten. Bitte versuche es erneut.'
-            }
+            message={error instanceof AuthError ? errorMessages[error.message] : t('unknownError')}
           />
         )}
       </form>
-      <h3 className="mt-10">Hast du noch gar kein Konto?</h3>
-      <p className="mb-4">Dann nichts wie los!</p>
+      <h3 className="mt-10">{t('youDontHaveAnAccountYet')}</h3>
+      <p className="mb-4">{t('letsGetStarted')}</p>
       <Link href="/signup" className="btn btn-small btn-secondary">
-        Registrieren
+        {t('signUp')}
       </Link>
     </main>
   )

@@ -16,6 +16,8 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react
 import { Fragment } from 'react'
 import clsx from 'clsx'
 import { BandItem } from './BandItem'
+import { useTranslations } from 'use-intl'
+import { useLocale } from 'next-intl'
 
 interface FormProps {
   isNew?: boolean
@@ -41,9 +43,11 @@ export const Form = ({ isNew, close }: FormProps) => {
   const { data: genres } = useGenres()
   const addBand = useAddBand()
   const editBand = useEditBand()
+  const t = useTranslations('BandForm')
+  const locale = useLocale()
   const { status } = isNew ? addBand : editBand
   const isSimilar = !!(dirtyFields.name && similarBands?.count)
-  const regionNames = new Intl.DisplayNames(['de'], { type: 'region' })
+  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
 
   const onSubmit: SubmitHandler<AddBand> = async function (formData) {
     if (isNew) {
@@ -57,17 +61,14 @@ export const Form = ({ isNew, close }: FormProps) => {
       <TextField
         {...register('name', { required: true })}
         error={errors.name}
-        label="Name"
+        label={t('name')}
         placeholder="Beatles"
       />
       {isSimilar && (
         <div className="rounded-lg bg-yellow/10 p-4">
           <div className="flex items-center gap-4 text-yellow">
             <AlertTriangle className="size-icon flex-none" />
-            <p>
-              <strong>Achtung:</strong> {similarBands.count === 1 ? 'Eine Band' : 'Folgende Bands'}{' '}
-              mit ähnlichem Namen {similarBands.count === 1 ? 'existiert' : 'existieren'} bereits:
-            </p>
+            <p>{t('duplicateBandsWarning', { count: similarBands.count })}</p>
           </div>
           <ul className="mt-4 grid">
             {similarBands.data.map(item => (
@@ -92,7 +93,7 @@ export const Form = ({ isNew, close }: FormProps) => {
               name: regionNames.of(item.iso2) ?? item.iso2,
             }))}
             error={errors.country_id}
-            label="Land"
+            label={t('country')}
           />
         )}
       />
@@ -108,7 +109,7 @@ export const Form = ({ isNew, close }: FormProps) => {
             onValuesChange={value =>
               onChange(genres?.filter(item => value.includes(item.id)) ?? [])
             }
-            label="Genres"
+            label={t('genres')}
           />
         )}
       />
@@ -123,14 +124,14 @@ export const Form = ({ isNew, close }: FormProps) => {
         <DisclosurePanel>
           <TextField
             {...register('youtube_url')}
-            label="YouTube-Kanal (optional)"
+            label={`${t('youtubeChannel')} ${t('optional')}`}
             placeholder="https://youtube.com/channel/UC4BSeEq7XNtihGqI309vhYg"
           />
         </DisclosurePanel>
         <DisclosureButton as={Fragment}>
           {({ open }) => (
             <Button
-              label={open ? 'Weniger anzeigen' : 'Mehr anzeigen'}
+              label={open ? t('showLess') : t('showMore')}
               icon={<ChevronDown className={clsx('size-icon', open && 'rotate-180')} />}
               size="small"
               appearance="tertiary"

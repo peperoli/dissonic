@@ -19,6 +19,8 @@ import { reorderList } from '../../lib/reorderList'
 import { FetchStatus } from '@tanstack/react-query'
 import { SpinnerIcon } from '../layout/SpinnerIcon'
 import { Reorder } from 'framer-motion'
+import { useLocale, useTranslations } from 'next-intl'
+import { DialogTitle } from '@radix-ui/react-dialog'
 
 type InsertHereProps = {
   reorderItems: () => void
@@ -26,12 +28,13 @@ type InsertHereProps = {
 }
 
 const InsertHere = ({ reorderItems, isDown }: InsertHereProps) => {
+  const t = useTranslations('ListManager')
   return (
     <div className="relative flex items-center justify-center">
       <hr className="mx-2 my-0 w-full border-t border-slate-500" />
       <Button
         onClick={reorderItems}
-        label="Hier einfügen"
+        label={t('insertHere')}
         contentType="icon"
         size="small"
         icon={<ImportIcon className={clsx('size-icon', !isDown && 'rotate-180')} />}
@@ -60,7 +63,9 @@ const ListItem = ({
   reorderItems,
 }: ListItemProps) => {
   const { data: spotifyArtist } = useSpotifyArtist(band.spotify_artist_id)
-  const regionNames = new Intl.DisplayNames('de', { type: 'region' })
+  const t = useTranslations('ListManager')
+  const locale = useLocale()
+  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
   const selectedToReorder = selectedItemToReorder === index
   return (
     <>
@@ -103,14 +108,14 @@ const ListItem = ({
         >
           <Button
             onClick={removeItem}
-            label="Eintrag entfernen"
+            label={t('removeEntry')}
             contentType="icon"
             icon={<XCircleIcon className="size-icon text-red" />}
             appearance="tertiary"
           />
           <Button
             onClick={selectItemToReorder}
-            label="Eintrag verschieben"
+            label={t('reorderEntry')}
             contentType="icon"
             icon={<ArrowDownUpIcon className="size-icon" />}
             appearance="tertiary"
@@ -141,13 +146,15 @@ type SearchResultProps = {
 const SearchResult = forwardRef<HTMLButtonElement, SearchResultProps>(
   ({ band, index, selected, addItem, removeItem, handleKeyNavigation }, ref) => {
     const { data: spotifyArtist } = useSpotifyArtist(band.spotify_artist_id)
-    const regionNames = new Intl.DisplayNames('de', { type: 'region' })
+    const t = useTranslations('ListManager')
+    const locale = useLocale()
+    const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
     return (
       <button
         ref={ref}
         onClick={selected ? removeItem : addItem}
         onKeyDown={e => handleKeyNavigation(e, index)}
-        aria-label={selected ? 'Eintrage entfernen' : 'Eintrag hinzufügen'}
+        aria-label={selected ? t('removeEntry') : t('addEntry')}
         className={clsx('flex gap-4 rounded-lg p-2 text-left hover:bg-slate-700')}
       >
         <div className="relative grid h-11 w-11 flex-none place-content-center rounded-lg bg-slate-750">
@@ -212,6 +219,7 @@ export const ListManager = ({
   const searchRef = useRef<HTMLInputElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const itemsRef = useRef<(HTMLButtonElement | null)[]>([])
+  const t = useTranslations('ListManager')
 
   useEffect(() => {
     itemsRef.current = itemsRef.current.slice(0, listItems.length)
@@ -255,10 +263,8 @@ export const ListManager = ({
   return (
     <div className="relative flex h-full flex-col">
       <div className={clsx('absolute', selectedItemToReorder !== null && 'invisible')}>
-        <h3>Bands hinzufügen</h3>
-        <p className="text-sm text-slate-300">
-          Tipp: Ordne für optimale Übersicht die Headliner zuoberst ein.
-        </p>
+        <DialogTitle>{t('addBands')}</DialogTitle>
+        <p className="text-sm text-slate-300">{t('orderBandsByBilling')}</p>
       </div>
       <div
         className={clsx(
@@ -267,14 +273,14 @@ export const ListManager = ({
         )}
       >
         <LightbulbIcon className="size-icon flex-none text-yellow" />
-        Auf ein Ziel klicken, um den Eintrag zu verschieben.
+        {t('clickOnATargetToMoveTheEntry')}
         <Button
           onClick={() => setSelectedItemToReorder(null)}
-          label="Abbrechen"
+          label={t('cancelReorder')}
           contentType="icon"
           icon={<XIcon className="size-icon" />}
           size="small"
-          className="flex-none"
+          className="flex-none ml-auto"
         />
       </div>
       <div className="order-last mt-auto flex gap-4 md:order-none md:mt-4">
@@ -286,12 +292,12 @@ export const ListManager = ({
             value={search}
             onChange={e => setSearch(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Bands hinzufügen"
+            placeholder={t('searchBands')}
             className="block w-full rounded-lg border border-slate-500 bg-slate-750 py-2 pl-12 pr-4"
           />
           {search && (
             <button onClick={() => setSearch('')} className="btn btn-icon absolute right-0">
-              <span className="sr-only">Suche zurücksetzen</span>
+              <span className="sr-only">{t('resetSearch')}</span>
               {fetchStatus === 'fetching' ? (
                 <SpinnerIcon className="size-icon animate-spin" />
               ) : (
@@ -300,7 +306,7 @@ export const ListManager = ({
             </button>
           )}
         </div>
-        <Button onClick={() => onSave(listItems)} label="Fertig" appearance="primary" />
+        <Button onClick={() => onSave(listItems)} label={t('done')} appearance="primary" />
       </div>
       <div ref={scrollContainerRef} className="h-full overflow-auto">
         {search === '' ? (
@@ -341,7 +347,7 @@ export const ListManager = ({
               ))
             ) : (
               <div className="p-4 text-center text-sm text-slate-300">
-                {fetchStatus === 'fetching' ? 'Laden ...' : 'Keine Ergebnisse gefunden.'}
+                {fetchStatus === 'fetching' ? t('loading') : t('noResultsFound')}
               </div>
             )}
           </div>

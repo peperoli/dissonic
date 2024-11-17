@@ -9,6 +9,7 @@ import { AuthError } from '@supabase/supabase-js'
 import { errorMessages } from '../../lib/errorMessages'
 import { useEditUser } from '../../hooks/auth/useEditUser'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 
 export function UpdatePasswordPage() {
   const {
@@ -18,6 +19,7 @@ export function UpdatePasswordPage() {
   } = useForm<{ email: string; password: string }>({ mode: 'onChange' })
   const { mutate, status, error } = useEditUser()
   const { push } = useRouter()
+  const t = useTranslations('UpdatePasswordPage')
 
   const onSubmit: SubmitHandler<{ email: string; password: string }> = async formData => {
     mutate(formData)
@@ -30,25 +32,22 @@ export function UpdatePasswordPage() {
   }, [status])
   return (
     <main className="container-sm">
-      <h1>Neues Passwort setzen</h1>
+      <h1>{t('updatePassword')}</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5 rounded-lg bg-slate-800 p-6">
         <TextField
           {...register('password', {
             required: true,
-            minLength: {
-              value: 10,
-              message: 'Das Passwort muss mindestens 10 Zeichen enthalten.',
-            },
+            minLength: { value: 12, message: t('passwordLengthError') },
           })}
           error={errors.password}
           type="password"
-          label="Passwort"
+          label={t('newPassword')}
           autoComplete="off"
         />
         <div className="flex items-center gap-4">
           <Button
             type="submit"
-            label="Speichern"
+            label={t('updatePassword')}
             appearance="primary"
             loading={status === 'pending'}
           />
@@ -60,7 +59,7 @@ export function UpdatePasswordPage() {
           />
         )}
         {status === 'success' && (
-          <StatusBanner statusType="success" message="Password erfolgreich zurückgesetzt." />
+          <StatusBanner statusType="success" message={t('updatePasswordSuccess')} />
         )}
       </form>
     </main>

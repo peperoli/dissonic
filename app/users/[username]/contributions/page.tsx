@@ -2,6 +2,7 @@ import { ContributionGroup } from '@/components/contributions/ContributionGroup'
 import { LoadMoreButton } from '@/components/contributions/LoadMoreButton'
 import { Tables } from '@/types/supabase'
 import { createClient } from '@/utils/supabase/server'
+import { getLocale } from 'next-intl/server'
 
 async function fetchData({
   params,
@@ -46,6 +47,7 @@ export default async function ContributionsPage(props: {
     params,
     searchParams,
   })
+  const locale = await getLocale()
   const groupedContributions = groupByDateAndTime(contributions)
 
   function groupByDateAndTime(items: Tables<'contributions'>[]) {
@@ -59,7 +61,7 @@ export default async function ContributionsPage(props: {
     }
 
     return items.reduce<DateGroup<TimeGroup<Tables<'contributions'>>>[]>((acc, item) => {
-      const date = new Date(item.timestamp).toLocaleDateString('de-CH', {
+      const date = new Date(item.timestamp).toLocaleDateString(locale, {
         weekday: 'long',
         day: 'numeric',
         month: 'short',

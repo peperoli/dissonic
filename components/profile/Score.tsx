@@ -6,6 +6,7 @@ import * as Tooltip from '@radix-ui/react-tooltip'
 import clsx from 'clsx'
 import { Info, Loader2Icon } from 'lucide-react'
 import { Tables } from '@/types/supabase'
+import { useLocale, useTranslations } from 'next-intl'
 
 const MONTH_MS = 1000 * 60 * 60 * 24 * 30.44
 
@@ -43,6 +44,8 @@ function getLongestStreak(concerts: Tables<'concerts'>[]) {
 
 export function Score({ profileId }: { profileId: string }) {
   const { data: bandsSeen, status: bandsSeenStatus } = useBandsSeen({ userId: profileId })
+  const t = useTranslations('Score')
+  const locale = useLocale()
   const uniqueBandsSeen = getUniqueObjects(bandsSeen?.map(item => item.band) ?? [])
   const concertsSeen = getUniqueObjects(bandsSeen?.map(item => item.concert) ?? [])
   const festivalsSeen = concertsSeen.filter(item => item.is_festival)
@@ -63,21 +66,21 @@ export function Score({ profileId }: { profileId: string }) {
         festivalsSeen.length > 0 ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-3'
       )}
     >
-      <h2 className="sr-only">Score</h2>
+      <h2 className="sr-only">{t('score')}</h2>
       <div className="rounded-lg bg-radial-gradient from-venom/50 px-2 py-6 text-center">
         <div className="text-[1.75rem] font-bold leading-none">{uniqueBandsSeen.length}</div>
-        Bands
+        {t('bands')}
       </div>
       <div className="rounded-lg bg-radial-gradient from-blue/50 px-2 py-6 text-center">
         <div className="text-[1.75rem] font-bold leading-none">
           {concertsSeen.filter(item => !item.is_festival).length}
         </div>
-        Konzerte
+        {t('concerts')}
       </div>
       {festivalsSeen.length > 0 && (
         <div className="rounded-lg bg-radial-gradient from-purple/50 px-2 py-6 text-center">
           <div className="text-[1.75rem] font-bold leading-none">{festivalsSeen.length}</div>
-          Festivals
+          {t('festivals')}
         </div>
       )}
       {streak && (
@@ -86,16 +89,24 @@ export function Score({ profileId }: { profileId: string }) {
             {Math.ceil(streak.diff / MONTH_MS + 1)}
           </div>
           <div className="flex justify-center gap-1">
-            längste Serie
+            <span className="truncate">{t('longestStreak')}</span>
             <Tooltip.Root>
               <Tooltip.Trigger>
                 <Info className="size-4" />
               </Tooltip.Trigger>
               <Tooltip.Content className="z-10 rounded-lg border border-slate-800 bg-slate-900 p-2 text-sm shadow-lg">
-                {streak.start.toLocaleDateString('de-CH', { month: 'long', year: 'numeric' })} bis{' '}
-                {streak.end.toLocaleDateString('de-CH', { month: 'long', year: 'numeric' })}
+                {t('dToD', {
+                  startDate: streak.start.toLocaleDateString(locale, {
+                    month: 'long',
+                    year: 'numeric',
+                  }),
+                  endDate: streak.end.toLocaleDateString(locale, {
+                    month: 'long',
+                    year: 'numeric',
+                  }),
+                })}
                 <br />
-                Mindestens ein Konzert pro Monat
+                {t('minOneConcertPerMonth')}
               </Tooltip.Content>
             </Tooltip.Root>
           </div>
