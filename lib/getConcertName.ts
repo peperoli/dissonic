@@ -1,21 +1,19 @@
 import { Tables } from '@/types/supabase'
-import { useLocale } from 'next-intl'
 
-export function useConcertName(
+export function getConcertName(
   concert:
-  | (Tables<'concerts'> & {
-    festival_root?: { name: string } | null
-    bands?: Tables<'bands'>[] | null
-    location?: Tables<'locations'> | null
-  })
-  | undefined
+    | (Tables<'concerts'> & {
+        festival_root?: { name: string } | null
+        bands?: Tables<'bands'>[] | null
+        location?: Tables<'locations'> | null
+      })
+    | undefined,
+  locale: string
 ) {
-  const locale = useLocale()
-  
   if (!concert) {
     return null
   }
-  
+
   const date = new Date(concert.date_start).toLocaleDateString(locale, {
     weekday: 'short',
     day: 'numeric',

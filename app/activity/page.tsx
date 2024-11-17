@@ -8,6 +8,14 @@ import { createClient } from '@/utils/supabase/server'
 import { getLocale, getTranslations } from 'next-intl/server'
 import { redirect } from 'next/navigation'
 
+export async function generateMetadata() {
+  const t = await getTranslations('ActivityPage')
+
+  return {
+    title: `${t('activity')} • Dissonic`,
+  }
+}
+
 export type ActivityItemT = Database['public']['Views']['activity']['Row'] & {
   user: Tables<'profiles'>
   created_at: string

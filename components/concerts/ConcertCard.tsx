@@ -76,7 +76,6 @@ export const ConcertCard = ({ concert, nested }: ConcertCardProps) => {
           {concert.bands?.map((band, index) => (
             <div className="flex gap-2" key={band.id}>
               <div
-                onClick={event => event.stopPropagation()}
                 className={clsx(
                   'font-bold',
                   bandsSeen?.find(bandSeen => band.id === bandSeen?.band_id) && 'text-venom'

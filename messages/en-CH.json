@@ -1,4 +1,8 @@
 {
+  "RootLayout": {
+    "title": "Dissonic • For the love of live music",
+    "description": "Keep track of concerts and bands you have experienced live. Made by fans for fans."
+  },
   "NavBar": {
     "profile": "Profile",
     "friends": "Friends",
@@ -42,6 +46,7 @@
     "removeFriend": "Remove friend"
   },
   "SignupPage": {
+    "createAccount": "Create account",
     "welcome": "<span>Welcome</span>, dear fan of live music!",
     "aDissonicAccountGivesYouTheFollowingFeatures": "A Dissonic account gives you the following features:",
     "trackBandsAndConcertsYouHaveExperiencedLive": "Track bands and concerts you have experienced live",
@@ -70,8 +75,8 @@
     "password": "Password",
     "login": "Login",
     "forgotPassword": "Forgot password?",
-    "youDontHaveAnAccountYet": "You don't have an account yet?",
-    "letsGetStarted": "Then let's get started!",
+    "youDontHaveAnAccountYet": "You don’t have an account yet?",
+    "letsGetStarted": "Then let’s get started!",
     "signUp": "Sign up"
   },
   "ResetPasswordPage": {
@@ -307,6 +312,7 @@
     "delete": "Delete"
   },
   "ProfileLayout": {
+    "title": "{username}’s Profile • Dissonic",
     "friend": "Friend",
     "settings": "Settings",
     "stats": "Stats",

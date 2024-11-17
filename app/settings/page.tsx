@@ -6,6 +6,14 @@ import { PasswordForm } from '@/components/profile/PasswordForm'
 import { EmailForm } from '@/components/profile/EmailForm'
 import { getTranslations } from 'next-intl/server'
 
+export async function generateMetadata() {
+  const t = await getTranslations('SettingsPage')
+
+  return {
+    title:`${t('accountSettings')} • Dissonic`,
+  }
+}
+
 async function fetchData() {
   const supabase = await createClient()
 

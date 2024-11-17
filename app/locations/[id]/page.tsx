@@ -4,6 +4,15 @@ import supabase from '../../../utils/supabase/client'
 import { LocationPage } from '@/components/locations/LocationPage'
 import { notFound } from 'next/navigation'
 
+export async function generateMetadata(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
+  const location = await fetchData(params)
+
+  return {
+    title: `${location.name} • Dissonic`,
+  }
+}
+
 export async function generateStaticParams() {
   const { data: locations, error } = await supabase.from('locations').select('id')
 

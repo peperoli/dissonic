@@ -15,7 +15,7 @@ import { ReactNode } from 'react'
 import { CommaSeperatedList } from '../helpers/CommaSeperatedList'
 import { useLocale, useTranslations } from 'next-intl'
 import { Profile } from '@/types/types'
-import { useConcertName } from '@/hooks/helpers/useConcertName'
+import { getConcertName } from '@/lib/getConcertName'
 
 type State = TablesInsert<'bands'> | TablesUpdate<'bands'> | null
 
@@ -29,7 +29,8 @@ const ConcertContributionItem = ({
   const { operation, ressource_id } = contribution
   const { data: concert } = useConcert(ressource_id, null, { bandsSize: 1 })
   const t = useTranslations('ContributionItem')
-  const concertName = useConcertName(concert)
+  const locale = useLocale()
+  const concertName = getConcertName(concert, locale)
 
   return (
     <ContributionItemWrapper contribution={contribution}>
@@ -123,7 +124,8 @@ const ConcertBandContributionItem = ({
   const { data: concert } = useConcert(ressource_id, null, { bandsSize: 1 })
   const { data: bands } = useBands({ ids: bandIds })
   const t = useTranslations('ContributionItem')
-  const concertName = useConcertName(concert)
+  const locale = useLocale()
+  const concertName = getConcertName(concert, locale)
 
   return (
     <ContributionItemWrapper contribution={contribution}>

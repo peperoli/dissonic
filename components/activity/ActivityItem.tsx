@@ -9,13 +9,14 @@ import { useConcert } from '@/hooks/concerts/useConcert'
 import { Tables } from '@/types/supabase'
 import { CommaSeperatedList } from '../helpers/CommaSeperatedList'
 import { useLocale, useTranslations } from 'next-intl'
-import { useConcertName } from '@/hooks/helpers/useConcertName'
+import { getConcertName } from '@/lib/getConcertName'
 
 const CommentItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
   const { user, created_at } = activityItem
   const { data: concert } = useConcert(activityItem.concert?.id ?? null, null, { bandsSize: 1 })
   const t = useTranslations('ActivityItem')
-  const concertName = useConcertName(concert)
+  const locale = useLocale()
+  const concertName = getConcertName(concert, locale)
   return (
     <div className="rounded-lg bg-slate-800 p-4">
       <ActivityItemLine
@@ -57,8 +58,9 @@ const BandSeenItem = ({
 }) => {
   const { user, created_at } = activityItem
   const t = useTranslations('ActivityItem')
+  const locale = useLocale()
   const { data: concert } = useConcert(activityItem.concert?.id ?? null, null, { bandsSize: 1 })
-  const concertName = useConcertName(concert)
+  const concertName = getConcertName(concert, locale)
   return (
     <div className="rounded-lg bg-slate-800 p-4">
       <ActivityItemLine

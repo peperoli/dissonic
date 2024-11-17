@@ -1,6 +1,15 @@
+import { getTranslations } from 'next-intl/server'
 import { LocationsPage } from '../../components/locations/LocationsPage'
 import { ExtendedRes, Location } from '../../types/types'
 import { createClient } from '../../utils/supabase/server'
+
+export async function generateMetadata() {
+  const t = await getTranslations('LocationsPage')
+
+  return {
+    title: `${t('locations')} • Dissonic`,
+  }
+}
 
 async function fetchData(): Promise<ExtendedRes<Location[]>> {
   const supabase = await createClient()

@@ -4,7 +4,18 @@ import { cookies } from 'next/headers'
 import { createClient } from '../../../utils/supabase/server'
 import supabase from '../../../utils/supabase/client'
 import { notFound } from 'next/navigation'
+import { getLocale } from 'next-intl/server'
+import { getConcertName } from '@/lib/getConcertName'
 
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const concert = await fetchConcert(parseInt(id))
+  const locale = await getLocale()
+  const concertName = getConcertName(concert, locale)
+  return {
+    title: `${concertName} • Dissonic`,
+  }
+}
 export async function generateStaticParams() {
   const { data: concerts, error } = await supabase.from('concerts').select('id')
 
@@ -44,7 +55,7 @@ async function fetchConcert(concertId: Concert['id']) {
 }
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
-  const params = await props.params;
+  const params = await props.params
   const concert = await fetchConcert(parseInt(params.id))
   const cookieStore = await cookies()
   return (

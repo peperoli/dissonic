@@ -11,6 +11,15 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ReactNode } from 'react'
 
+export async function generateMetadata({ params }: { params: Promise<{ username: string }> }) {
+  const { username } = await params
+  const t = await getTranslations('ProfileLayout')
+
+  return {
+    title: t('title', { username }),
+  }
+}
+
 async function fetchData(username: string) {
   const supabase = await createClient()
 

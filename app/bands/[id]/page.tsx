@@ -4,6 +4,15 @@ import { createClient } from '../../../utils/supabase/server'
 import supabase from '../../../utils/supabase/client'
 import { notFound } from 'next/navigation'
 
+export async function generateMetadata(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
+  const band = await fetchData(params)
+
+  return {
+    title: `${band.name} • Dissonic`,
+  }
+}
+
 export async function generateStaticParams() {
   const { data: bands, error } = await supabase.from('bands').select('id')
 
@@ -32,7 +41,7 @@ async function fetchData(params: { id: string }) {
     if (error.code === 'PGRST116') {
       notFound()
     }
-    
+
     throw error
   }
 

@@ -9,7 +9,7 @@ import { GuitarIcon } from 'lucide-react'
 import { useConcertProfiles } from '@/hooks/concerts/useConcertProfiles'
 import { Drawer, DrawerTitle, DrawerTrigger } from '../shared/Drawer'
 import { useLocale, useTranslations } from 'next-intl'
-import { useConcertName } from '@/hooks/helpers/useConcertName'
+import { getConcertName } from '@/lib/getConcertName'
 
 function BandItem({ band }: { band: Band }) {
   const { data: spotifyArtist } = useSpotifyArtist(band.spotify_artist_id)
@@ -54,6 +54,7 @@ function ConcertUserItem({
   count: number
 }) {
   const t = useTranslations('ConcertCommunity')
+  const locale = useLocale()
   const bandsSeenIds = concert.bands_seen
     ?.filter(item => item.user_id === profile.id)
     .map(item => item.band_id)
@@ -72,15 +73,12 @@ function ConcertUserItem({
           {t('uHasSeenNBandsAtConcertX', {
             username: profile.username,
             count,
-            concert: useConcertName(concert),
+            concert: getConcertName(concert, locale),
           })}
         </DrawerTitle>
       </div>
       <div className="flex items-center justify-between border-b border-slate-700 pb-4">
-        <UserItem
-          user={profile}
-          description={t('nBands', { count })}
-        />
+        <UserItem user={profile} description={t('nBands', { count })} />
         <Link href={`/users/${profile.username}`} className="btn btn-secondary btn-small">
           {t('showProfile')}
         </Link>

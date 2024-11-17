@@ -1,5 +1,14 @@
+import { getTranslations } from 'next-intl/server'
 import { BandsPage } from '../../components/bands/BandsPage'
 import { createClient } from '../../utils/supabase/server'
+
+export async function generateMetadata() {
+  const t = await getTranslations('BandsPage')
+
+  return {
+      title: `${t('bands')} • Dissonic`,
+  }
+}
 
 const fetchData = async () => {
   const supabase = await createClient()

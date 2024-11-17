@@ -5,6 +5,14 @@ import { Database } from '@/types/supabase'
 import { createClient } from '@/utils/supabase/server'
 import { getTranslations } from 'next-intl/server'
 
+export async function generateMetadata() {
+  const t = await getTranslations('UsersPage')
+
+  return {
+    title: `${t('fans')} • Dissonic`,
+  }
+}
+
 type SearchParams = {
   sort_by?: string
   sort_asc?: 'true' | 'false'

@@ -1,4 +1,8 @@
 {
+  "RootLayout": {
+    "title": "Dissonic • Für die Liebe zur Live-Musik",
+    "description": "Behalte den Überblick über Konzerte und Bands, die du live erlebt hast. Von Fans für Fans gemacht."
+  },
   "NavBar": {
     "profile": "Profil",
     "friends": "Freunde",
@@ -27,7 +31,7 @@
     "language": "Sprache"
   },
   "ModalProvider": {
-    "addConcert": "Konzerthinzufügen",
+    "addConcert": "Konzert hinzufügen",
     "editConcert": "Konzert bearbeiten",
     "deleteConcert": "Konzert löschen",
     "deleteComment": "Kommentar löschen",
@@ -42,6 +46,7 @@
     "removeFriend": "Freund*in entfernen"
   },
   "SignupPage": {
+    "createAccount": "Konto erstellen",
     "welcome": "<span>Willkommen</span>, geschätzter Fan von Live-Musik!",
     "aDissonicAccountGivesYouTheFollowingFeatures": "Ein Dissonic-Konto ermöglicht dir folgende Funktionen:",
     "trackBandsAndConcertsYouHaveExperiencedLive": "Tracke Bands und Konzerte, die du live erlebt hast",
@@ -307,6 +312,7 @@
     "delete": "Löschen"
   },
   "ProfileLayout": {
+    "title": "{username}s Profil • Dissonic",
     "friend": "Freund*in",
     "settings": "Einstellungen",
     "stats": "Statistiken",
