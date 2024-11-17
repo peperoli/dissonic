@@ -10,6 +10,7 @@ export default getRequestConfig(async () => {
   const matchingLanguage = languageHeader
     ?.split(',')
     .find(language => languages.includes(language.slice(0, 2)))
+    ?.slice(0, 2)
   const localeCookie = cookieStore.get('locale')
   const locale =
     localeCookie?.value || (matchingLanguage && `${matchingLanguage}-CH`) || defaultLocale
