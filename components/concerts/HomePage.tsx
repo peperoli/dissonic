@@ -23,7 +23,7 @@ import {
   useQueryState,
   useQueryStates,
 } from 'nuqs'
-import { BookUser, Globe, RotateCcw, User } from 'lucide-react'
+import { BookUser, Globe, RotateCcw, UserIcon } from 'lucide-react'
 import { useFriends } from '@/hooks/profiles/useFriends'
 import { Select } from '../forms/Select'
 import { FilterButton } from '../FilterButton'
@@ -31,13 +31,14 @@ import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 import { modalPaths } from '../shared/ModalProvider'
 import { SpeedDial } from '../layout/SpeedDial'
 import { useTranslations } from 'next-intl'
+import { User } from '@supabase/supabase-js'
 
 type HomePageProps = {
   concerts: ExtendedRes<Concert[]>
+  currentUser: User | null
 }
 
-export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
-  const { data: session } = useSession()
+export const HomePage = ({ concerts: initialConcerts, currentUser }: HomePageProps) => {
   const [size, setSize] = useQueryState('size', parseAsInteger.withDefault(25))
   const [selectedBands, setSelectedBands] = useQueryState('bands', parseAsArrayOf(parseAsInteger))
   const [selectedLocations, setSelectedLocations] = useQueryState(
@@ -53,7 +54,7 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
   const { data: profile } = useProfile(null, user)
   const selectedUserId = user && profile?.id
   const [view, setView] = useState(Cookies.get('view') ?? 'global')
-  const { data: friends } = useFriends({ profileId: session?.user?.id, pending: false })
+  const { data: friends } = useFriends({ profileId: currentUser?.id, pending: false })
   const sortBy = ['date_start', 'bands_count'] as const
   const [sort, setSort] = useQueryStates({
     sort_by: parseAsStringLiteral(sortBy).withDefault('date_start'),
@@ -62,8 +63,7 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
   const [_, setModal] = useQueryState('modal', parseAsStringLiteral(modalPaths))
 
   function getView() {
-    if (selectedUserId) return [selectedUserId]
-    if (view === 'user' && session?.user) return [session.user.id]
+    if (view === 'user' && currentUser) return [currentUser.id]
     if (view === 'friends' && friends)
       return [
         ...new Set([
@@ -79,7 +79,7 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
     locations: selectedLocations,
     years: selectedYears,
     festivalRoots: selectedFestivalRoots,
-    bandsSeenUsers: getView(),
+    bandsSeenUsers: selectedUserId ? [selectedUserId] : getView(),
     sort,
     size,
   })
@@ -116,7 +116,7 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
         <h1 className="mb-0">{t('concerts')}</h1>
         <Button
           onClick={
-            session ? () => setModal('add-concert') : () => push(`/login?redirect=${pathname}`)
+            currentUser ? () => setModal('add-concert') : () => push(`/login?redirect=${pathname}`)
           }
           label={t('addConcert')}
           appearance="primary"
@@ -177,12 +177,12 @@ export const HomePage = ({ concerts: initialConcerts }: HomePageProps) => {
             </FilterButton>
           </div>
         </div>
-        {session && (
+        {currentUser && (
           <SegmentedControl
             options={[
               { value: 'global', label: t('all'), icon: Globe },
               { value: 'friends', label: t('friends'), icon: BookUser },
-              { value: 'user', label: t('you'), icon: User },
+              { value: 'user', label: t('you'), icon: UserIcon },
             ]}
             value={view}
             onValueChange={handleView}
