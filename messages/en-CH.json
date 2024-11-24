@@ -96,6 +96,7 @@
     "concerts": "Concerts",
     "addConcert": "Add concert",
     "nEntries": "{count} entries",
+    "reset": "Reset",
     "sortBy": "Sort by",
     "newest": "Newest",
     "oldest": "Oldest",
@@ -226,6 +227,7 @@
     "addBand": "Add band",
     "searchBand": "Search band ...",
     "nEntries": "{count, plural, =1 {# entry} other {# entries}}",
+    "reset": "Reset",
     "noEntriesFound": "No entries found."
   },
   "CountryFilter": {

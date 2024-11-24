@@ -1,6 +1,5 @@
 import clsx from 'clsx'
-import * as Tooltip from '@radix-ui/react-tooltip'
-import { useRef, useState } from 'react'
+import { Tooltip } from '../shared/Tooltip'
 
 const RADIUS = 100
 
@@ -17,9 +16,6 @@ type SectorProps = {
 }
 
 const Sector = ({ name, value, percentage, angle, index, totalAngle }: SectorProps) => {
-  const [open, setOpen] = useState(false)
-  const ref = useRef(null)
-
   function polarToCartesian(
     centerX: number,
     centerY: number,
@@ -57,31 +53,31 @@ const Sector = ({ name, value, percentage, angle, index, totalAngle }: SectorPro
   }
 
   const d = describeSector(RADIUS, RADIUS, RADIUS, totalAngle, angle + totalAngle)
-  const props = {
-    ref,
-    onPointerOver: () => setOpen(true),
-    onPointerLeave: () => setOpen(false),
-    className: fillColors[index],
-  }
-  return (
+  const tooltipContent = (
     <>
-      {angle === 360 ? (
-        <circle cx={RADIUS} cy={RADIUS} r={RADIUS} {...props} />
-      ) : (
-        <path d={d} {...props} />
-      )}
-      <Tooltip.Root open={open} onOpenChange={setOpen}>
-        <Tooltip.Trigger ref={ref} />
-        <Tooltip.Portal>
-          <Tooltip.Content className="z-10 rounded-lg border border-slate-800 bg-slate-850 p-2 text-sm shadow-lg">
-            <div className="font-bold">
-              {value} {name}
-            </div>
-            {percentage}%
-          </Tooltip.Content>
-        </Tooltip.Portal>
-      </Tooltip.Root>
+      <div className="font-bold">
+        {value} {name}
+      </div>
+      {percentage}%
     </>
+  )
+
+  if (angle === 0) {
+    return null
+  }
+
+  if (angle === 360) {
+    return (
+      <Tooltip content={tooltipContent}>
+        <circle cx={RADIUS} cy={RADIUS} r={RADIUS} className={fillColors[index]} />
+      </Tooltip>
+    )
+  }
+
+  return (
+    <Tooltip content={tooltipContent}>
+      <path d={d} className={fillColors[index]} />
+    </Tooltip>
   )
 }
 

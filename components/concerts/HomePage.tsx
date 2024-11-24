@@ -12,7 +12,6 @@ import { YearsFilter } from './YearsFilter'
 import { FestivalRootFilter } from './FestivalRootFilter'
 import Cookies from 'js-cookie'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useSession } from '../../hooks/auth/useSession'
 import { SegmentedControl } from '../controls/SegmentedControl'
 import { useProfile } from '../../hooks/profiles/useProfile'
 import {
@@ -36,9 +35,14 @@ import { User } from '@supabase/supabase-js'
 type HomePageProps = {
   concerts: ExtendedRes<Concert[]>
   currentUser: User | null
+  view: string | undefined
 }
 
-export const HomePage = ({ concerts: initialConcerts, currentUser }: HomePageProps) => {
+export const HomePage = ({
+  concerts: initialConcerts,
+  currentUser,
+  view: initialView = 'global',
+}: HomePageProps) => {
   const [size, setSize] = useQueryState('size', parseAsInteger.withDefault(25))
   const [selectedBands, setSelectedBands] = useQueryState('bands', parseAsArrayOf(parseAsInteger))
   const [selectedLocations, setSelectedLocations] = useQueryState(
@@ -53,7 +57,7 @@ export const HomePage = ({ concerts: initialConcerts, currentUser }: HomePagePro
   const [user] = useQueryState('user')
   const { data: profile } = useProfile(null, user)
   const selectedUserId = user && profile?.id
-  const [view, setView] = useState(Cookies.get('view') ?? 'global')
+  const [view, setView] = useState(initialView)
   const { data: friends } = useFriends({ profileId: currentUser?.id, pending: false })
   const sortBy = ['date_start', 'bands_count'] as const
   const [sort, setSort] = useQueryStates({

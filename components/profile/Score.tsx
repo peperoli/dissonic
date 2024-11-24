@@ -2,7 +2,7 @@
 
 import { useBandsSeen } from '@/hooks/bands/useBandsSeen'
 import { getUniqueObjects } from '@/lib/getUniqueObjects'
-import * as Tooltip from '@radix-ui/react-tooltip'
+import { Tooltip } from '../shared/Tooltip'
 import clsx from 'clsx'
 import { Info, Loader2Icon } from 'lucide-react'
 import { Tables } from '@/types/supabase'
@@ -90,25 +90,28 @@ export function Score({ profileId }: { profileId: string }) {
           </div>
           <div className="flex justify-center gap-1">
             <span className="truncate">{t('longestStreak')}</span>
-            <Tooltip.Root>
-              <Tooltip.Trigger>
+            <Tooltip
+              content={
+                <>
+                  {t('dToD', {
+                    startDate: streak.start.toLocaleDateString(locale, {
+                      month: 'long',
+                      year: 'numeric',
+                    }),
+                    endDate: streak.end.toLocaleDateString(locale, {
+                      month: 'long',
+                      year: 'numeric',
+                    }),
+                  })}
+                  <br />
+                  {t('minOneConcertPerMonth')}
+                </>
+              }
+            >
+              <button>
                 <Info className="size-4" />
-              </Tooltip.Trigger>
-              <Tooltip.Content className="z-10 rounded-lg border border-slate-800 bg-slate-900 p-2 text-sm shadow-lg">
-                {t('dToD', {
-                  startDate: streak.start.toLocaleDateString(locale, {
-                    month: 'long',
-                    year: 'numeric',
-                  }),
-                  endDate: streak.end.toLocaleDateString(locale, {
-                    month: 'long',
-                    year: 'numeric',
-                  }),
-                })}
-                <br />
-                {t('minOneConcertPerMonth')}
-              </Tooltip.Content>
-            </Tooltip.Root>
+              </button>
+            </Tooltip>
           </div>
         </div>
       )}

@@ -1,6 +1,6 @@
 'use client'
 
-import * as Tooltip from '@radix-ui/react-tooltip'
+import { Tooltip } from './shared/Tooltip'
 import clsx from 'clsx'
 import { useTranslations } from 'next-intl'
 
@@ -43,26 +43,23 @@ const Bar = ({
   const x = (100 / length) * index * ASPECT_RATIO + datasetIndex * (width + GAP_SMALL)
   const y = 100 - height
   return (
-    <Tooltip.Root>
-      <Tooltip.Trigger asChild>
-        <rect
-          x={x}
-          y={y}
-          width={width}
-          height={height}
-          className={clsx('clip-rounded-t', value > 0 ? fillClasses[color] : 'fill-slate-500')}
-        />
-      </Tooltip.Trigger>
-      <Tooltip.Portal>
-        <Tooltip.Content className="z-10 rounded-lg border border-slate-800 bg-slate-850 p-2 text-sm shadow-lg">
-          <strong>
-            {t(unit, { count: value })}
-          </strong>
+    <Tooltip
+      content={
+        <>
+          <strong>{t(unit, { count: value })}</strong>
           <br />
           {name}
-        </Tooltip.Content>
-      </Tooltip.Portal>
-    </Tooltip.Root>
+        </>
+      }
+    >
+      <rect
+        x={x}
+        y={y}
+        width={width}
+        height={height}
+        className={clsx('clip-rounded-t', value > 0 ? fillClasses[color] : 'fill-slate-500')}
+      />
+    </Tooltip>
   )
 }
 

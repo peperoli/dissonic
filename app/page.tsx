@@ -3,10 +3,8 @@ import { HomePage } from '../components/concerts/HomePage'
 import { Concert } from '../types/types'
 import { createClient } from '../utils/supabase/server'
 
-async function fetchData() {
+async function fetchData(view: string = 'global') {
   const supabase = await createClient()
-  const cookieStore = await cookies()
-  const view = cookieStore.get('view')?.value
 
   const {
     data: { user },
@@ -72,6 +70,8 @@ async function fetchData() {
 }
 
 export default async function Page() {
-  const { concerts, user } = await fetchData()
-  return <HomePage concerts={concerts} currentUser={user} />
+  const cookieStore = await cookies()
+  const view = cookieStore.get('view')?.value
+  const { concerts, user } = await fetchData(view)
+  return <HomePage concerts={concerts} currentUser={user} view={view} />
 }

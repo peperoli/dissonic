@@ -2,7 +2,6 @@ import { Footer } from '@/components/layout/Footer'
 import { NavBar } from '@/components/layout/NavBar'
 import { Navigation } from '@/components/layout/Navigation'
 import { ModalProvider } from '@/components/shared/ModalProvider'
-import { TooltipProvider } from '@/components/shared/TooltipProvider'
 import { Metadata, Viewport } from 'next'
 import { Albert_Sans, Fira_Code } from 'next/font/google'
 import { ReactNode, Suspense } from 'react'
@@ -59,25 +58,23 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 
   return (
     <QueryProvider>
-      <TooltipProvider>
-        <html lang={locale} className={`${albertSans.variable} ${firaCode.variable}`}>
-          <body className="flex min-h-screen flex-col bg-slate-850 text-white">
-            <NextIntlClientProvider messages={messages}>
-              <NavBar />
-              <div className="md:flex">
-                <Navigation />
-                {children}
-              </div>
-              <Footer />
-              <Suspense>
-                <ModalProvider />
-              </Suspense>
-            </NextIntlClientProvider>
-            <Analytics />
-            <SpeedInsights />
-          </body>
-        </html>
-      </TooltipProvider>
+      <html lang={locale} className={`${albertSans.variable} ${firaCode.variable}`}>
+        <body className="flex min-h-screen flex-col bg-slate-850 text-white">
+          <NextIntlClientProvider messages={messages}>
+            <NavBar />
+            <div className="md:flex">
+              <Navigation />
+              {children}
+            </div>
+            <Footer />
+            <Suspense>
+              <ModalProvider />
+            </Suspense>
+          </NextIntlClientProvider>
+          <Analytics />
+          <SpeedInsights />
+        </body>
+      </html>
     </QueryProvider>
   )
 }
