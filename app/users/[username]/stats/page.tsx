@@ -1,3 +1,4 @@
+import { ConcertsByWeekday } from '@/components/profile/ConcertsByWeekday'
 import { ConcertsByYear } from '@/components/profile/ConcertsByYear'
 import { ConcertStats } from '@/components/profile/ConcertStats'
 import { PieCharts } from '@/components/profile/PieCharts'
@@ -27,7 +28,10 @@ export default async function Page({ params }: { params: Promise<{ username: str
   return (
     <section className="grid gap-4">
       <TopBands profileId={profile.id} />
-      <PieCharts profileId={profile.id} />
+      <div className="grid md:grid-cols-2 gap-4">
+        <PieCharts profileId={profile.id} />
+        <ConcertsByWeekday profileId={profile.id} />
+      </div>
       <ConcertStats profileId={profile.id} />
       <ConcertsByYear profileId={profile.id} />
       <TopLocations profileId={profile.id} />

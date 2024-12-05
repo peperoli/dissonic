@@ -354,8 +354,11 @@
     "bandsSeenOnce": "Bands seen once",
     "bandsSeenMultipleTimes": "Bands seen multiple times"
   },
+  "ConcertsByWeekday": {
+    "concertsByWeekday": "Concerts by weekday"
+  },
   "ConcertsByYear": {
-    "unitPerTimeUnit": "{unit, select, concerts {concerts} other {bands}} pro {timeUnit, select, year {year} other {months}}",
+    "unitPerTimeUnit": "{unit, select, concerts {Concerts} other {Bands}} by {timeUnit, select, year {year} other {months}}",
     "concerts": "Concerts",
     "bands": "Bands",
     "timeFrame": "Time frame",

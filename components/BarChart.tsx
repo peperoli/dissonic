@@ -4,7 +4,6 @@ import { Tooltip } from './shared/Tooltip'
 import clsx from 'clsx'
 import { useTranslations } from 'next-intl'
 
-const ASPECT_RATIO = 4 / 1
 const GAP = 1
 const GAP_SMALL = 0.5
 
@@ -20,6 +19,7 @@ type BarProps = {
   index: number
   max: number
   length: number
+  aspectRatio: number
   datasetIndex: number
   datasetAmount: number
   unit: string
@@ -32,15 +32,16 @@ const Bar = ({
   index,
   max,
   length,
+  aspectRatio,
   datasetIndex,
   datasetAmount,
   unit,
   color,
 }: BarProps) => {
   const t = useTranslations('BarChart')
-  const width = ((100 / length - GAP) * ASPECT_RATIO) / datasetAmount
+  const width = ((100 / length - GAP) * aspectRatio) / datasetAmount
   const height = (value / max) * 100 || 1
-  const x = (100 / length) * index * ASPECT_RATIO + datasetIndex * (width + GAP_SMALL)
+  const x = (100 / length) * index * aspectRatio + datasetIndex * (width + GAP_SMALL)
   const y = 100 - height
   return (
     <Tooltip
@@ -71,9 +72,10 @@ type DataSet = {
 
 type BarChartProps = {
   datasets: DataSet[]
+  aspectRatio?: number
 }
 
-export const BarChart = ({ datasets }: BarChartProps) => {
+export const BarChart = ({ datasets, aspectRatio = 4 }: BarChartProps) => {
   const maxValue = Math.max(...datasets.flatMap(item => item.data.map(({ value }) => value)))
   const largestDataset = datasets.reduce((prev, current) =>
     prev.data.length > current.data.length ? prev : current
@@ -81,7 +83,7 @@ export const BarChart = ({ datasets }: BarChartProps) => {
   const length = largestDataset.data.length
   return (
     <div>
-      <svg viewBox={`0 0 ${100 * ASPECT_RATIO} 100`} xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox={`0 0 ${100 * aspectRatio} 100`} xmlns="http://www.w3.org/2000/svg">
         {datasets.map(({ data, ...dataset }, datasetIndex) =>
           data.map((item, index) => (
             <Bar
@@ -90,6 +92,7 @@ export const BarChart = ({ datasets }: BarChartProps) => {
               index={index}
               max={maxValue}
               length={length}
+              aspectRatio={aspectRatio}
               datasetIndex={datasetIndex}
               datasetAmount={datasets.length}
               {...dataset}

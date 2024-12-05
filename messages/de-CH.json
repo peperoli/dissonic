@@ -354,6 +354,9 @@
     "bandsSeenOnce": "Einmal gesehene Bands",
     "bandsSeenMultipleTimes": "Mehrmals gesehene Bands"
   },
+  "ConcertsByWeekday": {
+    "concertsByWeekday": "Konzerte pro Wochentag"
+  },
   "ConcertsByYear": {
     "unitPerTimeUnit": "{unit, select, concerts {Konzerte} other {Bands}} pro {timeUnit, select, year {Jahr} other {Monat}}",
     "concerts": "Konzerte",

@@ -20,7 +20,7 @@ export function PieCharts({ profileId }: { profileId: string }) {
   }
 
   return (
-    <section className="grid gap-4 rounded-lg bg-slate-800 p-4 md:grid-cols-2 md:p-6">
+    <section className="grid gap-4 rounded-lg bg-slate-800 p-4 md:p-6">
       <PieChart
         data={[
           {
