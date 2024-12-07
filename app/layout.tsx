@@ -37,6 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export const viewport: Viewport = {
   themeColor: '#1f282e',
+  interactiveWidget: 'resizes-content',
 }
 
 const albertSans = Albert_Sans({
