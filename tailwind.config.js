@@ -24,6 +24,7 @@ module.exports = {
         300: '#A3B8C2',
         500: '#668899',
         600: '#516D7B',
+        650: '#47606B',
         700: '#3D525C',
         750: '#33434D',
         800: '#29363D',
@@ -62,6 +63,9 @@ module.exports = {
       aspectRatio: {
         '2/1': '2 / 1',
         '4/3': '4 / 3',
+      },
+      borderWidth: {
+        3: '3px',
       },
       backgroundImage: {
         'radial-gradient': 'radial-gradient(80% 100% at top, var(--tw-gradient-stops))',

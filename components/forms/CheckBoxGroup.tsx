@@ -1,4 +1,6 @@
 import { ListItem } from '@/types/types'
+import * as Checkbox from '@radix-ui/react-checkbox'
+import { CheckIcon } from 'lucide-react'
 
 type CheckBoxGroupProps = {
   name: string
@@ -15,19 +17,23 @@ export const CheckBoxGroup = ({ name, items, values, onValuesChange }: CheckBoxG
       onValuesChange([...values, id])
     }
   }
+
   return (
     <ul className="w-full">
       {items.map(item => (
         <li key={item.id}>
           <label className="flex w-full items-center gap-3 rounded px-2 py-1.5 hover:bg-slate-600">
-            <input
-              type="checkbox"
+            <Checkbox.Root
               name={name}
               value={item.name}
               checked={values.includes(item.id)}
-              onChange={() => handleChange(item.id)}
-              className="size-4 flex-none accent-venom"
-            />
+              onCheckedChange={() => handleChange(item.id)}
+              className="grid size-4 flex-none place-content-center rounded border-2 border-slate-300 bg-white/5 data-[state=checked]:border-venom data-[state=checked]:bg-venom"
+            >
+              <Checkbox.Indicator>
+                <CheckIcon className="size-3 text-slate-850" strokeWidth={4} />
+              </Checkbox.Indicator>
+            </Checkbox.Root>
             {item.name}
           </label>
         </li>

@@ -31,7 +31,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
           className="min-w-48 !pl-10"
         />
         {query && (
-          <button onClick={() => setQuery('')} className="btn btn-icon absolute right-0">
+          <button onClick={() => setQuery('')} className="btn btn-icon btn-small absolute right-0 m-1">
             <span className="sr-only">Suche zurücksetzen</span>
             <X className="size-icon" />
           </button>
