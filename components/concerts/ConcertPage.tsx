@@ -25,9 +25,14 @@ import { useTranslations } from 'next-intl'
 type ConcertPageProps = {
   initialConcert: Concert
   concertQueryState?: string
+  bandListHintPreference?: string
 }
 
-export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPageProps) => {
+export const ConcertPage = ({
+  initialConcert,
+  concertQueryState,
+  bandListHintPreference,
+}: ConcertPageProps) => {
   const { data: concert } = useConcert(initialConcert.id, { placeholderData: initialConcert })
   const { data: session } = useSession()
   const { data: spotifyArtist } = useSpotifyArtist(concert?.bands?.[0]?.spotify_artist_id)
@@ -129,7 +134,9 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
         </header>
         <section className="rounded-lg bg-slate-800 p-4 md:p-6">
           <h2>{t('lineup')}</h2>
-          {concert.bands && <BandList concert={concert} />}
+          {concert.bands && (
+            <BandList concert={concert} bandListHintPreference={bandListHintPreference} />
+          )}
         </section>
         <ConcertCommunity concert={concert} />
         {concert.bands && <ConcertStats bands={concert.bands} />}

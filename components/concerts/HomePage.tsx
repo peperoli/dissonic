@@ -10,8 +10,7 @@ import { BandFilter } from './BandFilter'
 import { LocationFilter } from './LocationFilter'
 import { YearsFilter } from './YearsFilter'
 import { FestivalRootFilter } from './FestivalRootFilter'
-import Cookies from 'js-cookie'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { SegmentedControl } from '../controls/SegmentedControl'
 import { useProfile } from '../../hooks/profiles/useProfile'
 import {
@@ -31,6 +30,7 @@ import { modalPaths } from '../shared/ModalProvider'
 import { SpeedDial } from '../layout/SpeedDial'
 import { useTranslations } from 'next-intl'
 import { User } from '@supabase/supabase-js'
+import { saveLastQueryState, setViewPreference } from '@/actions/preferences'
 
 type HomePageProps = {
   concerts: ExtendedRes<Concert[]>
@@ -89,10 +89,17 @@ export const HomePage = ({
   })
   const { push } = useRouter()
   const pathname = usePathname()
-  const searchParams = useSearchParams()
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const t = useTranslations('HomePage')
-  const queryStateString = searchParams.toString()
+  const queryStates = {
+    bands: selectedBands,
+    locations: selectedLocations,
+    years: selectedYears,
+    festivals: selectedFestivalRoots,
+    user: selectedUserId,
+    sort_by: sort.sort_by,
+    sort_asc: sort.sort_asc,
+  }
   const sortItems = [
     { id: 0, value: 'date_start,false', name: t('newest') },
     { id: 1, value: 'date_start,true', name: t('oldest') },
@@ -101,14 +108,12 @@ export const HomePage = ({
   ]
 
   useEffect(() => {
-    if (queryStateString) {
-      Cookies.set('concertQueryState', '?' + queryStateString, { sameSite: 'strict' })
-    }
-  }, [queryStateString])
+    saveLastQueryState('concerts', queryStates)
+  }, [JSON.stringify(queryStates)])
 
-  function handleView(value: string) {
+  async function handleView(value: string) {
     setView(value)
-    Cookies.set('view', value, { expires: 365, sameSite: 'strict' })
+    await setViewPreference(value)
   }
 
   function resetAll() {

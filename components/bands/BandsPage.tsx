@@ -8,18 +8,18 @@ import { Pagination, usePagination } from '../layout/Pagination'
 import { Band, ExtendedRes } from '../../types/types'
 import { useBands } from '../../hooks/bands/useBands'
 import { useDebounce } from '../../hooks/helpers/useDebounce'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
 import { StatusBanner } from '../forms/StatusBanner'
 import { CountryFilter } from './CountryFilter'
 import { GenreFilter } from './GenreFilter'
 import { BandTableRow } from './BandTableRow'
 import { parseAsArrayOf, parseAsInteger, useQueryState } from 'nuqs'
-import Cookies from 'js-cookie'
 import { useModal } from '../shared/ModalProvider'
 import { Plus, RotateCcw } from 'lucide-react'
 import { SpeedDial } from '../layout/SpeedDial'
 import { useTranslations } from 'next-intl'
+import { saveLastQueryState } from '@/actions/preferences'
 
 interface BandsPageProps {
   initialBands: ExtendedRes<Band[]>
@@ -50,9 +50,12 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
   const [_, setModal] = useModal()
   const { push } = useRouter()
   const pathname = usePathname()
-  const searchParams = useSearchParams()
   const t = useTranslations('BandsPage')
-  const queryStateString = searchParams.toString()
+  const queryStates = {
+    countries: selectedCountries,
+    genres: selectedGenres,
+    page: currentPage,
+  }
 
   useEffect(() => {
     if (selectedCountries || selectedGenres || query) {
@@ -65,8 +68,8 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
   }
 
   useEffect(() => {
-    Cookies.set('bandQueryState', '?' + queryStateString, { sameSite: 'strict' })
-  }, [queryStateString])
+    saveLastQueryState('bands', queryStates)
+  }, [JSON.stringify(queryStates)])
 
   if (!bands) {
     return (
@@ -91,7 +94,12 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
       </div>
       <Table>
         <div className="scrollbar-hidden -mx-4 flex gap-2 overflow-x-auto px-4 md:grid md:grid-cols-3 md:gap-4 md:overflow-visible">
-          <SearchField name="searchBands" placeholder={t('searchBand')} query={query} setQuery={setQuery} />
+          <SearchField
+            name="searchBands"
+            placeholder={t('searchBand')}
+            query={query}
+            setQuery={setQuery}
+          />
           <CountryFilter values={selectedCountries} onSubmit={setSelectedCountries} />
           <GenreFilter values={selectedGenres} onSubmit={setSelectedGenres} />
         </div>

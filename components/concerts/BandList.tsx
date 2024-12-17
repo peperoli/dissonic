@@ -9,16 +9,17 @@ import Link from 'next/link'
 import { Button } from '../Button'
 import { usePathname, useRouter } from 'next/navigation'
 import clsx from 'clsx'
-import Cookies from 'js-cookie'
 import { Edit, Lightbulb, Plus, X } from 'lucide-react'
 import { TablesInsert } from '@/types/supabase'
 import { useTranslations } from 'next-intl'
+import { setBandListHintPreference } from '@/actions/preferences'
 
 type BandListProps = {
   concert: Concert
+  bandListHintPreference?: string
 }
 
-export function BandList({ concert }: BandListProps) {
+export function BandList({ concert, bandListHintPreference }: BandListProps) {
   const { data: session } = useSession()
   const bandsSeen = concert.bands_seen
     ?.filter(item => item?.user_id === session?.user.id)
@@ -26,9 +27,6 @@ export function BandList({ concert }: BandListProps) {
   const [editing, setEditing] = useState(false)
   const [selectedBandsSeen, setSelectedBandsSeen] = useState<TablesInsert<'j_bands_seen'>[]>(
     bandsSeen ?? []
-  )
-  const [hideBandsSeenHint, setHideBandsSeenHint] = useState(
-    Cookies.get('hideBandsSeenHint') ?? null
   )
   const addBandsSeen = useAddBandsSeen()
   const deleteBandsSeen = useDeleteBandsSeen()
@@ -66,15 +64,12 @@ export function BandList({ concert }: BandListProps) {
     <section>
       {editing ? (
         <>
-          {!hideBandsSeenHint && (
+          {bandListHintPreference !== 'hide' && (
             <div className="mb-4 flex w-full gap-3 rounded-lg bg-slate-700 p-4">
               <Lightbulb className="size-icon flex-none text-yellow" />
               <p>{t('chooseBandsYouHaveSeenAtThisConcert')}</p>
               <button
-                onClick={() => {
-                  setHideBandsSeenHint('yes')
-                  Cookies.set('hideBandsSeenHint', 'yes', { expires: 365, sameSite: 'strict' })
-                }}
+                onClick={async () => await setBandListHintPreference('hide')}
                 aria-label={t('hideHint')}
                 className="ml-auto grid h-6 w-6 flex-none place-content-center rounded-md hover:bg-slate-600"
               >

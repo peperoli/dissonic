@@ -52,5 +52,5 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params
   const band = await fetchData(params)
   const cookieStore = await cookies()
-  return <BandPage initialBand={band} bandQueryState={cookieStore.get('bandQueryState')?.value} />
+  return <BandPage initialBand={band} bandQueryState={cookieStore.get('bandsLastQueryState')?.value} />
 }
