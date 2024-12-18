@@ -53,7 +53,7 @@
     "seeYourConcertHistoryAndStatistics": "Sieh deine Konzert-Historie und Statistiken",
     "commentOnConcertsAndReactToComments": "Kommentiere Konzerte und reagiere auf Kommentare",
     "contributeConcertsBandsAndLocations": "Erstelle und bearbeite Konzerte, Bands und Lokale",
-    "emailAlreadyInUseError": "Fehler: Diese E-Mail-Adresse wird bereits verwendet.",
+    "emailAlreadyInUseError": "Diese E-Mail ist bereits mit einem Benutzer verknüpft.",
     "successMessage": "Erfolgreich! Bestätige deine E-Mail-Adresse, um dein Benutzerkonto zu aktivieren.",
     "doYouHavAnAccountAlready": "Hast du bereits ein Konto?",
     "login": "Anmelden"
@@ -75,6 +75,8 @@
     "password": "Passwort",
     "login": "Anmelden",
     "forgotPassword": "Passwort vergessen?",
+    "Invalid login credentials": "Die E-Mail-Adresse oder das Passwort ist nicht korrekt.",
+    "Email not confirmed": "Die E-Mail-Adresse wurde noch nicht bestätigt.",
     "youDontHaveAnAccountYet": "Du hast noch kein Konto?",
     "letsGetStarted": "Dann nichts wie los!",
     "signUp": "Registrieren"

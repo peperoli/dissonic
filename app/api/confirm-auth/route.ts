@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
 
   if (!token_hash || !type) {
     console.error('Error: Missing token_hash or type')
-    return NextResponse.redirect('/signup')
+    return NextResponse.redirect(new URL('/signup', request.url))
   }
 
   const supabase = await createClient()
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
 
   if (error) {
     console.error(error.message)
-    return NextResponse.redirect('/signup')
+    return NextResponse.redirect(new URL('/signup', request.url))
   }
   
   redirectTo.searchParams.delete('next')

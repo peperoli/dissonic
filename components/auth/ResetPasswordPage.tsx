@@ -7,8 +7,6 @@ import { useResetPassword } from '../../hooks/auth/useResetPassword'
 import { emailRegex } from '../../lib/emailRegex'
 import { Button } from './../Button'
 import { StatusBanner } from './../forms/StatusBanner'
-import { AuthError } from '@supabase/supabase-js'
-import { errorMessages } from '../../lib/errorMessages'
 import { ArrowLeft } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
@@ -54,7 +52,7 @@ export function ResetPasswordPage() {
         {status === 'error' && (
           <StatusBanner
             statusType="error"
-            message={error instanceof AuthError ? errorMessages[error.message] : undefined}
+            message={t(error.message)}
           />
         )}
         {status === 'success' && (

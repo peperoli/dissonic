@@ -4,7 +4,6 @@ import { Button } from '../Button'
 import { CheckIcon } from 'lucide-react'
 import { useSignUp } from '../../hooks/auth/useSignup'
 import { StatusBanner } from '../forms/StatusBanner'
-import { errorMessages } from '../../lib/errorMessages'
 import { useRouter } from 'next/navigation'
 import { Form } from './Form'
 import { AuthError, PostgrestError } from '@supabase/supabase-js'
@@ -60,7 +59,7 @@ export const SignupPage = () => {
           message={
             'code' in error && error.code === '23505'
               ? t('emailAlreadyInUseError')
-              : errorMessages[error.message]
+              : t(error.message)
           }
           className="mt-6"
         />

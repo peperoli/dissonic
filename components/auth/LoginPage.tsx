@@ -5,8 +5,6 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { useSignIn } from '../../hooks/auth/useSignIn'
 import { Button } from './../Button'
 import { TextField } from './../forms/TextField'
-import { AuthError } from '@supabase/supabase-js'
-import { errorMessages } from '../../lib/errorMessages'
 import { StatusBanner } from './../forms/StatusBanner'
 import { emailRegex } from '../../lib/emailRegex'
 import Link from 'next/link'
@@ -66,12 +64,7 @@ export default function LoginPage() {
             {t('forgotPassword')}
           </Link>
         </div>
-        {status === 'error' && (
-          <StatusBanner
-            statusType="error"
-            message={error instanceof AuthError ? errorMessages[error.message] : t('unknownError')}
-          />
-        )}
+        {error && <StatusBanner statusType="error" message={t(error.message)} />}
       </form>
       <h3 className="mt-10">{t('youDontHaveAnAccountYet')}</h3>
       <p className="mb-4">{t('letsGetStarted')}</p>

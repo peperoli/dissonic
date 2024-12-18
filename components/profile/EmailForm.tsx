@@ -1,8 +1,6 @@
 'use client'
 
 import { emailRegex } from '@/lib/emailRegex'
-import { errorMessages } from '@/lib/errorMessages'
-import { AuthError } from '@supabase/supabase-js'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useEditUser } from '../../hooks/auth/useEditUser'
 import { Button } from '../Button'
@@ -51,7 +49,7 @@ export const EmailForm = () => {
       {status === 'error' && (
         <StatusBanner
           statusType="error"
-          message={error instanceof AuthError ? errorMessages[error.message] : t('errorMessage')}
+          message={t(error.message)}
         />
       )}
       {status === 'success' && <StatusBanner statusType="success" message={t('successMessage')} />}

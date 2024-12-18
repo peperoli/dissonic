@@ -5,8 +5,6 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { TextField } from '../forms/TextField'
 import { Button } from '../Button'
 import { StatusBanner } from '../forms/StatusBanner'
-import { AuthError } from '@supabase/supabase-js'
-import { errorMessages } from '../../lib/errorMessages'
 import { useEditUser } from '../../hooks/auth/useEditUser'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
@@ -55,7 +53,7 @@ export function UpdatePasswordPage() {
         {status === 'error' && (
           <StatusBanner
             statusType="error"
-            message={error instanceof AuthError ? errorMessages[error.message] : undefined}
+            message={t(error.message)}
           />
         )}
         {status === 'success' && (
