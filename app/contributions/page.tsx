@@ -4,11 +4,10 @@ import { Tables } from '@/types/supabase'
 import { ContributionFetchOptions } from '@/types/types'
 import { createClient } from '@/utils/supabase/server'
 import { getLocale, getTranslations } from 'next-intl/server'
-import Link from 'next/link'
 
 const relatedRessourceTypes = {
   concerts: ['j_concert_bands'],
-  bands: ['j_concert_bands', 'j_band_genres'],
+  bands: ['j_band_genres'],
   locations: [],
 }
 

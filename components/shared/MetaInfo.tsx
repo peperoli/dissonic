@@ -26,9 +26,8 @@ export const MetaInfo = ({ createdAt, creator, ressourceType, ressourceId }: Met
       <InfoIcon className="size-icon" />
       {createdAt && creator && (
         <p>
-          {t.rich('createdAtDByU', {
+          {t.rich('createdAtDateByUser', {
             date: new Date(createdAt).toLocaleDateString(locale),
-            hasCreator: creator ? 'true' : 'false',
             link: chunks => (
               <Link href={`/users/${creator.username}`} className="text-white hover:underline">
                 {chunks}
@@ -37,6 +36,9 @@ export const MetaInfo = ({ createdAt, creator, ressourceType, ressourceId }: Met
             username: creator.username,
           })}
         </p>
+      )}
+      {createdAt && !creator && (
+        <p>{t('createdAtDate', { date: new Date(createdAt).toLocaleDateString(locale) })}</p>
       )}
       {!!contributionsCount && (
         <Link

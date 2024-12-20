@@ -15,6 +15,7 @@ const editLocation = async (formData: TablesInsert<'locations'>) => {
       zip_code: formData.zip_code,
       city: formData.city,
       country_id: formData.country_id,
+      alt_names: formData.alt_names,
       website: formData.website,
     })
     .eq('id', formData.id)

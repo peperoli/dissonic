@@ -173,13 +173,13 @@
     "delete": "Löschen"
   },
   "MetaInfo": {
-    "createdAtDByU": "Erstellt am {date} von <link>{username}</link>",
+    "createdAtDateByUser": "Erstellt am {date} von <link>{username}</link>",
+    "createdAtDate": "Erstellt am {date}",
     "nContributions": "{count, plural, =1 {# Bearbeitung} other {# Bearbeitungen}}"
   },
   "ConcertForm": {
     "concert": "Konzert",
     "festival": "Festival",
-    "name": "Name",
     "festivalRoot": "Festival-Serie",
     "festivalRootMissing": "Festival-Serie fehlt?",
     "add": "Hinzufügen",
@@ -187,6 +187,8 @@
     "startDate": "Startdatum",
     "endDate": "Enddatum",
     "location": "Lokal",
+    "name": "Name",
+    "optional": "(optional)",
     "duplicateConcertWarning": "{count, plural, =1 {Es existiert bereits ein ähnliches Konzert:} other {Es existieren bereits # ähnliche Konzerte:}}",
     "cancel": "Abbrechen",
     "save": "Speichern"
@@ -247,6 +249,7 @@
     "bands": "Bands",
     "edit": "Bearbeiten",
     "delete": "Löschen",
+    "altNames": "Alternative Namen",
     "nConcertsWithX": "{count, plural, =1 {# Konzert} other {# Konzerte}} mit {band}"
   },
   "BandCommunity": {
@@ -261,10 +264,13 @@
     "duplicateBandsWarning": "{count, plural, =1 {Es existiert bereits eine ähnliche Band:} other {Es existieren bereits # ähnliche Bands:}}",
     "country": "Land",
     "genres": "Genres",
+    "altNames": "Alternative Namen",
     "youtubeChannel": "YouTube-Channel",
+    "optional": "(optional)",
     "showMore": "Mehr anzeigen",
     "showLess": "Weniger anzeigen",
-    "optional": "(optional)"
+    "cancel": "Abbrechen",
+    "save": "Speichern"
   },
   "SpotifyArtistSelect": {
     "spotifyLink": "Spotify-Verknüpfung",
@@ -289,6 +295,7 @@
     "edit": "Bearbeiten",
     "delete": "Löschen",
     "website": "Website",
+    "altNames": "Alternative Namen",
     "nConcertsAtX": "{count, plural, =1 {# Konzert} other {# Konzerte}} @ {location}"
   },
   "LocationCommunity": {
@@ -303,10 +310,11 @@
     "zipCode": "PLZ",
     "city": "Stadt",
     "country": "Land",
-    "showMore": "Mehr anzeigen",
-    "showLess": "Weniger anzeigen",
+    "altNames": "Alternative Namen",
     "website": "Website",
     "optional": "(optional)",
+    "showMore": "Mehr anzeigen",
+    "showLess": "Weniger anzeigen",
     "cancel": "Abbrechen",
     "save": "Speichern"
   },

@@ -11,6 +11,7 @@ export type Database = {
     Tables: {
       bands: {
         Row: {
+          alt_names: string | null
           country_id: number | null
           created_at: string | null
           creator_id: string | null
@@ -20,6 +21,7 @@ export type Database = {
           youtube_url: string | null
         }
         Insert: {
+          alt_names?: string | null
           country_id?: number | null
           created_at?: string | null
           creator_id?: string | null
@@ -29,6 +31,7 @@ export type Database = {
           youtube_url?: string | null
         }
         Update: {
+          alt_names?: string | null
           country_id?: number | null
           created_at?: string | null
           creator_id?: string | null
@@ -502,6 +505,7 @@ export type Database = {
       }
       locations: {
         Row: {
+          alt_names: string | null
           city: string
           country_id: number | null
           created_at: string | null
@@ -512,6 +516,7 @@ export type Database = {
           zip_code: string | null
         }
         Insert: {
+          alt_names?: string | null
           city: string
           country_id?: number | null
           created_at?: string | null
@@ -522,6 +527,7 @@ export type Database = {
           zip_code?: string | null
         }
         Update: {
+          alt_names?: string | null
           city?: string
           country_id?: number | null
           created_at?: string | null
@@ -751,6 +757,7 @@ export type Database = {
           search_string: string
         }
         Returns: {
+          alt_names: string | null
           country_id: number | null
           created_at: string | null
           creator_id: string | null
@@ -771,6 +778,7 @@ export type Database = {
           search_string: string
         }
         Returns: {
+          alt_names: string | null
           city: string
           country_id: number | null
           created_at: string | null

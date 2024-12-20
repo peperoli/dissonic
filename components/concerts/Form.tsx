@@ -101,7 +101,7 @@ export const Form = ({ close, isNew }: FormProps) => {
             />
           )}
         />
-        {isFestival === true ? (
+        {isFestival === true && (
           <>
             <Controller
               name="festival_root_id"
@@ -129,12 +129,6 @@ export const Form = ({ close, isNew }: FormProps) => {
               />
             </div>
           </>
-        ) : (
-          <TextField
-            {...register('name')}
-            label={`${t('name')} ${'(optional)'}`}
-            placeholder="Greenfield"
-          />
         )}
         <div className="flex">
           <TextField
@@ -184,6 +178,13 @@ export const Form = ({ close, isNew }: FormProps) => {
             />
           )}
         />
+        {!isFestival && (
+          <TextField
+            {...register('name')}
+            label={`${t('name')} ${t('optional')}`}
+            placeholder="A Day in Smoke"
+          />
+        )}
         {isSimilar && (
           <div className="rounded-lg bg-yellow/10 p-4">
             <div className="flex items-center gap-4 text-yellow">

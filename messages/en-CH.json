@@ -173,13 +173,13 @@
     "delete": "Delete"
   },
   "MetaInfo": {
-    "createdAtDByU": "Created at {date} by <link>{username}</link>",
+    "createdAtDateByUser": "Created at {date} by <link>{username}</link>",
+    "createdAtDate": "Created at {date}",
     "nContributions": "{count, plural, =1 {# contribution} other {# contributions}}"
   },
   "ConcertForm": {
     "concert": "Concert",
     "festival": "Festival",
-    "name": "Name",
     "festivalRoot": "Festival series",
     "festivalRootMissing": "Festival series missing?",
     "add": "Add",
@@ -187,6 +187,8 @@
     "startDate": "Start date",
     "endDate": "End date",
     "location": "Location",
+    "name": "Name",
+    "optional": "(optional)",
     "duplicateConcertWarning": "{count, plural, =1 {There is already a similar concert:} other {There are already # similar concerts:}}",
     "cancel": "Cancel",
     "save": "Save"
@@ -247,6 +249,7 @@
     "bands": "Bands",
     "edit": "Edit",
     "delete": "Delete",
+    "altNames": "Alternative names",
     "nConcertsWithX": "{count, plural, =1 {# concert} other {# concerts}} with {band}"
   },
   "BandCommunity": {
@@ -261,10 +264,13 @@
     "duplicateBandsWarning": "{count, plural, =1 {There is already a similar band:} other {There are already # similar bands:}}",
     "country": "Country",
     "genres": "Genres",
+    "altNames": "Alternative names",
     "youtubeChannel": "YouTube channel",
+    "optional": "(optional)",
     "showMore": "Show more",
     "showLess": "Show less",
-    "optional": "(optional)"
+    "cancel": "Cancel",
+    "save": "Save"
   },
   "SpotifyArtistSelect": {
     "spotifyLink": "Spotify link",
@@ -288,6 +294,7 @@
     "locations": "Locations",
     "edit": "Edit",
     "delete": "Delete",
+    "altNames": "Alternative names",
     "website": "Website",
     "nConcertsAtX": "{count, plural, =1 {# concert} other {# concerts}} @ {location}"
   },
@@ -302,11 +309,12 @@
     "duplicateLocationWarning": "{count, plural, =1 {There is already a similar location:} other {There are already # similar locations:}}",
     "zipCode": "ZIP Code",
     "city": "City",
+    "altNames": "Alternative names",
+    "website": "Website",
+    "optional": "(optional)",
     "country": "Country",
     "showMore": "Show more",
     "showLess": "Show less",
-    "website": "Website",
-    "optional": "(optional)",
     "cancel": "Cancel",
     "save": "Save"
   },

@@ -17,6 +17,7 @@ import { MetaInfo } from '../shared/MetaInfo'
 import { SpeedDial } from '../layout/SpeedDial'
 import { BandCommunity } from './BandCommunity'
 import { useLocale, useTranslations } from 'next-intl'
+import clsx from 'clsx'
 
 type BandPageProps = {
   initialBand: Band
@@ -86,7 +87,12 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
           )}
         </div>
         <div>
-          <h1>{band.name}</h1>
+          <h1 className={clsx(band.alt_names && 'mb-0')}>{band.name}</h1>
+          {band.alt_names && (
+            <p className="mb-6 text-sm text-slate-300">
+              {t('altNames')}: {band.alt_names}
+            </p>
+          )}
           {band.country && (
             <div className="mb-2 flex items-center gap-4">
               <MapPin className="size-icon flex-none text-slate-300" />

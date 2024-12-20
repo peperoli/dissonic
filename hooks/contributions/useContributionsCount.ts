@@ -4,7 +4,7 @@ import supabase from 'utils/supabase/client'
 
 const relatedRessourceTypes = {
   concerts: ['j_concert_bands'],
-  bands: ['j_concert_bands', 'j_band_genres'],
+  bands: ['j_band_genres'],
   locations: []
 }
 

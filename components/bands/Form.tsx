@@ -121,7 +121,8 @@ export const Form = ({ isNew, close }: FormProps) => {
         )}
       />
       <Disclosure>
-        <DisclosurePanel>
+        <DisclosurePanel className="grid gap-6">
+          <TextField {...register('alt_names')} label={`${t('altNames')} ${t('optional')}`} />
           <TextField
             {...register('youtube_url')}
             label={`${t('youtubeChannel')} ${t('optional')}`}
@@ -140,10 +141,10 @@ export const Form = ({ isNew, close }: FormProps) => {
         </DisclosureButton>
       </Disclosure>
       <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:static md:z-0 md:justify-end md:pb-0 [&>*]:flex-1">
-        <Button onClick={close} label="Abbrechen" />
+        <Button onClick={close} label={t('cancel')} />
         <Button
           type="submit"
-          label="Speichern"
+          label={t('save')}
           appearance="primary"
           loading={status === 'pending'}
         />

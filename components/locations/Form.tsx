@@ -114,7 +114,8 @@ export const Form = ({ close, isNew }: FormProps) => {
         )}
       />
       <Disclosure>
-        <DisclosurePanel>
+        <DisclosurePanel className="grid gap-6">
+          <TextField {...register('alt_names')} label={`${t('altNames')} ${t('optional')}`} />
           <TextField
             {...register('website')}
             label={`${t('website')} ${t('optional')}`}

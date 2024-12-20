@@ -14,6 +14,7 @@ import { MetaInfo } from '../shared/MetaInfo'
 import { SpeedDial } from '../layout/SpeedDial'
 import { LocationCommunity } from './LocationCommunity'
 import { useLocale, useTranslations } from 'next-intl'
+import clsx from 'clsx'
 
 type LocationPageProps = {
   location: Location
@@ -82,7 +83,12 @@ export const LocationPage = ({
           <MapPin className="size-12 text-slate-300" />
         </div>
         <div>
-          <h1>{location.name}</h1>
+          <h1 className={clsx(location.alt_names && 'mb-0')}>{location.name}</h1>
+          {location.alt_names && (
+            <p className="mb-6 text-sm text-slate-300">
+              {t('altNames')}: {location.alt_names}
+            </p>
+          )}
           {location.city && (
             <div className="mb-5 flex items-center gap-4">
               <MapPin className="size-icon flex-none text-slate-300" />
