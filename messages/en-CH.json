@@ -477,7 +477,12 @@
   },
   "ContributionsPage": {
     "contributions": "Contributions",
-    "noEntriesFound": "No entries found."
+    "noEntriesFound": "No entries found.",
+    "contributionsHint": "Only contributions starting from September 2024 are counted.",
+    "contributionsTotal": "{count, plural, =1 {contribution} other {contributions}}",
+    "concertsAdded": "{count, plural, =1 {concert} other {concerts}} added",
+    "bandsAdded": "{count, plural, =1 {band} other {bands}} added",
+    "locationsAdded": "{count, plural, =1 {location} other {locations}} added"
   },
   "ContributionItem": {
     "userContributedToConcert": "<user></user> {operation, select, INSERT {created} UPDATE {updated} DELETE {deleted} other {translation error}} <concert></concert>",

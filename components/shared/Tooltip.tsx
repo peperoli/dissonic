@@ -1,18 +1,18 @@
 'use client'
 
 import * as Popover from '@radix-ui/react-popover'
-import { ReactElement, useState } from 'react'
+import { ReactNode, useState } from 'react'
 
 export function Tooltip({
   children,
   content,
   ...props
-}: { children: ReactElement; content: ReactElement } & Pick<
+}: { children: ReactNode; content: ReactNode } & Pick<
   Popover.PopoverContentProps,
   'side' | 'sideOffset'
 >) {
   const [isOpen, setIsOpen] = useState(false)
-  console.log(isOpen)
+
   return (
     <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
       <Popover.Trigger
@@ -26,7 +26,7 @@ export function Tooltip({
         <Popover.Content
           side={props.side ?? 'top'}
           sideOffset={props.sideOffset ?? 2}
-          className="z-10 rounded-lg border border-slate-800 bg-slate-900 p-2 text-sm shadow-lg"
+          className="z-10 max-w-72 rounded-lg border border-slate-800 bg-slate-900 p-2 text-sm shadow-lg"
           {...props}
         >
           {content}
