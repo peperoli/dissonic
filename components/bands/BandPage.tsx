@@ -30,6 +30,7 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
   const { data: concerts } = useConcerts({
     bands: [initialBand.id],
     sort: { sort_by: 'date_start', sort_asc: false },
+    bandsSize: 5,
   })
   const [_, setModal] = useModal()
   const { data: session } = useSession()

@@ -15,6 +15,7 @@ export function ConcertList({ profileId }: { profileId: string }) {
     bandsSeenUsers: [profileId],
     sort: { sort_by: 'date_start', sort_asc: false },
     size,
+    bandsSize: 5,
   })
 
   if (status === 'pending') return <p className="text-sm text-slate-300">Lade ...</p>

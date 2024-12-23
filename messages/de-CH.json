@@ -132,6 +132,9 @@
   "SearchField": {
     "search": "Suchen ..."
   },
+  "ConcertCard": {
+    "dateStartToDateEnd": "{dateStart} bis {dateEnd}"
+  },
   "ConcertPage": {
     "concerts": "Konzerte",
     "edit": "Bearbeiten",

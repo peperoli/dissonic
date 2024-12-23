@@ -86,6 +86,7 @@ export const HomePage = ({
     bandsSeenUsers: selectedUserId ? [selectedUserId] : getView(),
     sort,
     size,
+    bandsSize: 5,
   })
   const { push } = useRouter()
   const pathname = usePathname()
@@ -198,9 +199,9 @@ export const HomePage = ({
           />
         )}
       </section>
-      <div className="grid gap-4">
+      <section className="grid gap-4">
         {concerts?.data.map(concert => <ConcertCard concert={concert} key={concert.id} />)}
-      </div>
+      </section>
       <div className="mt-4 flex flex-col items-center gap-2">
         <p className="text-sm text-slate-300">
           {t('nOfNEntries', { count: concerts?.data.length, total: concerts?.count })}

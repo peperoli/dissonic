@@ -51,11 +51,16 @@ const fetchConcerts = async (options?: ConcertFetchOptions) => {
       filteredConcerts.map(id => id.id)
     )
 
-  if (options?.size) {
-    filteredQuery = filteredQuery.range(0, options.size - 1)
-  }
   if (options?.sort) {
     filteredQuery = filteredQuery.order(options.sort.sort_by, { ascending: options.sort.sort_asc })
+  }
+
+  if (options?.size) {
+    filteredQuery = filteredQuery.limit(options.size)
+  }
+
+  if (options?.bandsSize) {
+    filteredQuery = filteredQuery.limit(options.bandsSize, { referencedTable: 'j_concert_bands' })
   }
 
   const { data, count, error } = await filteredQuery

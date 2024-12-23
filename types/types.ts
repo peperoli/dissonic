@@ -13,6 +13,7 @@ export type ConcertFetchOptions = {
   bandsSeenUsers?: string[] | null
   sort?: { sort_by: 'date_start' | 'bands_count'; sort_asc: boolean }
   size?: number
+  bandsSize?: number
 }
 
 export type BandFetchOptions = {

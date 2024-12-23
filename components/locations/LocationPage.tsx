@@ -29,6 +29,7 @@ export const LocationPage = ({
   const { data: concerts } = useConcerts({
     locations: [initialLocation.id],
     sort: { sort_by: 'date_start', sort_asc: false },
+    bandsSize: 5,
   })
   const [_, setModal] = useModal()
   const { data: session } = useSession()

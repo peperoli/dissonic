@@ -57,9 +57,10 @@ async function fetchData(view: string = 'global') {
       'id',
       concertIds.map(concert => concert.id)
     )
-    .range(0, 24)
     .order('date_start', { ascending: false })
     .order('item_index', { referencedTable: 'j_concert_bands', ascending: true })
+    .limit(25)
+    .limit(5, { referencedTable: 'j_concert_bands' })
     .returns<Concert[]>()
 
   if (error) {

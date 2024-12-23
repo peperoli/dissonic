@@ -2,14 +2,14 @@ import { Concert } from '../../types/types'
 import { useProfiles } from '../../hooks/profiles/useProfiles'
 import { useSession } from '../../hooks/auth/useSession'
 import clsx from 'clsx'
-import useMediaQuery from '../../hooks/helpers/useMediaQuery'
 import { UserItem } from '../shared/UserItem'
-import { MouseEvent, useState } from 'react'
-import { ConcertDate } from './ConcertDate'
-import { MapPin } from 'lucide-react'
-import { Chip } from '../Chip'
+import { Fragment } from 'react'
+import { CalendarIcon } from 'lucide-react'
+import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useLocale, useTranslations } from 'next-intl'
 import { TruncatedList } from 'react-truncate-list'
-import { useRouter } from 'next/navigation'
 
 interface ConcertCardProps {
   concert: Concert
@@ -17,95 +17,97 @@ interface ConcertCardProps {
 }
 
 export const ConcertCard = ({ concert, nested }: ConcertCardProps) => {
-  const [isExpanded, setIsExpanded] = useState(false)
-  const { data: session } = useSession()
   const fanIds = new Set(concert?.bands_seen?.map(item => item?.user_id ?? ''))
   const { data: profiles } = useProfiles({ ids: [...fanIds] }, fanIds.size > 0)
+  const { data: session } = useSession()
+  const { data: spotifyArtist } = useSpotifyArtist(concert.bands[0]?.spotify_artist_id)
   const bandsSeen = concert.bands_seen?.filter(item => item?.user_id === session?.user.id)
-  const isDesktop = useMediaQuery('(min-width: 768px)')
-  const router = useRouter()
-
-  function expand(event: MouseEvent) {
-    event.stopPropagation()
-    setIsExpanded(true)
-  }
+  const picture = spotifyArtist?.images?.[2]
+  const dateStart = new Date(concert.date_start)
+  const dateEnd = concert.date_end ? new Date(concert.date_end) : null
+  const t = useTranslations('ConcertCard')
+  const locale = useLocale()
 
   return (
-    <div
-      onClick={() => router.push(`/concerts/${concert.id}`)}
+    <Link
+      href={`/concerts/${concert.id}`}
       className={clsx(
-        'group flex gap-4 rounded-2xl p-5 hover:cursor-pointer',
+        'group flex gap-4 rounded-2xl p-4 hover:cursor-pointer',
         nested ? 'bg-slate-750' : 'bg-slate-800'
       )}
     >
-      <div className="flex flex-col items-center">
-        <ConcertDate date={new Date(concert.date_start)} isFirst />
-        {concert.date_end && concert.date_end !== concert.date_start && (
-          <>
-            <div className="h-2 border-l border-slate-700 md:h-4" />
-            <ConcertDate date={new Date(concert.date_end)} />
-          </>
+      <div className="grid size-22 flex-none place-content-center rounded-lg bg-slate-700">
+        {picture ? (
+          <Image
+            src={picture.url}
+            alt={concert.bands[0].name}
+            unoptimized
+            width={150}
+            height={150}
+            className="size-22 rounded-lg object-cover"
+          />
+        ) : (
+          <CalendarIcon className="size-8 text-slate-300" />
         )}
       </div>
-      <div className="w-full">
-        {(concert.festival_root || concert.name) && (
-          <div className="mb-2">
-            <Chip
-              label={
-                concert.festival_root
-                  ? concert.festival_root.name + ' ' + new Date(concert.date_start).getFullYear()
-                  : (concert.name ?? '')
-              }
-              size="sm"
-              color={concert.festival_root ? 'purple' : 'blue'}
-            />
-          </div>
+      <div className="grid content-start">
+        {concert.festival_root && (
+          <p className="mb-0 w-fit truncate rounded-md bg-white px-1 text-sm font-bold text-slate-850">
+            {concert.festival_root.name} {dateStart.getFullYear()}
+          </p>
         )}
-        <TruncatedList
-          renderTruncator={({ hiddenItemsCount }) => (
-            <button
-              onClick={expand}
-              className="rounded-md bg-slate-700 px-1.5 font-bold text-slate-300 hover:bg-slate-600"
-            >{`+${hiddenItemsCount}`}</button>
-          )}
-          className={clsx(
-            'mb-2 flex w-full flex-wrap items-center gap-x-2 gap-y-1',
-            !isExpanded && (concert.is_festival ? 'max-h-13' : 'max-h-6')
-          )}
-        >
+        <p className="h2 mb-0 truncate">
           {concert.bands?.map((band, index) => (
-            <div className="flex gap-2" key={band.id}>
-              <div
+            <Fragment key={band.id}>
+              {index !== 0 && <span className="text-slate-300"> &bull; </span>}
+              <span
                 className={clsx(
-                  'font-bold',
                   bandsSeen?.find(bandSeen => band.id === bandSeen?.band_id) && 'text-venom'
                 )}
               >
                 {band.name}
-              </div>
-              {index + 1 !== concert.bands?.length && (
-                <span className="text-slate-300">&bull;</span>
-              )}
-            </div>
+              </span>
+            </Fragment>
           ))}
-        </TruncatedList>
-        <div className="mb-2 flex w-full gap-4">
-          <div className="flex items-center gap-2 text-sm">
-            <MapPin className="size-icon text-slate-300" />
-            {concert.location?.name}
-          </div>
-        </div>
+        </p>
+        {dateEnd ? (
+          <p className="text-sm">
+            {t('dateStartToDateEnd', {
+              dateStart: dateStart.toLocaleDateString(locale, { day: 'numeric', month: 'short' }),
+              dateEnd: dateEnd.toLocaleDateString(locale, {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+              }),
+            })}
+          </p>
+        ) : (
+          <p className="text-sm">
+            {dateStart.toLocaleDateString(locale, {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            })}
+          </p>
+        )}
+        {!concert.festival_root && (
+          <p className="truncate text-sm text-slate-300">
+            {concert.location?.name}, {concert.location?.city}
+          </p>
+        )}
         {profiles && (
-          <div className="flex max-h-6 w-full items-center gap-2 md:gap-x-4">
-            {profiles.slice(0, 3).map(item => (
-              <UserItem user={item} size="sm" usernameIsHidden={!isDesktop} key={item.id} />
-            ))}
-            {profiles.length > 3 && (
-              <span className="text-sm text-slate-300">+{profiles.length - 3}</span>
+          <TruncatedList
+            renderTruncator={({ hiddenItemsCount }) => (
+              <span className="text-sm text-slate-300">+{hiddenItemsCount}</span>
             )}
-          </div>
+            className="mt-1 flex w-full items-center gap-2"
+          >
+            {profiles.map(item => (
+              <UserItem user={item} size="sm" usernameIsHidden key={item.id} />
+            ))}
+          </TruncatedList>
         )}
       </div>
-    </div>
+    </Link>
   )
 }
