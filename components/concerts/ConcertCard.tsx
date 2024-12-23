@@ -52,7 +52,7 @@ export const ConcertCard = ({ concert, nested }: ConcertCardProps) => {
       </div>
       <div className="grid content-start">
         {concert.festival_root && (
-          <p className="mb-0 w-fit truncate rounded-md bg-white px-1 text-sm font-bold text-slate-850">
+          <p className="line-clamp-1 justify-self-start rounded-md bg-white px-1 text-sm font-bold text-slate-850">
             {concert.festival_root.name} {dateStart.getFullYear()}
           </p>
         )}
