@@ -56,6 +56,14 @@ export const ConcertCard = ({ concert, nested }: ConcertCardProps) => {
             {concert.festival_root.name} {dateStart.getFullYear()}
           </p>
         )}
+        {concert.name && (
+          <p className="text-sm font-bold truncate">
+            {concert.name}
+            <span className="truncate text-sm text-slate-300">
+              , {concert.location?.name}, {concert.location?.city}
+            </span>
+          </p>
+        )}
         <p className="h2 mb-0 truncate">
           {concert.bands?.map((band, index) => (
             <Fragment key={band.id}>
@@ -90,7 +98,7 @@ export const ConcertCard = ({ concert, nested }: ConcertCardProps) => {
             })}
           </p>
         )}
-        {!concert.festival_root && (
+        {!concert.festival_root && !concert.name && (
           <p className="truncate text-sm text-slate-300">
             {concert.location?.name}, {concert.location?.city}
           </p>

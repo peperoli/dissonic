@@ -58,14 +58,14 @@ export const UserItem = ({
         )}
       </div>
       <div
-        className={clsx(
+        className={clsx('grid',
           usernameIsHidden && 'sr-only',
           size === 'lg' && 'mx-4',
           size === 'md' && 'mx-3',
           size === 'sm' && 'mx-2 text-sm'
         )}
       >
-        <ConditionalTag className="mb-0">{user.username}</ConditionalTag>
+        <ConditionalTag className="mb-0 truncate">{user.username}</ConditionalTag>
         {description && <div className="-mt-1 text-sm text-slate-300">{description}</div>}
       </div>
     </div>

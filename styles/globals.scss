@@ -26,6 +26,21 @@
     @apply mb-1.5 text-lg font-bold;
   }
 
+  .section-headline {
+    @apply relative z-10 overflow-hidden px-2 text-center text-xs uppercase tracking-widest text-slate-300;
+
+    &::before,
+    &::after {
+      content: '\a0';
+      @apply absolute top-1/2 ml-2 h-0.5 w-1/2 -translate-y-1/2 overflow-hidden bg-slate-750;
+    }
+
+    &::before {
+      margin-left: calc(-50% - 0.5rem);
+      @apply text-right;
+    }
+  }
+
   strong {
     @apply font-bold;
   }
