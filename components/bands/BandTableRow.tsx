@@ -14,7 +14,7 @@ type BandTableRowProps = {
 export function BandTableRow({ band }: BandTableRowProps) {
   const { data } = useSpotifyArtist(band.spotify_artist_id)
   const locale = useLocale()
-  const picture = data?.images[2]
+  const picture = data?.images?.[2]
   const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
   return (
     <TableRow key={band.id} href={`/bands/${band.id}`}>

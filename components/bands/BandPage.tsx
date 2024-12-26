@@ -3,10 +3,8 @@
 import Link from 'next/link'
 import { Fragment } from 'react'
 import { Button } from '../Button'
-import { ConcertCard } from '../concerts/ConcertCard'
 import { Band } from '../../types/types'
 import { useBand } from '../../hooks/bands/useBand'
-import { useConcerts } from '../../hooks/concerts/useConcerts'
 import { notFound, usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
 import { useModal } from '../shared/ModalProvider'
@@ -18,6 +16,8 @@ import { SpeedDial } from '../layout/SpeedDial'
 import { BandCommunity } from './BandCommunity'
 import { useLocale, useTranslations } from 'next-intl'
 import clsx from 'clsx'
+import { ConcertList } from '../profile/ConcertList'
+import { useConcertsCount } from '@/hooks/concerts/useConcertsCount'
 
 type BandPageProps = {
   initialBand: Band
@@ -27,10 +27,7 @@ type BandPageProps = {
 export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
   const { data: band } = useBand(initialBand.id, initialBand)
   const { data: spotifyArtist } = useSpotifyArtist(band?.spotify_artist_id)
-  const { data: concerts } = useConcerts({
-    bands: [initialBand.id],
-    sort: { sort_by: 'date_start', sort_asc: false },
-  })
+  const { data: concertsCount } = useConcertsCount({ bands: [initialBand.id] })
   const [_, setModal] = useModal()
   const { data: session } = useSession()
   const { push } = useRouter()
@@ -135,12 +132,10 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
         </div>
       </header>
       <BandCommunity band={band} />
-      {concerts?.data && concerts.data.length > 0 && (
+      {!!concertsCount && (
         <section className="grid gap-4 rounded-lg bg-slate-800 p-4 md:p-6">
-          <h2 className="mb-0">
-            {t('nConcertsWithX', { count: concerts.data.length, band: band.name })}
-          </h2>
-          {concerts?.data.map(item => <ConcertCard key={item.id} concert={item} nested />)}
+          <h2 className="mb-0">{t('nConcertsWithX', { count: concertsCount, band: band.name })}</h2>
+          <ConcertList bandId={band.id} nested />
         </section>
       )}
       <MetaInfo

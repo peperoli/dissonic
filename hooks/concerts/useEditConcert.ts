@@ -22,7 +22,7 @@ const editConcert = async (newConcert: EditConcert) => {
     const { error: editConcertError } = await supabase
       .from('concerts')
       .update({
-        name: newConcert.name,
+        name: newConcert.is_festival ? null : newConcert.name,
         is_festival: newConcert.is_festival,
         festival_root_id: newConcert.festival_root_id,
         date_start: newConcert.date_start,

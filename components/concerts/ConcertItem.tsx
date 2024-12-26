@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { CalendarIcon } from 'lucide-react'
 import { Tables } from '@/types/supabase'
 import { useLocale } from 'next-intl'
+import { Fragment } from 'react'
 
 export function ConcertItem({
   concert,
@@ -30,7 +31,7 @@ export function ConcertItem({
     : dateStart.toLocaleDateString(locale)
   return (
     <Link href={`/concerts/${concert.id}`} className="flex gap-4 rounded-lg p-2 hover:bg-slate-700">
-      <div className="relative grid size-16 flex-none place-content-center rounded-lg bg-slate-750">
+      <div className="relative grid size-15 flex-none place-content-center rounded-lg bg-slate-750">
         {spotifyArtist?.images[2] ? (
           <Image
             src={spotifyArtist?.images[2].url}
@@ -43,19 +44,27 @@ export function ConcertItem({
           <CalendarIcon className="size-icon text-slate-300" />
         )}
       </div>
-      <div className="grid">
+      <div className="grid content-start">
+        {concert.festival_root && (
+          <div className="line-clamp-1 justify-self-start rounded-md bg-white px-1 text-sm font-bold text-slate-850">
+            {concert.festival_root.name} {dateStart.getFullYear()}
+          </div>
+        )}
+        {concert.name && <div className="truncate text-sm font-bold">{concert.name}</div>}
         <div className="w-full truncate font-bold">
-          {concert.festival_root?.name ||
-            concert.name ||
-            concert.bands
-              ?.slice(0, 3)
-              .map(band => band.name)
-              .join(', ')}
+          {concert.bands?.map((band, index) => (
+            <Fragment key={band.id}>
+              {index !== 0 && <span className="text-slate-300"> &bull; </span>}
+              {band.name}
+            </Fragment>
+          ))}
         </div>
         <div className="text-sm">{concertDate}</div>
-        <div className="truncate text-sm text-slate-300">
-          {concert.location?.name}, {concert.location?.city}
-        </div>
+        {!concert.festival_root && !concert.name && (
+          <div className="truncate text-sm text-slate-300">
+            {concert.location?.name}, {concert.location?.city}
+          </div>
+        )}
       </div>
     </Link>
   )

@@ -5,8 +5,9 @@ const fetchBandsSeen = async (options: {
   userId: string
   bandId?: number
   locationId?: number
+  bandsSize?: number
 }) => {
-  const query = supabase
+  let query = supabase
     .from('j_bands_seen')
     .select(
       `*,
@@ -22,11 +23,15 @@ const fetchBandsSeen = async (options: {
     .limit(3, { referencedTable: 'bands' })
 
   if (options.bandId) {
-    query.eq('band_id', options.bandId)
+    query = query.eq('band_id', options.bandId)
   }
 
   if (options.locationId) {
-    query.eq('concert.location_id', options.locationId)
+    query = query.eq('concert.location_id', options.locationId)
+  }
+
+  if (options.bandsSize) {
+    query = query.limit(options.bandsSize, { referencedTable: 'concert.bands' })
   }
 
   const { data, error } = await query.order('item_index', { referencedTable: 'concert.bands' })
@@ -38,7 +43,12 @@ const fetchBandsSeen = async (options: {
   return data
 }
 
-export const useBandsSeen = (options: { userId: string; bandId?: number; locationId?: number }) => {
+export const useBandsSeen = (options: {
+  userId: string
+  bandId?: number
+  locationId?: number
+  bandsSize?: number
+}) => {
   return useQuery({
     queryKey: ['bandsSeen', JSON.stringify(options)],
     queryFn: () => fetchBandsSeen(options),

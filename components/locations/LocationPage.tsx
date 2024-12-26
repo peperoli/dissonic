@@ -2,9 +2,7 @@
 
 import Link from 'next/link'
 import { Button } from '../Button'
-import { ConcertCard } from '../concerts/ConcertCard'
 import { Location } from '../../types/types'
-import { useConcerts } from '../../hooks/concerts/useConcerts'
 import { notFound, usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
 import { useModal } from '../shared/ModalProvider'
@@ -15,6 +13,8 @@ import { SpeedDial } from '../layout/SpeedDial'
 import { LocationCommunity } from './LocationCommunity'
 import { useLocale, useTranslations } from 'next-intl'
 import clsx from 'clsx'
+import { ConcertList } from '../profile/ConcertList'
+import { useConcertsCount } from '@/hooks/concerts/useConcertsCount'
 
 type LocationPageProps = {
   location: Location
@@ -26,10 +26,7 @@ export const LocationPage = ({
   locationQueryState,
 }: LocationPageProps) => {
   const { data: location } = useLocation(initialLocation.id, initialLocation)
-  const { data: concerts } = useConcerts({
-    locations: [initialLocation.id],
-    sort: { sort_by: 'date_start', sort_asc: false },
-  })
+  const { data: concertsCount } = useConcertsCount({ locations: [initialLocation.id] })
   const [_, setModal] = useModal()
   const { data: session } = useSession()
   const { push } = useRouter()
@@ -113,12 +110,12 @@ export const LocationPage = ({
         </div>
       </header>
       <LocationCommunity location={location} />
-      {concerts?.data && concerts.data.length > 0 && (
+      {!!concertsCount && (
         <section className="grid gap-4 rounded-lg bg-slate-800 p-4 md:p-6">
           <h2 className="mb-0">
-            {t('nConcertsAtX', { count: concerts.data.length, location: location.name })}
+            {t('nConcertsAtX', { count: concertsCount, location: location.name })}
           </h2>
-          {concerts?.data.map(item => <ConcertCard key={item.id} concert={item} nested />)}
+          <ConcertList locationId={location.id} nested />
         </section>
       )}
       <MetaInfo

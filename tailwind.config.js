@@ -1,9 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./app/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./app/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
   theme: {
     fontFamily: {
       sans: ['var(--font-albert-sans)'],
@@ -11,11 +8,13 @@ module.exports = {
     },
     colors: {
       venom: {
-        'DEFAULT': '#99F162',
-        600: '#3BB31A'
+        DEFAULT: '#99F162',
+        600: '#3BB31A',
       },
-      purple: '#C462F1',
-      deepPurple: '#661881',
+      purple: {
+        DEFAULT: '#DBA1F7',
+        700: '#661881',
+      },
       blue: {
         DEFAULT: '#75C8F0',
       },
@@ -37,12 +36,15 @@ module.exports = {
       transparent: 'transparent',
     },
     boxShadow: {
-      'md': '0 2px 8px rgba(0, 0, 0, 0.2)',
-      'lg': '0 4px 16px rgba(0, 0, 0, 0.2)',
-      'xl': '0 8px 32px rgba(0, 0, 0, 0.2)',
-      'shine': '0 0 16px',
+      md: '0 2px 8px rgba(0, 0, 0, 0.2)',
+      lg: '0 4px 16px rgba(0, 0, 0, 0.2)',
+      xl: '0 8px 32px rgba(0, 0, 0, 0.2)',
+      shine: '0 0 16px',
     },
     extend: {
+      fontSize: {
+        sm: ['0.875rem', '1.125rem'],
+      },
       spacing: {
         13: '3.25rem',
         15: '3.75rem',
@@ -52,10 +54,10 @@ module.exports = {
         48: '12rem',
       },
       height: {
-        'icon': '1.33em',
+        icon: '1.33em',
       },
       size: {
-        'icon': '1.25em',
+        icon: '1.25em',
       },
       minHeight: {
         96: '24rem',
@@ -69,7 +71,7 @@ module.exports = {
       },
       backgroundImage: {
         'radial-gradient': 'radial-gradient(80% 100% at top, var(--tw-gradient-stops))',
-      }
+      },
     },
   },
   plugins: [],

@@ -28,9 +28,10 @@ import { FilterButton } from '../FilterButton'
 import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 import { modalPaths } from '../shared/ModalProvider'
 import { SpeedDial } from '../layout/SpeedDial'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { User } from '@supabase/supabase-js'
 import { saveLastQueryState, setViewPreference } from '@/actions/preferences'
+import { groupConcertsByMonth } from '@/lib/groupConcertsByMonth'
 
 type HomePageProps = {
   concerts: ExtendedRes<Concert[]>
@@ -86,11 +87,13 @@ export const HomePage = ({
     bandsSeenUsers: selectedUserId ? [selectedUserId] : getView(),
     sort,
     size,
+    bandsSize: 5,
   })
   const { push } = useRouter()
   const pathname = usePathname()
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const t = useTranslations('HomePage')
+  const locale = useLocale()
   const queryStates = {
     bands: selectedBands,
     locations: selectedLocations,
@@ -198,9 +201,20 @@ export const HomePage = ({
           />
         )}
       </section>
-      <div className="grid gap-4">
-        {concerts?.data.map(concert => <ConcertCard concert={concert} key={concert.id} />)}
-      </div>
+      {concerts?.data && (
+        <section className="grid gap-4">
+          {groupConcertsByMonth(concerts.data, locale).map(({ month, concerts }) => (
+            <div key={month}>
+              <h3 className="section-headline mb-4">{month}</h3>
+              <div className="grid gap-4">
+                {concerts.map(concert => (
+                  <ConcertCard concert={concert} key={concert.id} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </section>
+      )}
       <div className="mt-4 flex flex-col items-center gap-2">
         <p className="text-sm text-slate-300">
           {t('nOfNEntries', { count: concerts?.data.length, total: concerts?.count })}

@@ -19,7 +19,7 @@ function LocationUserItem({
   profile: Profile
   count: number
 }) {
-  const { data: bandsSeen } = useBandsSeen({ userId: profile.id, locationId: location.id })
+  const { data: bandsSeen } = useBandsSeen({ userId: profile.id, locationId: location.id, bandsSize: 5 })
   const t = useTranslations('LocationCommunity')
   const concerts = getUniqueObjects(
     bandsSeen?.map(item => item.concert).filter(concert => !!concert) ?? []

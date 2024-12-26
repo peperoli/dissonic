@@ -7,7 +7,7 @@ const addConcert = async (concert: AddConcert) => {
   const { data: newConcert, error: addConcertError } = await supabase
     .from('concerts')
     .insert({
-      name: concert.name,
+      name: concert.is_festival ? null : concert.name,
       is_festival: concert.is_festival,
       festival_root_id: concert.festival_root_id,
       date_start: concert.date_start,
