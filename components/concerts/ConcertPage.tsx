@@ -16,7 +16,6 @@ import { ConcertDate } from './ConcertDate'
 import clsx from 'clsx'
 import { ConcertStats } from './ConcertStats'
 import { useModal } from '../shared/ModalProvider'
-import { Chip } from '../Chip'
 import { MetaInfo } from '../shared/MetaInfo'
 import { SpeedDial } from '../layout/SpeedDial'
 import { ConcertCommunity } from './ConcertCommunity'
@@ -104,20 +103,15 @@ export const ConcertPage = ({
                 </>
               )}
             </div>
-            {(concert.name || concert.is_festival) && (
-              <div className="mb-2">
-                <Chip
-                  onClick={
-                    concert.festival_root_id
-                      ? () => push(`/?festivals=${concert.festival_root_id}`)
-                      : null
-                  }
-                  label={concert.is_festival ? 'Festival' : concert.name!}
-                  size="sm"
-                  color={concert.is_festival ? 'purple' : 'blue'}
-                />
-              </div>
+            {concert.festival_root && (
+              <Link
+                href={`/?festivals=${concert.festival_root_id}`}
+                className="mb-2 justify-self-start rounded-md bg-white px-2 py-1 font-bold text-slate-850"
+              >
+                Festival
+              </Link>
             )}
+            {concert.name && <div className="font-bold">{concert.name}</div>}
             <h1 className="mb-2">
               {concert.festival_root
                 ? `${concert.festival_root?.name} ${new Date(concert.date_start).getFullYear()}`

@@ -10,7 +10,7 @@ import { Drawer, DrawerTitle, DrawerTrigger } from '../shared/Drawer'
 import { useTranslations } from 'next-intl'
 
 function BandUserItem({ band, profile, count }: { band: Band; profile: Profile; count: number }) {
-  const { data: bandsSeen } = useBandsSeen({ userId: profile.id, bandId: band.id })
+  const { data: bandsSeen } = useBandsSeen({ userId: profile.id, bandId: band.id, bandsSize: 5 })
   const t = useTranslations('BandCommunity')
   const concerts = bandsSeen?.map(item => item.concert).filter(concert => !!concert)
 
