@@ -5,11 +5,7 @@ import { useBandsSeen } from '@/hooks/bands/useBandsSeen'
 import { getUniqueObjects } from '@/lib/getUniqueObjects'
 import { useLocale, useTranslations } from 'next-intl'
 
-type ConcertsByWeekdayProps = {
-  profileId: string
-}
-
-export const ConcertsByWeekday = ({ profileId }: ConcertsByWeekdayProps) => {
+export const ConcertsByWeekday = ({ profileId }: { profileId?: string }) => {
   const { data: bandsSeen } = useBandsSeen({ userId: profileId })
   const t = useTranslations('ConcertsByWeekday')
   const locale = useLocale()

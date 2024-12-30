@@ -33,14 +33,14 @@ const BandItem = ({ topItem }: {topItem: ItemCount & Band}) => {
       </div>
       <div className="mt-2 overflow-hidden">
         <h3 className="mb-0 truncate whitespace-nowrap text-base">{topItem.name}</h3>
-        <div className="text-sm text-slate-300">{t('nConcerts', { count: topItem.count })}</div>
+        <div className="text-sm text-slate-300">{t('nTimesSeen', { count: topItem.count })}</div>
       </div>
     </Link>
   )
 }
 
 
-export function TopBands({ profileId }: { profileId: string }) {
+export function TopBands({ profileId }: { profileId?: string }) {
   const { data: bandsSeen, status: bandsSeenStatus } = useBandsSeen({ userId: profileId })
   const t = useTranslations('TopBands')
 

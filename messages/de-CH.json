@@ -25,7 +25,9 @@
   },
   "Footer": {
     "githubRepository": "Github Repository",
-    "feedback": "Feedback"
+    "feedback": "Feedback",
+    "contributions": "Bearbeitungen",
+    "globalStats": "Globale Statistiken"
   },
   "LanguageSelect": {
     "language": "Sprache"
@@ -355,7 +357,7 @@
   "TopBands": {
     "loading": "Laden ...",
     "topBands": "Top Bands",
-    "nConcerts": "{count, plural, =1 {# Konzert} other {# Konzerte}}"
+    "nTimesSeen": "{count}x gesehen"
   },
   "TopGrid": {
     "showMore": "Mehr anzeigen",
@@ -384,7 +386,7 @@
   "TopLocations": {
     "loading": "Laden ...",
     "topLocations": "Top Lokale",
-    "nConcerts": "{count, plural, =1 {# Konzert} other {# Konzerte}}"
+    "nTimesVisited": "{count}x besucht"
   },
   "FriendsPage": {
     "friendInvites": "Freunschaftsanfragen",
@@ -493,5 +495,8 @@
     "userContributedToLocation": "<user></user> {operation, select, INSERT {erstellte} UPDATE {bearbeitete} DELETE {löschte} other {Übersetzungsfehler}} <location></location>",
     "userContributedToConcertBands": "<user></user> {operation, select, INSERT {fügte <bands></bands> zu <concert></concert> hinzu} DELETE {entfernte <bands></bands> von <concert></concert>} other {Übersetzungsfehler}}",
     "userContributedToBandGenres": "<user></user> {operation, select, INSERT {fügte <genres></genres> zu <band></band> hinzu} DELETE {entfernte <genres></genres> von <band></band>} other {Übersetzungsfehler}}"
+  },
+  "GlobalStatsPage": {
+    "globalStats": "Globale Statistiken"
   }
 }

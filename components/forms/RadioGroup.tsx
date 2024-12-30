@@ -24,7 +24,7 @@ export const RadioGroup = ({ name, items, value, onValueChange }: CheckBoxGroupP
                 value={item.id.toString()}
                 className="grid size-4 flex-none place-content-center rounded-full border-2 border-slate-300 bg-white/5 data-[state=checked]:border-venom data-[state=checked]:bg-venom"
               >
-                <RadioGroupPrimitive.Indicator className="size-3 rounded-full border-3 border-slate-850 bg-venom" />
+                <RadioGroupPrimitive.Indicator className="size-3 rounded-lg border-3 border-slate-850 bg-venom" />
               </RadioGroupPrimitive.Item>
               {item.name}
             </label>

@@ -5,7 +5,7 @@ import { PieChart } from './PieChart'
 import { getUniqueObjects } from '@/lib/getUniqueObjects'
 import { useTranslations } from 'next-intl'
 
-export function PieCharts({ profileId }: { profileId: string }) {
+export function PieCharts({ profileId }: { profileId?: string }) {
   const { data: bandsSeen, status: bandsSeenStatus } = useBandsSeen({ userId: profileId })
   const t = useTranslations('PieCharts')
   const concertsSeen = getUniqueObjects(bandsSeen?.map(item => item.concert) ?? [])

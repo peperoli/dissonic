@@ -19,13 +19,13 @@ export const LocationItem = ({ topItem }: { topItem: ItemCount & Location }) => 
       </div>
       <div className="mt-2 overflow-hidden">
         <h3 className="mb-0 truncate whitespace-nowrap text-base">{topItem.name}</h3>
-        <div className="text-sm text-slate-300">{t('nConcerts', { count: topItem.count })}</div>
+        <div className="text-sm text-slate-300">{t('nTimesVisited', { count: topItem.count })}</div>
       </div>
     </Link>
   )
 }
 
-export function TopLocations({ profileId }: { profileId: string }) {
+export function TopLocations({ profileId }: { profileId?: string }) {
   const { data: bandsSeen, status: bandsSeenStatus } = useBandsSeen({ userId: profileId })
   const t = useTranslations('TopLocations')
   const concertsSeen = getUniqueObjects(bandsSeen?.map(item => item.concert) ?? [])

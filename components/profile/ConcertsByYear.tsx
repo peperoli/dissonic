@@ -10,11 +10,7 @@ import { Select } from '../forms/Select'
 import { FilterButton } from '../FilterButton'
 import { useLocale, useTranslations } from 'next-intl'
 
-type ConcertsByYearProps = {
-  profileId: string
-}
-
-export const ConcertsByYear = ({ profileId }: ConcertsByYearProps) => {
+export const ConcertsByYear = ({ profileId }: { profileId?: string }) => {
   const { data: bandsSeen } = useBandsSeen({ userId: profileId })
   const [selectedUnit, setSelectedUnit] = useState('concerts')
   const [selectedYear, setSelectedYear] = useState<number>(-1)
