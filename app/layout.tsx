@@ -8,7 +8,7 @@ import { ReactNode, Suspense } from 'react'
 import { QueryProvider } from '../components/helpers/QueryProvider'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import '../styles/globals.scss'
+import '../styles/globals.css'
 import { getLocale, getMessages, getTranslations } from 'next-intl/server'
 import { NextIntlClientProvider } from 'next-intl'
 
