@@ -35,6 +35,7 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
   const pathname = usePathname()
   const t = useTranslations('BandPage')
   const locale = useLocale()
+  const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
   const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
 
   if (!band) {
@@ -59,17 +60,17 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
             size="small"
             appearance="tertiary"
           />
-          <Button
-            onClick={
-              session ? () => setModal('delete-band') : () => push(`/login?redirect=${pathname}`)
-            }
-            label={t('delete')}
-            icon={<Trash className="size-icon" />}
-            contentType="icon"
-            danger
-            size="small"
-            appearance="tertiary"
-          />
+          {isMod && (
+            <Button
+              onClick={() => setModal('delete-band')}
+              label={t('delete')}
+              icon={<Trash className="size-icon" />}
+              contentType="icon"
+              danger
+              size="small"
+              appearance="tertiary"
+            />
+          )}
         </div>
       </div>
       <header className="flex flex-col gap-5 rounded-2xl bg-radial-gradient from-blue/20 p-6 md:flex-row">

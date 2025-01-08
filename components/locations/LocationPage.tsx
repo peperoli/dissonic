@@ -34,6 +34,7 @@ export const LocationPage = ({
   const pathname = usePathname()
   const t = useTranslations('LocationPage')
   const locale = useLocale()
+  const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
   const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
   const mapSearchQuery = encodeURIComponent(
     [location?.name, location?.zip_code, location?.city].join(' ')
@@ -62,19 +63,17 @@ export const LocationPage = ({
             size="small"
             appearance="tertiary"
           />
-          <Button
-            onClick={
-              session
-                ? () => setModal('delete-location')
-                : () => push(`/login?redirect=${pathname}`)
-            }
-            label={t('delete')}
-            icon={<Trash className="size-icon" />}
-            contentType="icon"
-            danger
-            size="small"
-            appearance="tertiary"
-          />
+          {isMod && (
+            <Button
+              onClick={() => setModal('delete-location')}
+              label={t('delete')}
+              icon={<Trash className="size-icon" />}
+              contentType="icon"
+              danger
+              size="small"
+              appearance="tertiary"
+            />
+          )}
         </div>
       </div>
       <header className="flex flex-col gap-5 rounded-2xl bg-radial-gradient from-blue/20 p-6 md:flex-row">

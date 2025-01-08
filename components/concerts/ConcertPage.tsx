@@ -40,6 +40,7 @@ export const ConcertPage = ({
   const { push } = useRouter()
   const pathname = usePathname()
   const t = useTranslations('ConcertPage')
+  const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
 
   if (!concert) {
     notFound()
@@ -65,19 +66,17 @@ export const ConcertPage = ({
               size="small"
               appearance="tertiary"
             />
-            <Button
-              onClick={
-                session
-                  ? () => setModal('delete-concert')
-                  : () => push(`/login?redirect=${pathname}`)
-              }
-              label={t('delete')}
-              icon={<Trash className="size-icon" />}
-              contentType="icon"
-              danger
-              size="small"
-              appearance="tertiary"
-            />
+            {isMod && (
+              <Button
+                onClick={() => setModal('delete-concert')}
+                label={t('delete')}
+                icon={<Trash className="size-icon" />}
+                contentType="icon"
+                danger
+                size="small"
+                appearance="tertiary"
+              />
+            )}
           </div>
         </div>
         <header
