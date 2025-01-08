@@ -566,18 +566,21 @@ export type Database = {
           avatar_path: string | null
           created_at: string | null
           id: string
+          role: Database["public"]["Enums"]["app_role"] | null
           username: string
         }
         Insert: {
           avatar_path?: string | null
           created_at?: string | null
           id: string
+          role?: Database["public"]["Enums"]["app_role"] | null
           username: string
         }
         Update: {
           avatar_path?: string | null
           created_at?: string | null
           id?: string
+          role?: Database["public"]["Enums"]["app_role"] | null
           username?: string
         }
         Relationships: []
@@ -716,12 +719,19 @@ export type Database = {
           concert_count: number | null
           created_at: string | null
           id: string | null
+          role: Database["public"]["Enums"]["app_role"] | null
           username: string | null
         }
         Relationships: []
       }
     }
     Functions: {
+      custom_access_token_hook: {
+        Args: {
+          event: Json
+        }
+        Returns: Json
+      }
       gtrgm_compress: {
         Args: {
           "": unknown
@@ -807,8 +817,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_permission: "channels.delete" | "messages.delete"
-      app_role: "admin" | "moderator"
+      app_role: "developer" | "moderator"
       bands_type: "bands"
       concerts_type: "concerts"
       continents:

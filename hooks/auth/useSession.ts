@@ -1,5 +1,7 @@
+import { Enums } from '@/types/supabase'
 import supabase from '@/utils/supabase/client'
 import { useQuery } from '@tanstack/react-query'
+import { jwtDecode } from 'jwt-decode'
 
 const retrieveSession = async () => {
   const {
@@ -11,7 +13,17 @@ const retrieveSession = async () => {
     throw error
   }
 
-  return session
+  if (!session) {
+    return null
+  }
+
+  const jwt = jwtDecode(session.access_token)
+  const sessionWithRole = {
+    ...session,
+    user_role: 'user_role' in jwt ? (jwt.user_role as Enums<'app_role'>) : null,
+  }
+
+  return sessionWithRole
 }
 
 export const useSession = () => {
