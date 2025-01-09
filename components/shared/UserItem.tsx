@@ -5,6 +5,7 @@ import { User } from 'lucide-react'
 import clsx from 'clsx'
 import { getAssetUrl } from '@/lib/getAssetUrl'
 import { Tooltip } from './Tooltip'
+import { useTranslations } from 'next-intl'
 
 type UserItemProps = {
   user: Profile
@@ -21,6 +22,7 @@ export const UserItem = ({
   usernameIsHidden,
   avatarRight = false,
 }: UserItemProps) => {
+  const t = useTranslations('UserItem')
   const avatarUrl = getAssetUrl(user.avatar_path)
   const ConditionalTag = size === 'lg' ? 'h1' : 'div'
 
@@ -72,7 +74,20 @@ export const UserItem = ({
             size === 'sm' && 'mx-2 text-sm'
           )}
         >
-          <ConditionalTag className="mb-0 truncate">{user.username}</ConditionalTag>
+          <div className={clsx("line-clamp-1 inline-flex items-center", size === 'lg' ? 'gap-x-2' : 'gap-x-1')}>
+            <ConditionalTag className="mb-0 truncate">{user.username}</ConditionalTag>
+            {user.role && (
+              <span
+                className={clsx(
+                  'rounded-md  font-bold text-slate-850',
+                  user.role === 'developer' ? 'bg-gradient-to-r from-blue to-venom' : 'bg-slate-300',
+                  size === 'lg' ? 'text-base px-2' : 'text-sm px-1',
+                )}
+              >
+                {t(user.role)}
+              </span>
+            )}
+          </div>
           {description && <div className="-mt-1 text-sm text-slate-300">{description}</div>}
         </div>
       )}

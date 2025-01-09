@@ -107,7 +107,7 @@ export const ConcertPage = ({
             {concert.festival_root && (
               <Link
                 href={`/?festivals=${concert.festival_root_id}`}
-                className="mb-2 justify-self-start rounded-md bg-white px-2 py-1 font-bold text-slate-850"
+                className="mb-2 justify-self-start rounded-md bg-white px-2 font-bold text-slate-850"
               >
                 Festival
               </Link>

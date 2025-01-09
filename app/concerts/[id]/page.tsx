@@ -33,6 +33,7 @@ async function fetchConcert(concertId: Concert['id']) {
     .from('concerts')
     .select(
       `*,
+      festival_root:festival_roots(name),
       location:locations(*),
       bands:j_concert_bands(*, ...bands(*, country:countries(id, iso2), genres(*))),
       bands_seen:j_bands_seen(*),

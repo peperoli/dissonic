@@ -463,6 +463,8 @@
     "oldest": "Älteste"
   },
   "UserItem": {
+    "developer": "Dev",
+    "moderator": "Mod",
     "nConcerts": "{count, plural, =1 {# Konzert} other {# Konzerte}}",
     "nBands": "{count, plural, =1 {# Band} other {# Bands}}"
   },

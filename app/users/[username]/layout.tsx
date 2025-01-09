@@ -72,6 +72,7 @@ export default async function ProfileLayout({
     { href: `/users/${username}/activity`, label: t('activity') },
     { href: `/users/${username}/contributions`, label: t('contributions') },
   ]
+  console.log(profile)
   return (
     <main className="container grid gap-4">
       <section className="mb-6 flex flex-wrap items-center gap-4">
