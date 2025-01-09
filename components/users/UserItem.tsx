@@ -5,6 +5,7 @@ import { getRelativeTime } from '@/lib/relativeTime'
 import { UserIcon } from 'lucide-react'
 import { getAssetUrl } from '@/lib/getAssetUrl'
 import { useLocale, useTranslations } from 'next-intl'
+import clsx from 'clsx'
 
 type UserItemProps = {
   profileStat: ProfileStat
@@ -34,16 +35,21 @@ export const UserItem = ({ profileStat, index }: UserItemProps) => {
           {index + 1}
         </div>
       </div>
-      <div className="mt-2 overflow-hidden">
-        <h3 className="mb-0 truncate whitespace-nowrap text-base">{profileStat.username}</h3>
+      <div className="mt-2 grid">
+        <div className="inline-flex line-clamp-1 items-center gap-x-1">
+          <h3 className="mb-0 truncate text-base">{profileStat.username}</h3>
+          {profileStat.role && (
+            <span className={clsx("rounded-md px-1 text-sm font-bold text-slate-850", profileStat.role === 'developer' ? 'bg-gradient-to-r from-blue to-venom' : 'bg-slate-300')}>
+              {t(profileStat.role)}
+            </span>
+          )}
+        </div>
         <div className="text-sm text-slate-300">
           {t('nConcerts', { count: profileStat.concert_count })}
           <br />
           {t('nBands', { count: profileStat.band_count })}
           <br />
-          {profileStat.created_at && (
-            <span>{getRelativeTime(profileStat.created_at, locale)}</span>
-          )}
+          {profileStat.created_at && <span>{getRelativeTime(profileStat.created_at, locale)}</span>}
         </div>
       </div>
     </Link>
