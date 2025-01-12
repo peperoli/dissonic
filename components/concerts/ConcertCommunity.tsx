@@ -103,7 +103,7 @@ export function ConcertCommunity({ concert }: { concert: Concert }) {
   const t = useTranslations('ConcertCommunity')
 
   if (concertProfilesStatus === 'pending') {
-    return <p>Lade ...</p>
+    return <p className="text-sm text-slate-300">{t('loading')}</p>
   }
 
   if (concertProfiles?.length === 0 || concertProfilesStatus === 'error') {

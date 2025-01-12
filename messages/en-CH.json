@@ -152,12 +152,14 @@
     "thisConcertIsInTheFuture": "This concert is in the future."
   },
   "ConcertCommunity": {
+    "loading": "Loading ...",
     "fans": "Fans",
     "nBands": "{count, plural, =1 {# band} other {# bands}}",
     "uHasSeenNBandsAtConcertX": "{username} has seen {count, plural, =1 {# Band} other {# Bands}} at concert {concert}",
     "showProfile": "Show profile"
   },
   "ConcertStats": {
+    "loading": "Loading ...",
     "genresAndCountries": "Genres and countries",
     "includeRepeatedlySeenBands": "Include repeatedly seen bands",
     "showAll": "Show all",
@@ -264,6 +266,10 @@
     "uHasSeenNConcertsWithX": "{username} has seen {count, plural, =1 {# concert} other {# concerts}} with {band}",
     "showProfile": "Show profile"
   },
+  "ConcertList": {
+    "loading": "Loading ...",
+    "noConcertsFound": "No concerts found."
+  },
   "BandForm": {
     "name": "Name",
     "duplicateBandsWarning": "{count, plural, =1 {There is already a similar band:} other {There are already # similar bands:}}",
@@ -304,6 +310,7 @@
     "nConcertsAtX": "{count, plural, =1 {# concert} other {# concerts}} @ {location}"
   },
   "LocationCommunity": {
+    "loading": "Loading ...",
     "fans": "Fans",
     "nConcerts": "{count, plural, =1 {# concert} other {# concerts}}",
     "uHasSeenNConcertsAtX": "{username} has seen {count, plural, =1 {# concert} other {# concerts}} @ {location}",
@@ -364,6 +371,7 @@
     "showLess": "Show less"
   },
   "PieCharts": {
+    "loading": "Loading ...",
     "concerts": "Concerts",
     "festivals": "Festivals",
     "bandsSeenOnce": "Bands seen once",

@@ -152,12 +152,14 @@
     "thisConcertIsInTheFuture": "Dieses Konzert liegt in der Zukunft."
   },
   "ConcertCommunity": {
+    "loading": "Laden ...",
     "fans": "Fans",
     "nBands": "{count, plural, =1 {# Band} other {# Bands}}",
     "uHasSeenNBandsAtConcertX": "{username} hat {count, plural, =1 {# Band} other {# Bands}} am Konzert {concert} gesehen",
     "showProfile": "Profil anzeigen"
   },
   "ConcertStats": {
+    "loading": "Laden ...",
     "genresAndCountries": "Genres und Länder",
     "includeRepeatedlySeenBands": "Mehrfach gesehene Bands einschliessen",
     "showAll": "Alles anzeigen",
@@ -264,6 +266,10 @@
     "uHasSeenNConcertsWithX": "{username} hat {count, plural, =1 {# Konzert} other {# Konzerte}} mit {band} gesehen",
     "showProfile": "Profil anzeigen"
   },
+  "ConcertList": {
+    "loading": "Laden ...",
+    "noConcertsFound": "Keine Konzerte gefunden."
+  },
   "BandForm": {
     "name": "Name",
     "duplicateBandsWarning": "{count, plural, =1 {Es existiert bereits eine ähnliche Band:} other {Es existieren bereits # ähnliche Bands:}}",
@@ -304,6 +310,7 @@
     "nConcertsAtX": "{count, plural, =1 {# Konzert} other {# Konzerte}} @ {location}"
   },
   "LocationCommunity": {
+    "loading": "Laden ...",
     "fans": "Fans",
     "nConcerts": "{count, plural, =1 {# Konzert} other {# Konzerte}}",
     "uHasSeenNConcertsAtX": "{username} hat {count, plural, =1 {# Konzert} other {# Konzerte}} @ {location} gesehen",
@@ -364,6 +371,7 @@
     "showLess": "Weniger anzeigen"
   },
   "PieCharts": {
+    "loading": "Laden ...",
     "concerts": "Konzerte",
     "festivals": "Festivals",
     "bandsSeenOnce": "Einmal gesehene Bands",

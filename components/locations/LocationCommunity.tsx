@@ -19,7 +19,11 @@ function LocationUserItem({
   profile: Profile
   count: number
 }) {
-  const { data: bandsSeen } = useBandsSeen({ userId: profile.id, locationId: location.id, bandsSize: 5 })
+  const { data: bandsSeen } = useBandsSeen({
+    userId: profile.id,
+    locationId: location.id,
+    bandsSize: 5,
+  })
   const t = useTranslations('LocationCommunity')
   const concerts = getUniqueObjects(
     bandsSeen?.map(item => item.concert).filter(concert => !!concert) ?? []
@@ -64,7 +68,7 @@ export function LocationCommunity({ location }: { location: Location }) {
   const t = useTranslations('LocationCommunity')
 
   if (locationProfilesStatus === 'pending') {
-    return <p>Lade ...</p>
+    return <p className="text-sm text-slate-300">{t('loading')}</p>
   }
 
   if (locationProfiles?.length === 0 || locationProfilesStatus === 'error') {

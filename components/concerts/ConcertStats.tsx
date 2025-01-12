@@ -67,7 +67,7 @@ export const ConcertStats = ({ bands, uniqueBands }: ConcertStatsProps) => {
   ).sort((a, b) => b.count - a.count)
 
   if (bands.length === 0) {
-    return <p className='text-slate-300'>Keine Statistik gefunden.</p>
+    return null
   }
 
   return (

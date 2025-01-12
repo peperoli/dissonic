@@ -12,7 +12,7 @@ export function PieCharts({ profileId }: { profileId?: string }) {
   const uniqueBandsSeen = getUniqueObjects(bandsSeen?.map(item => item.band) ?? [])
 
   if (bandsSeenStatus === 'pending') {
-    return <p className="text-sm text-slate-300">Lade ...</p>
+    return <p className="text-sm text-slate-300">{t('loading')}</p>
   }
 
   if (!bandsSeen || bandsSeen?.length === 0) {

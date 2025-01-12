@@ -5,7 +5,7 @@ import { useConcerts } from '../../hooks/concerts/useConcerts'
 import { Button } from '../Button'
 import { ConcertCard } from '../concerts/ConcertCard'
 import { parseAsInteger, useQueryState } from 'nuqs'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 
 export function ConcertList({
   bandId,
@@ -31,12 +31,15 @@ export function ConcertList({
     size,
     bandsSize: 5,
   })
+  const t = useTranslations('ConcertList')
   const locale = useLocale()
 
-  if (status === 'pending') return <p className="text-sm text-slate-300">Lade ...</p>
+  if (status === 'pending') {
+    return <p className="text-sm text-slate-300">{t('loading')}</p>
+  }
 
   if (concerts?.data.length === 0) {
-    return <p className="text-slate-300">Keine Konzerte gefunden.</p>
+    return <p className="text-slate-300">{t('noConcertsFound')}</p>
   }
 
   return (

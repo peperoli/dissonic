@@ -167,7 +167,7 @@ export default async function ContributionsPage(props: {
       )}
       {groupedContributions.map(dateGroup => (
         <section key={dateGroup.date}>
-          <h2 className="h3">{dateGroup.date}</h2>
+          <h2 className="section-headline">{dateGroup.date}</h2>
           <ul className="grid gap-2">
             {dateGroup.items.map(timeGroup => (
               <ContributionGroup key={timeGroup.time} timeGroup={timeGroup} />
