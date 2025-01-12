@@ -28,7 +28,14 @@ export const LocationItem = ({ topItem }: { topItem: ItemCount & Location }) => 
 export function TopLocations({ profileId }: { profileId?: string }) {
   const { data: bandsSeen, status: bandsSeenStatus } = useBandsSeen({ userId: profileId })
   const t = useTranslations('TopLocations')
-  const concertsSeen = getUniqueObjects(bandsSeen?.map(item => item.concert) ?? [])
+  const concertsSeen = getUniqueObjects(
+    bandsSeen?.map(item => ({
+      id: item.concert_id + item.user_id,
+      ...item,
+    })) ?? []
+  )
+    .map(item => item.concert)
+    .filter(item => item !== null)
 
   if (bandsSeenStatus === 'pending') {
     return <p className="text-sm text-slate-300">{t('loading')}</p>
@@ -41,7 +48,7 @@ export function TopLocations({ profileId }: { profileId?: string }) {
   return (
     <TopGrid
       headline={t('topLocations')}
-      items={concertsSeen.map(item => item.location).filter(item => !!item)}
+      items={concertsSeen.map(item => item.location).filter(item => item !== null)}
       Item={LocationItem}
     />
   )
