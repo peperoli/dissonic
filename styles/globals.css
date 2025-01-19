@@ -26,7 +26,7 @@
   }
 
   .section-headline {
-    @apply relative z-10 overflow-hidden px-2 text-center text-xs uppercase tracking-widest text-slate-300;
+    @apply relative overflow-hidden px-2 text-center text-xs uppercase tracking-widest text-slate-300;
 
     &::before,
     &::after {
