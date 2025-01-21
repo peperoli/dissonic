@@ -9,7 +9,7 @@ import { Comments } from './Comments'
 import { notFound, usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
 import { BandList } from './BandList'
-import { ArrowLeft, Edit, MapPin, Trash } from 'lucide-react'
+import { ArchiveIcon, ArrowLeft, Edit, MapPin, Trash, Undo2Icon } from 'lucide-react'
 import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 import Image from 'next/image'
 import { ConcertDate } from './ConcertDate'
@@ -21,6 +21,8 @@ import { SpeedDial } from '../layout/SpeedDial'
 import { ConcertCommunity } from './ConcertCommunity'
 import { useTranslations } from 'next-intl'
 import { ShareButton } from '../shared/ShareButton'
+import { useArchiveConcert } from '@/hooks/concerts/useArchiveConcert'
+import { useRestoreConcert } from '@/hooks/concerts/useRestoreConcert'
 
 type ConcertPageProps = {
   initialConcert: Concert
@@ -36,6 +38,8 @@ export const ConcertPage = ({
   const { data: concert } = useConcert(initialConcert.id, { placeholderData: initialConcert })
   const { data: session } = useSession()
   const { data: spotifyArtist } = useSpotifyArtist(concert?.bands?.[0]?.spotify_artist_id)
+  const archiveConcert = useArchiveConcert()
+  const restoreConcert = useRestoreConcert()
   const [_, setModal] = useModal()
   const { push } = useRouter()
   const pathname = usePathname()
@@ -49,6 +53,7 @@ export const ConcertPage = ({
   return (
     <ConcertContext.Provider value={{ concert }}>
       <main className="container grid gap-4">
+        {`${concert.is_archived}`}
         <div className="flex items-center justify-between">
           <Link href={`/${concertQueryState ?? ''}`} className="btn btn-small btn-tertiary">
             <ArrowLeft className="size-icon" />
@@ -66,6 +71,26 @@ export const ConcertPage = ({
               size="small"
               appearance="tertiary"
             />
+            {concert.is_archived ? (
+              <Button
+                onClick={() => restoreConcert.mutate(concert.id)}
+                label={t('restore')}
+                icon={<Undo2Icon className="size-icon" />}
+                contentType="icon"
+                size="small"
+                appearance="tertiary"
+              />
+            ) : (
+              <Button
+                onClick={() => archiveConcert.mutate(concert.id)}
+                label={t('archive')}
+                icon={<ArchiveIcon className="size-icon" />}
+                contentType="icon"
+                danger
+                size="small"
+                appearance="tertiary"
+              />
+            )}
             {isMod && (
               <Button
                 onClick={() => setModal('delete-concert')}

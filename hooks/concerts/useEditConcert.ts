@@ -111,7 +111,7 @@ export const useEditConcert = () => {
     mutationFn: editConcert,
     onError: error => console.error(error),
     onSuccess: ({ concertId }) => {
-      queryClient.invalidateQueries({ queryKey: ['concert'] })
+      queryClient.invalidateQueries({ queryKey: ['concert', concertId] })
       queryClient.invalidateQueries({ queryKey: ['contributions-count', 'concerts', concertId] })
       setModal(null)
     },
