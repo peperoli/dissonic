@@ -143,6 +143,10 @@
     "delete": "Löschen",
     "lineup": "Lineup"
   },
+  "ShareButton": {
+    "share": "Teilen",
+    "urlCopiedToClipboard": "Die URL wurde in die Zwischenablage kopiert."
+  },
   "BandList": {
     "iWasThere": "Ich war dabei!",
     "chooseBandsYouHaveSeenAtThisConcert": "Wähle Bands, die du an diesem Konzert erlebt hast.",

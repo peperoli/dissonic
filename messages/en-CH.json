@@ -137,6 +137,10 @@
   "ConcertCard": {
     "dateStartToDateEnd": "{dateStart} to {dateEnd}"
   },
+  "ShareButton": {
+    "share": "Share",
+    "urlCopiedToClipboard": "The URL has been copied to the clipboard."
+  },
   "ConcertPage": {
     "concerts": "Concerts",
     "edit": "Edit",

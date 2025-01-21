@@ -11,6 +11,10 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import '../styles/globals.css'
 import { getLocale, getMessages, getTranslations } from 'next-intl/server'
 import { NextIntlClientProvider } from 'next-intl'
+import { Toaster } from 'react-hot-toast'
+import resolveConfig from 'tailwindcss/resolveConfig'
+import { content, theme } from '../tailwind.config'
+import { AlertCircleIcon, CheckCircleIcon } from 'lucide-react'
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('RootLayout')
@@ -31,6 +35,9 @@ export async function generateMetadata(): Promise<Metadata> {
       ],
       apple: '/favicon/apple-touch-icon.png',
       other: [{ rel: 'mask-icon', url: '/favicon/safari-pinned-tab.svg', color: '#1f282e' }],
+    },
+    openGraph: {
+      images: [{ url: '/og.jpg' }],
     },
   }
 }
@@ -56,6 +63,7 @@ const firaCode = Fira_Code({
 export default async function RootLayout({ children }: { children: ReactNode }) {
   const locale = await getLocale()
   const messages = await getMessages()
+  const fullConfig = resolveConfig({ content, theme })
 
   return (
     <QueryProvider>
@@ -71,6 +79,21 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             <Suspense>
               <ModalProvider />
             </Suspense>
+            <Toaster
+              toastOptions={{
+                duration: 5000,
+                style: {
+                  background: fullConfig.theme.colors.slate['900'],
+                  color: fullConfig.theme.colors.white,
+                },
+                success: {
+                  icon: <CheckCircleIcon className="size-icon text-venom" />,
+                },
+                error: {
+                  icon: <AlertCircleIcon className="size-icon text-red" />,
+                },
+              }}
+            />
           </NextIntlClientProvider>
           <Analytics />
           <SpeedInsights />

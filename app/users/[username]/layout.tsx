@@ -3,6 +3,7 @@ import { EditProfileButton } from '@/components/profile/EditProfileButton'
 import { Score } from '@/components/profile/Score'
 import { TabLink } from '@/components/profile/TabLink'
 import { ToggleFriendButton } from '@/components/profile/ToggleFriendButton'
+import { ShareButton } from '@/components/shared/ShareButton'
 import { UserItem } from '@/components/shared/UserItem'
 import { createClient } from '@/utils/supabase/server'
 import { CheckCircleIcon, Settings } from 'lucide-react'
@@ -82,18 +83,21 @@ export default async function ProfileLayout({
           </p>
         )}
         {!isOwnProfile && <ToggleFriendButton friend={friend} />}
-        {isOwnProfile && (
-          <div className="ml-auto flex gap-2">
-            <EditProfileButton />
-            <Link
-              href="/settings"
-              aria-label={t('settings')}
-              className="btn btn-icon btn-small btn-tertiary"
-            >
-              <Settings className="size-icon" />
-            </Link>
-          </div>
-        )}
+        <div className="ml-auto flex gap-2">
+          <ShareButton />
+          {isOwnProfile && (
+            <>
+              <EditProfileButton />
+              <Link
+                href="/settings"
+                aria-label={t('settings')}
+                className="btn btn-icon btn-small btn-tertiary"
+              >
+                <Settings className="size-icon" />
+              </Link>
+            </>
+          )}
+        </div>
       </section>
       <Score profileId={profile.id} />
       <div className="mb-4 overflow-x-auto rounded-lg bg-slate-700 px-3">

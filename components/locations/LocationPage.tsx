@@ -15,6 +15,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import clsx from 'clsx'
 import { ConcertList } from '../profile/ConcertList'
 import { useConcertsCount } from '@/hooks/concerts/useConcertsCount'
+import { ShareButton } from '../shared/ShareButton'
 
 type LocationPageProps = {
   location: Location
@@ -50,6 +51,7 @@ export const LocationPage = ({
           {t('locations')}
         </Link>
         <div className="flex gap-3">
+          <ShareButton />
           <Button
             onClick={
               session ? () => setModal('edit-location') : () => push(`/login?redirect=${pathname}`)

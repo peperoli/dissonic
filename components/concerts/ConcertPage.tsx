@@ -20,6 +20,7 @@ import { MetaInfo } from '../shared/MetaInfo'
 import { SpeedDial } from '../layout/SpeedDial'
 import { ConcertCommunity } from './ConcertCommunity'
 import { useTranslations } from 'next-intl'
+import { ShareButton } from '../shared/ShareButton'
 
 type ConcertPageProps = {
   initialConcert: Concert
@@ -53,6 +54,7 @@ export const ConcertPage = ({
             {t('concerts')}
           </Link>
           <div className="flex gap-3">
+            <ShareButton />
             <Button
               onClick={
                 session ? () => setModal('edit-concert') : () => push(`/login?redirect=${pathname}`)

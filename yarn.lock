@@ -4267,7 +4267,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:^2.0.0, clsx@npm:^2.1.0, clsx@npm:^2.1.1":
+"clsx@npm:^2.0.0, clsx@npm:^2.1.1":
   version: 2.1.1
   resolution: "clsx@npm:2.1.1"
   checksum: 10c0/c4c8eb865f8c82baab07e71bfa8897c73454881c4f99d6bc81585aecd7c441746c1399d08363dc096c550cceaf97bd4ce1e8854e1771e9998d9f94c4fe075839
@@ -4404,7 +4404,7 @@ __metadata:
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     react-hook-form: "npm:^7.53.0"
-    react-toastify: "npm:^10.0.5"
+    react-hot-toast: "npm:^2.5.1"
     react-truncate-list: "npm:^1.0.3"
     supabase: "npm:1.191.3"
     tailwindcss: "npm:^3.4.10"
@@ -4477,6 +4477,13 @@ __metadata:
   version: 3.1.2
   resolution: "csstype@npm:3.1.2"
   checksum: 10c0/32c038af259897c807ac738d9eab16b3d86747c72b09d5c740978e06f067f9b7b1737e1b75e407c7ab1fe1543dc95f20e202b4786aeb1b8d3bdf5d5ce655e6c6
+  languageName: node
+  linkType: hard
+
+"csstype@npm:^3.1.3":
+  version: 3.1.3
+  resolution: "csstype@npm:3.1.3"
+  checksum: 10c0/80c089d6f7e0c5b2bd83cf0539ab41474198579584fa10d86d0cafe0642202343cbc119e076a0b1aece191989477081415d66c9fefbf3c957fc2fc4b7009f248
   languageName: node
   linkType: hard
 
@@ -6109,6 +6116,15 @@ __metadata:
   version: 0.1.2
   resolution: "globrex@npm:0.1.2"
   checksum: 10c0/a54c029520cf58bda1d8884f72bd49b4cd74e977883268d931fd83bcbd1a9eb96d57c7dbd4ad80148fb9247467ebfb9b215630b2ed7563b2a8de02e1ff7f89d1
+  languageName: node
+  linkType: hard
+
+"goober@npm:^2.1.16":
+  version: 2.1.16
+  resolution: "goober@npm:2.1.16"
+  peerDependencies:
+    csstype: ^3.0.10
+  checksum: 10c0/f4c8256bf9c27873d47c1443f348779ac7f322516cb80a5dc647a6ebe790ce6bb9d3f487a0fb8be0b583fb96b9b2f6b7463f7fea3cd680306f95fa6fc9db1f6a
   languageName: node
   linkType: hard
 
@@ -8596,6 +8612,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-hot-toast@npm:^2.5.1":
+  version: 2.5.1
+  resolution: "react-hot-toast@npm:2.5.1"
+  dependencies:
+    csstype: "npm:^3.1.3"
+    goober: "npm:^2.1.16"
+  peerDependencies:
+    react: ">=16"
+    react-dom: ">=16"
+  checksum: 10c0/179efb089276fd20d246fa17e8282437f28e838561e83765d33ed8c03bc0ecff642243003aa08ccdf839616f9c00b3fad2e617de995ea2cd6bd6219325791fc5
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^16.13.1":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
@@ -8678,18 +8707,6 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 10c0/6d66f3bdb65e1ec79089f80314da97c9a005087a04ee034255a5de129a4c0d9fd0bf99fa7bf642781ac2dc745ca687aae3de082bd8afdd0d117bc953241e15ad
-  languageName: node
-  linkType: hard
-
-"react-toastify@npm:^10.0.5":
-  version: 10.0.5
-  resolution: "react-toastify@npm:10.0.5"
-  dependencies:
-    clsx: "npm:^2.1.0"
-  peerDependencies:
-    react: ">=18"
-    react-dom: ">=18"
-  checksum: 10c0/66c68ec3d6c017d9f32652d73bb925224921c6a80b629b9d481430d5b4fd504abb7a99995a64b9aef0fc31326c74f3cbe088b3287b978dd0c355079c4bbf4158
   languageName: node
   linkType: hard
 
