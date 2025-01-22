@@ -5,7 +5,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient()
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!
 
-  const { data: concerts } = await supabase.from('concerts').select('id')
+  const { data: concerts } = await supabase.from('concerts_full').select('id')
   const { data: bands } = await supabase.from('bands').select('id')
   const { data: locations } = await supabase.from('locations').select('id')
   const { data: profiles } = await supabase.from('profiles').select('id')

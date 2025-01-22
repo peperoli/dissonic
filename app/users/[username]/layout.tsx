@@ -11,6 +11,7 @@ import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ReactNode } from 'react'
+import * as Tooltip from '@radix-ui/react-tooltip'
 
 export async function generateMetadata({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params
@@ -72,7 +73,7 @@ export default async function ProfileLayout({
     { href: `/users/${username}/activity`, label: t('activity') },
     { href: `/users/${username}/contributions`, label: t('contributions') },
   ]
-  console.log(profile)
+
   return (
     <main className="container grid gap-4">
       <section className="mb-6 flex flex-wrap items-center gap-4">
@@ -89,13 +90,23 @@ export default async function ProfileLayout({
           {isOwnProfile && (
             <>
               <EditProfileButton />
-              <Link
-                href="/settings"
-                aria-label={t('settings')}
-                className="btn btn-icon btn-small btn-tertiary"
-              >
-                <Settings className="size-icon" />
-              </Link>
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <Link
+                    href="/settings"
+                    aria-label={t('settings')}
+                    className="btn btn-icon btn-small btn-tertiary"
+                  >
+                    <Settings className="size-icon" />
+                  </Link>
+                </Tooltip.Trigger>
+                <Tooltip.Content
+                  sideOffset={2}
+                  className="z-10 max-w-72 rounded-lg border border-slate-800 bg-slate-900 p-2 text-sm shadow-lg"
+                >
+                  {t('settings')}
+                </Tooltip.Content>
+              </Tooltip.Root>
             </>
           )}
         </div>

@@ -17,13 +17,13 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   }
 }
 export async function generateStaticParams() {
-  const { data: concerts, error } = await supabase.from('concerts').select('id')
+  const { data: concerts, error } = await supabase.from('concerts_full').select('id')
 
   if (error) {
     throw error
   }
 
-  return concerts?.map(concert => ({ id: concert.id.toString() }))
+  return concerts?.map(concert => ({ id: concert.id?.toString() }))
 }
 
 async function fetchConcert(concertId: Concert['id']) {

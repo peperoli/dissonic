@@ -9,7 +9,7 @@ import { Comments } from './Comments'
 import { notFound, usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
 import { BandList } from './BandList'
-import { ArchiveIcon, ArrowLeft, Edit, MapPin, Trash, Undo2Icon } from 'lucide-react'
+import { ArchiveIcon, ArchiveRestoreIcon, ArrowLeft, Edit, MapPin, Trash } from 'lucide-react'
 import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 import Image from 'next/image'
 import { ConcertDate } from './ConcertDate'
@@ -53,43 +53,46 @@ export const ConcertPage = ({
   return (
     <ConcertContext.Provider value={{ concert }}>
       <main className="container grid gap-4">
-        {`${concert.is_archived}`}
         <div className="flex items-center justify-between">
           <Link href={`/${concertQueryState ?? ''}`} className="btn btn-small btn-tertiary">
             <ArrowLeft className="size-icon" />
             {t('concerts')}
           </Link>
           <div className="flex gap-3">
-            <ShareButton />
-            <Button
-              onClick={
-                session ? () => setModal('edit-concert') : () => push(`/login?redirect=${pathname}`)
-              }
-              label={t('edit')}
-              icon={<Edit className="size-icon" />}
-              contentType="icon"
-              size="small"
-              appearance="tertiary"
-            />
             {concert.is_archived ? (
               <Button
                 onClick={() => restoreConcert.mutate(concert.id)}
                 label={t('restore')}
-                icon={<Undo2Icon className="size-icon" />}
+                icon={<ArchiveRestoreIcon className="size-icon" />}
                 contentType="icon"
                 size="small"
                 appearance="tertiary"
               />
             ) : (
-              <Button
-                onClick={() => archiveConcert.mutate(concert.id)}
-                label={t('archive')}
-                icon={<ArchiveIcon className="size-icon" />}
-                contentType="icon"
-                danger
-                size="small"
-                appearance="tertiary"
-              />
+              <>
+                <ShareButton />
+                <Button
+                  onClick={
+                    session
+                      ? () => setModal('edit-concert')
+                      : () => push(`/login?redirect=${pathname}`)
+                  }
+                  label={t('edit')}
+                  icon={<Edit className="size-icon" />}
+                  contentType="icon"
+                  size="small"
+                  appearance="tertiary"
+                />
+                <Button
+                  onClick={() => archiveConcert.mutate(concert.id)}
+                  label={t('archive')}
+                  icon={<ArchiveIcon className="size-icon" />}
+                  contentType="icon"
+                  danger
+                  size="small"
+                  appearance="tertiary"
+                />
+              </>
             )}
             {isMod && (
               <Button
@@ -138,10 +141,15 @@ export const ConcertPage = ({
               </Link>
             )}
             {concert.name && <div className="font-bold">{concert.name}</div>}
-            <h1 className="mb-2">
+            <h1 className="mb-2 flex flex-wrap items-center gap-x-2">
               {concert.festival_root
                 ? `${concert.festival_root?.name} ${new Date(concert.date_start).getFullYear()}`
                 : concert.bands?.[0]?.name}
+              {concert.is_archived && (
+                <span className="justify-self-start rounded-md bg-slate-300 px-2 text-base font-bold text-slate-850">
+                  {t('archived')}
+                </span>
+              )}
             </h1>
             <Link
               href={`/locations/${concert.location_id}`}

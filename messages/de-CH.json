@@ -18,7 +18,7 @@
     "fans": "Fans"
   },
   "SpeedDial": {
-    "speedDial": "Speed dial",
+    "addRessource": "Ressource hinzufügen",
     "addLocation": "Lokal hinzufügen",
     "addBand": "Band hinzufügen",
     "addConcert": "Konzert hinzufügen"
@@ -140,7 +140,12 @@
   "ConcertPage": {
     "concerts": "Konzerte",
     "edit": "Bearbeiten",
+    "archive": "Archivieren",
+    "concertArchived": "Konzert archiviert",
+    "restore": "Wiederherstellen",
+    "concertRestored": "Konzert wiederhergestellt",
     "delete": "Löschen",
+    "archived": "archiviert",
     "lineup": "Lineup"
   },
   "ShareButton": {
