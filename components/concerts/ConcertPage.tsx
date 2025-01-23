@@ -23,6 +23,7 @@ import { useTranslations } from 'next-intl'
 import { ShareButton } from '../shared/ShareButton'
 import { useArchiveConcert } from '@/hooks/concerts/useArchiveConcert'
 import { useRestoreConcert } from '@/hooks/concerts/useRestoreConcert'
+import { StatusBanner } from '../forms/StatusBanner'
 
 type ConcertPageProps = {
   initialConcert: Concert
@@ -67,6 +68,7 @@ export const ConcertPage = ({
                 contentType="icon"
                 size="small"
                 appearance="tertiary"
+                loading={restoreConcert.isPending}
               />
             ) : (
               <>
@@ -91,6 +93,7 @@ export const ConcertPage = ({
                   danger
                   size="small"
                   appearance="tertiary"
+                  loading={archiveConcert.isPending}
                 />
               </>
             )}
@@ -107,6 +110,9 @@ export const ConcertPage = ({
             )}
           </div>
         </div>
+        {concert.is_archived && (
+          <StatusBanner statusType="warning" message={t('concertArchivedBanner')} />
+        )}
         <header
           className={clsx(
             'relative aspect-square overflow-hidden rounded-2xl',
@@ -141,15 +147,10 @@ export const ConcertPage = ({
               </Link>
             )}
             {concert.name && <div className="font-bold">{concert.name}</div>}
-            <h1 className="mb-2 flex flex-wrap items-center gap-x-2">
+            <h1 className="mb-2">
               {concert.festival_root
                 ? `${concert.festival_root?.name} ${new Date(concert.date_start).getFullYear()}`
                 : concert.bands?.[0]?.name}
-              {concert.is_archived && (
-                <span className="justify-self-start rounded-md bg-slate-300 px-2 text-base font-bold text-slate-850">
-                  {t('archived')}
-                </span>
-              )}
             </h1>
             <Link
               href={`/locations/${concert.location_id}`}

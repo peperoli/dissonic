@@ -149,7 +149,7 @@
     "restore": "Restore",
     "concertRestored": "Concert restored",
     "delete": "Delete",
-    "archived": "archived",
+    "concertArchivedBanner": "This concert has been archived. Editing is disabled.",
     "lineup": "Lineup"
   },
   "BandList": {
@@ -264,7 +264,12 @@
   "BandPage": {
     "bands": "Bands",
     "edit": "Edit",
+    "archive": "Archive",
+    "bandArchived": "Band archived",
+    "restore": "Restore",
+    "bandRestored": "Band restored",
     "delete": "Delete",
+    "bandArchivedBanner": "This band has been archived. Editing is disabled.",
     "altNames": "Alternative names",
     "nConcertsWithX": "{count, plural, =1 {# concert} other {# concerts}} with {band}"
   },
@@ -313,7 +318,12 @@
   "LocationPage": {
     "locations": "Locations",
     "edit": "Edit",
+    "archive": "Archive",
+    "locationArchived": "Location archived",
+    "restore": "Restore",
+    "locationRestored": "Location restored",
     "delete": "Delete",
+    "locationArchivedBanner": "This location has been archived. Editing is disabled.",
     "altNames": "Alternative names",
     "website": "Website",
     "nConcertsAtX": "{count, plural, =1 {# concert} other {# concerts}} @ {location}"
@@ -509,11 +519,11 @@
     "locationsAdded": "{count, plural, =1 {location} other {locations}} added"
   },
   "ContributionItem": {
-    "userContributedToConcert": "<user></user> {operation, select, INSERT {created} UPDATE {updated} DELETE {deleted} other {translation error}} <concert></concert>",
-    "userContributedToBand": "<user></user> {operation, select, INSERT {created} UPDATE {updated} DELETE {deleted} other {translation error}} <band></band>",
-    "userContributedToLocation": "<user></user> {operation, select, INSERT {created} UPDATE {updated} DELETE {deleted} other {translation error}} <location></location>",
-    "userContributedToConcertBands": "<user></user> {operation, select, INSERT {added <bands></bands> to <concert></concert>} DELETE {removed <bands></bands> from <concert></concert>} other {translation error}}",
-    "userContributedToBandGenres": "<user></user> {operation, select, INSERT {added <genres></genres> to <band></band>} DELETE {removed <genres></genres> from <band></band>} other {translation error}}"
+    "userContributedToConcert": "<user></user> {operation, select, INSERT {created} UPDATE {updated} DELETE {deleted} ARCHIVE {archived} RESTORE {restored} other {unkown operation}} <concert></concert>",
+    "userContributedToBand": "<user></user> {operation, select, INSERT {created} UPDATE {updated} DELETE {deleted} ARCHIVE {archived} RESTORE {restored} other {unkown operation}} <band></band>",
+    "userContributedToLocation": "<user></user> {operation, select, INSERT {created} UPDATE {updated} DELETE {deleted} ARCHIVE {archived} RESTORE {restored} other {unkown operation}} <location></location>",
+    "userContributedToConcertBands": "<user></user> {operation, select, INSERT {added <bands></bands> to <concert></concert>} DELETE {removed <bands></bands> from <concert></concert>} other {unkown operation}}",
+    "userContributedToBandGenres": "<user></user> {operation, select, INSERT {added <genres></genres> to <band></band>} DELETE {removed <genres></genres> from <band></band>} other {unkown operation}}"
   },
   "GlobalStatsPage": {
     "globalStats": "Global Stats"

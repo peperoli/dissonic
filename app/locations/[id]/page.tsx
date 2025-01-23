@@ -14,7 +14,10 @@ export async function generateMetadata(props: { params: Promise<{ id: string }> 
 }
 
 export async function generateStaticParams() {
-  const { data: locations, error } = await supabase.from('locations').select('id')
+  const { data: locations, error } = await supabase
+    .from('locations')
+    .select('id')
+    .eq('is_archived', false)
 
   if (error) {
     throw error
@@ -44,7 +47,7 @@ async function fetchData(params: { id: string }) {
 }
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
-  const params = await props.params;
+  const params = await props.params
   const location = await fetchData(params)
   const cookieStore = await cookies()
   return (
