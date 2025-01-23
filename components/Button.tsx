@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { forwardRef, HTMLAttributes, ReactElement } from 'react'
 import { Loader2 } from 'lucide-react'
-import * as Tooltip from '@radix-ui/react-tooltip'
+import { Tooltip } from './shared/Tooltip'
 
 type ButtonProps = {
   type?: 'button' | 'submit' | 'reset' | undefined
@@ -15,19 +15,6 @@ type ButtonProps = {
   block?: boolean
   danger?: boolean
 } & HTMLAttributes<HTMLButtonElement>
-
-function IconButton({ ...props }) {
-  return (
-    <Tooltip.Root>
-      <Tooltip.Trigger />
-      <Tooltip.Portal>
-        <Tooltip.Content>
-          <Tooltip.Arrow />
-        </Tooltip.Content>
-      </Tooltip.Portal>
-    </Tooltip.Root>
-  )
-}
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
@@ -49,8 +36,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     if (contentType === 'icon') {
       return (
-        <Tooltip.Root>
-          <Tooltip.Trigger
+        <Tooltip content={label}>
+          <button
             type={type}
             ref={ref}
             disabled={disabled || loading}
@@ -67,16 +54,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             {...props}
           >
             {loading ? <Loader2 className="absolute size-icon animate-spin" /> : icon}
-          </Tooltip.Trigger>
-          <Tooltip.Portal>
-            <Tooltip.Content
-              sideOffset={2}
-              className="z-10 max-w-72 rounded-lg border border-slate-800 bg-slate-900 p-2 text-sm shadow-lg"
-            >
-              {label}
-            </Tooltip.Content>
-          </Tooltip.Portal>
-        </Tooltip.Root>
+          </button>
+        </Tooltip>
       )
     }
 

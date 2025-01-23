@@ -4,6 +4,7 @@ import { Score } from '@/components/profile/Score'
 import { TabLink } from '@/components/profile/TabLink'
 import { ToggleFriendButton } from '@/components/profile/ToggleFriendButton'
 import { ShareButton } from '@/components/shared/ShareButton'
+import { Tooltip } from '@/components/shared/Tooltip'
 import { UserItem } from '@/components/shared/UserItem'
 import { createClient } from '@/utils/supabase/server'
 import { CheckCircleIcon, Settings } from 'lucide-react'
@@ -11,7 +12,6 @@ import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ReactNode } from 'react'
-import * as Tooltip from '@radix-ui/react-tooltip'
 
 export async function generateMetadata({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params
@@ -90,23 +90,15 @@ export default async function ProfileLayout({
           {isOwnProfile && (
             <>
               <EditProfileButton />
-              <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <Link
-                    href="/settings"
-                    aria-label={t('settings')}
-                    className="btn btn-icon btn-small btn-tertiary"
-                  >
-                    <Settings className="size-icon" />
-                  </Link>
-                </Tooltip.Trigger>
-                <Tooltip.Content
-                  sideOffset={2}
-                  className="z-10 max-w-72 rounded-lg border border-slate-800 bg-slate-900 p-2 text-sm shadow-lg"
+              <Tooltip content={t('settings')}>
+                <Link
+                  href="/settings"
+                  aria-label={t('settings')}
+                  className="btn btn-icon btn-small btn-tertiary"
                 >
-                  {t('settings')}
-                </Tooltip.Content>
-              </Tooltip.Root>
+                  <Settings className="size-icon" />
+                </Link>
+              </Tooltip>
             </>
           )}
         </div>

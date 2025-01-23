@@ -52,6 +52,7 @@ const Bar = ({
           {name}
         </>
       }
+      triggerOnClick
     >
       <rect
         x={x}
