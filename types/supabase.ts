@@ -239,7 +239,8 @@ export type Database = {
           iso2: string
           iso3: string | null
           local_name: string | null
-          name: string | null
+          name_de: string
+          name_en: string | null
         }
         Insert: {
           continent?: Database["public"]["Enums"]["continents"] | null
@@ -247,7 +248,8 @@ export type Database = {
           iso2: string
           iso3?: string | null
           local_name?: string | null
-          name?: string | null
+          name_de: string
+          name_en?: string | null
         }
         Update: {
           continent?: Database["public"]["Enums"]["continents"] | null
@@ -255,7 +257,8 @@ export type Database = {
           iso2?: string
           iso3?: string | null
           local_name?: string | null
-          name?: string | null
+          name_de?: string
+          name_en?: string | null
         }
         Relationships: []
       }
@@ -659,6 +662,7 @@ export type Database = {
             | null
           festival_root_id: number | null
           id: number | null
+          is_archived: boolean | null
           is_festival: boolean | null
           location: Database["public"]["Tables"]["locations"]["Row"] | null
           location_id: number | null
@@ -767,11 +771,34 @@ export type Database = {
           youtube_url: string | null
         }[]
       }
+      search_countries: {
+        Args: {
+          search_string: string
+        }
+        Returns: {
+          continent: Database["public"]["Enums"]["continents"] | null
+          id: number
+          iso2: string
+          iso3: string | null
+          local_name: string | null
+          name_de: string
+          name_en: string | null
+        }[]
+      }
       search_festival_roots: {
         Args: {
           search_string: string
         }
         Returns: Database["public"]["CompositeTypes"]["festival_root"][]
+      }
+      search_genres: {
+        Args: {
+          search_string: string
+        }
+        Returns: {
+          id: number
+          name: string
+        }[]
       }
       search_locations: {
         Args: {

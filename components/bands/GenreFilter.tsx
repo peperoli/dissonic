@@ -10,11 +10,15 @@ type GenreMultiSelectProps = {
 }
 
 const GenreMultiSelect = ({ selectedOptions, setSelectedOptions }: GenreMultiSelectProps) => {
-  const { data: genres, isPending } = useGenres()
+  const [searchQuery, setSearchQuery] = useState('')
+  const { data: genres, isPending } = useGenres({ search: searchQuery })
   return (
     <Select
       name="Genre"
       items={genres}
+      searchable
+      searchQuery={searchQuery}
+      setSearchQuery={setSearchQuery}
       isLoading={isPending}
       multiple
       values={selectedOptions}

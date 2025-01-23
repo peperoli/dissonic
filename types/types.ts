@@ -25,6 +25,11 @@ export type BandFetchOptions = {
   page?: number
 }
 
+export type GenreFetchOptions = {
+  ids?: number[] | null
+  search?: string
+}
+
 export type FestivalRootFetchOptions = {
   ids?: number[] | null
   search?: string
@@ -36,6 +41,11 @@ export type LocationFetchOptions = {
   search?: string
   size?: number
   page?: number
+}
+
+export type CountryFetchOptions = {
+  ids?: number[] | null
+  search?: string
 }
 
 export type ActivityFetchOptions = {
