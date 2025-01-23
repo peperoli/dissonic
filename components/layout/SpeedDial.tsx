@@ -23,7 +23,7 @@ export const SpeedDial = () => {
       <div className="fixed bottom-0 right-0 m-4">
         <Dialog.Trigger asChild>
           <Button
-            label="Speed-Dial öffnen"
+            label={t('addRessource')}
             contentType="icon"
             icon={<Plus className="size-icon" />}
             appearance="primary"
@@ -33,7 +33,7 @@ export const SpeedDial = () => {
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-slate-800/90" />
         <Dialog.Content className="fixed bottom-0 right-0 z-50 flex flex-col items-end justify-end gap-4 p-4">
-          <Dialog.Title className="sr-only">{t('speedDial')}</Dialog.Title>
+          <Dialog.Title className="sr-only">{t('addRessource')}</Dialog.Title>
           <button
             onClick={
               session

@@ -1,8 +1,8 @@
 import clsx from 'clsx'
-import { AlertTriangle, CheckCircle, InfoIcon } from 'lucide-react'
+import { AlertCircleIcon, AlertTriangleIcon, CheckCircle, InfoIcon } from 'lucide-react'
 
 type StatusBannerProps = {
-  statusType: 'success' | 'error' | 'info'
+  statusType: 'success' | 'error' | 'warning' | 'info'
   message?: string
   className?: string
 }
@@ -11,15 +11,17 @@ export const StatusBanner = ({ statusType, message, className }: StatusBannerPro
   return (
     <div
       className={clsx(
-        'flex gap-3 p-4 rounded-lg',
-        statusType === 'success' && 'text-venom bg-venom/10',
-        statusType === 'error' && 'text-red bg-red/10',
-        statusType === 'info' && 'text-yellow bg-yellow/10',
+        'flex items-center gap-3 rounded-lg p-4',
+        statusType === 'success' && 'bg-venom/10 text-venom',
+        statusType === 'error' && 'bg-red/10 text-red',
+        statusType === 'warning' && 'bg-yellow/10 text-yellow',
+        statusType === 'info' && 'bg-blue/10 text-blue',
         className
       )}
     >
       {statusType === 'success' && <CheckCircle className="size-icon flex-none" />}
-      {statusType === 'error' && <AlertTriangle className="size-icon flex-none" />}
+      {statusType === 'error' && <AlertCircleIcon className="size-icon flex-none" />}
+      {statusType === 'warning' && <AlertTriangleIcon className="size-icon flex-none" />}
       {statusType === 'info' && <InfoIcon className="size-icon flex-none" />}
       {message ?? 'Es ist ein Fehler aufgetreten.'}
     </div>

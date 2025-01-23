@@ -6,7 +6,7 @@ import { Location } from '../../types/types'
 import { notFound, usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
 import { useModal } from '../shared/ModalProvider'
-import { ArrowLeft, Edit, MapPin, Trash } from 'lucide-react'
+import { ArchiveIcon, ArchiveRestoreIcon, ArrowLeft, Edit, MapPin, Trash } from 'lucide-react'
 import { useLocation } from '@/hooks/locations/useLocation'
 import { MetaInfo } from '../shared/MetaInfo'
 import { SpeedDial } from '../layout/SpeedDial'
@@ -16,6 +16,9 @@ import clsx from 'clsx'
 import { ConcertList } from '../profile/ConcertList'
 import { useConcertsCount } from '@/hooks/concerts/useConcertsCount'
 import { ShareButton } from '../shared/ShareButton'
+import { useArchiveLocation } from '@/hooks/locations/useArchiveLocation'
+import { useRestoreLocation } from '@/hooks/locations/useRestoreLocation'
+import { StatusBanner } from '../forms/StatusBanner'
 
 type LocationPageProps = {
   location: Location
@@ -28,12 +31,15 @@ export const LocationPage = ({
 }: LocationPageProps) => {
   const { data: location } = useLocation(initialLocation.id, initialLocation)
   const { data: concertsCount } = useConcertsCount({ locations: [initialLocation.id] })
+  const archiveLocation = useArchiveLocation()
+  const restoreLocation = useRestoreLocation()
   const [_, setModal] = useModal()
   const { data: session } = useSession()
   const { push } = useRouter()
   const pathname = usePathname()
   const t = useTranslations('LocationPage')
   const locale = useLocale()
+  const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
   const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
   const mapSearchQuery = encodeURIComponent(
     [location?.name, location?.zip_code, location?.city].join(' ')
@@ -51,32 +57,57 @@ export const LocationPage = ({
           {t('locations')}
         </Link>
         <div className="flex gap-3">
-          <ShareButton />
-          <Button
-            onClick={
-              session ? () => setModal('edit-location') : () => push(`/login?redirect=${pathname}`)
-            }
-            label={t('edit')}
-            icon={<Edit className="size-icon" />}
-            contentType="icon"
-            size="small"
-            appearance="tertiary"
-          />
-          <Button
-            onClick={
-              session
-                ? () => setModal('delete-location')
-                : () => push(`/login?redirect=${pathname}`)
-            }
-            label={t('delete')}
-            icon={<Trash className="size-icon" />}
-            contentType="icon"
-            danger
-            size="small"
-            appearance="tertiary"
-          />
+          {location.is_archived ? (
+            <Button
+              onClick={() => restoreLocation.mutate(location.id)}
+              label={t('restore')}
+              icon={<ArchiveRestoreIcon className="size-icon" />}
+              contentType="icon"
+              size="small"
+              appearance="tertiary"
+              loading={restoreLocation.isPending}
+            />
+          ) : (
+            <>
+              <ShareButton />
+              <Button
+                onClick={
+                  session
+                    ? () => setModal('edit-location')
+                    : () => push(`/login?redirect=${pathname}`)
+                }
+                label={t('edit')}
+                icon={<Edit className="size-icon" />}
+                contentType="icon"
+                size="small"
+                appearance="tertiary"
+              />
+              <Button
+                onClick={() => archiveLocation.mutate(location.id)}
+                label={t('archive')}
+                icon={<ArchiveIcon className="size-icon" />}
+                contentType="icon"
+                danger
+                size="small"
+                appearance="tertiary"
+                loading={archiveLocation.isPending}
+              />
+            </>
+          )}
+          {isMod && (
+            <Button
+              onClick={() => setModal('delete-location')}
+              label={t('delete')}
+              icon={<Trash className="size-icon" />}
+              contentType="icon"
+              danger
+              size="small"
+              appearance="tertiary"
+            />
+          )}
         </div>
       </div>
+      {location.is_archived && <StatusBanner statusType="warning" message={t('locationArchivedBanner')} />}
       <header className="flex flex-col gap-5 rounded-2xl bg-radial-gradient from-blue/20 p-6 md:flex-row">
         <div className="relative grid aspect-square w-full flex-none place-content-center rounded-lg bg-slate-750 md:w-40">
           <MapPin className="size-12 text-slate-300" />

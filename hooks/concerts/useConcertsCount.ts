@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import supabase from '@/utils/supabase/client'
 
 async function fetchConcertsCount(options?: Pick<ConcertFetchOptions, 'bands' | 'locations'>) {
-  let query = supabase.from('concerts').select('*, bands!j_concert_bands!inner(*)', { count: 'estimated', head: true })
+  let query = supabase.from('concerts_full').select('*, bands!j_concert_bands!inner(*)', { count: 'estimated', head: true })
 
   if (options?.bands && options.bands.length > 0) {
     query = query.in('bands.id', options.bands)

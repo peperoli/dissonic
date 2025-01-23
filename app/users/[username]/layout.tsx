@@ -4,6 +4,7 @@ import { Score } from '@/components/profile/Score'
 import { TabLink } from '@/components/profile/TabLink'
 import { ToggleFriendButton } from '@/components/profile/ToggleFriendButton'
 import { ShareButton } from '@/components/shared/ShareButton'
+import { Tooltip } from '@/components/shared/Tooltip'
 import { UserItem } from '@/components/shared/UserItem'
 import { createClient } from '@/utils/supabase/server'
 import { CheckCircleIcon, Settings } from 'lucide-react'
@@ -72,6 +73,7 @@ export default async function ProfileLayout({
     { href: `/users/${username}/activity`, label: t('activity') },
     { href: `/users/${username}/contributions`, label: t('contributions') },
   ]
+
   return (
     <main className="container grid gap-4">
       <section className="mb-6 flex flex-wrap items-center gap-4">
@@ -88,13 +90,15 @@ export default async function ProfileLayout({
           {isOwnProfile && (
             <>
               <EditProfileButton />
-              <Link
-                href="/settings"
-                aria-label={t('settings')}
-                className="btn btn-icon btn-small btn-tertiary"
-              >
-                <Settings className="size-icon" />
-              </Link>
+              <Tooltip content={t('settings')}>
+                <Link
+                  href="/settings"
+                  aria-label={t('settings')}
+                  className="btn btn-icon btn-small btn-tertiary"
+                >
+                  <Settings className="size-icon" />
+                </Link>
+              </Tooltip>
             </>
           )}
         </div>

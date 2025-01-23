@@ -9,7 +9,7 @@ import { Comments } from './Comments'
 import { notFound, usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
 import { BandList } from './BandList'
-import { ArrowLeft, Edit, MapPin, Trash } from 'lucide-react'
+import { ArchiveIcon, ArchiveRestoreIcon, ArrowLeft, Edit, MapPin, Trash } from 'lucide-react'
 import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 import Image from 'next/image'
 import { ConcertDate } from './ConcertDate'
@@ -21,6 +21,9 @@ import { SpeedDial } from '../layout/SpeedDial'
 import { ConcertCommunity } from './ConcertCommunity'
 import { useTranslations } from 'next-intl'
 import { ShareButton } from '../shared/ShareButton'
+import { useArchiveConcert } from '@/hooks/concerts/useArchiveConcert'
+import { useRestoreConcert } from '@/hooks/concerts/useRestoreConcert'
+import { StatusBanner } from '../forms/StatusBanner'
 
 type ConcertPageProps = {
   initialConcert: Concert
@@ -36,10 +39,13 @@ export const ConcertPage = ({
   const { data: concert } = useConcert(initialConcert.id, { placeholderData: initialConcert })
   const { data: session } = useSession()
   const { data: spotifyArtist } = useSpotifyArtist(concert?.bands?.[0]?.spotify_artist_id)
+  const archiveConcert = useArchiveConcert()
+  const restoreConcert = useRestoreConcert()
   const [_, setModal] = useModal()
   const { push } = useRouter()
   const pathname = usePathname()
   const t = useTranslations('ConcertPage')
+  const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
 
   if (!concert) {
     notFound()
@@ -54,32 +60,59 @@ export const ConcertPage = ({
             {t('concerts')}
           </Link>
           <div className="flex gap-3">
-            <ShareButton />
-            <Button
-              onClick={
-                session ? () => setModal('edit-concert') : () => push(`/login?redirect=${pathname}`)
-              }
-              label={t('edit')}
-              icon={<Edit className="size-icon" />}
-              contentType="icon"
-              size="small"
-              appearance="tertiary"
-            />
-            <Button
-              onClick={
-                session
-                  ? () => setModal('delete-concert')
-                  : () => push(`/login?redirect=${pathname}`)
-              }
-              label={t('delete')}
-              icon={<Trash className="size-icon" />}
-              contentType="icon"
-              danger
-              size="small"
-              appearance="tertiary"
-            />
+            {concert.is_archived ? (
+              <Button
+                onClick={() => restoreConcert.mutate(concert.id)}
+                label={t('restore')}
+                icon={<ArchiveRestoreIcon className="size-icon" />}
+                contentType="icon"
+                size="small"
+                appearance="tertiary"
+                loading={restoreConcert.isPending}
+              />
+            ) : (
+              <>
+                <ShareButton />
+                <Button
+                  onClick={
+                    session
+                      ? () => setModal('edit-concert')
+                      : () => push(`/login?redirect=${pathname}`)
+                  }
+                  label={t('edit')}
+                  icon={<Edit className="size-icon" />}
+                  contentType="icon"
+                  size="small"
+                  appearance="tertiary"
+                />
+                <Button
+                  onClick={() => archiveConcert.mutate(concert.id)}
+                  label={t('archive')}
+                  icon={<ArchiveIcon className="size-icon" />}
+                  contentType="icon"
+                  danger
+                  size="small"
+                  appearance="tertiary"
+                  loading={archiveConcert.isPending}
+                />
+              </>
+            )}
+            {isMod && (
+              <Button
+                onClick={() => setModal('delete-concert')}
+                label={t('delete')}
+                icon={<Trash className="size-icon" />}
+                contentType="icon"
+                danger
+                size="small"
+                appearance="tertiary"
+              />
+            )}
           </div>
         </div>
+        {concert.is_archived && (
+          <StatusBanner statusType="warning" message={t('concertArchivedBanner')} />
+        )}
         <header
           className={clsx(
             'relative aspect-square overflow-hidden rounded-2xl',
@@ -108,7 +141,7 @@ export const ConcertPage = ({
             {concert.festival_root && (
               <Link
                 href={`/?festivals=${concert.festival_root_id}`}
-                className="mb-2 justify-self-start rounded-md bg-white px-2 py-1 font-bold text-slate-850"
+                className="mb-2 justify-self-start rounded-md bg-white px-2 font-bold text-slate-850"
               >
                 Festival
               </Link>

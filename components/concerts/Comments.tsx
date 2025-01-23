@@ -36,22 +36,24 @@ export const Comments = () => {
       <h2>{t('comments')}</h2>
       {session ? (
         <>
-          <form onSubmit={handleSubmit(onSubmit)} className="mb-4 grid gap-4">
-            <TextArea
-              {...register('content')}
-              label={t('addComment')}
-              placeholder={t('whatDoYouThinkAboutThisConcert')}
-            />
-            <div className="flex justify-end">
-              <Button
-                type="submit"
-                label="Kommentieren"
-                appearance="primary"
-                disabled={watch('content') === ''}
-                loading={status === 'pending'}
+          {!concert.is_archived && (
+            <form onSubmit={handleSubmit(onSubmit)} className="mb-4 grid gap-4">
+              <TextArea
+                {...register('content')}
+                label={t('addComment')}
+                placeholder={t('whatDoYouThinkAboutThisConcert')}
               />
-            </div>
-          </form>
+              <div className="flex justify-end">
+                <Button
+                  type="submit"
+                  label="Kommentieren"
+                  appearance="primary"
+                  disabled={watch('content') === ''}
+                  loading={status === 'pending'}
+                />
+              </div>
+            </form>
+          )}
           <div className="grid gap-4">
             {comments && comments.length > 0 ? (
               comments.map(item => <CommentItem key={item.id} comment={item} />)
@@ -62,9 +64,7 @@ export const Comments = () => {
         </>
       ) : (
         <>
-          <p className="mb-4 text-sm text-slate-300">
-            {t('loginToSeeAndAddComments')}
-          </p>
+          <p className="mb-4 text-sm text-slate-300">{t('loginToSeeAndAddComments')}</p>
           <Button
             label={t('login')}
             onClick={() => push(`/login?redirect=${pathname}`)}

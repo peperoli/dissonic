@@ -9,7 +9,14 @@ import { useProfile } from '@/hooks/profiles/useProfile'
 import { getRelativeTime } from '@/lib/relativeTime'
 import { Tables, TablesInsert, TablesUpdate } from '@/types/supabase'
 import clsx from 'clsx'
-import { ArrowRight, PenIcon, PlusIcon, TrashIcon } from 'lucide-react'
+import {
+  ArchiveIcon,
+  ArchiveRestoreIcon,
+  ArrowRight,
+  PenIcon,
+  PlusIcon,
+  TrashIcon,
+} from 'lucide-react'
 import Link from 'next/link'
 import { ReactNode } from 'react'
 import { CommaSeperatedList } from '../helpers/CommaSeperatedList'
@@ -209,7 +216,7 @@ const ContributionItemWrapper = ({
 
   function findChanges(oldState: State, newState: State) {
     if (!oldState || !newState) {
-      return []
+      return null
     }
 
     const changes: { key: string; old: unknown; new: unknown }[] = []
@@ -223,7 +230,7 @@ const ContributionItemWrapper = ({
     return changes
   }
 
-  const changes = findChanges(state_old as State, state_new as State)
+  const changes = operation === 'UPDATE' && findChanges(state_old as State, state_new as State)
 
   return (
     <div className="rounded-lg bg-slate-800 p-4">
@@ -231,21 +238,23 @@ const ContributionItemWrapper = ({
         <div
           className={clsx(
             'grid size-10 flex-none place-content-center rounded',
-            operation === 'INSERT' && 'bg-venom/10 text-venom',
+            (operation === 'INSERT' || operation === 'RESTORE') && 'bg-venom/10 text-venom',
             operation === 'UPDATE' && 'bg-blue/10 text-blue',
-            operation === 'DELETE' && 'bg-red/10 text-red'
+            (operation === 'DELETE' || operation === 'ARCHIVE') && 'bg-red/10 text-red'
           )}
         >
           {operation === 'INSERT' && <PlusIcon className="size-icon" />}
           {operation === 'UPDATE' && <PenIcon className="size-icon" />}
           {operation === 'DELETE' && <TrashIcon className="size-icon" />}
+          {operation === 'ARCHIVE' && <ArchiveIcon className="size-icon" />}
+          {operation === 'RESTORE' && <ArchiveRestoreIcon className="size-icon" />}
         </div>
         <div className="flex flex-wrap items-center gap-x-1 text-sm text-slate-300">{children}</div>
         <span className="whitespace-nowrap text-sm text-slate-300 md:ml-auto">
           {getRelativeTime(timestamp, locale)}
         </span>
       </div>
-      {changes.length > 0 && (
+      {changes && changes.length > 0 && (
         <div className="mt-2 rounded border border-slate-700 p-2 text-sm">
           {changes.map(change => (
             <div key={change.key} className="flex flex-wrap items-center gap-1">

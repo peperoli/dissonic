@@ -107,6 +107,7 @@ export function Score({ profileId }: { profileId: string }) {
                   {t('minOneConcertPerMonth')}
                 </>
               }
+              triggerOnClick
             >
               <button>
                 <Info className="size-4" />

@@ -8,7 +8,16 @@ import { useBand } from '../../hooks/bands/useBand'
 import { notFound, usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
 import { useModal } from '../shared/ModalProvider'
-import { ArrowLeft, Edit, Guitar, MapPin, MusicIcon, Trash } from 'lucide-react'
+import {
+  ArchiveIcon,
+  ArchiveRestoreIcon,
+  ArrowLeft,
+  Edit,
+  Guitar,
+  MapPin,
+  MusicIcon,
+  Trash,
+} from 'lucide-react'
 import Image from 'next/image'
 import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 import { MetaInfo } from '../shared/MetaInfo'
@@ -19,6 +28,9 @@ import clsx from 'clsx'
 import { ConcertList } from '../profile/ConcertList'
 import { useConcertsCount } from '@/hooks/concerts/useConcertsCount'
 import { ShareButton } from '../shared/ShareButton'
+import { useArchiveBand } from '@/hooks/bands/useArchiveBand'
+import { useRestoreBand } from '@/hooks/bands/useRestoreBand'
+import { StatusBanner } from '../forms/StatusBanner'
 
 type BandPageProps = {
   initialBand: Band
@@ -29,12 +41,15 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
   const { data: band } = useBand(initialBand.id, initialBand)
   const { data: spotifyArtist } = useSpotifyArtist(band?.spotify_artist_id)
   const { data: concertsCount } = useConcertsCount({ bands: [initialBand.id] })
+  const archiveBand = useArchiveBand()
+  const restoreBand = useRestoreBand()
   const [_, setModal] = useModal()
   const { data: session } = useSession()
   const { push } = useRouter()
   const pathname = usePathname()
   const t = useTranslations('BandPage')
   const locale = useLocale()
+  const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
   const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
 
   if (!band) {
@@ -48,30 +63,55 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
           {t('bands')}
         </Link>
         <div className="flex gap-3">
-          <ShareButton />
-          <Button
-            onClick={
-              session ? () => setModal('edit-band') : () => push(`/login?redirect=${pathname}`)
-            }
-            label={t('edit')}
-            icon={<Edit className="size-icon" />}
-            contentType="icon"
-            size="small"
-            appearance="tertiary"
-          />
-          <Button
-            onClick={
-              session ? () => setModal('delete-band') : () => push(`/login?redirect=${pathname}`)
-            }
-            label={t('delete')}
-            icon={<Trash className="size-icon" />}
-            contentType="icon"
-            danger
-            size="small"
-            appearance="tertiary"
-          />
+          {band.is_archived ? (
+            <Button
+              onClick={() => restoreBand.mutate(band.id)}
+              label={t('restore')}
+              icon={<ArchiveRestoreIcon className="size-icon" />}
+              contentType="icon"
+              size="small"
+              appearance="tertiary"
+              loading={restoreBand.isPending}
+            />
+          ) : (
+            <>
+              <ShareButton />
+              <Button
+                onClick={
+                  session ? () => setModal('edit-band') : () => push(`/login?redirect=${pathname}`)
+                }
+                label={t('edit')}
+                icon={<Edit className="size-icon" />}
+                contentType="icon"
+                size="small"
+                appearance="tertiary"
+              />
+              <Button
+                onClick={() => archiveBand.mutate(band.id)}
+                label={t('archive')}
+                icon={<ArchiveIcon className="size-icon" />}
+                contentType="icon"
+                danger
+                size="small"
+                appearance="tertiary"
+                loading={archiveBand.isPending}
+              />
+            </>
+          )}
+          {isMod && (
+            <Button
+              onClick={() => setModal('delete-band')}
+              label={t('delete')}
+              icon={<Trash className="size-icon" />}
+              contentType="icon"
+              danger
+              size="small"
+              appearance="tertiary"
+            />
+          )}
         </div>
       </div>
+      {band.is_archived && <StatusBanner statusType="warning" message={t('bandArchivedBanner')} />}
       <header className="flex flex-col gap-5 rounded-2xl bg-radial-gradient from-blue/20 p-6 md:flex-row">
         <div className="relative grid aspect-square w-full flex-none place-content-center rounded-lg bg-slate-750 md:w-56">
           {spotifyArtist?.images[0] ? (

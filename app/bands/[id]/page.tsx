@@ -14,7 +14,7 @@ export async function generateMetadata(props: { params: Promise<{ id: string }> 
 }
 
 export async function generateStaticParams() {
-  const { data: bands, error } = await supabase.from('bands').select('id')
+  const { data: bands, error } = await supabase.from('bands').select('id').eq('is_archived', false)
 
   if (error) {
     throw error
@@ -52,5 +52,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params
   const band = await fetchData(params)
   const cookieStore = await cookies()
-  return <BandPage initialBand={band} bandQueryState={cookieStore.get('bandsLastQueryState')?.value} />
+  return (
+    <BandPage initialBand={band} bandQueryState={cookieStore.get('bandsLastQueryState')?.value} />
+  )
 }
