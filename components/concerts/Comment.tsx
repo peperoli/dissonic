@@ -98,7 +98,7 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
           {comment.edited_at && ` ${t('edited')}`}
         </span>
       </div>
-      <div className="relative flex gap-4 rounded-lg rounded-tl-none bg-slate-850 p-4 pb-6">
+      <div className="relative flex gap-4 rounded-lg rounded-tl-none bg-slate-850 ml-7 p-4 pb-6">
         {edit ? (
           <EditCommentForm comment={comment} setEdit={setEdit} />
         ) : (
@@ -109,7 +109,7 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
             <ReactionControl comment={comment} reactions={comment.reactions} user={session.user} />
           )}
           {comment.user_id === session?.user.id && !edit && (
-            <div className="hidden group-hover:flex">
+            <div className="md:hidden group-hover:flex">
               <Button
                 onClick={() => setEdit(true)}
                 contentType="icon"

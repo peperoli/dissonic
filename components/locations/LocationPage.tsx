@@ -59,7 +59,9 @@ export const LocationPage = ({
         <div className="flex gap-3">
           {location.is_archived ? (
             <Button
-              onClick={() => restoreLocation.mutate(location.id)}
+              onClick={() =>
+                session ? restoreLocation.mutate(location.id) : push(`/login?redirect=${pathname}`)
+              }
               label={t('restore')}
               icon={<ArchiveRestoreIcon className="size-icon" />}
               contentType="icon"
@@ -83,7 +85,11 @@ export const LocationPage = ({
                 appearance="tertiary"
               />
               <Button
-                onClick={() => archiveLocation.mutate(location.id)}
+                onClick={() =>
+                  session
+                    ? archiveLocation.mutate(location.id)
+                    : push(`/login?redirect=${pathname}`)
+                }
                 label={t('archive')}
                 icon={<ArchiveIcon className="size-icon" />}
                 contentType="icon"
@@ -107,7 +113,9 @@ export const LocationPage = ({
           )}
         </div>
       </div>
-      {location.is_archived && <StatusBanner statusType="warning" message={t('locationArchivedBanner')} />}
+      {location.is_archived && (
+        <StatusBanner statusType="warning" message={t('locationArchivedBanner')} />
+      )}
       <header className="flex flex-col gap-5 rounded-2xl bg-radial-gradient from-blue/20 p-6 md:flex-row">
         <div className="relative grid aspect-square w-full flex-none place-content-center rounded-lg bg-slate-750 md:w-40">
           <MapPin className="size-12 text-slate-300" />

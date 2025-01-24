@@ -62,7 +62,9 @@ export const ConcertPage = ({
           <div className="flex gap-3">
             {concert.is_archived ? (
               <Button
-                onClick={() => restoreConcert.mutate(concert.id)}
+                onClick={() =>
+                  session ? restoreConcert.mutate(concert.id) : push(`/login?redirect=${pathname}`)
+                }
                 label={t('restore')}
                 icon={<ArchiveRestoreIcon className="size-icon" />}
                 contentType="icon"
@@ -86,7 +88,11 @@ export const ConcertPage = ({
                   appearance="tertiary"
                 />
                 <Button
-                  onClick={() => archiveConcert.mutate(concert.id)}
+                  onClick={() =>
+                    session
+                      ? archiveConcert.mutate(concert.id)
+                      : push(`/login?redirect=${pathname}`)
+                  }
                   label={t('archive')}
                   icon={<ArchiveIcon className="size-icon" />}
                   contentType="icon"

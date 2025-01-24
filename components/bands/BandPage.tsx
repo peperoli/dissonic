@@ -65,7 +65,9 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
         <div className="flex gap-3">
           {band.is_archived ? (
             <Button
-              onClick={() => restoreBand.mutate(band.id)}
+              onClick={() =>
+                session ? restoreBand.mutate(band.id) : push(`/login?redirect=${pathname}`)
+              }
               label={t('restore')}
               icon={<ArchiveRestoreIcon className="size-icon" />}
               contentType="icon"
@@ -87,7 +89,9 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
                 appearance="tertiary"
               />
               <Button
-                onClick={() => archiveBand.mutate(band.id)}
+                onClick={() =>
+                  session ? archiveBand.mutate(band.id) : push(`/login?redirect=${pathname}`)
+                }
                 label={t('archive')}
                 icon={<ArchiveIcon className="size-icon" />}
                 contentType="icon"

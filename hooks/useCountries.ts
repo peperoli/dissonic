@@ -5,9 +5,7 @@ const fetchCountries = async (options?: { ids?: number[] | null }) => {
   let query = supabase
     .from('countries')
     .select('id, iso2')
-    .neq('local_name', null)
-    .neq('iso2', 'AQ')
-    .order('name')
+    .order('name_en')
 
   if (options?.ids && options.ids.length > 0) {
     query = query.in('id', options.ids)

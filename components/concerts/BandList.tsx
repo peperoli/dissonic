@@ -125,7 +125,7 @@ export function BandList({ concert, bandListHintPreference }: BandListProps) {
             <>
               <Button
                 onClick={
-                  session ? () => setEditing(true) : () => push(`/signup?redirect=${pathname}`)
+                  session ? () => setEditing(true) : () => push(`/login?redirect=${pathname}`)
                 }
                 label={t('iWasThere')}
                 icon={
