@@ -1,4 +1,4 @@
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { useProfiles } from '../../hooks/profiles/useProfiles'
@@ -12,7 +12,6 @@ import { useDeleteAvatar } from '@/hooks/files/useDeleteAvatar'
 import { useProfile } from '@/hooks/profiles/useProfile'
 import { useUploadAvatar } from '@/hooks/profiles/useUploadAvatar'
 import { useAvatar } from '@/hooks/profiles/useAvatar'
-import { useUser } from '@/hooks/auth/useUser'
 import { useTranslations } from 'next-intl'
 
 type FormProps = {
@@ -20,8 +19,8 @@ type FormProps = {
 }
 
 export const Form = ({ close }: FormProps) => {
-  const { data: user } = useUser()
-  const { data: profile } = useProfile(user?.id ?? null)
+  const { username } = useParams<{ username?: string }>()
+  const { data: profile } = useProfile(null, username)
   const { data: avatar } = useAvatar(profile?.avatar_path)
   const {
     register,
@@ -30,7 +29,7 @@ export const Form = ({ close }: FormProps) => {
     handleSubmit,
     formState: { dirtyFields, errors },
   } = useForm<EditProfile & { avatarFile: File | Blob | null }>({
-    defaultValues: { ...profile, avatarFile: avatar?.file ?? null },
+    values: { ...profile, avatarFile: avatar?.file ?? null },
     mode: 'onChange',
   })
   const { data: profiles } = useProfiles()
