@@ -32,7 +32,7 @@ export function ConcertItem({
   return (
     <Link href={`/concerts/${concert.id}`} className="flex gap-4 rounded-lg p-2 hover:bg-slate-700">
       <div className="relative grid size-15 flex-none place-content-center rounded-lg bg-slate-750">
-        {spotifyArtist?.images[2] ? (
+        {spotifyArtist?.images?.[2] ? (
           <Image
             src={spotifyArtist?.images[2].url}
             alt={concert.bands?.[0]?.name ?? ''}

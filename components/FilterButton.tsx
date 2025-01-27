@@ -1,5 +1,5 @@
 import { Button } from './Button'
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { ChevronDown, X } from 'lucide-react'
 import { ListItem } from '@/types/types'
 import { TruncatedList } from 'react-truncate-list'
@@ -43,6 +43,10 @@ export const FilterButton = ({
   const close = () => setOpen(false)
   const count = ('submittedValues' in props && props.submittedValues?.length) || 0
   const hasValues = count > 0 || ('selectedId' in props && props !== null)
+
+  useEffect(() => {
+    close()
+  }, ['selectedId' in props && props.selectedId])
 
   const triggerButton = (
     <button

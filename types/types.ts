@@ -47,9 +47,10 @@ export type ActivityFetchOptions = {
 
 export type ContributionFetchOptions = {
   size?: string
-  ressourceType?: 'concerts' | 'bands' | 'locations'
+  ressourceType?: 'all' | 'concerts' | 'bands' | 'locations' | 'festival_roots'
   ressourceId?: string
   userId?: string
+  operation?: 'all' | 'INSERT' | 'UPDATE' | 'ARCHIVE' | 'RESTORE' | 'DELETE'
 }
 
 export type QueryOptions<T> = {
@@ -151,7 +152,7 @@ export type ReorderableListItem = ListItem & {
 export type SpotifyArtist = {
   id: string
   name: string
-  images: {
+  images?: {
     height: number
     url: string
     width: number

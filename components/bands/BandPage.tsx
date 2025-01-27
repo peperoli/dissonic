@@ -118,7 +118,7 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
       {band.is_archived && <StatusBanner statusType="warning" message={t('bandArchivedBanner')} />}
       <header className="flex flex-col gap-5 rounded-2xl bg-radial-gradient from-blue/20 p-6 md:flex-row">
         <div className="relative grid aspect-square w-full flex-none place-content-center rounded-lg bg-slate-750 md:w-56">
-          {spotifyArtist?.images[0] ? (
+          {spotifyArtist?.images?.[0] ? (
             <Image
               src={spotifyArtist.images[0].url}
               alt={band.name}

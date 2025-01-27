@@ -64,7 +64,7 @@ export default function LoginPage() {
             {t('forgotPassword')}
           </Link>
         </div>
-        {error && <StatusBanner statusType="error" message={t(error.message)} />}
+        {error && <StatusBanner statusType="error" message={t.has(error.message) ? t(error.message) : error.message} />}
       </form>
       <h3 className="mt-10">{t('youDontHaveAnAccountYet')}</h3>
       <p className="mb-4">{t('letsGetStarted')}</p>

@@ -125,13 +125,13 @@ export const ConcertPage = ({
             concert.is_festival ? 'bg-purple md:aspect-2/1' : 'bg-venom md:aspect-4/3'
           )}
         >
-          {!concert.is_festival && spotifyArtist?.images[0] && (
+          {!concert.is_festival && spotifyArtist?.images?.[0] && (
             <Image src={spotifyArtist.images[0].url} alt="" fill className="object-cover" />
           )}
           <div
             className={clsx(
               'absolute inset-0 bg-radial-gradient from-transparent to-slate-850',
-              !concert.is_festival && spotifyArtist?.images[0] && 'via-transparent'
+              !concert.is_festival && spotifyArtist?.images?.[0] && 'via-transparent'
             )}
           />
           <div className="relative grid size-full content-end justify-start p-4 md:p-6">

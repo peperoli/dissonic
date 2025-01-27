@@ -518,10 +518,28 @@
     "bandsAdded": "{count, plural, =1 {band} other {bands}} added",
     "locationsAdded": "{count, plural, =1 {location} other {locations}} added"
   },
+  "OperationFilter": {
+    "operation": "Operation",
+    "all": "All",
+    "insert": "Insert",
+    "update": "Update",
+    "archive": "Archive",
+    "restore": "Restore",
+    "delete": "Delete"
+  },
+  "RessourceTypeFilter": {
+    "ressourceType": "Ressource type",
+    "all": "All",
+    "concerts": "Concerts",
+    "bands": "Bands",
+    "locations": "Locations",
+    "festival_roots": "Festival series"
+  },
   "ContributionItem": {
     "userContributedToConcert": "<user></user> {operation, select, INSERT {created} UPDATE {updated} DELETE {deleted} ARCHIVE {archived} RESTORE {restored} other {unkown operation}} <concert></concert>",
     "userContributedToBand": "<user></user> {operation, select, INSERT {created} UPDATE {updated} DELETE {deleted} ARCHIVE {archived} RESTORE {restored} other {unkown operation}} <band></band>",
     "userContributedToLocation": "<user></user> {operation, select, INSERT {created} UPDATE {updated} DELETE {deleted} ARCHIVE {archived} RESTORE {restored} other {unkown operation}} <location></location>",
+    "userContributedToFestivalRoot": "<user></user> {operation, select, INSERT {created} UPDATE {updated} DELETE {deleted} ARCHIVE {archived} RESTORE {restored} other {unkown operation}} <festivalRoot></festivalRoot>",
     "userContributedToConcertBands": "<user></user> {operation, select, INSERT {added <bands></bands> to <concert></concert>} DELETE {removed <bands></bands> from <concert></concert>} other {unkown operation}}",
     "userContributedToBandGenres": "<user></user> {operation, select, INSERT {added <genres></genres> to <band></band>} DELETE {removed <genres></genres> from <band></band>} other {unkown operation}}"
   },

@@ -23,6 +23,7 @@ import { CommaSeperatedList } from '../helpers/CommaSeperatedList'
 import { useLocale, useTranslations } from 'next-intl'
 import { Profile } from '@/types/types'
 import { getConcertName } from '@/lib/getConcertName'
+import { useFestivalRoot } from '@/hooks/concerts/useFestivalRoot'
 
 type State = TablesInsert<'bands'> | TablesUpdate<'bands'> | null
 
@@ -112,6 +113,34 @@ const LocationContributionItem = ({
           <Link href={`/locations/${ressource_id}`} className="text-white hover:underline">
             {location?.name || `ID: ${ressource_id}`}
           </Link>
+        ),
+      })}
+    </ContributionItemWrapper>
+  )
+}
+
+const FestivalRootContributionItem = ({
+  contribution,
+  profile,
+}: {
+  contribution: Tables<'contributions'>
+  profile: Profile
+}) => {
+  const { operation, ressource_id } = contribution
+  const { data: festivalRoot } = useFestivalRoot(ressource_id!)
+  const t = useTranslations('ContributionItem')
+
+  return (
+    <ContributionItemWrapper contribution={contribution}>
+      {t.rich('userContributedToFestivalRoot', {
+        user: () => (
+          <Link href={`/profiles/${profile.id}`} className="text-white hover:underline">
+            {profile.username}
+          </Link>
+        ),
+        operation,
+        festivalRoot: () => (
+          <span className="text-white">{festivalRoot?.name || `ID: ${ressource_id}`}</span>
         ),
       })}
     </ContributionItemWrapper>
@@ -294,6 +323,8 @@ export const ContributionItem = ({
     return <BandContributionItem contribution={contribution} profile={profile} />
   } else if (contribution.ressource_type === 'locations') {
     return <LocationContributionItem contribution={contribution} profile={profile} />
+  } else if (contribution.ressource_type === 'festival_roots') {
+    return <FestivalRootContributionItem contribution={contribution} profile={profile} />
   } else if (contribution.ressource_type === 'j_concert_bands') {
     return (
       <ConcertBandContributionItem
@@ -311,6 +342,6 @@ export const ContributionItem = ({
       />
     )
   } else {
-    return null
+    return <p>Contribution with unknown ressource type</p>
   }
 }
