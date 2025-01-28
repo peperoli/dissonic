@@ -25,7 +25,7 @@ export const Select = ({ name, items, isLoading, fixedHeight, ...props }: Select
   const t = useTranslations('Select')
 
   useEffect(() => {
-    if (searchRef.current && props.searchable && props.searchQuery) {
+    if (searchRef.current && !props.multiple && props.searchable && props.searchQuery) {
       searchRef.current.select()
     }
     // @ts-expect-error
@@ -49,7 +49,7 @@ export const Select = ({ name, items, isLoading, fixedHeight, ...props }: Select
       >
         {isLoading ? (
           <div className="grid h-full w-full place-content-center p-4">
-            <Loader2 className="size-8 animate-spin" />
+            <Loader2 className="size-icon animate-spin" />
           </div>
         ) : (
           <>

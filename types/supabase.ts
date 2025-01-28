@@ -16,6 +16,7 @@ export type Database = {
           created_at: string | null
           creator_id: string | null
           id: number
+          is_archived: boolean
           name: string
           spotify_artist_id: string | null
           youtube_url: string | null
@@ -26,6 +27,7 @@ export type Database = {
           created_at?: string | null
           creator_id?: string | null
           id?: number
+          is_archived?: boolean
           name: string
           spotify_artist_id?: string | null
           youtube_url?: string | null
@@ -36,6 +38,7 @@ export type Database = {
           created_at?: string | null
           creator_id?: string | null
           id?: number
+          is_archived?: boolean
           name?: string
           spotify_artist_id?: string | null
           youtube_url?: string | null
@@ -128,6 +131,7 @@ export type Database = {
           date_start: string
           festival_root_id: number | null
           id: number
+          is_archived: boolean
           is_festival: boolean
           location_id: number
           name: string | null
@@ -139,6 +143,7 @@ export type Database = {
           date_start: string
           festival_root_id?: number | null
           id?: number
+          is_archived?: boolean
           is_festival?: boolean
           location_id: number
           name?: string | null
@@ -150,6 +155,7 @@ export type Database = {
           date_start?: string
           festival_root_id?: number | null
           id?: number
+          is_archived?: boolean
           is_festival?: boolean
           location_id?: number
           name?: string | null
@@ -164,20 +170,6 @@ export type Database = {
           },
           {
             foreignKeyName: "concerts_creator_id_fkey"
-            columns: ["creator_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "concerts_creator_id_fkey1"
-            columns: ["creator_id"]
-            isOneToOne: false
-            referencedRelation: "profile_stats"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "concerts_creator_id_fkey1"
             columns: ["creator_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -268,6 +260,7 @@ export type Database = {
           creator_id: string
           default_location_id: number | null
           id: number
+          is_archived: boolean
           name: string
           website: string | null
         }
@@ -276,6 +269,7 @@ export type Database = {
           creator_id?: string
           default_location_id?: number | null
           id?: number
+          is_archived?: boolean
           name: string
           website?: string | null
         }
@@ -284,6 +278,7 @@ export type Database = {
           creator_id?: string
           default_location_id?: number | null
           id?: number
+          is_archived?: boolean
           name?: string
           website?: string | null
         }
@@ -514,6 +509,7 @@ export type Database = {
           created_at: string | null
           creator_id: string | null
           id: number
+          is_archived: boolean
           name: string
           website: string | null
           zip_code: string | null
@@ -525,6 +521,7 @@ export type Database = {
           created_at?: string | null
           creator_id?: string | null
           id?: number
+          is_archived?: boolean
           name: string
           website?: string | null
           zip_code?: string | null
@@ -536,6 +533,7 @@ export type Database = {
           created_at?: string | null
           creator_id?: string | null
           id?: number
+          is_archived?: boolean
           name?: string
           website?: string | null
           zip_code?: string | null
@@ -569,18 +567,21 @@ export type Database = {
           avatar_path: string | null
           created_at: string | null
           id: string
+          role: Database["public"]["Enums"]["app_role"] | null
           username: string
         }
         Insert: {
           avatar_path?: string | null
           created_at?: string | null
           id: string
+          role?: Database["public"]["Enums"]["app_role"] | null
           username: string
         }
         Update: {
           avatar_path?: string | null
           created_at?: string | null
           id?: string
+          role?: Database["public"]["Enums"]["app_role"] | null
           username?: string
         }
         Relationships: []
@@ -684,20 +685,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "concerts_creator_id_fkey1"
-            columns: ["creator_id"]
-            isOneToOne: false
-            referencedRelation: "profile_stats"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "concerts_creator_id_fkey1"
-            columns: ["creator_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "concerts_location_id_fkey"
             columns: ["location_id"]
             isOneToOne: false
@@ -720,12 +707,19 @@ export type Database = {
           concert_count: number | null
           created_at: string | null
           id: string | null
+          role: Database["public"]["Enums"]["app_role"] | null
           username: string | null
         }
         Relationships: []
       }
     }
     Functions: {
+      custom_access_token_hook: {
+        Args: {
+          event: Json
+        }
+        Returns: Json
+      }
       gtrgm_compress: {
         Args: {
           "": unknown
@@ -766,6 +760,7 @@ export type Database = {
           created_at: string | null
           creator_id: string | null
           id: number
+          is_archived: boolean
           name: string
           spotify_artist_id: string | null
           youtube_url: string | null
@@ -811,6 +806,7 @@ export type Database = {
           created_at: string | null
           creator_id: string | null
           id: number
+          is_archived: boolean
           name: string
           website: string | null
           zip_code: string | null
@@ -832,10 +828,21 @@ export type Database = {
         }
         Returns: string[]
       }
+      unaccent: {
+        Args: {
+          "": string
+        }
+        Returns: string
+      }
+      unaccent_init: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
     }
     Enums: {
-      app_permission: "channels.delete" | "messages.delete"
-      app_role: "admin" | "moderator"
+      app_role: "developer" | "moderator"
       bands_type: "bands"
       concerts_type: "concerts"
       continents:
