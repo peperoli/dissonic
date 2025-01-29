@@ -71,15 +71,6 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
     saveLastQueryState('bands', queryStates)
   }, [JSON.stringify(queryStates)])
 
-  if (!bands) {
-    return (
-      <StatusBanner
-        statusType="error"
-        message="Es ist ein Fehler aufgetreten. Bitte versuche es später erneut."
-        className="container"
-      />
-    )
-  }
   return (
     <main className="container-fluid">
       <div className="sr-only flex justify-between md:not-sr-only md:mb-6">
@@ -105,7 +96,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
         </div>
         <div className="flex items-center gap-4">
           <div className="my-4 text-sm text-slate-300">
-            {t('nEntries', { count: bands?.count })}
+            {t('nEntries', { count: bands?.count ?? 0 })}
           </div>
           {(selectedCountries || selectedGenres) && (
             <Button
@@ -117,7 +108,13 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
             />
           )}
         </div>
-        {bands.data.length === 0 ? (
+        {!bands ? (
+          <StatusBanner
+            statusType="error"
+            message="Es ist ein Fehler aufgetreten. Bitte versuche es später erneut."
+            className="container"
+          />
+        ) : !bands.data.length ? (
           <StatusBanner statusType="info" message={t('noEntriesFound')} />
         ) : (
           bands.data.map(band => <BandTableRow key={band.id} band={band} />)

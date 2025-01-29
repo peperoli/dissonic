@@ -13,7 +13,7 @@ import { useAddBand } from '@/hooks/bands/useAddBand'
 import { useEditBand } from '@/hooks/bands/useEditBand'
 import { AlertTriangle, ChevronDown } from 'lucide-react'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import clsx from 'clsx'
 import { BandItem } from './BandItem'
 import { useTranslations } from 'use-intl'
@@ -39,8 +39,10 @@ export const Form = ({ isNew, close }: FormProps) => {
     enabled: name.length >= 3,
     search: name,
   })
-  const { data: countries } = useCountries()
-  const { data: genres } = useGenres()
+  const [countriesSearchQuery, setCountriesSearchQuery] = useState('')
+  const [genresSearchQuery, setGenresSearchQuery] = useState('')
+  const { data: countries } = useCountries({ search: countriesSearchQuery })
+  const { data: genres } = useGenres({ search: genresSearchQuery })
   const addBand = useAddBand()
   const editBand = useEditBand()
   const t = useTranslations('BandForm')
@@ -92,6 +94,9 @@ export const Form = ({ isNew, close }: FormProps) => {
               id: item.id,
               name: regionNames.of(item.iso2) ?? item.iso2,
             }))}
+            searchable
+            searchQuery={countriesSearchQuery}
+            setSearchQuery={setCountriesSearchQuery}
             error={errors.country_id}
             label={t('country')}
           />
@@ -109,6 +114,9 @@ export const Form = ({ isNew, close }: FormProps) => {
             onValuesChange={value =>
               onChange(genres?.filter(item => value.includes(item.id)) ?? [])
             }
+            searchable
+            searchQuery={genresSearchQuery}
+            setSearchQuery={setGenresSearchQuery}
             label={t('genres')}
           />
         )}

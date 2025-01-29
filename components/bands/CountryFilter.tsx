@@ -10,7 +10,8 @@ type CountryMultiSelectProps = {
 }
 
 const CountryMultiSelect = ({ selectedOptions, setSelectedOptions }: CountryMultiSelectProps) => {
-  const { data: countries, isPending } = useCountries()
+  const [searchQuery, setSearchQuery] = useState('')
+  const { data: countries, isPending } = useCountries({ search: searchQuery })
   const locale = useLocale()
   const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
   return (
@@ -20,6 +21,9 @@ const CountryMultiSelect = ({ selectedOptions, setSelectedOptions }: CountryMult
         id: item.id,
         name: regionNames.of(item.iso2) ?? item.iso2,
       }))}
+      searchable
+      searchQuery={searchQuery}
+      setSearchQuery={setSearchQuery}
       isLoading={isPending}
       multiple
       values={selectedOptions}

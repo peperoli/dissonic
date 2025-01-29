@@ -56,7 +56,7 @@ export const NavBar = () => {
       </Link>
       {profile ? (
         <Menu as="div" className="relative">
-          <MenuButton>
+          <MenuButton className="group/user-item">
             <UserItem user={profile} avatarRight />
           </MenuButton>
           <MenuItems className="absolute right-0 z-30 mt-1 w-40 rounded-lg bg-slate-700 p-2 shadow-xl">

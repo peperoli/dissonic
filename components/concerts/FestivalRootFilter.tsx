@@ -10,13 +10,18 @@ type FestivalRootSelectProps = {
 }
 
 const FestivalRootSelect = ({ ...props }: FestivalRootSelectProps) => {
+  const [searchQuery, setSearchQuery] = useState('')
   const { data: festivalRoots, isPending } = useFestivalRoots({
+    search: searchQuery,
     sort: { sort_by: 'name', sort_asc: true },
   })
   return (
     <Select
       name="festivalRoot"
       items={festivalRoots}
+      searchable
+      searchQuery={searchQuery}
+      setSearchQuery={setSearchQuery}
       isLoading={isPending}
       multiple
       fixedHeight

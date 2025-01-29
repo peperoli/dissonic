@@ -260,6 +260,7 @@ export type Database = {
           creator_id: string
           default_location_id: number | null
           id: number
+          is_archived: boolean
           name: string
           website: string | null
         }
@@ -268,6 +269,7 @@ export type Database = {
           creator_id?: string
           default_location_id?: number | null
           id?: number
+          is_archived?: boolean
           name: string
           website?: string | null
         }
@@ -276,6 +278,7 @@ export type Database = {
           creator_id?: string
           default_location_id?: number | null
           id?: number
+          is_archived?: boolean
           name?: string
           website?: string | null
         }
@@ -781,7 +784,15 @@ export type Database = {
         Args: {
           search_string: string
         }
-        Returns: Database["public"]["CompositeTypes"]["festival_root"][]
+        Returns: {
+          created_at: string
+          creator_id: string
+          default_location_id: number | null
+          id: number
+          is_archived: boolean
+          name: string
+          website: string | null
+        }[]
       }
       search_genres: {
         Args: {
@@ -825,6 +836,18 @@ export type Database = {
         }
         Returns: string[]
       }
+      unaccent: {
+        Args: {
+          "": string
+        }
+        Returns: string
+      }
+      unaccent_init: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
     }
     Enums: {
       app_role: "developer" | "moderator"
@@ -842,15 +865,7 @@ export type Database = {
       ressources: "concerts" | "bands" | "locations"
     }
     CompositeTypes: {
-      festival_root: {
-        id: number | null
-        created_at: string | null
-        creator_id: string | null
-        name: string | null
-        default_location_id: number | null
-        website: string | null
-        default_location: unknown
-      }
+      [_ in never]: never
     }
   }
 }

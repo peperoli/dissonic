@@ -10,11 +10,15 @@ type BandMultiSelectProps = {
 }
 
 const BandMultiSelect = ({ ...props }: BandMultiSelectProps) => {
-  const { data: bands, isPending } = useBands()
+  const [searchQuery, setSearchQuery] = useState('')
+  const { data: bands, isPending } = useBands({ search: searchQuery })
   return (
     <Select
       name="band"
       items={bands?.data}
+      searchable
+      searchQuery={searchQuery}
+      setSearchQuery={setSearchQuery}
       isLoading={isPending}
       multiple
       fixedHeight
@@ -38,7 +42,7 @@ export const BandFilter = ({ values: submittedValues, onSubmit }: BandFilterProp
   }, [submittedValues])
   return (
     <FilterButton
-      label={t("band")}
+      label={t('band')}
       items={bands?.data}
       selectedIds={selectedIds}
       submittedValues={submittedValues}

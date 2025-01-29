@@ -50,15 +50,18 @@ export const Form = ({ close, isNew }: FormProps) => {
   const { data: similarConcerts } = useConcerts({
     enabled: !!(dateStart && bands?.length && locationId),
     years: dateStart
-      ? [new Date(dateStart).getFullYear(), new Date(dateStart).getFullYear()]
-      : null,
+    ? [new Date(dateStart).getFullYear(), new Date(dateStart).getFullYear()]
+    : null,
     bands: bands?.map(item => item.id),
     locations: locationId ? [locationId] : null,
   })
-  const { data: locations } = useLocations()
+  const [locationsSearchQuery, setLocationsSearchQuery] = useState('')
+  const [festivalRootsSearchQuery, setFestivalRootsSearchQuery] = useState('')
+  const { data: locations } = useLocations({ search: locationsSearchQuery })
   const isFestival = watch('is_festival')
   const { data: festivalRoots } = useFestivalRoots({
     enabled: isFestival,
+    search: festivalRootsSearchQuery,
     sort: { sort_by: 'name', sort_asc: true },
   })
   const t = useTranslations('ConcertForm')
@@ -113,6 +116,9 @@ export const Form = ({ close, isNew }: FormProps) => {
                   items={festivalRoots}
                   value={value}
                   onValueChange={onChange}
+                  searchable
+                  searchQuery={festivalRootsSearchQuery}
+                  setSearchQuery={setFestivalRootsSearchQuery}
                   error={errors.festival_root_id}
                   label={t('festivalRoot')}
                 />
@@ -173,6 +179,9 @@ export const Form = ({ close, isNew }: FormProps) => {
                 id: item.id,
                 name: `${item.name}, ${item.city}`,
               }))}
+              searchable
+              searchQuery={locationsSearchQuery}
+              setSearchQuery={setLocationsSearchQuery}
               error={errors.location_id}
               label={t('location')}
             />

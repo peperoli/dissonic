@@ -59,7 +59,7 @@ export const UserItem = ({
   return (
     <div
       className={clsx(
-        'flex cursor-pointer items-center rounded-full group-hover/user-item:bg-slate-600',
+        'flex cursor-pointer items-center rounded-full group-hover/user-item:bg-slate-700',
         (size === 'md' || size === 'sm') && '-m-1 p-1',
         avatarRight && 'flex-row-reverse'
       )}

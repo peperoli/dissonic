@@ -10,11 +10,15 @@ type LocationMultiSelectProps = {
 }
 
 const LocationMultiSelect = ({ ...props }: LocationMultiSelectProps) => {
-  const { data: locations, isPending } = useLocations()
+  const [searchQuery, setSearchQuery] = useState('')
+  const { data: locations, isPending } = useLocations({ search: searchQuery })
   return (
     <Select
       name="location"
       items={locations?.data.map(item => ({ id: item.id, name: `${item.name}, ${item.city}` }))}
+      searchable
+      searchQuery={searchQuery}
+      setSearchQuery={setSearchQuery}
       isLoading={isPending}
       multiple
       fixedHeight

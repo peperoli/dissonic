@@ -9,7 +9,7 @@ async function fetchLocations(options?: LocationFetchOptions): Promise<ExtendedR
     .select('*, country:countries(id, iso2)', { count: 'estimated' })
     .eq('is_archived', false)
 
-  if (options?.search) {
+  if (options?.search && options.search.length > 1) {
     // @ts-expect-error
     query = supabase.rpc(
       'search_locations',

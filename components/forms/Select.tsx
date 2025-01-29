@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { ListItem } from '../../types/types'
-import { normalizeString } from '../../lib/normalizeString'
 import { CheckBoxGroup } from './CheckBoxGroup'
 import { RadioGroup } from './RadioGroup'
 import { SearchField } from './SearchField'
@@ -12,60 +11,56 @@ export type SelectProps = {
   name: string
   items?: ListItem[]
   isLoading?: boolean
-  searchable?: boolean
   fixedHeight?: boolean
 } & (
   | { multiple?: false; value: number | null; onValueChange: (value: number) => void }
   | { multiple: true; values: number[]; onValuesChange: (values: number[]) => void }
-)
-export const Select = ({
-  name,
-  items,
-  isLoading,
-  searchable = true,
-  fixedHeight,
-  ...props
-}: SelectProps) => {
-  const [query, setQuery] = useState('')
+) &
+  (
+    | { searchable?: false }
+    | { searchable: true; searchQuery: string; setSearchQuery: (query: string) => void }
+  )
+export const Select = ({ name, items, isLoading, fixedHeight, ...props }: SelectProps) => {
   const searchRef = useRef<HTMLInputElement>(null)
   const t = useTranslations('Select')
-  const regExp = new RegExp(normalizeString(query), 'iu')
-  const filteredOptions = items?.filter(item => normalizeString(item.name).match(regExp))
 
   useEffect(() => {
-    if (searchRef.current && query) {
+    if (searchRef.current && !props.multiple && props.searchable && props.searchQuery) {
       searchRef.current.select()
     }
     // @ts-expect-error
   }, [props.values, props.value])
   return (
     <>
-      {searchable && (
-        <SearchField ref={searchRef} name={`${name}-search`} query={query} setQuery={setQuery} />
+      {props.searchable && (
+        <SearchField
+          ref={searchRef}
+          name={`${name}-search`}
+          query={props.searchQuery}
+          setQuery={props.setSearchQuery}
+        />
       )}
       <div
         className={clsx(
           'size-full overflow-auto',
-          searchable && 'pt-2',
+          props.searchable && 'pt-2',
           fixedHeight ? 'md:h-72' : 'md:max-h-72'
         )}
       >
         {isLoading ? (
           <div className="grid h-full w-full place-content-center p-4">
-            <Loader2 className="size-8 animate-spin" />
+            <Loader2 className="size-icon animate-spin" />
           </div>
         ) : (
           <>
-            {filteredOptions && filteredOptions.length > 0 ? (
+            {items && items.length > 0 ? (
               props.multiple ? (
-                <CheckBoxGroup name={name} items={filteredOptions} {...props} />
+                <CheckBoxGroup name={name} items={items} {...props} />
               ) : (
-                <RadioGroup name={name} items={filteredOptions} {...props} />
+                <RadioGroup name={name} items={items} {...props} />
               )
             ) : (
-              <div className="p-2 text-slate-300">
-                {t('tryUsingASensibleSearchTerm')}
-              </div>
+              <div className="p-2 text-slate-300">{t('tryUsingASensibleSearchTerm')}</div>
             )}
           </>
         )}
