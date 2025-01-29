@@ -8,7 +8,7 @@ async function fetchLocations(options?: LocationFetchOptions): Promise<ExtendedR
     .from('locations')
     .select('*, country:countries(id, iso2)', { count: 'estimated' })
 
-  if (options?.search) {
+  if (options?.search && options.search.length > 1) {
     // @ts-expect-error
     query = supabase.rpc(
       'search_locations',

@@ -5,7 +5,7 @@ import supabase from '../../utils/supabase/client'
 const fetchGenres = async (options?: GenreFetchOptions): Promise<Genre[]> => {
   let query = supabase.from('genres').select('*').order('name')
 
-  if (options?.search) {
+  if (options?.search && options.search.length > 1) {
     query = supabase.rpc('search_genres', { search_string: options.search })
   }
 

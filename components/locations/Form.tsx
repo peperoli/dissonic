@@ -8,7 +8,7 @@ import { useCountries } from '@/hooks/useCountries'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
 import { AlertTriangleIcon, ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { useLocation } from '@/hooks/locations/useLocation'
 import { useEditLocation } from '@/hooks/locations/useEditLocation'
@@ -38,10 +38,11 @@ export const Form = ({ close, isNew }: FormProps) => {
     enabled: name.length >= 3,
     search: name,
   })
+  const [countriesSearchQuery, setCountriesSearchQuery] = useState('')
+  const { data: countries } = useCountries({ search: countriesSearchQuery })
   const addLocation = useAddLocation()
   const editLocation = useEditLocation()
   const { status } = isNew ? addLocation : editLocation
-  const { data: countries } = useCountries()
   const t = useTranslations('LocationForm')
   const locale = useLocale()
   const isSimilar = !!(dirtyFields.name && similarLocations?.count)
@@ -108,6 +109,9 @@ export const Form = ({ close, isNew }: FormProps) => {
               id: item.id,
               name: regionNames.of(item.iso2) ?? item.iso2,
             }))}
+            searchable
+            searchQuery={countriesSearchQuery}
+            setSearchQuery={setCountriesSearchQuery}
             error={errors.country_id}
             label={t('country')}
           />

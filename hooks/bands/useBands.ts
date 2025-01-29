@@ -6,7 +6,7 @@ import supabase from '@/utils/supabase/client'
 const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[]>> => {
   let filterQuery = supabase.from('bands').select('id, genres(id)', { count: 'estimated' })
 
-  if (options?.search) {
+  if (options?.search && options.search.length > 1) {
     // @ts-expect-error
     filterQuery = supabase.rpc(
       'search_bands',

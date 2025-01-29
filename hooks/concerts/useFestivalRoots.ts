@@ -5,7 +5,7 @@ import { FestivalRoot, FestivalRootFetchOptions, QueryOptions } from '@/types/ty
 async function fetchLocations(options?: FestivalRootFetchOptions): Promise<FestivalRoot[]> {
   let query = supabase.from('festival_roots').select('*, default_location:locations(*)')
 
-  if (options?.search) {
+  if (options?.search && options.search.length > 1) {
     // @ts-expect-error
     query = supabase.rpc('search_festival_roots', { search_string: options.search })
   }
