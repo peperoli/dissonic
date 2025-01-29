@@ -18,7 +18,7 @@
     "fans": "Fans"
   },
   "SpeedDial": {
-    "speedDial": "Speed dial",
+    "addRessource": "Ressource hinzufügen",
     "addLocation": "Lokal hinzufügen",
     "addBand": "Band hinzufügen",
     "addConcert": "Konzert hinzufügen"
@@ -140,7 +140,12 @@
   "ConcertPage": {
     "concerts": "Konzerte",
     "edit": "Bearbeiten",
+    "archive": "Archivieren",
+    "concertArchived": "Konzert archiviert",
+    "restore": "Wiederherstellen",
+    "concertRestored": "Konzert wiederhergestellt",
     "delete": "Löschen",
+    "concertArchivedBanner": "Dieses Konzert wurde archiviert. Bearbeitungen sind deaktiviert.",
     "lineup": "Lineup"
   },
   "ShareButton": {
@@ -259,7 +264,12 @@
   "BandPage": {
     "bands": "Bands",
     "edit": "Bearbeiten",
+    "archive": "Archivieren",
+    "bandArchived": "Band archiviert",
+    "restore": "Wiederherstellen",
+    "bandRestored": "Band wiederhergestellt",
     "delete": "Löschen",
+    "bandArchivedBanner": "Diese Band wurde archiviert. Bearbeitungen sind deaktiviert.",
     "altNames": "Alternative Namen",
     "nConcertsWithX": "{count, plural, =1 {# Konzert} other {# Konzerte}} mit {band}"
   },
@@ -308,7 +318,12 @@
   "LocationPage": {
     "locations": "Lokale",
     "edit": "Bearbeiten",
+    "archive": "Archivieren",
+    "locationArchived": "Lokal archiviert",
+    "restore": "Wiederherstellen",
+    "locationRestored": "Lokal wiederhergestellt",
     "delete": "Löschen",
+    "locationArchivedBanner": "Dieses Lokal wurde archiviert. Bearbeitungen sind deaktiviert.",
     "website": "Website",
     "altNames": "Alternative Namen",
     "nConcertsAtX": "{count, plural, =1 {# Konzert} other {# Konzerte}} @ {location}"
@@ -463,6 +478,8 @@
     "oldest": "Älteste"
   },
   "UserItem": {
+    "developer": "Dev",
+    "moderator": "Mod",
     "nConcerts": "{count, plural, =1 {# Konzert} other {# Konzerte}}",
     "nBands": "{count, plural, =1 {# Band} other {# Bands}}"
   },
@@ -501,12 +518,30 @@
     "bandsAdded": "{count, plural, =1 {Band} other {Bands}} erstellt",
     "locationsAdded": "{count, plural, =1 {Lokal} other {Lokale}} erstellt"
   },
+  "OperationFilter": {
+    "operation": "Aktion",
+    "all": "Alle",
+    "insert": "Erstellen",
+    "update": "Bearbeiten",
+    "archive": "Archivieren",
+    "restore": "Wiederherstellen",
+    "delete": "Löschen"
+  },
+  "RessourceTypeFilter": {
+    "ressourceType": "Ressourcentyp",
+    "all": "Alle",
+    "concerts": "Konzerte",
+    "bands": "Bands",
+    "locations": "Lokale",
+    "festival_roots": "Festival-Serien"
+  },
   "ContributionItem": {
-    "userContributedToConcert": "<user></user> {operation, select, INSERT {erstellte} UPDATE {bearbeitete} DELETE {löschte} other {Übersetzungsfehler}} <concert></concert>",
-    "userContributedToBand": "<user></user> {operation, select, INSERT {erstellte} UPDATE {bearbeitete} DELETE {löschte} other {Übersetzungsfehler}} <band></band>",
-    "userContributedToLocation": "<user></user> {operation, select, INSERT {erstellte} UPDATE {bearbeitete} DELETE {löschte} other {Übersetzungsfehler}} <location></location>",
-    "userContributedToConcertBands": "<user></user> {operation, select, INSERT {fügte <bands></bands> zu <concert></concert> hinzu} DELETE {entfernte <bands></bands> von <concert></concert>} other {Übersetzungsfehler}}",
-    "userContributedToBandGenres": "<user></user> {operation, select, INSERT {fügte <genres></genres> zu <band></band> hinzu} DELETE {entfernte <genres></genres> von <band></band>} other {Übersetzungsfehler}}"
+    "userContributedToConcert": "<user></user> {operation, select, INSERT {erstellte} UPDATE {bearbeitete} DELETE {löschte} ARCHIVE {archivierte} RESTORE {stellte wieder her} other {unbekannte Operation}} <concert></concert>",
+    "userContributedToBand": "<user></user> {operation, select, INSERT {erstellte} UPDATE {bearbeitete} DELETE {löschte} ARCHIVE {archivierte} RESTORE {stellte wieder her} other {unbekannte Operation}} <band></band>",
+    "userContributedToLocation": "<user></user> {operation, select, INSERT {erstellte} UPDATE {bearbeitete} DELETE {löschte} ARCHIVE {archivierte} RESTORE {stellte wieder her} other {unbekannte Operation}} <location></location>",
+    "userContributedToFestivalRoot": "<user></user> {operation, select, INSERT {erstellte} UPDATE {bearbeitete} DELETE {löschte} ARCHIVE {archivierte} RESTORE {stellte wieder her} other {unbekannte aktion}} <festivalRoot></festivalRoot>",
+    "userContributedToConcertBands": "<user></user> {operation, select, INSERT {fügte <bands></bands> zu <concert></concert> hinzu} DELETE {entfernte <bands></bands> von <concert></concert>} other {unbekannte Operation}}",
+    "userContributedToBandGenres": "<user></user> {operation, select, INSERT {fügte <genres></genres> zu <band></band> hinzu} DELETE {entfernte <genres></genres> von <band></band>} other {unbekannte Operation}}"
   },
   "GlobalStatsPage": {
     "globalStats": "Globale Statistiken"

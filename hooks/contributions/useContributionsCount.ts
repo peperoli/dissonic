@@ -2,10 +2,11 @@ import { ContributionFetchOptions } from '@/types/types'
 import { useQuery } from '@tanstack/react-query'
 import supabase from 'utils/supabase/client'
 
-const relatedRessourceTypes = {
+export const relatedRessourceTypes = {
   concerts: ['j_concert_bands'],
   bands: ['j_band_genres'],
-  locations: []
+  locations: [],
+  festival_roots: [],
 }
 
 async function fetchContributionsCount({
@@ -19,7 +20,7 @@ async function fetchContributionsCount({
 }) {
   let query = supabase.from('contributions').select('*', { count: 'estimated', head: true })
 
-  if (ressourceType) {
+  if (ressourceType && ressourceType !== 'all') {
     query = query.in('ressource_type', [ressourceType, ...relatedRessourceTypes[ressourceType]])
   }
 

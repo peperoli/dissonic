@@ -1,18 +1,25 @@
 import { ContributionGroup } from '@/components/contributions/ContributionGroup'
 import { LoadMoreButton } from '@/components/contributions/LoadMoreButton'
+import { OperationFilter } from '@/components/contributions/OperationFilter'
+import { RessourceTypeFilter } from '@/components/contributions/RessourceTypeFilter'
+import { relatedRessourceTypes } from '@/hooks/contributions/useContributionsCount'
 import { Tables } from '@/types/supabase'
 import { ContributionFetchOptions } from '@/types/types'
 import { createClient } from '@/utils/supabase/server'
 import { getLocale, getTranslations } from 'next-intl/server'
-
-const relatedRessourceTypes = {
-  concerts: ['j_concert_bands'],
-  bands: ['j_band_genres'],
-  locations: [],
-}
+import { redirect } from 'next/navigation'
 
 async function fetchData({ searchParams }: { searchParams: ContributionFetchOptions }) {
   const supabase = await createClient()
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser()
+
+  if (userError || !user) {
+    redirect('/login?redirect=/contributions')
+  }
 
   let query = supabase
     .from('contributions')
@@ -20,7 +27,7 @@ async function fetchData({ searchParams }: { searchParams: ContributionFetchOpti
     .order('timestamp', { ascending: false })
     .limit(searchParams.size ? parseInt(searchParams.size) : 50)
 
-  if (searchParams.ressourceType) {
+  if (searchParams.ressourceType && searchParams.ressourceType !== 'all') {
     query = query.in('ressource_type', [
       searchParams.ressourceType,
       ...relatedRessourceTypes[searchParams.ressourceType],
@@ -33,6 +40,10 @@ async function fetchData({ searchParams }: { searchParams: ContributionFetchOpti
 
   if (searchParams.userId) {
     query = query.eq('user_id', searchParams.userId)
+  }
+
+  if (searchParams.operation && searchParams.operation !== 'all') {
+    query = query.eq('operation', searchParams.operation)
   }
 
   const { data, count, error } = await query
@@ -101,9 +112,11 @@ export default async function ContributionsPage(props: {
   return (
     <main className="container">
       <h1>{t('contributions')}</h1>
-      {contributions.length === 0 && (
-        <p className="mb-4 text-slate-300">{t('noEntriesFound')}</p>
-      )}
+      <div className="mb-6 flex flex-col gap-4 md:flex-row">
+        <OperationFilter />
+        <RessourceTypeFilter />
+      </div>
+      {contributions.length === 0 && <p className="mb-4 text-slate-300">{t('noEntriesFound')}</p>}
       <div className="grid gap-6">
         {groupedContributions.map(dateGroup => (
           <section key={dateGroup.date}>

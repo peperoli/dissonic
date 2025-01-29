@@ -1,14 +1,9 @@
 import { SpeedDial } from '@/components/layout/SpeedDial'
-import { EditProfileButton } from '@/components/profile/EditProfileButton'
+import { Header } from '@/components/profile/Header'
 import { Score } from '@/components/profile/Score'
 import { TabLink } from '@/components/profile/TabLink'
-import { ToggleFriendButton } from '@/components/profile/ToggleFriendButton'
-import { ShareButton } from '@/components/shared/ShareButton'
-import { UserItem } from '@/components/shared/UserItem'
 import { createClient } from '@/utils/supabase/server'
-import { CheckCircleIcon, Settings } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ReactNode } from 'react'
 
@@ -63,7 +58,6 @@ export default async function ProfileLayout({
   const { username } = await params
   const { profile, user, friend } = await fetchData(username)
   const t = await getTranslations('ProfileLayout')
-  const isOwnProfile = profile.id === user?.id
 
   const tabs = [
     { href: `/users/${username}/stats`, label: t('stats') },
@@ -72,33 +66,10 @@ export default async function ProfileLayout({
     { href: `/users/${username}/activity`, label: t('activity') },
     { href: `/users/${username}/contributions`, label: t('contributions') },
   ]
+
   return (
     <main className="container grid gap-4">
-      <section className="mb-6 flex flex-wrap items-center gap-4">
-        <UserItem user={profile} description={isOwnProfile ? user?.email : ''} size="lg" />
-        {friend && !friend?.pending && (
-          <p className="flex gap-2 text-slate-300">
-            <CheckCircleIcon className="size-icon" />
-            {t('friend')}
-          </p>
-        )}
-        {!isOwnProfile && <ToggleFriendButton friend={friend} />}
-        <div className="ml-auto flex gap-2">
-          <ShareButton />
-          {isOwnProfile && (
-            <>
-              <EditProfileButton />
-              <Link
-                href="/settings"
-                aria-label={t('settings')}
-                className="btn btn-icon btn-small btn-tertiary"
-              >
-                <Settings className="size-icon" />
-              </Link>
-            </>
-          )}
-        </div>
-      </section>
+      <Header profile={profile} user={user} friend={friend} />
       <Score profileId={profile.id} />
       <div className="mb-4 overflow-x-auto rounded-lg bg-slate-700 px-3">
         <nav className="flex">

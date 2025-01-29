@@ -21,7 +21,7 @@ const editProfile = async (newProfile: EditProfile) => {
     throw error
   }
 
-  return { username: data.username, avatarPath: data.avatar_path }
+  return { profileId: data.id, avatarPath: data.avatar_path }
 }
 
 export const useEditProfile = () => {
@@ -29,8 +29,8 @@ export const useEditProfile = () => {
   return useMutation({
     mutationFn: editProfile,
     onError: error => console.error(error),
-    onSuccess: ({ username, avatarPath }) => {
-      queryClient.invalidateQueries({ queryKey: ['profile', username] })
+    onSuccess: ({ profileId, avatarPath }) => {
+      queryClient.invalidateQueries({ queryKey: ['profile', profileId] })
       queryClient.invalidateQueries({ queryKey: ['avatar', avatarPath] })
     },
   })

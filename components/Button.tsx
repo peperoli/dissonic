@@ -1,6 +1,7 @@
 import clsx from 'clsx'
 import { forwardRef, HTMLAttributes, ReactElement } from 'react'
 import { Loader2 } from 'lucide-react'
+import { Tooltip } from './shared/Tooltip'
 
 type ButtonProps = {
   type?: 'button' | 'submit' | 'reset' | undefined
@@ -33,6 +34,31 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
+    if (contentType === 'icon') {
+      return (
+        <Tooltip content={label}>
+          <button
+            type={type}
+            ref={ref}
+            disabled={disabled || loading}
+            className={clsx(
+              'btn btn-icon',
+              appearance === 'primary' && 'btn-primary',
+              appearance === 'secondary' && 'btn-secondary',
+              appearance === 'tertiary' && 'btn-tertiary',
+              size === 'small' && 'btn-small',
+              block && 'btn-block',
+              danger && 'btn-danger',
+              className
+            )}
+            {...props}
+          >
+            {loading ? <Loader2 className="absolute size-icon animate-spin" /> : icon}
+          </button>
+        </Tooltip>
+      )
+    }
+
     return (
       <button
         type={type}
@@ -43,7 +69,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           appearance === 'primary' && 'btn-primary',
           appearance === 'secondary' && 'btn-secondary',
           appearance === 'tertiary' && 'btn-tertiary',
-          contentType === 'icon' && 'btn-icon',
           size === 'small' && 'btn-small',
           block && 'btn-block',
           danger && 'btn-danger',
@@ -52,9 +77,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {loading && <Loader2 className="absolute size-icon animate-spin" />}
-        <span className={clsx('flex gap-2 items-center', loading && 'opacity-0')}>
+        <span className={clsx('flex items-center gap-2', loading && 'opacity-0')}>
           {icon}
-          {label !== '' && <span className={`${contentType === 'icon' ? ' sr-only ' : ''}`}>{label}</span>}
+          {label}
         </span>
       </button>
     )

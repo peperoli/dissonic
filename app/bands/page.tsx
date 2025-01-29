@@ -16,6 +16,7 @@ const fetchData = async () => {
   const { data, count, error } = await supabase
     .from('bands')
     .select('*, country:countries(*), genres(*)', { count: 'estimated' })
+    .eq('is_archived', false)
     .range(0, 24)
     .order('name')
 

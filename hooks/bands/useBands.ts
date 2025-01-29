@@ -4,7 +4,10 @@ import { getPagination } from '@/lib/getPagination'
 import supabase from '@/utils/supabase/client'
 
 const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[]>> => {
-  let filterQuery = supabase.from('bands').select('id, genres(id)', { count: 'estimated' })
+  let filterQuery = supabase
+    .from('bands')
+    .select('id, genres(id)', { count: 'estimated' })
+    .eq('is_archived', false)
 
   if (options?.search && options.search.length > 1) {
     // @ts-expect-error

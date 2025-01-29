@@ -89,56 +89,47 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
   const locale = useLocale()
   const createdAt = new Date(comment.created_at)
   return (
-    <div className="group flex gap-2">
-      <div>{profile && <UserItem user={profile} usernameIsHidden size="sm" />}</div>
-      <div className={clsx('mt-1', edit && 'w-full')}>
-        <div className="mb-1 text-sm">
-          <Link href={`/users/${profile?.username}`} className="hover:underline">
-            {profile?.username}
-          </Link>
-          <span className="text-slate-300">
-            {' • '}
-            {getRelativeTime(comment.edited_at || createdAt, locale)}
-            {comment.edited_at && ` ${t('edited')}`}
-          </span>
-        </div>
-        <div className="relative flex gap-4 rounded-lg rounded-tl-none bg-slate-850 p-4 pb-6">
-          {edit ? (
-            <EditCommentForm comment={comment} setEdit={setEdit} />
-          ) : (
-            <p className="whitespace-pre-line break-words text-sm">{comment.content}</p>
+    <div className={clsx('group mt-1', edit && 'w-full')}>
+      <div className="mb-1 flex text-sm">
+        {profile && <UserItem user={profile} size="sm" />}
+        <span className="text-slate-300 mr-2">&bull;</span>
+        <span className="text-slate-300">
+          {getRelativeTime(comment.edited_at || createdAt, locale)}
+          {comment.edited_at && ` ${t('edited')}`}
+        </span>
+      </div>
+      <div className="relative flex gap-4 rounded-lg rounded-tl-none bg-slate-850 ml-7 p-4 pb-6">
+        {edit ? (
+          <EditCommentForm comment={comment} setEdit={setEdit} />
+        ) : (
+          <p className="whitespace-pre-line break-words text-sm">{comment.content}</p>
+        )}
+        <div className="absolute -bottom-4 flex rounded-lg bg-slate-700">
+          {comment.reactions && session && (
+            <ReactionControl comment={comment} reactions={comment.reactions} user={session.user} />
           )}
-          <div className="absolute -bottom-4 flex rounded-lg bg-slate-700">
-            {comment.reactions && session && (
-              <ReactionControl
-                comment={comment}
-                reactions={comment.reactions}
-                user={session.user}
+          {comment.user_id === session?.user.id && !edit && (
+            <div className="md:hidden group-hover:flex">
+              <Button
+                onClick={() => setEdit(true)}
+                contentType="icon"
+                label={t('edit')}
+                size="small"
+                icon={<EditIcon className="size-icon" />}
               />
-            )}
-            {comment.user_id === session?.user.id && !edit && (
-              <div className="hidden group-hover:flex">
-                <Button
-                  onClick={() => setEdit(true)}
-                  contentType="icon"
-                  label={t('edit')}
-                  size="small"
-                  icon={<EditIcon className="size-icon" />}
-                />
-                <Button
-                  onClick={() => {
-                    setModal('delete-comment')
-                    setCommentId(comment.id)
-                  }}
-                  contentType="icon"
-                  label={t('delete')}
-                  size="small"
-                  danger
-                  icon={<TrashIcon className="size-icon" />}
-                />
-              </div>
-            )}
-          </div>
+              <Button
+                onClick={() => {
+                  setModal('delete-comment')
+                  setCommentId(comment.id)
+                }}
+                contentType="icon"
+                label={t('delete')}
+                size="small"
+                danger
+                icon={<TrashIcon className="size-icon" />}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -3,7 +3,7 @@ import { Concert, ConcertFetchOptions, ExtendedRes, QueryOptions } from '@/types
 import supabase from '@/utils/supabase/client'
 
 const fetchConcerts = async (options?: ConcertFetchOptions) => {
-  let query = supabase.from('concerts').select(
+  let query = supabase.from('concerts_full').select(
     `id,
       bands!j_concert_bands(id),
       bands_seen:j_bands_seen(user_id)`,

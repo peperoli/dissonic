@@ -109,35 +109,39 @@ export function BandList({ concert, bandListHintPreference }: BandListProps) {
           ))}
         </ul>
       )}
-      <div className="mt-6 flex flex-wrap items-center gap-4">
-        {editing ? (
-          <>
-            <Button
-              onClick={updateBandsSeen}
-              label={t('save')}
-              appearance="primary"
-              loading={isPending}
-            />
-            <Button onClick={() => setEditing(false)} label={t('cancel')} />
-          </>
-        ) : (
-          <>
-            <Button
-              onClick={
-                session ? () => setEditing(true) : () => push(`/signup?redirect=${pathname}`)
-              }
-              label={t('iWasThere')}
-              icon={hasBandsSeen ? <Edit className="size-icon" /> : <Plus className="size-icon" />}
-              appearance={hasBandsSeen ? 'secondary' : 'primary'}
-              size={hasBandsSeen ? 'small' : 'medium'}
-              disabled={isFutureConcert}
-            />
-            {isFutureConcert && (
-              <p className="text-sm text-slate-300">{t('thisConcertIsInTheFuture')}</p>
-            )}
-          </>
-        )}
-      </div>
+      {!concert.is_archived && (
+        <div className="mt-6 flex flex-wrap items-center gap-4">
+          {editing ? (
+            <>
+              <Button
+                onClick={updateBandsSeen}
+                label={t('save')}
+                appearance="primary"
+                loading={isPending}
+              />
+              <Button onClick={() => setEditing(false)} label={t('cancel')} />
+            </>
+          ) : (
+            <>
+              <Button
+                onClick={
+                  session ? () => setEditing(true) : () => push(`/login?redirect=${pathname}`)
+                }
+                label={t('iWasThere')}
+                icon={
+                  hasBandsSeen ? <Edit className="size-icon" /> : <Plus className="size-icon" />
+                }
+                appearance={hasBandsSeen ? 'secondary' : 'primary'}
+                size={hasBandsSeen ? 'small' : 'medium'}
+                disabled={isFutureConcert}
+              />
+              {isFutureConcert && (
+                <p className="text-sm text-slate-300">{t('thisConcertIsInTheFuture')}</p>
+              )}
+            </>
+          )}
+        </div>
+      )}
     </section>
   )
 }

@@ -7,6 +7,7 @@ async function fetchLocations(options?: LocationFetchOptions): Promise<ExtendedR
   let query = supabase
     .from('locations')
     .select('*, country:countries(id, iso2)', { count: 'estimated' })
+    .eq('is_archived', false)
 
   if (options?.search && options.search.length > 1) {
     // @ts-expect-error

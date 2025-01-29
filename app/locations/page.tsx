@@ -17,6 +17,7 @@ async function fetchData(): Promise<ExtendedRes<Location[]>> {
   const { data, count, error } = await supabase
     .from('locations')
     .select('*, country:countries(id, iso2)', { count: 'estimated' })
+    .eq('is_archived', false)
     .range(0, 24)
     .order('name')
 

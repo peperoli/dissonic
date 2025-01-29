@@ -10,21 +10,21 @@ import Image from 'next/legacy/image'
 import Link from 'next/link'
 import { TopGrid } from './TopGrid'
 
-const BandItem = ({ topItem }: {topItem: ItemCount & Band}) => {
-  const { data } = useSpotifyArtist(topItem.spotify_artist_id)
+const BandItem = ({ topItem }: { topItem: ItemCount & Band }) => {
+  const { data: spotifyArtist } = useSpotifyArtist(topItem.spotify_artist_id)
   const t = useTranslations('TopBands')
-  const picture = data?.images?.[1]
+
   return (
     <Link href={`/bands/${topItem.id}`} className="block">
       <div className="relative flex aspect-square flex-shrink-0 items-center justify-center rounded-2xl bg-slate-750">
-        {picture ? (
+        {spotifyArtist?.images?.[1] ? (
           <Image
-            src={picture.url}
+            src={spotifyArtist.images[1].url}
             alt={topItem.name}
             layout="fill"
             objectFit="cover"
             placeholder="blur"
-            blurDataURL={data?.images[2].url}
+            blurDataURL={spotifyArtist.images[2].url}
             className="rounded-2xl"
           />
         ) : (
@@ -38,7 +38,6 @@ const BandItem = ({ topItem }: {topItem: ItemCount & Band}) => {
     </Link>
   )
 }
-
 
 export function TopBands({ profileId }: { profileId?: string }) {
   const { data: bandsSeen, status: bandsSeenStatus } = useBandsSeen({ userId: profileId })
