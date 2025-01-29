@@ -803,15 +803,6 @@ export type Database = {
           name: string
         }[]
       }
-      search_genres: {
-        Args: {
-          search_string: string
-        }
-        Returns: {
-          id: number
-          name: string
-        }[]
-      }
       search_locations: {
         Args: {
           search_string: string
