@@ -14,26 +14,22 @@ type SelectFieldProps = {
   error?: FieldError
 } & SelectProps
 
-export const SelectField = ({ label, items, error, ...props }: SelectFieldProps) => {
+export const SelectField = ({ label, items: filteredItems, error, ...props }: SelectFieldProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const t = useTranslations('SelectField')
-  const [storedValues, setStoredValues] = useState<ListItem | ListItem[] | null>(null)
+  const [storedValue, setStoredValue] = useState<ListItem | null>(null)
 
   useEffect(() => {
     if ('value' in props) {
-      setStoredValues(items?.find(item => item.id === props.value) ?? null)
+      setStoredValue(filteredItems?.find(item => item.id === props.value) ?? null)
     }
-
-    if ('values' in props) {
-      setStoredValues(items?.filter(item => props.values.includes(item.id)) ?? null)
-    }
-  }, ['value' in props && props.value, 'values' in props && props.values])
+  }, ['value' in props && props.value])
 
   function getValue() {
-    if (storedValues && !Array.isArray(storedValues)) return storedValues?.name
+    if (storedValue) return storedValue.name
 
-    if (storedValues && storedValues.length > 0) {
+    if (props.multiple && props.values.length > 0) {
       return (
         <TruncatedList
           renderTruncator={({ hiddenItemsCount }) => (
@@ -41,10 +37,10 @@ export const SelectField = ({ label, items, error, ...props }: SelectFieldProps)
           )}
           className="flex"
         >
-          {storedValues.map((item, index) => (
-            <div key={item.id} className="whitespace-nowrap">
-              {item.name}
-              {index + 1 < storedValues.length && <>,&nbsp;</>}
+          {props.values.map((value, index) => (
+            <div key={value} className="whitespace-nowrap">
+              {filteredItems?.find(item => item.id === value)?.name ?? `Genre (ID: ${value})`}
+              {index + 1 < props.values.length && <>,&nbsp;</>}
             </div>
           ))}
         </TruncatedList>
@@ -71,7 +67,7 @@ export const SelectField = ({ label, items, error, ...props }: SelectFieldProps)
             {getValue()}
           </div>
           <label>{label}</label>
-          {!items ? (
+          {!filteredItems ? (
             <Loader2 className="pointer-events-none absolute right-[18px] top-[18px] size-icon animate-spin" />
           ) : (
             <ChevronDown className="pointer-events-none absolute right-[18px] top-[18px] size-icon" />
@@ -80,7 +76,7 @@ export const SelectField = ({ label, items, error, ...props }: SelectFieldProps)
         {error && <div className="mt-1 text-sm text-yellow">{t('pleaseSelectAnOption')}</div>}
         <Dialog.Content className="fixed inset-0 z-20 flex min-w-full flex-col overflow-hidden bg-slate-700 p-4 shadow-xl md:absolute md:inset-auto md:mt-1 md:rounded-lg">
           <Dialog.Title className="sr-only">{label}</Dialog.Title>
-          <Select items={items} {...props} />
+          <Select items={filteredItems} {...props} />
           {'values' in props && (
             <Dialog.Close className="btn btn-primary">{t('save')}</Dialog.Close>
           )}
