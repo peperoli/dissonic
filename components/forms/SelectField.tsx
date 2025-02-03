@@ -7,21 +7,18 @@ import { TruncatedList } from 'react-truncate-list'
 import * as Dialog from '@radix-ui/react-dialog'
 import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 import { useTranslations } from 'next-intl'
+import { ListItem } from '@/types/types'
 
 type SelectFieldProps = {
   label: string
+  allItems: ListItem[] | undefined
   error?: FieldError
 } & SelectProps
 
-export const SelectField = ({ label, items, error, ...props }: SelectFieldProps) => {
+export const SelectField = ({ label, items, allItems, error, ...props }: SelectFieldProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const t = useTranslations('SelectField')
-  const [allItems, setAllItems] = useState(items)
-
-  useEffect(() => {
-    setAllItems((items?.length ?? 0) > (allItems?.length ?? 0) ? items : allItems)
-  }, [items?.length])
 
   function getValue() {
     if ('value' in props && props.value)

@@ -40,6 +40,7 @@ export const Form = ({ close, isNew }: FormProps) => {
   })
   const [countriesSearchQuery, setCountriesSearchQuery] = useState('')
   const { data: countries } = useCountries({ search: countriesSearchQuery })
+  const { data: allCountries } = useCountries()
   const addLocation = useAddLocation()
   const editLocation = useEditLocation()
   const { status } = isNew ? addLocation : editLocation
@@ -106,6 +107,10 @@ export const Form = ({ close, isNew }: FormProps) => {
             value={value}
             onValueChange={onChange}
             items={countries?.map(item => ({
+              id: item.id,
+              name: regionNames.of(item.iso2) ?? item.iso2,
+            }))}
+            allItems={allCountries?.map(item => ({
               id: item.id,
               name: regionNames.of(item.iso2) ?? item.iso2,
             }))}

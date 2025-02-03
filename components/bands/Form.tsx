@@ -42,7 +42,9 @@ export const Form = ({ isNew, close }: FormProps) => {
   const [countriesSearchQuery, setCountriesSearchQuery] = useState('')
   const [genresSearchQuery, setGenresSearchQuery] = useState('')
   const { data: countries } = useCountries({ search: countriesSearchQuery })
+  const { data: allCountries } = useCountries()
   const { data: genres } = useGenres({ search: genresSearchQuery })
+  const { data: allGenres } = useGenres()
   const addBand = useAddBand()
   const editBand = useEditBand()
   const t = useTranslations('BandForm')
@@ -94,6 +96,10 @@ export const Form = ({ isNew, close }: FormProps) => {
               id: item.id,
               name: regionNames.of(item.iso2) ?? item.iso2,
             }))}
+            allItems={allCountries?.map(item => ({
+              id: item.id,
+              name: regionNames.of(item.iso2) ?? item.iso2,
+            }))}
             searchable
             searchQuery={countriesSearchQuery}
             setSearchQuery={setCountriesSearchQuery}
@@ -109,10 +115,11 @@ export const Form = ({ isNew, close }: FormProps) => {
           <SelectField
             name="genres"
             items={genres}
+            allItems={allGenres}
             multiple
             values={value.map(item => item.id)}
-            onValuesChange={value =>
-              onChange(genres?.filter(item => value.includes(item.id)) ?? [])
+            onValuesChange={values =>
+              onChange(allGenres?.filter(item => values.includes(item.id)) ?? [])
             }
             searchable
             searchQuery={genresSearchQuery}

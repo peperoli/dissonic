@@ -50,20 +50,22 @@ export const Form = ({ close, isNew }: FormProps) => {
   const { data: similarConcerts } = useConcerts({
     enabled: !!(dateStart && bands?.length && locationId),
     years: dateStart
-    ? [new Date(dateStart).getFullYear(), new Date(dateStart).getFullYear()]
-    : null,
+      ? [new Date(dateStart).getFullYear(), new Date(dateStart).getFullYear()]
+      : null,
     bands: bands?.map(item => item.id),
     locations: locationId ? [locationId] : null,
   })
   const [locationsSearchQuery, setLocationsSearchQuery] = useState('')
   const [festivalRootsSearchQuery, setFestivalRootsSearchQuery] = useState('')
   const { data: locations } = useLocations({ search: locationsSearchQuery })
+  const { data: allLocations } = useLocations()
   const isFestival = watch('is_festival')
   const { data: festivalRoots } = useFestivalRoots({
     enabled: isFestival,
     search: festivalRootsSearchQuery,
     sort: { sort_by: 'name', sort_asc: true },
   })
+  const { data: allFestivalRoots } = useFestivalRoots({ enabled: isFestival })
   const t = useTranslations('ConcertForm')
   const festivalRootId = watch('festival_root_id')
   const isSimilar = !!(isNew && similarConcerts?.count)
@@ -114,6 +116,7 @@ export const Form = ({ close, isNew }: FormProps) => {
                 <SelectField
                   name="festival_root_id"
                   items={festivalRoots}
+                  allItems={allFestivalRoots}
                   value={value}
                   onValueChange={onChange}
                   searchable
@@ -176,6 +179,10 @@ export const Form = ({ close, isNew }: FormProps) => {
               value={value}
               onValueChange={onChange}
               items={locations?.data.map(item => ({
+                id: item.id,
+                name: `${item.name}, ${item.city}`,
+              }))}
+              allItems={allLocations?.data.map(item => ({
                 id: item.id,
                 name: `${item.name}, ${item.city}`,
               }))}

@@ -9,6 +9,7 @@ import { StatusBanner } from '../forms/StatusBanner'
 import { getErrorMessage } from '@/lib/getErrorMessage'
 import { useFestivalRoots } from '@/hooks/concerts/useFestivalRoots'
 import { AlertTriangleIcon, TentIcon } from 'lucide-react'
+import { useState } from 'react'
 
 interface FestivalRootFormProps {
   close: () => void
@@ -25,7 +26,9 @@ export const FestivalRootForm = ({ close }: FestivalRootFormProps) => {
     enabled: name.length >= 3,
     search: name,
   })
-  const { data: locations } = useLocations()
+  const [locationsSearchQuery, setLocationsSearchQuery] = useState('')
+  const { data: locations } = useLocations({ search: locationsSearchQuery })
+  const { data: allLocations } = useLocations()
   const { mutate, status, error } = useAddFestivalRoot()
   const isSimilar = !!(formState.dirtyFields.name && similarFestivalRoots?.length)
 
@@ -48,8 +51,11 @@ export const FestivalRootForm = ({ close }: FestivalRootFormProps) => {
             <AlertTriangleIcon className="size-icon flex-none" />
             <p>
               <strong>Achtung:</strong>{' '}
-              {similarFestivalRoots.length === 1 ? 'Eine Festival-Serie' : 'Folgende Festival-Serien'} mit ähnlichem
-              Namen {similarFestivalRoots.length === 1 ? 'existiert' : 'existieren'} bereits:
+              {similarFestivalRoots.length === 1
+                ? 'Eine Festival-Serie'
+                : 'Folgende Festival-Serien'}{' '}
+              mit ähnlichem Namen {similarFestivalRoots.length === 1 ? 'existiert' : 'existieren'}{' '}
+              bereits:
             </p>
           </div>
           <ul className="mt-4 grid">
@@ -78,6 +84,13 @@ export const FestivalRootForm = ({ close }: FestivalRootFormProps) => {
               id: item.id,
               name: `${item.name}, ${item.city}`,
             }))}
+            allItems={allLocations?.data.map(item => ({
+              id: item.id,
+              name: `${item.name}, ${item.city}`,
+            }))}
+            searchable
+            searchQuery={locationsSearchQuery}
+            setSearchQuery={setLocationsSearchQuery}
             value={value}
             onValueChange={onChange}
             error={formState.errors.default_location_id}
