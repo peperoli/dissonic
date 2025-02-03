@@ -67,9 +67,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const fullConfig = resolveConfig({ content, theme })
 
   return (
-    <QueryProvider>
-      <html lang={locale} className={`${albertSans.variable} ${firaCode.variable}`}>
-        <body className="flex min-h-screen flex-col bg-slate-850 text-white">
+    <html lang={locale} className={`${albertSans.variable} ${firaCode.variable}`}>
+      <body className="flex min-h-screen flex-col bg-slate-850 text-white">
+        <QueryProvider>
           <NextIntlClientProvider messages={messages}>
             <Tooltip.Provider delayDuration={200}>
               <NavBar />
@@ -98,10 +98,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               }}
             />
           </NextIntlClientProvider>
-          <Analytics />
-          <SpeedInsights />
-        </body>
-      </html>
-    </QueryProvider>
+        </QueryProvider>
+        <Analytics />
+        <SpeedInsights />
+      </body>
+    </html>
   )
 }

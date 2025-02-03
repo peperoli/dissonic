@@ -7,7 +7,6 @@ import { TruncatedList } from 'react-truncate-list'
 import * as Dialog from '@radix-ui/react-dialog'
 import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 import { useTranslations } from 'next-intl'
-import { ListItem } from '@/types/types'
 
 type SelectFieldProps = {
   label: string
@@ -18,22 +17,17 @@ export const SelectField = ({ label, items, error, ...props }: SelectFieldProps)
   const [isOpen, setIsOpen] = useState(false)
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const t = useTranslations('SelectField')
-  const [storedValues, setStoredValues] = useState<ListItem | ListItem[] | null>(null)
+  const [allItems, setAllItems] = useState(items)
 
   useEffect(() => {
-    if ('value' in props) {
-      setStoredValues(items?.find(item => item.id === props.value) ?? null)
-    }
-
-    if ('values' in props) {
-      setStoredValues(items?.filter(item => props.values.includes(item.id)) ?? null)
-    }
-  }, ['value' in props && props.value, 'values' in props && props.values])
+    setAllItems((items?.length ?? 0) > (allItems?.length ?? 0) ? items : allItems)
+  }, [items?.length])
 
   function getValue() {
-    if (storedValues && !Array.isArray(storedValues)) return storedValues?.name
+    if ('value' in props && props.value)
+      return allItems?.find(item => item.id === props.value)?.name ?? props.value
 
-    if (storedValues && storedValues.length > 0) {
+    if ('values' in props && props.values.length > 0) {
       return (
         <TruncatedList
           renderTruncator={({ hiddenItemsCount }) => (
@@ -41,10 +35,10 @@ export const SelectField = ({ label, items, error, ...props }: SelectFieldProps)
           )}
           className="flex"
         >
-          {storedValues.map((item, index) => (
-            <div key={item.id} className="whitespace-nowrap">
-              {item.name}
-              {index + 1 < storedValues.length && <>,&nbsp;</>}
+          {props.values.map((value, index) => (
+            <div key={value} className="whitespace-nowrap">
+              {allItems?.find(item => item.id === value)?.name ?? value}
+              {index + 1 < props.values.length && <>,&nbsp;</>}
             </div>
           ))}
         </TruncatedList>
