@@ -19,6 +19,8 @@ import { ShareButton } from '../shared/ShareButton'
 import { useArchiveLocation } from '@/hooks/locations/useArchiveLocation'
 import { useRestoreLocation } from '@/hooks/locations/useRestoreLocation'
 import { StatusBanner } from '../forms/StatusBanner'
+import Image from 'next/image'
+import supabase from '@/utils/supabase/client'
 
 type LocationPageProps = {
   location: Location
@@ -44,6 +46,7 @@ export const LocationPage = ({
   const mapSearchQuery = encodeURIComponent(
     [location?.name, location?.zip_code, location?.city].join(' ')
   )
+  const { data: imageUrl } = supabase.storage.from('ressources').getPublicUrl(location?.image)
 
   if (!location) {
     notFound()
@@ -118,7 +121,16 @@ export const LocationPage = ({
       )}
       <header className="flex flex-col gap-5 rounded-2xl bg-radial-gradient from-blue/20 p-6 md:flex-row">
         <div className="relative grid aspect-square w-full flex-none place-content-center rounded-lg bg-slate-750 md:w-40">
-          <MapPin className="size-12 text-slate-300" />
+          {location.image ? (
+            <Image
+              src={supabase.storage.from('ressources').getPublicUrl(location.image).data.publicUrl}
+              alt={location.name}
+              fill
+              className="object-cover rounded-lg"
+            />
+          ) : (
+            <MapPin className="size-12 text-slate-300" />
+          )}{' '}
         </div>
         <div>
           <h1 className={clsx(location.alt_names && 'mb-0')}>{location.name}</h1>

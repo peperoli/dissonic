@@ -635,6 +635,18 @@ export type Database = {
           },
         ]
       }
+      stop_words_bands: {
+        Row: {
+          word: string
+        }
+        Insert: {
+          word: string
+        }
+        Update: {
+          word?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       activities: {

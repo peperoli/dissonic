@@ -8,14 +8,14 @@ import { useTranslations } from 'next-intl'
 type FileUploadProps = {
   name: string
   label: string
-  value: File | Blob | null
-  onChange: (value: File | null) => void
+  value: File | string | null
+  onChange: (value: File | string | null) => void
 }
 
 export const FileUpload = ({ label, name, value, onChange }: FileUploadProps) => {
   const [dragActive, setDragActive] = useState(false)
   const t = useTranslations('FileUpload')
-  const fileUrl = value ? URL.createObjectURL(value) : null
+  const fileUrl = value instanceof File ? URL.createObjectURL(value) : value
 
   const handleDrag = function (event: DragEvent<HTMLDivElement>) {
     event.preventDefault()

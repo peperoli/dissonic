@@ -337,6 +337,7 @@
   },
   "LocationForm": {
     "name": "Name",
+    "image": "Bild",
     "duplicateLocationWarning": "{count, plural, =1 {Es existiert bereits ein ähnliches Lokal:} other {Es existieren bereits # ähnliche Lokale:}}",
     "zipCode": "PLZ",
     "city": "Stadt",
