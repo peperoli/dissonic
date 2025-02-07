@@ -44,7 +44,7 @@ const ConcertContributionItem = ({
     <ContributionItemWrapper contribution={contribution}>
       {t.rich('userContributedToConcert', {
         user: () => (
-          <Link href={`/profiles/${profile.id}`} className="text-white hover:underline">
+          <Link href={`/users/${profile.username}`} className="text-white hover:underline">
             {profile.username}
           </Link>
         ),
@@ -74,7 +74,7 @@ const BandContributionItem = ({
     <ContributionItemWrapper contribution={contribution}>
       {t.rich('userContributedToBand', {
         user: () => (
-          <Link href={`/profiles/${profile.id}`} className="text-white hover:underline">
+          <Link href={`/users/${profile.username}`} className="text-white hover:underline">
             {profile.username}
           </Link>
         ),
@@ -104,7 +104,7 @@ const LocationContributionItem = ({
     <ContributionItemWrapper contribution={contribution}>
       {t.rich('userContributedToLocation', {
         user: () => (
-          <Link href={`/profiles/${profile.id}`} className="text-white hover:underline">
+          <Link href={`/users/${profile.username}`} className="text-white hover:underline">
             {profile.username}
           </Link>
         ),
@@ -134,7 +134,7 @@ const FestivalRootContributionItem = ({
     <ContributionItemWrapper contribution={contribution}>
       {t.rich('userContributedToFestivalRoot', {
         user: () => (
-          <Link href={`/profiles/${profile.id}`} className="text-white hover:underline">
+          <Link href={`/users/${profile.username}`} className="text-white hover:underline">
             {profile.username}
           </Link>
         ),
@@ -167,7 +167,7 @@ const ConcertBandContributionItem = ({
     <ContributionItemWrapper contribution={contribution}>
       {t.rich('userContributedToConcertBands', {
         user: () => (
-          <Link href={`/profiles/${profile.id}`} className="text-white hover:underline">
+          <Link href={`/users/${profile.username}`} className="text-white hover:underline">
             {profile.username}
           </Link>
         ),
@@ -209,7 +209,7 @@ const BandGenreContributionItem = ({
     <ContributionItemWrapper contribution={contribution}>
       {t.rich('userContributedToBandGenres', {
         user: () => (
-          <Link href={`/profiles/${profile.id}`} className="text-white hover:underline">
+          <Link href={`/users/${profile.username}`} className="text-white hover:underline">
             {profile.username}
           </Link>
         ),

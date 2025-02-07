@@ -509,6 +509,7 @@ export type Database = {
           created_at: string | null
           creator_id: string | null
           id: number
+          image: string | null
           is_archived: boolean
           name: string
           website: string | null
@@ -521,6 +522,7 @@ export type Database = {
           created_at?: string | null
           creator_id?: string | null
           id?: number
+          image?: string | null
           is_archived?: boolean
           name: string
           website?: string | null
@@ -533,6 +535,7 @@ export type Database = {
           created_at?: string | null
           creator_id?: string | null
           id?: number
+          image?: string | null
           is_archived?: boolean
           name?: string
           website?: string | null
@@ -628,6 +631,18 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      stop_words_bands: {
+        Row: {
+          word: string
+        }
+        Insert: {
+          word: string
+        }
+        Update: {
+          word?: string
+        }
+        Relationships: []
       }
     }
     Views: {
@@ -814,6 +829,7 @@ export type Database = {
           created_at: string | null
           creator_id: string | null
           id: number
+          image: string | null
           is_archived: boolean
           name: string
           website: string | null

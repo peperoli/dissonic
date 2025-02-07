@@ -15,6 +15,8 @@ import { useEditLocation } from '@/hooks/locations/useEditLocation'
 import { useLocations } from '@/hooks/locations/useLocations'
 import { LocationItem } from './LocationItem'
 import { useLocale, useTranslations } from 'next-intl'
+import { FileUpload } from '../forms/FileUpload'
+import supabase from '@/utils/supabase/client'
 
 interface FormProps {
   close: () => void
@@ -30,8 +32,15 @@ export const Form = ({ close, isNew }: FormProps) => {
     watch,
     handleSubmit,
     formState: { dirtyFields, errors },
-  } = useForm<AddLocation>({
-    defaultValues: isNew ? { name: '', zip_code: '', city: '' } : location,
+  } = useForm<AddLocation & { imageFile: File | string | null }>({
+    defaultValues: isNew
+      ? { name: '', zip_code: '', city: '' }
+      : {
+          ...location,
+          imageFile: location?.image
+            ? supabase.storage.from('ressources').getPublicUrl(location.image).data.publicUrl
+            : null,
+        },
   })
   const name = watch('name')
   const { data: similarLocations } = useLocations({
@@ -49,13 +58,16 @@ export const Form = ({ close, isNew }: FormProps) => {
   const isSimilar = !!(dirtyFields.name && similarLocations?.count)
   const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
 
-  const onSubmit: SubmitHandler<AddLocation> = async function (formData) {
-    if (isNew) {
-      addLocation.mutate(formData)
-    } else {
-      editLocation.mutate(formData)
+  const onSubmit: SubmitHandler<AddLocation & { imageFile: File | string | null }> =
+    async function (formData) {
+      if (isNew) {
+        addLocation.mutate(formData)
+      } else {
+        editLocation.mutate(formData)
+      }
     }
-  }
+
+  console.log(watch())
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
@@ -64,6 +76,11 @@ export const Form = ({ close, isNew }: FormProps) => {
         error={errors.name}
         label={t('name')}
         placeholder="Hallenstadion"
+      />
+      <Controller
+        name="imageFile"
+        control={control}
+        render={({ field }) => <FileUpload label={t('image') + ' (optional)'} {...field} />}
       />
       {isSimilar && (
         <div className="rounded-lg bg-yellow/10 p-4">
