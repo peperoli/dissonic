@@ -70,7 +70,7 @@ export const Form = ({ isNew, close }: FormProps) => {
     if (isNew) {
       addBand.mutate({
         ...formData,
-        spotify_artist_id: formData.spotify_artist_id,
+        spotify_artist_id: formData.spotify_artist?.id,
         spotify_artist_images: formData.spotify_artist?.images ?? null,
       })
     } else {
