@@ -66,7 +66,7 @@ const editBand = async (newBand: EditBand) => {
       throw error
     }
 
-    return { bandId: newBand.id }
+    return { bandId: newBand.id, spotifyArtistId: newBand.spotify_artist_id }
   } catch (error) {
     throw error
   }
@@ -78,8 +78,9 @@ export const useEditBand = () => {
   return useMutation({
     mutationFn: editBand,
     onError: error => console.error(error),
-    onSuccess: ({ bandId }) => {
+    onSuccess: ({ bandId, spotifyArtistId }) => {
       queryClient.invalidateQueries({ queryKey: ['band'] })
+      queryClient.invalidateQueries({ queryKey: ['spotifyArtist', spotifyArtistId] })
       queryClient.invalidateQueries({
         queryKey: ['contributions-count', 'bands', bandId, null],
       })

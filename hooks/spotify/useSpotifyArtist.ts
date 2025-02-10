@@ -11,14 +11,19 @@ const fetchSpotifyArtist = async (token?: string | null, artistId?: string | nul
     },
   }
 
-  const data: Promise<SpotifyArtist> = await fetch(
-    `https://api.spotify.com/v1/artists/${artistId}`,
-    artistParams
-  )
-    .then(response => response.json())
-    .catch(error => console.error(error))
+  try {
+    const response = await fetch(`https://api.spotify.com/v1/artists/${artistId}`, artistParams)
 
-  return data
+    if (!response.ok) {
+      throw new Error(response.statusText)
+    }
+
+    const data: SpotifyArtist = await response.json()
+
+    return data
+  } catch (error) {
+    throw new Error(error instanceof Error ? error.message : 'Error fetching Spotify artist')
+  }
 }
 
 export const useSpotifyArtist = (artistId?: string | null) => {
