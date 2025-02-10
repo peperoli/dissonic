@@ -1,4 +1,4 @@
-import { Concert } from '../../types/types'
+import { Concert, SpotifyArtist } from '../../types/types'
 import { useProfiles } from '../../hooks/profiles/useProfiles'
 import { useSession } from '../../hooks/auth/useSession'
 import clsx from 'clsx'
@@ -20,9 +20,13 @@ export const ConcertCard = ({ concert, nested }: ConcertCardProps) => {
   const fanIds = new Set(concert?.bands_seen?.map(item => item?.user_id ?? ''))
   const { data: profiles } = useProfiles({ ids: [...fanIds] }, fanIds.size > 0)
   const { data: session } = useSession()
-  const { data: spotifyArtist } = useSpotifyArtist(concert.bands[0]?.spotify_artist_id)
+  const { data: spotifyArtist } = useSpotifyArtist(concert.bands[0]?.spotify_artist_id, {
+    enabled: !concert.bands[0]?.spotify_artist_images,
+  })
   const bandsSeen = concert.bands_seen?.filter(item => item?.user_id === session?.user.id)
-  const picture = spotifyArtist?.images?.[2]
+  const picture =
+    (concert.bands[0]?.spotify_artist_images as SpotifyArtist['images'])?.[2] ||
+    spotifyArtist?.images?.[2]
   const dateStart = new Date(concert.date_start)
   const dateEnd = concert.date_end ? new Date(concert.date_end) : null
   const t = useTranslations('ConcertCard')
@@ -56,7 +60,7 @@ export const ConcertCard = ({ concert, nested }: ConcertCardProps) => {
           </p>
         )}
         {concert.name && (
-          <p className="text-sm font-bold truncate">
+          <p className="truncate text-sm font-bold">
             {concert.name}
             <span className="truncate text-sm text-slate-300">
               , {concert.location?.name}, {concert.location?.city}

@@ -3,30 +3,26 @@
 import { useBandsSeen } from '@/hooks/bands/useBandsSeen'
 import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 import { ItemCount } from '@/lib/getCounts'
-import { Band } from '@/types/types'
+import { Band, BandSeen, SpotifyArtist } from '@/types/types'
 import { Guitar } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import Image from 'next/legacy/image'
+import Image from 'next/image'
 import Link from 'next/link'
 import { TopGrid } from './TopGrid'
 
 const BandItem = ({ topItem }: { topItem: ItemCount & Band }) => {
-  const { data: spotifyArtist } = useSpotifyArtist(topItem.spotify_artist_id)
+  const { data: spotifyArtist } = useSpotifyArtist(topItem.spotify_artist_id, {
+    enabled: !topItem.spotify_artist_images,
+  })
   const t = useTranslations('TopBands')
+  const image =
+    (topItem.spotify_artist_images as SpotifyArtist['images'])?.[1] || spotifyArtist?.images?.[1]
 
   return (
     <Link href={`/bands/${topItem.id}`} className="block">
       <div className="relative flex aspect-square flex-shrink-0 items-center justify-center rounded-2xl bg-slate-750">
-        {spotifyArtist?.images?.[1] ? (
-          <Image
-            src={spotifyArtist.images[1].url}
-            alt={topItem.name}
-            layout="fill"
-            objectFit="cover"
-            placeholder="blur"
-            blurDataURL={spotifyArtist.images[2].url}
-            className="rounded-2xl"
-          />
+        {image ? (
+          <Image src={image.url} alt={topItem.name} fill className="rounded-2xl object-cover" />
         ) : (
           <Guitar className="h-8 text-slate-300" />
         )}

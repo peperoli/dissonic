@@ -19,6 +19,7 @@ export type Database = {
           is_archived: boolean
           name: string
           spotify_artist_id: string | null
+          spotify_artist_images: Json | null
           youtube_url: string | null
         }
         Insert: {
@@ -30,6 +31,7 @@ export type Database = {
           is_archived?: boolean
           name: string
           spotify_artist_id?: string | null
+          spotify_artist_images?: Json | null
           youtube_url?: string | null
         }
         Update: {
@@ -41,6 +43,7 @@ export type Database = {
           is_archived?: boolean
           name?: string
           spotify_artist_id?: string | null
+          spotify_artist_images?: Json | null
           youtube_url?: string | null
         }
         Relationships: [
@@ -509,6 +512,7 @@ export type Database = {
           created_at: string | null
           creator_id: string | null
           id: number
+          image: string | null
           is_archived: boolean
           name: string
           website: string | null
@@ -521,6 +525,7 @@ export type Database = {
           created_at?: string | null
           creator_id?: string | null
           id?: number
+          image?: string | null
           is_archived?: boolean
           name: string
           website?: string | null
@@ -533,6 +538,7 @@ export type Database = {
           created_at?: string | null
           creator_id?: string | null
           id?: number
+          image?: string | null
           is_archived?: boolean
           name?: string
           website?: string | null
@@ -628,6 +634,18 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      stop_words_bands: {
+        Row: {
+          word: string
+        }
+        Insert: {
+          word: string
+        }
+        Update: {
+          word?: string
+        }
+        Relationships: []
       }
     }
     Views: {
@@ -750,6 +768,33 @@ export type Database = {
         }
         Returns: unknown
       }
+      json_matches_schema: {
+        Args: {
+          schema: Json
+          instance: Json
+        }
+        Returns: boolean
+      }
+      jsonb_matches_schema: {
+        Args: {
+          schema: Json
+          instance: Json
+        }
+        Returns: boolean
+      }
+      jsonschema_is_valid: {
+        Args: {
+          schema: Json
+        }
+        Returns: boolean
+      }
+      jsonschema_validation_errors: {
+        Args: {
+          schema: Json
+          instance: Json
+        }
+        Returns: string[]
+      }
       search_bands: {
         Args: {
           search_string: string
@@ -763,6 +808,7 @@ export type Database = {
           is_archived: boolean
           name: string
           spotify_artist_id: string | null
+          spotify_artist_images: Json | null
           youtube_url: string | null
         }[]
       }
@@ -814,6 +860,7 @@ export type Database = {
           created_at: string | null
           creator_id: string | null
           id: number
+          image: string | null
           is_archived: boolean
           name: string
           website: string | null

@@ -62,11 +62,15 @@ const ListItem = ({
   selectedItemToReorder,
   reorderItems,
 }: ListItemProps) => {
-  const { data: spotifyArtist } = useSpotifyArtist(band.spotify_artist_id)
+  const { data: spotifyArtist } = useSpotifyArtist(band.spotify_artist_id, {
+    enabled: !band.spotify_artist_images,
+  })
   const t = useTranslations('ListManager')
   const locale = useLocale()
   const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
   const selectedToReorder = selectedItemToReorder === index
+  const image = band.spotify_artist_images?.[2] || spotifyArtist?.images?.[2]
+
   return (
     <>
       {selectedItemToReorder !== null && !selectedToReorder && index === 0 && (
@@ -82,9 +86,9 @@ const ListItem = ({
         )}
       >
         <div className="relative grid h-11 w-11 flex-none place-content-center rounded-lg bg-slate-750">
-          {spotifyArtist?.images?.[2] ? (
+          {image ? (
             <Image
-              src={spotifyArtist.images[2].url}
+              src={image.url}
               alt={band.name}
               fill
               sizes="150px"
@@ -145,9 +149,12 @@ type SearchResultProps = {
 
 const SearchResult = forwardRef<HTMLButtonElement, SearchResultProps>(
   ({ band, index, selected, addItem, removeItem, handleKeyNavigation }, ref) => {
-    const { data: spotifyArtist } = useSpotifyArtist(band.spotify_artist_id)
+    const { data: spotifyArtist } = useSpotifyArtist(band.spotify_artist_id, {
+      enabled: !band.spotify_artist_images,
+    })
     const t = useTranslations('ListManager')
     const locale = useLocale()
+    const image = band.spotify_artist_images?.[2] || spotifyArtist?.images?.[2]
     const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
     return (
       <button
@@ -158,9 +165,9 @@ const SearchResult = forwardRef<HTMLButtonElement, SearchResultProps>(
         className={clsx('flex gap-4 rounded-lg p-2 text-left hover:bg-slate-700')}
       >
         <div className="relative grid h-11 w-11 flex-none place-content-center rounded-lg bg-slate-750">
-          {spotifyArtist?.images?.[2] ? (
+          {image ? (
             <Image
-              src={spotifyArtist.images[2].url}
+              src={image.url}
               alt={band.name}
               fill
               sizes="150px"
@@ -280,7 +287,7 @@ export const ListManager = ({
           contentType="icon"
           icon={<XIcon className="size-icon" />}
           size="small"
-          className="flex-none ml-auto"
+          className="ml-auto flex-none"
         />
       </div>
       <div className="order-last mt-auto flex gap-4 md:order-none md:mt-4">

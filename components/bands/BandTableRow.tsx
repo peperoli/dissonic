@@ -1,7 +1,7 @@
 'use client'
 
 import { TableRow } from '../TableRow'
-import { Band } from '../../types/types'
+import { Band, SpotifyArtist } from '../../types/types'
 import { useSpotifyArtist } from '../../hooks/spotify/useSpotifyArtist'
 import Image from 'next/image'
 import { Guitar } from 'lucide-react'
@@ -12,31 +12,33 @@ type BandTableRowProps = {
 }
 
 export function BandTableRow({ band }: BandTableRowProps) {
-  const { data } = useSpotifyArtist(band.spotify_artist_id)
+  const { data } = useSpotifyArtist(band.spotify_artist_id, {
+    enabled: !band.spotify_artist_images,
+  })
   const locale = useLocale()
-  const picture = data?.images?.[2]
+  const picture = (band.spotify_artist_images as SpotifyArtist['images'])?.[2] || data?.images?.[2]
   const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
   return (
     <TableRow key={band.id} href={`/bands/${band.id}`}>
-      <div className="relative flex-shrink-0 flex justify-center items-center w-11 h-11 rounded-lg bg-slate-750">
+      <div className="relative flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-slate-750">
         {picture ? (
           <Image
             src={picture.url}
             alt={band.name}
             fill
             sizes="150px"
-            className="object-cover rounded-lg"
+            className="rounded-lg object-cover"
           />
         ) : (
           <Guitar className="size-icon text-slate-300" />
         )}
       </div>
-      <div className="md:flex items-center gap-4 w-full">
+      <div className="w-full items-center gap-4 md:flex">
         <div className="md:w-1/3">{band.name}</div>
         {band.country && (
-          <div className="md:w-1/3 text-slate-300">{regionNames.of(band.country.iso2)}</div>
+          <div className="text-slate-300 md:w-1/3">{regionNames.of(band.country.iso2)}</div>
         )}
-        <div className="hidden md:[display:-webkit-box] md:w-1/3 text-sm line-clamp-2 text-slate-300">
+        <div className="line-clamp-2 hidden text-sm text-slate-300 md:w-1/3 md:[display:-webkit-box]">
           {band.genres?.map(item => item.name).join(' • ')}
         </div>
       </div>

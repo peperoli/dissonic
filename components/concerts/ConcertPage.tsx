@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useConcert } from '../../hooks/concerts/useConcert'
 import { ConcertContext } from '../../hooks/concerts/useConcertContext'
-import { Concert } from '../../types/types'
+import { Concert, SpotifyArtist } from '../../types/types'
 import { Button } from '../Button'
 import { Comments } from './Comments'
 import { notFound, usePathname, useRouter } from 'next/navigation'
@@ -38,7 +38,9 @@ export const ConcertPage = ({
 }: ConcertPageProps) => {
   const { data: concert } = useConcert(initialConcert.id, { placeholderData: initialConcert })
   const { data: session } = useSession()
-  const { data: spotifyArtist } = useSpotifyArtist(concert?.bands?.[0]?.spotify_artist_id)
+  const { data: spotifyArtist } = useSpotifyArtist(concert?.bands?.[0]?.spotify_artist_id, {
+    enabled: !concert?.bands?.[0]?.spotify_artist_images,
+  })
   const archiveConcert = useArchiveConcert()
   const restoreConcert = useRestoreConcert()
   const [_, setModal] = useModal()
@@ -46,6 +48,9 @@ export const ConcertPage = ({
   const pathname = usePathname()
   const t = useTranslations('ConcertPage')
   const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
+  const image =
+    (concert?.bands?.[0]?.spotify_artist_images as SpotifyArtist['images'])?.[0] ||
+    spotifyArtist?.images?.[0]
 
   if (!concert) {
     notFound()
@@ -125,13 +130,13 @@ export const ConcertPage = ({
             concert.is_festival ? 'bg-purple md:aspect-2/1' : 'bg-venom md:aspect-4/3'
           )}
         >
-          {!concert.is_festival && spotifyArtist?.images?.[0] && (
-            <Image src={spotifyArtist.images[0].url} alt="" fill className="object-cover" />
+          {!concert.is_festival && image && (
+            <Image src={image.url} alt="" fill className="object-cover" />
           )}
           <div
             className={clsx(
               'absolute inset-0 bg-radial-gradient from-transparent to-slate-850',
-              !concert.is_festival && spotifyArtist?.images?.[0] && 'via-transparent'
+              !concert.is_festival && image && 'via-transparent'
             )}
           />
           <div className="relative grid size-full content-end justify-start p-4 md:p-6">

@@ -9,8 +9,8 @@ import { useLocale, useTranslations } from 'next-intl'
 
 interface SelectItemProps {
   item: SpotifyArtist
-  value: string | null
-  handleChange: (value: string | null) => void
+  value: SpotifyArtist | null
+  handleChange: (value: SpotifyArtist | null) => void
 }
 
 const SelectItem = ({ item, value, handleChange }: SelectItemProps) => {
@@ -20,8 +20,8 @@ const SelectItem = ({ item, value, handleChange }: SelectItemProps) => {
     <label className="flex w-full items-center gap-3 rounded-lg p-2 focus-within:bg-slate-600 hover:bg-slate-600">
       <input
         type="radio"
-        checked={value === item.id}
-        onChange={() => handleChange(item.id)}
+        checked={value?.id === item.id}
+        onChange={() => handleChange(item)}
         className="sr-only"
       />
       <div className="relative flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-slate-800">
@@ -44,22 +44,22 @@ const SelectItem = ({ item, value, handleChange }: SelectItemProps) => {
           {item.genres.length > 0 && <> &bull; {item.genres.join(', ')}</>}
         </div>
       </div>
-      {value === item.id && <Check className="ml-auto size-icon" />}
+      {value?.id === item.id && <Check className="ml-auto size-icon" />}
     </label>
   )
 }
 
 interface SpotifyArtistSelectProps {
   bandName: string
-  value: string | null
-  onChange: (event: string | null) => void
+  value: SpotifyArtist | null
+  onChange: (event: SpotifyArtist | null) => void
 }
 
 export const SpotifyArtistSelect = ({ bandName, value, onChange }: SpotifyArtistSelectProps) => {
   const [limit, setLimit] = useState(10)
   const { data: searchResults, isLoading } = useSpotifySearch(bandName, { limit })
   const t = useTranslations('SpotifyArtistSelect')
-  const selectedArtist = searchResults?.find(item => item.id === value)
+  const selectedArtist = searchResults?.find(item => item.id === value?.id)
 
   return (
     <Popover className="relative">
@@ -88,7 +88,7 @@ export const SpotifyArtistSelect = ({ bandName, value, onChange }: SpotifyArtist
       <PopoverBackdrop className="fixed inset-0 bg-black opacity-30 md:hidden" />
       <PopoverPanel className="fixed inset-8 z-20 overflow-auto rounded-lg bg-slate-700 p-2 md:absolute md:inset-auto md:mt-1 md:max-h-72 md:w-full">
         {({ close }) => {
-          function handleChange(value: string | null) {
+          function handleChange(value: SpotifyArtist | null) {
             onChange(value)
             close()
           }

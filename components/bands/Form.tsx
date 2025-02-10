@@ -1,5 +1,5 @@
 import { useBands } from '../../hooks/bands/useBands'
-import { AddBand } from '../../types/types'
+import { AddBand, SpotifyArtist } from '../../types/types'
 import { Button } from '../Button'
 import { SpotifyArtistSelect } from './SpotifyArtistSelect'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
@@ -33,7 +33,18 @@ export const Form = ({ isNew, close }: FormProps) => {
     watch,
     handleSubmit,
     formState: { dirtyFields, errors },
-  } = useForm<AddBand>({ defaultValues: isNew ? { name: '', genres: [] } : band })
+  } = useForm<Omit<AddBand, 'spotify_artist_images'> & { spotify_artist: SpotifyArtist }>({
+    defaultValues: isNew
+      ? {
+          name: '',
+          genres: [],
+          spotify_artist: {
+            id: band?.spotify_artist_id,
+            images: band?.spotify_artist_images,
+          } as SpotifyArtist,
+        }
+      : band,
+  })
   const name = watch('name')
   const { data: similarBands } = useBands({
     enabled: name.length >= 3,
@@ -53,11 +64,21 @@ export const Form = ({ isNew, close }: FormProps) => {
   const isSimilar = !!(dirtyFields.name && similarBands?.count)
   const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
 
-  const onSubmit: SubmitHandler<AddBand> = async function (formData) {
+  const onSubmit: SubmitHandler<AddBand & { spotify_artist: SpotifyArtist }> = async function (
+    formData
+  ) {
     if (isNew) {
-      addBand.mutate(formData)
+      addBand.mutate({
+        ...formData,
+        spotify_artist_id: formData.spotify_artist_id,
+        spotify_artist_images: formData.spotify_artist?.images ?? null,
+      })
     } else {
-      editBand.mutate(formData)
+      editBand.mutate({
+        ...formData,
+        spotify_artist_id: formData.spotify_artist?.id ?? null,
+        spotify_artist_images: formData.spotify_artist?.images ?? null,
+      })
     }
   }
   return (
@@ -129,7 +150,7 @@ export const Form = ({ isNew, close }: FormProps) => {
         )}
       />
       <Controller
-        name="spotify_artist_id"
+        name="spotify_artist"
         control={control}
         render={({ field: { value = null, onChange } }) => (
           <SpotifyArtistSelect bandName={watch('name')} value={value} onChange={onChange} />

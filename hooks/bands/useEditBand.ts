@@ -25,6 +25,7 @@ const editBand = async (newBand: EditBand) => {
         name: newBand.name,
         country_id: newBand.country_id,
         spotify_artist_id: newBand.spotify_artist_id,
+        spotify_artist_images: newBand.spotify_artist_images,
         alt_names: newBand.alt_names,
         youtube_url: newBand.youtube_url,
       })

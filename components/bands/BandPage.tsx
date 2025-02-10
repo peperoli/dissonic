@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { Fragment } from 'react'
 import { Button } from '../Button'
-import { Band } from '../../types/types'
+import { Band, SpotifyArtist } from '../../types/types'
 import { useBand } from '../../hooks/bands/useBand'
 import { notFound, usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
@@ -39,7 +39,9 @@ type BandPageProps = {
 
 export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
   const { data: band } = useBand(initialBand.id, initialBand)
-  const { data: spotifyArtist } = useSpotifyArtist(band?.spotify_artist_id)
+  const { data: spotifyArtist } = useSpotifyArtist(band?.spotify_artist_id, {
+    enabled: !band?.spotify_artist_images,
+  })
   const { data: concertsCount } = useConcertsCount({ bands: [initialBand.id] })
   const archiveBand = useArchiveBand()
   const restoreBand = useRestoreBand()
@@ -50,6 +52,8 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
   const t = useTranslations('BandPage')
   const locale = useLocale()
   const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
+  const image =
+    (band?.spotify_artist_images as SpotifyArtist['images'])?.[0] || spotifyArtist?.images?.[0]
   const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
 
   if (!band) {
@@ -118,13 +122,8 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
       {band.is_archived && <StatusBanner statusType="warning" message={t('bandArchivedBanner')} />}
       <header className="flex flex-col gap-5 rounded-2xl bg-radial-gradient from-blue/20 p-6 md:flex-row">
         <div className="relative grid aspect-square w-full flex-none place-content-center rounded-lg bg-slate-750 md:w-56">
-          {spotifyArtist?.images?.[0] ? (
-            <Image
-              src={spotifyArtist.images[0].url}
-              alt={band.name}
-              fill
-              className="rounded-lg object-cover"
-            />
+          {image ? (
+            <Image src={image.url!} alt={band.name} fill className="rounded-lg object-cover" />
           ) : (
             <Guitar className="size-12 text-slate-300" />
           )}
@@ -165,9 +164,9 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
                 YouTube
               </Link>
             )}
-            {spotifyArtist && (
+            {band.spotify_artist_id && (
               <Link
-                href={spotifyArtist.external_urls.spotify}
+                href={`https://open.spotify.com/artist/${band.spotify_artist_id}`}
                 target="_blank"
                 className="btn btn-small btn-secondary"
               >
