@@ -41,7 +41,6 @@ export const ConcertCard = ({ concert, nested }: ConcertCardProps) => {
           <Image
             src={picture.url}
             alt={concert.bands[0].name}
-            unoptimized
             width={150}
             height={150}
             className="size-22 rounded-lg object-cover"

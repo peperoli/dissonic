@@ -23,7 +23,6 @@ export function BandTableRow({ band }: BandTableRowProps) {
           <Image
             src={picture.url}
             alt={band.name}
-            unoptimized
             fill
             sizes="150px"
             className="object-cover rounded-lg"

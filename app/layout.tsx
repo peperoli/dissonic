@@ -7,7 +7,6 @@ import { Albert_Sans, Fira_Code } from 'next/font/google'
 import { ReactNode, Suspense } from 'react'
 import { QueryProvider } from '../components/helpers/QueryProvider'
 import { Analytics } from '@vercel/analytics/next'
-import { SpeedInsights } from '@vercel/speed-insights/next'
 import '../styles/globals.css'
 import { getLocale, getMessages, getTranslations } from 'next-intl/server'
 import { NextIntlClientProvider } from 'next-intl'
@@ -100,7 +99,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           </NextIntlClientProvider>
         </QueryProvider>
         <Analytics />
-        <SpeedInsights />
       </body>
     </html>
   )
