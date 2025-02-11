@@ -262,7 +262,7 @@ const ContributionItemWrapper = ({
   const changes = operation === 'UPDATE' && findChanges(state_old as State, state_new as State)
 
   return (
-    <div className="rounded-lg bg-slate-800 p-4">
+    <div className="grid rounded-lg bg-slate-800 p-4">
       <div className="flex gap-4 md:flex-row md:items-center">
         <div
           className={clsx(
@@ -279,12 +279,12 @@ const ContributionItemWrapper = ({
           {operation === 'RESTORE' && <ArchiveRestoreIcon className="size-icon" />}
         </div>
         <div className="flex flex-wrap items-center gap-x-1 text-sm text-slate-300">{children}</div>
-        <span className="whitespace-nowrap text-sm text-slate-300 md:ml-auto">
+        <span className="ml-auto whitespace-nowrap text-sm text-slate-300 md:ml-auto">
           {getRelativeTime(timestamp, locale)}
         </span>
       </div>
       {changes && changes.length > 0 && (
-        <div className="mt-2 rounded border border-slate-700 p-2 text-sm">
+        <div className="mt-2 rounded border border-slate-700 p-2 text-sm overflow-x-auto">
           {changes.map(change => (
             <div key={change.key} className="flex flex-wrap items-center gap-1">
               <code>{change.key}:</code>

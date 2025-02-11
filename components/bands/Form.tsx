@@ -38,12 +38,13 @@ export const Form = ({ isNew, close }: FormProps) => {
       ? {
           name: '',
           genres: [],
+        }
+      : {
+          ...band,
           spotify_artist: {
             id: band?.spotify_artist_id,
-            images: band?.spotify_artist_images,
           } as SpotifyArtist,
-        }
-      : band,
+        },
   })
   const name = watch('name')
   const { data: similarBands } = useBands({

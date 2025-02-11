@@ -28,10 +28,12 @@ const fetchSpotifyArtist = async (token?: string | null, artistId?: string | nul
 
 export const useSpotifyArtist = (artistId?: string | null, options?: { enabled?: boolean }) => {
   const { data: token } = useSpotifyToken()
+  const HOUR = 1000 * 3600
   return useQuery({
     queryKey: ['spotifyArtist', artistId],
     queryFn: () => fetchSpotifyArtist(token, artistId),
-    staleTime: 1000 * 60 * 60 * 24,
+    staleTime: HOUR * 24,
+    gcTime: HOUR,
     enabled: !!token && !!artistId && options?.enabled !== false,
   })
 }
