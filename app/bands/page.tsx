@@ -6,16 +6,16 @@ export async function generateMetadata() {
   const t = await getTranslations('BandsPage')
 
   return {
-      title: `${t('bands')} • Dissonic`,
+    title: `${t('bands')} • Dissonic`,
   }
 }
 
 const fetchData = async () => {
   const supabase = await createClient()
 
-  const { data, count, error } = await supabase
+  const { data, error } = await supabase
     .from('bands')
-    .select('*, country:countries(*), genres(*)', { count: 'estimated' })
+    .select('*, country:countries(*), genres(*)')
     .eq('is_archived', false)
     .range(0, 24)
     .order('name')
@@ -23,6 +23,11 @@ const fetchData = async () => {
   if (error) {
     throw error
   }
+
+  const { count } = await supabase
+    .from('bands')
+    .select('*', { count: 'exact', head: true })
+    .eq('is_archived', false)
 
   return { data, count }
 }

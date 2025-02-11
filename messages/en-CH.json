@@ -488,6 +488,7 @@
     "noEntriesFound": "No entries found."
   },
   "ViewFilter": {
+    "all": "All",
     "friends": "Friends",
     "you": "You"
   },

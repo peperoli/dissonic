@@ -42,7 +42,7 @@ function getLongestStreak(concerts: Tables<'concerts'>[]) {
     : null
 }
 
-export function Score({ profileId }: { profileId: string }) {
+export function Score({ profileId }: { profileId?: string }) {
   const { data: bandsSeen, status: bandsSeenStatus } = useBandsSeen({ userId: profileId })
   const t = useTranslations('Score')
   const locale = useLocale()

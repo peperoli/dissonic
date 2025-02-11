@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ProfileStat } from 'app/users/page'
 import { getRelativeTime } from '@/lib/relativeTime'
-import { UserIcon } from 'lucide-react'
+import { CrownIcon, UserIcon } from 'lucide-react'
 import { getAssetUrl } from '@/lib/getAssetUrl'
 import { useLocale, useTranslations } from 'next-intl'
 import clsx from 'clsx'
@@ -32,14 +32,24 @@ export const UserItem = ({ profileStat, index }: UserItemProps) => {
           <UserIcon className="size-12 text-slate-850 md:size-16" />
         )}
         <div className="absolute right-1 top-1 grid size-6 place-content-center rounded-full bg-slate-850 text-sm md:right-2 md:top-2">
+          {index === 0 && (
+            <CrownIcon className="absolute -top-3 left-1/2 size-icon -translate-x-1/2 fill-yellow stroke-yellow" />
+          )}
           {index + 1}
         </div>
       </div>
       <div className="mt-2 grid">
-        <div className="inline-flex line-clamp-1 items-center gap-x-1">
+        <div className="line-clamp-1 inline-flex items-center gap-x-1">
           <h3 className="mb-0 truncate text-base">{profileStat.username}</h3>
           {profileStat.role && (
-            <span className={clsx("rounded-md px-1 text-sm font-bold text-slate-850", profileStat.role === 'developer' ? 'bg-gradient-to-r from-blue to-venom' : 'bg-slate-300')}>
+            <span
+              className={clsx(
+                'rounded-md px-1 text-sm font-bold text-slate-850',
+                profileStat.role === 'developer'
+                  ? 'bg-gradient-to-r from-blue to-venom'
+                  : 'bg-slate-300'
+              )}
+            >
               {t(profileStat.role)}
             </span>
           )}

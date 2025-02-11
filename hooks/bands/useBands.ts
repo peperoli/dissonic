@@ -4,37 +4,62 @@ import { getPagination } from '@/lib/getPagination'
 import supabase from '@/utils/supabase/client'
 
 const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[]>> => {
-  let filterQuery = supabase
-    .from('bands')
-    .select('id, genres(id)', { count: 'estimated' })
-    .eq('is_archived', false)
+  const [from, to] = getPagination(options?.page, options?.size)
+
+  let countQuery = supabase.from('bands').select('*', { count: 'exact', head: true })
 
   if (options?.search && options.search.length > 1) {
-    // @ts-expect-error
-    filterQuery = supabase.rpc(
+    countQuery = supabase.rpc(
       'search_bands',
       { search_string: options.search },
-      { count: 'estimated' }
+      { count: 'exact', head: true }
     )
   }
 
   if (options?.ids && options.ids.length > 0) {
-    filterQuery = filterQuery.in('id', options.ids)
+    countQuery = countQuery.in('id', options.ids)
   }
 
   if (options?.countries && options.countries.length > 0) {
-    filterQuery = filterQuery.in('country_id', options.countries)
+    countQuery = countQuery.in('country_id', options.countries)
   }
 
-  const { data: initialFilteredBands, count: initialCount, error: countError } = await filterQuery
+  const { count } = await countQuery
 
-  if (countError) {
-    throw countError
+  const ROWS_PER_PAGE = 1000
+  const maxPage = count ? Math.ceil(count / ROWS_PER_PAGE) : 1
+  const filterQueries = []
+
+  for (let page = 1; page <= maxPage; page++) {
+    let filterQuery = supabase
+      .from('bands')
+      .select('id, genres(id)')
+      .eq('is_archived', false)
+      .range((page - 1) * ROWS_PER_PAGE, page * ROWS_PER_PAGE - 1)
+
+    if (options?.search && options.search.length > 1) {
+      // @ts-expect-error
+      filterQuery = supabase.rpc('search_bands', { search_string: options.search })
+    }
+
+    if (options?.ids && options.ids.length > 0) {
+      filterQuery = filterQuery.in('id', options.ids)
+    }
+
+    if (options?.countries && options.countries.length > 0) {
+      filterQuery = filterQuery.in('country_id', options.countries)
+    }
+
+    filterQueries.push(filterQuery)
   }
 
-  const [from, to] = getPagination(options?.page ?? 0, options?.size ?? 25, initialCount ?? 0)
+  const responses = await Promise.all(filterQueries)
 
-  let filteredBands = initialFilteredBands
+  if (responses.some(({ error }) => error)) {
+    throw responses.find(({ error }) => error)
+  }
+
+  let filteredBands = responses.flatMap(({ data }) => data).filter(band => band !== null)
 
   if (options?.genres && options.genres.length > 0) {
     filteredBands = filteredBands?.filter(band =>
@@ -42,19 +67,15 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
     )
   }
 
-  let query = supabase
+  const { data, error } = await supabase
     .from('bands')
-    .select('*, country:countries(id, iso2), genres(*)', { count: 'estimated' })
+    .select('*, country:countries(id, iso2), genres(*)')
     .in(
       'id',
       filteredBands?.map(item => item.id)
     )
-
-  if (options?.page || options?.size) {
-    query = query.range(from, to)
-  }
-
-  const { data, count, error } = await query.order('name')
+    .order('name')
+    .range(from, to)
 
   if (error) {
     throw error
