@@ -6,9 +6,12 @@ import supabase from '@/utils/supabase/client'
 const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[]>> => {
   const [from, to] = getPagination(options?.page, options?.size)
 
-  let countQuery = supabase.from('bands').select('*', { count: 'exact', head: true })
+  let countQuery = supabase
+    .from('bands')
+    .select('id, genres!inner(id)', { count: 'exact', head: true })
 
   if (options?.search && options.search.length > 1) {
+    // @ts-expect-error
     countQuery = supabase.rpc(
       'search_bands',
       { search_string: options.search },
@@ -24,6 +27,10 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
     countQuery = countQuery.in('country_id', options.countries)
   }
 
+  if (options?.genres && options.genres.length > 0) {
+    countQuery = countQuery.in('genres.id', options.genres)
+  }
+
   const { count } = await countQuery
 
   const ROWS_PER_PAGE = 1000
@@ -33,7 +40,7 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
   for (let page = 1; page <= maxPage; page++) {
     let filterQuery = supabase
       .from('bands')
-      .select('id, genres(id)')
+      .select('id, genres!inner(id)')
       .eq('is_archived', false)
       .range((page - 1) * ROWS_PER_PAGE, page * ROWS_PER_PAGE - 1)
 
@@ -50,6 +57,10 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
       filterQuery = filterQuery.in('country_id', options.countries)
     }
 
+    if (options?.genres && options.genres.length > 0) {
+      filterQuery = filterQuery.in('genres.id', options.genres)
+    }
+
     filterQueries.push(filterQuery)
   }
 
@@ -59,21 +70,15 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
     throw responses.find(({ error }) => error)
   }
 
-  let filteredBands = responses.flatMap(({ data }) => data).filter(band => band !== null)
-
-  if (options?.genres && options.genres.length > 0) {
-    filteredBands = filteredBands?.filter(band =>
-      band.genres.some(genre => options.genres?.includes(genre.id))
-    )
-  }
+  let filteredBandIds = responses
+    .flatMap(({ data }) => data)
+    .filter(band => band !== null)
+    .map(band => band.id)
 
   let query = supabase
     .from('bands')
     .select('*, country:countries(id, iso2), genres(*)')
-    .in(
-      'id',
-      filteredBands?.map(item => item.id)
-    )
+    .in('id', filteredBandIds)
     .order('name')
 
   if (options?.page || options?.size) {

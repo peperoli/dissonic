@@ -635,18 +635,6 @@ export type Database = {
           },
         ]
       }
-      stop_words_bands: {
-        Row: {
-          word: string
-        }
-        Insert: {
-          word: string
-        }
-        Update: {
-          word?: string
-        }
-        Relationships: []
-      }
     }
     Views: {
       activity: {
@@ -799,18 +787,7 @@ export type Database = {
         Args: {
           search_string: string
         }
-        Returns: {
-          alt_names: string | null
-          country_id: number | null
-          created_at: string | null
-          creator_id: string | null
-          id: number
-          is_archived: boolean
-          name: string
-          spotify_artist_id: string | null
-          spotify_artist_images: Json | null
-          youtube_url: string | null
-        }[]
+        Returns: Database["public"]["CompositeTypes"]["band_with_genres"][]
       }
       search_countries: {
         Args: {
@@ -912,7 +889,10 @@ export type Database = {
       ressources: "concerts" | "bands" | "locations"
     }
     CompositeTypes: {
-      [_ in never]: never
+      band_with_genres: {
+        id: number | null
+        genres: number[] | null
+      }
     }
   }
 }
