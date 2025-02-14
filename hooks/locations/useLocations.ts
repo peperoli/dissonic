@@ -23,10 +23,14 @@ async function fetchLocations(options?: LocationFetchOptions): Promise<ExtendedR
           : supabase.rpc('search_locations', { search_string: options.search })
     }
 
-    query = query.eq('is_archived', false).order('name').range(from, to)
+    query = query.eq('is_archived', false).order('name')
 
     if (options?.ids && options.ids.length > 0) {
       query = query.in('id', options.ids)
+    }
+
+    if (options?.page || options?.size) {
+      query = query.range(from, to)
     }
 
     return query

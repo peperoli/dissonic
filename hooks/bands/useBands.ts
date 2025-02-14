@@ -67,7 +67,7 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
     )
   }
 
-  const { data, error } = await supabase
+  let query = supabase
     .from('bands')
     .select('*, country:countries(id, iso2), genres(*)')
     .in(
@@ -75,7 +75,12 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
       filteredBands?.map(item => item.id)
     )
     .order('name')
-    .range(from, to)
+
+  if (options?.page || options?.size) {
+    query = query.range(from, to)
+  }
+
+  const { data, error } = await query
 
   if (error) {
     throw error
