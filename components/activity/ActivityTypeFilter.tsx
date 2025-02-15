@@ -12,6 +12,7 @@ export const ActivityTypeFilter = () => {
     { id: 1, value: 'j_bands_seen', name: t('bandsSeen') },
     { id: 2, value: 'comments', name: t('comments') },
     { id: 3, value: 'friends', name: t('friendActions') },
+    { id: 4, value: 'profiles', name: t('newUsers') },
   ]
   const [selectedActivityType, setSelectedActivityType] = useQueryState('activityType', {
     defaultValue: 'all',

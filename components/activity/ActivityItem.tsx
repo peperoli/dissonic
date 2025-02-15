@@ -137,6 +137,31 @@ const FriendItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
   )
 }
 
+const ProfileItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
+  const { user, created_at } = activityItem
+  const t = useTranslations('ActivityItem')
+  return (
+    <div className="rounded-lg bg-slate-800 p-4">
+      <ActivityItemLine
+        user={
+          <Link href={`/users/${user.username}`} className="group/user-item">
+            <UserItem user={user} usernameIsHidden />
+          </Link>
+        }
+        createdAt={created_at}
+      >
+        {t.rich('userJoinedDissonic', {
+          user: () => (
+            <Link href={`/users/${user.username}`} className="text-white hover:underline">
+              {user.username}
+            </Link>
+          ),
+        })}
+      </ActivityItemLine>
+    </div>
+  )
+}
+
 const ActivityItemLine = ({
   createdAt,
   user,
@@ -171,6 +196,8 @@ export const ActivityItem = ({
     return <BandSeenItem activityItem={activityItem} bands={bands} />
   } else if (activityItem.type === 'friends') {
     return <FriendItem activityItem={activityItem} />
+  } else if (activityItem.type === 'profiles') {
+    return <ProfileItem activityItem={activityItem} />
   } else {
     return null
   }

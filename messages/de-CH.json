@@ -497,12 +497,14 @@
     "all": "Alle",
     "bandsSeen": "Gesehene Bands",
     "comments": "Kommentare",
-    "friendActions": "Freundesaktionen"
+    "friendActions": "Freundesaktionen",
+    "newUsers": "Neue Benutzer"
   },
   "ActivityItem": {
     "userCommentedOnConcert": "<user></user> kommentierte Konzert <concert></concert>",
     "userSawBandsAtConcert": "<user></user> sah <bands></bands> am Konzert <concert></concert>",
-    "user1AndUser2AreNowFriends": "<user1></user1> und <user2></user2> sind jetzt befreundet"
+    "user1AndUser2AreNowFriends": "<user1></user1> und <user2></user2> sind jetzt befreundet",
+    "userJoinedDissonic": "<user></user> ist Dissonic beigetreten"
   },
   "CommaSeperatedList": {
     "and": "und"

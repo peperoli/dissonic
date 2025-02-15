@@ -4,7 +4,7 @@ import { Database, Tables } from '@/types/supabase'
 import { createClient } from '@/utils/supabase/server'
 import { getLocale } from 'next-intl/server'
 
-export type ActivityItemT = Database['public']['Views']['activity']['Row'] & {
+export type ActivityItemT = Database['public']['Views']['activities']['Row'] & {
   user: Tables<'profiles'>
   created_at: string
 }
@@ -29,7 +29,7 @@ async function fetchData({
   }
 
   const { data, count, error } = await supabase
-    .from('activity')
+    .from('activities')
     .select('*', { count: 'estimated' })
     .overlaps('user_id', [profile.id])
     .order('created_at', { ascending: false })

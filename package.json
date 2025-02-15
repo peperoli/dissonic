@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate-db-types": "supabase gen types typescript > types/supabase.ts"
+    "generate-db-types": "supabase gen types typescript > types/supabase.ts --project-id"
   },
   "dependencies": {
     "@formkit/auto-animate": "^0.8.1",

@@ -16,7 +16,7 @@ export async function generateMetadata() {
   }
 }
 
-export type ActivityItemT = Database['public']['Views']['activity']['Row'] & {
+export type ActivityItemT = Database['public']['Views']['activities']['Row'] & {
   user: Tables<'profiles'>
   created_at: string
 }
@@ -37,7 +37,7 @@ async function fetchData({
     redirect('/login?redirect=/activity')
   }
 
-  let query = supabase.from('activity').select('*', { count: 'estimated' })
+  let query = supabase.from('activities').select('*', { count: 'estimated' })
 
   if (searchParams.activityType && searchParams.activityType !== 'all') {
     query = query.eq('type', searchParams.activityType)

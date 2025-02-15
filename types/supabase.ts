@@ -637,7 +637,7 @@ export type Database = {
       }
     }
     Views: {
-      activity: {
+      activities: {
         Row: {
           band: Database["public"]["Tables"]["bands"]["Row"] | null
           concert: Database["public"]["Tables"]["concerts"]["Row"] | null
