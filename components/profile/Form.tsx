@@ -4,12 +4,12 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { useProfiles } from '../../hooks/profiles/useProfiles'
 import { EditProfile } from '../../types/types'
 import { Button } from '../Button'
-import { FileUpload } from '../forms/FileUpload'
+import { FileInput } from '../forms/FileInput'
 import { TextField } from '../forms/TextField'
 import { useEditProfile } from '@/hooks/profiles/useEditProfile'
 import { useProfile } from '@/hooks/profiles/useProfile'
 import { useTranslations } from 'next-intl'
-import supabase from '@/utils/supabase/client'
+import { getAssetUrl } from '@/lib/getAssetUrl'
 
 type FormProps = {
   close: () => void
@@ -28,7 +28,7 @@ export const Form = ({ close }: FormProps) => {
     values: {
       ...profile,
       avatarFile: profile?.avatar_path
-        ? supabase.storage.from('avatars').getPublicUrl(profile.avatar_path).data.publicUrl
+        ? getAssetUrl('avatars', profile.avatar_path, profile.updated_at)
         : null,
     },
     mode: 'onChange',
@@ -56,7 +56,24 @@ export const Form = ({ close }: FormProps) => {
       <Controller
         name="avatarFile"
         control={control}
-        render={({ field }) => <FileUpload label={t('profilePicture')} {...field} />}
+        rules={{
+          validate: {
+            fileSize: value =>
+              !(value instanceof File) || value.size < 1024 * 1024 || t('fileSizeError'),
+            fileType: value =>
+              !(value instanceof File) ||
+              value.type.startsWith('image') ||
+              t('fileTypeError'),
+          },
+        }}
+        render={({ field }) => (
+          <FileInput
+            label={t('profilePicture') + ' (optional)'}
+            accept="image/*"
+            error={errors.avatarFile}
+            {...field}
+          />
+        )}
       />
       <TextField
         {...register('username', {
@@ -76,7 +93,6 @@ export const Form = ({ close }: FormProps) => {
           type="submit"
           label={t('save')}
           appearance="primary"
-          disabled={Object.keys(errors).length > 0}
           loading={editProfile.isPending}
         />
       </div>

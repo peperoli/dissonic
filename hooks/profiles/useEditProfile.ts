@@ -12,6 +12,22 @@ const editProfile = async (formData: EditProfile & { avatarFile: File | string |
       ? `${formData.id}.${formData.avatarFile?.name.split('.').at(-1)}`
       : formData.avatarFile
 
+  if (formData.avatarFile instanceof File && avatarPath) {
+    const { error: avatarError } = await supabase.storage
+      .from('avatars')
+      .upload(avatarPath, formData.avatarFile, { upsert: true })
+
+    if (avatarError) {
+      throw avatarError
+    }
+  } else if (formData.avatarFile === null && avatarPath) {
+    const { error: avatarError } = await supabase.storage.from('avatars').remove([avatarPath])
+
+    if (avatarError) {
+      throw avatarError
+    }
+  }
+
   const { data, error } = await supabase
     .from('profiles')
     .update({
@@ -24,16 +40,6 @@ const editProfile = async (formData: EditProfile & { avatarFile: File | string |
 
   if (error) {
     throw error
-  }
-
-  if (formData.avatarFile && avatarPath) {
-    const { error: avatarError } = await supabase.storage
-      .from('avatars')
-      .upload(avatarPath, formData.avatarFile, { upsert: true })
-
-    if (avatarError) {
-      throw avatarError
-    }
   }
 
   return { profileId: data.id }

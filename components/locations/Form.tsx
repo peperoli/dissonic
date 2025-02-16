@@ -15,8 +15,8 @@ import { useEditLocation } from '@/hooks/locations/useEditLocation'
 import { useLocations } from '@/hooks/locations/useLocations'
 import { LocationItem } from './LocationItem'
 import { useLocale, useTranslations } from 'next-intl'
-import { FileUpload } from '../forms/FileUpload'
-import supabase from '@/utils/supabase/client'
+import { FileInput } from '../forms/FileInput'
+import { getAssetUrl } from '@/lib/getAssetUrl'
 
 interface FormProps {
   close: () => void
@@ -38,7 +38,7 @@ export const Form = ({ close, isNew }: FormProps) => {
       : {
           ...location,
           imageFile: location?.image
-            ? supabase.storage.from('ressources').getPublicUrl(location.image).data.publicUrl
+            ? getAssetUrl('ressources', location.image, location.updated_at)
             : null,
         },
   })
@@ -56,6 +56,7 @@ export const Form = ({ close, isNew }: FormProps) => {
   const t = useTranslations('LocationForm')
   const locale = useLocale()
   const isSimilar = !!(dirtyFields.name && similarLocations?.count)
+  const fileTypes = ['image/jpeg', 'image/webp']
   const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
 
   const onSubmit: SubmitHandler<AddLocation & { imageFile: File | string | null }> =
@@ -67,7 +68,7 @@ export const Form = ({ close, isNew }: FormProps) => {
       }
     }
 
-  console.log(watch())
+    console.log(watch())
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
@@ -76,11 +77,6 @@ export const Form = ({ close, isNew }: FormProps) => {
         error={errors.name}
         label={t('name')}
         placeholder="Hallenstadion"
-      />
-      <Controller
-        name="imageFile"
-        control={control}
-        render={({ field }) => <FileUpload label={t('image') + ' (optional)'} {...field} />}
       />
       {isSimilar && (
         <div className="rounded-lg bg-yellow/10 p-4">
@@ -97,10 +93,30 @@ export const Form = ({ close, isNew }: FormProps) => {
           </ul>
         </div>
       )}
+      <Controller
+        name="imageFile"
+        control={control}
+        rules={{
+          validate: {
+            fileSize: value =>
+              !(value instanceof File) || value.size < 1024 * 1024 || t('fileSizeError'),
+            fileType: value =>
+              !(value instanceof File) || fileTypes.includes(value.type) || t('fileTypeError'),
+          },
+        }}
+        render={({ field }) => (
+          <FileInput
+            label={t('image') + ' (optional)'}
+            accept={fileTypes.join(',')}
+            error={errors.imageFile}
+            {...field}
+          />
+        )}
+      />
       <div className="grid grid-cols-3">
         <TextField
           {...register('zip_code')}
-          label={t('zipCode')}
+          label={t('zipCode') + ' (optional)'}
           placeholder="3000"
           grouped="start"
         />

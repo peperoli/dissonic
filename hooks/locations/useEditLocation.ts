@@ -13,7 +13,23 @@ const editLocation = async (
   const imagePath =
     formData.imageFile instanceof File
       ? `locations/${formData.id}.${formData.imageFile?.name.split('.').at(-1)}`
-      : formData.imageFile
+      : formData.image
+
+  if (formData.imageFile instanceof File && imagePath) {
+    const { error: imageError } = await supabase.storage
+      .from('ressources')
+      .upload(imagePath, formData.imageFile, { upsert: true })
+
+    if (imageError) {
+      throw imageError
+    }
+  } else if (formData.imageFile === null && imagePath) {
+    const { error: imageError } = await supabase.storage.from('ressources').remove([imagePath])
+
+    if (imageError) {
+      throw imageError
+    }
+  }
 
   const { error } = await supabase
     .from('locations')
@@ -30,16 +46,6 @@ const editLocation = async (
 
   if (error) {
     throw error
-  }
-
-  if (formData.imageFile && imagePath) {
-    const { error: imageError } = await supabase.storage
-      .from('ressources')
-      .upload(imagePath, formData.imageFile, { upsert: true })
-
-    if (imageError) {
-      throw imageError
-    }
   }
 
   return { locationId: formData.id }

@@ -23,7 +23,7 @@ export const UserItem = ({
   avatarRight = false,
 }: UserItemProps) => {
   const t = useTranslations('UserItem')
-  const avatarUrl = getAssetUrl('avatars', user.avatar_path)
+  const avatarUrl = getAssetUrl('avatars', user.avatar_path, user.updated_at)
   const ConditionalTag = size === 'lg' ? 'h1' : 'div'
 
   const avatar = (
