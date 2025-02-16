@@ -8,14 +8,22 @@ import { ItemCount } from '@/lib/getCounts'
 import { Location } from '@/types/types'
 import { MapPin } from 'lucide-react'
 import Link from 'next/link'
+import { getAssetUrl } from '@/lib/getAssetUrl'
+import Image from 'next/image'
 
 export const LocationItem = ({ topItem }: { topItem: ItemCount & Location }) => {
+  const imageUrl = getAssetUrl('ressources', topItem.image, topItem.updated_at)
   const t = useTranslations('TopLocations')
 
   return (
     <Link href={`/locations/${topItem.id}`} className="block">
       <div className="relative flex aspect-square flex-shrink-0 items-center justify-center rounded-2xl bg-slate-750">
-        <MapPin className="size-8 text-slate-300" />
+        {imageUrl ? (
+          <Image src={imageUrl} alt={topItem.name} fill className="rounded-lg object-cover" />
+        ) : (
+          <MapPin className="size-8 text-slate-300" />
+        )}
+
       </div>
       <div className="mt-2 overflow-hidden">
         <h3 className="mb-0 truncate whitespace-nowrap text-base">{topItem.name}</h3>

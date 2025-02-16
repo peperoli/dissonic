@@ -515,6 +515,7 @@ export type Database = {
           image: string | null
           is_archived: boolean
           name: string
+          updated_at: string | null
           website: string | null
           zip_code: string | null
         }
@@ -528,6 +529,7 @@ export type Database = {
           image?: string | null
           is_archived?: boolean
           name: string
+          updated_at?: string | null
           website?: string | null
           zip_code?: string | null
         }
@@ -541,6 +543,7 @@ export type Database = {
           image?: string | null
           is_archived?: boolean
           name?: string
+          updated_at?: string | null
           website?: string | null
           zip_code?: string | null
         }
@@ -634,18 +637,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      stop_words_bands: {
-        Row: {
-          word: string
-        }
-        Insert: {
-          word: string
-        }
-        Update: {
-          word?: string
-        }
-        Relationships: []
       }
     }
     Views: {
@@ -852,6 +843,7 @@ export type Database = {
           image: string | null
           is_archived: boolean
           name: string
+          updated_at: string | null
           website: string | null
           zip_code: string | null
         }[]

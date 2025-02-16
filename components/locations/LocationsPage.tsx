@@ -16,6 +16,7 @@ import { useModal } from '../shared/ModalProvider'
 import { StatusBanner } from '../forms/StatusBanner'
 import { SpeedDial } from '../layout/SpeedDial'
 import { useLocale, useTranslations } from 'next-intl'
+import { LocationTableRow } from './LocationTableRow'
 
 interface LocationsPageProps {
   initialLocations: ExtendedRes<Location[]>
@@ -73,15 +74,7 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
           <StatusBanner statusType="info" message={t('noEntriesFound')} />
         ) : (
           locations?.data.map(location => (
-            <TableRow key={location.id} href={`/locations/${location.id}`}>
-              <div className="w-full grid-cols-3 items-center gap-4 md:grid">
-                <div className="font-bold">{location.name}</div>
-                <div className="text-slate-300">{location.city}</div>
-                <div className="text-slate-300">
-                  {location.country && regionNames.of(location.country?.iso2)}
-                </div>
-              </div>
-            </TableRow>
+            <LocationTableRow key={location.id} location={location} />
           ))
         )}
         <Pagination entriesCount={locations?.count ?? 0} perPage={perPage} />

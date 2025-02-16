@@ -15,7 +15,7 @@ type UserItemProps = {
 export const UserItem = ({ profileStat, index }: UserItemProps) => {
   const t = useTranslations('UserItem')
   const locale = useLocale()
-  const avatarUrl = getAssetUrl(profileStat.avatar_path)
+  const avatarUrl = getAssetUrl('avatars', profileStat.avatar_path)
 
   return (
     <Link href={`/users/${profileStat.username}`} className="block">

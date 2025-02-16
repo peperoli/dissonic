@@ -1,11 +1,17 @@
 import supabase from '@/utils/supabase/client'
 
-export function getAssetUrl(path: string | null | undefined) {
+export function getAssetUrl(
+  bucket: 'avatars' | 'ressources',
+  path: string | null,
+  updatedAt?: string | null
+) {
   if (!path) {
     return null
   }
 
-  const { data } = supabase.storage.from('avatars').getPublicUrl(path)
+  const { data } = supabase.storage
+    .from(bucket)
+    .getPublicUrl(updatedAt ? `${path}?t=${updatedAt}` : path)
 
   return data.publicUrl
 }

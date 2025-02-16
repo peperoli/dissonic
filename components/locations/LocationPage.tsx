@@ -21,6 +21,7 @@ import { useRestoreLocation } from '@/hooks/locations/useRestoreLocation'
 import { StatusBanner } from '../forms/StatusBanner'
 import Image from 'next/image'
 import supabase from '@/utils/supabase/client'
+import { getAssetUrl } from '@/lib/getAssetUrl'
 
 type LocationPageProps = {
   location: Location
@@ -42,11 +43,11 @@ export const LocationPage = ({
   const t = useTranslations('LocationPage')
   const locale = useLocale()
   const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
+  const imageUrl = location && getAssetUrl('ressources', location.image, location?.updated_at)
   const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
   const mapSearchQuery = encodeURIComponent(
     [location?.name, location?.zip_code, location?.city].join(' ')
   )
-  const { data: imageUrl } = supabase.storage.from('ressources').getPublicUrl(location?.image)
 
   if (!location) {
     notFound()
@@ -121,12 +122,12 @@ export const LocationPage = ({
       )}
       <header className="flex flex-col gap-5 rounded-2xl bg-radial-gradient from-blue/20 p-6 md:flex-row">
         <div className="relative grid aspect-square w-full flex-none place-content-center rounded-lg bg-slate-750 md:w-40">
-          {location.image ? (
+          {imageUrl ? (
             <Image
-              src={supabase.storage.from('ressources').getPublicUrl(location.image).data.publicUrl}
+              src={imageUrl}
               alt={location.name}
               fill
-              className="object-cover rounded-lg"
+              className="rounded-lg object-cover"
             />
           ) : (
             <MapPin className="size-12 text-slate-300" />

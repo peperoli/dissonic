@@ -19,8 +19,8 @@ export function BandTableRow({ band }: BandTableRowProps) {
   const picture = (band.spotify_artist_images as SpotifyArtist['images'])?.[2] || data?.images?.[2]
   const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
   return (
-    <TableRow key={band.id} href={`/bands/${band.id}`}>
-      <div className="relative flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-slate-750">
+    <TableRow href={`/bands/${band.id}`}>
+      <div className="relative flex size-11 flex-shrink-0 items-center justify-center rounded-lg bg-slate-750 md:size-12">
         {picture ? (
           <Image
             src={picture.url}
@@ -33,12 +33,20 @@ export function BandTableRow({ band }: BandTableRowProps) {
           <Guitar className="size-icon text-slate-300" />
         )}
       </div>
-      <div className="w-full items-center gap-4 md:flex">
-        <div className="md:w-1/3">{band.name}</div>
+      <div className="md:hidden">
+        <div className="line-clamp-1">{band.name}</div>
+        <div className="line-clamp-1 text-sm text-slate-300">
+          {band.country?.iso2}
+          {!!band.genres.length && ' | '}
+          {band.genres?.map(item => item.name).join(' • ')}
+        </div>
+      </div>
+      <div className="hidden w-full items-center gap-4 md:flex">
+        <div className="w-1/3">{band.name}</div>
         {band.country && (
-          <div className="text-slate-300 md:w-1/3">{regionNames.of(band.country.iso2)}</div>
+          <div className="w-1/3 text-slate-300">{regionNames.of(band.country.iso2)}</div>
         )}
-        <div className="line-clamp-2 hidden text-sm text-slate-300 md:w-1/3 md:[display:-webkit-box]">
+        <div className="line-clamp-2 w-1/3 text-sm text-slate-300">
           {band.genres?.map(item => item.name).join(' • ')}
         </div>
       </div>

@@ -257,6 +257,8 @@ const ContributionItemWrapper = ({
     })
 
     return changes
+      .filter(change => change.key !== 'updated_at')
+      .filter(change => change.key !== 'spotify_artist_images')
   }
 
   const changes = operation === 'UPDATE' && findChanges(state_old as State, state_new as State)
@@ -284,7 +286,7 @@ const ContributionItemWrapper = ({
         </span>
       </div>
       {changes && changes.length > 0 && (
-        <div className="mt-2 rounded border border-slate-700 p-2 text-sm overflow-x-auto">
+        <div className="mt-2 overflow-x-auto rounded border border-slate-700 p-2 text-sm">
           {changes.map(change => (
             <div key={change.key} className="flex flex-wrap items-center gap-1">
               <code>{change.key}:</code>
