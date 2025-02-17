@@ -14,7 +14,7 @@ export function LocationItem({ location }: { location: Location }) {
     >
       <div className="relative grid h-11 w-11 flex-none place-content-center rounded-lg bg-slate-750">
         {imageUrl ? (
-          <Image src={imageUrl} alt={location.name} fill className="rounded-lg object-cover" />
+          <Image src={imageUrl} alt={location.name} fill unoptimized className="rounded-lg object-cover" />
         ) : (
           <MapPinIcon className="size-icon text-slate-300" />
         )}

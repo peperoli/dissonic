@@ -78,6 +78,7 @@ export const FileInput = ({ label, name, value, onChange, error, ...props }: Fil
                   alt={''}
                   layout="fill"
                   objectFit="cover"
+                  unoptimized
                   className="rounded-md"
                 />
                 <div className="absolute -right-2 -top-2 rounded-lg shadow-lg">

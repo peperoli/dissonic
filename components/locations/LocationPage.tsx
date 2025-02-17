@@ -127,6 +127,7 @@ export const LocationPage = ({
               src={imageUrl}
               alt={location.name}
               fill
+              unoptimized
               className="rounded-lg object-cover"
             />
           ) : (

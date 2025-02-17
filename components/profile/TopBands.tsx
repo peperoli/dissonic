@@ -22,7 +22,7 @@ const BandItem = ({ topItem }: { topItem: ItemCount & Band }) => {
     <Link href={`/bands/${topItem.id}`} className="block">
       <div className="relative flex aspect-square flex-shrink-0 items-center justify-center rounded-2xl bg-slate-750">
         {image ? (
-          <Image src={image.url} alt={topItem.name} fill className="rounded-2xl object-cover" />
+          <Image src={image.url} alt={topItem.name} fill unoptimized className="rounded-2xl object-cover" />
         ) : (
           <Guitar className="h-8 text-slate-300" />
         )}

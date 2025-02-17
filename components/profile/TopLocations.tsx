@@ -19,7 +19,7 @@ export const LocationItem = ({ topItem }: { topItem: ItemCount & Location }) => 
     <Link href={`/locations/${topItem.id}`} className="block">
       <div className="relative flex aspect-square flex-shrink-0 items-center justify-center rounded-2xl bg-slate-750">
         {imageUrl ? (
-          <Image src={imageUrl} alt={topItem.name} fill className="rounded-lg object-cover" />
+          <Image src={imageUrl} alt={topItem.name} fill unoptimized className="rounded-lg object-cover" />
         ) : (
           <MapPin className="size-8 text-slate-300" />
         )}

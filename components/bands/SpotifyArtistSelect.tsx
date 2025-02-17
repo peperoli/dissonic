@@ -31,6 +31,7 @@ const SelectItem = ({ item, value, handleChange }: SelectItemProps) => {
             alt={item.name}
             fill
             sizes="150px"
+            unoptimized
             className="rounded-lg object-cover"
           />
         ) : (
@@ -74,6 +75,7 @@ export const SpotifyArtistSelect = ({ bandName, value, onChange }: SpotifyArtist
                   alt={selectedArtist.name}
                   fill
                   sizes="150px"
+                  unoptimized
                   className="rounded-lg object-cover"
                 />
               ) : (

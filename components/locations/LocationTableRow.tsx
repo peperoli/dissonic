@@ -20,6 +20,7 @@ export function LocationTableRow({ location }: { location: Location }) {
             alt={location.name}
             fill
             sizes="150px"
+            unoptimized
             className="rounded-lg object-cover"
           />
         ) : (
