@@ -123,7 +123,7 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
       <header className="flex flex-col gap-5 rounded-2xl bg-radial-gradient from-blue/20 p-6 md:flex-row">
         <div className="relative grid aspect-square w-full flex-none place-content-center rounded-lg bg-slate-750 md:w-56">
           {image ? (
-            <Image src={image.url!} alt={band.name} fill className="rounded-lg object-cover" />
+            <Image src={image.url!} alt={band.name} fill unoptimized className="rounded-lg object-cover" />
           ) : (
             <Guitar className="size-12 text-slate-300" />
           )}

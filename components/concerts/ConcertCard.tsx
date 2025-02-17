@@ -47,6 +47,7 @@ export const ConcertCard = ({ concert, nested }: ConcertCardProps) => {
             alt={concert.bands[0].name}
             width={150}
             height={150}
+            unoptimized
             className="size-22 rounded-lg object-cover"
           />
         ) : (

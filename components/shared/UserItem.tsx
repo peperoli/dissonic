@@ -41,6 +41,7 @@ export const UserItem = ({
           alt={user.username}
           sizes="200px"
           fill
+          unoptimized
           className="rounded-full object-cover"
         />
       ) : (

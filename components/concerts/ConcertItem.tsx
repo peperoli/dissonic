@@ -44,6 +44,7 @@ export function ConcertItem({
             alt={concert.bands?.[0]?.name ?? ''}
             fill
             sizes="150px"
+            unoptimized
             className="rounded-lg object-cover"
           />
         ) : (

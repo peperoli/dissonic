@@ -92,6 +92,7 @@ const ListItem = ({
               alt={band.name}
               fill
               sizes="150px"
+              unoptimized
               className="rounded-lg object-cover"
             />
           ) : (
@@ -171,6 +172,7 @@ const SearchResult = forwardRef<HTMLButtonElement, SearchResultProps>(
               alt={band.name}
               fill
               sizes="150px"
+              unoptimized
               className="rounded-lg object-cover"
             />
           ) : (

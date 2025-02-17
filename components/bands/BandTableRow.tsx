@@ -27,6 +27,7 @@ export function BandTableRow({ band }: BandTableRowProps) {
             alt={band.name}
             fill
             sizes="150px"
+            unoptimized
             className="rounded-lg object-cover"
           />
         ) : (

@@ -28,6 +28,7 @@ export function BandItem({ band }: { band: Band }) {
             alt={band.name}
             fill
             sizes="150px"
+            unoptimized
             className="rounded-lg object-cover"
           />
         ) : (

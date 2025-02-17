@@ -26,6 +26,7 @@ export const UserItem = ({ profileStat, index }: UserItemProps) => {
             alt={`${profileStat.username}'s Avatar`}
             sizes="300px"
             fill
+            unoptimized
             className="rounded-full object-cover"
           />
         ) : (
