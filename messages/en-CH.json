@@ -235,7 +235,8 @@
     "noResultsFound": "No results found.",
     "addEntry": "Add entry",
     "removeEntry": "Remove entry",
-    "reorderEntry": "Reorder entry"
+    "reorderEntry": "Reorder entry",
+    "insertHere": "Insert here"
   },
   "DeleteConcertForm": {
     "doYouReallyWantToDeleteThisConcert": "Do you really want to delete this concert?",
