@@ -14,6 +14,8 @@ import { useLocation } from '@/hooks/locations/useLocation'
 import { useEditLocation } from '@/hooks/locations/useEditLocation'
 import { useLocations } from '@/hooks/locations/useLocations'
 import { useLocale, useTranslations } from 'next-intl'
+import { FileInput } from '../forms/FileInput'
+import { getAssetUrl } from '@/lib/getAssetUrl'
 import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
 
 interface FormProps {
@@ -30,8 +32,15 @@ export const Form = ({ close, isNew }: FormProps) => {
     watch,
     handleSubmit,
     formState: { dirtyFields, errors },
-  } = useForm<AddLocation>({
-    defaultValues: isNew ? { name: '', zip_code: '', city: '' } : location,
+  } = useForm<AddLocation & { imageFile: File | string | null }>({
+    defaultValues: isNew
+      ? { name: '', zip_code: '', city: '' }
+      : {
+          ...location,
+          imageFile: location?.image
+            ? getAssetUrl('ressources', location.image, location.updated_at)
+            : null,
+        },
   })
   const name = watch('name')
   const [similarLocationsSize, setSimilarLocationsSize] = useState(3)
@@ -49,15 +58,17 @@ export const Form = ({ close, isNew }: FormProps) => {
   const t = useTranslations('LocationForm')
   const locale = useLocale()
   const isSimilar = !!(dirtyFields.name && similarLocations?.count)
+  const fileTypes = ['image/jpeg', 'image/webp']
   const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
 
-  const onSubmit: SubmitHandler<AddLocation> = async function (formData) {
-    if (isNew) {
-      addLocation.mutate(formData)
-    } else {
-      editLocation.mutate(formData)
+  const onSubmit: SubmitHandler<AddLocation & { imageFile: File | string | null }> =
+    async function (formData) {
+      if (isNew) {
+        addLocation.mutate(formData)
+      } else {
+        editLocation.mutate(formData)
+      }
     }
-  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
@@ -75,10 +86,30 @@ export const Form = ({ close, isNew }: FormProps) => {
           setSimilarItemsSize={setSimilarLocationsSize}
         />
       )}
+      <Controller
+        name="imageFile"
+        control={control}
+        rules={{
+          validate: {
+            fileSize: value =>
+              !(value instanceof File) || value.size < 1024 * 1024 || t('fileSizeError'),
+            fileType: value =>
+              !(value instanceof File) || fileTypes.includes(value.type) || t('fileTypeError'),
+          },
+        }}
+        render={({ field }) => (
+          <FileInput
+            label={t('image') + ' (optional)'}
+            accept={fileTypes.join(',')}
+            error={errors.imageFile}
+            {...field}
+          />
+        )}
+      />
       <div className="grid grid-cols-3">
         <TextField
           {...register('zip_code')}
-          label={t('zipCode')}
+          label={t('zipCode') + ' (optional)'}
           placeholder="3000"
           grouped="start"
         />

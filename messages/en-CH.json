@@ -344,6 +344,9 @@
   },
   "LocationForm": {
     "name": "Name",
+    "image": "Image",
+    "fileSizeError": "The file size must not exceed 1 MB.",
+    "fileTypeError": "The file type must be JPEG or WebP.",
     "zipCode": "ZIP Code",
     "city": "City",
     "altNames": "Alternative names",
@@ -441,12 +444,14 @@
   },
   "ProfileForm": {
     "profilePicture": "Profile picture",
+    "fileSizeError": "The file size must not exceed 1 MB.",
+    "fileTypeError": "Only image files are permitted.",
     "username": "Username",
     "usernameTakenError": "This username is already taken. Try being creative.",
     "cancel": "Cancel",
     "save": "Save"
   },
-  "FileUpload": {
+  "FileInput": {
     "remove": "Remove",
     "dragOrBrowseFile": "Drag or <span>browse</span> file"
   },

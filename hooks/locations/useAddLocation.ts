@@ -4,11 +4,30 @@ import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
 import { useRouter } from 'next/navigation'
 
-const addLocation = async (location: AddLocation) => {
-  const { data, error } = await supabase.from('locations').insert(location).select().single()
+const addLocation = async (formData: AddLocation & { imageFile: File | string | null }) => {
+  const imagePath =
+    formData.imageFile instanceof File
+      ? `locations/${formData.id}.${formData.imageFile?.name.split('.').at(-1)}`
+      : formData.imageFile
+
+  const { data, error } = await supabase
+    .from('locations')
+    .insert({ ...formData, image: imagePath })
+    .select()
+    .single()
 
   if (error) {
     throw error
+  }
+
+  if (formData.imageFile && imagePath) {
+    const { error: imageError } = await supabase.storage
+      .from('ressources')
+      .upload(imagePath, formData.imageFile)
+
+    if (imageError) {
+      throw imageError
+    }
   }
 
   return { locationId: data.id }

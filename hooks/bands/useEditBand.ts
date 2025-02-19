@@ -3,8 +3,8 @@ import { EditBand, Genre } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
 
-const editBand = async (newBand: EditBand) => {
-  if (!newBand.id) {
+const editBand = async (formData: EditBand) => {
+  if (!formData.id) {
     throw new Error('Band ID is required')
   }
 
@@ -12,7 +12,7 @@ const editBand = async (newBand: EditBand) => {
     const { data: oldBand, error: oldGenresError } = await supabase
       .from('bands')
       .select('id, genres(*)')
-      .eq('id', newBand.id)
+      .eq('id', formData.id)
       .single()
 
     if (oldGenresError) {
@@ -22,31 +22,31 @@ const editBand = async (newBand: EditBand) => {
     const { error: editBandError } = await supabase
       .from('bands')
       .update({
-        name: newBand.name,
-        country_id: newBand.country_id,
-        spotify_artist_id: newBand.spotify_artist_id,
-        spotify_artist_images: newBand.spotify_artist_images,
-        alt_names: newBand.alt_names,
-        youtube_url: newBand.youtube_url,
+        name: formData.name,
+        country_id: formData.country_id,
+        spotify_artist_id: formData.spotify_artist_id,
+        spotify_artist_images: formData.spotify_artist_images,
+        alt_names: formData.alt_names,
+        youtube_url: formData.youtube_url,
       })
-      .eq('id', newBand.id)
+      .eq('id', formData.id)
 
     if (editBandError) {
       throw editBandError
     }
 
     try {
-      const addGenres: Genre[] = newBand.genres.filter(
+      const addGenres: Genre[] = formData.genres.filter(
         item => !oldBand.genres.find(item2 => item.id === item2.id)
       )
       const deleteGenres: Genre[] = oldBand.genres.filter(
-        item => !newBand.genres.find(item2 => item.id === item2.id)
+        item => !formData.genres.find(item2 => item.id === item2.id)
       )
 
       const { error: deleteGenresError } = await supabase
         .from('j_band_genres')
         .delete()
-        .eq('band_id', newBand.id)
+        .eq('band_id', formData.id)
         .in(
           'genre_id',
           deleteGenres.map(item => item.id)
@@ -58,7 +58,7 @@ const editBand = async (newBand: EditBand) => {
 
       const { error: addGenresError } = await supabase
         .from('j_band_genres')
-        .insert(addGenres.map(genre => ({ band_id: newBand.id!, genre_id: genre.id })))
+        .insert(addGenres.map(genre => ({ band_id: formData.id!, genre_id: genre.id })))
 
       if (addGenresError) {
         throw addGenresError
@@ -67,7 +67,7 @@ const editBand = async (newBand: EditBand) => {
       throw error
     }
 
-    return { bandId: newBand.id, spotifyArtistId: newBand.spotify_artist_id }
+    return { bandId: formData.id, spotifyArtistId: formData.spotify_artist_id }
   } catch (error) {
     throw error
   }

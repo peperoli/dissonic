@@ -2,18 +2,39 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EditProfile } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 
-const editProfile = async (newProfile: EditProfile) => {
-  if (!newProfile.id) {
+const editProfile = async (formData: EditProfile & { avatarFile: File | string | null }) => {
+  if (!formData.id) {
     throw new Error('Profile ID is required')
+  }
+
+  const avatarPath =
+    formData.avatarFile instanceof File
+      ? `${formData.id}.${formData.avatarFile?.name.split('.').at(-1)}`
+      : formData.avatarFile
+
+  if (formData.avatarFile instanceof File && avatarPath) {
+    const { error: avatarError } = await supabase.storage
+      .from('avatars')
+      .upload(avatarPath, formData.avatarFile, { upsert: true })
+
+    if (avatarError) {
+      throw avatarError
+    }
+  } else if (formData.avatarFile === null && avatarPath) {
+    const { error: avatarError } = await supabase.storage.from('avatars').remove([avatarPath])
+
+    if (avatarError) {
+      throw avatarError
+    }
   }
 
   const { data, error } = await supabase
     .from('profiles')
     .update({
-      username: newProfile.username,
-      avatar_path: newProfile.avatar_path,
+      username: formData.username,
+      avatar_path: avatarPath,
     })
-    .eq('id', newProfile.id)
+    .eq('id', formData.id)
     .select()
     .single()
 
@@ -21,7 +42,7 @@ const editProfile = async (newProfile: EditProfile) => {
     throw error
   }
 
-  return { profileId: data.id, avatarPath: data.avatar_path }
+  return { profileId: data.id }
 }
 
 export const useEditProfile = () => {
@@ -29,9 +50,8 @@ export const useEditProfile = () => {
   return useMutation({
     mutationFn: editProfile,
     onError: error => console.error(error),
-    onSuccess: ({ profileId, avatarPath }) => {
+    onSuccess: ({ profileId }) => {
       queryClient.invalidateQueries({ queryKey: ['profile', profileId] })
-      queryClient.invalidateQueries({ queryKey: ['avatar', avatarPath] })
     },
   })
 }

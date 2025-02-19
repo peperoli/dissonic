@@ -3,9 +3,32 @@ import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
 import { TablesInsert } from '@/types/supabase'
 
-const editLocation = async (formData: TablesInsert<'locations'>) => {
+const editLocation = async (
+  formData: TablesInsert<'locations'> & { imageFile: File | string | null }
+) => {
   if (!formData.id) {
     throw new Error('Location ID is required')
+  }
+
+  const imagePath =
+    formData.imageFile instanceof File
+      ? `locations/${formData.id}.${formData.imageFile?.name.split('.').at(-1)}`
+      : formData.image
+
+  if (formData.imageFile instanceof File && imagePath) {
+    const { error: imageError } = await supabase.storage
+      .from('ressources')
+      .upload(imagePath, formData.imageFile, { upsert: true })
+
+    if (imageError) {
+      throw imageError
+    }
+  } else if (formData.imageFile === null && imagePath) {
+    const { error: imageError } = await supabase.storage.from('ressources').remove([imagePath])
+
+    if (imageError) {
+      throw imageError
+    }
   }
 
   const { error } = await supabase
@@ -17,12 +40,15 @@ const editLocation = async (formData: TablesInsert<'locations'>) => {
       country_id: formData.country_id,
       alt_names: formData.alt_names,
       website: formData.website,
+      image: imagePath,
     })
     .eq('id', formData.id)
 
   if (error) {
     throw error
   }
+
+  return { locationId: formData.id }
 }
 
 export const useEditLocation = () => {
@@ -31,8 +57,8 @@ export const useEditLocation = () => {
   return useMutation({
     mutationFn: editLocation,
     onError: error => console.error(error),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['location'] })
+    onSuccess: ({ locationId }) => {
+      queryClient.invalidateQueries({ queryKey: ['location', locationId] })
       setModal(null)
     },
   })

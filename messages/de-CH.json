@@ -344,6 +344,9 @@
   },
   "LocationForm": {
     "name": "Name",
+    "image": "Bild",
+    "fileSizeError": "Die Datei darf nicht grösser als 1 MB sein.",
+    "fileTypeError": "Es sind nur Dateien im Format JPEG oder WebP erlaubt.",
     "zipCode": "PLZ",
     "city": "Stadt",
     "country": "Land",
@@ -441,12 +444,14 @@
   },
   "ProfileForm": {
     "profilePicture": "Profilbild",
+    "fileSizeError": "Die Datei darf nicht grösser als 1 MB sein.",
+    "fileTypeError": "Es sind nur Bilddateien erlaubt.",
     "username": "Benutzername",
     "usernameTakenError": "Dieser Benutzername ist bereits vergeben. Probiere, kreativ zu sein.",
     "cancel": "Abbrechen",
     "save": "Speichern"
   },
-  "FileUpload": {
+  "FileInput": {
     "remove": "Entfernen",
     "dragOrBrowseFile": "Datei hinziehen oder <span>durchsuchen</span>"
   },

@@ -515,6 +515,7 @@ export type Database = {
           image: string | null
           is_archived: boolean
           name: string
+          updated_at: string | null
           website: string | null
           zip_code: string | null
         }
@@ -528,6 +529,7 @@ export type Database = {
           image?: string | null
           is_archived?: boolean
           name: string
+          updated_at?: string | null
           website?: string | null
           zip_code?: string | null
         }
@@ -541,6 +543,7 @@ export type Database = {
           image?: string | null
           is_archived?: boolean
           name?: string
+          updated_at?: string | null
           website?: string | null
           zip_code?: string | null
         }
@@ -574,6 +577,7 @@ export type Database = {
           created_at: string | null
           id: string
           role: Database["public"]["Enums"]["app_role"] | null
+          updated_at: string | null
           username: string
         }
         Insert: {
@@ -581,6 +585,7 @@ export type Database = {
           created_at?: string | null
           id: string
           role?: Database["public"]["Enums"]["app_role"] | null
+          updated_at?: string | null
           username: string
         }
         Update: {
@@ -588,6 +593,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           role?: Database["public"]["Enums"]["app_role"] | null
+          updated_at?: string | null
           username?: string
         }
         Relationships: []
@@ -714,6 +720,7 @@ export type Database = {
           created_at: string | null
           id: string | null
           role: Database["public"]["Enums"]["app_role"] | null
+          updated_at: string | null
           username: string | null
         }
         Relationships: []
@@ -840,6 +847,7 @@ export type Database = {
           image: string | null
           is_archived: boolean
           name: string
+          updated_at: string | null
           website: string | null
           zip_code: string | null
         }[]
