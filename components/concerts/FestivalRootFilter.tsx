@@ -18,7 +18,7 @@ const FestivalRootSelect = ({ ...props }: FestivalRootSelectProps) => {
   return (
     <Select
       name="festivalRoot"
-      items={festivalRoots}
+      items={festivalRoots?.data}
       searchable
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
@@ -49,7 +49,7 @@ export const FestivalRootFilter = ({
   return (
     <FilterButton
       label={t("festival")}
-      items={festivalRoots}
+      items={festivalRoots?.data}
       selectedIds={selectedIds}
       submittedValues={submittedValues}
       onSubmit={onSubmit}

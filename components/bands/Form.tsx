@@ -11,13 +11,13 @@ import { useBand } from '@/hooks/bands/useBand'
 import { useParams } from 'next/navigation'
 import { useAddBand } from '@/hooks/bands/useAddBand'
 import { useEditBand } from '@/hooks/bands/useEditBand'
-import { AlertTriangle, ChevronDown } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 import clsx from 'clsx'
-import { BandItem } from './BandItem'
 import { useTranslations } from 'use-intl'
 import { useLocale } from 'next-intl'
+import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
 
 interface FormProps {
   isNew?: boolean
@@ -47,9 +47,11 @@ export const Form = ({ isNew, close }: FormProps) => {
         },
   })
   const name = watch('name')
+  const [similarBandsSize, setSimilarBandsSize] = useState(3)
   const { data: similarBands } = useBands({
     enabled: name.length >= 3,
     search: name,
+    size: similarBandsSize,
   })
   const [countriesSearchQuery, setCountriesSearchQuery] = useState('')
   const [genresSearchQuery, setGenresSearchQuery] = useState('')
@@ -91,19 +93,12 @@ export const Form = ({ isNew, close }: FormProps) => {
         placeholder="Beatles"
       />
       {isSimilar && (
-        <div className="rounded-lg bg-yellow/10 p-4">
-          <div className="flex items-center gap-4 text-yellow">
-            <AlertTriangle className="size-icon flex-none" />
-            <p>{t('duplicateBandsWarning', { count: similarBands.count })}</p>
-          </div>
-          <ul className="mt-4 grid">
-            {similarBands.data.map(item => (
-              <li key={item.id}>
-                <BandItem band={item} />
-              </li>
-            ))}
-          </ul>
-        </div>
+        <SimilarItemsWarning
+          itemType="bands"
+          similarItems={similarBands}
+          similarItemsSize={similarBandsSize}
+          setSimilarItemsSize={setSimilarBandsSize}
+        />
       )}
       <Controller
         name="country_id"

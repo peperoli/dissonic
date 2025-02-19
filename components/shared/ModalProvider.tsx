@@ -90,16 +90,13 @@ export const ModalProvider = () => {
   } as const
   const close = () => setModal(null)
 
-  if (!modal) {
-    return null
-  }
-
-  const ModalComponent = modals[modal].component
+  const ModalContent = modal && modals[modal].component
+  const title = modal && modals[modal].title
 
   return (
-    <Modal defaultOpen>
-      <DialogTitle>{modals[modal].title}</DialogTitle>
-      <ModalComponent isNew={modal?.startsWith('add')} close={close} />
+    <Modal open={modal !== null} onOpenChange={isOpen => !isOpen && close()}>
+      <DialogTitle>{title}</DialogTitle>
+      {ModalContent && <ModalContent isNew={modal?.startsWith('add')} close={close} />}
     </Modal>
   )
 }

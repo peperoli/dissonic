@@ -34,6 +34,7 @@ export type FestivalRootFetchOptions = {
   ids?: number[] | null
   search?: string
   sort?: { sort_by: 'name'; sort_asc: boolean }
+  size?: number
 }
 
 export type LocationFetchOptions = {

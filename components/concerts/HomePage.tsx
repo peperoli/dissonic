@@ -203,16 +203,18 @@ export const HomePage = ({
       </section>
       {concerts?.data && (
         <section className="grid gap-4">
-          {groupConcertsByMonth(concerts.data, locale).map(({ month, concerts }) => (
-            <div key={month}>
-              <h3 className="section-headline mb-4">{month}</h3>
-              <div className="grid gap-4">
-                {concerts.map(concert => (
-                  <ConcertCard concert={concert} key={concert.id} />
-                ))}
-              </div>
-            </div>
-          ))}
+          {sort.sort_by === 'date_start'
+            ? groupConcertsByMonth(concerts.data, locale).map(({ month, concerts }) => (
+                <div key={month}>
+                  <h3 className="section-headline mb-4">{month}</h3>
+                  <div className="grid gap-4">
+                    {concerts.map(concert => (
+                      <ConcertCard concert={concert} key={concert.id} />
+                    ))}
+                  </div>
+                </div>
+              ))
+            : concerts.data.map(concert => <ConcertCard concert={concert} key={concert.id} />)}
         </section>
       )}
       <div className="mt-4 flex flex-col items-center gap-2">

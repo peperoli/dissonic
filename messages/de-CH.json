@@ -205,7 +205,6 @@
     "location": "Lokal",
     "name": "Name",
     "optional": "(optional)",
-    "duplicateConcertWarning": "{count, plural, =1 {Es existiert bereits ein ähnliches Konzert:} other {Es existieren bereits # ähnliche Konzerte:}}",
     "cancel": "Abbrechen",
     "save": "Speichern"
   },
@@ -235,7 +234,16 @@
     "noResultsFound": "Keine Resultate gefunden.",
     "addEntry": "Eintrag hinzufügen",
     "removeEntry": "Eintrag entfernen",
-    "reorderEntry": "Eintrag verschieben"
+    "reorderEntry": "Eintrag verschieben",
+    "insertHere": "Hier einfügen"
+  },
+  "SimilarItemsWarning": {
+    "similarConcertsWarning": "{count, plural, =1 {Es existiert bereits ein ähnliches Konzert:} other {Es existieren bereits # ähnliche Konzerte:}}",
+    "similarBandsWarning": "{count, plural, =1 {Es existiert bereits eine ähnliche Band:} other {Es existieren bereits # ähnliche Bands:}}",
+    "similarLocationsWarning": "{count, plural, =1 {Es existiert bereits ein ähnliches Lokal:} other {Es existieren bereits # ähnliche Lokale:}}",
+    "similarFestivalRootsWarning": "{count, plural, =1 {Es existiert bereits eine ähnliche Festival-Serie:} other {Es existieren bereits # ähnliche Festival-Serien:}}",
+    "showAll": "Alle anzeigen",
+    "showLess": "Weniger anzeigen"
   },
   "DeleteConcertForm": {
     "doYouReallyWantToDeleteThisConcert": "Willst du dieses Konzert wirklich löschen?",
@@ -286,7 +294,6 @@
   },
   "BandForm": {
     "name": "Name",
-    "duplicateBandsWarning": "{count, plural, =1 {Es existiert bereits eine ähnliche Band:} other {Es existieren bereits # ähnliche Bands:}}",
     "country": "Land",
     "genres": "Genres",
     "altNames": "Alternative Namen",
@@ -340,7 +347,6 @@
     "image": "Bild",
     "fileSizeError": "Die Datei darf nicht grösser als 1 MB sein.",
     "fileTypeError": "Es sind nur Dateien im Format JPEG oder WebP erlaubt.",
-    "duplicateLocationWarning": "{count, plural, =1 {Es existiert bereits ein ähnliches Lokal:} other {Es existieren bereits # ähnliche Lokale:}}",
     "zipCode": "PLZ",
     "city": "Stadt",
     "country": "Land",
