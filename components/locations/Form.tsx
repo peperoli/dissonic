@@ -6,15 +6,15 @@ import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { SelectField } from '../forms/SelectField'
 import { useCountries } from '@/hooks/useCountries'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
-import { AlertTriangleIcon, ChevronDown } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
 import { Fragment, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { useLocation } from '@/hooks/locations/useLocation'
 import { useEditLocation } from '@/hooks/locations/useEditLocation'
 import { useLocations } from '@/hooks/locations/useLocations'
-import { LocationItem } from './LocationItem'
 import { useLocale, useTranslations } from 'next-intl'
+import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
 
 interface FormProps {
   close: () => void
@@ -34,9 +34,11 @@ export const Form = ({ close, isNew }: FormProps) => {
     defaultValues: isNew ? { name: '', zip_code: '', city: '' } : location,
   })
   const name = watch('name')
+  const [similarLocationsSize, setSimilarLocationsSize] = useState(3)
   const { data: similarLocations } = useLocations({
     enabled: name.length >= 3,
     search: name,
+    size: similarLocationsSize,
   })
   const [countriesSearchQuery, setCountriesSearchQuery] = useState('')
   const { data: countries } = useCountries({ search: countriesSearchQuery })
@@ -66,19 +68,12 @@ export const Form = ({ close, isNew }: FormProps) => {
         placeholder="Hallenstadion"
       />
       {isSimilar && (
-        <div className="rounded-lg bg-yellow/10 p-4">
-          <div className="flex items-center gap-4 text-yellow">
-            <AlertTriangleIcon className="size-icon flex-none" />
-            <p>{t('duplicateLocationWarning', { count: similarLocations.count })}</p>
-          </div>
-          <ul className="mt-4 grid">
-            {similarLocations.data.map(item => (
-              <li key={item.id}>
-                <LocationItem location={item} />
-              </li>
-            ))}
-          </ul>
-        </div>
+        <SimilarItemsWarning
+          itemType="locations"
+          similarItems={similarLocations!}
+          similarItemsSize={similarLocationsSize}
+          setSimilarItemsSize={setSimilarLocationsSize}
+        />
       )}
       <div className="grid grid-cols-3">
         <TextField

@@ -1,5 +1,3 @@
-import { AlertTriangle } from 'lucide-react'
-import Link from 'next/link'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { useConcerts } from '../../hooks/concerts/useConcerts'
 import { useLocations } from '../../hooks/locations/useLocations'
@@ -19,7 +17,7 @@ import { useConcert } from '@/hooks/concerts/useConcert'
 import { useEditConcert } from '@/hooks/concerts/useEditConcert'
 import { useParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { ConcertItem } from './ConcertItem'
+import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
 
 type FormProps = {
   isNew?: boolean
@@ -48,6 +46,7 @@ export const Form = ({ close, isNew }: FormProps) => {
   const dateStart = watch('date_start')
   const bands = watch('bands')
   const locationId = watch('location_id')
+  const [similarConcertsSize, setSimilarConcertsSize] = useState(3)
   const { data: similarConcerts } = useConcerts({
     enabled: !!(dateStart && bands?.length && locationId),
     years: dateStart
@@ -55,6 +54,7 @@ export const Form = ({ close, isNew }: FormProps) => {
       : null,
     bands: bands?.map(item => item.id),
     locations: locationId ? [locationId] : null,
+    size: similarConcertsSize,
   })
   const [locationsSearchQuery, setLocationsSearchQuery] = useState('')
   const [festivalRootsSearchQuery, setFestivalRootsSearchQuery] = useState('')
@@ -74,7 +74,7 @@ export const Form = ({ close, isNew }: FormProps) => {
   useEffect(() => {
     if (!festivalRootId || !isNew) return
 
-    const defaultLocationId = festivalRoots?.find(
+    const defaultLocationId = festivalRoots?.data.find(
       item => item.id === festivalRootId
     )?.default_location_id
 
@@ -116,8 +116,8 @@ export const Form = ({ close, isNew }: FormProps) => {
               render={({ field: { value = null, onChange } }) => (
                 <SelectField
                   name="festival_root_id"
-                  items={festivalRoots}
-                  allItems={allFestivalRoots}
+                  items={festivalRoots?.data}
+                  allItems={allFestivalRoots?.data}
                   value={value}
                   onValueChange={onChange}
                   searchable
@@ -203,19 +203,12 @@ export const Form = ({ close, isNew }: FormProps) => {
           />
         )}
         {isSimilar && (
-          <div className="rounded-lg bg-yellow/10 p-4">
-            <div className="flex items-center gap-4 text-yellow">
-              <AlertTriangle className="size-icon flex-none" />
-              <p>{t('duplicateConcertWarning', { count: similarConcerts.count })}</p>
-            </div>
-            <ul className="mt-4 grid">
-              {similarConcerts.data.map(item => (
-                <li key={item.id}>
-                  <ConcertItem concert={item} />
-                </li>
-              ))}
-            </ul>
-          </div>
+          <SimilarItemsWarning
+            itemType="concerts"
+            similarItems={similarConcerts}
+            similarItemsSize={similarConcertsSize}
+            setSimilarItemsSize={setSimilarConcertsSize}
+          />
         )}
         <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:static md:justify-end md:pb-0 [&>*]:flex-1">
           <Button onClick={close} label={t('cancel')} />

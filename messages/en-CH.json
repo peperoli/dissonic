@@ -205,7 +205,6 @@
     "location": "Location",
     "name": "Name",
     "optional": "(optional)",
-    "duplicateConcertWarning": "{count, plural, =1 {There is already a similar concert:} other {There are already # similar concerts:}}",
     "cancel": "Cancel",
     "save": "Save"
   },
@@ -237,6 +236,14 @@
     "removeEntry": "Remove entry",
     "reorderEntry": "Reorder entry",
     "insertHere": "Insert here"
+  },
+  "SimilarItemsWarning": {
+    "similarConcertsWarning": "{count, plural, =1 {There is already a similar concert:} other {There are already # similar concerts:}}",
+    "similarBandsWarning": "{count, plural, =1 {There is already a similar band:} other {There are already # similar bands:}}",
+    "similarLocationsWarning": "{count, plural, =1 {There is already a similar location:} other {There are already # similar locations:}}",
+    "similarFestivalRootsWarning": "{count, plural, =1 {There is already a similar festival series:} other {There are already # similar festival series:}}",
+    "showAll": "Show all",
+    "showLess": "Show less"
   },
   "DeleteConcertForm": {
     "doYouReallyWantToDeleteThisConcert": "Do you really want to delete this concert?",
@@ -287,7 +294,6 @@
   },
   "BandForm": {
     "name": "Name",
-    "duplicateBandsWarning": "{count, plural, =1 {There is already a similar band:} other {There are already # similar bands:}}",
     "country": "Country",
     "genres": "Genres",
     "altNames": "Alternative names",
@@ -338,7 +344,6 @@
   },
   "LocationForm": {
     "name": "Name",
-    "duplicateLocationWarning": "{count, plural, =1 {There is already a similar location:} other {There are already # similar locations:}}",
     "zipCode": "ZIP Code",
     "city": "City",
     "altNames": "Alternative names",

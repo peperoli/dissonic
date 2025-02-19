@@ -17,7 +17,7 @@ export const ViewFilter = () => {
     { value: 'user', label: t('you'), icon: UserIcon },
   ].filter(item => item !== null)
   const [selectedView, setSelectedView] = useQueryState('view', {
-    defaultValue: 'friends',
+    defaultValue: isMod ? 'global' : 'friends',
     shallow: false,
   })
 
