@@ -2,7 +2,7 @@
 
 @layer components {
   .form-control {
-    @apply relative w-full flex flex-col items-start;
+    @apply relative flex w-full flex-col items-start;
 
     input[type='text'],
     input[type='date'],
@@ -11,18 +11,18 @@
     textarea,
     select,
     .form-input {
-      @apply block w-full px-4 pt-5 pb-1 rounded-lg border bg-slate-750 accent-white;
+      @apply block w-full rounded-lg border bg-slate-750 px-4 pb-1 pt-5 accent-white;
 
       &::placeholder {
         @apply text-slate-300;
       }
 
       & + label {
-        @apply order-first absolute ml-4 mt-0.5 py-0.5 rounded text-xs text-slate-300 z-10;
+        @apply absolute z-10 order-first ml-4 mt-0.5 truncate rounded py-0.5 text-xs text-slate-300 transition;
       }
 
       &:placeholder-shown + label {
-        @apply transform origin-left scale-150 translate-y-3 cursor-text;
+        @apply w-1/2 origin-left translate-y-3 scale-150 transform cursor-text;
       }
 
       &::placeholder {
@@ -37,7 +37,7 @@
         }
 
         &:focus + label {
-          @apply text-venom translate-y-0 scale-100;
+          @apply translate-y-0 scale-100 text-venom;
         }
       }
     }
@@ -47,7 +47,7 @@
     }
 
     input[type='search'] {
-      @apply block w-full px-4 py-2 rounded-lg border border-slate-500 bg-white/5 focus:outline-none focus:ring-2 focus:ring-venom;
+      @apply block w-full rounded-lg border border-slate-500 bg-white/5 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-venom;
     }
 
     textarea {
@@ -55,7 +55,7 @@
     }
 
     input[type='checkbox'] {
-      @apply w-4 h-4 mr-2 accent-venom;
+      @apply mr-2 h-4 w-4 accent-venom;
     }
   }
 }

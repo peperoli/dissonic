@@ -337,6 +337,7 @@
   },
   "LocationForm": {
     "name": "Name",
+    "image": "Image",
     "fileSizeError": "The file size must not exceed 1 MB.",
     "fileTypeError": "The file type must be JPEG or WebP.",
     "duplicateLocationWarning": "{count, plural, =1 {There is already a similar location:} other {There are already # similar locations:}}",

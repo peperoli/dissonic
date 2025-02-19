@@ -68,8 +68,6 @@ export const Form = ({ close, isNew }: FormProps) => {
       }
     }
 
-    console.log(watch())
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
       <TextField

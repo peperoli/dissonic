@@ -36,7 +36,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           )}
           {...props}
         />
-        <label htmlFor={name} className='truncate'>{label}</label>
+        <label htmlFor={name}>{label}</label>
         {type === 'password' && (
           <Button
             label={inputType === 'password' ? t('showPassword') : t('hidePassword')}
