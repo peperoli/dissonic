@@ -9,7 +9,16 @@ import { Comments } from './Comments'
 import { notFound, usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
 import { BandList } from './BandList'
-import { ArchiveIcon, ArchiveRestoreIcon, ArrowLeft, Edit, MapPin, Trash } from 'lucide-react'
+import {
+  ArchiveIcon,
+  ArchiveRestoreIcon,
+  ArrowLeft,
+  BadgeCheckIcon,
+  BadgeMinus,
+  Edit,
+  MapPin,
+  Trash,
+} from 'lucide-react'
 import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 import Image from 'next/image'
 import { ConcertDate } from './ConcertDate'
@@ -24,6 +33,7 @@ import { ShareButton } from '../shared/ShareButton'
 import { useArchiveConcert } from '@/hooks/concerts/useArchiveConcert'
 import { useRestoreConcert } from '@/hooks/concerts/useRestoreConcert'
 import { StatusBanner } from '../forms/StatusBanner'
+import { Tooltip } from '../shared/Tooltip'
 
 type ConcertPageProps = {
   initialConcert: Concert
@@ -173,7 +183,22 @@ export const ConcertPage = ({
           </div>
         </header>
         <section className="rounded-lg bg-slate-800 p-4 md:p-6">
-          <h2>{t('lineup')}</h2>
+          <div className="flex items-baseline gap-2">
+            <h2>{t('lineup')}</h2>
+            <span className="inline-flex gap-1 text-sm text-slate-300">
+              {t('nBands', { count: concert.bands.length })}
+              {isMod &&
+                (concert.ressource_status === 'complete' ? (
+                  <Tooltip content={t('complete')} triggerOnClick>
+                    <BadgeCheckIcon className="size-icon text-venom" />
+                  </Tooltip>
+                ) : concert.ressource_status === 'incomplete_lineup' ? (
+                  <Tooltip content={t('incompleteLineup')} triggerOnClick>
+                    <BadgeMinus className="size-icon text-yellow" />
+                  </Tooltip>
+                ) : null)}
+            </span>
+          </div>
           {concert.bands && (
             <BandList concert={concert} bandListHintPreference={bandListHintPreference} />
           )}

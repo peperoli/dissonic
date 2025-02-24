@@ -139,6 +139,8 @@
   },
   "ConcertPage": {
     "concerts": "Konzerte",
+    "complete": "Vollständig",
+    "incompleteLineup": "Unvollständiges Lineup",
     "edit": "Bearbeiten",
     "archive": "Archivieren",
     "concertArchived": "Konzert archiviert",
@@ -146,7 +148,8 @@
     "concertRestored": "Konzert wiederhergestellt",
     "delete": "Löschen",
     "concertArchivedBanner": "Dieses Konzert wurde archiviert. Bearbeitungen sind deaktiviert.",
-    "lineup": "Lineup"
+    "lineup": "Lineup",
+    "nBands": "{count, plural, =1 {eine Band} other {# Bands}}"
   },
   "ShareButton": {
     "share": "Teilen",
@@ -205,6 +208,11 @@
     "location": "Lokal",
     "name": "Name",
     "optional": "(optional)",
+    "showMore": "Mehr anzeigen",
+    "showLess": "Weniger anzeigen",
+    "ressourceStatus": "Ressourcenstatus",
+    "complete": "Vollständig",
+    "incompleteLineup": "Unvollständiges Lineup",
     "cancel": "Abbrechen",
     "save": "Speichern"
   },

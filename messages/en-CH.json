@@ -143,14 +143,17 @@
   },
   "ConcertPage": {
     "concerts": "Concerts",
+    "complete": "Complete",
+    "incompleteLineup": "Incomplete lineup",
     "edit": "Edit",
     "archive": "Archive",
-    "concertArchived": "Concert archived",    
+    "concertArchived": "Concert archived",
     "restore": "Restore",
     "concertRestored": "Concert restored",
     "delete": "Delete",
     "concertArchivedBanner": "This concert has been archived. Editing is disabled.",
-    "lineup": "Lineup"
+    "lineup": "Lineup",
+    "nBands": "{count, plural, =1 {one band} other {# bands}}"
   },
   "BandList": {
     "iWasThere": "I was there!",
@@ -205,6 +208,11 @@
     "location": "Location",
     "name": "Name",
     "optional": "(optional)",
+    "showMore": "Show more",
+    "showLess": "Show less",
+    "ressourceStatus": "Ressource status",
+    "complete": "Complete",
+    "incompleteLineup": "Incomplete lineup",
     "cancel": "Cancel",
     "save": "Save"
   },

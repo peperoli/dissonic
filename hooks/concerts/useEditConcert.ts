@@ -28,6 +28,7 @@ const editConcert = async (newConcert: EditConcert) => {
         date_start: newConcert.date_start,
         date_end: newConcert.is_festival ? newConcert.date_end : null,
         location_id: newConcert.location_id,
+        ressource_status: newConcert.ressource_status,
       })
       .eq('id', newConcert.id)
 

@@ -13,6 +13,7 @@ const addConcert = async (concert: AddConcert) => {
       date_start: concert.date_start,
       date_end: concert.date_end,
       location_id: concert.location_id,
+      ressource_status: concert.ressource_status,
     })
     .select()
     .single()

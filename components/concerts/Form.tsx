@@ -8,8 +8,8 @@ import { EditBandsButton } from './EditBandsButton'
 import { SelectField } from '../forms/SelectField'
 import { SegmentedControl } from '../controls/SegmentedControl'
 import { useFestivalRoots } from '@/hooks/concerts/useFestivalRoots'
-import { useEffect, useState } from 'react'
-import { Plus } from 'lucide-react'
+import { Fragment, useEffect, useState } from 'react'
+import { ChevronDownIcon, Plus } from 'lucide-react'
 import Modal from '../Modal'
 import { FestivalRootForm } from './FestivalRootForm'
 import { useAddConcert } from '@/hooks/concerts/useAddConcert'
@@ -18,6 +18,10 @@ import { useEditConcert } from '@/hooks/concerts/useEditConcert'
 import { useParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
+import { useSession } from '@/hooks/auth/useSession'
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
+import clsx from 'clsx'
+import * as RadioGroup from '@radix-ui/react-radio-group'
 
 type FormProps = {
   isNew?: boolean
@@ -68,8 +72,14 @@ export const Form = ({ close, isNew }: FormProps) => {
   })
   const { data: allFestivalRoots } = useFestivalRoots({ enabled: isFestival })
   const t = useTranslations('ConcertForm')
+  const { data: session } = useSession()
   const festivalRootId = watch('festival_root_id')
   const isSimilar = !!(isNew && similarConcerts?.count)
+  const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
+  const ressourceStatusItems = [
+    { id: 'complete', name: t('complete') },
+    { id: 'incomplete_lineup', name: t('incompleteLineup') },
+  ]
 
   useEffect(() => {
     if (!festivalRootId || !isNew) return
@@ -209,6 +219,53 @@ export const Form = ({ close, isNew }: FormProps) => {
             similarItemsSize={similarConcertsSize}
             setSimilarItemsSize={setSimilarConcertsSize}
           />
+        )}
+        {isMod && (
+          <Disclosure>
+            <DisclosurePanel className="grid gap-6">
+              <Controller
+                name="ressource_status"
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <fieldset>
+                    <legend className="mb-1 text-sm text-slate-300">{t('ressourceStatus')}</legend>
+                    <RadioGroup.Root
+                      name="ressource_status"
+                      value={value ?? undefined}
+                      onValueChange={value => onChange(value)}
+                      orientation="vertical"
+                    >
+                      <ul className="w-full">
+                        {ressourceStatusItems.map(item => (
+                          <li key={item.id}>
+                            <label className="flex w-full items-center gap-3 rounded px-2 py-1.5 hover:bg-slate-600">
+                              <RadioGroup.Item
+                                value={item.id}
+                                className="grid size-4 flex-none place-content-center rounded-full border-2 border-slate-300 bg-white/5 data-[state=checked]:border-venom data-[state=checked]:bg-venom"
+                              >
+                                <RadioGroup.Indicator className="size-3 rounded-lg border-3 border-slate-850 bg-venom" />
+                              </RadioGroup.Item>
+                              {item.name}
+                            </label>
+                          </li>
+                        ))}
+                      </ul>
+                    </RadioGroup.Root>
+                  </fieldset>
+                )}
+              />
+            </DisclosurePanel>
+            <DisclosureButton as={Fragment}>
+              {({ open }) => (
+                <Button
+                  label={open ? t('showLess') : t('showMore')}
+                  icon={<ChevronDownIcon className={clsx('size-icon', open && 'rotate-180')} />}
+                  size="small"
+                  appearance="tertiary"
+                />
+              )}
+            </DisclosureButton>
+          </Disclosure>
         )}
         <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:static md:justify-end md:pb-0 [&>*]:flex-1">
           <Button onClick={close} label={t('cancel')} />

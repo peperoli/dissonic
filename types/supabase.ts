@@ -138,6 +138,9 @@ export type Database = {
           is_festival: boolean
           location_id: number
           name: string | null
+          ressource_status:
+            | Database["public"]["Enums"]["ressource_status"]
+            | null
         }
         Insert: {
           created_at?: string
@@ -150,6 +153,9 @@ export type Database = {
           is_festival?: boolean
           location_id: number
           name?: string | null
+          ressource_status?:
+            | Database["public"]["Enums"]["ressource_status"]
+            | null
         }
         Update: {
           created_at?: string
@@ -162,6 +168,9 @@ export type Database = {
           is_festival?: boolean
           location_id?: number
           name?: string | null
+          ressource_status?:
+            | Database["public"]["Enums"]["ressource_status"]
+            | null
         }
         Relationships: [
           {
@@ -885,6 +894,7 @@ export type Database = {
       app_role: "developer" | "moderator"
       bands_type: "bands"
       concerts_type: "concerts"
+      content_status: "complete" | "incomplete"
       continents:
         | "Africa"
         | "Antarctica"
@@ -894,6 +904,7 @@ export type Database = {
         | "North America"
         | "South America"
       locations_type: "locations"
+      ressource_status: "complete" | "incomplete_lineup"
       ressources: "concerts" | "bands" | "locations"
     }
     CompositeTypes: {
