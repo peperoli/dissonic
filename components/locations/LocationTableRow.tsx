@@ -36,9 +36,9 @@ export function LocationTableRow({ location }: { location: Location }) {
       <div className="hidden w-full items-center gap-4 md:flex">
         <div className="w-1/3">{location.name}</div>
         <div className="w-1/3 text-slate-300">{location.city}</div>
-        {location.country && (
-          <div className="w-1/3 text-slate-300">{regionNames.of(location.country.iso2)}</div>
-        )}
+        <div className="w-1/3 text-slate-300">
+          {location.country && regionNames.of(location.country.iso2)}
+        </div>
       </div>
     </TableRow>
   )
