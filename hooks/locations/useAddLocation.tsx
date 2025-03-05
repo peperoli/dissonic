@@ -3,6 +3,9 @@ import { AddLocation } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
 import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
+import { useTranslations } from 'next-intl'
+import Link from 'next/link'
 
 const addLocation = async (formData: AddLocation & { imageFile: File | string | null }) => {
   const imagePath =
@@ -36,14 +39,22 @@ const addLocation = async (formData: AddLocation & { imageFile: File | string | 
 export const useAddLocation = () => {
   const queryClient = useQueryClient()
   const [_, setModal] = useQueryState('modal', { history: 'push' })
-  const { push } = useRouter()
+  const t = useTranslations('useAddLocation')
+
   return useMutation({
     mutationFn: addLocation,
     onError: error => console.error(error),
     onSuccess: ({ locationId }) => {
       queryClient.invalidateQueries({ queryKey: ['locations'] })
       setModal(null)
-      push(`/locations/${locationId}`)
+      toast.success(
+        <>
+          {t('locationAdded')}
+          <Link href={`/locations/${locationId}`} className="btn btn-small btn-tertiary">
+            {t('open')}
+          </Link>
+        </>
+      )
     },
   })
 }

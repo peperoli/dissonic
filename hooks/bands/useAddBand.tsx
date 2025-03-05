@@ -2,7 +2,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AddBand } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
-import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
+import { useTranslations } from 'next-intl'
+import Link from 'next/link'
 
 const addBand = async (band: AddBand) => {
   const { data: newBand, error: bandError } = await supabase
@@ -36,14 +38,22 @@ const addBand = async (band: AddBand) => {
 export const useAddBand = () => {
   const queryClient = useQueryClient()
   const [_, setModal] = useQueryState('modal', { history: 'push' })
-  const { push } = useRouter()
+  const t = useTranslations('useAddBand')
+
   return useMutation({
     mutationFn: addBand,
     onError: error => console.error(error),
     onSuccess: ({ bandId }) => {
       queryClient.invalidateQueries({ queryKey: ['bands'] })
       setModal(null)
-      push(`/bands/${bandId}`)
+      toast.success(
+        <>
+          {t('bandAdded')}
+          <Link href={`/bands/${bandId}`} className="btn btn-small btn-tertiary">
+            {t('open')}
+          </Link>
+        </>
+      )
     },
   })
 }

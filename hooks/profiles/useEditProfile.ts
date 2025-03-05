@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EditProfile } from '@/types/types'
 import supabase from '@/utils/supabase/client'
+import { useTranslations } from 'next-intl'
+import toast from 'react-hot-toast'
 
 const editProfile = async (formData: EditProfile & { avatarFile: File | string | null }) => {
   if (!formData.id) {
@@ -47,11 +49,14 @@ const editProfile = async (formData: EditProfile & { avatarFile: File | string |
 
 export const useEditProfile = () => {
   const queryClient = useQueryClient()
+  const t = useTranslations('useEditProfile')
+
   return useMutation({
     mutationFn: editProfile,
     onError: error => console.error(error),
     onSuccess: ({ profileId }) => {
       queryClient.invalidateQueries({ queryKey: ['profile', profileId] })
+      toast.success(t('profileSaved'))
     },
   })
 }

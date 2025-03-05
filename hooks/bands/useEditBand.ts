@@ -2,6 +2,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EditBand, Genre } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
+import toast from 'react-hot-toast'
+import { useTranslations } from 'next-intl'
 
 const editBand = async (formData: EditBand) => {
   if (!formData.id) {
@@ -76,16 +78,19 @@ const editBand = async (formData: EditBand) => {
 export const useEditBand = () => {
   const queryClient = useQueryClient()
   const [_, setModal] = useQueryState('modal', { history: 'push' })
+  const t = useTranslations('useEditBand')
+
   return useMutation({
     mutationFn: editBand,
     onError: error => console.error(error),
     onSuccess: ({ bandId, spotifyArtistId }) => {
-      queryClient.invalidateQueries({ queryKey: ['band'] })
+      queryClient.invalidateQueries({ queryKey: ['band', bandId] })
       queryClient.invalidateQueries({ queryKey: ['spotifyArtist', spotifyArtistId] })
       queryClient.invalidateQueries({
         queryKey: ['contributions-count', 'bands', bandId, null],
       })
       setModal(null)
+      toast.success(t('bandSaved'))
     },
   })
 }

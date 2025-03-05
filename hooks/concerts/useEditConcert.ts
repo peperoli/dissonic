@@ -2,6 +2,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EditConcert } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
+import toast from 'react-hot-toast'
+import { useTranslations } from 'next-intl'
+import Link from 'next/link'
 
 const editConcert = async (newConcert: EditConcert) => {
   if (!newConcert.id) {
@@ -108,6 +111,8 @@ const editConcert = async (newConcert: EditConcert) => {
 export const useEditConcert = () => {
   const queryClient = useQueryClient()
   const [_, setModal] = useQueryState('modal', { history: 'push' })
+  const t = useTranslations('useEditConcert')
+
   return useMutation({
     mutationFn: editConcert,
     onError: error => console.error(error),
@@ -115,6 +120,7 @@ export const useEditConcert = () => {
       queryClient.invalidateQueries({ queryKey: ['concert', concertId] })
       queryClient.invalidateQueries({ queryKey: ['contributions-count', 'concerts', concertId] })
       setModal(null)
+      toast.success(t('concertSaved'))
     },
   })
 }

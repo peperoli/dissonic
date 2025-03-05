@@ -2,6 +2,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
 import { TablesInsert } from '@/types/supabase'
+import toast from 'react-hot-toast'
+import { useTranslations } from 'next-intl'
 
 const editLocation = async (
   formData: TablesInsert<'locations'> & { imageFile: File | string | null }
@@ -54,12 +56,15 @@ const editLocation = async (
 export const useEditLocation = () => {
   const queryClient = useQueryClient()
   const [_, setModal] = useQueryState('modal', { history: 'push' })
+  const t = useTranslations('useEditLocation')
+
   return useMutation({
     mutationFn: editLocation,
     onError: error => console.error(error),
     onSuccess: ({ locationId }) => {
       queryClient.invalidateQueries({ queryKey: ['location', locationId] })
       setModal(null)
+      toast.success(t('locationSaved'))
     },
   })
 }
