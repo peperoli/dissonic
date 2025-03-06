@@ -83,6 +83,12 @@
     "letsGetStarted": "Dann nichts wie los!",
     "signUp": "Registrieren"
   },
+  "useSignIn": {
+    "loggedIn": "Anmeldung erfolgreich"
+  },
+  "useLogOut": {
+    "loggedOut": "Abmeldung erfolgreich"
+  },
   "ResetPasswordPage": {
     "login": "Anmelden",
     "resetPassword": "Passwort zurücksetzen",
@@ -414,7 +420,7 @@
     "locationDeleted": "Lokal gelöscht"
   },
   "ProfileLayout": {
-    "title": "{username}s Profil • Dissonic",
+    "title": "{username}’s Profil • Dissonic",
     "friend": "Freund*in",
     "settings": "Einstellungen",
     "stats": "Statistiken",

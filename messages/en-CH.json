@@ -83,6 +83,12 @@
     "letsGetStarted": "Then let’s get started!",
     "signUp": "Sign up"
   },
+  "useSignIn": {
+    "loggedIn": "Login successful"
+  },
+  "useLogOut": {
+    "loggedOut": "Logout successful"
+  },
   "ResetPasswordPage": {
     "login": "Login",
     "resetPassword": "Reset password",
