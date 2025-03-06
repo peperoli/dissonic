@@ -83,6 +83,12 @@
     "letsGetStarted": "Then let’s get started!",
     "signUp": "Sign up"
   },
+  "useSignIn": {
+    "loggedIn": "Login successful"
+  },
+  "useLogOut": {
+    "loggedOut": "Logout successful"
+  },
   "ResetPasswordPage": {
     "login": "Login",
     "resetPassword": "Reset password",
@@ -161,7 +167,8 @@
     "hideHint": "Hide hint",
     "save": "Save",
     "cancel": "Cancel",
-    "thisConcertIsInTheFuture": "This concert is in the future."
+    "thisConcertIsInTheFuture": "This concert is in the future.",
+    "bandsSeenUpdated": "Seen bands updated"
   },
   "ConcertCommunity": {
     "loading": "Loading ...",
@@ -253,10 +260,31 @@
     "showAll": "Show all",
     "showLess": "Show less"
   },
+  "useAddConcert": {
+    "concertAdded": "Concert added",
+    "open": "Open"
+  },
+  "useEditConcert": {
+    "concertSaved": "Concert saved"
+  },
   "DeleteConcertForm": {
     "doYouReallyWantToDeleteThisConcert": "Do you really want to delete this concert?",
     "cancel": "Cancel",
     "delete": "Delete"
+  },
+  "useDeleteConcert": {
+    "concertDeleted": "Concert deleted"
+  },
+  "FestivalRootForm": {
+    "addFestivalRoot": "Add festival series",
+    "name": "Name",
+    "defaultLocation": "Default location",
+    "website": "Website",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "useAddFestivalRoot": {
+    "festivalRootAdded": "Festival series added"
   },
   "BandsPage": {
     "bands": "Bands",
@@ -318,10 +346,20 @@
     "showMore": "Show more",
     "nFollowers": "{count, plural, =1 {# follower} other {# followers}}"
   },
+  "useAddBand": {
+    "bandAdded": "Band added",
+    "open": "Open"
+  },
+  "useEditBand": {
+    "bandSaved": "Band saved"
+  },
   "DeleteBandForm": {
     "doYouReallyWantToDeleteThisBand": "Do you really want to delete this band?",
     "cancel": "Cancel",
     "delete": "Delete"
+  },
+  "useDeleteBand": {
+    "bandDeleted": "Band deleted"
   },
   "LocationsPage": {
     "locations": "Locations",
@@ -366,10 +404,20 @@
     "cancel": "Cancel",
     "save": "Save"
   },
+  "useAddLocation": {
+    "locationAdded": "Location added",
+    "open": "Open"
+  },
+  "useEditLocation": {
+    "locationSaved": "Location saved"
+  },
   "DeleteLocationForm": {
     "doYouReallyWantToDeleteThisLocation": "Do you really want to delete this location?",
     "cancel": "Cancel",
     "delete": "Delete"
+  },
+  "useDeleteLocation": {
+    "locationDeleted": "Location deleted"
   },
   "ProfileLayout": {
     "title": "{username}’s Profile • Dissonic",
@@ -384,6 +432,12 @@
   "ToggleFriendButton": {
     "addFriend": "Add friend",
     "removeFriend": "Remove friend"
+  },
+  "useAddFriend": {
+    "friendInviteSent": "Friend invite sent"
+  },
+  "useDeleteFriend": {
+    "friendRemoved": "Friend removed"
   },
   "EditProfileButton": {
     "editProfile": "Edit profile"
@@ -463,6 +517,9 @@
     "remove": "Remove",
     "dragOrBrowseFile": "Drag or <span>browse</span> file"
   },
+  "useEditProfile": {
+    "profileSaved": "Profile saved"
+  },
   "SettingsPage": {
     "profile": "Profile",
     "accountSettings": "Account settings"
@@ -483,6 +540,9 @@
     "save": "Save",
     "errorMessage": "An error has occurred. Please try again.",
     "successMessage": "You will shortly receive an e-mail in which you can confirm the change."
+  },
+  "useEditUser": {
+    "userSaved": "User saved"
   },
   "UsersPage": {
     "fans": "Fans"

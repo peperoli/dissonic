@@ -13,6 +13,7 @@ import { Edit, Lightbulb, Plus, X } from 'lucide-react'
 import { TablesInsert } from '@/types/supabase'
 import { useTranslations } from 'next-intl'
 import { setBandListHintPreference } from '@/actions/preferences'
+import toast from 'react-hot-toast'
 
 type BandListProps = {
   concert: Concert
@@ -58,8 +59,9 @@ export function BandList({ concert, bandListHintPreference }: BandListProps) {
     if (isSuccess) {
       setEditing(false)
       queryClient.invalidateQueries({ queryKey: ['concert', concert.id] })
+      toast.success(t('bandsSeenUpdated'))
     }
-  }, [addBandsSeen.status, deleteBandsSeen.status])
+  }, [isSuccess])
   return (
     <section>
       {editing ? (

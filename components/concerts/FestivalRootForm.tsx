@@ -10,6 +10,7 @@ import { getErrorMessage } from '@/lib/getErrorMessage'
 import { useFestivalRoots } from '@/hooks/concerts/useFestivalRoots'
 import { useState } from 'react'
 import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
+import { useTranslations } from 'next-intl'
 
 interface FestivalRootFormProps {
   close: () => void
@@ -32,6 +33,7 @@ export const FestivalRootForm = ({ close }: FestivalRootFormProps) => {
   const { data: locations } = useLocations({ search: locationsSearchQuery })
   const { data: allLocations } = useLocations()
   const { mutate, status, error } = useAddFestivalRoot()
+  const t = useTranslations('FestivalRootForm')
   const isSimilar = !!(formState.dirtyFields.name && similarFestivalRoots?.count)
 
   async function onSubmit(data: TablesInsert<'festival_roots'>) {
@@ -40,11 +42,11 @@ export const FestivalRootForm = ({ close }: FestivalRootFormProps) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6">
-      <h2>Festival-Serie hinzufügen</h2>
+      <h2>{t('addFestivalRoot')}</h2>
       <TextField
         {...register('name', { required: true })}
         error={formState.errors.name}
-        label="Name"
+        label={t('name')}
         placeholder="Greenfield Festival"
       />
       {isSimilar && (
@@ -76,21 +78,21 @@ export const FestivalRootForm = ({ close }: FestivalRootFormProps) => {
             value={value}
             onValueChange={onChange}
             error={formState.errors.default_location_id}
-            label="Standard-Location"
+            label={t('defaultLocation')}
           />
         )}
       />
       <TextField
         {...register('website')}
-        label="Website (optional)"
+        label={t('website') + ' (optional)'}
         placeholder="https://greenfieldfestival.ch"
       />
       {!!error && <StatusBanner statusType="error" message={getErrorMessage(error)} />}
       <div className="flex gap-4 pt-4 [&>*]:flex-1">
-        <Button onClick={close} label="Abbrechen" />
+        <Button onClick={close} label={t('cancel')} />
         <Button
           type="submit"
-          label="Speichern"
+          label={t('save')}
           appearance="primary"
           loading={status === 'pending'}
         />

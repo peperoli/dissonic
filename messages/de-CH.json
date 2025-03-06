@@ -83,6 +83,12 @@
     "letsGetStarted": "Dann nichts wie los!",
     "signUp": "Registrieren"
   },
+  "useSignIn": {
+    "loggedIn": "Anmeldung erfolgreich"
+  },
+  "useLogOut": {
+    "loggedOut": "Abmeldung erfolgreich"
+  },
   "ResetPasswordPage": {
     "login": "Anmelden",
     "resetPassword": "Passwort zurücksetzen",
@@ -161,7 +167,8 @@
     "hideHint": "Hinweis ausblenden",
     "save": "Speichern",
     "cancel": "Abbrechen",
-    "thisConcertIsInTheFuture": "Dieses Konzert liegt in der Zukunft."
+    "thisConcertIsInTheFuture": "Dieses Konzert liegt in der Zukunft.",
+    "bandsSeenUpdated": "Gesehene Bands aktualisiert"
   },
   "ConcertCommunity": {
     "loading": "Laden ...",
@@ -253,10 +260,31 @@
     "showAll": "Alle anzeigen",
     "showLess": "Weniger anzeigen"
   },
+  "useAddConcert": {
+    "concertAdded": "Konzert hinzugefügt",
+    "open": "Öffnen"
+  },
+  "useEditConcert": {
+    "concertSaved": "Konzert gespeichert"
+  },
   "DeleteConcertForm": {
     "doYouReallyWantToDeleteThisConcert": "Willst du dieses Konzert wirklich löschen?",
     "cancel": "Abbrechen",
     "delete": "Löschen"
+  },
+  "useDeleteConcert": {
+    "concertDeleted": "Konzert gelöscht"
+  },
+  "FestivalRootForm": {
+    "addFestivalRoot": "Festival-Serie hinzufügen",
+    "name": "Name",
+    "defaultLocation": "Standard-Lokalität",
+    "website": "Website",
+    "cancel": "Abbrechen",
+    "save": "Speichern"
+  },
+  "useAddFestivalRoot": {
+    "festivalRootAdded": "Festival-Serie hinzugefügt"
   },
   "BandsPage": {
     "bands": "Bands",
@@ -318,10 +346,20 @@
     "showMore": "Mehr anzeigen",
     "nFollowers": "{count, plural, =1 {# Follower} other {# Follower}}"
   },
+  "useAddBand": {
+    "bandAdded": "Band hinzugefügt",
+    "open": "Öffnen"
+  },
+  "useEditBand": {
+    "bandSaved": "Band gespeichert"
+  },
   "DeleteBandForm": {
     "doYouReallyWantToDeleteThisBand": "Willst du diese Band wirklich löschen?",
     "cancel": "Abbrechen",
     "delete": "Löschen"
+  },
+  "useDeleteBand": {
+    "bandDeleted": "Band gelöscht"
   },
   "LocationsPage": {
     "locations": "Lokale",
@@ -366,13 +404,23 @@
     "cancel": "Abbrechen",
     "save": "Speichern"
   },
+  "useAddLocation": {
+    "locationAdded": "Lokal hinzugefügt",
+    "open": "Öffnen"
+  },
+  "useEditLocation": {
+    "locationSaved": "Lokal gespeichert"
+  },
   "DeleteLocationForm": {
     "doYouReallyWantToDeleteThisLocation": "Willst du dieses Lokal wirklich löschen?",
     "cancel": "Abbrechen",
     "delete": "Löschen"
   },
+  "useDeleteLocation": {
+    "locationDeleted": "Lokal gelöscht"
+  },
   "ProfileLayout": {
-    "title": "{username}s Profil • Dissonic",
+    "title": "{username}’s Profil • Dissonic",
     "friend": "Freund*in",
     "settings": "Einstellungen",
     "stats": "Statistiken",
@@ -384,6 +432,12 @@
   "ToggleFriendButton": {
     "addFriend": "Freund*in hinzufügen",
     "removeFriend": "Freund*in entfernen"
+  },
+  "useAddFriend": {
+    "friendInviteSent": "Freundschaftsanfrage gesendet"
+  },
+  "useDeleteFriend": {
+    "friendRemoved": "Freund*in entfernt"
   },
   "EditProfileButton": {
     "editProfile": "Profil bearbeiten"
@@ -463,6 +517,9 @@
     "remove": "Entfernen",
     "dragOrBrowseFile": "Datei hinziehen oder <span>durchsuchen</span>"
   },
+  "useEditProfile": {
+    "profileSaved": "Profil gespeichert"
+  },
   "SettingsPage": {
     "profile": "Profil",
     "accountSettings": "Kontoeinstellungen"
@@ -483,6 +540,9 @@
     "save": "Speichern",
     "errorMessage": "Es ist ein Fehler aufgetreten. Bitte versuche es erneut.",
     "successMessage": "Du erhältst in Kürze eine E-Mail, in dem du die Änderung bestätigen kannst."
+  },
+  "useEditUser": {
+    "userSaved": "Konto gespeichert"
   },
   "UsersPage": {
     "fans": "Fans"

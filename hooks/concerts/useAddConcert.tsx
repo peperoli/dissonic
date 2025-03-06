@@ -2,6 +2,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AddConcert } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 import { useModal } from '@/components/shared/ModalProvider'
+import toast from 'react-hot-toast'
+import { useTranslations } from 'next-intl'
+import Link from 'next/link'
 
 const addConcert = async (concert: AddConcert) => {
   const { data: newConcert, error: addConcertError } = await supabase
@@ -40,12 +43,22 @@ const addConcert = async (concert: AddConcert) => {
 export const useAddConcert = () => {
   const [_, setModal] = useModal()
   const queryClient = useQueryClient()
+  const t = useTranslations('useAddConcert')
+
   return useMutation({
     mutationFn: addConcert,
     onError: error => console.error(error),
-    onSuccess: () => {
+    onSuccess: ({ concertId }) => {
       setModal(null)
       queryClient.invalidateQueries({ queryKey: ['concerts'] })
+      toast.success(
+        <>
+          {t('concertAdded')}
+          <Link href={`/concerts/${concertId}`} className="btn btn-small btn-tertiary">
+            {t('open')}
+          </Link>
+        </>
+      )
     },
   })
 }
