@@ -68,7 +68,8 @@ export const HomePage = ({
   const [_, setModal] = useQueryState('modal', parseAsStringLiteral(modalPaths))
 
   function getView() {
-    if (view === 'user' && currentUser) return [currentUser.id]
+    if (!currentUser) return
+    if (view === 'user') return [currentUser.id]
     if (view === 'friends' && friends)
       return [
         ...new Set([
