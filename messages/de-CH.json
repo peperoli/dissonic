@@ -68,7 +68,10 @@
     "usernameTakenError": "Dieser Benutzername ist bereits vergeben. Probiere, kreativ zu sein.",
     "password": "Passwort",
     "passwordLengthError": "Das Passwort muss mindestens 12 Zeichen lang sein.",
-    "createAccount": "Konto erstellen"
+    "createAccount": "Konto erstellen",
+    "or": "oder",
+    "continueWithGoogle": "Mit Google fortfahren",
+    "continueWithSpotify": "Mit Spotify fortfahren"
   },
   "LoginPage": {
     "loginToTrackConcerts": "Anmelden, um Konzerte zu tracken",

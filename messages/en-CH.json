@@ -68,7 +68,10 @@
     "usernameTakenError": "This username is already taken. Try being creative.",
     "password": "Password",
     "passwordLengthError": "The password must be at least 12 characters long.",
-    "createAccount": "Create account"
+    "createAccount": "Create account",
+    "or": "or",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithSpotify": "Continue with Spotify"
   },
   "LoginPage": {
     "loginToTrackConcerts": "Login to track concerts",
