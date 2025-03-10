@@ -576,6 +576,7 @@
     "all": "Alle",
     "bandsSeen": "Gesehene Bands",
     "comments": "Kommentare",
+    "reactions": "Reaktionen",
     "friendActions": "Freundesaktionen",
     "newUsers": "Neue Benutzer"
   },
@@ -583,7 +584,8 @@
     "userCommentedOnConcert": "<user></user> kommentierte Konzert <concert></concert>",
     "userSawBandsAtConcert": "<user></user> sah <bands></bands> am Konzert <concert></concert>",
     "user1AndUser2AreNowFriends": "<user1></user1> und <user2></user2> sind jetzt befreundet",
-    "userJoinedDissonic": "<user></user> ist Dissonic beigetreten"
+    "userJoinedDissonic": "<user></user> ist Dissonic beigetreten",
+    "userReactedWithReactionTypeToCommentersCommentOnConcert": "<user></user> reagierte mit {reactionType} auf <commenter></commenter>’s Kommentar zu <concert></concert>"
   },
   "CommaSeperatedList": {
     "and": "und"

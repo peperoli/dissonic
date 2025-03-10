@@ -80,6 +80,17 @@ export const ReactionToggle = ({
   )
 }
 
+export const reactionIcons: { [key: string]: string } = {
+  up: '👍',
+  down: '👎',
+  heart: '❤️',
+  funny: '😂',
+  horns: '🤘',
+  clap: '👏',
+  dead: '💀',
+  gremlin: '👹',
+}
+
 type ReactionControlProps = {
   comment: Comment
   reactions: Reaction[]
@@ -87,14 +98,6 @@ type ReactionControlProps = {
 }
 
 export const ReactionControl = ({ comment, reactions, user }: ReactionControlProps) => {
-  const reactionIcons: { [key: string]: string } = {
-    up: '👍',
-    down: '👎',
-    funny: '😂',
-    horns: '🤘',
-    clap: '👏',
-    gremlin: '👹',
-  }
   const reactionCounts: { type: string; count: number; users: Profile[] }[] = []
 
   reactions.forEach(item => {
@@ -127,7 +130,7 @@ export const ReactionControl = ({ comment, reactions, user }: ReactionControlPro
           <PopoverButton aria-label="Reagieren" className="btn btn-icon btn-small">
             <SmilePlus className="size-icon" />
           </PopoverButton>
-          <PopoverPanel className="absolute left-1/2 z-10 mt-1 flex -translate-x-1/2 rounded-lg bg-slate-700 shadow-xl">
+          <PopoverPanel className="absolute left-1/2 z-10 mt-1 grid grid-cols-4 w-32 -translate-x-1/2 rounded-lg bg-slate-700 shadow-xl">
             {({ close }) => (
               <>
                 {Object.keys(reactionIcons).map(key => (

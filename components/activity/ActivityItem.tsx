@@ -10,6 +10,7 @@ import { Tables } from '@/types/supabase'
 import { CommaSeperatedList } from '../helpers/CommaSeperatedList'
 import { useLocale, useTranslations } from 'next-intl'
 import { getConcertName } from '@/lib/getConcertName'
+import { reactionIcons } from '../concerts/ReactionControl'
 
 const CommentItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
   const { user, created_at } = activityItem
@@ -162,6 +163,46 @@ const ProfileItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
   )
 }
 
+const ReactionItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
+  const { user, created_at, receiver, content } = activityItem
+  const t = useTranslations('ActivityItem')
+  const locale = useLocale()
+  const { data: concert } = useConcert(activityItem.concert?.id ?? null, null, { bandsSize: 1 })
+  const concertName = concert ? getConcertName(concert, locale) : null
+
+  return (
+    <div className="rounded-lg bg-slate-800 p-4">
+      <ActivityItemLine
+        user={
+          <Link href={`/users/${user.username}`} className="group/user-item">
+            <UserItem user={user} usernameIsHidden />
+          </Link>
+        }
+        createdAt={created_at}
+      >
+        {t.rich('userReactedWithReactionTypeToCommentersCommentOnConcert', {
+          user: () => (
+            <Link href={`/users/${user.username}`} className="text-white hover:underline">
+              {user.username}
+            </Link>
+          ),
+          reactionType: content ? reactionIcons[content] : null,
+          commenter: () => (
+            <Link href={`/users/${receiver?.username}`} className="text-white hover:underline">
+              {receiver?.username}
+            </Link>
+          ),
+          concert: () => (
+            <Link href={`/concerts/${concert?.id}`} className="text-white hover:underline">
+              {concertName || `ID: ${concert?.id}`}
+            </Link>
+          ),
+        })}
+      </ActivityItemLine>
+    </div>
+  )
+}
+
 const ActivityItemLine = ({
   createdAt,
   user,
@@ -198,7 +239,9 @@ export const ActivityItem = ({
     return <FriendItem activityItem={activityItem} />
   } else if (activityItem.type === 'profiles') {
     return <ProfileItem activityItem={activityItem} />
+  } else if (activityItem.type === 'reactions') {
+    return <ReactionItem activityItem={activityItem} />
   } else {
-    return null
+    return <p>Activity with unknown ressource type</p>
   }
 }

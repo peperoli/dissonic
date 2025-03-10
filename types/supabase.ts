@@ -742,36 +742,6 @@ export type Database = {
         }
         Returns: Json
       }
-      gtrgm_compress: {
-        Args: {
-          "": unknown
-        }
-        Returns: unknown
-      }
-      gtrgm_decompress: {
-        Args: {
-          "": unknown
-        }
-        Returns: unknown
-      }
-      gtrgm_in: {
-        Args: {
-          "": unknown
-        }
-        Returns: unknown
-      }
-      gtrgm_options: {
-        Args: {
-          "": unknown
-        }
-        Returns: undefined
-      }
-      gtrgm_out: {
-        Args: {
-          "": unknown
-        }
-        Returns: unknown
-      }
       json_matches_schema: {
         Args: {
           schema: Json
@@ -861,22 +831,6 @@ export type Database = {
           zip_code: string | null
         }[]
       }
-      set_limit: {
-        Args: {
-          "": number
-        }
-        Returns: number
-      }
-      show_limit: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      show_trgm: {
-        Args: {
-          "": string
-        }
-        Returns: string[]
-      }
       unaccent: {
         Args: {
           "": string
@@ -893,8 +847,6 @@ export type Database = {
     Enums: {
       app_role: "developer" | "moderator"
       bands_type: "bands"
-      concerts_type: "concerts"
-      content_status: "complete" | "incomplete"
       continents:
         | "Africa"
         | "Antarctica"
