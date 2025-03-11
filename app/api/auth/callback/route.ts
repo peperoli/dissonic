@@ -20,18 +20,17 @@ export async function GET(request: Request) {
     }
 
     if (user) {
-      console.log('User:', user)
       const { data: profile } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single()
-      
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+
       if (!profile) {
         // create a new profile for the user if it doesn't exist already
         const { error: profileError } = await supabase
           .from('profiles')
-          .insert({ id: user.id, username: user.user_metadata.full_name })
+          .insert({ id: user.id, username: encodeURIComponent(user.user_metadata.full_name) })
 
         if (profileError) {
           throw profileError
