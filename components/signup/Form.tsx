@@ -5,32 +5,39 @@ import { useProfiles } from '../../hooks/profiles/useProfiles'
 import { usernameRegex } from '../../lib/usernameRegex'
 import { Button } from '../Button'
 import { TextField } from '../forms/TextField'
-import { signUp, SignUpFormData } from '../../actions/auth'
+import { signInWithOAuth, signUp as signUpAction, SignUpFormData } from '../../actions/auth'
 import { useTranslations } from 'next-intl'
 import { StatusBanner } from '../forms/StatusBanner'
 import { useMutation } from '@tanstack/react-query'
 import { SiGoogle, SiSpotify } from '@icons-pack/react-simple-icons'
 
 export const Form = () => {
-  const { mutate, status, error } = useMutation({
-    mutationFn: signUp,
-    onError: error => console.error(error),
-  })
-
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<SignUpFormData>({ mode: 'onChange' })
   const { data: profiles } = useProfiles()
+  const signUp = useMutation({
+    mutationFn: signUpAction,
+    onError: error => console.error(error),
+  })
+  const signInWithGoogle = useMutation({
+    mutationFn: () => signInWithOAuth('google'),
+    onError: error => console.error(error),
+  })
+  const signInWithSpotify = useMutation({
+    mutationFn: () => signInWithOAuth('spotify'),
+    onError: error => console.error(error),
+  })
   const t = useTranslations('SignupForm')
   const usernames = profiles?.map(item => item.username)
 
-  return status === 'success' ? (
+  return signUp.status === 'success' ? (
     <StatusBanner statusType="success" message={t('successMessage')} className="mt-6" />
   ) : (
     <section className="rounded-lg bg-slate-800 p-6">
-      <form onSubmit={handleSubmit(formData => mutate(formData))} className="grid gap-5">
+      <form onSubmit={handleSubmit(formData => signUp.mutate(formData))} className="grid gap-5">
         <TextField
           {...register('email', { required: true })}
           error={errors.email}
@@ -64,17 +71,17 @@ export const Form = () => {
             type="submit"
             label={t('createAccount')}
             appearance="primary"
-            loading={status === 'pending'}
+            loading={signUp.status === 'pending'}
           />
         </div>
       </form>
-      {status === 'error' && (
+      {signUp.status === 'error' && (
         <StatusBanner
           statusType="error"
           message={
-            'code' in error && error.code === '23505'
+            'code' in signUp.error && signUp.error.code === '23505'
               ? t('emailAlreadyInUseError')
-              : t(error.message)
+              : t(signUp.error.message)
           }
           className="mt-6"
         />
@@ -83,13 +90,17 @@ export const Form = () => {
         <span className="section-headline">{t('or')}</span>
         <Button
           label={t('continueWithGoogle')}
+          onClick={() => signInWithGoogle.mutate()}
           icon={<SiGoogle className="size-icon" />}
           appearance="secondary"
+          loading={signInWithGoogle.status === 'pending'}
         />
         <Button
           label={t('continueWithSpotify')}
+          onClick={() => signInWithSpotify.mutate()}
           icon={<SiSpotify className="size-icon" />}
           appearance="secondary"
+          loading={signInWithSpotify.status === 'pending'}
         />
       </div>
     </section>
