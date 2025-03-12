@@ -55,8 +55,6 @@
     "seeYourConcertHistoryAndStatistics": "Sieh deine Konzert-Historie und Statistiken",
     "commentOnConcertsAndReactToComments": "Kommentiere Konzerte und reagiere auf Kommentare",
     "contributeConcertsBandsAndLocations": "Erstelle und bearbeite Konzerte, Bands und Lokale",
-    "emailAlreadyInUseError": "Diese E-Mail ist bereits mit einem Benutzer verknüpft.",
-    "successMessage": "Erfolgreich! Bestätige deine E-Mail-Adresse, um dein Benutzerkonto zu aktivieren.",
     "doYouHavAnAccountAlready": "Hast du bereits ein Konto?",
     "login": "Anmelden"
   },
@@ -69,6 +67,9 @@
     "password": "Passwort",
     "passwordLengthError": "Das Passwort muss mindestens 12 Zeichen lang sein.",
     "createAccount": "Konto erstellen",
+    "emailAlreadyInUseError": "Diese E-Mail ist bereits mit einem Benutzer verknüpft.",
+    "genericError": "Es ist ein Fehler aufgetreten. Bitte versuche es erneut.",
+    "successMessage": "Erfolgreich! Bestätige deine E-Mail-Adresse, um dein Benutzerkonto zu aktivieren.",
     "or": "oder",
     "continueWithGoogle": "Mit Google fortfahren",
     "continueWithSpotify": "Mit Spotify fortfahren"
@@ -549,7 +550,8 @@
     "description": "Verknüpfe dein Konto mit Drittanbietern. Das ermöglicht dir, dich mit einem bestehenden Konto anzumelden.",
     "linkWithGoogle": "Mit Google verknüpfen",
     "linkedAtDate": "Verknüpft am {date}",
-    "unlink": "Verknüpfung aufheben"
+    "unlink": "Verknüpfung aufheben",
+    "identityUnlinked": "Verknüpfung aufgehoben"
   },
   "useEditUser": {
     "userSaved": "Konto gespeichert"

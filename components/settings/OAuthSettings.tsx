@@ -2,12 +2,13 @@
 
 import { useLocale, useTranslations } from 'next-intl'
 import { Button } from '../Button'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { linkIdentity, unlinkIdentity } from '@/actions/auth'
 import { SiGoogle } from '@icons-pack/react-simple-icons'
 import { UserIdentity } from '@supabase/supabase-js'
 import { MailIcon, UnlinkIcon } from 'lucide-react'
 import { useUserIdentities } from '@/hooks/auth/useUserIdentities'
+import toast from 'react-hot-toast'
 
 function IdentityItem({
   identity,
@@ -16,9 +17,14 @@ function IdentityItem({
   identity: UserIdentity
   identitiesCount: number
 }) {
+  const queryClient = useQueryClient()
   const { mutate, isPending } = useMutation({
     mutationFn: () => unlinkIdentity(identity),
     onError: error => console.error(error),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-identities'] })
+      toast.success(t('identityUnlinked'))
+    },
   })
   const t = useTranslations('OAuthSettings')
   const locale = useLocale()
@@ -81,7 +87,7 @@ export function OAuthSettings({
     <section className="rounded-lg bg-slate-800 p-6">
       <h2>{t('headline')}</h2>
       <p className="mb-5 text-slate-300">{t('description')}</p>
-      <ul className="grid gap-3 mb-5">
+      <ul className="mb-5 grid gap-3">
         {userIdentities?.map(identity => (
           <IdentityItem
             key={identity.id}

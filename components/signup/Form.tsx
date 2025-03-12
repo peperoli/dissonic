@@ -81,7 +81,9 @@ export const Form = () => {
           message={
             'code' in signUp.error && signUp.error.code === '23505'
               ? t('emailAlreadyInUseError')
-              : t(signUp.error.message)
+              : t.has(signUp.error.message)
+                ? t(signUp.error.message)
+                : t('genericError')
           }
           className="mt-6"
         />
