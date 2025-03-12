@@ -1,6 +1,6 @@
 'use server'
 
-import { Provider } from '@supabase/supabase-js'
+import { Provider, UserIdentity } from '@supabase/supabase-js'
 import { createClient } from '../utils/supabase/server'
 import { redirect } from 'next/navigation'
 
@@ -65,4 +65,29 @@ export async function signInWithOAuth(provider: Provider) {
   }
 
   redirect(data.url)
+}
+
+export async function linkIdentity(provider: Provider) {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase.auth.linkIdentity({
+    provider,
+    options: { redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback` },
+  })
+
+  if (error) {
+    throw error
+  }
+
+  redirect(data.url)
+}
+
+export async function unlinkIdentity(identity: UserIdentity) {
+  const supabase = await createClient()
+
+  const { error } = await supabase.auth.unlinkIdentity(identity)
+
+  if (error) {
+    throw error
+  }
 }

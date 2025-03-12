@@ -544,6 +544,13 @@
     "errorMessage": "An error has occurred. Please try again.",
     "successMessage": "You will shortly receive an e-mail in which you can confirm the change."
   },
+  "OAuthSettings": {
+    "headline": "OAuth settings",
+    "description": "Link your account to third-party authentication providers. This allows you to log in with an existing account.",
+    "linkWithGoogle": "Link with Google",
+    "linkedAtDate": "Linked at {date}",
+    "unlink": "Unlink"
+  },
   "useEditUser": {
     "userSaved": "User saved"
   },

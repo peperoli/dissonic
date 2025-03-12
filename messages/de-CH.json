@@ -544,6 +544,13 @@
     "errorMessage": "Es ist ein Fehler aufgetreten. Bitte versuche es erneut.",
     "successMessage": "Du erhältst in Kürze eine E-Mail, in dem du die Änderung bestätigen kannst."
   },
+  "OAuthSettings": {
+    "headline": "OAuth-Einstellungen",
+    "description": "Verknüpfe dein Konto mit Drittanbietern. Das ermöglicht dir, dich mit einem bestehenden Konto anzumelden.",
+    "linkWithGoogle": "Mit Google verknüpfen",
+    "linkedAtDate": "Verknüpft am {date}",
+    "unlink": "Verknüpfung aufheben"
+  },
   "useEditUser": {
     "userSaved": "Konto gespeichert"
   },
