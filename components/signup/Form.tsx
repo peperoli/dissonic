@@ -5,11 +5,11 @@ import { useProfiles } from '../../hooks/profiles/useProfiles'
 import { usernameRegex } from '../../lib/usernameRegex'
 import { Button } from '../Button'
 import { TextField } from '../forms/TextField'
-import { signInWithOAuth, signUp as signUpAction, SignUpFormData } from '../../actions/auth'
+import { signUp as signUpAction, SignUpFormData } from '../../actions/auth'
 import { useTranslations } from 'next-intl'
 import { StatusBanner } from '../forms/StatusBanner'
 import { useMutation } from '@tanstack/react-query'
-import { SiGoogle, SiSpotify } from '@icons-pack/react-simple-icons'
+import { OAuthButtons } from '../auth/OAuthButtons'
 
 export const Form = () => {
   const {
@@ -22,21 +22,14 @@ export const Form = () => {
     mutationFn: signUpAction,
     onError: error => console.error(error),
   })
-  const signInWithGoogle = useMutation({
-    mutationFn: () => signInWithOAuth('google'),
-    onError: error => console.error(error),
-  })
-  const signInWithSpotify = useMutation({
-    mutationFn: () => signInWithOAuth('spotify'),
-    onError: error => console.error(error),
-  })
+
   const t = useTranslations('SignupForm')
   const usernames = profiles?.map(item => item.username)
 
   return signUp.status === 'success' ? (
     <StatusBanner statusType="success" message={t('successMessage')} className="mt-6" />
   ) : (
-    <section className="rounded-lg bg-slate-800 p-6">
+    <section className="">
       <form onSubmit={handleSubmit(formData => signUp.mutate(formData))} className="grid gap-5">
         <TextField
           {...register('email', { required: true })}
@@ -88,23 +81,7 @@ export const Form = () => {
           className="mt-6"
         />
       )}
-      <div className="mt-6 grid gap-3">
-        <span className="section-headline">{t('or')}</span>
-        <Button
-          label={t('continueWithGoogle')}
-          onClick={() => signInWithGoogle.mutate()}
-          icon={<SiGoogle className="size-icon" />}
-          appearance="secondary"
-          loading={signInWithGoogle.status === 'pending'}
-        />
-        <Button
-          label={t('continueWithSpotify')}
-          onClick={() => signInWithSpotify.mutate()}
-          icon={<SiSpotify className="size-icon" />}
-          appearance="secondary"
-          loading={signInWithSpotify.status === 'pending'}
-        />
-      </div>
+      <OAuthButtons />
     </section>
   )
 }

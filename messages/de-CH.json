@@ -69,7 +69,9 @@
     "createAccount": "Konto erstellen",
     "emailAlreadyInUseError": "Diese E-Mail ist bereits mit einem Benutzer verknüpft.",
     "genericError": "Es ist ein Fehler aufgetreten. Bitte versuche es erneut.",
-    "successMessage": "Erfolgreich! Bestätige deine E-Mail-Adresse, um dein Benutzerkonto zu aktivieren.",
+    "successMessage": "Erfolgreich! Bestätige deine E-Mail-Adresse, um dein Benutzerkonto zu aktivieren."
+  },
+  "OAuthButtons": {
     "or": "oder",
     "continueWithGoogle": "Mit Google fortfahren",
     "continueWithSpotify": "Mit Spotify fortfahren"
@@ -550,8 +552,10 @@
     "description": "Verknüpfe dein Konto mit Drittanbietern. Das ermöglicht dir, dich mit einem bestehenden Konto anzumelden.",
     "linkWithGoogle": "Mit Google verknüpfen",
     "linkedAtDate": "Verknüpft am {date}",
-    "unlink": "Verknüpfung aufheben",
-    "identityUnlinked": "Verknüpfung aufgehoben"
+    "unlinkProvider": "Verknüpfung aufheben",
+    "doYouReallyWantToUnlinkThisProvider": "Willst du die Verknüpfung mit {provider} wirklich aufheben?",
+    "cancel": "Abbrechen",
+    "providerUnlinked": "Verknüpfung aufgehoben"
   },
   "useEditUser": {
     "userSaved": "Konto gespeichert"

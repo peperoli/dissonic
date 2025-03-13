@@ -50,13 +50,13 @@ export async function signUp(formData: SignUpFormData) {
   }
 }
 
-export async function signInWithOAuth(provider: Provider) {
+export async function signInWithOAuth(provider: Provider, next: string | null) {
   const supabase = await createClient()
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback`,
+      redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback?next=${next ?? '/'}`,
     },
   })
 
@@ -72,7 +72,9 @@ export async function linkIdentity(provider: Provider) {
 
   const { data, error } = await supabase.auth.linkIdentity({
     provider,
-    options: { redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback` },
+    options: {
+      redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback?next=/settings#oauth`,
+    },
   })
 
   if (error) {

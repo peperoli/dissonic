@@ -8,7 +8,7 @@ export async function SignupPage() {
 
   return (
     <main className="container-sm">
-      <section className="rounded-2xl bg-radial-gradient from-venom/50 p-8">
+      <section className="rounded-2xl bg-radial-gradient from-blue/20 p-8">
         <h1>
           {t.rich('welcome', {
             span: chunk => <span className="text-[1.5em]">{chunk}</span>,
@@ -33,8 +33,8 @@ export async function SignupPage() {
             {t('contributeConcertsBandsAndLocations')}
           </li>
         </ul>
-      </section>
       <Form />
+      </section>
       <h2 className="mt-10">{t('doYouHavAnAccountAlready')}</h2>
       <Link href="/login" className="btn btn-secondary">
         {t('login')}

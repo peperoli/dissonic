@@ -9,6 +9,9 @@ import { UserIdentity } from '@supabase/supabase-js'
 import { MailIcon, UnlinkIcon } from 'lucide-react'
 import { useUserIdentities } from '@/hooks/auth/useUserIdentities'
 import toast from 'react-hot-toast'
+import { useQueryState } from 'nuqs'
+import Modal from '../Modal'
+import { DialogTitle } from '@radix-ui/react-dialog'
 
 function IdentityItem({
   identity,
@@ -18,56 +21,77 @@ function IdentityItem({
   identitiesCount: number
 }) {
   const queryClient = useQueryClient()
+  const [modal, setModal] = useQueryState('modal', { history: 'push' })
+  const closeModal = () => setModal(null)
   const { mutate, isPending } = useMutation({
     mutationFn: () => unlinkIdentity(identity),
     onError: error => console.error(error),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user-identities'] })
-      toast.success(t('identityUnlinked'))
+      closeModal()
+      toast.success(t('providerUnlinked'))
     },
   })
   const t = useTranslations('OAuthSettings')
   const locale = useLocale()
+  const linkedAt = identity.created_at ? (
+    <p className="text-sm text-slate-300">
+      {t('linkedAtDate', {
+        date: new Date(identity.created_at).toLocaleDateString(locale),
+      })}
+    </p>
+  ) : null
 
   return (
-    <li className="flex items-center justify-between gap-4">
-      <div className="flex items-center gap-4">
-        {identity.provider === 'email' ? (
-          <MailIcon className="size-icon" />
-        ) : identity.provider === 'google' ? (
-          <SiGoogle className="size-icon text-[#4285F4]" />
-        ) : null}
-        <div>
-          <p className="font-bold capitalize">{identity.provider}</p>
-          <p className="text-sm text-slate-300">
-            {identity.identity_data?.email}
-            {identity.identity_data?.full_name && (
-              <>&nbsp;&bull; {identity.identity_data?.full_name}</>
-            )}
-          </p>
+    <>
+      <li className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          {identity.provider === 'email' ? (
+            <MailIcon className="size-icon flex-none" />
+          ) : identity.provider === 'google' ? (
+            <SiGoogle className="size-icon flex-none text-[#4285F4]" />
+          ) : null}
+          <div>
+            <p className="font-bold capitalize">{identity.provider}</p>
+            <p className="text-sm text-slate-300">
+              {identity.identity_data?.email}
+              {identity.identity_data?.full_name && (
+                <>&nbsp;&bull; {identity.identity_data?.full_name}</>
+              )}
+            </p>
+            <span className="md:hidden">{linkedAt}</span>
+          </div>
         </div>
-      </div>
-      <div className="flex items-center gap-4">
-        {identity.created_at && (
-          <p className="text-sm text-slate-300">
-            {t('linkedAtDate', {
-              date: new Date(identity.created_at).toLocaleDateString(locale),
-            })}
-          </p>
-        )}
-        {identitiesCount > 1 && identity.provider !== 'email' && (
+        <div className="flex items-center gap-4">
+          <span className="hidden md:block">{linkedAt}</span>
+          {identitiesCount > 1 && identity.provider !== 'email' && (
+            <Button
+              label={t('unlinkProvider')}
+              icon={<UnlinkIcon className="size-icon" />}
+              onClick={() => setModal('unlink-identity')}
+              contentType="icon"
+              size="small"
+              appearance="secondary"
+              danger
+            />
+          )}
+        </div>
+      </li>
+      <Modal open={modal !== null} onOpenChange={isOpen => !isOpen && closeModal()}>
+        <DialogTitle>{t('unlinkProvider')}</DialogTitle>
+        <p>{t('doYouReallyWantToUnlinkThisProvider', { provider: identity.provider })}</p>
+        <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:justify-end [&>*]:flex-1">
+          <Button label={t('cancel')} onClick={closeModal} />
           <Button
-            label={t('unlink')}
-            icon={<UnlinkIcon />}
+            label={t('unlinkProvider')}
             onClick={() => mutate()}
-            contentType="icon"
-            appearance="tertiary"
+            appearance="primary"
             danger
             loading={isPending}
           />
-        )}
-      </div>
-    </li>
+        </div>
+      </Modal>
+    </>
   )
 }
 
@@ -84,7 +108,7 @@ export function OAuthSettings({
   })
 
   return (
-    <section className="rounded-lg bg-slate-800 p-6">
+    <section id="oauth" className="rounded-lg bg-slate-800 p-6">
       <h2>{t('headline')}</h2>
       <p className="mb-5 text-slate-300">{t('description')}</p>
       <ul className="mb-5 grid gap-3">

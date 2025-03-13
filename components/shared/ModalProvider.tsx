@@ -4,7 +4,6 @@ import { Loader2 } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { parseAsStringLiteral, useQueryState } from 'nuqs'
 import Modal from '../Modal'
-import { ReactElement } from 'react'
 import { DialogTitle } from '@radix-ui/react-dialog'
 import { useTranslations } from 'next-intl'
 
@@ -90,11 +89,11 @@ export const ModalProvider = () => {
   } as const
   const close = () => setModal(null)
 
-  const ModalContent = modal && modals[modal].component
-  const title = modal && modals[modal].title
+  const ModalContent = modal && modals[modal]?.component
+  const title = modal && modals[modal]?.title
 
   return (
-    <Modal open={modal !== null} onOpenChange={isOpen => !isOpen && close()}>
+    <Modal open={modal !== null && !!modals[modal]} onOpenChange={isOpen => !isOpen && close()}>
       <DialogTitle>{title}</DialogTitle>
       {ModalContent && <ModalContent isNew={modal?.startsWith('add')} close={close} />}
     </Modal>

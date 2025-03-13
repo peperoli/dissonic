@@ -69,7 +69,9 @@
     "createAccount": "Create account",
     "emailAlreadyInUseError": "This e-mail address is already linked to a user.",
     "successMessage": "Success! You will shortly receive an e-mail in which you can confirm your registration.",
-    "genericError": "An error has occurred. Please try again.",
+    "genericError": "An error has occurred. Please try again."
+  },
+  "OAuthButtons": {
     "or": "or",
     "continueWithGoogle": "Continue with Google",
     "continueWithSpotify": "Continue with Spotify"
@@ -550,8 +552,10 @@
     "description": "Link your account to third-party authentication providers. This allows you to log in with an existing account.",
     "linkWithGoogle": "Link with Google",
     "linkedAtDate": "Linked at {date}",
-    "unlink": "Unlink",
-    "identityUnlinked": "Identity unlinked"
+    "unlinkProvider": "Unlink provider",
+    "doYouReallyWantToUnlinkThisProvider": "Do you really want to unlink {provider}?",
+    "cancel": "Cancel",
+    "providerUnlinked": "Provider unlinked"
   },
   "useEditUser": {
     "userSaved": "User saved"
