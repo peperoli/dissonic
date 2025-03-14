@@ -4,7 +4,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import { Button } from '../Button'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { linkIdentity, unlinkIdentity } from '@/actions/auth'
-import { SiGoogle } from '@icons-pack/react-simple-icons'
+import { SiGoogle, SiSpotify } from '@icons-pack/react-simple-icons'
 import { UserIdentity } from '@supabase/supabase-js'
 import { MailIcon, UnlinkIcon } from 'lucide-react'
 import { useUserIdentities } from '@/hooks/auth/useUserIdentities'
@@ -50,6 +50,8 @@ function IdentityItem({
             <MailIcon className="size-icon flex-none" />
           ) : identity.provider === 'google' ? (
             <SiGoogle className="size-icon flex-none text-[#4285F4]" />
+          ) : identity.provider === 'spotify' ? (
+            <SiSpotify className="size-icon flex-none text-[#1ED760]" />
           ) : null}
           <div>
             <p className="font-bold capitalize">{identity.provider}</p>
@@ -106,6 +108,10 @@ export function OAuthSettings({
     mutationFn: () => linkIdentity('google'),
     onError: error => console.error(error),
   })
+  const linkSpotify = useMutation({
+    mutationFn: () => linkIdentity('spotify'),
+    onError: error => console.error(error),
+  })
 
   return (
     <section id="oauth" className="rounded-lg bg-slate-800 p-6">
@@ -120,14 +126,24 @@ export function OAuthSettings({
           />
         ))}
       </ul>
-      {!userIdentities?.some(identity => identity.provider === 'google') && (
-        <Button
-          label={t('linkWithGoogle')}
-          onClick={() => linkGoogle.mutate()}
-          icon={<SiGoogle className="size-icon" />}
-          loading={linkGoogle.isPending}
-        />
-      )}
+      <div className="flex flex-wrap gap-3">
+        {!userIdentities?.some(identity => identity.provider === 'google') && (
+          <Button
+            label={t('linkWithGoogle')}
+            onClick={() => linkGoogle.mutate()}
+            icon={<SiGoogle className="size-icon" />}
+            loading={linkGoogle.isPending}
+          />
+        )}
+        {!userIdentities?.some(identity => identity.provider === 'spotify') && (
+          <Button
+            label={t('linkWithSpotify')}
+            onClick={() => linkSpotify.mutate()}
+            icon={<SiSpotify className="size-icon" />}
+            loading={linkSpotify.isPending}
+          />
+        )}
+      </div>
     </section>
   )
 }

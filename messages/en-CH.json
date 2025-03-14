@@ -551,6 +551,7 @@
     "headline": "OAuth settings",
     "description": "Link your account to third-party authentication providers. This allows you to log in with an existing account.",
     "linkWithGoogle": "Link with Google",
+    "linkWithSpotify": "Link with Spotify",
     "linkedAtDate": "Linked at {date}",
     "unlinkProvider": "Unlink provider",
     "doYouReallyWantToUnlinkThisProvider": "Do you really want to unlink {provider}?",

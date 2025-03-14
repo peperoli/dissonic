@@ -551,6 +551,7 @@
     "headline": "OAuth-Einstellungen",
     "description": "Verknüpfe dein Konto mit Drittanbietern. Das ermöglicht dir, dich mit einem bestehenden Konto anzumelden.",
     "linkWithGoogle": "Mit Google verknüpfen",
+    "linkWithSpotify": "Mit Spotify verknüpfen",
     "linkedAtDate": "Verknüpft am {date}",
     "unlinkProvider": "Verknüpfung aufheben",
     "doYouReallyWantToUnlinkThisProvider": "Willst du die Verknüpfung mit {provider} wirklich aufheben?",
