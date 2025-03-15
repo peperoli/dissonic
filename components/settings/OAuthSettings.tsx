@@ -4,7 +4,6 @@ import { useLocale, useTranslations } from 'next-intl'
 import { Button } from '../Button'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { linkIdentity, unlinkIdentity } from '@/actions/auth'
-import { SiGoogle, SiSpotify } from '@icons-pack/react-simple-icons'
 import { UserIdentity } from '@supabase/supabase-js'
 import { MailIcon, UnlinkIcon } from 'lucide-react'
 import { useUserIdentities } from '@/hooks/auth/useUserIdentities'
@@ -12,6 +11,8 @@ import toast from 'react-hot-toast'
 import { useQueryState } from 'nuqs'
 import Modal from '../Modal'
 import { DialogTitle } from '@radix-ui/react-dialog'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faGoogle, faMicrosoft } from '@fortawesome/free-brands-svg-icons'
 
 function IdentityItem({
   identity,
@@ -49,12 +50,14 @@ function IdentityItem({
           {identity.provider === 'email' ? (
             <MailIcon className="size-icon flex-none" />
           ) : identity.provider === 'google' ? (
-            <SiGoogle className="size-icon flex-none text-[#4285F4]" />
-          ) : identity.provider === 'spotify' ? (
-            <SiSpotify className="size-icon flex-none text-[#1ED760]" />
+            <FontAwesomeIcon icon={faGoogle} className="size-icon flex-none" />
+          ) : identity.provider === 'azure' ? (
+            <FontAwesomeIcon icon={faMicrosoft} className="size-icon flex-none" />
           ) : null}
           <div>
-            <p className="font-bold capitalize">{identity.provider}</p>
+            <p className="font-bold capitalize">
+              {identity.provider === 'azure' ? 'Azure (Microsoft)' : identity.provider}
+            </p>
             <p className="text-sm text-slate-300">
               {identity.identity_data?.email}
               {identity.identity_data?.full_name && (
@@ -81,7 +84,11 @@ function IdentityItem({
       </li>
       <Modal open={modal !== null} onOpenChange={isOpen => !isOpen && closeModal()}>
         <DialogTitle>{t('unlinkProvider')}</DialogTitle>
-        <p>{t('doYouReallyWantToUnlinkThisProvider', { provider: identity.provider })}</p>
+        <p>
+          {t.rich('doYouReallyWantToUnlinkThisProvider', {
+            provider: () => <strong className="capitalize">{identity.provider}</strong>,
+          })}
+        </p>
         <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:justify-end [&>*]:flex-1">
           <Button label={t('cancel')} onClick={closeModal} />
           <Button
@@ -108,8 +115,8 @@ export function OAuthSettings({
     mutationFn: () => linkIdentity('google'),
     onError: error => console.error(error),
   })
-  const linkSpotify = useMutation({
-    mutationFn: () => linkIdentity('spotify'),
+  const linkMicrosoft = useMutation({
+    mutationFn: () => linkIdentity('azure'),
     onError: error => console.error(error),
   })
 
@@ -131,16 +138,16 @@ export function OAuthSettings({
           <Button
             label={t('linkWithGoogle')}
             onClick={() => linkGoogle.mutate()}
-            icon={<SiGoogle className="size-icon" />}
+            icon={<FontAwesomeIcon icon={faGoogle} className="size-icon" />}
             loading={linkGoogle.isPending}
           />
         )}
-        {!userIdentities?.some(identity => identity.provider === 'spotify') && (
+        {!userIdentities?.some(identity => identity.provider === 'azure') && (
           <Button
-            label={t('linkWithSpotify')}
-            onClick={() => linkSpotify.mutate()}
-            icon={<SiSpotify className="size-icon" />}
-            loading={linkSpotify.isPending}
+            label={t('linkWithMicrosoft')}
+            onClick={() => linkMicrosoft.mutate()}
+            icon={<FontAwesomeIcon icon={faMicrosoft} className="size-icon" />}
+            loading={linkMicrosoft.isPending}
           />
         )}
       </div>

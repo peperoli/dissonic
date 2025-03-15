@@ -74,7 +74,7 @@
   "OAuthButtons": {
     "or": "or",
     "continueWithGoogle": "Continue with Google",
-    "continueWithSpotify": "Continue with Spotify"
+    "continueWithMicrosoft": "Continue with Microsoft"
   },
   "LoginPage": {
     "loginToTrackConcerts": "Login to track concerts",
@@ -551,10 +551,10 @@
     "headline": "OAuth settings",
     "description": "Link your account to third-party authentication providers. This allows you to log in with an existing account.",
     "linkWithGoogle": "Link with Google",
-    "linkWithSpotify": "Link with Spotify",
+    "linkWithMicrosoft": "Link with Microsoft",
     "linkedAtDate": "Linked at {date}",
     "unlinkProvider": "Unlink provider",
-    "doYouReallyWantToUnlinkThisProvider": "Do you really want to unlink {provider}?",
+    "doYouReallyWantToUnlinkThisProvider": "Do you really want to unlink <provider></provider>?",
     "cancel": "Cancel",
     "providerUnlinked": "Provider unlinked"
   },

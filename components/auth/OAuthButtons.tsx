@@ -4,8 +4,9 @@ import { Button } from '../Button'
 import { signInWithOAuth } from '../../actions/auth'
 import { useTranslations } from 'next-intl'
 import { useMutation } from '@tanstack/react-query'
-import { SiGoogle, SiSpotify } from '@icons-pack/react-simple-icons'
 import { useSearchParams } from 'next/navigation'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faGoogle, faMicrosoft } from '@fortawesome/free-brands-svg-icons'
 
 export function OAuthButtons() {
   const searchParams = useSearchParams()
@@ -14,8 +15,8 @@ export function OAuthButtons() {
     mutationFn: () => signInWithOAuth('google', redirect),
     onError: error => console.error(error),
   })
-  const signInWithSpotify = useMutation({
-    mutationFn: () => signInWithOAuth('spotify', redirect),
+  const signInWithMicrosoft = useMutation({
+    mutationFn: () => signInWithOAuth('azure', redirect),
     onError: error => console.error(error),
   })
   const t = useTranslations('OAuthButtons')
@@ -26,16 +27,16 @@ export function OAuthButtons() {
       <Button
         label={t('continueWithGoogle')}
         onClick={() => signInWithGoogle.mutate()}
-        icon={<SiGoogle className="size-icon" />}
+        icon={<FontAwesomeIcon icon={faGoogle} className="size-icon" />}
         appearance="secondary"
         loading={signInWithGoogle.status === 'pending'}
       />
       <Button
-        label={t('continueWithSpotify')}
-        onClick={() => signInWithSpotify.mutate()}
-        icon={<SiSpotify className="size-icon" />}
+        label={t('continueWithMicrosoft')}
+        onClick={() => signInWithMicrosoft.mutate()}
+        icon={<FontAwesomeIcon icon={faMicrosoft} className="size-icon" />}
         appearance="secondary"
-        loading={signInWithSpotify.status === 'pending'}
+        loading={signInWithMicrosoft.status === 'pending'}
       />
     </div>
   )

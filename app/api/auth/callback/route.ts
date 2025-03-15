@@ -6,10 +6,9 @@ export async function GET(request: Request) {
   const code = searchParams.get('code')
   const next = searchParams.get('next') ?? '/'
   const error = searchParams.get('error')
-  const error_description = searchParams.get('error_description')
 
   if (error) {
-    return new Response('Error: ' + error_description, { status: 400 }) 
+    return NextResponse.redirect(`${origin}/api/auth/callback-error?${searchParams.toString()}`)
   }
 
   if (code) {
@@ -36,7 +35,12 @@ export async function GET(request: Request) {
         // create a new profile for the user if it doesn't exist already
         const { error: profileError } = await supabase
           .from('profiles')
-          .insert({ id: user.id, username: encodeURIComponent(user.user_metadata.full_name) })
+          .insert({
+            id: user.id,
+            username: user.user_metadata.full_name
+              ? encodeURIComponent(user.user_metadata.full_name)
+              : new Date().getTime().toString(),
+          })
 
         if (profileError) {
           throw profileError
