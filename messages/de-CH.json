@@ -74,7 +74,7 @@
   "OAuthButtons": {
     "or": "oder",
     "continueWithGoogle": "Mit Google fortfahren",
-    "continueWithMicrosoft": "Continue with Microsoft"
+    "continueWithMicrosoft": "Mit Microsoft fortfahren"
   },
   "LoginPage": {
     "loginToTrackConcerts": "Anmelden, um Konzerte zu tracken",
