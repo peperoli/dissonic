@@ -55,8 +55,6 @@
     "seeYourConcertHistoryAndStatistics": "Sieh deine Konzert-Historie und Statistiken",
     "commentOnConcertsAndReactToComments": "Kommentiere Konzerte und reagiere auf Kommentare",
     "contributeConcertsBandsAndLocations": "Erstelle und bearbeite Konzerte, Bands und Lokale",
-    "emailAlreadyInUseError": "Diese E-Mail ist bereits mit einem Benutzer verknüpft.",
-    "successMessage": "Erfolgreich! Bestätige deine E-Mail-Adresse, um dein Benutzerkonto zu aktivieren.",
     "doYouHavAnAccountAlready": "Hast du bereits ein Konto?",
     "login": "Anmelden"
   },
@@ -68,7 +66,15 @@
     "usernameTakenError": "Dieser Benutzername ist bereits vergeben. Probiere, kreativ zu sein.",
     "password": "Passwort",
     "passwordLengthError": "Das Passwort muss mindestens 12 Zeichen lang sein.",
-    "createAccount": "Konto erstellen"
+    "createAccount": "Konto erstellen",
+    "emailAlreadyInUseError": "Diese E-Mail ist bereits mit einem Benutzer verknüpft.",
+    "genericError": "Es ist ein Fehler aufgetreten. Bitte versuche es erneut.",
+    "successMessage": "Erfolgreich! Bestätige deine E-Mail-Adresse, um dein Benutzerkonto zu aktivieren."
+  },
+  "OAuthButtons": {
+    "or": "oder",
+    "continueWithGoogle": "Mit Google fortfahren",
+    "continueWithMicrosoft": "Mit Microsoft fortfahren"
   },
   "LoginPage": {
     "loginToTrackConcerts": "Anmelden, um Konzerte zu tracken",
@@ -540,6 +546,17 @@
     "save": "Speichern",
     "errorMessage": "Es ist ein Fehler aufgetreten. Bitte versuche es erneut.",
     "successMessage": "Du erhältst in Kürze eine E-Mail, in dem du die Änderung bestätigen kannst."
+  },
+  "OAuthSettings": {
+    "headline": "OAuth-Einstellungen",
+    "description": "Verknüpfe dein Konto mit Drittanbietern. Das ermöglicht dir, dich mit einem bestehenden Konto anzumelden.",
+    "linkWithGoogle": "Mit Google verknüpfen",
+    "linkWithMicrosoft": "Mit Microsoft verknüpfen",
+    "linkedAtDate": "Verknüpft am {date}",
+    "unlinkProvider": "Verknüpfung aufheben",
+    "doYouReallyWantToUnlinkThisProvider": "Willst du die Verknüpfung mit <provider></provider> wirklich aufheben?",
+    "cancel": "Abbrechen",
+    "providerUnlinked": "Verknüpfung aufgehoben"
   },
   "useEditUser": {
     "userSaved": "Konto gespeichert"

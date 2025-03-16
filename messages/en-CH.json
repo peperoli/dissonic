@@ -55,8 +55,6 @@
     "seeYourConcertHistoryAndStatistics": "See your concert history and statistics",
     "commentOnConcertsAndReactToComments": "Comment on concerts and react to comments",
     "contributeConcertsBandsAndLocations": "Contribute to concerts, bands and locations",
-    "emailAlreadyInUseError": "This e-mail address is already linked to a user.",
-    "successMessage": "Success! You will shortly receive an e-mail in which you can confirm your registration.",
     "doYouHavAnAccountAlready": "Do you have an account already?",
     "login": "Login"
   },
@@ -68,7 +66,15 @@
     "usernameTakenError": "This username is already taken. Try being creative.",
     "password": "Password",
     "passwordLengthError": "The password must be at least 12 characters long.",
-    "createAccount": "Create account"
+    "createAccount": "Create account",
+    "emailAlreadyInUseError": "This e-mail address is already linked to a user.",
+    "successMessage": "Success! You will shortly receive an e-mail in which you can confirm your registration.",
+    "genericError": "An error has occurred. Please try again."
+  },
+  "OAuthButtons": {
+    "or": "or",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithMicrosoft": "Continue with Microsoft"
   },
   "LoginPage": {
     "loginToTrackConcerts": "Login to track concerts",
@@ -540,6 +546,17 @@
     "save": "Save",
     "errorMessage": "An error has occurred. Please try again.",
     "successMessage": "You will shortly receive an e-mail in which you can confirm the change."
+  },
+  "OAuthSettings": {
+    "headline": "OAuth settings",
+    "description": "Link your account to third-party authentication providers. This allows you to log in with an existing account.",
+    "linkWithGoogle": "Link with Google",
+    "linkWithMicrosoft": "Link with Microsoft",
+    "linkedAtDate": "Linked at {date}",
+    "unlinkProvider": "Unlink provider",
+    "doYouReallyWantToUnlinkThisProvider": "Do you really want to unlink <provider></provider>?",
+    "cancel": "Cancel",
+    "providerUnlinked": "Provider unlinked"
   },
   "useEditUser": {
     "userSaved": "User saved"
