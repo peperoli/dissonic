@@ -61,10 +61,10 @@ enable_confirmations = false
 # Use an external OAuth provider. The full list of providers are: `apple`, `azure`, `bitbucket`,
 # `discord`, `facebook`, `github`, `gitlab`, `google`, `keycloak`, `linkedin`, `notion`, `twitch`,
 # `twitter`, `slack`, `spotify`, `workos`, `zoom`.
-[auth.external.apple]
-enabled = false
-client_id = ""
-secret = ""
+[auth.external.google]
+enabled = true
+client_id = "1087944860873-uk8ull681im15vhck3p1va1rbp3dt1p8.apps.googleusercontent.com "
+secret = "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"
 # Overrides the default auth redirectUrl.
 redirect_uri = ""
 # Overrides the default auth provider URL. Used to support self-hosted gitlab, single-tenant Azure,

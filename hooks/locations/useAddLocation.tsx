@@ -2,7 +2,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AddLocation } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
-import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
@@ -15,7 +14,15 @@ const addLocation = async (formData: AddLocation & { imageFile: File | string | 
 
   const { data, error } = await supabase
     .from('locations')
-    .insert({ ...formData, image: imagePath })
+    .insert({
+      name: formData.name,
+      zip_code: formData.zip_code,
+      city: formData.city,
+      country_id: formData.country_id,
+      alt_names: formData.alt_names,
+      website: formData.website,
+      image: imagePath,
+    })
     .select()
     .single()
 

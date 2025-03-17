@@ -50,3 +50,4 @@ public/workbox-*.js
 
 # Misc
 .tool-versions
+certificates
