@@ -53,7 +53,7 @@ export const useEditProfile = () => {
 
   return useMutation({
     mutationFn: editProfile,
-    onError: error => console.error(error),
+    onError: error => { console.error(error); toast.error(error.message)},
     onSuccess: ({ profileId }) => {
       queryClient.invalidateQueries({ queryKey: ['profile', profileId] })
       toast.success(t('profileSaved'))

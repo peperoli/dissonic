@@ -1,5 +1,6 @@
 import supabase from '@/utils/supabase/client'
 import { useMutation } from '@tanstack/react-query'
+import toast from 'react-hot-toast'
 
 async function resetPassword(email: string) {
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -12,5 +13,11 @@ async function resetPassword(email: string) {
 }
 
 export function useResetPassword() {
-  return useMutation({ mutationFn: resetPassword, onError: error => console.error(error) })
+  return useMutation({
+    mutationFn: resetPassword,
+    onError: error => {
+      console.error(error)
+      toast.error(error.message)
+    },
+  })
 }

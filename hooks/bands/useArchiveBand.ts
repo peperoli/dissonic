@@ -22,7 +22,7 @@ export const useArchiveBand = () => {
 
   return useMutation({
     mutationFn: archiveBand,
-    onError: error => console.error(error),
+    onError: error => { console.error(error); toast.error(error.message)},
     onSuccess: ({ bandId }) => {
       queryClient.invalidateQueries({ queryKey: ['band', bandId] })
       toast.success(t('bandArchived'))

@@ -7,11 +7,6 @@ import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 
 const addLocation = async (formData: AddLocation & { imageFile: File | string | null }) => {
-  const imagePath =
-    formData.imageFile instanceof File
-      ? `locations/${formData.id}.${formData.imageFile?.name.split('.').at(-1)}`
-      : formData.imageFile
-
   const { data, error } = await supabase
     .from('locations')
     .insert({
@@ -21,7 +16,6 @@ const addLocation = async (formData: AddLocation & { imageFile: File | string | 
       country_id: formData.country_id,
       alt_names: formData.alt_names,
       website: formData.website,
-      image: imagePath,
     })
     .select()
     .single()
@@ -30,6 +24,11 @@ const addLocation = async (formData: AddLocation & { imageFile: File | string | 
     throw error
   }
 
+  const imagePath =
+    formData.imageFile instanceof File
+      ? `locations/${data.id}.${formData.imageFile?.name.split('.').at(-1)}`
+      : formData.imageFile
+
   if (formData.imageFile && imagePath) {
     const { error: imageError } = await supabase.storage
       .from('ressources')
@@ -37,6 +36,17 @@ const addLocation = async (formData: AddLocation & { imageFile: File | string | 
 
     if (imageError) {
       throw imageError
+    }
+
+    const { error: updateImageError } = await supabase
+      .from('locations')
+      .update({
+        image: imagePath,
+      })
+      .eq('id', data.id)
+
+    if (updateImageError) {
+      throw updateImageError
     }
   }
 
@@ -50,17 +60,20 @@ export const useAddLocation = () => {
 
   return useMutation({
     mutationFn: addLocation,
-    onError: error => console.error(error),
+    onError: error => {
+      console.error(error)
+      toast.error(error.message)
+    },
     onSuccess: ({ locationId }) => {
       queryClient.invalidateQueries({ queryKey: ['locations'] })
       setModal(null)
       toast.success(
-        <>
+        <div className="flex items-center gap-3">
           {t('locationAdded')}
           <Link href={`/locations/${locationId}`} className="btn btn-small btn-tertiary">
             {t('open')}
           </Link>
-        </>
+        </div>
       )
     },
   })

@@ -26,7 +26,7 @@ function IdentityItem({
   const closeModal = () => setModal(null)
   const { mutate, isPending } = useMutation({
     mutationFn: () => unlinkIdentity(identity),
-    onError: error => console.error(error),
+    onError: error => { console.error(error); toast.error(error.message)},
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user-identities'] })
       closeModal()
@@ -113,11 +113,11 @@ export function OAuthSettings({
   const t = useTranslations('OAuthSettings')
   const linkGoogle = useMutation({
     mutationFn: () => linkIdentity('google'),
-    onError: error => console.error(error),
+    onError: error => { console.error(error); toast.error(error.message)},
   })
   const linkMicrosoft = useMutation({
     mutationFn: () => linkIdentity('azure'),
-    onError: error => console.error(error),
+    onError: error => { console.error(error); toast.error(error.message)},
   })
 
   return (

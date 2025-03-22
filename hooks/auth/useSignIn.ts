@@ -12,7 +12,7 @@ export function useSignIn() {
 
   return useMutation({
     mutationFn: signIn,
-    onError: error => console.error(error),
+    onError: error => { console.error(error); toast.error(error.message)},
     onSuccess: () => {
       push(redirect ? redirect : '/')
       toast.success(t('loggedIn'))

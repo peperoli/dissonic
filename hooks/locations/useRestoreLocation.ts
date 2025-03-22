@@ -22,7 +22,7 @@ export const useRestoreLocation = () => {
 
   return useMutation({
     mutationFn: restoreLocation,
-    onError: error => console.error(error),
+    onError: error => { console.error(error); toast.error(error.message)},
     onSuccess: ({ locationId }) => {
       queryClient.invalidateQueries({ queryKey: ['location', locationId] })
       toast.success(t('locationArchived'))

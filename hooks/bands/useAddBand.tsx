@@ -42,17 +42,17 @@ export const useAddBand = () => {
 
   return useMutation({
     mutationFn: addBand,
-    onError: error => console.error(error),
+    onError: error => { console.error(error); toast.error(error.message)},
     onSuccess: ({ bandId }) => {
       queryClient.invalidateQueries({ queryKey: ['bands'] })
       setModal(null)
       toast.success(
-        <>
+        <div className="flex items-center gap-3">
           {t('bandAdded')}
           <Link href={`/bands/${bandId}`} className="btn btn-small btn-tertiary">
             {t('open')}
           </Link>
-        </>
+        </div>
       )
     },
   })

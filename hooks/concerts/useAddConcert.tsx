@@ -47,17 +47,17 @@ export const useAddConcert = () => {
 
   return useMutation({
     mutationFn: addConcert,
-    onError: error => console.error(error),
+    onError: error => { console.error(error); toast.error(error.message)},
     onSuccess: ({ concertId }) => {
       setModal(null)
       queryClient.invalidateQueries({ queryKey: ['concerts'] })
       toast.success(
-        <>
+        <div className="flex items-center gap-3">
           {t('concertAdded')}
           <Link href={`/concerts/${concertId}`} className="btn btn-small btn-tertiary">
             {t('open')}
           </Link>
-        </>
+        </div>
       )
     },
   })

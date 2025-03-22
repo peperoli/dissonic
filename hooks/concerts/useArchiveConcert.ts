@@ -22,7 +22,7 @@ export const useArchiveConcert = () => {
 
   return useMutation({
     mutationFn: archiveConcert,
-    onError: error => console.error(error),
+    onError: error => { console.error(error); toast.error(error.message)},
     onSuccess: ({ concertId }) => {
       queryClient.invalidateQueries({ queryKey: ['concert', concertId] })
       toast.success(t('concertArchived'))

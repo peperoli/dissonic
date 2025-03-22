@@ -19,7 +19,7 @@ export const useEditUser = () => {
 
   return useMutation({
     mutationFn: editUser,
-    onError: error => console.error(error),
+    onError: error => { console.error(error); toast.error(error.message)},
     onSuccess: () => toast.success(t('userSaved')),
   })
 }

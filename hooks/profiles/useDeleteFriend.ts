@@ -23,7 +23,7 @@ export function useDeleteFriend() {
 
   return useMutation({
     mutationFn: deleteFriend,
-    onError: error => console.error(error),
+    onError: error => { console.error(error); toast.error(error.message)},
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['friends'] })
       setModal(null)

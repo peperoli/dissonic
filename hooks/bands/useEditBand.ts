@@ -82,7 +82,7 @@ export const useEditBand = () => {
 
   return useMutation({
     mutationFn: editBand,
-    onError: error => console.error(error),
+    onError: error => { console.error(error); toast.error(error.message)},
     onSuccess: ({ bandId, spotifyArtistId }) => {
       queryClient.invalidateQueries({ queryKey: ['band', bandId] })
       queryClient.invalidateQueries({ queryKey: ['spotifyArtist', spotifyArtistId] })

@@ -20,7 +20,7 @@ export const useAddFestivalRoot = () => {
 
   return useMutation({
     mutationFn: addFestivalRoot,
-    onError: error => console.error(error),
+    onError: error => { console.error(error); toast.error(error.message)},
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['festivalRoots'] })
       setModal(null)

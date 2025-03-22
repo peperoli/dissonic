@@ -83,16 +83,17 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             </Tooltip.Provider>
             <Toaster
               toastOptions={{
-                duration: 5000,
                 style: {
                   background: fullConfig.theme.colors.slate['900'],
                   color: fullConfig.theme.colors.white,
                 },
                 success: {
-                  icon: <CheckCircleIcon className="size-icon text-venom" />,
+                  icon: <CheckCircleIcon className="size-icon text-venom flex-none" />,
+                  duration: 5000,
                 },
                 error: {
-                  icon: <AlertCircleIcon className="size-icon text-red" />,
+                  icon: <AlertCircleIcon className="size-icon text-red flex-none" />,
+                  duration: 10000,
                 },
               }}
             />

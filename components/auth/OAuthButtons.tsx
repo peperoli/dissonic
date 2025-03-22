@@ -7,17 +7,24 @@ import { useMutation } from '@tanstack/react-query'
 import { useSearchParams } from 'next/navigation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGoogle, faMicrosoft } from '@fortawesome/free-brands-svg-icons'
+import toast from 'react-hot-toast'
 
 export function OAuthButtons() {
   const searchParams = useSearchParams()
   const redirect = searchParams.get('redirect')
   const signInWithGoogle = useMutation({
     mutationFn: () => signInWithOAuth('google', redirect),
-    onError: error => console.error(error),
+    onError: error => {
+      console.error(error)
+      toast.error(error.message)
+    },
   })
   const signInWithMicrosoft = useMutation({
     mutationFn: () => signInWithOAuth('azure', redirect),
-    onError: error => console.error(error),
+    onError: error => {
+      console.error(error)
+      toast.error(error.message)
+    },
   })
   const t = useTranslations('OAuthButtons')
 

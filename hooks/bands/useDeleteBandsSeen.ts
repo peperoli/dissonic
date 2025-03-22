@@ -1,6 +1,7 @@
 import supabase from '@/utils/supabase/client'
 import { BandSeen } from '@/types/types'
 import { useMutation } from '@tanstack/react-query'
+import toast from 'react-hot-toast'
 
 async function deleteBandsSeen(bandsSeen: BandSeen[]) {
   const bandsSeenIds = bandsSeen.map(item => item.band_id)
@@ -22,5 +23,11 @@ async function deleteBandsSeen(bandsSeen: BandSeen[]) {
 }
 
 export function useDeleteBandsSeen() {
-  return useMutation({ mutationFn: deleteBandsSeen, onError: error => console.error(error) })
+  return useMutation({
+    mutationFn: deleteBandsSeen,
+    onError: error => {
+      console.error(error)
+      toast.error(error.message)
+    },
+  })
 }

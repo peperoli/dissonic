@@ -22,7 +22,7 @@ export const useRestoreConcert = () => {
 
   return useMutation({
     mutationFn: restoreConcert,
-    onError: error => console.error(error),
+    onError: error => { console.error(error); toast.error(error.message)},
     onSuccess: ({ concertId }) => {
       queryClient.invalidateQueries({ queryKey: ['concert', concertId] })
       toast.success(t('concertRestored'))

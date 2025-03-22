@@ -22,7 +22,7 @@ export const useAddFriend = () => {
 
   return useMutation({
     mutationFn: addFriend,
-    onError: error => console.error(error),
+    onError: error => { console.error(error); toast.error(error.message)},
     onSuccess: ({ senderId, receiverId }) => {
       queryClient.invalidateQueries({ queryKey: ['profile', receiverId] })
       queryClient.invalidateQueries({ queryKey: ['friends', senderId] })

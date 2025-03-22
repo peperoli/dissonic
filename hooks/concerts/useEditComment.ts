@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EditComment } from '@/types/types'
 import supabase from '@/utils/supabase/client'
+import toast from 'react-hot-toast'
 
 const editComment = async (comment: EditComment) => {
   if (!comment.id) {
@@ -25,7 +26,10 @@ export const useEditComment = () => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: editComment,
-    onError: error => console.error(error),
+    onError: error => {
+      console.error(error)
+      toast.error(error.message)
+    },
     onSuccess: ({ concertId }) =>
       queryClient.invalidateQueries({ queryKey: ['comments', concertId] }),
   })

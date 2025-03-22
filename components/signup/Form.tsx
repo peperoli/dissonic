@@ -10,6 +10,7 @@ import { useTranslations } from 'next-intl'
 import { StatusBanner } from '../forms/StatusBanner'
 import { useMutation } from '@tanstack/react-query'
 import { OAuthButtons } from '../auth/OAuthButtons'
+import toast from 'react-hot-toast'
 
 export const Form = () => {
   const {
@@ -20,7 +21,10 @@ export const Form = () => {
   const { data: profiles } = useProfiles()
   const signUp = useMutation({
     mutationFn: signUpAction,
-    onError: error => console.error(error),
+    onError: error => {
+      console.error(error)
+      toast.error(error.message)
+    },
   })
 
   const t = useTranslations('SignupForm')
