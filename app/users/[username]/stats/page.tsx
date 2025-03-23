@@ -1,3 +1,4 @@
+import { Comparison } from '@/components/profile/Comparison'
 import { ConcertsByWeekday } from '@/components/profile/ConcertsByWeekday'
 import { ConcertsByYear } from '@/components/profile/ConcertsByYear'
 import { ConcertStats } from '@/components/profile/ConcertStats'
@@ -9,6 +10,10 @@ import { createClient } from '@/utils/supabase/server'
 async function fetchData(username: string) {
   const supabase = await createClient()
 
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+
   const { data: profile, error } = await supabase
     .from('profiles')
     .select('id')
@@ -19,16 +24,17 @@ async function fetchData(username: string) {
     throw error
   }
 
-  return { profile }
+  return { session, profile }
 }
 
 export default async function Page({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params
-  const { profile } = await fetchData(username)
+  const { profile, session } = await fetchData(username)
   return (
     <section className="grid gap-4">
+      {session && session.user.id !== profile.id && <Comparison profileId={profile.id} />}
       <TopBands profileId={profile.id} />
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid gap-4 md:grid-cols-2">
         <PieCharts profileId={profile.id} />
         <ConcertsByWeekday profileId={profile.id} />
       </div>
