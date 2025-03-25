@@ -61,7 +61,7 @@ async function fetchData(view: string = 'global') {
     .order('item_index', { referencedTable: 'j_concert_bands', ascending: true })
     .limit(25)
     .limit(5, { referencedTable: 'j_concert_bands' })
-    .returns<Concert[]>()
+    .overrideTypes<Concert[]>()
 
   if (error) {
     throw error

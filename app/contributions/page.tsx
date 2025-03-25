@@ -35,7 +35,7 @@ async function fetchData({ searchParams }: { searchParams: ContributionFetchOpti
   }
 
   if (searchParams.ressourceId) {
-    query = query.eq('ressource_id', searchParams.ressourceId)
+    query = query.eq('ressource_id', parseInt(searchParams.ressourceId))
   }
 
   if (searchParams.userId) {
