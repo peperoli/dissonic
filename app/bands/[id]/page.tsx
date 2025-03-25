@@ -34,7 +34,7 @@ async function fetchData(params: { id: string }) {
       genres(*),
       creator:profiles!bands_creator_id_fkey(*)`
     )
-    .eq('id', params.id)
+    .eq('id', parseInt(params.id))
     .single()
 
   if (error) {

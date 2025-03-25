@@ -65,7 +65,7 @@ const fetchConcerts = async (options?: ConcertFetchOptions) => {
 
   const { data, count, error } = await filteredQuery
     .order('item_index', { referencedTable: 'j_concert_bands', ascending: true })
-    .returns<Concert[]>()
+    .overrideTypes<Concert[], { merge: false }>()
 
   if (error) {
     throw error

@@ -41,8 +41,8 @@ async function fetchConcert(concertId: Concert['id']) {
     )
     .eq('id', concertId)
     .order('item_index', { referencedTable: 'j_concert_bands', ascending: true })
-    .returns<Concert>()
     .single()
+    .overrideTypes<Concert>()
 
   if (error) {
     if (error.code === 'PGRST116') {
