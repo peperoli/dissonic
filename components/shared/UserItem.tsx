@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactElement } from 'react'
 import { Profile } from '../../types/types'
 import Image from 'next/image'
 import { User } from 'lucide-react'
@@ -9,7 +9,7 @@ import { useTranslations } from 'next-intl'
 
 type UserItemProps = {
   user: Profile
-  description?: string | null
+  description?: ReactElement | string | null
   size?: 'lg' | 'md' | 'sm'
   usernameIsHidden?: boolean
   avatarRight?: boolean

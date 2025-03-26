@@ -22,7 +22,9 @@ export const FriendItem = ({ friend, profileId }: FriendItemProps) => {
   const [__, setFriendId] = useQueryState('friendId', { history: 'push' })
   const { data: session } = useSession()
   const t = useTranslations('FriendItem')
+  // @ts-expect-error
   const { data: concerts } = useCompareConcertsSeen(profileId, friend?.id)
+  // @ts-expect-error
   const { data: bands } = useCompareBandsSeen(profileId, friend?.id)
 
   if (!friend) return null

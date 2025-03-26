@@ -457,6 +457,10 @@
     "dToD": "{startDate} to {endDate}",
     "minOneConcertPerMonth": "Minimum one concert per month"
   },
+  "Comparison": {
+    "loading": "Loading ...",
+    "profileComparison": "Profile comparison"
+  },
   "TopBands": {
     "loading": "Loading ...",
     "topBands": "Top bands",
