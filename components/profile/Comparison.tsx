@@ -11,12 +11,13 @@ import { useTranslations } from 'next-intl'
 import clsx from 'clsx'
 import { CalendarIcon, GuitarIcon, MapPinIcon } from 'lucide-react'
 
-function ComparisonChart({
+export function ComparisonChart({
   user1,
   user2,
   user1BandsSeen,
   user2BandsSeen,
   ressourceType,
+  size = 'md',
 }: {
   user1: Profile
   user2: Profile
@@ -29,6 +30,7 @@ function ComparisonChart({
     band: Tables<'bands'> | null
   })[]
   ressourceType: 'concerts' | 'bands' | 'locations'
+  size?: 'sm' | 'md'
 }) {
   const user1ConcertsSeen = new Set(user1BandsSeen.map(bandSeen => bandSeen.concert_id))
   const user2ConcertsSeen = new Set(user2BandsSeen.map(bandSeen => bandSeen.concert_id))
@@ -55,81 +57,117 @@ function ComparisonChart({
         ? user1UniqueBandsSeen.intersection(user2UniqueBandsSeen)
         : user1LocationsSeen.intersection(user2LocationsSeen)
   const total = onlyUser1.union(onlyUser2).union(shared)
-  // const t = useTranslations('ComparisonChart')
+  const t = useTranslations('ComparisonChart')
 
   return (
     <div className="flex items-center gap-2">
-      <div className="relative">
-        <UserItem user={user1} usernameIsHidden />
-        <div className="absolute inset-0 grid place-content-center rounded-full bg-slate-900/20">
-          {ressourceType === 'concerts' ? (
-            <CalendarIcon className="size-icon drop-shadow" />
-          ) : ressourceType === 'bands' ? (
-            <GuitarIcon className="size-icon drop-shadow" />
-          ) : (
-            <MapPinIcon className="size-icon drop-shadow" />
-          )}
+      {size !== 'sm' && (
+        <div className="relative">
+          <UserItem user={user1} usernameIsHidden size={size} />
+          <div className="absolute inset-0 grid place-content-center rounded-full bg-slate-900/20">
+            {ressourceType === 'concerts' ? (
+              <CalendarIcon className="size-icon drop-shadow" />
+            ) : ressourceType === 'bands' ? (
+              <GuitarIcon className="size-icon drop-shadow" />
+            ) : (
+              <MapPinIcon className="size-icon drop-shadow" />
+            )}
+          </div>
         </div>
-      </div>
+      )}
       <div className="flex w-full items-center gap-1">
         <Tooltip
           triggerOnClick
-          content={`Nur ${user1.username}: ${onlyUser1.size} ${ressourceType}`}
+          content={
+            <>
+              <strong>
+                {t(`count_${ressourceType}`, {
+                  count: onlyUser1.size,
+                })}
+              </strong>
+              <br />
+              {t('onlyUsername', { username: user1.username })}
+            </>
+          }
         >
           <div
             className={clsx(
-              'h-4 rounded bg-slate-300',
+              'rounded',
               ressourceType === 'concerts'
                 ? 'bg-venom/40'
                 : ressourceType === 'bands'
                   ? 'bg-blue/40'
-                  : 'bg-purple/40'
+                  : 'bg-purple/40',
+              size === 'sm' ? 'h-2' : 'h-4'
             )}
             style={{ width: `${(onlyUser1.size / total.size) * 100}%` }}
           />
         </Tooltip>
-        <Tooltip triggerOnClick content={`Gemeinsam: ${shared.size} ${ressourceType}`}>
+        <Tooltip
+          triggerOnClick
+          content={
+            <>
+              <strong>{t(`count_${ressourceType}`, { count: shared.size })}</strong>
+              <br />
+              {t('shared')}
+            </>
+          }
+        >
           <div
             className={clsx(
-              'h-4 rounded',
+              'rounded',
               ressourceType === 'concerts'
                 ? 'bg-venom shadow-shine shadow-venom/50'
                 : ressourceType === 'bands'
                   ? 'bg-blue shadow-shine shadow-blue/50'
-                  : 'bg-purple shadow-shine shadow-purple/50'
+                  : 'bg-purple shadow-shine shadow-purple/50',
+              size === 'sm' ? 'h-2' : 'h-4'
             )}
             style={{ width: `${(shared.size / total.size) * 100}%` }}
           />
         </Tooltip>
         <Tooltip
           triggerOnClick
-          content={`Nur ${user2.username}: ${onlyUser2.size} ${ressourceType}`}
+          content={
+            <>
+              <strong>
+                {t(`count_${ressourceType}`, {
+                  count: onlyUser2.size,
+                })}
+              </strong>
+              <br />
+              {t('onlyUsername', { username: user2.username })}
+            </>
+          }
         >
           <div
             className={clsx(
-              'h-4 rounded bg-slate-300',
+              'rounded',
               ressourceType === 'concerts'
                 ? 'bg-venom/40'
                 : ressourceType === 'bands'
                   ? 'bg-blue/40'
-                  : 'bg-purple/40'
+                  : 'bg-purple/40',
+              size === 'sm' ? 'h-2' : 'h-4'
             )}
             style={{ width: `${(onlyUser2.size / total.size) * 100}%` }}
           />
         </Tooltip>
       </div>
-      <div className="relative">
-        <UserItem user={user2} usernameIsHidden />
-        <div className="absolute inset-0 grid place-content-center rounded-full bg-slate-900/20">
-          {ressourceType === 'concerts' ? (
-            <CalendarIcon className="size-icon drop-shadow" />
-          ) : ressourceType === 'bands' ? (
-            <GuitarIcon className="size-icon drop-shadow" />
-          ) : (
-            <MapPinIcon className="size-icon drop-shadow" />
-          )}
+      {size !== 'sm' && (
+        <div className="relative">
+          <UserItem user={user2} usernameIsHidden size={size} />
+          <div className="absolute inset-0 grid place-content-center rounded-full bg-slate-900/20">
+            {ressourceType === 'concerts' ? (
+              <CalendarIcon className="size-icon drop-shadow" />
+            ) : ressourceType === 'bands' ? (
+              <GuitarIcon className="size-icon drop-shadow" />
+            ) : (
+              <MapPinIcon className="size-icon drop-shadow" />
+            )}
+          </div>
         </div>
-      </div>{' '}
+      )}
     </div>
   )
 }

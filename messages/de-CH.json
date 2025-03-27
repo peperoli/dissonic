@@ -461,6 +461,13 @@
     "loading": "Laden ...",
     "profileComparison": "Profilvergleich"
   },
+  "ComparisonChart": {
+    "count_concerts": "{count, plural, =1 {# Konzert} other {# Konzerte}}",
+    "count_bands": "{count, plural, =1 {# Band} other {# Bands}}",
+    "count_locations": "{count, plural, =1 {# Lokal} other {# Lokale}}",
+    "onlyUsername": "Nur {username}",
+    "shared": "Gemeinsam"
+  },
   "TopBands": {
     "loading": "Laden ...",
     "topBands": "Top Bands",

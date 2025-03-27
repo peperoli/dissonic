@@ -9,8 +9,9 @@ import { UserItem } from '../shared/UserItem'
 import { useQueryState } from 'nuqs'
 import { useModal } from '../shared/ModalProvider'
 import { useTranslations } from 'next-intl'
-import { useCompareConcertsSeen } from '@/hooks/profiles/useCompareConcertsSeen'
-import { useCompareBandsSeen } from '@/hooks/profiles/useCompareBandsSeen'
+import { useBandsSeen } from '@/hooks/bands/useBandsSeen'
+import { ComparisonChart } from './Comparison'
+import { useProfile } from '@/hooks/profiles/useProfile'
 
 type FriendItemProps = {
   friend: Profile | null
@@ -21,25 +22,31 @@ export const FriendItem = ({ friend, profileId }: FriendItemProps) => {
   const [_, setModal] = useModal()
   const [__, setFriendId] = useQueryState('friendId', { history: 'push' })
   const { data: session } = useSession()
+  const { data: profile } = useProfile(profileId)
   const t = useTranslations('FriendItem')
-  // @ts-expect-error
-  const { data: concerts } = useCompareConcertsSeen(profileId, friend?.id)
-  // @ts-expect-error
-  const { data: bands } = useCompareBandsSeen(profileId, friend?.id)
+  const { data: user1BandsSeen } = useBandsSeen({ userId: friend?.id })
+  const { data: user2BandsSeen } = useBandsSeen({ userId: profileId })
 
   if (!friend) return null
 
   return (
-    <div className="col-span-full flex items-center justify-between gap-3 rounded-lg bg-slate-800 p-4 md:col-span-1">
-      <Link href={`/users/${friend.username}`}>
+    <div className="col-span-full flex items-center gap-1 rounded-lg bg-slate-800 p-4 md:col-span-1">
+      <Link href={`/users/${friend.username}`} className="w-full">
         <UserItem
           user={friend}
           description={
-            <>
-              Konzerte: {concerts?.count}
-              <br />
-              Bands: {bands?.count}
-            </>
+            profile && user1BandsSeen && user2BandsSeen ? (
+              <div className="mt-2">
+                <ComparisonChart
+                  user1={friend}
+                  user2={profile}
+                  user1BandsSeen={user1BandsSeen}
+                  user2BandsSeen={user2BandsSeen}
+                  ressourceType="concerts"
+                  size="sm"
+                />
+              </div>
+            ) : null
           }
         />
       </Link>

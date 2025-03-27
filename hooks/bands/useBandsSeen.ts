@@ -83,8 +83,12 @@ export const useBandsSeen = (options: {
   locationId?: number
   bandsSize?: number
 }) => {
+  const HOUR = 1000 * 3600
   return useQuery({
     queryKey: ['bandsSeen', JSON.stringify(options)],
     queryFn: () => fetchBandsSeen(options),
+    staleTime: HOUR,
+    gcTime: HOUR,
+
   })
 }

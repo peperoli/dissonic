@@ -69,7 +69,7 @@ export const UserItem = ({
       {!usernameIsHidden && (
         <div
           className={clsx(
-            'grid',
+            'grid w-full',
             size === 'lg' && 'mx-4',
             size === 'md' && 'mx-3',
             size === 'sm' && 'mx-2 text-sm'
