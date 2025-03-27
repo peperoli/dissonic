@@ -10,13 +10,11 @@ import { useLocale, useTranslations } from 'next-intl'
 
 const MONTH_MS = 1000 * 60 * 60 * 24 * 30.44
 
-function getLongestStreak(concerts: Tables<'concerts'>[]) {
-  const sortedConcerts = concerts.sort(
-    (a, b) => new Date(a.date_start).getTime() - new Date(b.date_start).getTime()
-  )
+function getLongestStreak(concerts: Tables<'concerts'>['date_start'][]) {
+  const sortedConcerts = concerts.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
   const streaks: { start: Date; end: Date }[] = []
   for (let i = 0; i < sortedConcerts.length; i++) {
-    const date = new Date(sortedConcerts[i].date_start)
+    const date = new Date(sortedConcerts[i])
     const matchingStreak = streaks.find(
       streak =>
         (streak.end.getFullYear() === date.getFullYear() &&
@@ -46,10 +44,12 @@ export function Score({ profileId }: { profileId?: string }) {
   const { data: bandsSeen, status: bandsSeenStatus } = useBandsSeen({ userId: profileId })
   const t = useTranslations('Score')
   const locale = useLocale()
-  const uniqueBandsSeen = getUniqueObjects(bandsSeen?.map(item => item.band) ?? [])
-  const concertsSeen = getUniqueObjects(bandsSeen?.map(item => item.concert) ?? [])
-  const festivalsSeen = concertsSeen.filter(item => item.is_festival)
-  const streak = getLongestStreak(concertsSeen)
+  const uniqueBandsSeen = new Set(bandsSeen?.map(item => item.band_id))
+  const concertsSeen = new Set(bandsSeen?.map(item => item.concert_id))
+  const locationsSeen = new Set(bandsSeen?.map(item => item.concert?.location_id))
+  const streak = getLongestStreak(
+    Array.from(new Set(bandsSeen?.map(item => item.concert?.date_start ?? '')))
+  )
 
   if (bandsSeenStatus === 'pending') {
     return (
@@ -61,28 +61,21 @@ export function Score({ profileId }: { profileId?: string }) {
 
   return (
     <section
-      className={clsx(
-        'mb-4 grid gap-4',
-        festivalsSeen.length > 0 ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-3'
-      )}
+      className={clsx('mb-4 grid gap-4', true ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-3')}
     >
       <h2 className="sr-only">{t('score')}</h2>
       <div className="rounded-lg bg-radial-gradient from-venom/50 px-2 py-6 text-center">
-        <div className="text-[1.75rem] font-bold leading-none">{uniqueBandsSeen.length}</div>
-        {t('bands')}
-      </div>
-      <div className="rounded-lg bg-radial-gradient from-blue/50 px-2 py-6 text-center">
-        <div className="text-[1.75rem] font-bold leading-none">
-          {concertsSeen.filter(item => !item.is_festival).length}
-        </div>
+        <div className="text-[1.75rem] font-bold leading-none">{concertsSeen.size}</div>
         {t('concerts')}
       </div>
-      {festivalsSeen.length > 0 && (
-        <div className="rounded-lg bg-radial-gradient from-purple/50 px-2 py-6 text-center">
-          <div className="text-[1.75rem] font-bold leading-none">{festivalsSeen.length}</div>
-          {t('festivals')}
-        </div>
-      )}
+      <div className="rounded-lg bg-radial-gradient from-blue/50 px-2 py-6 text-center">
+        <div className="text-[1.75rem] font-bold leading-none">{uniqueBandsSeen.size}</div>
+        {t('bands')}
+      </div>
+      <div className="rounded-lg bg-radial-gradient from-purple/50 px-2 py-6 text-center">
+        <div className="text-[1.75rem] font-bold leading-none">{locationsSeen.size}</div>
+        {t('locations')}
+      </div>
       {streak && (
         <div className="rounded-lg bg-radial-gradient from-slate-500/50 px-2 py-6 text-center">
           <div className="text-[1.75rem] font-bold leading-none">

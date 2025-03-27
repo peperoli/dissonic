@@ -450,9 +450,9 @@
   },
   "Score": {
     "score": "Punkte",
-    "bands": "Bands",
     "concerts": "Konzerte",
-    "festivals": "Festivals",
+    "bands": "Bands",
+    "locations": "Lokale",
     "longestStreak": "Längste Serie",
     "dToD": "{startDate} bis {endDate}",
     "minOneConcertPerMonth": "Mindestens ein Konzert pro Monat"

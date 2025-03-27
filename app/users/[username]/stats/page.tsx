@@ -34,12 +34,12 @@ export default async function Page({ params }: { params: Promise<{ username: str
     <section className="grid gap-4">
       {session && session.user.id !== profile.id && <Comparison profileId={profile.id} />}
       <TopBands profileId={profile.id} />
+      <ConcertsByYear profileId={profile.id} />
       <div className="grid gap-4 md:grid-cols-2">
         <PieCharts profileId={profile.id} />
         <ConcertsByWeekday profileId={profile.id} />
       </div>
       <ConcertStats profileId={profile.id} />
-      <ConcertsByYear profileId={profile.id} />
       <TopLocations profileId={profile.id} />
     </section>
   )
