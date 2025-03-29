@@ -22,10 +22,21 @@ export type ProfileStat = Database['public']['Views']['profile_stats']['Row']
 
 async function fetchProfiles(options: SearchParams): Promise<ProfileStat[]> {
   const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('profile_stats')
-    .select('*')
-    .order(options.sort_by ?? 'concert_count', { ascending: options.sort_asc === 'true' })
+  let query = supabase.from('profile_stats').select('*')
+
+  if (!options.sort_by || options.sort_by === 'concert_count') {
+    query = query
+      .order('concert_count', { ascending: options.sort_asc === 'true' })
+      .order('band_count', { ascending: options.sort_asc === 'true' })
+  } else if (options.sort_by === 'bands_count') {
+    query = query
+      .order('band_count', { ascending: options.sort_asc === 'true' })
+      .order('concert_count', { ascending: options.sort_asc === 'true' })
+  } else {
+    query = query.order(options.sort_by, { ascending: options.sort_asc === 'true' })
+  }
+
+  const { data, error } = await query
 
   if (error) {
     throw error
