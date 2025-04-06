@@ -146,7 +146,7 @@
   "SearchField": {
     "search": "Search ..."
   },
-  "ConcertCard": {
+  "ConcertDate": {
     "dateStartToDateEnd": "{dateStart} to {dateEnd}"
   },
   "ShareButton": {
