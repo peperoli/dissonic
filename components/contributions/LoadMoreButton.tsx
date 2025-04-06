@@ -1,14 +1,21 @@
 'use client'
 
-import { parseAsInteger, useQueryState } from 'nuqs'
+import { parseAsInteger, UseQueryStateOptions, useQueryState } from 'nuqs'
 import { Button } from '../Button'
 import { useTranslations } from 'next-intl'
 
-export function LoadMoreButton() {
-  const [_, setSize] = useQueryState(
-    'size',
-    parseAsInteger.withDefault(50).withOptions({ shallow: false })
-  )
+export function useSize(options?: Pick<UseQueryStateOptions<number>, 'shallow'>) {
+  return useQueryState('size', parseAsInteger.withDefault(50).withOptions(options ?? {}))
+}
+
+export function LoadMoreButton({
+  isLoading,
+  shallow,
+}: {
+  isLoading?: boolean
+  shallow?: UseQueryStateOptions<number>['shallow']
+}) {
+  const [_, setSize] = useSize(shallow !== undefined ? { shallow } : undefined)
   const t = useTranslations('LoadMoreButton')
   return (
     <div className="flex justify-center">
@@ -16,6 +23,7 @@ export function LoadMoreButton() {
         label={t('showMore')}
         onClick={() => setSize(prev => prev + 50)}
         appearance="primary"
+        loading={isLoading}
       />
     </div>
   )

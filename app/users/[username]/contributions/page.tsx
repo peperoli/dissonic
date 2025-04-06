@@ -1,6 +1,7 @@
 import { ContributionGroup } from '@/components/contributions/ContributionGroup'
 import { LoadMoreButton } from '@/components/contributions/LoadMoreButton'
 import { Tooltip } from '@/components/shared/Tooltip'
+import { getMediumDate } from '@/lib/date'
 import { Tables } from '@/types/supabase'
 import { createClient } from '@/utils/supabase/server'
 import { InfoIcon } from 'lucide-react'
@@ -97,12 +98,7 @@ export default async function ContributionsPage(props: {
     }
 
     return items.reduce<DateGroup<TimeGroup<Tables<'contributions'>>>[]>((acc, item) => {
-      const date = new Date(item.timestamp).toLocaleDateString(locale, {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-      })
+      const date = getMediumDate(item.timestamp, locale)
       const time = new Date(item.timestamp).getTime()
       const userId = item.user_id?.[0] ?? null
       const ressourceType = item.ressource_type
@@ -137,13 +133,15 @@ export default async function ContributionsPage(props: {
       {!!contributionsCount && (
         <ul className="grid grid-cols-2 gap-4 md:grid-cols-4">
           <li className="rounded-lg bg-slate-800 p-4">
-            <p className="h2 inline-flex gap-2 items-center mb-0">
+            <p className="h2 mb-0 inline-flex items-center gap-2">
               {contributionsCount}
               <Tooltip content={t('contributionsHint')}>
                 <InfoIcon className="size-icon text-sm" />
               </Tooltip>
             </p>
-            <span className="text-sm">{t('contributionsTotal', { count: contributionsCount })}</span>
+            <span className="text-sm">
+              {t('contributionsTotal', { count: contributionsCount })}
+            </span>
           </li>
           {!!addedConcertsCount && (
             <li className="rounded-lg bg-slate-800 p-4">
@@ -175,7 +173,7 @@ export default async function ContributionsPage(props: {
           </ul>
         </section>
       ))}
-      {contributions.length !== contributionsCount && <LoadMoreButton />}
+      {contributions.length !== contributionsCount && <LoadMoreButton shallow={false} />}
     </section>
   )
 }

@@ -1,16 +1,12 @@
 import { Concert } from '@/types/types'
+import { getMediumDate } from './date'
 
 export function getConcertName(concert: Concert | undefined, locale: string) {
   if (!concert) {
     return null
   }
 
-  const date = new Date(concert.date_start).toLocaleDateString(locale, {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
+  const date = getMediumDate(concert.date_start, locale)
 
   if (concert.festival_root) {
     return `${concert.festival_root.name} ${new Date(concert.date_start).getFullYear()}`

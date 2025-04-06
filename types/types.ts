@@ -51,9 +51,9 @@ export type CountryFetchOptions = {
 
 export type ActivityFetchOptions = {
   size?: number
-  activityType?: 'all' | 'j_bands_seen' | 'comments' | 'friends'
+  activityType?: 'all' | 'j_bands_seen' | 'comments' | 'reactions' | 'friends' | 'profiles'
   user?: string
-  view?: 'friends' | 'user'
+  view?: 'global' | 'friends' | 'user'
 }
 
 export type ContributionFetchOptions = {

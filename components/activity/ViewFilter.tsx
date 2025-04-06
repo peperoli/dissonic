@@ -1,10 +1,16 @@
 'use client'
 
-import { useQueryState } from 'nuqs'
+import { parseAsStringLiteral, useQueryState } from 'nuqs'
 import { SegmentedControl } from '../controls/SegmentedControl'
 import { BookUserIcon, GlobeIcon, UserIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useSession } from '@/hooks/auth/useSession'
+import { ActivityFetchOptions } from '@/types/types'
+
+export function useView(isMod: boolean) {
+  const view = ['global', 'friends', 'user'] as const
+  return useQueryState('view', parseAsStringLiteral(view).withDefault(isMod ? 'global' : 'friends'))
+}
 
 export const ViewFilter = () => {
   const { data: session } = useSession()
@@ -16,12 +22,13 @@ export const ViewFilter = () => {
     { value: 'friends', label: t('friends'), icon: BookUserIcon },
     { value: 'user', label: t('you'), icon: UserIcon },
   ].filter(item => item !== null)
-  const [selectedView, setSelectedView] = useQueryState('view', {
-    defaultValue: isMod ? 'global' : 'friends',
-    shallow: false,
-  })
+  const [selectedView, setSelectedView] = useView(isMod)
 
   return (
-    <SegmentedControl options={viewItems} value={selectedView} onValueChange={setSelectedView} />
+    <SegmentedControl
+      options={viewItems}
+      value={selectedView}
+      onValueChange={setSelectedView as keyof ActivityFetchOptions['view']}
+    />
   )
 }
