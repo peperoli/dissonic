@@ -8,8 +8,8 @@ import { CalendarIcon } from 'lucide-react'
 import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useLocale, useTranslations } from 'next-intl'
 import { TruncatedList } from 'react-truncate-list'
+import { ConcertDate } from './ConcertDate'
 
 interface ConcertCardProps {
   concert: Concert
@@ -29,8 +29,6 @@ export const ConcertCard = ({ concert, nested }: ConcertCardProps) => {
     spotifyArtist?.images?.[2]
   const dateStart = new Date(concert.date_start)
   const dateEnd = concert.date_end ? new Date(concert.date_end) : null
-  const t = useTranslations('ConcertCard')
-  const locale = useLocale()
 
   return (
     <Link
@@ -85,26 +83,7 @@ export const ConcertCard = ({ concert, nested }: ConcertCardProps) => {
             </Fragment>
           ))}
         </p>
-        {dateEnd ? (
-          <p className="text-sm">
-            {t('dateStartToDateEnd', {
-              dateStart: dateStart.toLocaleDateString(locale, { day: 'numeric', month: 'short' }),
-              dateEnd: dateEnd.toLocaleDateString(locale, {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric',
-              }),
-            })}
-          </p>
-        ) : (
-          <p className="text-sm">
-            {dateStart.toLocaleDateString(locale, {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-            })}
-          </p>
-        )}
+        <ConcertDate dateStart={dateStart} dateEnd={dateEnd} />
         {!concert.festival_root && !concert.name && (
           <p className="truncate text-sm text-slate-300">
             {concert.location?.name}, {concert.location?.city}

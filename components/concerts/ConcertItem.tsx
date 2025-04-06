@@ -5,9 +5,9 @@ import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 import Image from 'next/image'
 import { CalendarIcon } from 'lucide-react'
 import { Tables } from '@/types/supabase'
-import { useLocale } from 'next-intl'
 import { Fragment } from 'react'
 import { SpotifyArtist } from '@/types/types'
+import { ConcertDate } from './ConcertDate'
 
 export function ConcertItem({
   concert,
@@ -21,20 +21,12 @@ export function ConcertItem({
   const { data: spotifyArtist } = useSpotifyArtist(concert.bands?.[0]?.spotify_artist_id, {
     enabled: !concert.bands?.[0]?.spotify_artist_images,
   })
-  const locale = useLocale()
   const image =
     (concert.bands?.[0]?.spotify_artist_images as SpotifyArtist['images'])?.[2] ||
     spotifyArtist?.images?.[2]
   const dateStart = new Date(concert.date_start)
   const dateEnd = concert.date_end ? new Date(concert.date_end) : null
-  const isSameYear = dateStart.getFullYear() === dateEnd?.getFullYear()
-  const concertDate = dateEnd
-    ? `${dateStart.toLocaleDateString(locale, {
-        day: 'numeric',
-        month: 'numeric',
-        year: isSameYear ? undefined : 'numeric',
-      })} bis ${dateEnd.toLocaleDateString(locale)}`
-    : dateStart.toLocaleDateString(locale)
+
   return (
     <Link href={`/concerts/${concert.id}`} className="flex gap-4 rounded-lg p-2 hover:bg-slate-700">
       <div className="relative grid size-15 flex-none place-content-center rounded-lg bg-slate-750">
@@ -66,7 +58,7 @@ export function ConcertItem({
             </Fragment>
           ))}
         </div>
-        <div className="text-sm">{concertDate}</div>
+        <ConcertDate dateStart={dateStart} dateEnd={dateEnd} />
         {!concert.festival_root && !concert.name && (
           <div className="truncate text-sm text-slate-300">
             {concert.location?.name}, {concert.location?.city}

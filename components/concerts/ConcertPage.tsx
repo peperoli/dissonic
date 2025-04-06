@@ -21,14 +21,13 @@ import {
 } from 'lucide-react'
 import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 import Image from 'next/image'
-import { ConcertDate } from './ConcertDate'
 import clsx from 'clsx'
 import { ConcertStats } from './ConcertStats'
 import { useModal } from '../shared/ModalProvider'
 import { MetaInfo } from '../shared/MetaInfo'
 import { SpeedDial } from '../layout/SpeedDial'
 import { ConcertCommunity } from './ConcertCommunity'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { ShareButton } from '../shared/ShareButton'
 import { useArchiveConcert } from '@/hooks/concerts/useArchiveConcert'
 import { useRestoreConcert } from '@/hooks/concerts/useRestoreConcert'
@@ -217,5 +216,51 @@ export const ConcertPage = ({
         <SpeedDial />
       </main>
     </ConcertContext.Provider>
+  )
+}
+
+function ConcertDate({
+  date,
+  isFirst,
+  contrast,
+}: {
+  date: Date
+  isFirst?: boolean
+  contrast?: boolean
+}) {
+  const locale = useLocale()
+  const isCurrentYear = date.getFullYear() === new Date().getFullYear()
+  return (
+    <div
+      className={clsx(
+        'relative flex aspect-square w-16 flex-none flex-col items-center justify-center rounded-lg p-2 transition duration-200',
+        clsx(
+          contrast
+            ? isFirst
+              ? 'bg-white/20 backdrop-blur-lg group-hover:bg-white/30'
+              : 'border border-white/20 backdrop-blur-lg'
+            : isFirst
+              ? 'bg-slate-700 group-hover:bg-slate-600'
+              : 'border border-slate-700'
+        )
+      )}
+    >
+      {isCurrentYear ? (
+        <>
+          <span className="text-2xl font-bold leading-none">
+            {date.toLocaleDateString(locale, { day: 'numeric' })}
+          </span>
+          <span className="text-sm">{date.toLocaleDateString(locale, { month: 'short' })}</span>
+        </>
+      ) : (
+        <>
+          <div className="flex gap-1">
+            <span className="font-bold">{date.toLocaleDateString(locale, { day: 'numeric' })}</span>
+            <span>{date.toLocaleDateString(locale, { month: 'short' })}</span>
+          </div>
+          <span className="text-sm">{date.getFullYear()}</span>
+        </>
+      )}
+    </div>
   )
 }
