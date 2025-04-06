@@ -1,9 +1,22 @@
 'use client'
 
-import { useQueryState } from 'nuqs'
+import { parseAsStringLiteral, useQueryState } from 'nuqs'
 import { FilterButton } from '../FilterButton'
 import { Select } from '../forms/Select'
 import { useTranslations } from 'next-intl'
+import { ActivityFetchOptions } from '@/types/types'
+
+export function useActivityType() {
+  const activityType = [
+    'all',
+    'j_bands_seen',
+    'comments',
+    'reactions',
+    'friends',
+    'profiles',
+  ] as const
+  return useQueryState('activityType', parseAsStringLiteral(activityType).withDefault('all'))
+}
 
 export const ActivityTypeFilter = () => {
   const t = useTranslations('ActivityTypeFilter')
@@ -15,10 +28,8 @@ export const ActivityTypeFilter = () => {
     { id: 4, value: 'friends', name: t('friendActions') },
     { id: 5, value: 'profiles', name: t('newUsers') },
   ]
-  const [selectedActivityType, setSelectedActivityType] = useQueryState('activityType', {
-    defaultValue: 'all',
-    shallow: false,
-  })
+  const [selectedActivityType, setSelectedActivityType] = useActivityType()
+
   return (
     <FilterButton
       label={t('activityType')}
@@ -30,7 +41,11 @@ export const ActivityTypeFilter = () => {
         name="sort"
         items={activityTypeItems}
         value={activityTypeItems.findIndex(item => item.value === selectedActivityType)}
-        onValueChange={value => setSelectedActivityType(activityTypeItems[value].value)}
+        onValueChange={value =>
+          setSelectedActivityType(
+            activityTypeItems[value].value as keyof ActivityFetchOptions['activityType']
+          )
+        }
         searchable={false}
       />
     </FilterButton>

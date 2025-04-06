@@ -3,6 +3,7 @@ import { LoadMoreButton } from '@/components/contributions/LoadMoreButton'
 import { OperationFilter } from '@/components/contributions/OperationFilter'
 import { RessourceTypeFilter } from '@/components/contributions/RessourceTypeFilter'
 import { relatedRessourceTypes } from '@/hooks/contributions/useContributionsCount'
+import { getMediumDate } from '@/lib/date'
 import { Tables } from '@/types/supabase'
 import { ContributionFetchOptions } from '@/types/types'
 import { createClient } from '@/utils/supabase/server'
@@ -75,12 +76,7 @@ export default async function ContributionsPage(props: {
     }
 
     return items.reduce<DateGroup<TimeGroup<Tables<'contributions'>>>[]>((acc, item) => {
-      const date = new Date(item.timestamp).toLocaleDateString(locale, {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-      })
+      const date = getMediumDate(item.timestamp, locale)
       const time = new Date(item.timestamp).getTime()
       const userId = item.user_id?.[0] ?? null
       const ressourceType = item.ressource_type
@@ -128,7 +124,7 @@ export default async function ContributionsPage(props: {
             </ul>
           </section>
         ))}
-        {contributions.length !== contributionsCount && <LoadMoreButton />}
+        {contributions.length !== contributionsCount && <LoadMoreButton shallow={false} />}
       </div>
     </main>
   )
