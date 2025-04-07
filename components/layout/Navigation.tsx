@@ -25,7 +25,7 @@ const NavLink = ({ link, name }: NavLinkProps) => {
     >
       {name}
       {isCurrent && (
-        <span className="absolute bottom-0 left-4 right-4 block h-0.5 bg-venom md:hidden" />
+        <span className="absolute bottom-0 left-4 right-4 block h-0.5 bg-venom md:bottom-2 md:left-0 md:right-auto md:top-2 md:h-auto md:w-0.5" />
       )}
     </Link>
   )
