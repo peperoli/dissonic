@@ -3,6 +3,16 @@
     "title": "Dissonic • For the love of live music",
     "description": "Keep track of concerts and bands you have experienced live. Made by fans for fans."
   },
+  "Error": {
+    "headline": "500: Mistakes were made",
+    "description": "An application error has occurred. Please try again later or seek professional help.",
+    "tryAgain": "Try again"
+  },
+  "NotFound": {
+    "headline": "404: Page not found",
+    "description": "The requested resource could not be found. It may have been deleted or moved.",
+    "backToHome": "Back to home"
+  },
   "NavBar": {
     "profile": "Profile",
     "friends": "Friends",

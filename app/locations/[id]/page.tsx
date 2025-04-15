@@ -28,11 +28,17 @@ export async function generateStaticParams() {
 
 async function fetchData(params: { id: string }) {
   const supabase = await createClient()
+  const locationId = parseInt(params.id)
+  
+  if (Number.isNaN(locationId)) {
+    notFound()
+  }
+
 
   const { data, error } = await supabase
     .from('locations')
     .select('*, country:countries(id, iso2), creator:profiles!locations_creator_id_fkey(*)')
-    .eq('id', parseInt(params.id))
+    .eq('id', locationId)
     .single()
 
   if (error) {

@@ -25,6 +25,11 @@ export async function generateStaticParams() {
 
 async function fetchData(params: { id: string }) {
   const supabase = await createClient()
+  const bandId = parseInt(params.id)
+  
+  if (Number.isNaN(bandId)) {
+    notFound()
+  }
 
   const { data, error } = await supabase
     .from('bands')
@@ -34,7 +39,7 @@ async function fetchData(params: { id: string }) {
       genres(*),
       creator:profiles!bands_creator_id_fkey(*)`
     )
-    .eq('id', parseInt(params.id))
+    .eq('id', bandId)
     .single()
 
   if (error) {

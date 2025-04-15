@@ -3,6 +3,16 @@
     "title": "Dissonic • Für die Liebe zur Live-Musik",
     "description": "Behalte den Überblick über Konzerte und Bands, die du live erlebt hast. Von Fans für Fans gemacht."
   },
+  "Error": {
+    "headline": "500: Fehler wurden begangen",
+    "description": "Es ist ein Applikations-Fehler aufgetreten. Bitte versuche es später erneut oder suche professionelle Hilfe.",
+    "tryAgain": "Erneut versuchen"
+  },
+  "NotFound": {
+    "headline": "404: Seite nicht gefunden",
+    "description": "Die angeforderte Ressource konnte nicht gefunden werden. Möglicherweise wurde Sie gelöscht oder verschoben.",
+    "backToHome": "Zurück zur Startseite"
+  },
   "NavBar": {
     "profile": "Profil",
     "friends": "Freunde",
