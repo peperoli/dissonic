@@ -35,8 +35,8 @@ export const FriendItem = ({ friend, profileId }: FriendItemProps) => {
         <UserItem
           user={friend}
           description={
-            profile && user1BandsSeen && user2BandsSeen ? (
-              <div className="mt-2">
+            <div className="mt-2">
+              {profile && user1BandsSeen && user2BandsSeen ? (
                 <ComparisonChart
                   user1={friend}
                   user2={profile}
@@ -45,8 +45,10 @@ export const FriendItem = ({ friend, profileId }: FriendItemProps) => {
                   ressourceType="concerts"
                   size="sm"
                 />
-              </div>
-            ) : null
+              ) : (
+                <div className="h-2 w-full animate-pulse rounded bg-slate-700" />
+              )}
+            </div>
           }
         />
       </Link>

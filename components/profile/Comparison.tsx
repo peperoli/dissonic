@@ -62,17 +62,14 @@ export function ComparisonChart({
   return (
     <div className="flex items-center gap-2">
       {size !== 'sm' && (
-        <div className="relative">
-          <UserItem user={user1} usernameIsHidden size={size} />
-          <div className="absolute inset-0 grid place-content-center rounded-full bg-slate-900/20">
-            {ressourceType === 'concerts' ? (
-              <CalendarIcon className="size-icon drop-shadow" />
-            ) : ressourceType === 'bands' ? (
-              <GuitarIcon className="size-icon drop-shadow" />
-            ) : (
-              <MapPinIcon className="size-icon drop-shadow" />
-            )}
-          </div>
+        <div className="grid size-8 flex-none place-content-center rounded-full bg-slate-700 text-sm">
+          {ressourceType === 'concerts' ? (
+            <CalendarIcon className="size-icon" />
+          ) : ressourceType === 'bands' ? (
+            <GuitarIcon className="size-icon" />
+          ) : (
+            <MapPinIcon className="size-icon" />
+          )}
         </div>
       )}
       <div className="flex w-full items-center gap-1">
@@ -92,13 +89,13 @@ export function ComparisonChart({
         >
           <div
             className={clsx(
-              'rounded',
+              'rounded-md',
               ressourceType === 'concerts'
                 ? 'bg-venom/40'
                 : ressourceType === 'bands'
                   ? 'bg-blue/40'
                   : 'bg-purple/40',
-              size === 'sm' ? 'h-2' : 'h-4'
+              size === 'sm' ? 'h-2' : 'h-6'
             )}
             style={{ width: `${(onlyUser1.size / total.size) * 100}%` }}
           />
@@ -115,13 +112,13 @@ export function ComparisonChart({
         >
           <div
             className={clsx(
-              'rounded',
+              'rounded-md',
               ressourceType === 'concerts'
                 ? 'bg-venom shadow-shine shadow-venom/50'
                 : ressourceType === 'bands'
                   ? 'bg-blue shadow-shine shadow-blue/50'
                   : 'bg-purple shadow-shine shadow-purple/50',
-              size === 'sm' ? 'h-2' : 'h-4'
+              size === 'sm' ? 'h-2' : 'h-6'
             )}
             style={{ width: `${(shared.size / total.size) * 100}%` }}
           />
@@ -142,30 +139,27 @@ export function ComparisonChart({
         >
           <div
             className={clsx(
-              'rounded',
+              'rounded-md',
               ressourceType === 'concerts'
                 ? 'bg-venom/40'
                 : ressourceType === 'bands'
                   ? 'bg-blue/40'
                   : 'bg-purple/40',
-              size === 'sm' ? 'h-2' : 'h-4'
+              size === 'sm' ? 'h-2' : 'h-6'
             )}
             style={{ width: `${(onlyUser2.size / total.size) * 100}%` }}
           />
         </Tooltip>
       </div>
       {size !== 'sm' && (
-        <div className="relative">
-          <UserItem user={user2} usernameIsHidden size={size} />
-          <div className="absolute inset-0 grid place-content-center rounded-full bg-slate-900/20">
-            {ressourceType === 'concerts' ? (
-              <CalendarIcon className="size-icon drop-shadow" />
-            ) : ressourceType === 'bands' ? (
-              <GuitarIcon className="size-icon drop-shadow" />
-            ) : (
-              <MapPinIcon className="size-icon drop-shadow" />
-            )}
-          </div>
+        <div className="grid size-8 flex-none place-content-center rounded-full bg-slate-700 text-sm">
+          {ressourceType === 'concerts' ? (
+            <CalendarIcon className="size-icon" />
+          ) : ressourceType === 'bands' ? (
+            <GuitarIcon className="size-icon" />
+          ) : (
+            <MapPinIcon className="size-icon" />
+          )}
         </div>
       )}
     </div>
@@ -186,7 +180,12 @@ export function Comparison({ profileId }: { profileId: string }) {
 
   return (
     <section className="grid gap-4 rounded-lg bg-slate-800 p-6">
-      <h2>{t('profileComparison')}</h2>
+      <h2 className="mb-0">{t('profileComparison')}</h2>
+      <div className="flex items-center gap-2">
+        <UserItem user={sessionProfile} usernameIsHidden />
+        <span className="section-headline w-full">vs</span>
+        <UserItem user={profile} usernameIsHidden />
+      </div>
       <ComparisonChart
         user1={sessionProfile}
         user2={profile}
