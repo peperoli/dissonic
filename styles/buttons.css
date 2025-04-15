@@ -2,7 +2,7 @@
 
 @layer components {
 	.btn {
-		@apply inline-flex justify-center items-center gap-2 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed;
+		@apply inline-flex justify-center flex-shrink-0 items-center gap-2 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed;
 
 		&.btn-block {
 			@apply w-full;

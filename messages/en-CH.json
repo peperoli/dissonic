@@ -450,12 +450,23 @@
   },
   "Score": {
     "score": "Score",
-    "bands": "Bands",
     "concerts": "Concerts",
-    "festivals": "Festivals",
+    "bands": "Bands",
+    "locations": "Locations",
     "longestStreak": "Longest streak",
     "dToD": "{startDate} to {endDate}",
     "minOneConcertPerMonth": "Minimum one concert per month"
+  },
+  "Comparison": {
+    "loading": "Loading ...",
+    "profileComparison": "Profile comparison"
+  },
+  "ComparisonChart": {
+    "count_concerts": "{count, plural, =1 {# concert} other {# concerts}}",
+    "count_bands": "{count, plural, =1 {# band} other {# bands}}",
+    "count_locations": "{count, plural, =1 {# location} other {# Locations}}",
+    "onlyUsername": "Only {username}",
+    "shared": "Shared"
   },
   "TopBands": {
     "loading": "Loading ...",

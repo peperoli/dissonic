@@ -16,12 +16,12 @@ export default async function GlobalStatsPage() {
       <section className="grid gap-4">
         <Score />
         <TopBands />
+        <ConcertsByYear />
         <div className="grid gap-4 md:grid-cols-2">
           <PieCharts />
           <ConcertsByWeekday />
         </div>
         <ConcertStats />
-        <ConcertsByYear />
         <TopLocations />
       </section>
     </main>

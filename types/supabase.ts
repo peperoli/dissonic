@@ -610,20 +610,23 @@ export type Database = {
       reactions: {
         Row: {
           comment_id: number
-          created_at: string | null
+          created_at: string
           type: string
+          updated_at: string | null
           user_id: string
         }
         Insert: {
           comment_id?: number
-          created_at?: string | null
+          created_at?: string
           type: string
+          updated_at?: string | null
           user_id: string
         }
         Update: {
           comment_id?: number
-          created_at?: string | null
+          created_at?: string
           type?: string
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: [
@@ -736,6 +739,45 @@ export type Database = {
       }
     }
     Functions: {
+      compare_bands_seen: {
+        Args: {
+          user_1_id: string
+          user_2_id: string
+        }
+        Returns: {
+          alt_names: string | null
+          country_id: number | null
+          created_at: string | null
+          creator_id: string | null
+          id: number
+          is_archived: boolean
+          name: string
+          spotify_artist_id: string | null
+          spotify_artist_images: Json | null
+          youtube_url: string | null
+        }[]
+      }
+      compare_concerts_seen: {
+        Args: {
+          user_1_id: string
+          user_2_id: string
+        }
+        Returns: {
+          created_at: string
+          creator_id: string | null
+          date_end: string | null
+          date_start: string
+          festival_root_id: number | null
+          id: number
+          is_archived: boolean
+          is_festival: boolean
+          location_id: number
+          name: string | null
+          ressource_status:
+            | Database["public"]["Enums"]["ressource_status"]
+            | null
+        }[]
+      }
       custom_access_token_hook: {
         Args: {
           event: Json
