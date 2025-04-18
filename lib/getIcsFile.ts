@@ -1,5 +1,5 @@
 import { Concert } from '@/types/types'
-import ics from 'ics'
+import * as ics from 'ics'
 import { saveAs } from 'file-saver'
 import toast from 'react-hot-toast'
 
