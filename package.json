@@ -26,7 +26,9 @@
     "@vercel/analytics": "^1.5.0",
     "autoprefixer": "^10.4.16",
     "clsx": "^2.1.1",
+    "file-saver": "^2.0.5",
     "framer-motion": "^11.11.11",
+    "ics": "^3.8.1",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.483.0",
     "next": "^15.2.4",
@@ -42,6 +44,7 @@
     "tailwindcss": "^3.4.17"
   },
   "devDependencies": {
+    "@types/file-saver": "^2",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.9.0",
     "@types/react": "^19.0.12",

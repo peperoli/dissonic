@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/Button'
+import { StatusBanner } from '@/components/forms/StatusBanner'
 import { RotateCw } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useEffect } from 'react'
@@ -28,6 +29,9 @@ export default function Error({
       </blockquote>
       <h1 className="text-red">{t('headline')}</h1>
       <p className="mb-4">{t('description')}</p>
+      {process.env.NODE_ENV === 'development' && (
+        <StatusBanner statusType="error" message={error.digest || error.message} />
+      )}
       <Button
         onClick={reset}
         label={t('tryAgain')}

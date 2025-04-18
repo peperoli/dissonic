@@ -15,6 +15,7 @@ import {
   ArrowLeft,
   BadgeCheckIcon,
   BadgeMinus,
+  CalendarPlusIcon,
   Edit,
   MapPin,
   Trash,
@@ -33,6 +34,7 @@ import { useArchiveConcert } from '@/hooks/concerts/useArchiveConcert'
 import { useRestoreConcert } from '@/hooks/concerts/useRestoreConcert'
 import { StatusBanner } from '../forms/StatusBanner'
 import { Tooltip } from '../shared/Tooltip'
+import { getIcsFile } from '@/lib/getIcsFile'
 
 type ConcertPageProps = {
   initialConcert: Concert
@@ -89,6 +91,16 @@ export const ConcertPage = ({
             ) : (
               <>
                 <ShareButton />
+                {new Date(concert.date_start) > new Date() && (
+                  <Button
+                    onClick={() => getIcsFile(concert)}
+                    label={t('addToCalendar')}
+                    icon={<CalendarPlusIcon className="size-icon" />}
+                    contentType="icon"
+                    size="small"
+                    appearance="tertiary"
+                  />
+                )}
                 <Button
                   onClick={
                     session
