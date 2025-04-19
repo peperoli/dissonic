@@ -123,7 +123,13 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
       <header className="flex flex-col gap-5 rounded-2xl bg-radial-gradient from-blue/20 p-6 md:flex-row">
         <div className="relative grid aspect-square w-full flex-none place-content-center rounded-lg bg-slate-750 md:w-56">
           {image ? (
-            <Image src={image.url!} alt={band.name} fill unoptimized className="rounded-lg object-cover" />
+            <Image
+              src={image.url!}
+              alt={band.name}
+              fill
+              unoptimized
+              className="rounded-lg object-cover"
+            />
           ) : (
             <Guitar className="size-12 text-slate-300" />
           )}
@@ -138,7 +144,9 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
           {band.country && (
             <div className="mb-2 flex items-center gap-4">
               <MapPin className="size-icon flex-none text-slate-300" />
-              {regionNames.of(band.country.iso2)}
+              <Link href={`/bands?countries=${band.country.id}`} className="hover:underline">
+                {regionNames.of(band.country.iso2)}
+              </Link>
             </div>
           )}
           {band.genres.length > 0 && (

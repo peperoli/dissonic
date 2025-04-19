@@ -1,13 +1,13 @@
 import supabase from '@/utils/supabase/client'
 import { BandSeen } from '@/types/types'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 
 async function deleteBandsSeen(bandsSeen: BandSeen[]) {
   const bandsSeenIds = bandsSeen.map(item => item.band_id)
 
   if (bandsSeenIds.length === 0) {
-    return
+    return { concertId: null }
   }
 
   const { error } = await supabase
@@ -20,14 +20,21 @@ async function deleteBandsSeen(bandsSeen: BandSeen[]) {
   if (error) {
     throw error
   }
+
+  return { concertId: bandsSeen[0].concert_id }
 }
 
 export function useDeleteBandsSeen() {
+  const queryClient = useQueryClient()
+
   return useMutation({
     mutationFn: deleteBandsSeen,
     onError: error => {
       console.error(error)
       toast.error(error.message)
+    },
+    onSuccess: ({ concertId }) => {
+      queryClient.invalidateQueries({ queryKey: ['bandsSeen', concertId] })
     },
   })
 }
