@@ -91,7 +91,7 @@ export const ConcertPage = ({
             ) : (
               <>
                 <ShareButton />
-                {new Date(concert.date_start) > new Date() && (
+                {new Date(concert.date_start).setHours(0) >= new Date().setHours(0, 0, 0, 0) && (
                   <Button
                     onClick={() => getIcsFile(concert)}
                     label={t('addToCalendar')}
