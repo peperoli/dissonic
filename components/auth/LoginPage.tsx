@@ -2,13 +2,12 @@
 
 import { useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { useSignIn } from '../../hooks/auth/useSignIn'
+import { useSignIn, type SignInFormData } from '../../hooks/auth/useSignIn'
 import { Button } from './../Button'
 import { TextField } from './../forms/TextField'
 import { StatusBanner } from './../forms/StatusBanner'
 import { emailRegex } from '../../lib/emailRegex'
 import Link from 'next/link'
-import { SignInFormData } from '../../actions/auth'
 import { useTranslations } from 'next-intl'
 import { OAuthButtons } from './OAuthButtons'
 

@@ -5,12 +5,10 @@ import { useProfiles } from '../../hooks/profiles/useProfiles'
 import { usernameRegex } from '../../lib/usernameRegex'
 import { Button } from '../Button'
 import { TextField } from '../forms/TextField'
-import { signUp as signUpAction, SignUpFormData } from '../../actions/auth'
+import { useSignUp, type SignUpFormData } from '@/hooks/auth/useSignUp'
 import { useTranslations } from 'next-intl'
 import { StatusBanner } from '../forms/StatusBanner'
-import { useMutation } from '@tanstack/react-query'
 import { OAuthButtons } from '../auth/OAuthButtons'
-import toast from 'react-hot-toast'
 
 export const Form = () => {
   const {
@@ -19,22 +17,16 @@ export const Form = () => {
     formState: { errors },
   } = useForm<SignUpFormData>({ mode: 'onChange' })
   const { data: profiles } = useProfiles()
-  const signUp = useMutation({
-    mutationFn: signUpAction,
-    onError: error => {
-      console.error(error)
-      toast.error(error.message)
-    },
-  })
+  const { mutate, status, error } = useSignUp()
 
   const t = useTranslations('SignupForm')
   const usernames = profiles?.map(item => item.username)
 
-  return signUp.status === 'success' ? (
+  return status === 'success' ? (
     <StatusBanner statusType="success" message={t('successMessage')} className="mt-6" />
   ) : (
-    <section className="">
-      <form onSubmit={handleSubmit(formData => signUp.mutate(formData))} className="grid gap-5">
+    <section>
+      <form onSubmit={handleSubmit(formData => mutate(formData))} className="grid gap-5">
         <TextField
           {...register('email', { required: true })}
           error={errors.email}
@@ -68,18 +60,18 @@ export const Form = () => {
             type="submit"
             label={t('createAccount')}
             appearance="primary"
-            loading={signUp.status === 'pending'}
+            loading={status === 'pending'}
           />
         </div>
       </form>
-      {signUp.status === 'error' && (
+      {status === 'error' && (
         <StatusBanner
           statusType="error"
           message={
-            'code' in signUp.error && signUp.error.code === '23505'
+            'code' in error && (error.code === '23505' || error.code === '23503')
               ? t('emailAlreadyInUseError')
-              : t.has(signUp.error.message)
-                ? t(signUp.error.message)
+              : t.has(error.message)
+                ? t(error.message)
                 : t('genericError')
           }
           className="mt-6"
