@@ -19,6 +19,19 @@ const fetchConcerts = async (options?: ConcertFetchOptions) => {
     query = query.lte('date_start', `${options.years[1]}-12-31`)
   }
 
+  if (options?.dateRange) {
+    const startDate = options.dateRange[0]
+    const endDate = options.dateRange[1]
+
+    if (startDate) {
+      query = query.gte('date_start', startDate.toISOString())
+    }
+    
+    if (endDate) {
+      query = query.lte('date_start', endDate.toISOString())
+    }
+  }
+
   if (options?.festivalRoots && options.festivalRoots.length > 0) {
     query = query.in('festival_root_id', options.festivalRoots)
   }

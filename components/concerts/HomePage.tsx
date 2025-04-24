@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Button } from '../Button'
 import { PlusIcon } from 'lucide-react'
 import { Concert, ExtendedRes } from '../../types/types'
@@ -17,11 +17,12 @@ import {
   parseAsArrayOf,
   parseAsBoolean,
   parseAsInteger,
+  parseAsString,
   parseAsStringLiteral,
   useQueryState,
   useQueryStates,
 } from 'nuqs'
-import { BookUser, Globe, RotateCcw, UserIcon } from 'lucide-react'
+import { RotateCcw } from 'lucide-react'
 import { useFriends } from '@/hooks/profiles/useFriends'
 import { Select } from '../forms/Select'
 import { FilterButton } from '../FilterButton'
@@ -36,13 +37,13 @@ import { groupConcertsByMonth } from '@/lib/groupConcertsByMonth'
 type HomePageProps = {
   concerts: ExtendedRes<Concert[]>
   currentUser: User | null
-  view: string | undefined
+  view: { concerts_view: string | undefined; user_view: string | undefined } | undefined
 }
 
 export const HomePage = ({
   concerts: initialConcerts,
   currentUser,
-  view: initialView = 'global',
+  view: initialView = { concerts_view: 'past', user_view: 'global' },
 }: HomePageProps) => {
   const [size, setSize] = useQueryState('size', parseAsInteger.withDefault(25))
   const [selectedBands, setSelectedBands] = useQueryState('bands', parseAsArrayOf(parseAsInteger))
@@ -58,7 +59,10 @@ export const HomePage = ({
   const [user] = useQueryState('user')
   const { data: profile } = useProfile(null, user)
   const selectedUserId = user && profile?.id
-  const [view, setView] = useState(initialView)
+  const [view, setView] = useQueryStates({
+    concerts_view: parseAsString.withDefault(initialView.concerts_view ?? 'past'),
+    user_view: parseAsString.withDefault(initialView.user_view ?? 'global'),
+  })
   const { data: friends } = useFriends({ profileId: currentUser?.id, pending: false })
   const sortBy = ['date_start', 'bands_count'] as const
   const [sort, setSort] = useQueryStates({
@@ -66,11 +70,14 @@ export const HomePage = ({
     sort_asc: parseAsBoolean.withDefault(false),
   })
   const [_, setModal] = useQueryState('modal', parseAsStringLiteral(modalPaths))
+  const today = new Date()
+  const tomorrow = new Date(today)
+  tomorrow.setDate(tomorrow.getDate() + 1)
 
   function getView() {
     if (!currentUser) return
-    if (view === 'user') return [currentUser.id]
-    if (view === 'friends' && friends)
+    if (view.user_view === 'user') return [currentUser.id]
+    if (view.user_view === 'friends' && friends)
       return [
         ...new Set([
           ...friends?.map(item => item.sender_id),
@@ -83,6 +90,7 @@ export const HomePage = ({
     placeholderData: initialConcerts,
     bands: selectedBands,
     locations: selectedLocations,
+    dateRange: view.concerts_view === 'future' ? [tomorrow, null] : [null, today],
     years: selectedYears,
     festivalRoots: selectedFestivalRoots,
     bandsSeenUsers: selectedUserId ? [selectedUserId] : getView(),
@@ -112,10 +120,24 @@ export const HomePage = ({
   ]
 
   useEffect(() => {
+    if (view.concerts_view === 'future') {
+      setSort({
+        sort_by: 'date_start',
+        sort_asc: true,
+      })
+    } else {
+      setSort({
+        sort_by: 'date_start',
+        sort_asc: false,
+      })
+    }
+  }, [view.concerts_view])
+
+  useEffect(() => {
     saveLastQueryState('concerts', queryStates)
   }, [JSON.stringify(queryStates)])
 
-  async function handleView(value: string) {
+  async function handleView(value: { concerts_view: string; user_view: string }) {
     setView(value)
     await setViewPreference(value)
   }
@@ -190,17 +212,27 @@ export const HomePage = ({
             </FilterButton>
           </div>
         </div>
-        {currentUser && (
+        <div className="flex flex-wrap gap-4">
           <SegmentedControl
             options={[
-              { value: 'global', label: t('all'), icon: Globe },
-              { value: 'friends', label: t('friends'), icon: BookUser },
-              { value: 'user', label: t('you'), icon: UserIcon },
+              { value: 'past', label: t('past') },
+              { value: 'future', label: t('future') },
             ]}
-            value={view}
-            onValueChange={handleView}
+            value={view.concerts_view}
+            onValueChange={value => handleView({ ...view, concerts_view: value })}
           />
-        )}
+          {currentUser && (
+            <SegmentedControl
+              options={[
+                { value: 'global', label: t('all') },
+                { value: 'friends', label: t('friends') },
+                { value: 'user', label: t('you') },
+              ]}
+              value={view.user_view}
+              onValueChange={value => handleView({ ...view, user_view: value })}
+            />
+          )}
+        </div>
       </section>
       {concerts?.data && (
         <section className="grid gap-4">

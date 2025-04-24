@@ -75,5 +75,11 @@ export default async function Page() {
   const view = cookieStore.get('view')?.value
   const { concerts, user } = await fetchData(view)
 
-  return <HomePage concerts={concerts} currentUser={user} view={view} />
+  return (
+    <HomePage
+      concerts={concerts}
+      currentUser={user}
+      view={{ concerts_view: view?.split(';')[0], user_view: view?.split(';')[1] }}
+    />
+  )
 }
