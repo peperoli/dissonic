@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { Button } from '../Button'
-import { PlusIcon } from 'lucide-react'
+import { BookUserIcon, GlobeIcon, PlusIcon, UserIcon } from 'lucide-react'
 import { Concert, ExtendedRes } from '../../types/types'
 import { useConcerts } from '../../hooks/concerts/useConcerts'
 import { ConcertCard } from './ConcertCard'
@@ -67,10 +67,10 @@ export const HomePage = ({
   const sortBy = ['date_start', 'bands_count'] as const
   const [sort, setSort] = useQueryStates({
     sort_by: parseAsStringLiteral(sortBy).withDefault('date_start'),
-    sort_asc: parseAsBoolean.withDefault(false),
+    sort_asc: parseAsBoolean.withDefault(initialView.concerts_view === 'future'),
   })
   const [_, setModal] = useQueryState('modal', parseAsStringLiteral(modalPaths))
-  const today = new Date()
+  const today = new Date(new Date().setHours(0, 0, 0, 0))
   const tomorrow = new Date(today)
   tomorrow.setDate(tomorrow.getDate() + 1)
 
@@ -90,7 +90,7 @@ export const HomePage = ({
     placeholderData: initialConcerts,
     bands: selectedBands,
     locations: selectedLocations,
-    dateRange: view.concerts_view === 'future' ? [tomorrow, null] : [null, today],
+    dateRange: view.concerts_view === 'future' ? [tomorrow, null] : [null, tomorrow],
     years: selectedYears,
     festivalRoots: selectedFestivalRoots,
     bandsSeenUsers: selectedUserId ? [selectedUserId] : getView(),
@@ -160,6 +160,14 @@ export const HomePage = ({
         />
       </div>
       <section className="-mx-4 mb-4 grid gap-4 bg-radial-gradient from-blue/20 p-5 md:mx-auto md:rounded-2xl">
+        <SegmentedControl
+          options={[
+            { value: 'past', label: t('past') },
+            { value: 'future', label: t('future') },
+          ]}
+          value={view.concerts_view}
+          onValueChange={value => handleView({ ...view, concerts_view: value })}
+        />
         <div className="scrollbar-hidden -mx-4 flex gap-2 overflow-x-auto px-4 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible">
           <BandFilter values={selectedBands} onSubmit={setSelectedBands} />
           <LocationFilter values={selectedLocations} onSubmit={setSelectedLocations} />
@@ -212,27 +220,17 @@ export const HomePage = ({
             </FilterButton>
           </div>
         </div>
-        <div className="flex flex-wrap gap-4">
+        {currentUser && view.concerts_view !== 'future' && (
           <SegmentedControl
             options={[
-              { value: 'past', label: t('past') },
-              { value: 'future', label: t('future') },
+              { value: 'global', label: t('all'), icon: GlobeIcon },
+              { value: 'friends', label: t('friends'), icon: BookUserIcon },
+              { value: 'user', label: t('you'), icon: UserIcon },
             ]}
-            value={view.concerts_view}
-            onValueChange={value => handleView({ ...view, concerts_view: value })}
+            value={view.user_view}
+            onValueChange={value => handleView({ ...view, user_view: value })}
           />
-          {currentUser && (
-            <SegmentedControl
-              options={[
-                { value: 'global', label: t('all') },
-                { value: 'friends', label: t('friends') },
-                { value: 'user', label: t('you') },
-              ]}
-              value={view.user_view}
-              onValueChange={value => handleView({ ...view, user_view: value })}
-            />
-          )}
-        </div>
+        )}
       </section>
       {concerts?.data && (
         <section className="grid gap-4">
