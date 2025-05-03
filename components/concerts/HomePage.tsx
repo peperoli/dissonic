@@ -37,13 +37,13 @@ import { groupConcertsByMonth } from '@/lib/groupConcertsByMonth'
 type HomePageProps = {
   concerts: ExtendedRes<Concert[]>
   currentUser: User | null
-  view: { concerts_view: string | undefined; user_view: string | undefined } | undefined
+  view: { concertsView: string; userView: string }
 }
 
 export const HomePage = ({
   concerts: initialConcerts,
   currentUser,
-  view: initialView = { concerts_view: 'past', user_view: 'global' },
+  view: initialView,
 }: HomePageProps) => {
   const [size, setSize] = useQueryState('size', parseAsInteger.withDefault(25))
   const [selectedBands, setSelectedBands] = useQueryState('bands', parseAsArrayOf(parseAsInteger))
@@ -60,14 +60,14 @@ export const HomePage = ({
   const { data: profile } = useProfile(null, user)
   const selectedUserId = user && profile?.id
   const [view, setView] = useQueryStates({
-    concerts_view: parseAsString.withDefault(initialView.concerts_view ?? 'past'),
-    user_view: parseAsString.withDefault(initialView.user_view ?? 'global'),
+    concerts_view: parseAsString.withDefault(initialView.concertsView ?? 'past'),
+    user_view: parseAsString.withDefault(initialView.userView ?? 'global'),
   })
   const { data: friends } = useFriends({ profileId: currentUser?.id, pending: false })
   const sortBy = ['date_start', 'bands_count'] as const
   const [sort, setSort] = useQueryStates({
     sort_by: parseAsStringLiteral(sortBy).withDefault('date_start'),
-    sort_asc: parseAsBoolean.withDefault(initialView.concerts_view === 'future'),
+    sort_asc: parseAsBoolean.withDefault(initialView.concertsView === 'future'),
   })
   const [_, setModal] = useQueryState('modal', parseAsStringLiteral(modalPaths))
   const today = new Date(new Date().setHours(0, 0, 0, 0))

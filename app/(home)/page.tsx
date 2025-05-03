@@ -3,10 +3,9 @@ import { HomePage } from '../../components/concerts/HomePage'
 import { Concert } from '../../types/types'
 import { createClient } from '../../utils/supabase/server'
 
-async function fetchData(view: string = 'past;global') {
+async function fetchData(view: { concertsView: string; userView: string }) {
   const supabase = await createClient()
-  const concertsView = view.split(';')[0]
-  const userView = view.split(';')[1]
+  const { concertsView, userView } = view
 
   const {
     data: { user },
@@ -84,14 +83,12 @@ async function fetchData(view: string = 'past;global') {
 
 export default async function Page() {
   const cookieStore = await cookies()
-  const view = cookieStore.get('view')?.value
+  const viewString = cookieStore.get('view')?.value
+  const view = {
+    concertsView: viewString?.split(';')[0] || 'past',
+    userView: viewString?.split(';')[1] || 'global',
+  }
   const { concerts, user } = await fetchData(view)
 
-  return (
-    <HomePage
-      concerts={concerts}
-      currentUser={user}
-      view={{ concerts_view: view?.split(';')[0], user_view: view?.split(';')[1] }}
-    />
-  )
+  return <HomePage concerts={concerts} currentUser={user} view={view} />
 }
