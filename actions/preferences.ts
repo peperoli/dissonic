@@ -2,9 +2,11 @@
 
 import { cookies } from 'next/headers'
 
-export async function setViewPreference(view: string) {
+export async function setViewPreference(value: { concerts_view: string; user_view: string }) {
   const cookieStore = await cookies()
-  cookieStore.set('view', view, { maxAge: 60 * 60 * 24 * 365.25 })
+  cookieStore.set('view', `${value.concerts_view};${value.user_view}`, {
+    maxAge: 60 * 60 * 24 * 365.25,
+  })
 }
 
 export async function saveLastQueryState(

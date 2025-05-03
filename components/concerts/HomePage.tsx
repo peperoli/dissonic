@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Button } from '../Button'
-import { PlusIcon } from 'lucide-react'
+import { BookUserIcon, GlobeIcon, PlusIcon, UserIcon } from 'lucide-react'
 import { Concert, ExtendedRes } from '../../types/types'
 import { useConcerts } from '../../hooks/concerts/useConcerts'
 import { ConcertCard } from './ConcertCard'
@@ -17,11 +17,12 @@ import {
   parseAsArrayOf,
   parseAsBoolean,
   parseAsInteger,
+  parseAsString,
   parseAsStringLiteral,
   useQueryState,
   useQueryStates,
 } from 'nuqs'
-import { BookUser, Globe, RotateCcw, UserIcon } from 'lucide-react'
+import { RotateCcw } from 'lucide-react'
 import { useFriends } from '@/hooks/profiles/useFriends'
 import { Select } from '../forms/Select'
 import { FilterButton } from '../FilterButton'
@@ -36,13 +37,13 @@ import { groupConcertsByMonth } from '@/lib/groupConcertsByMonth'
 type HomePageProps = {
   concerts: ExtendedRes<Concert[]>
   currentUser: User | null
-  view: string | undefined
+  view: { concertsView: string; userView: string }
 }
 
 export const HomePage = ({
   concerts: initialConcerts,
   currentUser,
-  view: initialView = 'global',
+  view: initialView,
 }: HomePageProps) => {
   const [size, setSize] = useQueryState('size', parseAsInteger.withDefault(25))
   const [selectedBands, setSelectedBands] = useQueryState('bands', parseAsArrayOf(parseAsInteger))
@@ -58,19 +59,25 @@ export const HomePage = ({
   const [user] = useQueryState('user')
   const { data: profile } = useProfile(null, user)
   const selectedUserId = user && profile?.id
-  const [view, setView] = useState(initialView)
+  const [view, setView] = useQueryStates({
+    concerts_view: parseAsString.withDefault(initialView.concertsView ?? 'past'),
+    user_view: parseAsString.withDefault(initialView.userView ?? 'global'),
+  })
   const { data: friends } = useFriends({ profileId: currentUser?.id, pending: false })
   const sortBy = ['date_start', 'bands_count'] as const
   const [sort, setSort] = useQueryStates({
     sort_by: parseAsStringLiteral(sortBy).withDefault('date_start'),
-    sort_asc: parseAsBoolean.withDefault(false),
+    sort_asc: parseAsBoolean.withDefault(initialView.concertsView === 'future'),
   })
   const [_, setModal] = useQueryState('modal', parseAsStringLiteral(modalPaths))
+  const today = new Date(new Date().setHours(0, 0, 0, 0))
+  const tomorrow = new Date(today)
+  tomorrow.setDate(tomorrow.getDate() + 1)
 
   function getView() {
     if (!currentUser) return
-    if (view === 'user') return [currentUser.id]
-    if (view === 'friends' && friends)
+    if (view.user_view === 'user') return [currentUser.id]
+    if (view.user_view === 'friends' && friends)
       return [
         ...new Set([
           ...friends?.map(item => item.sender_id),
@@ -83,9 +90,11 @@ export const HomePage = ({
     placeholderData: initialConcerts,
     bands: selectedBands,
     locations: selectedLocations,
+    dateRange: view.concerts_view === 'future' ? [tomorrow, null] : [null, tomorrow],
     years: selectedYears,
     festivalRoots: selectedFestivalRoots,
-    bandsSeenUsers: selectedUserId ? [selectedUserId] : getView(),
+    bandsSeenUsers:
+      view.concerts_view !== 'future' ? (selectedUserId ? [selectedUserId] : getView()) : null,
     sort,
     size,
     bandsSize: 5,
@@ -112,10 +121,24 @@ export const HomePage = ({
   ]
 
   useEffect(() => {
+    if (view.concerts_view === 'future') {
+      setSort({
+        sort_by: 'date_start',
+        sort_asc: true,
+      })
+    } else {
+      setSort({
+        sort_by: 'date_start',
+        sort_asc: false,
+      })
+    }
+  }, [view.concerts_view])
+
+  useEffect(() => {
     saveLastQueryState('concerts', queryStates)
   }, [JSON.stringify(queryStates)])
 
-  async function handleView(value: string) {
+  async function handleView(value: { concerts_view: string; user_view: string }) {
     setView(value)
     await setViewPreference(value)
   }
@@ -138,6 +161,14 @@ export const HomePage = ({
         />
       </div>
       <section className="-mx-4 mb-4 grid gap-4 bg-radial-gradient from-blue/20 p-5 md:mx-auto md:rounded-2xl">
+        <SegmentedControl
+          options={[
+            { value: 'past', label: t('past') },
+            { value: 'future', label: t('future') },
+          ]}
+          value={view.concerts_view}
+          onValueChange={value => handleView({ ...view, concerts_view: value })}
+        />
         <div className="scrollbar-hidden -mx-4 flex gap-2 overflow-x-auto px-4 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible">
           <BandFilter values={selectedBands} onSubmit={setSelectedBands} />
           <LocationFilter values={selectedLocations} onSubmit={setSelectedLocations} />
@@ -190,15 +221,15 @@ export const HomePage = ({
             </FilterButton>
           </div>
         </div>
-        {currentUser && (
+        {currentUser && view.concerts_view !== 'future' && (
           <SegmentedControl
             options={[
-              { value: 'global', label: t('all'), icon: Globe },
-              { value: 'friends', label: t('friends'), icon: BookUser },
+              { value: 'global', label: t('all'), icon: GlobeIcon },
+              { value: 'friends', label: t('friends'), icon: BookUserIcon },
               { value: 'user', label: t('you'), icon: UserIcon },
             ]}
-            value={view}
-            onValueChange={handleView}
+            value={view.user_view}
+            onValueChange={value => handleView({ ...view, user_view: value })}
           />
         )}
       </section>

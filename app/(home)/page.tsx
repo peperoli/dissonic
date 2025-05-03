@@ -3,8 +3,9 @@ import { HomePage } from '../../components/concerts/HomePage'
 import { Concert } from '../../types/types'
 import { createClient } from '../../utils/supabase/server'
 
-async function fetchData(view: string = 'global') {
+async function fetchData(view: { concertsView: string; userView: string }) {
   const supabase = await createClient()
+  const { concertsView, userView } = view
 
   const {
     data: { user },
@@ -12,18 +13,28 @@ async function fetchData(view: string = 'global') {
 
   let { data: concertIds, error: concertIdsError } = await supabase
     .from('concerts_full')
-    .select('id, bands_seen:j_bands_seen(user_id)')
+    .select('id, date_start, bands_seen:j_bands_seen(user_id)')
 
   if (!concertIds) {
     throw concertIdsError
   }
 
-  if (user) {
-    if (view === 'user') {
+  if (concertsView === 'past') {
+    concertIds = concertIds.filter(
+      concert => concert.date_start && new Date(concert.date_start) < new Date()
+    )
+  } else if (concertsView === 'future') {
+    concertIds = concertIds.filter(
+      concert => concert.date_start && new Date(concert.date_start) > new Date()
+    )
+  }
+
+  if (user && concertsView !== 'future') {
+    if (userView === 'user') {
       concertIds = concertIds.filter(concert =>
         concert.bands_seen.find(band => band.user_id === user.id)
       )
-    } else if (view === 'friends') {
+    } else if (userView === 'friends') {
       const { data: friends, error: friendsError } = await supabase
         .from('friends')
         .select(
@@ -57,7 +68,7 @@ async function fetchData(view: string = 'global') {
       'id',
       concertIds.map(concert => concert.id)
     )
-    .order('date_start', { ascending: false })
+    .order('date_start', { ascending: concertsView === 'future' })
     .order('item_index', { referencedTable: 'j_concert_bands', ascending: true })
     .limit(25)
     .limit(5, { referencedTable: 'j_concert_bands' })
@@ -72,7 +83,11 @@ async function fetchData(view: string = 'global') {
 
 export default async function Page() {
   const cookieStore = await cookies()
-  const view = cookieStore.get('view')?.value
+  const viewString = cookieStore.get('view')?.value
+  const view = {
+    concertsView: viewString?.split(';')[0] || 'past',
+    userView: viewString?.split(';')[1] || 'global',
+  }
   const { concerts, user } = await fetchData(view)
 
   return <HomePage concerts={concerts} currentUser={user} view={view} />
