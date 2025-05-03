@@ -93,7 +93,8 @@ export const HomePage = ({
     dateRange: view.concerts_view === 'future' ? [tomorrow, null] : [null, tomorrow],
     years: selectedYears,
     festivalRoots: selectedFestivalRoots,
-    bandsSeenUsers: selectedUserId ? [selectedUserId] : getView(),
+    bandsSeenUsers:
+      view.concerts_view !== 'future' ? (selectedUserId ? [selectedUserId] : getView()) : null,
     sort,
     size,
     bandsSize: 5,

@@ -30,7 +30,7 @@ async function fetchData(view: string = 'past;global') {
     )
   }
 
-  if (user) {
+  if (user && concertsView !== 'future') {
     if (userView === 'user') {
       concertIds = concertIds.filter(concert =>
         concert.bands_seen.find(band => band.user_id === user.id)
