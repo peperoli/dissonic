@@ -122,3 +122,59 @@ export const ConcertStats = ({ bands, uniqueBands }: ConcertStatsProps) => {
     </section>
   )
 }
+
+export const SimpleConcertStats = ({ bands }: { bands: Band[] }) => {
+  const [visibleItems, setVisibleItems] = useState(10)
+  const [animationParent] = useAutoAnimate()
+  const t = useTranslations('ConcertStats')
+  const locale = useLocale()
+  const genres = bands.map(band => band.genres).flat(1)
+  const countries = bands.map(band => band.country).filter(country => !!country)
+  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
+  const genreCounts = getCounts(genres).sort((a, b) => b.count - a.count)
+  const countryCounts = getCounts(
+    countries.map(country => ({
+      name: regionNames.of(country.iso2) || country.iso2,
+      ...country,
+    }))
+  ).sort((a, b) => b.count - a.count)
+
+  if (bands.length === 0) {
+    return null
+  }
+
+  return (
+    <section className="rounded-lg bg-slate-800 p-4 md:p-6">
+      <div className="grid md:grid-cols-2 gap-4 md:gap-6">
+        <div>
+          <h2>{t('genres')}</h2>
+          <ul ref={animationParent} className="flex flex-wrap gap-2">
+            {genreCounts.slice(0, visibleItems).map(item => {
+              return <Chip key={item.id} label={item.name} count={item.count} size="sm" />
+            })}
+          </ul>
+        </div>
+        <div>
+          <h2>{t('countries')}</h2>
+          <ul className="flex flex-wrap gap-2">
+            {countryCounts.slice(0, visibleItems).map(item => {
+              return <Chip key={item.id} label={item.name} count={item.count} size="sm" />
+            })}
+          </ul>
+        </div>
+      </div>
+      {(genreCounts.length > 10 || countryCounts.length > 10) && (
+        <div className="mt-5 flex justify-center">
+          {visibleItems === 10 ? (
+            <Button
+              onClick={() => setVisibleItems(Math.max(genreCounts.length, countryCounts.length))}
+              label={t('showAll')}
+            />
+          ) : (
+            <Button onClick={() => setVisibleItems(10)} label={t('showLess')} />
+          )}
+        </div>
+      )}
+    </section>
+  )
+}

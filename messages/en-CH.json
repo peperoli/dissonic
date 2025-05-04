@@ -178,7 +178,11 @@
     "delete": "Delete",
     "concertArchivedBanner": "This concert has been archived. Editing is disabled.",
     "lineup": "Lineup",
-    "nBands": "{count, plural, =1 {one band} other {# bands}}"
+    "nBands": "{count, plural, =1 {one band} other {# bands}}",
+    "info": "Info",
+    "doorsTime": "Doors",
+    "showTime": "Show",
+    "sourceLink": "Source link"
   },
   "BandList": {
     "iWasThere": "I was there!",
@@ -199,6 +203,8 @@
   "ConcertStats": {
     "loading": "Loading ...",
     "genresAndCountries": "Genres and countries",
+    "genres": "Genres",
+    "countries": "Countries",
     "includeRepeatedlySeenBands": "Include repeatedly seen bands",
     "showAll": "Show all",
     "showLess": "Show less"
@@ -232,6 +238,12 @@
     "startDate": "Start date",
     "endDate": "End date",
     "location": "Location",
+    "doorsTime": "Doors",
+    "showTime": "Show",
+    "sourceLink": "Source link",
+    "ticketLink": "Ticket link",
+    "addTicketLink": "Add ticket link",
+    "removeTicketLink": "Remove ticket link",
     "name": "Name",
     "optional": "(optional)",
     "showMore": "Show more",

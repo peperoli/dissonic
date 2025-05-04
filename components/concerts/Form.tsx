@@ -1,4 +1,4 @@
-import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import { Controller, SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
 import { useConcerts } from '../../hooks/concerts/useConcerts'
 import { useLocations } from '../../hooks/locations/useLocations'
 import { AddConcert, ReorderableListItem } from '../../types/types'
@@ -9,7 +9,7 @@ import { SelectField } from '../forms/SelectField'
 import { SegmentedControl } from '../controls/SegmentedControl'
 import { useFestivalRoots } from '@/hooks/concerts/useFestivalRoots'
 import { Fragment, useEffect, useState } from 'react'
-import { ChevronDownIcon, Plus } from 'lucide-react'
+import { ChevronDownIcon, MinusIcon, Plus, PlusIcon } from 'lucide-react'
 import Modal from '../Modal'
 import { FestivalRootForm } from './FestivalRootForm'
 import { useAddConcert } from '@/hooks/concerts/useAddConcert'
@@ -40,8 +40,10 @@ export const Form = ({ close, isNew }: FormProps) => {
     handleSubmit,
     formState: { errors },
     // @ts-expect-error
-  } = useForm<AddConcert>({
-    defaultValues: isNew ? { is_festival: false, date_start: today } : concert,
+  } = useForm<AddConcert & { ticketLinks: { link: string }[] }>({
+    defaultValues: isNew
+      ? { is_festival: false, date_start: today }
+      : { ...concert, ticketLinks: concert?.ticket_links?.map(link => ({ link })) },
   })
   const addConcert = useAddConcert()
   const editConcert = useEditConcert()
@@ -59,6 +61,10 @@ export const Form = ({ close, isNew }: FormProps) => {
     bands: bands?.map(item => item.id),
     locations: locationId ? [locationId] : null,
     size: similarConcertsSize,
+  })
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'ticketLinks',
   })
   const [locationsSearchQuery, setLocationsSearchQuery] = useState('')
   const [festivalRootsSearchQuery, setFestivalRootsSearchQuery] = useState('')
@@ -93,11 +99,16 @@ export const Form = ({ close, isNew }: FormProps) => {
     setValue('location_id', defaultLocationId)
   }, [festivalRootId])
 
-  const onSubmit: SubmitHandler<AddConcert> = async function (formData) {
+  const onSubmit: SubmitHandler<AddConcert & { ticketLinks: { link: string }[] }> = async function (
+    formData
+  ) {
     if (isNew) {
       addConcert.mutate(formData)
     } else {
-      editConcert.mutate(formData)
+      editConcert.mutate({
+        ...formData,
+        ticket_links: formData.ticketLinks?.map(item => item.link),
+      })
     }
   }
   return (
@@ -204,6 +215,54 @@ export const Form = ({ close, isNew }: FormProps) => {
               label={t('location')}
             />
           )}
+        />
+        <div className="flex">
+          <TextField
+            type="time"
+            {...register('doors_time')}
+            label={`${t('doorsTime')} ${t('optional')}`}
+            placeholder="18:30"
+            grouped="start"
+          />
+          <TextField
+            type="time"
+            {...register('show_time')}
+            label={`${t('showTime')} ${t('optional')}`}
+            placeholder="19:00"
+            grouped="end"
+          />
+        </div>
+        <TextField
+          {...register('source_link')}
+          label={`${t('sourceLink')} ${t('optional')}`}
+          placeholder="https://example.com"
+        />
+        {fields.map((field, index) => (
+          <div className="flex items-center gap-4">
+            <TextField
+              key={field.id}
+              {...register(`ticketLinks.${index}.link` as const)}
+              label={`${t('ticketLink')} ${t('optional')}`}
+              placeholder="https://example.com"
+            />
+            {index > 0 && (
+              <Button
+                label="Wohnung entfernen"
+                onClick={() => remove(index)}
+                icon={<MinusIcon className="size-icon" />}
+                contentType="icon"
+                size="small"
+                danger
+              />
+            )}
+          </div>
+        ))}
+        <Button
+          label={t('addTicketLink')}
+          onClick={() => append({ link: '' })}
+          icon={<PlusIcon className="size-icon" />}
+          size="small"
+          appearance="tertiary"
         />
         {!isFestival && (
           <TextField

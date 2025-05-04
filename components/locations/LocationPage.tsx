@@ -20,7 +20,6 @@ import { useArchiveLocation } from '@/hooks/locations/useArchiveLocation'
 import { useRestoreLocation } from '@/hooks/locations/useRestoreLocation'
 import { StatusBanner } from '../forms/StatusBanner'
 import Image from 'next/image'
-import supabase from '@/utils/supabase/client'
 import { getAssetUrl } from '@/lib/getAssetUrl'
 
 type LocationPageProps = {

@@ -23,7 +23,7 @@ import {
 import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 import Image from 'next/image'
 import clsx from 'clsx'
-import { ConcertStats } from './ConcertStats'
+import { SimpleConcertStats } from './ConcertStats'
 import { useModal } from '../shared/ModalProvider'
 import { MetaInfo } from '../shared/MetaInfo'
 import { SpeedDial } from '../layout/SpeedDial'
@@ -58,14 +58,18 @@ export const ConcertPage = ({
   const { push } = useRouter()
   const pathname = usePathname()
   const t = useTranslations('ConcertPage')
-  const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
-  const image =
-    (concert?.bands?.[0]?.spotify_artist_images as SpotifyArtist['images'])?.[0] ||
-    spotifyArtist?.images?.[0]
+  const locale = useLocale()
 
   if (!concert) {
     notFound()
   }
+
+  const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
+  const image =
+    (concert.bands?.[0]?.spotify_artist_images as SpotifyArtist['images'])?.[0] ||
+    spotifyArtist?.images?.[0]
+  const isFutureOrToday =
+    new Date(concert.date_start).setHours(0) >= new Date().setHours(0, 0, 0, 0)
 
   return (
     <ConcertContext.Provider value={{ concert }}>
@@ -91,7 +95,7 @@ export const ConcertPage = ({
             ) : (
               <>
                 <ShareButton />
-                {new Date(concert.date_start).setHours(0) >= new Date().setHours(0, 0, 0, 0) && (
+                {isFutureOrToday && (
                   <Button
                     onClick={() => getIcsFile(concert)}
                     label={t('addToCalendar')}
@@ -215,7 +219,8 @@ export const ConcertPage = ({
           )}
         </section>
         <ConcertCommunity concert={concert} />
-        {concert.bands && <ConcertStats bands={concert.bands} />}
+        {concert.bands && <SimpleConcertStats bands={concert.bands} />}
+        {isFutureOrToday && <ConcertInfo concert={concert} />}
         <div className="rounded-lg bg-slate-800 p-4 md:p-6">
           <Comments />
         </div>
@@ -273,6 +278,31 @@ function ConcertDate({
           <span className="text-sm">{date.getFullYear()}</span>
         </>
       )}
+    </div>
+  )
+}
+
+function ConcertInfo({ concert }: { concert: Concert }) {
+  const t = useTranslations('ConcertPage')
+
+  return (
+    <div className="rounded-lg bg-slate-800 p-4 md:p-6">
+      <h2 className="sr-only">{t('info')}</h2>
+      <div className="">
+        <div className="flex items-center gap-2">
+          <p>{t('showTime')}</p>
+          <span className="text-slate-300">{concert.doors_time?.slice(0, 5)}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <p>{t('doorsTime')}</p>
+          <span className="text-slate-300">{concert.show_time?.slice(0, 5)}</span>
+        </div>
+        {concert.source_link && (
+          <Link href={concert.source_link} target="_blank" className="btn btn-secondary">
+            {t('sourceLink')}
+          </Link>
+        )}
+      </div>
     </div>
   )
 }
