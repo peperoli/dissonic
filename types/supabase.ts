@@ -144,7 +144,6 @@ export type Database = {
             | null
           show_time: string | null
           source_link: string | null
-          ticket_links: string[] | null
         }
         Insert: {
           created_at?: string
@@ -163,7 +162,6 @@ export type Database = {
             | null
           show_time?: string | null
           source_link?: string | null
-          ticket_links?: string[] | null
         }
         Update: {
           created_at?: string
@@ -182,7 +180,6 @@ export type Database = {
             | null
           show_time?: string | null
           source_link?: string | null
-          ticket_links?: string[] | null
         }
         Relationships: [
           {
@@ -785,7 +782,6 @@ export type Database = {
             | null
           show_time: string | null
           source_link: string | null
-          ticket_links: string[] | null
         }[]
       }
       custom_access_token_hook: {

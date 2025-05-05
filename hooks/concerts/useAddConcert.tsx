@@ -16,6 +16,9 @@ const addConcert = async (concert: AddConcert) => {
       date_start: concert.date_start,
       date_end: concert.date_end,
       location_id: concert.location_id,
+      doors_time: concert.doors_time || null,
+      show_time: concert.show_time || null,
+      source_link: concert.source_link,
       ressource_status: concert.ressource_status,
     })
     .select()

@@ -17,6 +17,7 @@ import {
   BadgeMinus,
   CalendarPlusIcon,
   Edit,
+  LinkIcon,
   MapPin,
   Trash,
 } from 'lucide-react'
@@ -58,7 +59,6 @@ export const ConcertPage = ({
   const { push } = useRouter()
   const pathname = usePathname()
   const t = useTranslations('ConcertPage')
-  const locale = useLocale()
 
   if (!concert) {
     notFound()
@@ -219,8 +219,8 @@ export const ConcertPage = ({
           )}
         </section>
         <ConcertCommunity concert={concert} />
-        {concert.bands && <SimpleConcertStats bands={concert.bands} />}
         {isFutureOrToday && <ConcertInfo concert={concert} />}
+        {concert.bands && <SimpleConcertStats bands={concert.bands} />}
         <div className="rounded-lg bg-slate-800 p-4 md:p-6">
           <Comments />
         </div>
@@ -285,20 +285,29 @@ function ConcertDate({
 function ConcertInfo({ concert }: { concert: Concert }) {
   const t = useTranslations('ConcertPage')
 
+  if (!concert.doors_time && !concert.show_time && !concert.source_link) {
+    return null
+  }
+
   return (
     <div className="rounded-lg bg-slate-800 p-4 md:p-6">
       <h2 className="sr-only">{t('info')}</h2>
-      <div className="">
-        <div className="flex items-center gap-2">
-          <p>{t('showTime')}</p>
-          <span className="text-slate-300">{concert.doors_time?.slice(0, 5)}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <p>{t('doorsTime')}</p>
-          <span className="text-slate-300">{concert.show_time?.slice(0, 5)}</span>
-        </div>
+      <div className="flex items-center gap-4">
+        <p className="font-bold">
+          {t('doorsTime')}{' '}
+          <span className="font-normal text-slate-300">
+            {concert.doors_time?.slice(0, 5) || '–'}
+          </span>
+        </p>
+        <p className="font-bold">
+          {t('showTime')}{' '}
+          <span className="font-normal text-slate-300">
+            {concert.show_time?.slice(0, 5) || '–'}
+          </span>
+        </p>
         {concert.source_link && (
-          <Link href={concert.source_link} target="_blank" className="btn btn-secondary">
+          <Link href={concert.source_link} target="_blank" className="btn btn-secondary btn-small ml-auto">
+            <LinkIcon className="size-icon" />
             {t('sourceLink')}
           </Link>
         )}
