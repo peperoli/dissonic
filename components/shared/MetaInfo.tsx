@@ -17,7 +17,7 @@ export const MetaInfo = ({ createdAt, creator, ressourceType, ressourceId }: Met
   const t = useTranslations('MetaInfo')
   const locale = useLocale()
 
-  if ((!createdAt || !creator) && !contributionsCount) {
+  if (!createdAt && !creator && !contributionsCount) {
     return null
   }
 

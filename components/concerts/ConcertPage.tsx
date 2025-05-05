@@ -156,7 +156,7 @@ export const ConcertPage = ({
           )}
         >
           {!concert.is_festival && image && (
-            <Image src={image.url} alt="" fill unoptimized className="object-cover" />
+            <Image src={image.url} alt="" fill unoptimized className="object-cover object-top" />
           )}
           <div
             className={clsx(
