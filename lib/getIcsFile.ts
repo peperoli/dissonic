@@ -15,7 +15,13 @@ export function getIcsFile(concert: Concert) {
           .map(band => band.name)
           .join(', ')) ?? 'Concert'
   const event = {
-    start: [dateStart.getFullYear(), dateStart.getMonth() + 1, dateStart.getDate(), 19, 0],
+    start: [
+      dateStart.getFullYear(),
+      dateStart.getMonth() + 1,
+      dateStart.getDate(),
+      concert.show_time ? parseInt(concert.show_time.split(':')[0]) : 19,
+      concert.show_time ? parseInt(concert.show_time.split(':')[1]) : 0,
+    ],
     end: [dateEnd.getFullYear(), dateEnd.getMonth() + 1, dateEnd.getDate(), 23, 0],
     title,
     description: `${process.env.NEXT_PUBLIC_BASE_URL}${pathname}`,

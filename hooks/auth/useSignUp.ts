@@ -18,9 +18,8 @@ export async function signUp(formData: SignUpFormData) {
     },
   })
 
-  console.log('hi')
   if (error || !user) {
-    console.log(error)
+    console.error(error)
     throw error
   }
   
@@ -29,7 +28,7 @@ export async function signUp(formData: SignUpFormData) {
   .insert({ id: user.id, username: formData.username })
   
   if (profileError) {
-    console.log(error)
+    console.error(error)
     throw profileError
   }
 }
@@ -38,7 +37,7 @@ export function useSignUp() {
   return useMutation({
     mutationFn: signUp,
     onError: error => {
-      console.log(error)
+      console.error(error)
     },
   })
 }

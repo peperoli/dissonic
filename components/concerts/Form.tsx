@@ -100,6 +100,35 @@ export const Form = ({ close, isNew }: FormProps) => {
       editConcert.mutate(formData)
     }
   }
+
+  function FutureConcertFields() {
+    return (
+      <>
+        <div className="flex">
+          <TextField
+            type="time"
+            {...register('doors_time')}
+            label={`${t('doorsTime')} ${t('optional')}`}
+            placeholder="18:30"
+            grouped="start"
+          />
+          <TextField
+            type="time"
+            {...register('show_time')}
+            label={`${t('showTime')} ${t('optional')}`}
+            placeholder="19:00"
+            grouped="end"
+          />
+        </div>
+        <TextField
+          {...register('source_link')}
+          label={`${t('sourceLink')} ${t('optional')}`}
+          placeholder="https://example.com"
+        />
+      </>
+    )
+  }
+
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
@@ -220,40 +249,12 @@ export const Form = ({ close, isNew }: FormProps) => {
             setSimilarItemsSize={setSimilarConcertsSize}
           />
         )}
-        {isMod && (
+        {new Date(watch('date_start')).setHours(0) >= new Date().setHours(0, 0, 0, 0) ? (
+          <FutureConcertFields />
+        ) : (
           <Disclosure>
             <DisclosurePanel className="grid gap-6">
-              <Controller
-                name="ressource_status"
-                control={control}
-                render={({ field: { value, onChange } }) => (
-                  <fieldset>
-                    <legend className="mb-1 text-sm text-slate-300">{t('ressourceStatus')}</legend>
-                    <RadioGroup.Root
-                      name="ressource_status"
-                      value={value ?? undefined}
-                      onValueChange={value => onChange(value)}
-                      orientation="vertical"
-                    >
-                      <ul className="w-full">
-                        {ressourceStatusItems.map(item => (
-                          <li key={item.id}>
-                            <label className="flex w-full items-center gap-3 rounded px-2 py-1.5 hover:bg-slate-600">
-                              <RadioGroup.Item
-                                value={item.id}
-                                className="grid size-4 flex-none place-content-center rounded-full border-2 border-slate-300 bg-white/5 data-[state=checked]:border-venom data-[state=checked]:bg-venom"
-                              >
-                                <RadioGroup.Indicator className="size-3 rounded-lg border-3 border-slate-850 bg-venom" />
-                              </RadioGroup.Item>
-                              {item.name}
-                            </label>
-                          </li>
-                        ))}
-                      </ul>
-                    </RadioGroup.Root>
-                  </fieldset>
-                )}
-              />
+              <FutureConcertFields />
             </DisclosurePanel>
             <DisclosureButton as={Fragment}>
               {({ open }) => (
@@ -266,6 +267,39 @@ export const Form = ({ close, isNew }: FormProps) => {
               )}
             </DisclosureButton>
           </Disclosure>
+        )}
+        {isMod && (
+          <Controller
+            name="ressource_status"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <fieldset>
+                <legend className="mb-1 text-sm text-slate-300">{t('ressourceStatus')}</legend>
+                <RadioGroup.Root
+                  name="ressource_status"
+                  value={value ?? undefined}
+                  onValueChange={value => onChange(value)}
+                  orientation="vertical"
+                >
+                  <ul className="w-full">
+                    {ressourceStatusItems.map(item => (
+                      <li key={item.id}>
+                        <label className="flex w-full items-center gap-3 rounded px-2 py-1.5 hover:bg-slate-600">
+                          <RadioGroup.Item
+                            value={item.id}
+                            className="grid size-4 flex-none place-content-center rounded-full border-2 border-slate-300 bg-white/5 data-[state=checked]:border-venom data-[state=checked]:bg-venom"
+                          >
+                            <RadioGroup.Indicator className="size-3 rounded-lg border-3 border-slate-850 bg-venom" />
+                          </RadioGroup.Item>
+                          {item.name}
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                </RadioGroup.Root>
+              </fieldset>
+            )}
+          />
         )}
         <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:static md:justify-end md:pb-0 [&>*]:flex-1">
           <Button onClick={close} label={t('cancel')} />

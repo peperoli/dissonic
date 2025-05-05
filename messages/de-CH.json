@@ -174,7 +174,11 @@
     "delete": "Löschen",
     "concertArchivedBanner": "Dieses Konzert wurde archiviert. Bearbeitungen sind deaktiviert.",
     "lineup": "Lineup",
-    "nBands": "{count, plural, =1 {eine Band} other {# Bands}}"
+    "nBands": "{count, plural, =1 {eine Band} other {# Bands}}",
+    "info": "Info",
+    "doorsTime": "Einlass",
+    "showTime": "Show",
+    "sourceLink": "Quell-Link"
   },
   "ShareButton": {
     "share": "Teilen",
@@ -199,6 +203,8 @@
   "ConcertStats": {
     "loading": "Laden ...",
     "genresAndCountries": "Genres und Länder",
+    "genres": "Genres",
+    "countries": "Länder",
     "includeRepeatedlySeenBands": "Mehrfach gesehene Bands einschliessen",
     "showAll": "Alles anzeigen",
     "showLess": "Weniger anzeigen"
@@ -232,6 +238,12 @@
     "startDate": "Startdatum",
     "endDate": "Enddatum",
     "location": "Lokal",
+    "doorsTime": "Einlass",
+    "showTime": "Show",
+    "sourceLink": "Quell-Link",
+    "ticketLink": "Ticket-Link",
+    "addTicketLink": "Ticket-Link hinzufügen",
+    "removeTicketLink": "Ticket-Link entfernen",
     "name": "Name",
     "optional": "(optional)",
     "showMore": "Mehr anzeigen",

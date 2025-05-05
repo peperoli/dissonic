@@ -30,6 +30,9 @@ const editConcert = async (newConcert: EditConcert) => {
         date_start: newConcert.date_start,
         date_end: newConcert.is_festival ? newConcert.date_end : null,
         location_id: newConcert.location_id,
+        doors_time: newConcert.doors_time || null,
+        show_time: newConcert.show_time || null,
+        source_link: newConcert.source_link,
         ressource_status: newConcert.ressource_status,
       })
       .eq('id', newConcert.id)

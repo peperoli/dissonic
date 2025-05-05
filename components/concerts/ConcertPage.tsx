@@ -17,13 +17,14 @@ import {
   BadgeMinus,
   CalendarPlusIcon,
   Edit,
+  LinkIcon,
   MapPin,
   Trash,
 } from 'lucide-react'
 import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 import Image from 'next/image'
 import clsx from 'clsx'
-import { ConcertStats } from './ConcertStats'
+import { SimpleConcertStats } from './ConcertStats'
 import { useModal } from '../shared/ModalProvider'
 import { MetaInfo } from '../shared/MetaInfo'
 import { SpeedDial } from '../layout/SpeedDial'
@@ -58,14 +59,17 @@ export const ConcertPage = ({
   const { push } = useRouter()
   const pathname = usePathname()
   const t = useTranslations('ConcertPage')
-  const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
-  const image =
-    (concert?.bands?.[0]?.spotify_artist_images as SpotifyArtist['images'])?.[0] ||
-    spotifyArtist?.images?.[0]
 
   if (!concert) {
     notFound()
   }
+
+  const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
+  const image =
+    (concert.bands?.[0]?.spotify_artist_images as SpotifyArtist['images'])?.[0] ||
+    spotifyArtist?.images?.[0]
+  const isFutureOrToday =
+    new Date(concert.date_start).setHours(0) >= new Date().setHours(0, 0, 0, 0)
 
   return (
     <ConcertContext.Provider value={{ concert }}>
@@ -91,7 +95,7 @@ export const ConcertPage = ({
             ) : (
               <>
                 <ShareButton />
-                {new Date(concert.date_start).setHours(0) >= new Date().setHours(0, 0, 0, 0) && (
+                {isFutureOrToday && (
                   <Button
                     onClick={() => getIcsFile(concert)}
                     label={t('addToCalendar')}
@@ -215,7 +219,8 @@ export const ConcertPage = ({
           )}
         </section>
         <ConcertCommunity concert={concert} />
-        {concert.bands && <ConcertStats bands={concert.bands} />}
+        {isFutureOrToday && <ConcertInfo concert={concert} />}
+        {concert.bands && <SimpleConcertStats bands={concert.bands} />}
         <div className="rounded-lg bg-slate-800 p-4 md:p-6">
           <Comments />
         </div>
@@ -273,6 +278,40 @@ function ConcertDate({
           <span className="text-sm">{date.getFullYear()}</span>
         </>
       )}
+    </div>
+  )
+}
+
+function ConcertInfo({ concert }: { concert: Concert }) {
+  const t = useTranslations('ConcertPage')
+
+  if (!concert.doors_time && !concert.show_time && !concert.source_link) {
+    return null
+  }
+
+  return (
+    <div className="rounded-lg bg-slate-800 p-4 md:p-6">
+      <h2 className="sr-only">{t('info')}</h2>
+      <div className="flex items-center gap-4">
+        <p className="font-bold">
+          {t('doorsTime')}{' '}
+          <span className="font-normal text-slate-300">
+            {concert.doors_time?.slice(0, 5) || '–'}
+          </span>
+        </p>
+        <p className="font-bold">
+          {t('showTime')}{' '}
+          <span className="font-normal text-slate-300">
+            {concert.show_time?.slice(0, 5) || '–'}
+          </span>
+        </p>
+        {concert.source_link && (
+          <Link href={concert.source_link} target="_blank" className="btn btn-secondary btn-small ml-auto">
+            <LinkIcon className="size-icon" />
+            {t('sourceLink')}
+          </Link>
+        )}
+      </div>
     </div>
   )
 }

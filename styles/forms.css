@@ -6,6 +6,7 @@
 
     input[type='text'],
     input[type='date'],
+    input[type='time'],
     input[type='email'],
     input[type='password'],
     textarea,
