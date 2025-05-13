@@ -3,13 +3,23 @@ import { createClient } from '../../../utils/supabase/server'
 import supabase from '../../../utils/supabase/client'
 import { LocationPage } from '@/components/locations/LocationPage'
 import { notFound } from 'next/navigation'
+import { ResolvingMetadata } from 'next'
+import { getAssetUrl } from '@/lib/getAssetUrl'
 
-export async function generateMetadata(props: { params: Promise<{ id: string }> }) {
+export async function generateMetadata(
+  props: { params: Promise<{ id: string }> },
+  parent: ResolvingMetadata
+) {
   const params = await props.params
   const location = await fetchData(params)
+  const imageUrl = location && getAssetUrl('ressources', location.image, location?.updated_at)
+  const parentImages = (await parent).openGraph?.images || []
 
   return {
     title: `${location.name} • Dissonic`,
+    openGraph: {
+      images: imageUrl ? [imageUrl] : parentImages,
+    },
   }
 }
 
@@ -29,11 +39,10 @@ export async function generateStaticParams() {
 async function fetchData(params: { id: string }) {
   const supabase = await createClient()
   const locationId = parseInt(params.id)
-  
+
   if (Number.isNaN(locationId)) {
     notFound()
   }
-
 
   const { data, error } = await supabase
     .from('locations')

@@ -1,19 +1,33 @@
 import { ConcertPage } from '../../../components/concerts/ConcertPage'
-import { Concert } from '../../../types/types'
+import { Concert, SpotifyArtist } from '../../../types/types'
 import { cookies } from 'next/headers'
 import { createClient } from '../../../utils/supabase/server'
 import supabase from '../../../utils/supabase/client'
 import { notFound } from 'next/navigation'
 import { getLocale } from 'next-intl/server'
 import { getConcertName } from '@/lib/getConcertName'
+import { ResolvingMetadata } from 'next'
+import { fetchSpotifyToken } from '@/hooks/spotify/useSpotifyToken'
+import { fetchSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 
-export async function generateMetadata(props: { params: Promise<{ id: string }> }) {
+export async function generateMetadata(
+  props: { params: Promise<{ id: string }> },
+  parent: ResolvingMetadata
+) {
   const params = await props.params
   const concert = await fetchConcert(params)
   const locale = await getLocale()
   const concertName = getConcertName(concert, locale)
+  const spotifyToken = await fetchSpotifyToken()
+  const spotifyArtist = await fetchSpotifyArtist(spotifyToken, concert.bands[0].spotify_artist_id)
+  const artistImage = (concert.bands[0].spotify_artist_images as SpotifyArtist['images'])?.[0] || spotifyArtist?.images?.[0]
+  const parentImages = (await parent).openGraph?.images || []
+
   return {
     title: `${concertName} • Dissonic`,
+    openGraph: {
+      images: artistImage ? [artistImage.url] : parentImages,
+    },
   }
 }
 export async function generateStaticParams() {

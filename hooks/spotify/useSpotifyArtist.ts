@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { SpotifyArtist } from '@/types/types'
 import { useSpotifyToken } from './useSpotifyToken'
 
-const fetchSpotifyArtist = async (token?: string | null, artistId?: string | null) => {
+export async function fetchSpotifyArtist(token: string | null, artistId: string | null) {
   const artistParams = {
     method: 'GET',
     headers: {
@@ -26,12 +26,13 @@ const fetchSpotifyArtist = async (token?: string | null, artistId?: string | nul
   }
 }
 
-export const useSpotifyArtist = (artistId?: string | null, options?: { enabled?: boolean }) => {
-  const { data: token } = useSpotifyToken()
+export const useSpotifyArtist = (artistId: string | null, options?: { enabled?: boolean }) => {
   const HOUR = 1000 * 3600
+  const { data: token } = useSpotifyToken()
+
   return useQuery({
     queryKey: ['spotifyArtist', artistId],
-    queryFn: () => fetchSpotifyArtist(token, artistId),
+    queryFn: () => fetchSpotifyArtist(token ?? null, artistId),
     staleTime: HOUR * 24,
     gcTime: HOUR,
     enabled: !!token && !!artistId && options?.enabled !== false,

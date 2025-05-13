@@ -39,7 +39,7 @@ type BandPageProps = {
 
 export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
   const { data: band } = useBand(initialBand.id, initialBand)
-  const { data: spotifyArtist } = useSpotifyArtist(band?.spotify_artist_id, {
+  const { data: spotifyArtist } = useSpotifyArtist(band?.spotify_artist_id ?? null, {
     enabled: !band?.spotify_artist_images,
   })
   const { data: concertsCount } = useConcertsCount({ bands: [initialBand.id] })

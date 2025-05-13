@@ -50,7 +50,7 @@ export const ConcertPage = ({
 }: ConcertPageProps) => {
   const { data: concert } = useConcert(initialConcert.id, { placeholderData: initialConcert })
   const { data: session } = useSession()
-  const { data: spotifyArtist } = useSpotifyArtist(concert?.bands?.[0]?.spotify_artist_id, {
+  const { data: spotifyArtist } = useSpotifyArtist(concert?.bands?.[0]?.spotify_artist_id ?? null, {
     enabled: !concert?.bands?.[0]?.spotify_artist_images,
   })
   const archiveConcert = useArchiveConcert()
@@ -306,7 +306,11 @@ function ConcertInfo({ concert }: { concert: Concert }) {
           </span>
         </p>
         {concert.source_link && (
-          <Link href={concert.source_link} target="_blank" className="btn btn-secondary btn-small ml-auto">
+          <Link
+            href={concert.source_link}
+            target="_blank"
+            className="btn btn-secondary btn-small ml-auto"
+          >
             <LinkIcon className="size-icon" />
             {t('sourceLink')}
           </Link>
