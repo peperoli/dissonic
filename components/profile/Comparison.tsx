@@ -16,7 +16,7 @@ export function ComparisonChart({
   user2,
   user1BandsSeen,
   user2BandsSeen,
-  ressourceType,
+  resourceType,
   size = 'md',
 }: {
   user1: Profile
@@ -29,7 +29,7 @@ export function ComparisonChart({
     concert: Tables<'concerts'> | null
     band: Tables<'bands'> | null
   })[]
-  ressourceType: 'concerts' | 'bands' | 'locations'
+  resourceType: 'concerts' | 'bands' | 'locations'
   size?: 'sm' | 'md'
 }) {
   const user1ConcertsSeen = new Set(user1BandsSeen.map(bandSeen => bandSeen.concert_id))
@@ -39,21 +39,21 @@ export function ComparisonChart({
   const user1LocationsSeen = new Set(user1BandsSeen.map(bandSeen => bandSeen.concert?.location_id))
   const user2LocationsSeen = new Set(user2BandsSeen.map(bandSeen => bandSeen.concert?.location_id))
   const onlyUser1 =
-    ressourceType === 'concerts'
+    resourceType === 'concerts'
       ? user1ConcertsSeen.difference(user2ConcertsSeen)
-      : ressourceType === 'bands'
+      : resourceType === 'bands'
         ? user1UniqueBandsSeen.difference(user2UniqueBandsSeen)
         : user1LocationsSeen.difference(user2LocationsSeen)
   const onlyUser2 =
-    ressourceType === 'concerts'
+    resourceType === 'concerts'
       ? user2ConcertsSeen.difference(user1ConcertsSeen)
-      : ressourceType === 'bands'
+      : resourceType === 'bands'
         ? user2UniqueBandsSeen.difference(user1UniqueBandsSeen)
         : user2LocationsSeen.difference(user1LocationsSeen)
   const shared =
-    ressourceType === 'concerts'
+    resourceType === 'concerts'
       ? user1ConcertsSeen.intersection(user2ConcertsSeen)
-      : ressourceType === 'bands'
+      : resourceType === 'bands'
         ? user1UniqueBandsSeen.intersection(user2UniqueBandsSeen)
         : user1LocationsSeen.intersection(user2LocationsSeen)
   const total = onlyUser1.union(onlyUser2).union(shared)
@@ -63,9 +63,9 @@ export function ComparisonChart({
     <div className="flex items-center gap-2">
       {size !== 'sm' && (
         <div className="grid size-8 flex-none place-content-center rounded-full bg-slate-700 text-sm">
-          {ressourceType === 'concerts' ? (
+          {resourceType === 'concerts' ? (
             <CalendarIcon className="size-icon" />
-          ) : ressourceType === 'bands' ? (
+          ) : resourceType === 'bands' ? (
             <GuitarIcon className="size-icon" />
           ) : (
             <MapPinIcon className="size-icon" />
@@ -78,7 +78,7 @@ export function ComparisonChart({
           content={
             <>
               <strong>
-                {t(`count_${ressourceType}`, {
+                {t(`count_${resourceType}`, {
                   count: onlyUser1.size,
                 })}
               </strong>
@@ -90,9 +90,9 @@ export function ComparisonChart({
           <div
             className={clsx(
               'rounded-md',
-              ressourceType === 'concerts'
+              resourceType === 'concerts'
                 ? 'bg-venom/40'
-                : ressourceType === 'bands'
+                : resourceType === 'bands'
                   ? 'bg-blue/40'
                   : 'bg-purple/40',
               size === 'sm' ? 'h-2' : 'h-6'
@@ -104,7 +104,7 @@ export function ComparisonChart({
           triggerOnClick
           content={
             <>
-              <strong>{t(`count_${ressourceType}`, { count: shared.size })}</strong>
+              <strong>{t(`count_${resourceType}`, { count: shared.size })}</strong>
               <br />
               {t('shared')}
             </>
@@ -113,9 +113,9 @@ export function ComparisonChart({
           <div
             className={clsx(
               'rounded-md',
-              ressourceType === 'concerts'
+              resourceType === 'concerts'
                 ? 'bg-venom shadow-shine shadow-venom/50'
-                : ressourceType === 'bands'
+                : resourceType === 'bands'
                   ? 'bg-blue shadow-shine shadow-blue/50'
                   : 'bg-purple shadow-shine shadow-purple/50',
               size === 'sm' ? 'h-2' : 'h-6'
@@ -128,7 +128,7 @@ export function ComparisonChart({
           content={
             <>
               <strong>
-                {t(`count_${ressourceType}`, {
+                {t(`count_${resourceType}`, {
                   count: onlyUser2.size,
                 })}
               </strong>
@@ -140,9 +140,9 @@ export function ComparisonChart({
           <div
             className={clsx(
               'rounded-md',
-              ressourceType === 'concerts'
+              resourceType === 'concerts'
                 ? 'bg-venom/40'
-                : ressourceType === 'bands'
+                : resourceType === 'bands'
                   ? 'bg-blue/40'
                   : 'bg-purple/40',
               size === 'sm' ? 'h-2' : 'h-6'
@@ -153,9 +153,9 @@ export function ComparisonChart({
       </div>
       {size !== 'sm' && (
         <div className="grid size-8 flex-none place-content-center rounded-full bg-slate-700 text-sm">
-          {ressourceType === 'concerts' ? (
+          {resourceType === 'concerts' ? (
             <CalendarIcon className="size-icon" />
-          ) : ressourceType === 'bands' ? (
+          ) : resourceType === 'bands' ? (
             <GuitarIcon className="size-icon" />
           ) : (
             <MapPinIcon className="size-icon" />
@@ -191,21 +191,21 @@ export function Comparison({ profileId }: { profileId: string }) {
         user2={profile}
         user1BandsSeen={bandsSeen1}
         user2BandsSeen={bandsSeen2}
-        ressourceType="concerts"
+        resourceType="concerts"
       />
       <ComparisonChart
         user1={sessionProfile}
         user2={profile}
         user1BandsSeen={bandsSeen1}
         user2BandsSeen={bandsSeen2}
-        ressourceType="bands"
+        resourceType="bands"
       />
       <ComparisonChart
         user1={sessionProfile}
         user2={profile}
         user1BandsSeen={bandsSeen1}
         user2BandsSeen={bandsSeen2}
-        ressourceType="locations"
+        resourceType="locations"
       />
     </section>
   )

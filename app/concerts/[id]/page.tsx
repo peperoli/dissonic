@@ -18,16 +18,26 @@ export async function generateMetadata(
   const concert = await fetchConcert(params)
   const locale = await getLocale()
   const concertName = getConcertName(concert, locale)
-  const spotifyToken = await fetchSpotifyToken()
-  const spotifyArtist = await fetchSpotifyArtist(spotifyToken, concert.bands[0].spotify_artist_id)
-  const artistImage = (concert.bands[0].spotify_artist_images as SpotifyArtist['images'])?.[0] || spotifyArtist?.images?.[0]
-  const parentImages = (await parent).openGraph?.images || []
 
-  return {
-    title: `${concertName} • Dissonic`,
-    openGraph: {
-      images: artistImage ? [artistImage.url] : parentImages,
-    },
+  try {
+    const spotifyToken = await fetchSpotifyToken()
+    const spotifyArtist = await fetchSpotifyArtist(
+      spotifyToken,
+      concert.bands[0]?.spotify_artist_id
+    )
+    const artistImage =
+      (concert.bands[0].spotify_artist_images as SpotifyArtist['images'])?.[0] ||
+      spotifyArtist?.images?.[0]
+    const parentImages = (await parent).openGraph?.images || []
+
+    return {
+      title: `${concertName} • Dissonic`,
+      openGraph: {
+        images: artistImage ? [artistImage.url] : parentImages,
+      },
+    }
+  } catch (error) {
+    return { title: `${concertName} • Dissonic` }
   }
 }
 export async function generateStaticParams() {

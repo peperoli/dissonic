@@ -1,8 +1,8 @@
 import { ContributionGroup } from '@/components/contributions/ContributionGroup'
 import { LoadMoreButton } from '@/components/contributions/LoadMoreButton'
 import { OperationFilter } from '@/components/contributions/OperationFilter'
-import { RessourceTypeFilter } from '@/components/contributions/RessourceTypeFilter'
-import { relatedRessourceTypes } from '@/hooks/contributions/useContributionsCount'
+import { ResourceTypeFilter } from '@/components/contributions/ResourceTypeFilter'
+import { relatedResourceTypes } from '@/hooks/contributions/useContributionsCount'
 import { getMediumDate } from '@/lib/date'
 import { Tables } from '@/types/supabase'
 import { ContributionFetchOptions } from '@/types/types'
@@ -28,15 +28,15 @@ async function fetchData({ searchParams }: { searchParams: ContributionFetchOpti
     .order('timestamp', { ascending: false })
     .limit(searchParams.size ? parseInt(searchParams.size) : 50)
 
-  if (searchParams.ressourceType && searchParams.ressourceType !== 'all') {
-    query = query.in('ressource_type', [
-      searchParams.ressourceType,
-      ...relatedRessourceTypes[searchParams.ressourceType],
+  if (searchParams.resourceType && searchParams.resourceType !== 'all') {
+    query = query.in('resource_type', [
+      searchParams.resourceType,
+      ...relatedResourceTypes[searchParams.resourceType],
     ])
   }
 
-  if (searchParams.ressourceId) {
-    query = query.eq('ressource_id', parseInt(searchParams.ressourceId))
+  if (searchParams.resourceId) {
+    query = query.eq('resource_id', parseInt(searchParams.resourceId))
   }
 
   if (searchParams.userId) {
@@ -70,8 +70,8 @@ export default async function ContributionsPage(props: {
     type TimeGroup<T> = {
       time: number
       userId: string | null
-      ressourceType: string
-      ressourceId: number | null
+      resourceType: string
+      resourceId: number | null
       items: T[]
     }
 
@@ -79,8 +79,8 @@ export default async function ContributionsPage(props: {
       const date = getMediumDate(item.timestamp, locale)
       const time = new Date(item.timestamp).getTime()
       const userId = item.user_id?.[0] ?? null
-      const ressourceType = item.ressource_type
-      const ressourceId = item.ressource_id
+      const resourceType = item.resource_type
+      const resourceId = item.resource_id
 
       let dateGroup = acc.find(group => group.date === date)
       if (!dateGroup) {
@@ -92,11 +92,11 @@ export default async function ContributionsPage(props: {
         group =>
           group.time === time &&
           group.userId === userId &&
-          group.ressourceId === ressourceId &&
-          group.ressourceType === ressourceType
+          group.resourceId === resourceId &&
+          group.resourceType === resourceType
       )
       if (!timeGroup) {
-        timeGroup = { time, userId, ressourceId, ressourceType, items: [] }
+        timeGroup = { time, userId, resourceId, resourceType, items: [] }
         dateGroup.items.push(timeGroup)
       }
 
@@ -110,7 +110,7 @@ export default async function ContributionsPage(props: {
       <h1>{t('contributions')}</h1>
       <div className="mb-6 flex flex-col gap-4 md:flex-row">
         <OperationFilter />
-        <RessourceTypeFilter />
+        <ResourceTypeFilter />
       </div>
       {contributions.length === 0 && <p className="mb-4 text-slate-300">{t('noEntriesFound')}</p>}
       <div className="grid gap-6">

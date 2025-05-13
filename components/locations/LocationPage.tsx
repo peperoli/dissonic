@@ -175,8 +175,8 @@ export const LocationPage = ({
       <MetaInfo
         createdAt={location.created_at}
         creator={location.creator}
-        ressourceType="locations"
-        ressourceId={location.id}
+        resourceType="locations"
+        resourceId={location.id}
       />
       <SpeedDial />
     </main>

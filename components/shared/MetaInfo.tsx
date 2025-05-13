@@ -8,12 +8,12 @@ type MetaInfoProps = {
   creator?: {
     username: string
   } | null
-  ressourceType: 'concerts' | 'bands' | 'locations'
-  ressourceId: number
+  resourceType: 'concerts' | 'bands' | 'locations'
+  resourceId: number
 }
 
-export const MetaInfo = ({ createdAt, creator, ressourceType, ressourceId }: MetaInfoProps) => {
-  const { data: contributionsCount } = useContributionsCount({ ressourceType, ressourceId })
+export const MetaInfo = ({ createdAt, creator, resourceType, resourceId }: MetaInfoProps) => {
+  const { data: contributionsCount } = useContributionsCount({ resourceType, resourceId })
   const t = useTranslations('MetaInfo')
   const locale = useLocale()
 
@@ -42,7 +42,7 @@ export const MetaInfo = ({ createdAt, creator, ressourceType, ressourceId }: Met
       )}
       {!!contributionsCount && (
         <Link
-          href={`/contributions?ressourceType=${ressourceType}&ressourceId=${ressourceId}`}
+          href={`/contributions?resourceType=${resourceType}&resourceId=${resourceId}`}
           className="hover:underline"
         >
           {t('nContributions', { count: contributionsCount })}

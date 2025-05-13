@@ -194,8 +194,8 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
       <MetaInfo
         createdAt={band.created_at}
         creator={band.creator}
-        ressourceType="bands"
-        ressourceId={band.id}
+        resourceType="bands"
+        resourceId={band.id}
       />
       <SpeedDial />
     </main>

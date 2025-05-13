@@ -10,7 +10,7 @@
   },
   "NotFound": {
     "headline": "404: Seite nicht gefunden",
-    "description": "Die angeforderte Ressource konnte nicht gefunden werden. Möglicherweise wurde Sie gelöscht oder verschoben.",
+    "description": "Die angeforderte Resource konnte nicht gefunden werden. Möglicherweise wurde Sie gelöscht oder verschoben.",
     "backToHome": "Zurück zur Startseite"
   },
   "NavBar": {
@@ -28,7 +28,7 @@
     "fans": "Fans"
   },
   "SpeedDial": {
-    "addRessource": "Ressource hinzufügen",
+    "addResource": "Resource hinzufügen",
     "addLocation": "Lokal hinzufügen",
     "addBand": "Band hinzufügen",
     "addConcert": "Konzert hinzufügen"
@@ -248,7 +248,7 @@
     "optional": "(optional)",
     "showMore": "Mehr anzeigen",
     "showLess": "Weniger anzeigen",
-    "ressourceStatus": "Ressourcenstatus",
+    "resourceStatus": "Resourcenstatus",
     "complete": "Vollständig",
     "incompleteLineup": "Unvollständiges Lineup",
     "cancel": "Abbrechen",
@@ -664,8 +664,8 @@
     "restore": "Wiederherstellen",
     "delete": "Löschen"
   },
-  "RessourceTypeFilter": {
-    "ressourceType": "Ressourcentyp",
+  "ResourceTypeFilter": {
+    "resourceType": "Resourcentyp",
     "all": "Alle",
     "concerts": "Konzerte",
     "bands": "Bands",

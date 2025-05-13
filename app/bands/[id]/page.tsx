@@ -14,17 +14,24 @@ export async function generateMetadata(
 ) {
   const params = await props.params
   const band = await fetchData(params)
-  const spotifyToken = await fetchSpotifyToken()
-  const spotifyArtist = await fetchSpotifyArtist(spotifyToken, band.spotify_artist_id)
-  const artistImage =
-    (band.spotify_artist_images as SpotifyArtist['images'])?.[0] || spotifyArtist?.images?.[0]
-  const parentImages = (await parent).openGraph?.images || []
 
-  return {
-    title: `${band.name} • Dissonic`,
-    openGraph: {
-      images: artistImage ? [artistImage.url] : parentImages,
-    },
+  try {
+    const spotifyToken = await fetchSpotifyToken()
+    const spotifyArtist = await fetchSpotifyArtist(spotifyToken, band.spotify_artist_id)
+    const artistImage =
+      (band.spotify_artist_images as SpotifyArtist['images'])?.[0] || spotifyArtist?.images?.[0]
+    const parentImages = (await parent).openGraph?.images || []
+
+    return {
+      title: `${band.name} • Dissonic`,
+      openGraph: {
+        images: artistImage ? [artistImage.url] : parentImages,
+      },
+    }
+  } catch (error) {
+    return {
+      title: `${band.name} • Dissonic`,
+    }
   }
 }
 

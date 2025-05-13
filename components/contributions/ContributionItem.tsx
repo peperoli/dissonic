@@ -34,8 +34,8 @@ const ConcertContributionItem = ({
   contribution: Tables<'contributions'>
   profile: Profile
 }) => {
-  const { operation, ressource_id } = contribution
-  const { data: concert } = useConcert(ressource_id, null, { bandsSize: 1 })
+  const { operation, resource_id } = contribution
+  const { data: concert } = useConcert(resource_id, null, { bandsSize: 1 })
   const t = useTranslations('ContributionItem')
   const locale = useLocale()
   const concertName = getConcertName(concert, locale)
@@ -50,8 +50,8 @@ const ConcertContributionItem = ({
         ),
         operation,
         concert: () => (
-          <Link href={`/concerts/${ressource_id}`} className="text-white hover:underline">
-            {concertName || `ID: ${ressource_id}`}
+          <Link href={`/concerts/${resource_id}`} className="text-white hover:underline">
+            {concertName || `ID: ${resource_id}`}
           </Link>
         ),
       })}
@@ -66,8 +66,8 @@ const BandContributionItem = ({
   contribution: Tables<'contributions'>
   profile: Profile
 }) => {
-  const { operation, ressource_id } = contribution
-  const { data: band } = useBand(ressource_id)
+  const { operation, resource_id } = contribution
+  const { data: band } = useBand(resource_id)
   const t = useTranslations('ContributionItem')
 
   return (
@@ -80,8 +80,8 @@ const BandContributionItem = ({
         ),
         operation,
         band: () => (
-          <Link href={`/bands/${ressource_id}`} className="text-white hover:underline">
-            {band?.name || `ID: ${ressource_id}`}
+          <Link href={`/bands/${resource_id}`} className="text-white hover:underline">
+            {band?.name || `ID: ${resource_id}`}
           </Link>
         ),
       })}
@@ -96,8 +96,8 @@ const LocationContributionItem = ({
   contribution: Tables<'contributions'>
   profile: Profile
 }) => {
-  const { operation, ressource_id } = contribution
-  const { data: location } = useLocation(ressource_id)
+  const { operation, resource_id } = contribution
+  const { data: location } = useLocation(resource_id)
   const t = useTranslations('ContributionItem')
 
   return (
@@ -110,8 +110,8 @@ const LocationContributionItem = ({
         ),
         operation,
         location: () => (
-          <Link href={`/locations/${ressource_id}`} className="text-white hover:underline">
-            {location?.name || `ID: ${ressource_id}`}
+          <Link href={`/locations/${resource_id}`} className="text-white hover:underline">
+            {location?.name || `ID: ${resource_id}`}
           </Link>
         ),
       })}
@@ -126,8 +126,8 @@ const FestivalRootContributionItem = ({
   contribution: Tables<'contributions'>
   profile: Profile
 }) => {
-  const { operation, ressource_id } = contribution
-  const { data: festivalRoot } = useFestivalRoot(ressource_id!)
+  const { operation, resource_id } = contribution
+  const { data: festivalRoot } = useFestivalRoot(resource_id!)
   const t = useTranslations('ContributionItem')
 
   return (
@@ -140,7 +140,7 @@ const FestivalRootContributionItem = ({
         ),
         operation,
         festivalRoot: () => (
-          <span className="text-white">{festivalRoot?.name || `ID: ${ressource_id}`}</span>
+          <span className="text-white">{festivalRoot?.name || `ID: ${resource_id}`}</span>
         ),
       })}
     </ContributionItemWrapper>
@@ -156,8 +156,8 @@ const ConcertBandContributionItem = ({
   bandIds: Tables<'bands'>['id'][] | undefined
   profile: Profile
 }) => {
-  const { operation, ressource_id } = contribution
-  const { data: concert } = useConcert(ressource_id, null, { bandsSize: 1 })
+  const { operation, resource_id } = contribution
+  const { data: concert } = useConcert(resource_id, null, { bandsSize: 1 })
   const { data: bands } = useBands({ ids: bandIds })
   const t = useTranslations('ContributionItem')
   const locale = useLocale()
@@ -183,7 +183,7 @@ const ConcertBandContributionItem = ({
         ),
         concert: () => (
           <Link href={`/concerts/${concert?.id}`} className="text-white hover:underline">
-            {concertName || `ID: ${ressource_id}`}
+            {concertName || `ID: ${resource_id}`}
           </Link>
         ),
       })}
@@ -200,8 +200,8 @@ const BandGenreContributionItem = ({
   genreIds: Tables<'genres'>['id'][] | undefined
   profile: Profile
 }) => {
-  const { operation, ressource_id } = contribution
-  const { data: band } = useBand(ressource_id, null)
+  const { operation, resource_id } = contribution
+  const { data: band } = useBand(resource_id, null)
   const { data: genres } = useGenres({ ids: genreIds ?? [] })
   const t = useTranslations('ContributionItem')
 
@@ -225,7 +225,7 @@ const BandGenreContributionItem = ({
         ),
         band: () => (
           <Link href={`/bands/${band?.id}`} className="text-white hover:underline">
-            {band?.name || `ID: ${ressource_id}`}
+            {band?.name || `ID: ${resource_id}`}
           </Link>
         ),
       })}
@@ -319,15 +319,15 @@ export const ContributionItem = ({
     return null
   }
 
-  if (contribution.ressource_type === 'concerts') {
+  if (contribution.resource_type === 'concerts') {
     return <ConcertContributionItem contribution={contribution} profile={profile} />
-  } else if (contribution.ressource_type === 'bands') {
+  } else if (contribution.resource_type === 'bands') {
     return <BandContributionItem contribution={contribution} profile={profile} />
-  } else if (contribution.ressource_type === 'locations') {
+  } else if (contribution.resource_type === 'locations') {
     return <LocationContributionItem contribution={contribution} profile={profile} />
-  } else if (contribution.ressource_type === 'festival_roots') {
+  } else if (contribution.resource_type === 'festival_roots') {
     return <FestivalRootContributionItem contribution={contribution} profile={profile} />
-  } else if (contribution.ressource_type === 'j_concert_bands') {
+  } else if (contribution.resource_type === 'j_concert_bands') {
     return (
       <ConcertBandContributionItem
         contribution={contribution}
@@ -335,7 +335,7 @@ export const ContributionItem = ({
         bandIds={bandIds}
       />
     )
-  } else if (contribution.ressource_type === 'j_band_genres') {
+  } else if (contribution.resource_type === 'j_band_genres') {
     return (
       <BandGenreContributionItem
         contribution={contribution}
@@ -344,6 +344,6 @@ export const ContributionItem = ({
       />
     )
   } else {
-    return <p>Contribution with unknown ressource type</p>
+    return <p>Contribution with unknown resource type</p>
   }
 }

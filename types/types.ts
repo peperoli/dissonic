@@ -59,8 +59,8 @@ export type ActivityFetchOptions = {
 
 export type ContributionFetchOptions = {
   size?: string
-  ressourceType?: 'all' | 'concerts' | 'bands' | 'locations' | 'festival_roots'
-  ressourceId?: string
+  resourceType?: 'all' | 'concerts' | 'bands' | 'locations' | 'festival_roots'
+  resourceId?: string
   userId?: string
   operation?: 'all' | 'INSERT' | 'UPDATE' | 'ARCHIVE' | 'RESTORE' | 'DELETE'
 }

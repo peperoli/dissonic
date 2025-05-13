@@ -242,6 +242,6 @@ export const ActivityItem = ({
   } else if (activityItem.type === 'reactions') {
     return <ReactionItem activityItem={activityItem} />
   } else {
-    return <p>Activity with unknown ressource type</p>
+    return <p>Activity with unknown resource type</p>
   }
 }

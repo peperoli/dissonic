@@ -203,11 +203,11 @@ export const ConcertPage = ({
             <span className="inline-flex gap-1 text-sm text-slate-300">
               {t('nBands', { count: concert.bands.length })}
               {isMod &&
-                (concert.ressource_status === 'complete' ? (
+                (concert.resource_status === 'complete' ? (
                   <Tooltip content={t('complete')} triggerOnClick>
                     <BadgeCheckIcon className="size-icon text-venom" />
                   </Tooltip>
-                ) : concert.ressource_status === 'incomplete_lineup' ? (
+                ) : concert.resource_status === 'incomplete_lineup' ? (
                   <Tooltip content={t('incompleteLineup')} triggerOnClick>
                     <BadgeMinus className="size-icon text-yellow" />
                   </Tooltip>
@@ -227,8 +227,8 @@ export const ConcertPage = ({
         <MetaInfo
           createdAt={concert.created_at}
           creator={concert.creator}
-          ressourceType="concerts"
-          ressourceId={concert.id}
+          resourceType="concerts"
+          resourceId={concert.id}
         />
         <SpeedDial />
       </main>

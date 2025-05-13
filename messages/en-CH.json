@@ -28,7 +28,7 @@
     "fans": "Fans"
   },
   "SpeedDial": {
-    "addRessource": "Add ressource",
+    "addResource": "Add resource",
     "addLocation": "Add location",
     "addBand": "Add band",
     "addConcert": "Add concert"
@@ -248,7 +248,7 @@
     "optional": "(optional)",
     "showMore": "Show more",
     "showLess": "Show less",
-    "ressourceStatus": "Ressource status",
+    "resourceStatus": "Resource status",
     "complete": "Complete",
     "incompleteLineup": "Incomplete lineup",
     "cancel": "Cancel",
@@ -664,8 +664,8 @@
     "restore": "Restore",
     "delete": "Delete"
   },
-  "RessourceTypeFilter": {
-    "ressourceType": "Ressource type",
+  "ResourceTypeFilter": {
+    "resourceType": "Resource type",
     "all": "All",
     "concerts": "Concerts",
     "bands": "Bands",

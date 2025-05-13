@@ -33,7 +33,7 @@ const editConcert = async (newConcert: EditConcert) => {
         doors_time: newConcert.doors_time || null,
         show_time: newConcert.show_time || null,
         source_link: newConcert.source_link,
-        ressource_status: newConcert.ressource_status,
+        resource_status: newConcert.resource_status,
       })
       .eq('id', newConcert.id)
 

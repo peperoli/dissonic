@@ -41,21 +41,21 @@ async function fetchData({
     .from('contributions')
     .select('*', { count: 'estimated', head: true })
     .eq('user_id', profile.id)
-    .eq('ressource_type', 'concerts')
+    .eq('resource_type', 'concerts')
     .eq('operation', 'INSERT')
 
   const { count: addedBandsCount } = await supabase
     .from('contributions')
     .select('*', { count: 'estimated', head: true })
     .eq('user_id', profile.id)
-    .eq('ressource_type', 'bands')
+    .eq('resource_type', 'bands')
     .eq('operation', 'INSERT')
 
   const { count: addedLocationsCount } = await supabase
     .from('contributions')
     .select('*', { count: 'estimated', head: true })
     .eq('user_id', profile.id)
-    .eq('ressource_type', 'locations')
+    .eq('resource_type', 'locations')
     .eq('operation', 'INSERT')
 
   return {
@@ -92,8 +92,8 @@ export default async function ContributionsPage(props: {
     type TimeGroup<T> = {
       time: number
       userId: string | null
-      ressourceType: string
-      ressourceId: number | null
+      resourceType: string
+      resourceId: number | null
       items: T[]
     }
 
@@ -101,8 +101,8 @@ export default async function ContributionsPage(props: {
       const date = getMediumDate(item.timestamp, locale)
       const time = new Date(item.timestamp).getTime()
       const userId = item.user_id?.[0] ?? null
-      const ressourceType = item.ressource_type
-      const ressourceId = item.ressource_id
+      const resourceType = item.resource_type
+      const resourceId = item.resource_id
 
       let dateGroup = acc.find(group => group.date === date)
       if (!dateGroup) {
@@ -114,11 +114,11 @@ export default async function ContributionsPage(props: {
         group =>
           group.time === time &&
           group.userId === userId &&
-          group.ressourceId === ressourceId &&
-          group.ressourceType === ressourceType
+          group.resourceId === resourceId &&
+          group.resourceType === resourceType
       )
       if (!timeGroup) {
-        timeGroup = { time, userId, ressourceId, ressourceType, items: [] }
+        timeGroup = { time, userId, resourceId, resourceType, items: [] }
         dateGroup.items.push(timeGroup)
       }
 

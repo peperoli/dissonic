@@ -42,7 +42,7 @@ export const FriendItem = ({ friend, profileId }: FriendItemProps) => {
                   user2={profile}
                   user1BandsSeen={user1BandsSeen}
                   user2BandsSeen={user2BandsSeen}
-                  ressourceType="concerts"
+                  resourceType="concerts"
                   size="sm"
                 />
               ) : (

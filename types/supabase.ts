@@ -139,9 +139,7 @@ export type Database = {
           is_festival: boolean
           location_id: number
           name: string | null
-          ressource_status:
-            | Database["public"]["Enums"]["ressource_status"]
-            | null
+          resource_status: Database["public"]["Enums"]["resource_status"] | null
           show_time: string | null
           source_link: string | null
         }
@@ -157,8 +155,8 @@ export type Database = {
           is_festival?: boolean
           location_id: number
           name?: string | null
-          ressource_status?:
-            | Database["public"]["Enums"]["ressource_status"]
+          resource_status?:
+            | Database["public"]["Enums"]["resource_status"]
             | null
           show_time?: string | null
           source_link?: string | null
@@ -175,8 +173,8 @@ export type Database = {
           is_festival?: boolean
           location_id?: number
           name?: string | null
-          ressource_status?:
-            | Database["public"]["Enums"]["ressource_status"]
+          resource_status?:
+            | Database["public"]["Enums"]["resource_status"]
             | null
           show_time?: string | null
           source_link?: string | null
@@ -216,8 +214,8 @@ export type Database = {
         Row: {
           id: number
           operation: string
-          ressource_id: number | null
-          ressource_type: string
+          resource_id: number | null
+          resource_type: string
           state_new: Json | null
           state_old: Json | null
           timestamp: string
@@ -226,8 +224,8 @@ export type Database = {
         Insert: {
           id?: number
           operation: string
-          ressource_id?: number | null
-          ressource_type: string
+          resource_id?: number | null
+          resource_type: string
           state_new?: Json | null
           state_old?: Json | null
           timestamp?: string
@@ -236,8 +234,8 @@ export type Database = {
         Update: {
           id?: number
           operation?: string
-          ressource_id?: number | null
-          ressource_type?: string
+          resource_id?: number | null
+          resource_type?: string
           state_new?: Json | null
           state_old?: Json | null
           timestamp?: string
@@ -777,9 +775,7 @@ export type Database = {
           is_festival: boolean
           location_id: number
           name: string | null
-          ressource_status:
-            | Database["public"]["Enums"]["ressource_status"]
-            | null
+          resource_status: Database["public"]["Enums"]["resource_status"] | null
           show_time: string | null
           source_link: string | null
         }[]
@@ -877,8 +873,8 @@ export type Database = {
         | "North America"
         | "South America"
       locations_type: "locations"
-      ressource_status: "complete" | "incomplete_lineup"
-      ressources: "concerts" | "bands" | "locations"
+      resource_status: "complete" | "incomplete_lineup"
+      resources: "concerts" | "bands" | "locations"
     }
     CompositeTypes: {
       band_with_genres: {
@@ -1009,8 +1005,8 @@ export const Constants = {
         "South America",
       ],
       locations_type: ["locations"],
-      ressource_status: ["complete", "incomplete_lineup"],
-      ressources: ["concerts", "bands", "locations"],
+      resource_status: ["complete", "incomplete_lineup"],
+      resources: ["concerts", "bands", "locations"],
     },
   },
 } as const

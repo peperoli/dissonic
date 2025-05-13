@@ -2,7 +2,7 @@ import { ContributionFetchOptions } from '@/types/types'
 import { useQuery } from '@tanstack/react-query'
 import supabase from 'utils/supabase/client'
 
-export const relatedRessourceTypes = {
+export const relatedResourceTypes = {
   concerts: ['j_concert_bands'],
   bands: ['j_band_genres'],
   locations: [],
@@ -10,22 +10,22 @@ export const relatedRessourceTypes = {
 }
 
 async function fetchContributionsCount({
-  ressourceType,
-  ressourceId,
+  resourceType,
+  resourceId,
   userId,
 }: {
-  ressourceType?: ContributionFetchOptions['ressourceType']
-  ressourceId?: number
+  resourceType?: ContributionFetchOptions['resourceType']
+  resourceId?: number
   userId?: ContributionFetchOptions['userId'] | null
 }) {
   let query = supabase.from('contributions').select('*', { count: 'estimated', head: true })
 
-  if (ressourceType && ressourceType !== 'all') {
-    query = query.in('ressource_type', [ressourceType, ...relatedRessourceTypes[ressourceType]])
+  if (resourceType && resourceType !== 'all') {
+    query = query.in('resource_type', [resourceType, ...relatedResourceTypes[resourceType]])
   }
 
-  if (ressourceId) {
-    query = query.eq('ressource_id', ressourceId)
+  if (resourceId) {
+    query = query.eq('resource_id', resourceId)
   }
 
   if (userId) {
@@ -42,16 +42,16 @@ async function fetchContributionsCount({
 }
 
 export function useContributionsCount({
-  ressourceType,
-  ressourceId,
+  resourceType,
+  resourceId,
   userId,
 }: {
-  ressourceType?: ContributionFetchOptions['ressourceType']
-  ressourceId?: number
+  resourceType?: ContributionFetchOptions['resourceType']
+  resourceId?: number
   userId?: ContributionFetchOptions['userId'] | null
 }) {
   return useQuery({
-    queryKey: ['contributions-count', ressourceType, ressourceId, userId],
-    queryFn: () => fetchContributionsCount({ ressourceType, ressourceId, userId }),
+    queryKey: ['contributions-count', resourceType, resourceId, userId],
+    queryFn: () => fetchContributionsCount({ resourceType, resourceId, userId }),
   })
 }

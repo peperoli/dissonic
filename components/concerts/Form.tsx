@@ -76,7 +76,7 @@ export const Form = ({ close, isNew }: FormProps) => {
   const festivalRootId = watch('festival_root_id')
   const isSimilar = !!(isNew && similarConcerts?.count)
   const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
-  const ressourceStatusItems = [
+  const resourceStatusItems = [
     { id: 'complete', name: t('complete') },
     { id: 'incomplete_lineup', name: t('incompleteLineup') },
   ]
@@ -270,19 +270,19 @@ export const Form = ({ close, isNew }: FormProps) => {
         )}
         {isMod && (
           <Controller
-            name="ressource_status"
+            name="resource_status"
             control={control}
             render={({ field: { value, onChange } }) => (
               <fieldset>
-                <legend className="mb-1 text-sm text-slate-300">{t('ressourceStatus')}</legend>
+                <legend className="mb-1 text-sm text-slate-300">{t('resourceStatus')}</legend>
                 <RadioGroup.Root
-                  name="ressource_status"
+                  name="resource_status"
                   value={value ?? undefined}
                   onValueChange={value => onChange(value)}
                   orientation="vertical"
                 >
                   <ul className="w-full">
-                    {ressourceStatusItems.map(item => (
+                    {resourceStatusItems.map(item => (
                       <li key={item.id}>
                         <label className="flex w-full items-center gap-3 rounded px-2 py-1.5 hover:bg-slate-600">
                           <RadioGroup.Item

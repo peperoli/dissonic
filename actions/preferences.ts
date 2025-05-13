@@ -10,7 +10,7 @@ export async function setViewPreference(value: { concerts_view: string; user_vie
 }
 
 export async function saveLastQueryState(
-  ressource: 'concerts' | 'bands',
+  resource: 'concerts' | 'bands',
   queryStates: Record<string, string | number | number[] | boolean | null | undefined>
 ) {
   const cookieStore = await cookies()
@@ -29,7 +29,7 @@ export async function saveLastQueryState(
         })
     )
   )
-  cookieStore.set(`${ressource}LastQueryState`, `?${searchParams.toString()}`)
+  cookieStore.set(`${resource}LastQueryState`, `?${searchParams.toString()}`)
 }
 
 export async function setBandListHintPreference(bandListHint: 'hide' | 'show') {
