@@ -256,9 +256,7 @@ const ContributionItemWrapper = ({
       }
     })
 
-    return changes
-      .filter(change => change.key !== 'updated_at')
-      .filter(change => change.key !== 'spotify_artist_images')
+    return changes.filter(change => change.key !== 'updated_at')
   }
 
   const changes = operation === 'UPDATE' && findChanges(state_old as State, state_new as State)
@@ -290,11 +288,13 @@ const ContributionItemWrapper = ({
           {changes.map(change => (
             <div key={change.key} className="flex flex-wrap items-center gap-1">
               <code>{change.key}:</code>
-              <code className="rounded bg-red/10 px-1 text-red">{JSON.stringify(change.old)}</code>
+              <pre className="rounded bg-red/10 px-1 text-red">
+                {JSON.stringify(change.old, null, 2)}
+              </pre>
               <ArrowRight className="size-icon text-slate-300" />
-              <code className="rounded bg-venom/10 px-1 text-venom">
-                {JSON.stringify(change.new)}
-              </code>
+              <pre className="rounded bg-venom/10 px-1 text-venom">
+                {JSON.stringify(change.new, null, 2)}
+              </pre>
             </div>
           ))}
         </div>

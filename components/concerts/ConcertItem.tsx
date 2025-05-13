@@ -18,7 +18,7 @@ export function ConcertItem({
     location: Tables<'locations'> | null
   }
 }) {
-  const { data: spotifyArtist } = useSpotifyArtist(concert.bands?.[0]?.spotify_artist_id, {
+  const { data: spotifyArtist } = useSpotifyArtist(concert.bands?.[0]?.spotify_artist_id ?? null, {
     enabled: !concert.bands?.[0]?.spotify_artist_images,
   })
   const image =

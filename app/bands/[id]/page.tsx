@@ -3,13 +3,28 @@ import { cookies } from 'next/headers'
 import { createClient } from '../../../utils/supabase/server'
 import supabase from '../../../utils/supabase/client'
 import { notFound } from 'next/navigation'
+import { fetchSpotifyToken } from '@/hooks/spotify/useSpotifyToken'
+import { fetchSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
+import { SpotifyArtist } from '@/types/types'
+import { ResolvingMetadata } from 'next'
 
-export async function generateMetadata(props: { params: Promise<{ id: string }> }) {
+export async function generateMetadata(
+  props: { params: Promise<{ id: string }> },
+  parent: ResolvingMetadata
+) {
   const params = await props.params
   const band = await fetchData(params)
+  const spotifyToken = await fetchSpotifyToken()
+  const spotifyArtist = await fetchSpotifyArtist(spotifyToken, band.spotify_artist_id)
+  const artistImage =
+    (band.spotify_artist_images as SpotifyArtist['images'])?.[0] || spotifyArtist?.images?.[0]
+  const parentImages = (await parent).openGraph?.images || []
 
   return {
     title: `${band.name} • Dissonic`,
+    openGraph: {
+      images: artistImage ? [artistImage.url] : parentImages,
+    },
   }
 }
 
@@ -26,7 +41,7 @@ export async function generateStaticParams() {
 async function fetchData(params: { id: string }) {
   const supabase = await createClient()
   const bandId = parseInt(params.id)
-  
+
   if (Number.isNaN(bandId)) {
     notFound()
   }

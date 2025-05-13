@@ -2,17 +2,28 @@ import { SpeedDial } from '@/components/layout/SpeedDial'
 import { Header } from '@/components/profile/Header'
 import { Score } from '@/components/profile/Score'
 import { TabLink } from '@/components/profile/TabLink'
+import { getAssetUrl } from '@/lib/getAssetUrl'
 import { createClient } from '@/utils/supabase/server'
+import { ResolvingMetadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { ReactNode } from 'react'
 
-export async function generateMetadata({ params }: { params: Promise<{ username: string }> }) {
+export async function generateMetadata(
+  { params }: { params: Promise<{ username: string }> },
+  parent: ResolvingMetadata
+) {
   const { username } = await params
   const t = await getTranslations('ProfileLayout')
+  const { profile } = await fetchData(username)
+  const avatarUrl = getAssetUrl('avatars', profile.avatar_path, profile.updated_at)
+  const parentImages = (await parent).openGraph?.images || []
 
   return {
     title: t('title', { username }),
+    openGraph: {
+      images: avatarUrl ? [avatarUrl] : parentImages,
+    },
   }
 }
 
