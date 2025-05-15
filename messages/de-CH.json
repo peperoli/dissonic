@@ -14,6 +14,7 @@
     "backToHome": "Zurück zur Startseite"
   },
   "NavBar": {
+    "search": "Suche",
     "profile": "Profil",
     "friends": "Freunde",
     "logout": "Abmelden",
@@ -26,6 +27,13 @@
     "locations": "Lokale",
     "activity": "Aktivität",
     "fans": "Fans"
+  },
+  "SearchForm": {
+    "all": "Alle",
+    "concerts": "Konzerte",
+    "bands": "Bands",
+    "locations": "Lokale",
+    "showAll": "Alle anzeigen"
   },
   "SpeedDial": {
     "addResource": "Resource hinzufügen",
@@ -55,7 +63,8 @@
     "deleteLocation": "Lokal löschen",
     "editProfile": "Profil bearbeiten",
     "addFriend": "Freund*in hinzufügen",
-    "removeFriend": "Freund*in entfernen"
+    "removeFriend": "Freund*in entfernen",
+    "search": "Suche"
   },
   "SignupPage": {
     "createAccount": "Konto erstellen",

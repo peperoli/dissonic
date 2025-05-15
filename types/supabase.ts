@@ -744,6 +744,25 @@ export type Database = {
         }
         Relationships: []
       }
+      search_records: {
+        Row: {
+          bands: Database["public"]["Tables"]["bands"]["Row"][] | null
+          city: string | null
+          country: string | null
+          date_end: string | null
+          date_start: string | null
+          festival_root: string | null
+          genres: string[] | null
+          id: number | null
+          image: string | null
+          location: string | null
+          name: string | null
+          search_strings: string[] | null
+          spotify_artist_id: string | null
+          type: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       compare_bands_seen: {
@@ -835,6 +854,10 @@ export type Database = {
           name: string
         }[]
       }
+      search_global: {
+        Args: { search_string: string }
+        Returns: Database["public"]["CompositeTypes"]["search_result"][]
+      }
       search_locations: {
         Args: { search_string: string }
         Returns: {
@@ -880,6 +903,23 @@ export type Database = {
       band_with_genres: {
         id: number | null
         genres: number[] | null
+      }
+      search_result: {
+        type: string | null
+        id: number | null
+        search_strings: string[] | null
+        image: string | null
+        name: string | null
+        festival_root: string | null
+        date_start: string | null
+        date_end: string | null
+        bands: Database["public"]["Tables"]["bands"]["Row"][] | null
+        location: string | null
+        genres: string[] | null
+        country: string | null
+        spotify_artist_id: string | null
+        city: string | null
+        sim_score: number | null
       }
     }
   }

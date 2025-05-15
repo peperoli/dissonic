@@ -22,7 +22,7 @@ export function ConcertItem({
     enabled: !concert.bands?.[0]?.spotify_artist_images,
   })
   const image =
-    (concert.bands?.[0]?.spotify_artist_images as SpotifyArtist['images'])?.[2] ||
+    (concert.bands?.[0]?.spotify_artist_images as SpotifyArtist['images'])?.at(-1) ||
     spotifyArtist?.images?.[2]
   const dateStart = new Date(concert.date_start)
   const dateEnd = concert.date_end ? new Date(concert.date_end) : null

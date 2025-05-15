@@ -10,9 +10,11 @@ import { useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useSession } from '../../hooks/auth/useSession'
 import { UserItem } from '../shared/UserItem'
-import { BookUser, LogOut, User } from 'lucide-react'
+import { BookUser, LogOut, SearchIcon, User } from 'lucide-react'
 import clsx from 'clsx'
 import { useTranslations } from 'next-intl'
+import { useModal } from '../shared/ModalProvider'
+import { Button } from '../Button'
 
 export const NavBar = () => {
   const { data: session } = useSession()
@@ -21,6 +23,7 @@ export const NavBar = () => {
   const logOutMutation = useLogOut()
   const queryClient = useQueryClient()
   const { push } = useRouter()
+  const [_, setModal] = useModal()
   const pathname = usePathname()
   const t = useTranslations('NavBar')
 
@@ -54,6 +57,13 @@ export const NavBar = () => {
       <Link href="/">
         <Logo />
       </Link>
+      <Button
+        label={t('search')}
+        onClick={() => setModal('search')}
+        icon={<SearchIcon className="size-icon" />}
+        contentType='icon'
+        className='ml-auto'
+      />
       {profile ? (
         <Menu as="div" className="relative">
           <MenuButton className="group/user-item">
