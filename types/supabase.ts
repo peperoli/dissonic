@@ -592,6 +592,7 @@ export type Database = {
           avatar_path: string | null
           created_at: string | null
           id: string
+          last_searched: Json[] | null
           role: Database["public"]["Enums"]["app_role"] | null
           updated_at: string | null
           username: string
@@ -600,6 +601,7 @@ export type Database = {
           avatar_path?: string | null
           created_at?: string | null
           id: string
+          last_searched?: Json[] | null
           role?: Database["public"]["Enums"]["app_role"] | null
           updated_at?: string | null
           username: string
@@ -608,6 +610,7 @@ export type Database = {
           avatar_path?: string | null
           created_at?: string | null
           id?: string
+          last_searched?: Json[] | null
           role?: Database["public"]["Enums"]["app_role"] | null
           updated_at?: string | null
           username?: string

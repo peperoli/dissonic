@@ -30,6 +30,7 @@
   },
   "SearchForm": {
     "all": "All",
+    "lastSearched": "Last searched",
     "concerts": "Concerts",
     "bands": "Bands",
     "locations": "Locations",
