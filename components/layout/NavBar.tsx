@@ -14,7 +14,8 @@ import { BookUser, LogOut, SearchIcon, User } from 'lucide-react'
 import clsx from 'clsx'
 import { useTranslations } from 'next-intl'
 import { useModal } from '../shared/ModalProvider'
-import { Button } from '../Button'
+import LogoHorns from './LogoHorns'
+import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 
 export const NavBar = () => {
   const { data: session } = useSession()
@@ -26,6 +27,7 @@ export const NavBar = () => {
   const [_, setModal] = useModal()
   const pathname = usePathname()
   const t = useTranslations('NavBar')
+  const isDesktop = useMediaQuery('(min-width: 768px)')
 
   useEffect(() => {
     if (logOutMutation.status === 'success') {
@@ -53,21 +55,21 @@ export const NavBar = () => {
     },
   ]
   return (
-    <nav className="container-fluid flex items-center justify-between">
-      <Link href="/">
-        <Logo />
+    <nav className="container-fluid flex items-center gap-4">
+      <Link href="/" className="flex-shrink-0 md:w-40">
+        {isDesktop ? <Logo /> : <LogoHorns />}
       </Link>
-      <Button
-        label={t('search')}
+      <button
         onClick={() => setModal('search')}
-        icon={<SearchIcon className="size-icon" />}
-        contentType='icon'
-        className='ml-auto'
-      />
+        className="flex w-full max-w-96 items-center gap-3 rounded-lg border border-slate-500 bg-white/5 px-4 py-2 text-left text-slate-300 focus:outline-none focus:ring-2 focus:ring-venom"
+      >
+        <SearchIcon className="size-icon" />
+        {t('search')}
+      </button>
       {profile ? (
-        <Menu as="div" className="relative">
+        <Menu as="div" className="relative ml-auto flex-shrink-0">
           <MenuButton className="group/user-item">
-            <UserItem user={profile} avatarRight />
+            <UserItem user={profile} avatarRight usernameIsHidden={!isDesktop} />
           </MenuButton>
           <MenuItems className="absolute right-0 z-30 mt-1 w-40 rounded-lg bg-slate-700 p-2 shadow-xl">
             {menuItems.map((item, index) => {
