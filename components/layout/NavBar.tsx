@@ -10,7 +10,7 @@ import { useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useSession } from '../../hooks/auth/useSession'
 import { UserItem } from '../shared/UserItem'
-import { BookUser, LogOut, SearchIcon, User } from 'lucide-react'
+import { ArrowBigUp, BookUser, LogOut, SearchIcon, User } from 'lucide-react'
 import clsx from 'clsx'
 import { useTranslations } from 'next-intl'
 import { useModal } from '../shared/ModalProvider'
@@ -35,6 +35,21 @@ export const NavBar = () => {
       push('/login')
     }
   }, [logOutMutation.status])
+
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.shiftKey && event.key === 'F') {
+        event.preventDefault()
+        setModal('search')
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown, true)
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
 
   const menuItems = [
     {
@@ -61,10 +76,13 @@ export const NavBar = () => {
       </Link>
       <button
         onClick={() => setModal('search')}
-        className="flex w-full max-w-96 items-center gap-3 rounded-lg border border-slate-500 bg-white/5 px-4 py-2 text-left text-slate-300 focus:outline-none focus:ring-2 focus:ring-venom"
+        className="flex w-full max-w-96 items-center gap-3 rounded-lg border border-slate-500 bg-white/5 px-4 py-2 text-left focus:outline-none focus:ring-2 focus:ring-venom"
       >
         <SearchIcon className="size-icon" />
-        {t('search')}
+        <span className="text-slate-300">{t('search')}</span>
+        <span className="ml-auto hidden items-center rounded border border-slate-500 px-1 py-0.5 text-sm text-slate-500 md:flex">
+          <ArrowBigUp className="size-icon" />+ F
+        </span>
       </button>
       {profile ? (
         <Menu as="div" className="relative ml-auto flex-shrink-0">
