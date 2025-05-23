@@ -10,9 +10,12 @@ import { useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useSession } from '../../hooks/auth/useSession'
 import { UserItem } from '../shared/UserItem'
-import { BookUser, LogOut, User } from 'lucide-react'
+import { ArrowBigUp, BookUser, LogOut, SearchIcon, User } from 'lucide-react'
 import clsx from 'clsx'
 import { useTranslations } from 'next-intl'
+import { useModal } from '../shared/ModalProvider'
+import LogoHorns from './LogoHorns'
+import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 
 export const NavBar = () => {
   const { data: session } = useSession()
@@ -21,8 +24,10 @@ export const NavBar = () => {
   const logOutMutation = useLogOut()
   const queryClient = useQueryClient()
   const { push } = useRouter()
+  const [_, setModal] = useModal()
   const pathname = usePathname()
   const t = useTranslations('NavBar')
+  const isDesktop = useMediaQuery('(min-width: 768px)')
 
   useEffect(() => {
     if (logOutMutation.status === 'success') {
@@ -30,6 +35,21 @@ export const NavBar = () => {
       push('/login')
     }
   }, [logOutMutation.status])
+
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.shiftKey && event.key === 'F') {
+        event.preventDefault()
+        setModal('search')
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown, true)
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
 
   const menuItems = [
     {
@@ -50,14 +70,24 @@ export const NavBar = () => {
     },
   ]
   return (
-    <nav className="container-fluid flex items-center justify-between">
-      <Link href="/">
-        <Logo />
+    <nav className="container-fluid flex items-center gap-4">
+      <Link href="/" className="flex-shrink-0 md:w-40">
+        {isDesktop ? <Logo /> : <LogoHorns />}
       </Link>
+      <button
+        onClick={() => setModal('search')}
+        className="flex w-full max-w-96 items-center gap-3 rounded-lg border border-slate-500 bg-white/5 px-4 py-2 text-left focus:outline-none focus:ring-2 focus:ring-venom"
+      >
+        <SearchIcon className="size-icon" />
+        <span className="text-slate-300">{t('search')}</span>
+        <span className="ml-auto hidden items-center rounded border border-slate-500 px-1 py-0.5 text-sm text-slate-500 md:flex">
+          <ArrowBigUp className="size-icon" />+ F
+        </span>
+      </button>
       {profile ? (
-        <Menu as="div" className="relative">
+        <Menu as="div" className="relative ml-auto flex-shrink-0">
           <MenuButton className="group/user-item">
-            <UserItem user={profile} avatarRight />
+            <UserItem user={profile} avatarRight usernameIsHidden={!isDesktop} />
           </MenuButton>
           <MenuItems className="absolute right-0 z-30 mt-1 w-40 rounded-lg bg-slate-700 p-2 shadow-xl">
             {menuItems.map((item, index) => {

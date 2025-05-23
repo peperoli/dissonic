@@ -6,6 +6,8 @@ import { parseAsStringLiteral, useQueryState } from 'nuqs'
 import Modal from '../Modal'
 import { DialogTitle } from '@radix-ui/react-dialog'
 import { useTranslations } from 'next-intl'
+import { SearchForm } from '../layout/SearchForm'
+import clsx from 'clsx'
 
 function Loader() {
   return <Loader2 className="size-8 animate-spin text-slate-300" />
@@ -62,8 +64,8 @@ export const modalPaths = [
   'edit-profile',
   'add-friend',
   'delete-friend',
+  'search',
 ] as const
-
 
 export function useModal() {
   return useQueryState('modal', parseAsStringLiteral(modalPaths).withOptions({ history: 'push' }))
@@ -86,6 +88,7 @@ export const ModalProvider = () => {
     'edit-profile': { title: t('editProfile'), component: ProfileForm },
     'add-friend': { title: t('addFriend'), component: AddFriendForm },
     'delete-friend': { title: t('removeFriend'), component: RemoveFriendForm },
+    search: { title: t('search'), component: SearchForm },
   } as const
   const close = () => setModal(null)
 
@@ -93,8 +96,12 @@ export const ModalProvider = () => {
   const title = modal && modals[modal]?.title
 
   return (
-    <Modal open={modal !== null && !!modals[modal]} onOpenChange={isOpen => !isOpen && close()}>
-      <DialogTitle>{title}</DialogTitle>
+    <Modal
+      open={modal !== null && !!modals[modal]}
+      onOpenChange={isOpen => !isOpen && close()}
+      closeOnClickOutside={modal === 'search'}
+    >
+      <DialogTitle className={clsx(modal === 'search' && 'sr-only')}>{title}</DialogTitle>
       {ModalContent && <ModalContent isNew={modal?.startsWith('add')} close={close} />}
     </Modal>
   )
