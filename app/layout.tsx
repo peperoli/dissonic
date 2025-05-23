@@ -15,6 +15,8 @@ import resolveConfig from 'tailwindcss/resolveConfig'
 import { content, theme } from '../tailwind.config'
 import { AlertCircleIcon, CheckCircleIcon } from 'lucide-react'
 import * as Tooltip from '@radix-ui/react-tooltip'
+import { JotaiProvider } from '@/components/shared/JotaiProvider'
+import { atomWithStorage } from 'jotai/utils'
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('RootLayout')
@@ -69,35 +71,37 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html lang={locale} className={`${albertSans.variable} ${firaCode.variable}`}>
       <body className="flex min-h-screen flex-col bg-slate-850 text-white">
         <QueryProvider>
-          <NextIntlClientProvider messages={messages}>
-            <Tooltip.Provider delayDuration={200}>
-              <NavBar />
-              <div className="md:flex">
-                <Navigation />
-                {children}
-              </div>
-              <Footer />
-              <Suspense>
-                <ModalProvider />
-              </Suspense>
-            </Tooltip.Provider>
-            <Toaster
-              toastOptions={{
-                style: {
-                  background: fullConfig.theme.colors.slate['900'],
-                  color: fullConfig.theme.colors.white,
-                },
-                success: {
-                  icon: <CheckCircleIcon className="size-icon text-venom flex-none" />,
-                  duration: 5000,
-                },
-                error: {
-                  icon: <AlertCircleIcon className="size-icon text-red flex-none" />,
-                  duration: 10000,
-                },
-              }}
-            />
-          </NextIntlClientProvider>
+          <JotaiProvider>
+            <NextIntlClientProvider messages={messages}>
+              <Tooltip.Provider delayDuration={200}>
+                <NavBar />
+                <div className="md:flex">
+                  <Navigation />
+                  {children}
+                </div>
+                <Footer />
+                <Suspense>
+                  <ModalProvider />
+                </Suspense>
+              </Tooltip.Provider>
+              <Toaster
+                toastOptions={{
+                  style: {
+                    background: fullConfig.theme.colors.slate['900'],
+                    color: fullConfig.theme.colors.white,
+                  },
+                  success: {
+                    icon: <CheckCircleIcon className="size-icon flex-none text-venom" />,
+                    duration: 5000,
+                  },
+                  error: {
+                    icon: <AlertCircleIcon className="size-icon flex-none text-red" />,
+                    duration: 10000,
+                  },
+                }}
+              />
+            </NextIntlClientProvider>
+          </JotaiProvider>
         </QueryProvider>
         <Analytics />
       </body>

@@ -34,17 +34,15 @@ import { User } from '@supabase/supabase-js'
 import { saveLastQueryState, setViewPreference } from '@/actions/preferences'
 import { groupConcertsByMonth } from '@/lib/groupConcertsByMonth'
 
-type HomePageProps = {
-  concerts: ExtendedRes<Concert[]>
-  currentUser: User | null
-  view: { concertsView: string; userView: string }
-}
-
-export const HomePage = ({
+export function ConcertsPage({
   concerts: initialConcerts,
   currentUser,
   view: initialView,
-}: HomePageProps) => {
+}: {
+  concerts: ExtendedRes<Concert[]>
+  currentUser: User | null
+  view: { concertsView: string; userView: string }
+}) {
   const [size, setSize] = useQueryState('size', parseAsInteger.withDefault(25))
   const [selectedBands, setSelectedBands] = useQueryState('bands', parseAsArrayOf(parseAsInteger))
   const [selectedLocations, setSelectedLocations] = useQueryState(
@@ -86,21 +84,25 @@ export const HomePage = ({
       ]
   }
 
+  const pathname = usePathname()
   const { data: concerts, isFetching } = useConcerts({
     placeholderData: initialConcerts,
     bands: selectedBands,
     locations: selectedLocations,
-    dateRange: view.concerts_view === 'future' ? [tomorrow, null] : [null, tomorrow],
+    dateRange: initialView.concertsView === 'future' ? [tomorrow, null] : [null, tomorrow],
     years: selectedYears,
     festivalRoots: selectedFestivalRoots,
     bandsSeenUsers:
-      view.concerts_view !== 'future' ? (selectedUserId ? [selectedUserId] : getView()) : null,
+      initialView.concertsView !== 'future'
+        ? selectedUserId
+          ? [selectedUserId]
+          : getView()
+        : null,
     sort,
     size,
     bandsSize: 5,
   })
   const { push } = useRouter()
-  const pathname = usePathname()
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const t = useTranslations('HomePage')
   const locale = useLocale()
@@ -147,7 +149,7 @@ export const HomePage = ({
     push(pathname, { scroll: false })
   }
   return (
-    <main className="container">
+    <main className="container pt-0">
       <div className="mb-6 hidden items-center justify-between md:flex">
         <h1 className="mb-0">{t('concerts')}</h1>
         <Button
@@ -160,15 +162,7 @@ export const HomePage = ({
           className="hidden md:block"
         />
       </div>
-      <section className="-mx-4 mb-4 grid gap-4 bg-radial-gradient from-blue/20 p-5 md:mx-auto md:rounded-2xl">
-        <SegmentedControl
-          options={[
-            { value: 'past', label: t('past') },
-            { value: 'future', label: t('future') },
-          ]}
-          value={view.concerts_view}
-          onValueChange={value => handleView({ ...view, concerts_view: value })}
-        />
+      <section className="-mx-4 grid gap-4 bg-radial-gradient from-blue/20 p-5 md:mx-auto md:rounded-2xl">
         <div className="scrollbar-hidden -mx-4 flex gap-2 overflow-x-auto px-4 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible">
           <BandFilter values={selectedBands} onSubmit={setSelectedBands} />
           <LocationFilter values={selectedLocations} onSubmit={setSelectedLocations} />
@@ -238,7 +232,9 @@ export const HomePage = ({
           {sort.sort_by === 'date_start'
             ? groupConcertsByMonth(concerts.data, locale).map(({ month, concerts }) => (
                 <div key={month}>
-                  <h3 className="section-headline mb-4">{month}</h3>
+                  <h3 className="section-headline sticky top-0 z-10 mb-0 mt-3 bg-slate-850 py-3">
+                    {month}
+                  </h3>
                   <div className="grid gap-4">
                     {concerts.map(concert => (
                       <ConcertCard concert={concert} key={concert.id} />

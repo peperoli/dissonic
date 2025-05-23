@@ -55,7 +55,7 @@ export const NavBar = () => {
     },
   ]
   return (
-    <nav className="container-fluid flex items-center gap-4">
+    <nav className="container-fluid flex items-center gap-6">
       <Link href="/" className="flex-shrink-0 md:w-40">
         {isDesktop ? <Logo /> : <LogoHorns />}
       </Link>
