@@ -18,16 +18,18 @@ export const Modal = ({ children, fullHeight, closeOnClickOutside, ...props }: M
           }}
           className="fixed inset-0 z-50 bg-black/75"
         />
-          <Dialog.Content
+        <Dialog.Content>
+          <div
             className={clsx(
-              'fixed inset-0 z-50 flex justify-center overflow-auto',
+              'pointer-events-none fixed inset-0 z-50 flex justify-center overflow-auto',
               !fullHeight && 'items-start'
             )}
           >
-            <div className="mx-auto min-h-full w-full max-w-lg bg-slate-800 p-6 md:m-16 md:min-h-0 md:rounded-lg md:p-8">
+            <div className="pointer-events-auto mx-auto min-h-full w-full max-w-lg bg-slate-800 p-6 md:m-16 md:min-h-0 md:rounded-lg md:p-8">
               {children}
             </div>
-          </Dialog.Content>
+          </div>
+        </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
   )

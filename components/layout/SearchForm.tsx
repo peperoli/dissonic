@@ -49,25 +49,29 @@ export function SearchForm() {
           setQuery={setSearchString}
           isLoading={isFetching}
         />
-        <SegmentedControl
-          options={[
-            { value: 'all', label: t('all') },
-            { value: 'concerts', label: t('concerts') },
-            { value: 'bands', label: t('bands') },
-            { value: 'locations', label: t('locations') },
-          ]}
-          value={selectedType}
-          onValueChange={setSelectedType}
-        />
+        {(!!lastSearched?.length || !!searchString.length) && (
+          <SegmentedControl
+            options={[
+              { value: 'all', label: t('all') },
+              { value: 'concerts', label: t('concerts') },
+              { value: 'bands', label: t('bands') },
+              { value: 'locations', label: t('locations') },
+            ]}
+            value={selectedType}
+            onValueChange={setSelectedType}
+          />
+        )}
       </div>
       {!searchString.length
         ? lastSearched && (
             <div className="mt-6">
               <h2 className="h3">{t('lastSearched')}</h2>
               <ul>
-                {lastSearched?.map(result => {
-                  return <SearchResultItem key={result.id} result={result} />
-                })}
+                {lastSearched
+                  ?.filter(result => selectedType === 'all' || result.type === selectedType)
+                  .map(result => {
+                    return <SearchResultItem key={result.id} result={result} />
+                  })}
               </ul>
             </div>
           )
