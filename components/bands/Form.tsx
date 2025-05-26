@@ -43,6 +43,7 @@ export const Form = ({ isNew, close }: FormProps) => {
           ...band,
           spotify_artist: {
             id: band?.spotify_artist_id,
+            images: band?.spotify_artist_images,
           } as SpotifyArtist,
         },
   })

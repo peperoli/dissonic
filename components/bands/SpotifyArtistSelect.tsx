@@ -4,8 +4,9 @@ import { SpotifyArtist } from '../../types/types'
 import { Popover, PopoverBackdrop, PopoverButton, PopoverPanel } from '@headlessui/react'
 import { Check, ChevronDown, LinkIcon } from 'lucide-react'
 import { Button } from '../Button'
-import { useState } from 'react'
-import { useLocale, useTranslations } from 'next-intl'
+import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
+import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 
 interface SelectItemProps {
   item: SpotifyArtist
@@ -60,7 +61,13 @@ export const SpotifyArtistSelect = ({ bandName, value, onChange }: SpotifyArtist
   const [limit, setLimit] = useState(10)
   const { data: searchResults, isLoading } = useSpotifySearch(bandName, { limit })
   const t = useTranslations('SpotifyArtistSelect')
-  const selectedArtist = searchResults?.find(item => item.id === value?.id)
+  const { data: selectedArtist } = useSpotifyArtist(value?.id ?? null)
+
+  useEffect(() => {
+    if (selectedArtist) {
+      onChange(selectedArtist)
+    }
+  }, [value])
 
   return (
     <Popover className="relative">

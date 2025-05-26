@@ -251,7 +251,7 @@ const ContributionItemWrapper = ({
     const changes: { key: string; old: unknown; new: unknown }[] = []
 
     Object.entries(oldState).forEach(([key, value]) => {
-      if (newState[key as keyof State] !== value) {
+      if (JSON.stringify(newState[key as keyof State]) !== JSON.stringify(value)) {
         changes.push({ key, old: oldState[key as keyof State], new: newState[key as keyof State] })
       }
     })
