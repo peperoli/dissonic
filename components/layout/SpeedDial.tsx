@@ -20,7 +20,7 @@ export const SpeedDial = () => {
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
-      <div className="fixed bottom-0 right-0 m-4">
+      <div className="fixed bottom-16 right-0 z-20 m-4 md:bottom-0">
         <Dialog.Trigger asChild>
           <Button
             label={t('addResource')}

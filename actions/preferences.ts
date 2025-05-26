@@ -2,11 +2,18 @@
 
 import { cookies } from 'next/headers'
 
-export async function setViewPreference(value: { concerts_view: string; user_view: string }) {
+const YEAR = 60 * 60 * 24 * 365.25
+
+export async function setViewPreference(userView: 'global' | 'friends' | 'user') {
   const cookieStore = await cookies()
-  cookieStore.set('view', `${value.concerts_view};${value.user_view}`, {
-    maxAge: 60 * 60 * 24 * 365.25,
+  cookieStore.set('concertsUserView', userView, {
+    maxAge: YEAR,
   })
+}
+
+export async function setConcertsRangePreference(range: 'past' | 'future') {
+  const cookieStore = await cookies()
+  cookieStore.set('concertsRange', range, { maxAge: YEAR })
 }
 
 export async function saveLastQueryState(
@@ -34,5 +41,5 @@ export async function saveLastQueryState(
 
 export async function setBandListHintPreference(bandListHint: 'hide' | 'show') {
   const cookieStore = await cookies()
-  cookieStore.set('bandListHint', bandListHint, { maxAge: 60 * 60 * 24 * 365.25 })
+  cookieStore.set('bandListHint', bandListHint, { maxAge: YEAR })
 }
