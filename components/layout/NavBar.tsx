@@ -70,7 +70,7 @@ export const NavBar = () => {
     },
   ]
   return (
-    <nav className="container-fluid flex items-center gap-4">
+    <nav className="container-fluid flex items-center gap-6">
       <Link href="/" className="flex-shrink-0 md:w-40">
         {isDesktop ? <Logo /> : <LogoHorns />}
       </Link>
@@ -119,7 +119,7 @@ export const NavBar = () => {
           </MenuItems>
         </Menu>
       ) : (
-        <div className="flex gap-4">
+        <div className="flex gap-4 ml-auto">
           <Link href="/signup" className="btn btn-tertiary max-md:hidden">
             {t('signUp')}
           </Link>

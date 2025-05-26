@@ -128,6 +128,10 @@
     "passwordLengthError": "The password must be at least 12 characters long.",
     "updatePasswordSuccess": "Success! You can now login with your new password."
   },
+    "ConcertsNav": {
+    "past": "Until today",
+    "future": "Future"
+  },
   "HomePage": {
     "concerts": "Concerts",
     "addConcert": "Add concert",

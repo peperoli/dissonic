@@ -18,9 +18,33 @@ const nextConfig = {
   redirects: async () => {
     return [
       {
-        source: '/concerts',
-        destination: '/',
+        source: '/',
         permanent: true,
+        destination: '/concerts',
+      },
+      {
+        source: '/concerts',
+        has: [
+          {
+            type: 'cookie',
+            key: 'concertsRange',
+            value: 'future',
+          },
+        ],
+        permanent: false,
+        destination: '/concerts/future',
+      },
+      {
+        source: '/concerts',
+        missing: [
+          {
+            type: 'cookie',
+            key: 'concertsRange',
+            value: 'future',
+          },
+        ],
+        permanent: false,
+        destination: '/concerts/past',
       },
     ]
   },

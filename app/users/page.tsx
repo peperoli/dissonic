@@ -62,7 +62,6 @@ export default async function Page(props: { searchParams: Promise<SearchParams> 
           <UserItem key={profileStat.id} profileStat={profileStat} index={index} />
         ))}
       </div>
-      <SpeedDial />
     </main>
   )
 }

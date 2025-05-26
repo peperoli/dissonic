@@ -156,7 +156,7 @@ function SearchResultItem({ result }: { result: SearchResult }) {
           }
         />
       ) : (
-        <li key={result.id}>{result.name}</li>
+        <div key={result.id}>{result.name}</div>
       )}
     </li>
   )
