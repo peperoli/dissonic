@@ -34,6 +34,7 @@ module.exports = {
       yellow: '#EEF162',
       black: '#000',
       transparent: 'transparent',
+      current: 'currentColor',
     },
     boxShadow: {
       md: '0 2px 8px rgba(0, 0, 0, 0.2)',

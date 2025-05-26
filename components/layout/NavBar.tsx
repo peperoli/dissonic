@@ -101,7 +101,7 @@ export const NavBar = () => {
           </MenuItems>
         </Menu>
       ) : (
-        <div className="flex gap-4">
+        <div className="flex gap-4 ml-auto">
           <Link href="/signup" className="btn btn-tertiary max-md:hidden">
             {t('signUp')}
           </Link>
