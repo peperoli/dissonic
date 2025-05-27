@@ -233,9 +233,13 @@
     "login": "Login"
   },
   "Comment": {
+    "comment": "Comment",
     "edited": "edited",
     "edit": "Edit",
-    "delete": "Delete"
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "reply": "Reply"
   },
   "MetaInfo": {
     "createdAtDateByUser": "Created at {date} by <link>{username}</link>",
