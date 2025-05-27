@@ -233,9 +233,13 @@
     "login": "Anmelden"
   },
   "Comment": {
+    "comment": "Kommentar",
     "edited": "bearbeitet",
     "edit": "Bearbeiten",
-    "delete": "Löschen"
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "reply": "Antworten"
   },
   "MetaInfo": {
     "createdAtDateByUser": "Erstellt am {date} von <link>{username}</link>",

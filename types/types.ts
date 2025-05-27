@@ -92,6 +92,7 @@ export type FestivalRoot = Tables<'festival_roots'> & {
 
 export type Comment = Tables<'comments'> & {
   reactions?: Reaction[]
+  replies?: Comment[] | null
 }
 
 export type AddComment = TablesInsert<'comments'>

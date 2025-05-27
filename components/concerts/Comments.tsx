@@ -1,5 +1,5 @@
 import { Button } from '../Button'
-import { use, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Comment } from '../../types/types'
 import { useComments } from '../../hooks/concerts/useComments'
 import { useAddComment } from '../../hooks/concerts/useAddComment'
@@ -54,7 +54,7 @@ export const Comments = () => {
               </div>
             </form>
           )}
-          <div className="grid gap-4">
+          <div className="grid gap-5">
             {comments && comments.length > 0 ? (
               comments.map(item => <CommentItem key={item.id} comment={item} />)
             ) : (

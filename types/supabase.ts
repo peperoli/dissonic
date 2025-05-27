@@ -77,6 +77,7 @@ export type Database = {
           created_at: string
           edited_at: string | null
           id: number
+          parent_id: number | null
           user_id: string
         }
         Insert: {
@@ -85,6 +86,7 @@ export type Database = {
           created_at?: string
           edited_at?: string | null
           id?: number
+          parent_id?: number | null
           user_id: string
         }
         Update: {
@@ -93,6 +95,7 @@ export type Database = {
           created_at?: string
           edited_at?: string | null
           id?: number
+          parent_id?: number | null
           user_id?: string
         }
         Relationships: [
@@ -108,6 +111,13 @@ export type Database = {
             columns: ["concert_id"]
             isOneToOne: false
             referencedRelation: "concerts_full"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
             referencedColumns: ["id"]
           },
           {
