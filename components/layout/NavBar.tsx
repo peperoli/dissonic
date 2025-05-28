@@ -6,7 +6,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useLogOut } from '../../hooks/auth/useLogOut'
 import { useProfile } from '../../hooks/profiles/useProfile'
-import { useEffect } from 'react'
+import { ReactNode, useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useSession } from '../../hooks/auth/useSession'
 import { UserItem } from '../shared/UserItem'
@@ -24,7 +24,7 @@ export const NavBar = () => {
   const logOutMutation = useLogOut()
   const queryClient = useQueryClient()
   const { push } = useRouter()
-  const [_, setModal] = useModal()
+  const [modal, setModal] = useModal()
   const pathname = usePathname()
   const t = useTranslations('NavBar')
   const isDesktop = useMediaQuery('(min-width: 768px)')
@@ -38,7 +38,7 @@ export const NavBar = () => {
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.shiftKey && event.key === 'F') {
+      if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'F') {
         event.preventDefault()
         setModal('search')
       }
@@ -49,7 +49,7 @@ export const NavBar = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [])
+  }, [modal])
 
   const menuItems = [
     {
@@ -80,8 +80,12 @@ export const NavBar = () => {
       >
         <SearchIcon className="size-icon" />
         <span className="text-slate-300">{t('search')}</span>
-        <span className="ml-auto hidden items-center rounded border border-slate-500 px-1 py-0.5 text-sm text-slate-500 md:flex">
-          <ArrowBigUp className="size-icon" />+ F
+        <span className="ml-auto hidden gap-1 text-sm text-slate-500 md:flex">
+          <KeyboardKey>Ctrl</KeyboardKey>
+          <KeyboardKey>
+            <ArrowBigUp className="size-icon" />
+          </KeyboardKey>
+          <KeyboardKey>F</KeyboardKey>
         </span>
       </button>
       {profile ? (
@@ -119,7 +123,7 @@ export const NavBar = () => {
           </MenuItems>
         </Menu>
       ) : (
-        <div className="flex gap-4 ml-auto">
+        <div className="ml-auto flex gap-4">
           <Link href="/signup" className="btn btn-tertiary max-md:hidden">
             {t('signUp')}
           </Link>
@@ -129,5 +133,13 @@ export const NavBar = () => {
         </div>
       )}
     </nav>
+  )
+}
+
+function KeyboardKey({ children }: { children: ReactNode }) {
+  return (
+    <span className="min-w-6 rounded border border-slate-500 px-1 py-0.5 text-center shadow-[0_1px_0_#668899]">
+      {children}
+    </span>
   )
 }
