@@ -36,11 +36,12 @@ import { useRestoreConcert } from '@/hooks/concerts/useRestoreConcert'
 import { StatusBanner } from '../forms/StatusBanner'
 import { Tooltip } from '../shared/Tooltip'
 import { getIcsFile } from '@/lib/getIcsFile'
+import { useMemories } from '@/hooks/concerts/useMemories'
 
 type ConcertPageProps = {
   initialConcert: Concert
   concertQueryState?: string
-  bandListHintPreference?: string
+  bandListHintPreference: string
 }
 
 export const ConcertPage = ({
@@ -59,6 +60,7 @@ export const ConcertPage = ({
   const { push } = useRouter()
   const pathname = usePathname()
   const t = useTranslations('ConcertPage')
+  const { data: memories } = useMemories({ concertId: concert?.id })
 
   if (!concert) {
     notFound()
@@ -218,6 +220,14 @@ export const ConcertPage = ({
             <BandList concert={concert} bandListHintPreference={bandListHintPreference} />
           )}
         </section>
+        <pre>{JSON.stringify(memories, null, 2)}</pre>
+        <ul>
+          {memories?.map((memory, index) => (
+            <li key={index} className="border">
+              <Image src={memory} alt="blyat" width={100} height={100} className="" />
+            </li>
+          ))}
+        </ul>
         <ConcertCommunity concert={concert} />
         {isFutureOrToday && <ConcertInfo concert={concert} />}
         {concert.bands && <SimpleConcertStats bands={concert.bands} />}

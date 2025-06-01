@@ -92,7 +92,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     <ConcertPage
       initialConcert={concert}
       concertQueryState={cookieStore.get('concertsLastQueryState')?.value}
-      bandListHintPreference={cookieStore.get('bandListHint')?.value}
+      bandListHintPreference={cookieStore.get('bandListHint')?.value ?? 'show'}
     />
   )
 }

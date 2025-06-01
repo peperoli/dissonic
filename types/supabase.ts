@@ -114,7 +114,7 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "comments_parent_id_fkey"
+            foreignKeyName: "comments_reply_to_fkey"
             columns: ["parent_id"]
             isOneToOne: false
             referencedRelation: "comments"
@@ -593,6 +593,69 @@ export type Database = {
             columns: ["country_id"]
             isOneToOne: false
             referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      memories: {
+        Row: {
+          band_id: number | null
+          concert_id: number
+          created_at: string
+          file_name: string
+          id: number
+          user_id: string
+        }
+        Insert: {
+          band_id?: number | null
+          concert_id: number
+          created_at?: string
+          file_name: string
+          id?: number
+          user_id?: string
+        }
+        Update: {
+          band_id?: number | null
+          concert_id?: number
+          created_at?: string
+          file_name?: string
+          id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "memories_band_id_fkey"
+            columns: ["band_id"]
+            isOneToOne: false
+            referencedRelation: "bands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "memories_concert_id_fkey"
+            columns: ["concert_id"]
+            isOneToOne: false
+            referencedRelation: "concerts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "memories_concert_id_fkey"
+            columns: ["concert_id"]
+            isOneToOne: false
+            referencedRelation: "concerts_full"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "memories_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profile_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "memories_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]

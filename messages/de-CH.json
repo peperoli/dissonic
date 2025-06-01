@@ -200,12 +200,21 @@
   },
   "BandList": {
     "iWasThere": "Ich war dabei!",
+    "thisConcertIsInTheFuture": "Dieses Konzert liegt in der Zukunft."
+  },
+  "ConcertLogForm": {
     "chooseBandsYouHaveSeenAtThisConcert": "Wähle Bands, die du an diesem Konzert erlebt hast.",
     "hideHint": "Hinweis ausblenden",
+    "memories": "Erinnerungen",
     "save": "Speichern",
-    "cancel": "Abbrechen",
-    "thisConcertIsInTheFuture": "Dieses Konzert liegt in der Zukunft.",
+    "cancel": "Abbrechen"
+  },
+  "useAddLog": {
     "bandsSeenUpdated": "Gesehene Bands aktualisiert"
+  },
+  "MultiFileInput": {
+    "dragOrBrowseFiles": "Dateien hinziehen oder <span>durchsuchen</span>",
+    "remove": "Entfernen"
   },
   "ConcertCommunity": {
     "loading": "Laden ...",

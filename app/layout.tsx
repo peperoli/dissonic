@@ -88,18 +88,18 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
                   color: fullConfig.theme.colors.white,
                 },
                 success: {
-                  icon: <CheckCircleIcon className="size-icon text-venom flex-none" />,
+                  icon: <CheckCircleIcon className="size-icon flex-none text-venom" />,
                   duration: 5000,
                 },
                 error: {
-                  icon: <AlertCircleIcon className="size-icon text-red flex-none" />,
+                  icon: <AlertCircleIcon className="size-icon flex-none text-red" />,
                   duration: 10000,
                 },
               }}
             />
           </NextIntlClientProvider>
         </QueryProvider>
-        <Analytics />
+        {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
   )

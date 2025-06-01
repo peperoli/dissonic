@@ -2,6 +2,7 @@ import { User } from '@supabase/supabase-js'
 import { Dispatch, SetStateAction } from 'react'
 import { useConcertContext } from '../../hooks/concerts/useConcertContext'
 import { Tables, TablesInsert } from '@/types/supabase'
+import clsx from 'clsx'
 
 interface BandSeenToggleProps {
   band: Tables<'bands'>
@@ -44,7 +45,7 @@ export const BandSeenToggle = ({
   }
 
   return (
-    <label className={`btn btn-tag ${isSeen ? 'btn-seen' : ''}`}>
+    <label className={clsx('btn btn-tag focus-within:outline', isSeen && 'btn-seen')}>
       <input
         type="checkbox"
         name="seenBands"
