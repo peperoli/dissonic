@@ -7,21 +7,27 @@ import { Button } from '../Button'
 import { useTranslations } from 'next-intl'
 import { Band } from '@/types/types'
 import { SelectField } from './SelectField'
+import { Tables } from '@/types/supabase'
 
-function FileItem({
-  file,
+export type Memory =
+  | Tables<'memories'>
+  | {
+      file: File
+      band_id: number | null
+    }
+
+function MemoryItem({
+  memory,
   onRemove,
   bands,
-  bandId,
   setBandId,
 }: {
-  file: File
+  memory: Memory
   onRemove: () => void
   bands: Band[]
-  bandId: number | null
   setBandId: (bandId: number | null) => void
 }) {
-  const fileUrl = URL.createObjectURL(file)
+  const fileUrl = 'file' in memory ? URL.createObjectURL(memory.file) : memory.file_url
   const t = useTranslations('MultiFileInput')
 
   function formatSize(bytes: number) {
@@ -35,22 +41,25 @@ function FileItem({
   return (
     <div className="flex w-full items-center gap-4 text-left text-sm">
       <div className="relative grid size-20 flex-none place-content-center rounded-md bg-slate-700">
-        {file.type.startsWith('image/') && fileUrl ? (
-          <Image src={fileUrl} alt={file.name} fill className="rounded-md object-cover" />
+        {fileUrl ? (
+          <Image src={fileUrl} alt="" fill className="rounded-md object-cover" />
         ) : (
           <FileIcon className="text-xl" />
         )}
       </div>
       <div className="grid w-full">
-        <div className="w-full truncate mb-2">
-          {file.name} <span className="text-slate-300">&bull; {formatSize(file.size)}</span>
+        <div className="mb-2 w-full truncate">
+          {'file' in memory ? memory.file.name : memory.file_name}{' '}
+          <span className="text-slate-300">
+            &bull; {formatSize('file' in memory ? memory.file.size : memory.file_size)}
+          </span>
         </div>
         <SelectField
           label="Band"
           name="bandId"
           items={bands.map(band => ({ id: band.id, name: band.name }))}
           allItems={bands}
-          value={bandId}
+          value={memory.band_id || null}
           onValueChange={setBandId}
         />
       </div>
@@ -67,7 +76,7 @@ function FileItem({
   )
 }
 
-export function MultiFileInput({
+export function MemoriesControl({
   label,
   name,
   value,
@@ -81,8 +90,8 @@ export function MultiFileInput({
   name: string
   error?: FieldError
   hint?: string
-  value: { file: File; bandId: number | null }[]
-  onChange: (value: { file: File; bandId: number | null }[]) => void
+  value: Memory[]
+  onChange: (value: Memory[]) => void
   accept?: HTMLInputElement['accept']
   bands: Band[]
 }) {
@@ -107,14 +116,14 @@ export function MultiFileInput({
 
     if (event.dataTransfer.files) {
       const files = Array.from(event.dataTransfer.files)
-      onChange(value.concat(files.map(file => ({ file, bandId: null }))))
+      onChange(value.concat(files.map(file => ({ file, band_id: null }))))
     }
   }
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     if (event.target.files) {
       const files = Array.from(event.target.files)
-      onChange(value.concat(files.map(file => ({ file, bandId: null }))))
+      onChange(value.concat(files.map(file => ({ file, band_id: null }))))
     }
   }
 
@@ -147,25 +156,26 @@ export function MultiFileInput({
           {value.length > 0 ? (
             <div className="grid gap-4">
               {value.map((memory, index) => {
-                if (memory.file instanceof File) {
-                  return (
-                    <FileItem
-                      file={memory.file}
-                      onRemove={() =>
-                        onChange(value.filter(item => item.file.name !== memory.file.name))
-                      }
-                      bands={bands}
-                      bandId={memory.bandId}
-                      setBandId={bandId => {
-                        onChange([
-                          ...value.filter(item => item.file.name !== memory.file.name),
-                          { file: memory.file, bandId },
-                        ])
-                      }}
-                      key={index}
-                    />
-                  )
-                }
+                return (
+                  <MemoryItem
+                    memory={memory}
+                    onRemove={() => {
+                      const newValue = [...value]
+                      newValue.splice(index, 1)
+                      onChange(newValue)
+                    }}
+                    bands={bands}
+                    setBandId={bandId => {
+                      const newValue = [...value]
+                      newValue.splice(index, 1, {
+                        ...memory,
+                        band_id: bandId,
+                      })
+                      onChange(newValue)
+                    }}
+                    key={index}
+                  />
+                )
               })}
             </div>
           ) : (

@@ -1,22 +1,27 @@
-import { uploadMemories } from '@/actions/files'
-import { TablesInsert } from '@/types/supabase'
+import { deleteMemories, uploadMemories } from '@/actions/files'
+import { Tables, TablesInsert } from '@/types/supabase'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
 import toast from 'react-hot-toast'
 import supabase from '@/utils/supabase/client'
+import { Memory } from '@/components/forms/MemoriesControl'
 
 async function addLog({
   concertId,
   userId,
   bandsToAdd,
   bandsToDelete,
-  memories,
+  memoriesToAdd,
+  memoriesToDelete,
+  memoriesToUpdate,
 }: {
   concertId: number
   userId: string
   bandsToAdd: TablesInsert<'j_bands_seen'>[]
   bandsToDelete: TablesInsert<'j_bands_seen'>[]
-  memories: { file: File; bandId: number | null }[]
+  memoriesToAdd: Exclude<Memory, Tables<'memories'>>[]
+  memoriesToDelete: Exclude<Memory, { file: File; band_id: number | null }>[]
+  memoriesToUpdate: Exclude<Memory, { file: File; band_id: number | null }>[]
 }) {
   const { error: insertBandsError } = await supabase.from('j_bands_seen').insert(bandsToAdd)
 
@@ -39,20 +44,58 @@ async function addLog({
   }
 
   try {
-    const urls = await uploadMemories(memories.map(memory => memory.file))
+    const urlsToAdd = await uploadMemories(memoriesToAdd.map(memory => memory.file))
+    await deleteMemories(memoriesToDelete.map(memory => memory.file_name))
 
-    if (!!urls?.length) {
+    if (urlsToAdd.length > 0) {
       const { error: insertMemoriesError } = await supabase.from('memories').insert(
-        urls.map((url, index) => ({
+        urlsToAdd.map((url, index) => ({
           concert_id: concertId,
-          file_name: url.split('?')[0],
-          band_id: memories[index].bandId,
+          file_url: url,
+          band_id: memoriesToAdd[index].band_id,
+          file_size: memoriesToAdd[index].file.size,
+          file_name: memoriesToAdd[index].file.name,
+          file_type: memoriesToAdd[index].file.type,
         }))
       )
 
       if (insertMemoriesError) {
         throw insertMemoriesError
       }
+    }
+
+    if (memoriesToDelete.length > 0) {
+      const { error } = await supabase
+        .from('memories')
+        .delete()
+        .eq('concert_id', concertId)
+        .in(
+          'id',
+          memoriesToDelete.map(memory => memory.id)
+        )
+
+      if (error) {
+        throw error
+      }
+    }
+
+    if (memoriesToUpdate.length > 0) {
+      memoriesToUpdate.forEach(async memory => {
+        const { error } = await supabase
+          .from('memories')
+          .update({
+            band_id: memory.band_id,
+          })
+          .eq('concert_id', concertId)
+          .in(
+            'id',
+            memoriesToUpdate.map(memory => memory.id)
+          )
+
+        if (error) {
+          throw error
+        }
+      })
     }
   } catch (error) {
     throw error

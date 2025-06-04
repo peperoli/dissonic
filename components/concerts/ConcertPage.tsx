@@ -223,7 +223,7 @@ export const ConcertPage = ({
         <ul className='grid grid-cols-4 gap-4'>
           {memories?.map((memory, index) => (
             <li key={index} className="bg-slate-700">
-              <Image src={memory.file_name} alt={memory.id} width={100} height={100} className="" />
+              <Image src={memory.file_url} alt={memory.id} width={100} height={100} className="" />
               {concert.bands?.find(band => band.id === memory.band_id)?.name}
             </li>
           ))}
