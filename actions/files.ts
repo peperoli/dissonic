@@ -1,12 +1,6 @@
 'use server'
 
-import {
-  S3Client,
-  ListBucketsCommand,
-  ListObjectsV2Command,
-  GetObjectCommand,
-  PutObjectCommand,
-} from '@aws-sdk/client-s3'
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 
 const S3 = new S3Client({
   region: 'auto',
@@ -19,40 +13,23 @@ const S3 = new S3Client({
   responseChecksumValidation: 'WHEN_REQUIRED',
 })
 
-export async function getMemories(fileNames: string[]) {
-  const files = []
-  try {
-    for (const fileName of fileNames) {
-      const command = new GetObjectCommand({
-        Bucket: 'concert-memories',
-        Key: fileName,
-      })
-      const file = await S3.send(command)
-      files.push(await file.Body?.transformToWebStream())
-    }
-    return files
-  } catch (error) {
-    console.error('Error getting objects:', error)
-  }
-}
-
 export async function uploadMemories(files: File[]) {
-  const fileNames: string[] = []
+  const urls: string[] = []
   try {
     for (const file of files) {
       const fileName = `${Date.now()}-${file.name}`
       const buffer = Buffer.from(await file.arrayBuffer())
-      const command = new PutObjectCommand({
+      const putObjectCommand = new PutObjectCommand({
         Bucket: 'concert-memories',
         Key: fileName,
         Body: buffer,
         ContentType: file.type,
       })
-      await S3.send(command)
-      fileNames.push(fileName)
+      await S3.send(putObjectCommand)
+      urls.push(`https://pub-8067124940ec421cb1be4c6467795917.r2.dev/${fileName}`)
     }
-    return fileNames
+    return urls
   } catch (error) {
-    console.error('Error uploading files:', error)
+    throw error
   }
 }

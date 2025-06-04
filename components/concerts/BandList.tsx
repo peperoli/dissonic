@@ -1,6 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react'
 import { Concert } from '@/types/types'
-import { useQueryClient } from '@tanstack/react-query'
 import { BandSeenToggle } from './BandSeenToggle'
 import { useSession } from '../../hooks/auth/useSession'
 import Link from 'next/link'
@@ -14,6 +13,7 @@ import { setBandListHintPreference } from '@/actions/preferences'
 import { useForm } from 'react-hook-form'
 import { MultiFileInput } from '../forms/MultiFileInput'
 import { useAddLog } from '@/hooks/concerts/useAddLog'
+import { useMemories } from '@/hooks/concerts/useMemories'
 
 type BandListProps = {
   concert: Concert
@@ -99,7 +99,10 @@ function ConcertLogForm({
 }) {
   const { data: session } = useSession()
   const {} = useForm({ defaultValues: {} })
-  const [files, setFiles] = useState<File[]>([])
+  const { data: initialMemories } = useMemories({ concertId: concert.id })
+  const [memories, setMemories] = useState<{ file: File; bandId: number | null }[]>(
+    initialMemories?.map(memory => ({ file: memory.file_name, bandId: memory.band_id })) || []
+  )
   const bandsSeen = concert.bands_seen
     ?.filter(item => item?.user_id === session?.user.id)
     .filter(item => typeof item !== 'undefined')
@@ -107,7 +110,6 @@ function ConcertLogForm({
     bandsSeen ?? []
   )
   const addLog = useAddLog()
-  const queryClient = useQueryClient()
   const t = useTranslations('ConcertLogForm')
   const bandsSeenIds = bandsSeen?.map(bandSeen => bandSeen?.band_id)
   const selectedBandsSeenIds = selectedBandsSeen.map(bandSeen => bandSeen.band_id)
@@ -127,7 +129,7 @@ function ConcertLogForm({
       userId: session.user.id,
       bandsToAdd,
       bandsToDelete,
-      files,
+      memories,
     })
   }
 
@@ -171,8 +173,9 @@ function ConcertLogForm({
         name="memories"
         label={t('memories') + ' (optional)'}
         accept={['image/jpeg', 'image/webp'].join(',')}
-        value={files}
-        onChange={setFiles}
+        value={memories}
+        onChange={setMemories}
+        bands={concert.bands || []}
       />
       <div className="mt-6 flex flex-wrap items-center gap-4">
         <Button type="submit" label={t('save')} appearance="primary" loading={addLog.isPending} />

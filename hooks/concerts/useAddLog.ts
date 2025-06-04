@@ -10,13 +10,13 @@ async function addLog({
   userId,
   bandsToAdd,
   bandsToDelete,
-  files,
+  memories,
 }: {
   concertId: number
   userId: string
   bandsToAdd: TablesInsert<'j_bands_seen'>[]
   bandsToDelete: TablesInsert<'j_bands_seen'>[]
-  files: File[]
+  memories: { file: File; bandId: number | null }[]
 }) {
   const { error: insertBandsError } = await supabase.from('j_bands_seen').insert(bandsToAdd)
 
@@ -39,13 +39,14 @@ async function addLog({
   }
 
   try {
-    const fileNames = await uploadMemories(files)
+    const urls = await uploadMemories(memories.map(memory => memory.file))
 
-    if (!!fileNames?.length) {
+    if (!!urls?.length) {
       const { error: insertMemoriesError } = await supabase.from('memories').insert(
-        fileNames.map(fileName => ({
+        urls.map((url, index) => ({
           concert_id: concertId,
-          file_name: fileName,
+          file_name: url.split('?')[0],
+          band_id: memories[index].bandId,
         }))
       )
 
@@ -71,7 +72,7 @@ export function useAddLog() {
       toast.error(error.message)
     },
     onSuccess: ({ concertId }) => {
-      queryClient.invalidateQueries({ queryKey: ['concert', concertId] })
+      queryClient.invalidateQueries({ queryKey: ['memories', concertId] })
       toast.success(t('bandsSeenUpdated'))
     },
   })

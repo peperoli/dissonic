@@ -220,11 +220,11 @@ export const ConcertPage = ({
             <BandList concert={concert} bandListHintPreference={bandListHintPreference} />
           )}
         </section>
-        <pre>{JSON.stringify(memories, null, 2)}</pre>
-        <ul>
+        <ul className='grid grid-cols-4 gap-4'>
           {memories?.map((memory, index) => (
-            <li key={index} className="border">
-              <Image src={memory} alt="blyat" width={100} height={100} className="" />
+            <li key={index} className="bg-slate-700">
+              <Image src={memory.file_name} alt={memory.id} width={100} height={100} className="" />
+              {concert.bands?.find(band => band.id === memory.band_id)?.name}
             </li>
           ))}
         </ul>

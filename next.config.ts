@@ -13,6 +13,7 @@ const nextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: 'i.scdn.co' },
       { protocol: 'https', hostname: 'saehmgtoacwmofqbbaff.supabase.co' },
+      { protocol: 'https', hostname: 'pub-8067124940ec421cb1be4c6467795917.r2.dev' },
     ],
   },
   redirects: async () => {

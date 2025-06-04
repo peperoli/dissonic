@@ -5,8 +5,22 @@ import { FieldError } from 'react-hook-form'
 import { FileIcon, XIcon } from 'lucide-react'
 import { Button } from '../Button'
 import { useTranslations } from 'next-intl'
+import { Band } from '@/types/types'
+import { SelectField } from './SelectField'
 
-function FileItem({ file, onRemove }: { file: File; onRemove: () => void }) {
+function FileItem({
+  file,
+  onRemove,
+  bands,
+  bandId,
+  setBandId,
+}: {
+  file: File
+  onRemove: () => void
+  bands: Band[]
+  bandId: number | null
+  setBandId: (bandId: number | null) => void
+}) {
   const fileUrl = URL.createObjectURL(file)
   const t = useTranslations('MultiFileInput')
 
@@ -19,27 +33,36 @@ function FileItem({ file, onRemove }: { file: File; onRemove: () => void }) {
   }
 
   return (
-    <div className="flex items-center gap-4 text-left text-sm">
-      <div className="relative grid h-16 w-16 flex-none place-content-center rounded-md bg-slate-700">
+    <div className="flex w-full items-center gap-4 text-left text-sm">
+      <div className="relative grid size-20 flex-none place-content-center rounded-md bg-slate-700">
         {file.type.startsWith('image/') && fileUrl ? (
           <Image src={fileUrl} alt={file.name} fill className="rounded-md object-cover" />
         ) : (
           <FileIcon className="text-xl" />
         )}
       </div>
-      <div className="grid place-items-start">
-        <div className="w-full truncate">{file.name}</div>
-        <div className="text-slate-300">{formatSize(file.size)}</div>
-        <Button
-          label={t('remove')}
-          icon={<XIcon className="size-icon" />}
-          appearance="tertiary"
-          size="small"
-          danger
-          onClick={onRemove}
-          className="-ml-4"
+      <div className="grid w-full">
+        <div className="w-full truncate mb-2">
+          {file.name} <span className="text-slate-300">&bull; {formatSize(file.size)}</span>
+        </div>
+        <SelectField
+          label="Band"
+          name="bandId"
+          items={bands.map(band => ({ id: band.id, name: band.name }))}
+          allItems={bands}
+          value={bandId}
+          onValueChange={setBandId}
         />
       </div>
+      <Button
+        label={t('remove')}
+        icon={<XIcon className="size-icon" />}
+        contentType="icon"
+        size="small"
+        appearance="tertiary"
+        danger
+        onClick={onRemove}
+      />
     </div>
   )
 }
@@ -52,14 +75,16 @@ export function MultiFileInput({
   error,
   hint,
   accept,
+  bands,
 }: {
   label: string
   name: string
   error?: FieldError
   hint?: string
-  value: File[]
-  onChange: (files: File[]) => void
+  value: { file: File; bandId: number | null }[]
+  onChange: (value: { file: File; bandId: number | null }[]) => void
   accept?: HTMLInputElement['accept']
+  bands: Band[]
 }) {
   const ref = useRef(null)
   const [dragActive, setDragActive] = useState(false)
@@ -82,14 +107,14 @@ export function MultiFileInput({
 
     if (event.dataTransfer.files) {
       const files = Array.from(event.dataTransfer.files)
-      onChange(value.concat(files))
+      onChange(value.concat(files.map(file => ({ file, bandId: null }))))
     }
   }
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     if (event.target.files) {
       const files = Array.from(event.target.files)
-      onChange(value.concat(files))
+      onChange(value.concat(files.map(file => ({ file, bandId: null }))))
     }
   }
 
@@ -120,13 +145,23 @@ export function MultiFileInput({
           )}
         >
           {value.length > 0 ? (
-            <div className="grid grid-cols-2 gap-4">
-              {value.map((file, index) => {
-                if (file instanceof File) {
+            <div className="grid gap-4">
+              {value.map((memory, index) => {
+                if (memory.file instanceof File) {
                   return (
                     <FileItem
-                      file={file}
-                      onRemove={() => onChange(value.filter(item => item.name !== file.name))}
+                      file={memory.file}
+                      onRemove={() =>
+                        onChange(value.filter(item => item.file.name !== memory.file.name))
+                      }
+                      bands={bands}
+                      bandId={memory.bandId}
+                      setBandId={bandId => {
+                        onChange([
+                          ...value.filter(item => item.file.name !== memory.file.name),
+                          { file: memory.file, bandId },
+                        ])
+                      }}
                       key={index}
                     />
                   )
