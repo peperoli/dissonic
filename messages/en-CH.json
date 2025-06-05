@@ -55,6 +55,7 @@
     "addConcert": "Add concert",
     "editConcert": "Edit concert",
     "deleteConcert": "Delete concert",
+    "addLog": "Add log",
     "deleteComment": "Delete comment",
     "addBand": "Add band",
     "editBand": "Edit band",

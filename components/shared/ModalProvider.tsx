@@ -8,6 +8,7 @@ import { DialogTitle } from '@radix-ui/react-dialog'
 import { useTranslations } from 'next-intl'
 import { SearchForm } from '../layout/SearchForm'
 import clsx from 'clsx'
+import { ConcertLogForm } from '../concerts/ConcertLogForm'
 
 function Loader() {
   return <Loader2 className="size-8 animate-spin text-slate-300" />
@@ -54,6 +55,7 @@ export const modalPaths = [
   'add-concert',
   'edit-concert',
   'delete-concert',
+  'add-log',
   'delete-comment',
   'add-band',
   'edit-band',
@@ -78,6 +80,7 @@ export const ModalProvider = () => {
     'add-concert': { title: t('addConcert'), component: ConcertForm },
     'edit-concert': { title: t('editConcert'), component: ConcertForm },
     'delete-concert': { title: t('deleteConcert'), component: DeleteConcertForm },
+    'add-log': { title: t('addLog'), component: ConcertLogForm },
     'delete-comment': { title: t('deleteComment'), component: DeleteCommentForm },
     'add-band': { title: t('addBand'), component: BandForm },
     'edit-band': { title: t('editBand'), component: BandForm },

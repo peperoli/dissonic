@@ -8,7 +8,7 @@ import { Button } from '../Button'
 import { Comments } from './Comments'
 import { notFound, usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
-import { BandList } from './BandList'
+import { Lineup } from './Lineup'
 import {
   ArchiveIcon,
   ArchiveRestoreIcon,
@@ -217,13 +217,13 @@ export const ConcertPage = ({
             </span>
           </div>
           {concert.bands && (
-            <BandList concert={concert} bandListHintPreference={bandListHintPreference} />
+            <Lineup concert={concert} bandListHintPreference={bandListHintPreference} />
           )}
         </section>
         <ul className='grid grid-cols-4 gap-4'>
           {memories?.map((memory, index) => (
             <li key={index} className="bg-slate-700">
-              <Image src={memory.file_url} alt={memory.id} width={100} height={100} className="" />
+              <Image src={memory.file_url} alt={memory.file_name} width={100} height={100} className="" />
               {concert.bands?.find(band => band.id === memory.band_id)?.name}
             </li>
           ))}
