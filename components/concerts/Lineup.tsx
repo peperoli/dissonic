@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Concert } from '@/types/types'
 import { useSession } from '../../hooks/auth/useSession'
 import Link from 'next/link'
@@ -7,26 +6,19 @@ import { usePathname, useRouter } from 'next/navigation'
 import clsx from 'clsx'
 import { Edit, Plus } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { ConcertLogForm } from './ConcertLogForm'
 import { useModal } from '../shared/ModalProvider'
 
-export function Lineup({
-  concert,
-  bandListHintPreference,
-}: {
-  concert: Concert
-  bandListHintPreference: string
-}) {
+export function Lineup({ concert }: { concert: Concert }) {
   const { data: session } = useSession()
   const bandsSeen = concert.bands_seen
     ?.filter(item => item?.user_id === session?.user.id)
     .filter(item => typeof item !== 'undefined')
   const { push } = useRouter()
   const pathname = usePathname()
-  const t = useTranslations('BandList')
+  const t = useTranslations('Lineup')
   const hasBandsSeen = bandsSeen && bandsSeen.length > 0
   const isFutureConcert = new Date(concert.date_start) > new Date()
-  const [modal, setModal] = useModal()
+  const [_, setModal] = useModal()
 
   return (
     <section>
@@ -51,7 +43,11 @@ export function Lineup({
       {!concert.is_archived && (
         <div className="mt-6 flex flex-wrap items-center gap-4">
           <Button
-            onClick={session ? () => setModal('add-log') : () => push(`/login?redirect=${pathname}`)}
+            onClick={
+              session
+                ? () => setModal(hasBandsSeen ? 'edit-log' : 'add-log')
+                : () => push(`/login?redirect=${pathname}`)
+            }
             label={t('iWasThere')}
             icon={hasBandsSeen ? <Edit className="size-icon" /> : <Plus className="size-icon" />}
             appearance={hasBandsSeen ? 'secondary' : 'primary'}

@@ -2,14 +2,14 @@
 
 import { createContext, useContext } from 'react'
 
-export const CookiesContext = createContext<{ bandListHint: string | undefined } | null>(null)
+export const CookiesContext = createContext<{ lineupHintPreference: string | undefined } | null>(null)
 
 export function CookiesProvider({
   children,
   cookies,
 }: {
   children: React.ReactNode
-  cookies: { bandListHint: string | undefined }
+  cookies: { lineupHintPreference: string | undefined }
 }) {
   return <CookiesContext.Provider value={cookies}>{children}</CookiesContext.Provider>
 }

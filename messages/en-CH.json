@@ -56,6 +56,7 @@
     "editConcert": "Edit concert",
     "deleteConcert": "Delete concert",
     "addLog": "Add log",
+    "editLog": "Edit log",
     "deleteComment": "Delete comment",
     "addBand": "Add band",
     "editBand": "Edit band",
@@ -129,7 +130,7 @@
     "passwordLengthError": "The password must be at least 12 characters long.",
     "updatePasswordSuccess": "Success! You can now login with your new password."
   },
-    "ConcertsNav": {
+  "ConcertsNav": {
     "past": "Until today",
     "future": "Future"
   },
@@ -199,14 +200,26 @@
     "showTime": "Show",
     "sourceLink": "Source link"
   },
-  "BandList": {
+  "Lineup": {
     "iWasThere": "I was there!",
+    "thisConcertIsInTheFuture": "This concert is in the future."
+  },
+  "ConcertLogForm": {
     "chooseBandsYouHaveSeenAtThisConcert": "Choose bands you have seen at this concert.",
     "hideHint": "Hide hint",
+    "memories": "Memories",
     "save": "Save",
-    "cancel": "Cancel",
-    "thisConcertIsInTheFuture": "This concert is in the future.",
-    "bandsSeenUpdated": "Seen bands updated"
+    "cancel": "Cancel"
+  },
+  "useAddLog": {
+    "logAdded": "Log added"
+  },
+  "useEditLog": {
+    "logUpdated": "Log updated"
+  },
+  "MultiFileInput": {
+    "dragOrBrowseFiles": "Drag or <span>browse</span> files",
+    "remove": "Remove"
   },
   "ConcertCommunity": {
     "loading": "Loading ...",

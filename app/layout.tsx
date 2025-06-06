@@ -74,7 +74,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <QueryProvider>
           <NextIntlClientProvider messages={messages}>
             <Tooltip.Provider delayDuration={200}>
-              <CookiesProvider cookies={{ bandListHint: cookieStore.get('bandListHint')?.value }}>
+              <CookiesProvider cookies={{ lineupHintPreference: cookieStore.get('lineupHintPreference')?.value }}>
                 <NavBar />
                 <div className="md:flex">
                   <Navigation />

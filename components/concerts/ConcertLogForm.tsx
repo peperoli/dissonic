@@ -1,10 +1,10 @@
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState, useTransition } from 'react'
 import { useSession } from '../../hooks/auth/useSession'
 import { Button } from '../Button'
 import { Lightbulb, X } from 'lucide-react'
 import { TablesInsert } from '@/types/supabase'
 import { useTranslations } from 'next-intl'
-import { setBandListHintPreference } from '@/actions/preferences'
+import { setLineupHintPreference } from '@/actions/preferences'
 import { useAddLog } from '@/hooks/concerts/useAddLog'
 import { useMemories } from '@/hooks/concerts/useMemories'
 import { MemoriesControl, Memory } from '../forms/MemoriesControl'
@@ -13,9 +13,9 @@ import { useConcert } from '@/hooks/concerts/useConcert'
 import { useCookies } from 'contexts/cookies'
 import { User } from '@supabase/supabase-js'
 import { Dispatch, SetStateAction } from 'react'
-import { useConcertContext } from '../../hooks/concerts/useConcertContext'
 import { Tables } from '@/types/supabase'
 import clsx from 'clsx'
+import { useEditLog } from '@/hooks/concerts/useEditLog'
 
 export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () => void }) {
   const { id: concertId } = useParams<{ id?: string }>()
@@ -30,13 +30,23 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
     bandsSeen ?? []
   )
   const addLog = useAddLog()
+  const editLog = useEditLog()
   const t = useTranslations('ConcertLogForm')
-  const { bandListHint } = useCookies()
+  const { lineupHintPreference } = useCookies()
   const bandsSeenIds = bandsSeen?.map(bandSeen => bandSeen?.band_id)
   const selectedBandsSeenIds = selectedBandsSeen.map(bandSeen => bandSeen.band_id)
   const bandsToAdd = selectedBandsSeen.filter(item => !bandsSeenIds?.includes(item.band_id))
   const bandsToDelete =
     bandsSeen?.filter(item => !selectedBandsSeenIds.includes(item?.band_id ?? 0)) ?? []
+  const memoriesIds = memories.filter(memory => 'id' in memory).map(memory => memory.id)
+  const memoriesToAdd = memories.filter(memory => 'file' in memory)
+  const memoriesToDelete =
+    initialMemories?.filter(initialMemory => !memoriesIds.includes(initialMemory.id)) ?? []
+  const memoriesToUpdate = memories
+    .filter(memory => 'id' in memory)
+    .filter(memory => initialMemories?.some(initialMemory => initialMemory.id === memory.id))
+  const isPending = addLog.isPending || editLog.isPending
+  const isSuccess = addLog.isSuccess || editLog.isSuccess
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault()
@@ -45,49 +55,34 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
       return
     }
 
-    addLog.mutate({
-      concertId: concert?.id,
-      userId: session.user.id,
-      bandsToAdd,
-      bandsToDelete,
-      memoriesToAdd: memories.filter(memory => 'file' in memory),
-      memoriesToDelete:
-        initialMemories?.filter(
-          initialMemory =>
-            !memories.some(memory => 'id' in memory && memory.id === initialMemory.id)
-        ) ?? [],
-      memoriesToUpdate:
-        initialMemories?.filter(initialMemory =>
-          memories.some(memory => 'id' in memory && memory.id === initialMemory.id)
-        ) ?? [],
-    })
+    if (isNew) {
+      addLog.mutate({
+        concertId: concert.id,
+        bandsToAdd,
+        memoriesToAdd,
+      })
+    } else {
+      editLog.mutate({
+        concertId: concert?.id,
+        userId: session.user.id,
+        bandsToAdd,
+        bandsToDelete,
+        memoriesToAdd,
+        memoriesToDelete,
+        memoriesToUpdate,
+      })
+    }
   }
 
   useEffect(() => {
-    setSelectedBandsSeen(bandsSeen ?? [])
-  }, [])
-
-  useEffect(() => {
-    if (addLog.isSuccess) {
+    if (isSuccess) {
       close()
     }
-  }, [addLog.isSuccess])
+  }, [isSuccess])
 
   return (
     <form onSubmit={handleSubmit}>
-      {bandListHint !== 'hide' && (
-        <div className="mb-4 flex w-full gap-3 rounded-lg bg-slate-700 p-4">
-          <Lightbulb className="size-icon flex-none text-yellow" />
-          <p>{t('chooseBandsYouHaveSeenAtThisConcert')}</p>
-          <button
-            onClick={async () => await setBandListHintPreference('hide')}
-            aria-label={t('hideHint')}
-            className="ml-auto grid h-6 w-6 flex-none place-content-center rounded-md hover:bg-slate-600"
-          >
-            <X className="size-icon" />
-          </button>
-        </div>
-      )}
+      {lineupHintPreference !== 'hide' && <Hint />}
       <div className="mb-4 flex flex-wrap gap-2">
         {concert?.bands?.map(band => (
           <BandSeenToggle
@@ -110,10 +105,36 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
       />
       <pre className="overflow-auto">{JSON.stringify(memories, null, 2)}</pre>
       <div className="mt-6 flex flex-wrap items-center gap-4">
-        <Button type="submit" label={t('save')} appearance="primary" loading={addLog.isPending} />
+        <Button type="submit" label={t('save')} appearance="primary" loading={isPending} />
         <Button onClick={close} label={t('cancel')} />
       </div>
     </form>
+  )
+}
+
+function Hint() {
+  const [isPending, startTransition] = useTransition()
+  const t = useTranslations('ConcertLogForm')
+
+  return (
+    <div className="mb-4 flex w-full items-center gap-3 rounded-lg bg-slate-700 p-4">
+      <Lightbulb className="size-icon flex-none text-yellow" />
+      <p>{t('chooseBandsYouHaveSeenAtThisConcert')}</p>
+      <Button
+        label={t('hideHint')}
+        onClick={() =>
+          startTransition(async () => {
+            await setLineupHintPreference('hide')
+          })
+        }
+        icon={<X className="size-icon" />}
+        contentType="icon"
+        appearance="tertiary"
+        size="small"
+        loading={isPending}
+        className="ml-auto hover:!bg-slate-600"
+      />
+    </div>
   )
 }
 

@@ -39,8 +39,8 @@ function MemoryItem({
   }
 
   return (
-    <div className="flex w-full items-center gap-4 text-left text-sm">
-      <div className="relative grid size-20 flex-none place-content-center rounded-md bg-slate-700">
+    <div className="flex w-full gap-4 text-left text-sm">
+      <div className="relative grid size-22 flex-none place-content-center rounded-md bg-slate-700">
         {fileUrl ? (
           <Image src={fileUrl} alt="" fill className="rounded-md object-cover" />
         ) : (
@@ -48,11 +48,11 @@ function MemoryItem({
         )}
       </div>
       <div className="grid w-full">
-        <div className="mb-2 w-full truncate">
+        <div className="w-full truncate">
           {'file' in memory ? memory.file.name : memory.file_name}{' '}
-          <span className="text-slate-300">
-            &bull; {formatSize('file' in memory ? memory.file.size : memory.file_size)}
-          </span>
+        </div>
+        <div className="mb-2 text-slate-300">
+          {formatSize('file' in memory ? memory.file.size : memory.file_size)}
         </div>
         <SelectField
           label="Band"
@@ -149,7 +149,7 @@ export function MemoriesControl({
           onDragOver={handleDrag}
           onDrop={handleDrop}
           className={clsx(
-            'bg-slate-50 w-full cursor-pointer rounded-lg border-2 border-slate-300 p-6 text-center peer-focus:outline peer-focus:ring-2',
+            'w-full cursor-pointer rounded-lg border-2 border-slate-500 bg-slate-750 p-6 text-center peer-focus:outline peer-focus:ring-2',
             !dragActive && 'border-dashed'
           )}
         >

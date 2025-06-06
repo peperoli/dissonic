@@ -41,13 +41,13 @@ import { useMemories } from '@/hooks/concerts/useMemories'
 type ConcertPageProps = {
   initialConcert: Concert
   concertQueryState?: string
-  bandListHintPreference: string
+  lineupHintPreference: string
 }
 
 export const ConcertPage = ({
   initialConcert,
   concertQueryState,
-  bandListHintPreference,
+  lineupHintPreference,
 }: ConcertPageProps) => {
   const { data: concert } = useConcert(initialConcert.id, { placeholderData: initialConcert })
   const { data: session } = useSession()
@@ -217,7 +217,7 @@ export const ConcertPage = ({
             </span>
           </div>
           {concert.bands && (
-            <Lineup concert={concert} bandListHintPreference={bandListHintPreference} />
+            <Lineup concert={concert} lineupHintPreference={lineupHintPreference} />
           )}
         </section>
         <ul className='grid grid-cols-4 gap-4'>

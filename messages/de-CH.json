@@ -56,6 +56,7 @@
     "editConcert": "Konzert bearbeiten",
     "deleteConcert": "Konzert löschen",
     "addLog": "Log hinzufügen",
+    "editLog": "Log bearbeiten",
     "deleteComment": "Kommentar löschen",
     "addBand": "Band hinzufügen",
     "editBand": "Band bearbeiten",
@@ -199,7 +200,7 @@
     "share": "Teilen",
     "urlCopiedToClipboard": "Die URL wurde in die Zwischenablage kopiert."
   },
-  "BandList": {
+  "Lineup": {
     "iWasThere": "Ich war dabei!",
     "thisConcertIsInTheFuture": "Dieses Konzert liegt in der Zukunft."
   },
@@ -211,7 +212,10 @@
     "cancel": "Abbrechen"
   },
   "useAddLog": {
-    "bandsSeenUpdated": "Gesehene Bands aktualisiert"
+    "logAdded": "Log hinzugefügt"
+  },
+  "useEditLog": {
+    "logUpdated": "Log aktualisiert"
   },
   "MultiFileInput": {
     "dragOrBrowseFiles": "Dateien hinziehen oder <span>durchsuchen</span>",
