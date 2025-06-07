@@ -1,21 +1,31 @@
 import { uploadMemories } from '@/actions/files'
-import { Tables, TablesInsert } from '@/types/supabase'
+import { Memory } from '@/components/concerts/ConcertLogForm'
+import { Tables } from '@/types/supabase'
+import supabase from '@/utils/supabase/client'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
 import toast from 'react-hot-toast'
-import supabase from '@/utils/supabase/client'
-import { Memory } from '@/components/forms/MemoriesControl'
 
 async function addLog({
   concertId,
+  userId,
   bandsToAdd,
   memoriesToAdd,
+  comment,
 }: {
   concertId: number
-  bandsToAdd: TablesInsert<'j_bands_seen'>[]
+  userId: string
+  bandsToAdd: number[]
   memoriesToAdd: Exclude<Memory, Tables<'memories'>>[]
+  comment: Tables<'comments'>['content']
 }) {
-  const { error: insertBandsError } = await supabase.from('j_bands_seen').insert(bandsToAdd)
+  const { error: insertBandsError } = await supabase.from('j_bands_seen').insert(
+    bandsToAdd.map(bandId => ({
+      concert_id: concertId,
+      band_id: bandId,
+      user_id: userId,
+    }))
+  )
 
   if (insertBandsError) {
     throw insertBandsError
@@ -44,6 +54,16 @@ async function addLog({
     throw error
   }
 
+  if (!!comment?.length) {
+    const { error: insertCommentError } = await supabase
+      .from('comments')
+      .insert({ concert_id: concertId, content: comment })
+
+    if (insertCommentError) {
+      throw insertCommentError
+    }
+  }
+
   return { concertId }
 }
 
@@ -58,8 +78,9 @@ export function useAddLog() {
       toast.error(error.message)
     },
     onSuccess: ({ concertId }) => {
-      queryClient.invalidateQueries({ queryKey: ['bandsSeen', concertId] })
+      queryClient.invalidateQueries({ queryKey: ['concert', concertId] })
       queryClient.invalidateQueries({ queryKey: ['memories', concertId] })
+      queryClient.invalidateQueries({ queryKey: ['comments', concertId] })
       toast.success(t('logAdded'))
     },
   })

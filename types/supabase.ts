@@ -87,7 +87,7 @@ export type Database = {
           edited_at?: string | null
           id?: number
           parent_id?: number | null
-          user_id: string
+          user_id?: string
         }
         Update: {
           concert_id?: number

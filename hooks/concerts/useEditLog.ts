@@ -1,10 +1,10 @@
 import { deleteMemories, uploadMemories } from '@/actions/files'
-import { Tables, TablesInsert } from '@/types/supabase'
+import { Memory } from '@/components/concerts/ConcertLogForm'
+import { Tables } from '@/types/supabase'
+import supabase from '@/utils/supabase/client'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
 import toast from 'react-hot-toast'
-import supabase from '@/utils/supabase/client'
-import { Memory } from '@/components/forms/MemoriesControl'
 
 async function editLog({
   concertId,
@@ -14,16 +14,24 @@ async function editLog({
   memoriesToAdd,
   memoriesToDelete,
   memoriesToUpdate,
+  comment,
 }: {
   concertId: number
   userId: string
-  bandsToAdd: TablesInsert<'j_bands_seen'>[]
-  bandsToDelete: TablesInsert<'j_bands_seen'>[]
+  bandsToAdd: number[]
+  bandsToDelete: number[]
   memoriesToAdd: Exclude<Memory, Tables<'memories'>>[]
   memoriesToDelete: Exclude<Memory, { file: File; band_id: number | null }>[]
   memoriesToUpdate: Exclude<Memory, { file: File; band_id: number | null }>[]
+  comment: Tables<'comments'>['content']
 }) {
-  const { error: insertBandsError } = await supabase.from('j_bands_seen').insert(bandsToAdd)
+  const { error: insertBandsError } = await supabase.from('j_bands_seen').insert(
+    bandsToAdd.map(bandId => ({
+      concert_id: concertId,
+      band_id: bandId,
+      user_id: userId,
+    }))
+  )
 
   if (insertBandsError) {
     throw insertBandsError
@@ -34,10 +42,7 @@ async function editLog({
     .delete()
     .eq('concert_id', concertId)
     .eq('user_id', userId)
-    .in(
-      'band_id',
-      bandsToDelete.map(band => band.band_id)
-    )
+    .in('band_id', bandsToDelete)
 
   if (deleteBandsSeenError) {
     throw deleteBandsSeenError
@@ -93,6 +98,28 @@ async function editLog({
     throw error
   }
 
+  if (!!comment?.length) {
+    const { error: updateCommentError } = await supabase
+      .from('comments')
+      .upsert({ concert_id: concertId, content: comment })
+      .eq('concert_id', concertId)
+      .eq('user_id', userId)
+
+    if (updateCommentError) {
+      throw updateCommentError
+    }
+  } else {
+    const { error: deleteCommentError } = await supabase
+      .from('comments')
+      .delete()
+      .eq('concert_id', concertId)
+      .eq('user_id', userId)
+
+    if (deleteCommentError) {
+      throw deleteCommentError
+    }
+  }
+
   return { concertId }
 }
 
@@ -107,8 +134,9 @@ export function useEditLog() {
       toast.error(error.message)
     },
     onSuccess: ({ concertId }) => {
-      queryClient.invalidateQueries({ queryKey: ['bandsSeen', concertId] })
+      queryClient.invalidateQueries({ queryKey: ['concert', concertId] })
       queryClient.invalidateQueries({ queryKey: ['memories', concertId] })
+      queryClient.invalidateQueries({ queryKey: ['comments', concertId] })
       toast.success(t('logUpdated'))
     },
   })

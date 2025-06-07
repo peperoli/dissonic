@@ -1,4 +1,3 @@
-import { cookies } from 'next/headers'
 import { Concert } from '@/types/types'
 import { createClient } from '@/utils/supabase/server'
 import { ConcertsPage } from '@/components/concerts/ConcertsPage'
@@ -31,13 +30,7 @@ async function fetchData() {
 }
 
 export default async function Page() {
-  const cookieStore = await cookies()
-  const userView = cookieStore.get('concertsUserView')?.value
-  const view = {
-    range: 'future',
-    userView: userView || 'global',
-  }
   const { concerts, user } = await fetchData()
 
-  return <ConcertsPage concerts={concerts} currentUser={user} view={view} />
+  return <ConcertsPage concerts={concerts} currentUser={user} />
 }

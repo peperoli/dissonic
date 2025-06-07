@@ -205,9 +205,11 @@
     "thisConcertIsInTheFuture": "This concert is in the future."
   },
   "ConcertLogForm": {
-    "chooseBandsYouHaveSeenAtThisConcert": "Choose bands you have seen at this concert.",
-    "hideHint": "Hide hint",
+    "hintText": "Choose bands you’ve seen at this concert and add your memories.",
+    "bandsIveSeen": "Bands I’ve seen",
     "memories": "Memories",
+    "comment": "Comment",
+    "commentPlaceholder": "What do you remember about this concert?",
     "save": "Save",
     "cancel": "Cancel"
   },

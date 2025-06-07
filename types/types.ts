@@ -137,7 +137,7 @@ export type AddLocation = TablesInsert<'locations'>
 
 export type Country = { id: number; iso2: string }
 
-export type Profile = Tables<'profiles'> & {
+export type Profile = Omit<Tables<'profiles'>, 'last_searched'> & {
   friends?: { count: number }[]
 }
 

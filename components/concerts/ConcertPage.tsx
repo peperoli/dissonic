@@ -41,14 +41,9 @@ import { useMemories } from '@/hooks/concerts/useMemories'
 type ConcertPageProps = {
   initialConcert: Concert
   concertQueryState?: string
-  lineupHintPreference: string
 }
 
-export const ConcertPage = ({
-  initialConcert,
-  concertQueryState,
-  lineupHintPreference,
-}: ConcertPageProps) => {
+export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPageProps) => {
   const { data: concert } = useConcert(initialConcert.id, { placeholderData: initialConcert })
   const { data: session } = useSession()
   const { data: spotifyArtist } = useSpotifyArtist(concert?.bands?.[0]?.spotify_artist_id ?? null, {
@@ -216,14 +211,18 @@ export const ConcertPage = ({
                 ) : null)}
             </span>
           </div>
-          {concert.bands && (
-            <Lineup concert={concert} lineupHintPreference={lineupHintPreference} />
-          )}
+          {concert.bands && <Lineup concert={concert} />}
         </section>
-        <ul className='grid grid-cols-4 gap-4'>
+        <ul className="grid grid-cols-4 gap-4">
           {memories?.map((memory, index) => (
             <li key={index} className="bg-slate-700">
-              <Image src={memory.file_url} alt={memory.file_name} width={100} height={100} className="" />
+              <Image
+                src={memory.file_url}
+                alt={memory.file_name}
+                width={100}
+                height={100}
+                className=""
+              />
               {concert.bands?.find(band => band.id === memory.band_id)?.name}
             </li>
           ))}

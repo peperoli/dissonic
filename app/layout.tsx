@@ -74,7 +74,12 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <QueryProvider>
           <NextIntlClientProvider messages={messages}>
             <Tooltip.Provider delayDuration={200}>
-              <CookiesProvider cookies={{ lineupHintPreference: cookieStore.get('lineupHintPreference')?.value }}>
+              <CookiesProvider
+                cookies={{
+                  concertsUserView: cookieStore.get('concertsUserView')?.value ?? 'global',
+                  concertsRange: cookieStore.get('concertsRange')?.value ?? 'past',
+                }}
+              >
                 <NavBar />
                 <div className="md:flex">
                   <Navigation />

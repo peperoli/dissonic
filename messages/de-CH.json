@@ -205,9 +205,11 @@
     "thisConcertIsInTheFuture": "Dieses Konzert liegt in der Zukunft."
   },
   "ConcertLogForm": {
-    "chooseBandsYouHaveSeenAtThisConcert": "Wähle Bands, die du an diesem Konzert erlebt hast.",
-    "hideHint": "Hinweis ausblenden",
+    "hintText": "Wähle Bands die du an diesem Konzert gesehen hast und füge Erinnerungen hinzu.",
+    "bandsIveSeen": "Bands, die ich gesehen habe",
     "memories": "Erinnerungen",
+    "comment": "Kommentar",
+    "commentPlaceholder": "Woran erinnerst du dich an diesem Konzert?",
     "save": "Speichern",
     "cancel": "Abbrechen"
   },
@@ -240,7 +242,7 @@
   "Comments": {
     "comments": "Kommentare",
     "addComment": "Kommentar hinzufügen",
-    "whatDoYouThinkAboutThisConcert": "Was ist dir von diesem Konzert in Erinnerung geblieben?",
+    "whatDoYouThinkAboutThisConcert": "Woran erinnerst du dich an diesem Konzert",
     "comment": "Kommentieren",
     "noCommentsYet": "Noch keine Kommentare vorhanden. Du kannst den ersten Schritt machen.",
     "loginToSeeAndAddComments": "Melde dich an, um Kommentare zu sehen und schreiben.",

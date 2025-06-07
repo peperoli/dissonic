@@ -38,8 +38,3 @@ export async function saveLastQueryState(
   )
   cookieStore.set(`${resource}LastQueryState`, `?${searchParams.toString()}`)
 }
-
-export async function setLineupHintPreference(lineupHintPreference: 'hide' | 'show') {
-  const cookieStore = await cookies()
-  cookieStore.set('lineupHintPreference', lineupHintPreference, { maxAge: YEAR })
-}

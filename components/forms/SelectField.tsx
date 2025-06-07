@@ -55,7 +55,7 @@ export const SelectField = ({ label, items, allItems, error, ...props }: SelectF
         <Dialog.Trigger aria-label={label} className="form-control">
           <div
             className={clsx(
-              'form-input !pr-12 text-left',
+              'form-input truncate !pr-12 text-left',
               error ? 'border-yellow' : 'border-slate-500'
             )}
           >

@@ -2,14 +2,17 @@
 
 import { createContext, useContext } from 'react'
 
-export const CookiesContext = createContext<{ lineupHintPreference: string | undefined } | null>(null)
+export const CookiesContext = createContext<{
+  concertsUserView: string | null
+  concertsRange: string | null
+} | null>(null)
 
 export function CookiesProvider({
   children,
   cookies,
 }: {
   children: React.ReactNode
-  cookies: { lineupHintPreference: string | undefined }
+  cookies: { concertsUserView: string | null; concertsRange: string | null }
 }) {
   return <CookiesContext.Provider value={cookies}>{children}</CookiesContext.Provider>
 }

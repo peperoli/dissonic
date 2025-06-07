@@ -34,15 +34,14 @@ import { User } from '@supabase/supabase-js'
 import { saveLastQueryState, setViewPreference } from '@/actions/preferences'
 import { groupConcertsByMonth } from '@/lib/groupConcertsByMonth'
 import { ConcertsNav } from '../layout/ConcertsNav'
+import { useCookies } from 'contexts/cookies'
 
 export function ConcertsPage({
   concerts: initialConcerts,
   currentUser,
-  view: initialView,
 }: {
   concerts: ExtendedRes<Concert[]>
   currentUser: User | null
-  view: { range: string; userView: string }
 }) {
   const [size, setSize] = useQueryState('size', parseAsInteger.withDefault(25))
   const [selectedBands, setSelectedBands] = useQueryState('bands', parseAsArrayOf(parseAsInteger))
@@ -58,15 +57,16 @@ export function ConcertsPage({
   const [user] = useQueryState('user')
   const { data: profile } = useProfile(null, user)
   const selectedUserId = user && profile?.id
+  const cookies = useCookies()
   const [view, setView] = useQueryStates({
-    range: parseAsString.withDefault(initialView.range ?? 'past'),
-    userView: parseAsString.withDefault(initialView.userView ?? 'global'),
+    range: parseAsString.withDefault(cookies.concertsRange ?? 'past'),
+    userView: parseAsString.withDefault(cookies.concertsUserView ?? 'global'),
   })
   const { data: friends } = useFriends({ profileId: currentUser?.id, pending: false })
   const sortBy = ['date_start', 'bands_count'] as const
   const [sort, setSort] = useQueryStates({
     sort_by: parseAsStringLiteral(sortBy).withDefault('date_start'),
-    sort_asc: parseAsBoolean.withDefault(initialView.range === 'future'),
+    sort_asc: parseAsBoolean.withDefault(cookies.concertsRange === 'future'),
   })
   const [_, setModal] = useQueryState('modal', parseAsStringLiteral(modalPaths))
   const [isPending, startTransition] = useTransition()
@@ -91,11 +91,11 @@ export function ConcertsPage({
     placeholderData: initialConcerts,
     bands: selectedBands,
     locations: selectedLocations,
-    dateRange: initialView.range === 'future' ? [tomorrow, null] : [null, tomorrow],
+    dateRange: cookies.concertsRange === 'future' ? [tomorrow, null] : [null, tomorrow],
     years: selectedYears,
     festivalRoots: selectedFestivalRoots,
     bandsSeenUsers:
-      initialView.range !== 'future' ? (selectedUserId ? [selectedUserId] : getView()) : null,
+      cookies.concertsRange !== 'future' ? (selectedUserId ? [selectedUserId] : getView()) : null,
     sort,
     size,
     bandsSize: 5,
