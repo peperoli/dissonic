@@ -1,6 +1,8 @@
 'use server'
 
+import { createClient } from '@/utils/supabase/server'
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
 const S3 = new S3Client({
   region: 'auto',
@@ -13,36 +15,49 @@ const S3 = new S3Client({
   responseChecksumValidation: 'WHEN_REQUIRED',
 })
 
-export async function uploadMemories(files: File[]) {
-  const urls: string[] = []
+export async function getPutUrl(fileName: string) {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('User not authenticated')
+  }
+
   try {
-    for (const file of files) {
-      const fileName = `${Date.now()}-${file.name}`
-      const buffer = Buffer.from(await file.arrayBuffer())
-      const putObjectCommand = new PutObjectCommand({
-        Bucket: 'concert-memories',
-        Key: fileName,
-        Body: buffer,
-        ContentType: file.type,
-      })
-      await S3.send(putObjectCommand)
-      urls.push(`https://pub-8067124940ec421cb1be4c6467795917.r2.dev/${fileName}`)
-    }
-    return urls
+    const putObjectCommand = new PutObjectCommand({
+      Bucket: 'concert-memories',
+      Key: fileName,
+    })
+    // @ts-expect-error
+    const signedUrl = await getSignedUrl(S3, putObjectCommand, {
+      expiresIn: 60,
+    })
+
+    return { fileName, signedUrl }
   } catch (error) {
     throw error
   }
 }
 
-export async function deleteMemories(fileNames: string[]) {
+export async function deleteFile(fileName: string) {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('User not authenticated')
+  }
+
   try {
-    for (const fileName of fileNames) {
-      const deleteObjectCommand = new DeleteObjectCommand({
-        Bucket: 'concert-memories',
-        Key: fileName,
-      })
-      await S3.send(deleteObjectCommand)
-    }
+    const deleteObjectCommand = new DeleteObjectCommand({
+      Bucket: 'concert-memories',
+      Key: fileName,
+    })
+
+    await S3.send(deleteObjectCommand)
   } catch (error) {
     throw error
   }

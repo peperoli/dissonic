@@ -1,10 +1,11 @@
-import { deleteMemories, uploadMemories } from '@/actions/files'
+import { deleteFile } from '@/actions/files'
 import { Memory } from '@/components/concerts/ConcertLogForm'
 import { Tables } from '@/types/supabase'
 import supabase from '@/utils/supabase/client'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
 import toast from 'react-hot-toast'
+import { uploadMemory } from './useAddLog'
 
 async function editLog({
   concertId,
@@ -48,41 +49,29 @@ async function editLog({
     throw deleteBandsSeenError
   }
 
+  await Promise.all(memoriesToAdd.map(memory => uploadMemory(memory, concertId)))
+
   try {
-    const urlsToAdd = await uploadMemories(memoriesToAdd.map(memory => memory.file))
-    await deleteMemories(memoriesToDelete.map(memory => memory.file_name))
+    memoriesToDelete.forEach(async memory => {
+      try {
+        await deleteFile(memory.file_name)
 
-    if (urlsToAdd.length > 0) {
-      const { error: insertMemoriesError } = await supabase.from('memories').insert(
-        urlsToAdd.map((url, index) => ({
-          concert_id: concertId,
-          file_url: url,
-          band_id: memoriesToAdd[index].band_id,
-          file_size: memoriesToAdd[index].file.size,
-          file_name: memoriesToAdd[index].file.name,
-          file_type: memoriesToAdd[index].file.type,
-        }))
-      )
+        const { error } = await supabase
+          .from('memories')
+          .delete()
+          .eq('concert_id', concertId)
+          .in(
+            'id',
+            memoriesToDelete.map(memory => memory.id)
+          )
 
-      if (insertMemoriesError) {
-        throw insertMemoriesError
-      }
-    }
-
-    if (memoriesToDelete.length > 0) {
-      const { error } = await supabase
-        .from('memories')
-        .delete()
-        .eq('concert_id', concertId)
-        .in(
-          'id',
-          memoriesToDelete.map(memory => memory.id)
-        )
-
-      if (error) {
+        if (error) {
+          throw error
+        }
+      } catch (error) {
         throw error
       }
-    }
+    })
 
     memoriesToUpdate.forEach(async memory => {
       const { error } = await supabase
@@ -99,14 +88,33 @@ async function editLog({
   }
 
   if (!!comment?.length) {
-    const { error: updateCommentError } = await supabase
+    const { data: existingComment } = await supabase
       .from('comments')
-      .upsert({ concert_id: concertId, content: comment })
+      .select('id')
       .eq('concert_id', concertId)
       .eq('user_id', userId)
+      .single()
 
-    if (updateCommentError) {
-      throw updateCommentError
+    if (existingComment) {
+      const { error: updateCommentError } = await supabase
+        .from('comments')
+        .update({ concert_id: concertId, content: comment })
+        .eq('concert_id', concertId)
+        .eq('user_id', userId)
+
+      if (updateCommentError) {
+        throw updateCommentError
+      }
+    } else {
+      const { error: insertCommentError } = await supabase.from('comments').insert({
+        concert_id: concertId,
+        user_id: userId,
+        content: comment,
+      })
+
+      if (insertCommentError) {
+        throw insertCommentError
+      }
     }
   } else {
     const { error: deleteCommentError } = await supabase

@@ -1,10 +1,39 @@
-import { uploadMemories } from '@/actions/files'
+import { getPutUrl } from '@/actions/files'
 import { Memory } from '@/components/concerts/ConcertLogForm'
 import { Tables } from '@/types/supabase'
 import supabase from '@/utils/supabase/client'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
 import toast from 'react-hot-toast'
+
+export async function uploadMemory(memory: Exclude<Memory, Tables<'memories'>>, concertId: number) {
+  try {
+    const fileName = `${Date.now()}-${memory.file.name}`
+    const { signedUrl } = await getPutUrl(fileName)
+
+    await fetch(signedUrl, {
+      method: 'PUT',
+      body: memory.file,
+      headers: {
+        'Content-Type': memory.file.type,
+      },
+    })
+
+    const { error: insertMemoriesError } = await supabase.from('memories').insert({
+      concert_id: concertId,
+      band_id: memory.band_id,
+      file_name: fileName,
+      file_size: memory.file.size,
+      file_type: memory.file.type,
+    })
+
+    if (insertMemoriesError) {
+      throw insertMemoriesError
+    }
+  } catch (error) {
+    throw error
+  }
+}
 
 async function addLog({
   concertId,
@@ -31,28 +60,7 @@ async function addLog({
     throw insertBandsError
   }
 
-  try {
-    const urlsToAdd = await uploadMemories(memoriesToAdd.map(memory => memory.file))
-
-    if (urlsToAdd.length > 0) {
-      const { error: insertMemoriesError } = await supabase.from('memories').insert(
-        urlsToAdd.map((url, index) => ({
-          concert_id: concertId,
-          file_url: url,
-          band_id: memoriesToAdd[index].band_id,
-          file_size: memoriesToAdd[index].file.size,
-          file_name: memoriesToAdd[index].file.name,
-          file_type: memoriesToAdd[index].file.type,
-        }))
-      )
-
-      if (insertMemoriesError) {
-        throw insertMemoriesError
-      }
-    }
-  } catch (error) {
-    throw error
-  }
+  await Promise.all(memoriesToAdd.map(memory => uploadMemory(memory, concertId)))
 
   if (!!comment?.length) {
     const { error: insertCommentError } = await supabase

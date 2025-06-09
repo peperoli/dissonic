@@ -605,7 +605,6 @@ export type Database = {
           file_name: string
           file_size: number
           file_type: string
-          file_url: string
           id: number
           user_id: string
         }
@@ -616,7 +615,6 @@ export type Database = {
           file_name: string
           file_size: number
           file_type: string
-          file_url: string
           id?: number
           user_id?: string
         }
@@ -627,7 +625,6 @@ export type Database = {
           file_name?: string
           file_size?: number
           file_type?: string
-          file_url?: string
           id?: number
           user_id?: string
         }

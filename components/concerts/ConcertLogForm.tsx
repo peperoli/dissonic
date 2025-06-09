@@ -17,6 +17,7 @@ import { useSession } from '../../hooks/auth/useSession'
 import { Button } from '../Button'
 import { SelectField } from '../forms/SelectField'
 import { TextArea } from '../forms/TextArea'
+import { getR2AssetUrl } from '@/lib/getR2AssetUrl'
 
 export type Memory =
   | Tables<'memories'>
@@ -36,15 +37,18 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
   const { data: concert } = useConcert(concertId ? parseInt(concertId) : null)
   const { data: session } = useSession()
   const { data: initialMemories } = useMemories({ concertId: concert?.id })
-  const { data: comments } = useComments({ concertId: concert?.id ?? null })
-  const { register, control, handleSubmit, formState } = useForm<LogFields>({
-    defaultValues: {
-      bandsSeen: concert?.bands_seen?.map(bandSeen => bandSeen.band_id),
-      memories: initialMemories,
+  const { data: comments } = useComments({
+    concertId: concert?.id ?? null,
+    userId: session?.user.id,
+    includeReplies: false,
+  })
+  const { register, control, handleSubmit } = useForm<LogFields>({
+    values: {
+      bandsSeen: concert?.bands_seen?.map(bandSeen => bandSeen.band_id) ?? [],
+      memories: initialMemories ?? [],
       comment: comments?.[0]?.content || '',
     },
   })
-  console.log(formState.errors)
   const initialBandsSeen = concert?.bands_seen
     ?.filter(item => item?.user_id === session?.user.id)
     .filter(item => typeof item !== 'undefined')
@@ -132,8 +136,8 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
         placeholder={t('commentPlaceholder')}
       />
       <div className="sticky bottom-0 z-10 mt-auto flex gap-4 bg-slate-800 py-4 md:static md:z-0 md:justify-end md:pb-0 [&>*]:flex-1">
-        <Button type="submit" label={t('save')} appearance="primary" loading={isPending} />
         <Button onClick={close} label={t('cancel')} />
+        <Button type="submit" label={t('save')} appearance="primary" loading={isPending} />
       </div>
     </form>
   )
@@ -309,7 +313,7 @@ function MemoryItem({
   onRemove: () => void
   bands: Band[]
 }) {
-  const fileUrl = 'file' in memory ? URL.createObjectURL(memory.file) : memory.file_url
+  const fileUrl = 'file' in memory ? URL.createObjectURL(memory.file) : getR2AssetUrl(memory.file_name)
   const t = useTranslations('MultiFileInput')
 
   function formatSize(bytes: number) {
@@ -329,7 +333,7 @@ function MemoryItem({
           <FileIcon className="text-xl" />
         )}
       </div>
-      <div className="grid">
+      <div className="grid w-full">
         <div className="flex w-full gap-2">
           <div className="mb-2 grid">
             <span className="truncate">
@@ -347,6 +351,7 @@ function MemoryItem({
             appearance="tertiary"
             danger
             onClick={onRemove}
+            className='ml-auto'
           />
         </div>
         <div className="overflow-hidden">
