@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import supabase from '@/utils/supabase/client'
 
 async function fetchMemories({ concertId }: { concertId?: number }) {
-  let query = supabase.from('memories').select('*')
+  let query = supabase.from('memories').select('*, band:bands(id, name)')
 
   if (concertId) {
     query = query.eq('concert_id', concertId)

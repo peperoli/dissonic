@@ -36,8 +36,7 @@ import { useRestoreConcert } from '@/hooks/concerts/useRestoreConcert'
 import { StatusBanner } from '../forms/StatusBanner'
 import { Tooltip } from '../shared/Tooltip'
 import { getIcsFile } from '@/lib/getIcsFile'
-import { useMemories } from '@/hooks/concerts/useMemories'
-import { getR2AssetUrl } from '@/lib/getR2AssetUrl'
+import { Memories } from './Memories'
 
 type ConcertPageProps = {
   initialConcert: Concert
@@ -56,7 +55,6 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
   const { push } = useRouter()
   const pathname = usePathname()
   const t = useTranslations('ConcertPage')
-  const { data: memories } = useMemories({ concertId: concert?.id })
 
   if (!concert) {
     notFound()
@@ -214,19 +212,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
           </div>
           {concert.bands && <Lineup concert={concert} />}
         </section>
-        <ul className="grid grid-cols-4 gap-4">
-          {memories?.map((memory, index) => (
-            <li key={index} className="relative aspect-square bg-slate-700">
-              <Image
-                src={getR2AssetUrl(memory.file_name)}
-                alt={memory.file_name}
-                fill
-                className="object-cover"
-              />
-              {concert.bands?.find(band => band.id === memory.band_id)?.name}
-            </li>
-          ))}
-        </ul>
+        <Memories concertId={concert.id} />
         <ConcertCommunity concert={concert} />
         {isFutureOrToday && <ConcertInfo concert={concert} />}
         {concert.bands && <SimpleConcertStats bands={concert.bands} />}

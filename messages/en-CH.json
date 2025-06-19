@@ -223,6 +223,9 @@
     "dragOrBrowseFiles": "Drag or <span>browse</span> files",
     "remove": "Remove"
   },
+  "Memories": {
+    "memories": "Memories"
+  },
   "ConcertCommunity": {
     "loading": "Loading ...",
     "fans": "Fans",

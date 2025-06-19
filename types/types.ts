@@ -179,3 +179,7 @@ export type SpotifyArtist = {
     spotify: string
   }
 }
+
+export type Memory = Tables<'memories'> & {
+  band: Pick<Tables<'bands'>, 'id' | 'name'> | null
+}
