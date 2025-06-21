@@ -87,7 +87,7 @@ export type Database = {
           edited_at?: string | null
           id?: number
           parent_id?: number | null
-          user_id: string
+          user_id?: string
         }
         Update: {
           concert_id?: number
@@ -114,7 +114,7 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "comments_parent_id_fkey"
+            foreignKeyName: "comments_reply_to_fkey"
             columns: ["parent_id"]
             isOneToOne: false
             referencedRelation: "comments"
@@ -388,6 +388,36 @@ export type Database = {
           },
         ]
       }
+      genre_relations: {
+        Row: {
+          child_id: number
+          parent_id: number
+        }
+        Insert: {
+          child_id: number
+          parent_id: number
+        }
+        Update: {
+          child_id?: number
+          parent_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "genre_relations_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "genres"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "genre_relations_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "genres"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       genres: {
         Row: {
           id: number
@@ -593,6 +623,75 @@ export type Database = {
             columns: ["country_id"]
             isOneToOne: false
             referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      memories: {
+        Row: {
+          band_id: number | null
+          concert_id: number
+          created_at: string
+          file_name: string
+          file_size: number
+          file_type: string
+          id: number
+          user_id: string
+        }
+        Insert: {
+          band_id?: number | null
+          concert_id: number
+          created_at?: string
+          file_name: string
+          file_size: number
+          file_type: string
+          id?: number
+          user_id?: string
+        }
+        Update: {
+          band_id?: number | null
+          concert_id?: number
+          created_at?: string
+          file_name?: string
+          file_size?: number
+          file_type?: string
+          id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "memories_band_id_fkey"
+            columns: ["band_id"]
+            isOneToOne: false
+            referencedRelation: "bands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "memories_concert_id_fkey"
+            columns: ["concert_id"]
+            isOneToOne: false
+            referencedRelation: "concerts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "memories_concert_id_fkey"
+            columns: ["concert_id"]
+            isOneToOne: false
+            referencedRelation: "concerts_full"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "memories_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profile_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "memories_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
