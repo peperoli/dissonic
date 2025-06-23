@@ -7,11 +7,11 @@ import { Tables } from '@/types/supabase'
 import { Band, ListItem } from '@/types/types'
 import * as Checkbox from '@radix-ui/react-checkbox'
 import clsx from 'clsx'
-import { FileIcon, XIcon } from 'lucide-react'
+import { FileIcon, PauseIcon, PlayIcon, XIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
-import { ChangeEvent, DragEvent, useEffect, useRef, useState } from 'react'
+import { ChangeEvent, DragEvent, use, useEffect, useRef, useState } from 'react'
 import { Control, Controller, FieldError, useFieldArray, useForm } from 'react-hook-form'
 import { useSession } from '../../hooks/auth/useSession'
 import { Button } from '../Button'
@@ -52,11 +52,9 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
   const initialBandsSeen = concert?.bands_seen
     ?.filter(item => item?.user_id === session?.user.id)
     .filter(item => typeof item !== 'undefined')
-
   const addLog = useAddLog()
   const editLog = useEditLog()
   const t = useTranslations('ConcertLogForm')
-
   const isPending = addLog.isPending || editLog.isPending
   const isSuccess = addLog.isSuccess || editLog.isSuccess
 
@@ -127,7 +125,7 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
         name="memories"
         control={control}
         label={t('memories')}
-        accept={['image/jpeg', 'image/webp'].join(',')}
+        accept={['image/*', 'video/*'].join(',')}
         bands={concert?.bands || []}
       />
       <TextArea
@@ -313,8 +311,11 @@ function MemoryItem({
   onRemove: () => void
   bands: Band[]
 }) {
-  const fileUrl = 'file' in memory ? URL.createObjectURL(memory.file) : getR2AssetUrl(memory.file_name)
+  const fileUrl =
+    'file' in memory ? URL.createObjectURL(memory.file) : getR2AssetUrl(memory.file_name)
   const t = useTranslations('MultiFileInput')
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [isPaused, setIsPaused] = useState(true)
 
   function formatSize(bytes: number) {
     if (bytes < 1024 ** 2) {
@@ -323,12 +324,53 @@ function MemoryItem({
       return (bytes / 1024 ** 2).toFixed(1) + ' MB'
     }
   }
+  
+  useEffect(() => {
+    if (videoRef.current) {
+      if (!videoRef.current.paused) {
+        setIsPaused(false)
+      }
+    }
+  }, [videoRef.current])
+  
+  function togglePlay() {
+    if (videoRef.current) {
+      if (videoRef.current.paused) {
+        videoRef.current.play()
+        setIsPaused(false)
+      } else {
+        videoRef.current.pause()
+        setIsPaused(true)
+      }
+    }
+  }
+
 
   return (
     <div className="flex w-full gap-4 text-left text-sm">
-      <div className="relative grid size-22 flex-none place-content-center rounded-md bg-slate-700">
-        {fileUrl ? (
+      <div className="relative grid size-22 flex-none place-content-center overflow-hidden rounded-md bg-slate-700">
+        {('file' in memory && memory.file.type.startsWith('image/')) ||
+        ('file_type' in memory && memory.file_type.startsWith('image/')) ? (
           <Image src={fileUrl} alt="" fill className="rounded-md object-cover" />
+        ) : 'file' in memory && memory.file.type.startsWith('video/') ? (
+          <>
+            <video
+              src={fileUrl}
+              ref={videoRef}
+              className="absolute inset-0 size-full rounded-md object-cover"
+            />
+            <Button
+              label={t('play')}
+              icon={
+                isPaused ? <PlayIcon className="size-icon" /> : <PauseIcon className="size-icon" />
+              }
+              contentType="icon"
+              size="small"
+              appearance="secondary"
+              onClick={togglePlay}
+              className="relative"
+            />
+          </>
         ) : (
           <FileIcon className="text-xl" />
         )}
@@ -351,7 +393,7 @@ function MemoryItem({
             appearance="tertiary"
             danger
             onClick={onRemove}
-            className='ml-auto'
+            className="ml-auto"
           />
         </div>
         <div className="overflow-hidden">
