@@ -28,12 +28,13 @@ export function Memories({ concertId }: { concertId?: number }) {
                 setLightboxIsOpen(true)
                 push(`#${memory.id}`)
               }}
-              className="aspect-3/4 relative rounded-lg bg-slate-700"
+              className="relative aspect-3/4 rounded-lg bg-slate-700"
             >
               <Image
-                src={getR2AssetUrl(memory.file_name)}
+                src={getR2AssetUrl(memory.file_name, { width: 300, height: 400 })}
                 alt={memory.file_name}
                 fill
+                unoptimized
                 className="rounded-lg object-cover"
               />
               <div className="absolute bottom-0 m-1 rounded-lg bg-slate-900/50 px-2 py-1">
@@ -74,7 +75,7 @@ function Lightbox({
           <Dialog.Title className="sr-only">{t('memories')}</Dialog.Title>
           <ul
             onWheel={isDesktop ? handleWheel : undefined}
-            className="flex flex-col md:flex-row h-full snap-both snap-mandatory md:snap-none gap-2 overflow-x-auto scroll-smooth"
+            className="flex h-full snap-both snap-mandatory flex-col gap-2 overflow-x-auto scroll-smooth md:snap-none md:flex-row"
           >
             {memories?.map(memory => <MemoryItem key={memory.id} memory={memory} />)}
           </ul>
@@ -91,12 +92,13 @@ function MemoryItem({ memory }: { memory: Memory }) {
   return (
     <li
       id={memory.id.toString()}
-      className="aspect-3/4 relative snap-center rounded-lg bg-slate-700"
+      className="relative aspect-3/4 snap-center rounded-lg bg-slate-700"
     >
       <Image
-        src={getR2AssetUrl(memory.file_name)}
+        src={getR2AssetUrl(memory.file_name, { width: 750, height: 1000 })}
         alt={memory.file_name}
         fill
+        unoptimized
         className="rounded-lg object-cover"
       />
       {memory.band && (
