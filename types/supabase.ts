@@ -388,6 +388,36 @@ export type Database = {
           },
         ]
       }
+      genre_relations: {
+        Row: {
+          child_id: number
+          parent_id: number
+        }
+        Insert: {
+          child_id: number
+          parent_id: number
+        }
+        Update: {
+          child_id?: number
+          parent_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "genre_relations_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "genres"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "genre_relations_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "genres"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       genres: {
         Row: {
           id: number
@@ -602,9 +632,11 @@ export type Database = {
           band_id: number | null
           concert_id: number
           created_at: string
+          file_height: number | null
           file_name: string
           file_size: number
           file_type: string
+          file_width: number | null
           id: number
           user_id: string
         }
@@ -612,9 +644,11 @@ export type Database = {
           band_id?: number | null
           concert_id: number
           created_at?: string
+          file_height?: number | null
           file_name: string
           file_size: number
           file_type: string
+          file_width?: number | null
           id?: number
           user_id?: string
         }
@@ -622,9 +656,11 @@ export type Database = {
           band_id?: number | null
           concert_id?: number
           created_at?: string
+          file_height?: number | null
           file_name?: string
           file_size?: number
           file_type?: string
+          file_width?: number | null
           id?: number
           user_id?: string
         }
@@ -771,6 +807,7 @@ export type Database = {
           creator_id: string | null
           date_end: string | null
           date_start: string | null
+          doors_time: string | null
           festival_root:
             | Database["public"]["Tables"]["festival_roots"]["Row"]
             | null
@@ -781,6 +818,9 @@ export type Database = {
           location: Database["public"]["Tables"]["locations"]["Row"] | null
           location_id: number | null
           name: string | null
+          resource_status: Database["public"]["Enums"]["resource_status"] | null
+          show_time: string | null
+          source_link: string | null
         }
         Relationships: [
           {

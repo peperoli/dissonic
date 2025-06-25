@@ -186,14 +186,12 @@ export function MemoriesControl({
   label,
   name,
   control,
-  error,
   accept,
   bands,
 }: {
   label: string
   name: string
   control: Control<LogFields>
-  error?: FieldError
   accept?: HTMLInputElement['accept']
   bands: Band[]
 }) {
@@ -259,41 +257,33 @@ export function MemoriesControl({
             !dragActive && 'border-dashed'
           )}
         >
-          {fields.length > 0 ? (
-            <div className="grid gap-4">
-              {fields.map((field, index) => {
-                return (
-                  <MemoryItem
-                    memory={field}
-                    control={control}
-                    index={index}
-                    onRemove={() => {
-                      remove(index)
-                    }}
-                    bands={bands}
-                    key={field.id}
-                  />
-                )
-              })}
-            </div>
-          ) : (
-            <span className="text-center text-slate-300">
-              {dragActive
-                ? 'Dateien hier ablegen'
-                : t.rich('dragOrBrowseFiles', {
-                    span: chunk => (
-                      <span className="cursor-pointer font-bold hover:text-venom">{chunk}</span>
-                    ),
-                  })}
-            </span>
-          )}
+          <span className="text-center text-slate-300">
+            {dragActive
+              ? 'Dateien hier ablegen'
+              : t.rich('dragOrBrowseFiles', {
+                  span: chunk => (
+                    <span className="cursor-pointer font-bold hover:text-venom">{chunk}</span>
+                  ),
+                })}
+          </span>
         </div>
       </label>
-      {error && (
-        <div className="text-red-600 shadow absolute z-10 mt-1 rounded bg-white px-2 py-1 text-sm">
-          {error.message || 'Bitte wählen Sie eine Datei aus.'}
-        </div>
-      )}
+      <div className="grid gap-4 p-4 bg-slate-750 rounded-lg mt-2">
+        {fields.map((field, index) => {
+          return (
+            <MemoryItem
+              memory={field}
+              control={control}
+              index={index}
+              onRemove={() => {
+                remove(index)
+              }}
+              bands={bands}
+              key={field.id}
+            />
+          )
+        })}
+      </div>
     </div>
   )
 }
@@ -324,7 +314,7 @@ function MemoryItem({
       return (bytes / 1024 ** 2).toFixed(1) + ' MB'
     }
   }
-  
+
   useEffect(() => {
     if (videoRef.current) {
       if (!videoRef.current.paused) {
@@ -332,7 +322,7 @@ function MemoryItem({
       }
     }
   }, [videoRef.current])
-  
+
   function togglePlay() {
     if (videoRef.current) {
       if (videoRef.current.paused) {
@@ -345,13 +335,12 @@ function MemoryItem({
     }
   }
 
-
   return (
     <div className="flex w-full gap-4 text-left text-sm">
       <div className="relative grid size-22 flex-none place-content-center overflow-hidden rounded-md bg-slate-700">
         {('file' in memory && memory.file.type.startsWith('image/')) ||
         ('file_type' in memory && memory.file_type.startsWith('image/')) ? (
-          <Image src={fileUrl} alt="" fill className="rounded-md object-cover" />
+          <Image src={fileUrl} alt="" fill className="rounded-md object-contain" />
         ) : 'file' in memory && memory.file.type.startsWith('video/') ? (
           <>
             <video

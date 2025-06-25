@@ -15,12 +15,16 @@ export function Memories({ concertId }: { concertId?: number }) {
   const [lightboxIsOpen, setLightboxIsOpen] = useState(false)
   const { push } = useRouter()
 
+  if (!memories?.length) {
+    return null
+  }
+
   return (
     <>
       <section className="rounded-lg bg-slate-800 p-4 md:p-6">
         <h2>{t('memories')}</h2>
         <ul className="grid grid-cols-4 gap-2">
-          {memories?.map((memory, index) => (
+          {memories.map((memory, index) => (
             <li
               key={index}
               role="button"
@@ -37,16 +41,16 @@ export function Memories({ concertId }: { concertId?: number }) {
                 unoptimized
                 className="rounded-lg object-cover"
               />
-              <div className="absolute bottom-0 m-1 rounded-lg bg-slate-900/50 px-2 py-1">
-                {memory.band?.name}
-              </div>
+              {memory.band?.name && (
+                <div className="absolute bottom-0 m-1 rounded-lg bg-slate-900/50 px-2 py-1">
+                  {memory.band.name}
+                </div>
+              )}
             </li>
           ))}
         </ul>
       </section>
-      {memories && (
-        <Lightbox memories={memories} open={lightboxIsOpen} onOpenChange={setLightboxIsOpen} />
-      )}
+      <Lightbox memories={memories} open={lightboxIsOpen} onOpenChange={setLightboxIsOpen} />
     </>
   )
 }
@@ -92,14 +96,15 @@ function MemoryItem({ memory }: { memory: Memory }) {
   return (
     <li
       id={memory.id.toString()}
-      className="relative aspect-3/4 snap-center rounded-lg bg-slate-700"
+      className="relative snap-center rounded-lg bg-slate-700 flex-none"
     >
       <Image
-        src={getR2AssetUrl(memory.file_name, { width: 750, height: 1000 })}
+        src={getR2AssetUrl(memory.file_name, { height: 1000 })}
         alt={memory.file_name}
-        fill
+        width={memory.file_width || 750}
+        height={memory.file_height || 1000}
         unoptimized
-        className="rounded-lg object-cover"
+        className="rounded-lg h-full object-cover"
       />
       {memory.band && (
         <div className="absolute bottom-0 m-1 rounded-lg bg-slate-900/50 px-2 py-1">
