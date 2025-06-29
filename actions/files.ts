@@ -30,7 +30,6 @@ export async function getPutUrl(fileName: string) {
       Bucket: 'concert-memories',
       Key: fileName,
     })
-    // @ts-expect-error
     const signedUrl = await getSignedUrl(S3, putObjectCommand, {
       expiresIn: 60,
     })

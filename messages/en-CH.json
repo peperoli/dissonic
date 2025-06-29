@@ -177,14 +177,8 @@
   "ConcertDate": {
     "dateStartToDateEnd": "{dateStart} to {dateEnd}"
   },
-  "ShareButton": {
-    "share": "Share",
-    "urlCopiedToClipboard": "The URL has been copied to the clipboard."
-  },
   "ConcertPage": {
     "concerts": "Concerts",
-    "complete": "Complete",
-    "incompleteLineup": "Incomplete lineup",
     "addToCalendar": "Add to calendar",
     "edit": "Edit",
     "archive": "Archive",
@@ -193,14 +187,20 @@
     "concertRestored": "Concert restored",
     "delete": "Delete",
     "concertArchivedBanner": "This concert has been archived. Editing is disabled.",
-    "lineup": "Lineup",
-    "nBands": "{count, plural, =1 {one band} other {# bands}}",
     "info": "Info",
     "doorsTime": "Doors",
     "showTime": "Show",
     "sourceLink": "Source link"
   },
+  "ShareButton": {
+    "share": "Share",
+    "urlCopiedToClipboard": "The URL has been copied to the clipboard."
+  },
   "Lineup": {
+    "lineup": "Lineup",
+    "nBands": "{count, plural, =1 {one band} other {# bands}}",
+    "complete": "Complete",
+    "incompleteLineup": "Incomplete lineup",
     "iWasThere": "I was there!",
     "thisConcertIsInTheFuture": "This concert is in the future."
   },
@@ -224,7 +224,9 @@
     "remove": "Remove"
   },
   "Memories": {
-    "memories": "Memories"
+    "memories": "Memories",
+    "nImages": "{count, plural, =1 {# image} other {# images}}",
+    "nVideos": "{count, plural, =1 {# video} other {# videos}}"
   },
   "ConcertCommunity": {
     "loading": "Loading ...",

@@ -11,13 +11,13 @@ import { FileIcon, PauseIcon, PlayIcon, XIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
-import { ChangeEvent, DragEvent, use, useEffect, useRef, useState } from 'react'
-import { Control, Controller, FieldError, useFieldArray, useForm } from 'react-hook-form'
+import { ChangeEvent, DragEvent, useEffect, useRef, useState } from 'react'
+import { Control, Controller, useFieldArray, useForm } from 'react-hook-form'
 import { useSession } from '../../hooks/auth/useSession'
 import { Button } from '../Button'
 import { SelectField } from '../forms/SelectField'
 import { TextArea } from '../forms/TextArea'
-import { getR2AssetUrl } from '@/lib/getR2AssetUrl'
+import { getR2ImageUrl } from '@/lib/r2Helpers'
 
 export type Memory =
   | Tables<'memories'>
@@ -268,7 +268,7 @@ export function MemoriesControl({
           </span>
         </div>
       </label>
-      <div className="grid gap-4 p-4 bg-slate-750 rounded-lg mt-2">
+      <div className="mt-2 grid gap-4 rounded-lg bg-slate-750 p-4">
         {fields.map((field, index) => {
           return (
             <MemoryItem
@@ -302,7 +302,7 @@ function MemoryItem({
   bands: Band[]
 }) {
   const fileUrl =
-    'file' in memory ? URL.createObjectURL(memory.file) : getR2AssetUrl(memory.file_name)
+    'file' in memory ? URL.createObjectURL(memory.file) : getR2ImageUrl(memory.file_name)
   const t = useTranslations('MultiFileInput')
   const videoRef = useRef<HTMLVideoElement>(null)
   const [isPaused, setIsPaused] = useState(true)

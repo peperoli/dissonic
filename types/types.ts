@@ -182,4 +182,5 @@ export type SpotifyArtist = {
 
 export type Memory = Tables<'memories'> & {
   band: Pick<Tables<'bands'>, 'id' | 'name'> | null
+  profile?: Pick<Tables<'profiles'>, 'id' | 'username' | 'role' | 'avatar_path' | 'updated_at'> | null
 }

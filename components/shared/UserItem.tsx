@@ -8,7 +8,7 @@ import { Tooltip } from './Tooltip'
 import { useTranslations } from 'next-intl'
 
 type UserItemProps = {
-  user: Profile
+  user: Pick<Profile, 'id' | 'username' | 'avatar_path' | 'updated_at' | 'role'>, 
   description?: ReactElement | string | null
   size?: 'lg' | 'md' | 'sm'
   usernameIsHidden?: boolean
@@ -60,7 +60,7 @@ export const UserItem = ({
   return (
     <div
       className={clsx(
-        'flex cursor-pointer items-center rounded-full group-hover/user-item:bg-slate-700',
+        'flex group-hover/user-item:cursor-pointer items-center rounded-full group-hover/user-item:bg-slate-700',
         (size === 'md' || size === 'sm') && '-m-1 p-1',
         avatarRight && 'flex-row-reverse'
       )}

@@ -179,8 +179,6 @@
   },
   "ConcertPage": {
     "concerts": "Konzerte",
-    "complete": "Vollständig",
-    "incompleteLineup": "Unvollständiges Lineup",
     "addToCalendar": "Zum Kalender hinzufügen",
     "edit": "Bearbeiten",
     "archive": "Archivieren",
@@ -189,8 +187,6 @@
     "concertRestored": "Konzert wiederhergestellt",
     "delete": "Löschen",
     "concertArchivedBanner": "Dieses Konzert wurde archiviert. Bearbeitungen sind deaktiviert.",
-    "lineup": "Lineup",
-    "nBands": "{count, plural, =1 {eine Band} other {# Bands}}",
     "info": "Info",
     "doorsTime": "Einlass",
     "showTime": "Show",
@@ -201,6 +197,10 @@
     "urlCopiedToClipboard": "Die URL wurde in die Zwischenablage kopiert."
   },
   "Lineup": {
+    "lineup": "Lineup",
+    "nBands": "{count, plural, =1 {eine Band} other {# Bands}}",
+    "complete": "Vollständig",
+    "incompleteLineup": "Unvollständiges Lineup",
     "iWasThere": "Ich war dabei!",
     "thisConcertIsInTheFuture": "Dieses Konzert liegt in der Zukunft."
   },
@@ -224,7 +224,9 @@
     "remove": "Entfernen"
   },
   "Memories": {
-    "memories": "Erinnerungen"
+    "memories": "Erinnerungen",
+    "nImages": "{count, plural, =1 {ein Bild} other {# Bilder}}",
+    "nVideos": "{count, plural, =1 {ein Video} other {# Videos}}"
   },
   "ConcertCommunity": {
     "loading": "Laden ...",

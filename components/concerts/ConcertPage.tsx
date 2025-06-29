@@ -12,14 +12,11 @@ import { Lineup } from './Lineup'
 import {
   ArchiveIcon,
   ArchiveRestoreIcon,
-  ArrowLeft,
-  BadgeCheckIcon,
-  BadgeMinus,
-  CalendarPlusIcon,
+  ArrowLeft, CalendarPlusIcon,
   Edit,
   LinkIcon,
   MapPin,
-  Trash,
+  Trash
 } from 'lucide-react'
 import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 import Image from 'next/image'
@@ -34,9 +31,8 @@ import { ShareButton } from '../shared/ShareButton'
 import { useArchiveConcert } from '@/hooks/concerts/useArchiveConcert'
 import { useRestoreConcert } from '@/hooks/concerts/useRestoreConcert'
 import { StatusBanner } from '../forms/StatusBanner'
-import { Tooltip } from '../shared/Tooltip'
 import { getIcsFile } from '@/lib/getIcsFile'
-import { Memories } from './Memories'
+import { ConcertMemories } from './ConcertMemories'
 
 type ConcertPageProps = {
   initialConcert: Concert
@@ -193,26 +189,8 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
             </Link>
           </div>
         </header>
-        <section className="rounded-lg bg-slate-800 p-4 md:p-6">
-          <div className="flex items-baseline gap-2">
-            <h2>{t('lineup')}</h2>
-            <span className="inline-flex gap-1 text-sm text-slate-300">
-              {t('nBands', { count: concert.bands.length })}
-              {isMod &&
-                (concert.resource_status === 'complete' ? (
-                  <Tooltip content={t('complete')} triggerOnClick>
-                    <BadgeCheckIcon className="size-icon text-venom" />
-                  </Tooltip>
-                ) : concert.resource_status === 'incomplete_lineup' ? (
-                  <Tooltip content={t('incompleteLineup')} triggerOnClick>
-                    <BadgeMinus className="size-icon text-yellow" />
-                  </Tooltip>
-                ) : null)}
-            </span>
-          </div>
-          {concert.bands && <Lineup concert={concert} />}
-        </section>
-        <Memories concertId={concert.id} />
+        <Lineup concert={concert} />
+        <ConcertMemories concertId={concert.id} />
         <ConcertCommunity concert={concert} />
         {isFutureOrToday && <ConcertInfo concert={concert} />}
         {concert.bands && <SimpleConcertStats bands={concert.bands} />}
