@@ -1,7 +1,14 @@
 'use server'
 
 import { createClient } from '@/utils/supabase/server'
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+  CreateMultipartUploadCommand,
+  UploadPartCommand,
+  CompleteMultipartUploadCommand,
+} from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
 const S3 = new S3Client({
@@ -15,7 +22,7 @@ const S3 = new S3Client({
   responseChecksumValidation: 'WHEN_REQUIRED',
 })
 
-export async function getPutUrl(fileName: string) {
+export async function getPutObjectUrl(fileName: string) {
   const supabase = await createClient()
   const {
     data: { user },
@@ -34,7 +41,93 @@ export async function getPutUrl(fileName: string) {
       expiresIn: 60,
     })
 
-    return { fileName, signedUrl }
+    return { signedUrl }
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function getCreateMultipartUploadUrl(fileName: string) {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('User not authenticated')
+  }
+
+  try {
+    const createMultipartUploadCommand = new CreateMultipartUploadCommand({
+      Bucket: 'concert-memories',
+      Key: fileName,
+    })
+    const createMultipartUploadUrl = await getSignedUrl(S3, createMultipartUploadCommand, {
+      expiresIn: 60,
+    })
+
+    return { createMultipartUploadUrl }
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function getUploadPartUrls(fileName: string, uploadId: string, partsCount: number) {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('User not authenticated')
+  }
+
+  try {
+    const uploadPartUrls = await Promise.all(
+      Array.from({ length: partsCount }, async (_, index) => {
+        const uploadPartCommand = new UploadPartCommand({
+          Bucket: 'concert-memories',
+          Key: fileName,
+          UploadId: uploadId,
+          PartNumber: index + 1,
+        })
+        return getSignedUrl(S3, uploadPartCommand, {
+          expiresIn: 60,
+        })
+      })
+    )
+
+    return { uploadPartUrls }
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function completeMultipartUpload(
+  fileName: string,
+  uploadId: string,
+  parts: { ETag: string; PartNumber: number }[]
+) {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('User not authenticated')
+  }
+
+  try {
+    const completeMultipartUploadCommand = new CompleteMultipartUploadCommand({
+      Bucket: 'concert-memories',
+      Key: fileName,
+      UploadId: uploadId,
+      MultipartUpload: {
+        Parts: parts,
+      },
+    })
+
+    return await S3.send(completeMultipartUploadCommand)
   } catch (error) {
     throw error
   }

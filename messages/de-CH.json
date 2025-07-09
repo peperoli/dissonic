@@ -221,6 +221,7 @@
   },
   "MultiFileInput": {
     "dragOrBrowseFiles": "Dateien hinziehen oder <span>durchsuchen</span>",
+    "play": "Abspielen",
     "remove": "Entfernen"
   },
   "Memories": {

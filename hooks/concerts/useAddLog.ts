@@ -1,4 +1,9 @@
-import { getPutUrl } from '@/actions/files'
+import {
+  completeMultipartUpload,
+  getCreateMultipartUploadUrl,
+  getPutObjectUrl,
+  getUploadPartUrls,
+} from '@/actions/files'
 import { Memory } from '@/components/concerts/ConcertLogForm'
 import { Tables } from '@/types/supabase'
 import supabase from '@/utils/supabase/client'
@@ -8,38 +13,77 @@ import toast from 'react-hot-toast'
 
 export async function uploadMemory(memory: Exclude<Memory, Tables<'memories'>>, concertId: number) {
   try {
+    const PART_SIZE = 5 * 1024 * 1024 // 5 MB
     const fileName = `${Date.now()}-${memory.file.name}`
-    const { signedUrl } = await getPutUrl(fileName)
     const dimensions: { width: number | null; height: number | null } = {
       width: null,
       height: null,
     }
 
-    if (memory.file.type.startsWith('image/')) {
-      const reader = new FileReader()
+    if (memory.file.size < PART_SIZE) {
+      const { signedUrl } = await getPutObjectUrl(fileName)
 
-      reader.onload = event => {
-        const img = new Image()
-        img.onload = () => {
-          dimensions.width = img.width
-          dimensions.height = img.height
+      if (memory.file.type.startsWith('image/')) {
+        const reader = new FileReader()
+
+        reader.onload = event => {
+          const img = new Image()
+          img.onload = () => {
+            dimensions.width = img.width
+            dimensions.height = img.height
+          }
+          if (!event.target?.result) {
+            throw new Error('Failed to read file')
+          }
+          img.src = event.target?.result as string
         }
-        if (!event.target?.result) {
-          throw new Error('Failed to read file')
-        }
-        img.src = event.target?.result as string
+
+        reader.readAsDataURL(memory.file)
       }
 
-      reader.readAsDataURL(memory.file)
-    }
+      await fetch(signedUrl, {
+        method: 'PUT',
+        body: memory.file,
+        headers: {
+          'Content-Type': memory.file.type,
+        },
+      })
+    } else {
+      const { createMultipartUploadUrl } = await getCreateMultipartUploadUrl(fileName)
 
-    await fetch(signedUrl, {
-      method: 'PUT',
-      body: memory.file,
-      headers: {
-        'Content-Type': memory.file.type,
-      },
-    })
+      const createMultipartUploadResponse = await fetch(createMultipartUploadUrl, {
+        method: 'POST',
+      })
+      console.log(createMultipartUploadResponse.headers)
+      return
+
+      const { uploadId } = await createMultipartUploadResponse.json()
+
+      const { uploadPartUrls } = await getUploadPartUrls(
+        fileName,
+        uploadId,
+        Math.ceil(memory.file.size / PART_SIZE)
+      )
+
+      const response = await Promise.all(
+        uploadPartUrls.map((url, index) => {
+          return fetch(url, {
+            method: 'PUT',
+            body: memory.file.slice(index * PART_SIZE, (index + 1) * PART_SIZE),
+            headers: {
+              'Content-Type': memory.file.type,
+            },
+          })
+        })
+      )
+
+      const parts = response.map((res, index) => ({
+        ETag: res.headers.get('ETag') || '',
+        PartNumber: index + 1,
+      }))
+
+      await completeMultipartUpload(fileName, uploadId, parts)
+    }
 
     const { error: insertMemoriesError } = await supabase.from('memories').insert({
       concert_id: concertId,
