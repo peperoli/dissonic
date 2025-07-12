@@ -8,6 +8,7 @@ import {
   CreateMultipartUploadCommand,
   UploadPartCommand,
   CompleteMultipartUploadCommand,
+  AbortMultipartUploadCommand,
 } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
@@ -62,11 +63,14 @@ export async function getCreateMultipartUploadUrl(fileName: string) {
       Bucket: 'concert-memories',
       Key: fileName,
     })
-    const createMultipartUploadUrl = await getSignedUrl(S3, createMultipartUploadCommand, {
-      expiresIn: 60,
-    })
 
-    return { createMultipartUploadUrl }
+    const { UploadId } = await S3.send(createMultipartUploadCommand)
+
+    if (!UploadId) {
+      throw new Error('Failed to create multipart upload')
+    }
+
+    return { uploadId: UploadId }
   } catch (error) {
     throw error
   }
@@ -92,7 +96,7 @@ export async function getUploadPartUrls(fileName: string, uploadId: string, part
           PartNumber: index + 1,
         })
         return getSignedUrl(S3, uploadPartCommand, {
-          expiresIn: 60,
+          expiresIn: 3600,
         })
       })
     )
@@ -128,6 +132,30 @@ export async function completeMultipartUpload(
     })
 
     return await S3.send(completeMultipartUploadCommand)
+  } catch (error) {
+    await abortMultipartUpload(fileName, uploadId)
+    throw error
+  }
+}
+
+export async function abortMultipartUpload(fileName: string, uploadId: string) {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('User not authenticated')
+  }
+
+  try {
+    const abortMultipartUploadCommand = new AbortMultipartUploadCommand({
+      Bucket: 'concert-memories',
+      Key: fileName,
+      UploadId: uploadId,
+    })
+
+    return await S3.send(abortMultipartUploadCommand)
   } catch (error) {
     throw error
   }

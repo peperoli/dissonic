@@ -12,12 +12,13 @@ import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
 import { ChangeEvent, DragEvent, useEffect, useRef, useState } from 'react'
-import { Control, Controller, useFieldArray, useForm } from 'react-hook-form'
+import { Control, Controller, set, useFieldArray, useForm } from 'react-hook-form'
 import { useSession } from '../../hooks/auth/useSession'
 import { Button } from '../Button'
 import { SelectField } from '../forms/SelectField'
 import { TextArea } from '../forms/TextArea'
 import { getR2ImageUrl } from '@/lib/r2Helpers'
+import { progress } from 'framer-motion'
 
 export type Memory =
   | Tables<'memories'>
@@ -55,6 +56,7 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
   const addLog = useAddLog()
   const editLog = useEditLog()
   const t = useTranslations('ConcertLogForm')
+  const [uploadProgress, setUploadProgress] = useState(0)
   const isPending = addLog.isPending || editLog.isPending
   const isSuccess = addLog.isSuccess || editLog.isSuccess
 
@@ -93,6 +95,11 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
         memoriesToDelete,
         memoriesToUpdate,
         comment,
+        onUploadProgress: progress => {
+          if (progress) {
+            setUploadProgress(progress)
+          }
+        },
       })
     }
   }
@@ -135,7 +142,14 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
       />
       <div className="sticky bottom-0 z-10 mt-auto flex gap-4 bg-slate-800 py-4 md:static md:z-0 md:justify-end md:pb-0 [&>*]:flex-1">
         <Button onClick={close} label={t('cancel')} />
-        <Button type="submit" label={t('save')} appearance="primary" loading={isPending} />
+        <button type='submit' className="btn btn-primary" disabled={isPending}>
+          {isPending ? t('saving') :  t('save')}
+          {uploadProgress > 0 && (
+            <span className="ml-2 text-sm text-slate-300">
+              ({Math.round(uploadProgress * 100)}%)
+            </span>
+          )}
+        </button>
       </div>
     </form>
   )

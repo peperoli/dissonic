@@ -1,11 +1,12 @@
 import { deleteFile } from '@/actions/files'
 import { Memory } from '@/components/concerts/ConcertLogForm'
+import { uploadMemory } from '@/lib/uploadMemory'
 import { Tables } from '@/types/supabase'
 import supabase from '@/utils/supabase/client'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
+import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { uploadMemory } from './useAddLog'
 
 async function editLog({
   concertId,
@@ -16,6 +17,7 @@ async function editLog({
   memoriesToDelete,
   memoriesToUpdate,
   comment,
+  onUploadProgress,
 }: {
   concertId: number
   userId: string
@@ -25,6 +27,7 @@ async function editLog({
   memoriesToDelete: Exclude<Memory, { file: File; band_id: number | null }>[]
   memoriesToUpdate: Exclude<Memory, { file: File; band_id: number | null }>[]
   comment: Tables<'comments'>['content']
+  onUploadProgress?: (progress: number) => void
 }) {
   const { error: insertBandsError } = await supabase.from('j_bands_seen').insert(
     bandsToAdd.map(bandId => ({
@@ -49,7 +52,13 @@ async function editLog({
     throw deleteBandsSeenError
   }
 
-  await Promise.all(memoriesToAdd.map(memory => uploadMemory(memory, concertId)))
+  await Promise.all(
+    memoriesToAdd.map((memory, index) =>
+      uploadMemory(memory, concertId, {
+        onUploadProgress: progress => onUploadProgress?.(progress),
+      })
+    )
+  )
 
   try {
     memoriesToDelete.forEach(async memory => {

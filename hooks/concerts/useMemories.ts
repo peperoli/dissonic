@@ -26,7 +26,7 @@ async function fetchMemories({concertId, size}: { concertId?: number, size?: num
 
 export function useMemories(fetchOptions: { concertId?: number, size?: number }) {
   return useQuery({
-    queryKey: ['memories', JSON.stringify(fetchOptions)],
+    queryKey: ['memories', fetchOptions.concertId, fetchOptions.size],
     queryFn: () => fetchMemories(fetchOptions),
   })
 }
