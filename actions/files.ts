@@ -48,7 +48,7 @@ export async function getPutObjectUrl(fileName: string) {
   }
 }
 
-export async function getCreateMultipartUploadUrl(fileName: string) {
+export async function getCreateMultipartUploadUrl(bucketName: string, fileName: string) {
   const supabase = await createClient()
   const {
     data: { user },
@@ -60,7 +60,7 @@ export async function getCreateMultipartUploadUrl(fileName: string) {
 
   try {
     const createMultipartUploadCommand = new CreateMultipartUploadCommand({
-      Bucket: 'concert-memories',
+      Bucket: bucketName,
       Key: fileName,
     })
 
@@ -76,7 +76,12 @@ export async function getCreateMultipartUploadUrl(fileName: string) {
   }
 }
 
-export async function getUploadPartUrls(fileName: string, uploadId: string, partsCount: number) {
+export async function getUploadPartUrls(
+  bucketName: string,
+  fileName: string,
+  uploadId: string,
+  partsCount: number
+) {
   const supabase = await createClient()
   const {
     data: { user },
@@ -108,6 +113,7 @@ export async function getUploadPartUrls(fileName: string, uploadId: string, part
 }
 
 export async function completeMultipartUpload(
+  bucketName: string,
   fileName: string,
   uploadId: string,
   parts: { ETag: string; PartNumber: number }[]
@@ -123,7 +129,7 @@ export async function completeMultipartUpload(
 
   try {
     const completeMultipartUploadCommand = new CompleteMultipartUploadCommand({
-      Bucket: 'concert-memories',
+      Bucket: bucketName,
       Key: fileName,
       UploadId: uploadId,
       MultipartUpload: {
@@ -133,12 +139,12 @@ export async function completeMultipartUpload(
 
     return await S3.send(completeMultipartUploadCommand)
   } catch (error) {
-    await abortMultipartUpload(fileName, uploadId)
+    await abortMultipartUpload(bucketName, fileName, uploadId)
     throw error
   }
 }
 
-export async function abortMultipartUpload(fileName: string, uploadId: string) {
+export async function abortMultipartUpload(bucketName: string, fileName: string, uploadId: string) {
   const supabase = await createClient()
   const {
     data: { user },
@@ -150,7 +156,7 @@ export async function abortMultipartUpload(fileName: string, uploadId: string) {
 
   try {
     const abortMultipartUploadCommand = new AbortMultipartUploadCommand({
-      Bucket: 'concert-memories',
+      Bucket: bucketName,
       Key: fileName,
       UploadId: uploadId,
     })

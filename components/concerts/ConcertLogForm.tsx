@@ -11,14 +11,14 @@ import { FileIcon, PauseIcon, PlayIcon, XIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
-import { ChangeEvent, DragEvent, useEffect, useRef, useState } from 'react'
-import { Control, Controller, set, useFieldArray, useForm } from 'react-hook-form'
+import { useEffect, useRef, useState } from 'react'
+import { Control, Controller, useFieldArray, useForm } from 'react-hook-form'
 import { useSession } from '../../hooks/auth/useSession'
 import { Button } from '../Button'
 import { SelectField } from '../forms/SelectField'
 import { TextArea } from '../forms/TextArea'
 import { getR2ImageUrl } from '@/lib/r2Helpers'
-import { progress } from 'framer-motion'
+import { FileItem, useMemoriesControl } from '@/hooks/helpers/useMemoriesControl'
 
 export type Memory =
   | Tables<'memories'>
@@ -134,6 +134,7 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
         label={t('memories')}
         accept={['image/*', 'video/*'].join(',')}
         bands={concert?.bands || []}
+        concertId={concert?.id}
       />
       <TextArea
         {...register('comment')}
@@ -142,8 +143,8 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
       />
       <div className="sticky bottom-0 z-10 mt-auto flex gap-4 bg-slate-800 py-4 md:static md:z-0 md:justify-end md:pb-0 [&>*]:flex-1">
         <Button onClick={close} label={t('cancel')} />
-        <button type='submit' className="btn btn-primary" disabled={isPending}>
-          {isPending ? t('saving') :  t('save')}
+        <button type="submit" className="btn btn-primary" disabled={isPending}>
+          {isPending ? t('saving') : t('save')}
           {uploadProgress > 0 && (
             <span className="ml-2 text-sm text-slate-300">
               ({Math.round(uploadProgress * 100)}%)
@@ -200,50 +201,28 @@ export function MemoriesControl({
   label,
   name,
   control,
-  accept,
+  acceptedFileTypes,
   bands,
+  concertId,
 }: {
   label: string
   name: string
   control: Control<LogFields>
-  accept?: HTMLInputElement['accept']
+  acceptedFileTypes?: string[]
   bands: Band[]
+  concertId: number
 }) {
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'memories',
   })
+  const { fileItems, setFileItems, isDragActive, onDrag, onDrop, onChange } = useMemoriesControl({
+    bucketName: 'real-estates',
+    folder: concertId.toString(),
+    acceptedFileTypes,
+  })
   const ref = useRef(null)
-  const [dragActive, setDragActive] = useState(false)
   const t = useTranslations('MultiFileInput')
-
-  function handleDrag(event: DragEvent<HTMLDivElement>) {
-    event.preventDefault()
-    event.stopPropagation()
-    if (event.type === 'dragenter' || event.type === 'dragover') {
-      setDragActive(true)
-    } else if (event.type === 'dragleave') {
-      setDragActive(false)
-    }
-  }
-
-  function handleDrop(event: DragEvent<HTMLDivElement>) {
-    event.preventDefault()
-    event.stopPropagation()
-    setDragActive(false)
-
-    if (event.dataTransfer.files) {
-      const files = Array.from(event.dataTransfer.files)
-      append(files.map(file => ({ file, band_id: null })))
-    }
-  }
-
-  async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
-    if (event.target.files) {
-      const files = Array.from(event.target.files)
-      append(files.map(file => ({ file, band_id: null })))
-    }
-  }
 
   return (
     <div className="grid">
@@ -253,26 +232,26 @@ export function MemoriesControl({
           type="file"
           id={name}
           name={name}
-          accept={accept}
+          accept={acceptedFileTypes?.join(',')}
           multiple
-          onChange={handleFileChange}
+          onChange={onChange}
           className="peer sr-only"
         />
         <div
           role="button"
           ref={ref}
-          onDrag={handleDrag}
-          onDragEnter={handleDrag}
-          onDragLeave={handleDrag}
-          onDragOver={handleDrag}
-          onDrop={handleDrop}
+          onDrag={onDrag}
+          onDragEnter={onDrag}
+          onDragLeave={onDrag}
+          onDragOver={onDrag}
+          onDrop={onDrop}
           className={clsx(
             'w-full cursor-pointer rounded-lg border-2 border-slate-500 bg-slate-750 p-6 text-center peer-focus:outline peer-focus:ring-2',
-            !dragActive && 'border-dashed'
+            !isDragActive && 'border-dashed'
           )}
         >
           <span className="text-center text-slate-300">
-            {dragActive
+            {isDragActive
               ? 'Dateien hier ablegen'
               : t.rich('dragOrBrowseFiles', {
                   span: chunk => (
@@ -286,7 +265,8 @@ export function MemoriesControl({
         {fields.map((field, index) => {
           return (
             <MemoryItem
-              memory={field}
+              fileItem={fileItems[index]}
+              field={fields}
               control={control}
               index={index}
               onRemove={() => {
@@ -303,13 +283,15 @@ export function MemoriesControl({
 }
 
 function MemoryItem({
-  memory,
+  fileItem,
+  field,
   control,
   index,
   onRemove,
   bands,
 }: {
-  memory: Memory
+  fileItem: FileItem
+  field: Memory
   control: Control<LogFields>
   index: number
   onRemove: () => void
