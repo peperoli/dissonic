@@ -19,6 +19,7 @@ import { SelectField } from '../forms/SelectField'
 import { TextArea } from '../forms/TextArea'
 import { getR2ImageUrl } from '@/lib/r2Helpers'
 import { FileItem, useMemoriesControl } from '@/hooks/helpers/useMemoriesControl'
+import { progress } from 'framer-motion'
 
 export type Memory =
   | Tables<'memories'>
@@ -45,7 +46,10 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
   })
   const { register, control, handleSubmit } = useForm<LogFields>({
     values: {
-      bandsSeen: concert?.bands_seen?.map(bandSeen => bandSeen.band_id) ?? [],
+      bandsSeen:
+        concert?.bands_seen
+          ?.filter(bandSeen => bandSeen.user_id === session?.user.id)
+          .map(bandSeen => bandSeen.band_id) ?? [],
       memories: initialMemories ?? [],
       comment: comments?.[0]?.content || '',
     },
@@ -262,18 +266,17 @@ export function MemoriesControl({
         </div>
       </label>
       <div className="mt-2 grid gap-4 rounded-lg bg-slate-750 p-4">
-        {fields.map((field, index) => {
+        {fileItems.map((fileItem, index) => {
           return (
             <MemoryItem
-              fileItem={fileItems[index]}
-              field={fields}
+              fileItem={fileItem}
               control={control}
               index={index}
               onRemove={() => {
                 remove(index)
               }}
               bands={bands}
-              key={field.id}
+              key={fileItem.file.name + index}
             />
           )
         })}
@@ -284,21 +287,18 @@ export function MemoriesControl({
 
 function MemoryItem({
   fileItem,
-  field,
   control,
   index,
   onRemove,
   bands,
 }: {
   fileItem: FileItem
-  field: Memory
   control: Control<LogFields>
   index: number
   onRemove: () => void
   bands: Band[]
 }) {
-  const fileUrl =
-    'file' in memory ? URL.createObjectURL(memory.file) : getR2ImageUrl(memory.file_name)
+  const fileUrl = URL.createObjectURL(fileItem.file)
   const t = useTranslations('MultiFileInput')
   const videoRef = useRef<HTMLVideoElement>(null)
   const [isPaused, setIsPaused] = useState(true)
@@ -333,11 +333,10 @@ function MemoryItem({
 
   return (
     <div className="flex w-full gap-4 text-left text-sm">
-      <div className="relative grid size-22 flex-none place-content-center overflow-hidden rounded-md bg-slate-700">
-        {('file' in memory && memory.file.type.startsWith('image/')) ||
-        ('file_type' in memory && memory.file_type.startsWith('image/')) ? (
+      <div className="relative grid size-22 flex-none place-content-center rounded-md bg-slate-700">
+        {fileItem.file.type.startsWith('image/') ? (
           <Image src={fileUrl} alt="" fill className="rounded-md object-contain" />
-        ) : 'file' in memory && memory.file.type.startsWith('video/') ? (
+        ) : fileItem.file.type.startsWith('video/') ? (
           <>
             <video
               src={fileUrl}
@@ -362,13 +361,21 @@ function MemoryItem({
       </div>
       <div className="grid w-full">
         <div className="flex w-full gap-2">
-          <div className="mb-2 grid">
-            <span className="truncate">
-              {'file' in memory ? memory.file.name : memory.file_name}
-            </span>
-            <span className="text-slate-300">
-              {formatSize('file' in memory ? memory.file.size : memory.file_size)}
-            </span>
+          <div className="mb-2 grid w-full">
+            <span className="truncate">{fileItem.file.name}</span>
+            <div className="h-1 w-full rounded bg-slate-700">
+              <div
+                style={{ width: fileItem.progress * 100 + '%' }}
+                className={clsx(
+                  'h-1 rounded',
+                  fileItem.error ? 'bg-red' : fileItem.isSuccess ? 'bg-venom' : 'bg-blue'
+                )}
+              />
+            </div>
+            <div className="flex justify-between">
+              <span>Uploading ... {fileItem.progress}</span>
+              <span className="text-slate-300">{formatSize(fileItem.file.size)}</span>
+            </div>
           </div>
           <Button
             label={t('remove')}
