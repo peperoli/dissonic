@@ -11,6 +11,7 @@ import {
   AbortMultipartUploadCommand,
 } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import Cloudflare from 'cloudflare'
 
 const S3 = new S3Client({
   region: 'auto',
@@ -46,6 +47,34 @@ export async function getPutObjectUrl(fileName: string) {
   } catch (error) {
     throw error
   }
+}
+
+export async function getImageUploadUrl() {
+  const cloudflare = new Cloudflare({
+    apiToken: process.env.CLOUDFLARE_API_TOKEN,
+  })
+
+  const { id, uploadURL } = await cloudflare.images.v2.directUploads.create({
+    account_id: process.env.CLOUDFLARE_ACCOUNT_ID,
+  })
+  if (!uploadURL) {
+    throw new Error('Failed to get upload URL from Cloudflare')
+  }
+
+  const res = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/images/v1/${id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+      },
+    }
+  )
+  
+  if (!res.ok) {
+    throw new Error(`Failed to fetch image upload URL: ${res.status} ${res.statusText}`)
+  }
+
+  return { id, uploadURL }
 }
 
 export async function getCreateMultipartUploadUrl(bucketName: string, fileName: string) {

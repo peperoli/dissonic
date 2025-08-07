@@ -1,4 +1,5 @@
-import { uploadFile } from '@/lib/uploadFileS3'
+import { uploadFileS3 } from '@/lib/uploadFileS3'
+import { uploadImageCloudflare } from '@/lib/uploadImageCloudflare'
 import { ChangeEvent, DragEvent, useMemo, useState } from 'react'
 
 export type FileItem = {
@@ -71,7 +72,9 @@ export function useMemoriesControl(options: UseMemoriesControlOptions) {
   async function uploadFiles(files: File[]) {
     await Promise.all(
       files.map(async file => {
-        await uploadFile('concert-memories', file, {
+        await uploadImageCloudflare(bucketName, file, {
+          folder,
+          acceptedFileTypes,
           onUploadProgress: progress => {
             setFileItems(prevItems =>
               prevItems.map(item =>

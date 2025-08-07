@@ -20,6 +20,8 @@ import { TextArea } from '../forms/TextArea'
 import { getR2ImageUrl } from '@/lib/r2Helpers'
 import { FileItem, useMemoriesControl } from '@/hooks/helpers/useMemoriesControl'
 import { progress } from 'framer-motion'
+import { getImageUploadUrl } from '@/actions/files'
+import { useQuery } from '@tanstack/react-query'
 
 export type Memory =
   | Tables<'memories'>
@@ -63,6 +65,13 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
   const [uploadProgress, setUploadProgress] = useState(0)
   const isPending = addLog.isPending || editLog.isPending
   const isSuccess = addLog.isSuccess || editLog.isSuccess
+
+  const { data: uploadUrlData } = useQuery({
+    queryKey: ['direct-upload-url'],
+    queryFn: async () => {
+      return await getImageUploadUrl()
+    },
+  })
 
   function onSubmit(formData: LogFields) {
     const { bandsSeen, memories, comment } = formData
@@ -115,48 +124,50 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
   }, [isSuccess])
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-      <p className="text-slate-300">{t('hintText')}</p>
-      <fieldset>
-        <legend className="mb-2 text-sm text-slate-300">{t('bandsIveSeen')}</legend>
-        <Controller
-          name="bandsSeen"
+    <>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+        <p className="text-slate-300">{t('hintText')}</p>
+        <fieldset>
+          <legend className="mb-2 text-sm text-slate-300">{t('bandsIveSeen')}</legend>
+          <Controller
+            name="bandsSeen"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <ToggleGroup
+                name="bandsSeen"
+                values={value}
+                onValuesChange={onChange}
+                items={concert?.bands ?? []}
+              />
+            )}
+          />
+        </fieldset>
+        <MemoriesControl
+          name="memories"
           control={control}
-          render={({ field: { value, onChange } }) => (
-            <ToggleGroup
-              name="bandsSeen"
-              values={value}
-              onValuesChange={onChange}
-              items={concert?.bands ?? []}
-            />
-          )}
+          label={t('memories')}
+          accept={['image/*', 'video/*'].join(',')}
+          bands={concert?.bands || []}
+          concertId={concert?.id}
         />
-      </fieldset>
-      <MemoriesControl
-        name="memories"
-        control={control}
-        label={t('memories')}
-        accept={['image/*', 'video/*'].join(',')}
-        bands={concert?.bands || []}
-        concertId={concert?.id}
-      />
-      <TextArea
-        {...register('comment')}
-        label={t('comment')}
-        placeholder={t('commentPlaceholder')}
-      />
-      <div className="sticky bottom-0 z-10 mt-auto flex gap-4 bg-slate-800 py-4 md:static md:z-0 md:justify-end md:pb-0 [&>*]:flex-1">
-        <Button onClick={close} label={t('cancel')} />
-        <button type="submit" className="btn btn-primary" disabled={isPending}>
-          {isPending ? t('saving') : t('save')}
-          {uploadProgress > 0 && (
-            <span className="ml-2 text-sm text-slate-300">
-              ({Math.round(uploadProgress * 100)}%)
-            </span>
-          )}
-        </button>
-      </div>
-    </form>
+        <TextArea
+          {...register('comment')}
+          label={t('comment')}
+          placeholder={t('commentPlaceholder')}
+        />
+        <div className="sticky bottom-0 z-10 mt-auto flex gap-4 bg-slate-800 py-4 md:static md:z-0 md:justify-end md:pb-0 [&>*]:flex-1">
+          <Button onClick={close} label={t('cancel')} />
+          <button type="submit" className="btn btn-primary" disabled={isPending}>
+            {isPending ? t('saving') : t('save')}
+            {uploadProgress > 0 && (
+              <span className="ml-2 text-sm text-slate-300">
+                ({Math.round(uploadProgress * 100)}%)
+              </span>
+            )}
+          </button>
+        </div>
+      </form>
+    </>
   )
 }
 
@@ -221,7 +232,7 @@ export function MemoriesControl({
     name: 'memories',
   })
   const { fileItems, setFileItems, isDragActive, onDrag, onDrop, onChange } = useMemoriesControl({
-    bucketName: 'real-estates',
+    bucketName: 'concert-memories',
     folder: concertId.toString(),
     acceptedFileTypes,
   })

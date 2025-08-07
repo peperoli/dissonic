@@ -5,7 +5,7 @@ import {
   getUploadPartUrls,
 } from '@/actions/files'
 
-export async function uploadFile(
+export async function uploadFileS3(
   bucketName: string,
   file: File,
   options?: {
@@ -95,6 +95,7 @@ export async function uploadFile(
       })
 
       await completeMultipartUpload(bucketName, fileName, uploadId, parts)
+      console.log('File uploaded successfully:', fileName)
     }
   } catch (error) {
     throw error
