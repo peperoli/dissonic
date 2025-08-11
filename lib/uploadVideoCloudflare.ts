@@ -1,4 +1,4 @@
-import { getVideoUploadUrl } from '@/actions/files'
+import * as tus from 'tus-js-client'
 
 export async function uploadVideoCloudflare(
   file: File,
@@ -8,31 +8,42 @@ export async function uploadVideoCloudflare(
     onUploadProgress?: (progress: number) => void
   }
 ) {
-  const { id, uploadURL } = await getVideoUploadUrl()
-  const fileExtension = file.type.split('/').at(-1)
-  const fileName = options?.prefix
-    ? `${options.prefix}-${id}.${fileExtension}`
-    : `${id}.${fileExtension}`
-  const formData = new FormData()
-  formData.append('file', file, fileName)
+  const fileName = `concert-memories-${Date.now()}`
+  const upload = new tus.Upload(file, {
+    endpoint: '/api/cloudflare/get-stream-upload-url',
+    chunkSize: 5 * 1024 * 1024,
+    retryDelays: [0, 3000, 5000],
+    metadata: {
+      name: fileName,
+      type: file.type,
+    },
+    uploadDataDuringCreation: true,
+    removeFingerprintOnSuccess: true, // Important if you want to allow re-uploading the same file https://github.com/tus/tus-js-client/blob/main/docs/api.md#removefingerprintonsuccess
 
-  if (options?.onUploadProgress) {
-    options.onUploadProgress(0)
-  }
-
-  const response = await fetch(uploadURL, {
-    method: 'POST',
-    body: formData,
+    onError: function (error) {
+      throw error
+    },
+    onProgress: function (bytesUploaded, bytesTotal) {
+      const progress = (bytesUploaded / bytesTotal) * 100
+      if (options?.onUploadProgress) {
+        options.onUploadProgress(progress)
+      }
+    },
+    onSuccess: function () {
+      console.log('Upload successful')
+    },
   })
 
-  if (!response.ok) {
-    console.error(file.name, response)
-    throw new Error(`Failed to upload file: ${file.name}`)
-  }
+  // Check if there are any previous uploads to continue.
+  upload.findPreviousUploads().then(function (previousUploads) {
+    // Found previous uploads so we select the first one.
+    if (previousUploads.length) {
+      upload.resumeFromPreviousUpload(previousUploads[0])
+    }
 
-  if (options?.onUploadProgress) {
-    options.onUploadProgress(1)
-  }
+    // Start the upload
+    upload.start()
+  })
 
   return { fileName }
 }

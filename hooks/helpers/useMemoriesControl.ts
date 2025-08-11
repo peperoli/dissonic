@@ -102,7 +102,9 @@ export function useMemoriesControl(options: UseMemoriesControlOptions) {
               onUploadProgress: progress => {
                 setFileItems(prevItems =>
                   prevItems.map(item =>
-                    item.file.name === file.name ? { ...item, isLoading: true, progress } : item
+                    item.file.name === file.name
+                      ? { ...item, isLoading: progress !== 100, progress }
+                      : item
                   )
                 )
               },

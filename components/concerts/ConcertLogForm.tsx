@@ -377,7 +377,7 @@ function MemoryItem({
             <span className="truncate">{fileItem.file.name}</span>
             <div className="my-1 h-1 w-full rounded bg-slate-700">
               <div
-                style={{ width: fileItem.progress * 100 + '%' }}
+                style={{ width: fileItem.progress + '%' }}
                 className={clsx(
                   'h-1 rounded transition-[width]',
                   fileItem.error ? 'bg-red' : fileItem.isSuccess ? 'bg-venom' : 'bg-blue'
@@ -386,7 +386,7 @@ function MemoryItem({
             </div>
             <div className="flex justify-between">
               {fileItem.isLoading ? (
-                <span className="text-blue">Uploading ... {fileItem.progress * 100} %</span>
+                <span className="text-blue">Uploading ... {fileItem.progress.toFixed(2)} %</span>
               ) : fileItem.isSuccess ? (
                 <span className="text-venom">Uploaded</span>
               ) : null}
