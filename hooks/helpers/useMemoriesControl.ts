@@ -4,6 +4,7 @@ import { ChangeEvent, DragEvent, useMemo, useState } from 'react'
 
 export type FileItem = {
   file: File
+  fileName: string
   preview: string
   isLoading: boolean
   progress: number
@@ -60,6 +61,7 @@ export function useMemoriesControl(options: UseMemoriesControlOptions) {
       ...prevItems,
       ...files.map(file => ({
         file,
+        fileName: '',
         preview: URL.createObjectURL(file),
         isLoading: false,
         progress: 0,
@@ -72,33 +74,39 @@ export function useMemoriesControl(options: UseMemoriesControlOptions) {
   async function uploadFiles(files: File[]) {
     await Promise.all(
       files.map(async file => {
-        await uploadImageCloudflare(bucketName, file, {
-          folder,
-          acceptedFileTypes,
-          onUploadProgress: progress => {
-            setFileItems(prevItems =>
-              prevItems.map(item =>
-                item.file.name === file.name ? { ...item, isLoading: true, progress } : item
+        try {
+          const { fileName } = await uploadImageCloudflare(file, {
+            prefix: 'concert-memories',
+            acceptedFileTypes,
+            onUploadProgress: progress => {
+              setFileItems(prevItems =>
+                prevItems.map(item =>
+                  item.file.name === file.name ? { ...item, isLoading: true, progress } : item
+                )
               )
-            )
-          },
-        })
-          .then(() => {
-            setFileItems(prevItems =>
-              prevItems.map(item =>
-                item.file.name === file.name ? { ...item, isLoading: false, isSuccess: true } : item
-              )
-            )
+            },
           })
-          .catch(error => {
-            setFileItems(prevItems =>
-              prevItems.map(item =>
-                item.file.name === file.name
-                  ? { ...item, isLoading: false, error: error.message }
-                  : item
-              )
+
+          setFileItems(prevItems =>
+            prevItems.map(item =>
+              item.file.name === file.name
+                ? { ...item, fileName, isLoading: false, isSuccess: true }
+                : item
             )
-          })
+          )
+        } catch (error) {
+          setFileItems(prevItems =>
+            prevItems.map(item =>
+              item.file.name === file.name
+                ? {
+                    ...item,
+                    isLoading: false,
+                    error: error instanceof Error ? error.message : JSON.stringify(error),
+                  }
+                : item
+            )
+          )
+        }
       })
     )
   }

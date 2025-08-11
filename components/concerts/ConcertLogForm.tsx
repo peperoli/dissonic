@@ -146,7 +146,7 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
           name="memories"
           control={control}
           label={t('memories')}
-          accept={['image/*', 'video/*'].join(',')}
+          acceptedFileTypes={['image/*', 'video/*']}
           bands={concert?.bands || []}
           concertId={concert?.id}
         />
@@ -292,6 +292,7 @@ export function MemoriesControl({
           )
         })}
       </div>
+      <pre className="max-w-xl overflow-auto">{JSON.stringify(fileItems, null, 2)}</pre>
     </div>
   )
 }
@@ -374,17 +375,21 @@ function MemoryItem({
         <div className="flex w-full gap-2">
           <div className="mb-2 grid w-full">
             <span className="truncate">{fileItem.file.name}</span>
-            <div className="h-1 w-full rounded bg-slate-700">
+            <div className="my-1 h-1 w-full rounded bg-slate-700">
               <div
                 style={{ width: fileItem.progress * 100 + '%' }}
                 className={clsx(
-                  'h-1 rounded',
+                  'h-1 rounded transition-[width]',
                   fileItem.error ? 'bg-red' : fileItem.isSuccess ? 'bg-venom' : 'bg-blue'
                 )}
               />
             </div>
             <div className="flex justify-between">
-              <span>Uploading ... {fileItem.progress}</span>
+              {fileItem.isLoading ? (
+                <span className="text-blue">Uploading ... {fileItem.progress * 100} %</span>
+              ) : fileItem.isSuccess ? (
+                <span className="text-venom">Uploaded</span>
+              ) : null}
               <span className="text-slate-300">{formatSize(fileItem.file.size)}</span>
             </div>
           </div>
