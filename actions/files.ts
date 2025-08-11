@@ -69,12 +69,28 @@ export async function getImageUploadUrl() {
       },
     }
   )
-  
+
   if (!res.ok) {
     throw new Error(`Failed to fetch image upload URL: ${res.status} ${res.statusText}`)
   }
 
   return { id, uploadURL }
+}
+
+export async function getVideoUploadUrl() {
+  const cloudflare = new Cloudflare({
+    apiToken: process.env.CLOUDFLARE_API_TOKEN,
+  })
+  const { uid, uploadURL } = await cloudflare.stream.directUpload.create({
+    account_id: process.env.CLOUDFLARE_ACCOUNT_ID,
+    maxDurationSeconds: 60,
+  })
+
+  if (!uploadURL) {
+    throw new Error('Failed to get upload URL from Cloudflare')
+  }
+
+  return { id: uid, uploadURL }
 }
 
 export async function getCreateMultipartUploadUrl(bucketName: string, fileName: string) {

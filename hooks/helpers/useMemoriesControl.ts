@@ -1,5 +1,5 @@
-import { uploadFileS3 } from '@/lib/uploadFileS3'
 import { uploadImageCloudflare } from '@/lib/uploadImageCloudflare'
+import { uploadVideoCloudflare } from '@/lib/uploadVideoCloudflare'
 import { ChangeEvent, DragEvent, useMemo, useState } from 'react'
 
 export type FileItem = {
@@ -75,25 +75,47 @@ export function useMemoriesControl(options: UseMemoriesControlOptions) {
     await Promise.all(
       files.map(async file => {
         try {
-          const { fileName } = await uploadImageCloudflare(file, {
-            prefix: 'concert-memories',
-            acceptedFileTypes,
-            onUploadProgress: progress => {
-              setFileItems(prevItems =>
-                prevItems.map(item =>
-                  item.file.name === file.name ? { ...item, isLoading: true, progress } : item
+          if (file.type.startsWith('image/')) {
+            const { fileName } = await uploadImageCloudflare(file, {
+              prefix: 'concert-memories',
+              acceptedFileTypes,
+              onUploadProgress: progress => {
+                setFileItems(prevItems =>
+                  prevItems.map(item =>
+                    item.file.name === file.name ? { ...item, isLoading: true, progress } : item
+                  )
                 )
-              )
-            },
-          })
+              },
+            })
 
-          setFileItems(prevItems =>
-            prevItems.map(item =>
-              item.file.name === file.name
-                ? { ...item, fileName, isLoading: false, isSuccess: true }
-                : item
+            setFileItems(prevItems =>
+              prevItems.map(item =>
+                item.file.name === file.name
+                  ? { ...item, fileName, isLoading: false, isSuccess: true }
+                  : item
+              )
             )
-          )
+          } else if (file.type.startsWith('video/')) {
+            const { fileName } = await uploadVideoCloudflare(file, {
+              prefix: 'concert-memories',
+              acceptedFileTypes,
+              onUploadProgress: progress => {
+                setFileItems(prevItems =>
+                  prevItems.map(item =>
+                    item.file.name === file.name ? { ...item, isLoading: true, progress } : item
+                  )
+                )
+              },
+            })
+
+            setFileItems(prevItems =>
+              prevItems.map(item =>
+                item.file.name === file.name
+                  ? { ...item, fileName, isLoading: false, isSuccess: true }
+                  : item
+              )
+            )
+          }
         } catch (error) {
           setFileItems(prevItems =>
             prevItems.map(item =>
