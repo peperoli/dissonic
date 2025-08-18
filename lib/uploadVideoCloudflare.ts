@@ -6,6 +6,7 @@ export async function uploadVideoCloudflare(
     prefix?: string
     acceptedFileTypes?: string[]
     onUploadProgress?: (progress: number) => void
+    onSuccess?: () => void
   }
 ) {
   const fileName = `concert-memories-${Date.now()}`
@@ -24,13 +25,17 @@ export async function uploadVideoCloudflare(
       throw error
     },
     onProgress: function (bytesUploaded, bytesTotal) {
-      const progress = (bytesUploaded / bytesTotal) * 100
+      const progress = Math.round((bytesUploaded / bytesTotal) * 100)
       if (options?.onUploadProgress) {
         options.onUploadProgress(progress)
       }
     },
     onSuccess: function () {
-      console.log('Upload successful')
+      if (options?.onSuccess) {
+        options.onSuccess()
+      } else {
+        console.log('Upload successful')
+      }
     },
   })
 

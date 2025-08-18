@@ -2,7 +2,7 @@ import { uploadImageCloudflare } from '@/lib/uploadImageCloudflare'
 import { uploadVideoCloudflare } from '@/lib/uploadVideoCloudflare'
 import { ChangeEvent, DragEvent, useMemo, useState } from 'react'
 
-export type FileItem = {
+export type MemoryFileItem = {
   file: File
   fileName: string
   preview: string
@@ -10,6 +10,7 @@ export type FileItem = {
   progress: number
   error: string | null
   isSuccess: boolean
+  bandId: number | null
 }
 
 type UseMemoriesControlOptions = {
@@ -39,6 +40,9 @@ type UseMemoriesControlOptions = {
    * Maximum number of files allowed per upload.
    */
   maxFiles?: number
+  memoryFileItems: MemoryFileItem[]
+  append: (items: MemoryFileItem | MemoryFileItem[]) => void
+  update: (index: number, item: MemoryFileItem) => void
 }
 
 export function useMemoriesControl(options: UseMemoriesControlOptions) {
@@ -48,18 +52,20 @@ export function useMemoriesControl(options: UseMemoriesControlOptions) {
     acceptedFileTypes = [],
     maxFileSize = Number.POSITIVE_INFINITY,
     maxFiles = Number.POSITIVE_INFINITY,
+    memoryFileItems,
+    append,
+    update,
   } = options
-  const [fileItems, setFileItems] = useState<FileItem[]>([])
   const [dragActive, setDragActive] = useState(false)
   const isSuccess = useMemo(
-    () => fileItems.length > 0 && fileItems.every(item => !item.error && item.isSuccess),
-    [fileItems]
+    () =>
+      memoryFileItems.length > 0 && memoryFileItems.every(item => !item.error && item.isSuccess),
+    [memoryFileItems]
   )
 
   function addFiles(files: File[]) {
-    setFileItems(prevItems => [
-      ...prevItems,
-      ...files.map(file => ({
+    append(
+      files.map(file => ({
         file,
         fileName: '',
         preview: URL.createObjectURL(file),
@@ -67,8 +73,9 @@ export function useMemoriesControl(options: UseMemoriesControlOptions) {
         progress: 0,
         error: null,
         isSuccess: false,
-      })),
-    ])
+        bandId: null,
+      }))
+    )
   }
 
   async function uploadFiles(files: File[]) {
@@ -80,56 +87,48 @@ export function useMemoriesControl(options: UseMemoriesControlOptions) {
               prefix: 'concert-memories',
               acceptedFileTypes,
               onUploadProgress: progress => {
-                setFileItems(prevItems =>
-                  prevItems.map(item =>
-                    item.file.name === file.name ? { ...item, isLoading: true, progress } : item
-                  )
-                )
+                memoryFileItems.forEach((item, index) => {
+                  if (item.file.name === file.name) {
+                    update(index, { ...item, isLoading: true, progress })
+                  }
+                })
               },
             })
 
-            setFileItems(prevItems =>
-              prevItems.map(item =>
-                item.file.name === file.name
-                  ? { ...item, fileName, isLoading: false, isSuccess: true }
-                  : item
-              )
-            )
+            memoryFileItems.forEach((item, index) => {
+              if (item.file.name === file.name) {
+                update(index, { ...item, fileName, isLoading: false, isSuccess: true })
+              }
+            })
           } else if (file.type.startsWith('video/')) {
             const { fileName } = await uploadVideoCloudflare(file, {
               prefix: 'concert-memories',
               acceptedFileTypes,
               onUploadProgress: progress => {
-                setFileItems(prevItems =>
-                  prevItems.map(item =>
-                    item.file.name === file.name
-                      ? { ...item, isLoading: progress !== 100, progress }
-                      : item
-                  )
-                )
+                memoryFileItems.forEach((item, index) => {
+                  if (item.file.name === file.name) {
+                    update(index, { ...item, isLoading: true, progress })
+                  }
+                })
+              },
+              onSuccess: () => {
+                memoryFileItems.forEach((item, index) => {
+                  if (item.file.name === file.name) {
+                    update(index, { ...item, fileName, isLoading: false, isSuccess: true })
+                  }
+                })
               },
             })
-
-            setFileItems(prevItems =>
-              prevItems.map(item =>
-                item.file.name === file.name
-                  ? { ...item, fileName, isLoading: false, isSuccess: true }
-                  : item
-              )
-            )
           }
         } catch (error) {
-          setFileItems(prevItems =>
-            prevItems.map(item =>
-              item.file.name === file.name
-                ? {
-                    ...item,
-                    isLoading: false,
-                    error: error instanceof Error ? error.message : JSON.stringify(error),
-                  }
-                : item
-            )
-          )
+          memoryFileItems.forEach((item, index) => {
+            if (item.file.name === file.name)
+              update(index, {
+                ...item,
+                isLoading: false,
+                error: error instanceof Error ? error.message : JSON.stringify(error),
+              })
+          })
         }
       })
     )
@@ -167,8 +166,6 @@ export function useMemoriesControl(options: UseMemoriesControlOptions) {
   }
 
   return {
-    fileItems,
-    setFileItems,
     isDragActive: dragActive,
     onDrag,
     onDrop,
