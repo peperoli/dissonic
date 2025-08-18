@@ -19,13 +19,6 @@ import { useQuery } from '@tanstack/react-query'
 import { MemoriesControl } from './MemoriesControl'
 import { MemoryFileItem } from '@/hooks/helpers/useMemoriesControl'
 
-export type Memory =
-  | Tables<'memories'>
-  | {
-      file: File
-      band_id: number | null
-    }
-
 export type LogFields = {
   bandsSeen: number[]
   memories: MemoryFileItem[]
@@ -48,7 +41,17 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
         concert?.bands_seen
           ?.filter(bandSeen => bandSeen.user_id === session?.user.id)
           .map(bandSeen => bandSeen.band_id) ?? [],
-      memories: initialMemories ?? [],
+      memories:
+        initialMemories?.map(memory => ({
+          ...memory,
+          bandId: memory.band_id,
+          fileName: '',
+          preview: '',
+          isLoading: false,
+          progress: 100,
+          isSuccess: true,
+          error: null,
+        })) ?? [],
       comment: comments?.[0]?.content || '',
     },
   })
@@ -207,4 +210,3 @@ function ToggleGroup({
     </ul>
   )
 }
-

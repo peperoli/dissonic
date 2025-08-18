@@ -9,6 +9,8 @@ import { Button } from '../Button'
 import { SelectField } from '../forms/SelectField'
 import { MemoryFileItem, useMemoriesControl } from '@/hooks/helpers/useMemoriesControl'
 import { LogFields } from './ConcertLogForm'
+import { getAssetUrl } from '@/lib/getAssetUrl'
+import { getR2ImageUrl } from '@/lib/cloudflareHelpers'
 
 export function MemoriesControl({
   label,
@@ -94,7 +96,7 @@ export function MemoriesControl({
                 remove(index)
               }}
               bands={bands}
-              key={fileItem.file.name + index}
+              key={index}
             />
           )
         })}
@@ -117,7 +119,7 @@ function MemoryItem({
   onRemove: () => void
   bands: Band[]
 }) {
-  const fileUrl = URL.createObjectURL(fileItem.file)
+  const fileUrl = fileItem.file ? URL.createObjectURL(fileItem.file) : getR2ImageUrl(fileItem.fileName)
   const t = useTranslations('MultiFileInput')
   const videoRef = useRef<HTMLVideoElement>(null)
   const [isPaused, setIsPaused] = useState(true)
@@ -153,9 +155,9 @@ function MemoryItem({
   return (
     <div className="flex w-full gap-4 text-left text-sm">
       <div className="relative grid size-22 flex-none place-content-center rounded-md bg-slate-700">
-        {fileItem.file.type.startsWith('image/') ? (
+        {fileItem.file?.type.startsWith('image/') ? (
           <Image src={fileUrl} alt="" fill className="rounded-md object-contain" />
-        ) : fileItem.file.type.startsWith('video/') ? (
+        ) : fileItem.file?.type.startsWith('video/') ? (
           <>
             <video
               src={fileUrl}
@@ -181,7 +183,7 @@ function MemoryItem({
       <div className="grid w-full">
         <div className="flex w-full gap-2">
           <div className="mb-2 grid w-full">
-            <span className="truncate">{fileItem.file.name}</span>
+            <span className="truncate">{fileItem.file?.name}</span>
             <div className="my-1 h-1 w-full rounded bg-slate-700">
               <div
                 style={{ width: fileItem.progress + '%' }}
@@ -197,7 +199,7 @@ function MemoryItem({
               ) : fileItem.isSuccess ? (
                 <span className="text-venom">Uploaded</span>
               ) : null}
-              <span className="text-slate-300">{formatSize(fileItem.file.size)}</span>
+              <span className="text-slate-300">{fileItem.file ? formatSize(fileItem.file.size) : null}</span>
             </div>
           </div>
           <Button

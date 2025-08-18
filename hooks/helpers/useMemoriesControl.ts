@@ -1,9 +1,10 @@
 import { uploadImageCloudflare } from '@/lib/uploadImageCloudflare'
 import { uploadVideoCloudflare } from '@/lib/uploadVideoCloudflare'
+import { Tables } from '@/types/supabase'
 import { ChangeEvent, DragEvent, useMemo, useState } from 'react'
 
 export type MemoryFileItem = {
-  file: File
+  file?: File
   fileName: string
   preview: string
   isLoading: boolean
@@ -11,7 +12,7 @@ export type MemoryFileItem = {
   error: string | null
   isSuccess: boolean
   bandId: number | null
-}
+} & Partial<Tables<'memories'>>
 
 type UseMemoriesControlOptions = {
   /**
@@ -86,17 +87,10 @@ export function useMemoriesControl(options: UseMemoriesControlOptions) {
             const { fileName } = await uploadImageCloudflare(file, {
               prefix: 'concert-memories',
               acceptedFileTypes,
-              onUploadProgress: progress => {
-                memoryFileItems.forEach((item, index) => {
-                  if (item.file.name === file.name) {
-                    update(index, { ...item, isLoading: true, progress })
-                  }
-                })
-              },
             })
 
             memoryFileItems.forEach((item, index) => {
-              if (item.file.name === file.name) {
+              if (item.file?.name === file.name) {
                 update(index, { ...item, fileName, isLoading: false, isSuccess: true })
               }
             })
@@ -106,14 +100,14 @@ export function useMemoriesControl(options: UseMemoriesControlOptions) {
               acceptedFileTypes,
               onUploadProgress: progress => {
                 memoryFileItems.forEach((item, index) => {
-                  if (item.file.name === file.name) {
+                  if (item.file?.name === file.name) {
                     update(index, { ...item, isLoading: true, progress })
                   }
                 })
               },
               onSuccess: () => {
                 memoryFileItems.forEach((item, index) => {
-                  if (item.file.name === file.name) {
+                  if (item.file?.name === file.name) {
                     update(index, { ...item, fileName, isLoading: false, isSuccess: true })
                   }
                 })
@@ -122,7 +116,7 @@ export function useMemoriesControl(options: UseMemoriesControlOptions) {
           }
         } catch (error) {
           memoryFileItems.forEach((item, index) => {
-            if (item.file.name === file.name)
+            if (item.file?.name === file.name)
               update(index, {
                 ...item,
                 isLoading: false,

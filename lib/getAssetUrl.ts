@@ -9,6 +9,10 @@ export function getAssetUrl(
     return null
   }
 
+  if (path.startsWith('http')) {
+    return path
+  }
+
   const { data } = supabase.storage
     .from(bucket)
     .getPublicUrl(updatedAt ? `${path}?t=${updatedAt}` : path)

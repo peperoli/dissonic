@@ -1,5 +1,5 @@
 import { useMemories } from '@/hooks/concerts/useMemories'
-import { getR2ImageUrl, getR2StillframeUrl, getR2VideoUrl } from '@/lib/r2Helpers'
+import { getCloudflareThumbnailUrl, getR2ImageUrl, getR2VideoUrl } from '@/lib/cloudflareHelpers'
 import Image from 'next/image'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useTranslations } from 'next-intl'
@@ -81,14 +81,19 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
               <Image
                 src={
                   memory.file_type.startsWith('image/')
-                    ? getR2ImageUrl(memory.file_name, { width: 300, height: 300, fit: 'cover' })
-                    : getR2StillframeUrl(memory.file_name, {
+                    ? getR2ImageUrl(memory.cloudflare_file_id, {
+                        width: 300,
+                        height: 300,
+                        fit: 'cover',
+                      })
+                    : getCloudflareThumbnailUrl(memory.cloudflare_file_id, {
+                        time: '10s',
                         width: 300,
                         height: 300,
                         fit: 'cover',
                       })
                 }
-                alt={memory.file_name}
+                alt=""
                 fill
                 unoptimized
                 className="rounded-lg object-cover"
@@ -166,15 +171,15 @@ function MemoryItem({ memory }: { memory: Memory }) {
       <div className="">
         {memory.file_type.startsWith('image/') ? (
           <Image
-            src={getR2ImageUrl(memory.file_name, { width: 800 })}
-            alt={memory.file_name}
-            width={memory.file_width || 750}
-            height={memory.file_height || 1000}
+            src={getR2ImageUrl(memory.cloudflare_file_id, { width: 800 })}
+            alt=""
+            width={1000}
+            height={1000}
             unoptimized
             className="max-h-full rounded-lg object-cover"
           />
         ) : (
-          <VideoPlayer src={getR2VideoUrl(memory.file_name, { width: 800 })} />
+          <VideoPlayer src={getR2VideoUrl(memory.cloudflare_file_id, { width: 800 })} />
         )}
         <div className="absolute bottom-0 left-0 m-2 flex flex-col items-start gap-1">
           {memory.band && (

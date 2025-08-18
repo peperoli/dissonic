@@ -30,9 +30,10 @@ export function getR2VideoUrl(
   return `https://dissonic.ch/cdn-cgi/media/${optionsString}/https://dissonic.ch/${fileName}`
 }
 
-export function getR2StillframeUrl(
-  fileName: string,
+export function getCloudflareThumbnailUrl(
+  videoId: string,
   options?: {
+    time?: string
     width?: number
     height?: number
     fit?: 'contain' | 'scale-down' | 'cover'
@@ -41,5 +42,5 @@ export function getR2StillframeUrl(
   const optionsString = Object.entries({ mode: 'frame', ...options })
     .map(([key, value]) => `${key}=${value}`)
     .join(',')
-  return `https://dissonic.ch/cdn-cgi/media/${optionsString}/https://dissonic.ch/${fileName}`
+  return `https://customer-bwyzo46pfd5dc1rh.cloudflarestream.com/${videoId}/thumbnails/thumbnail.jpg?${optionsString}`
 }
