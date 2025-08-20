@@ -116,7 +116,7 @@ export function useMemoriesControl(options: UseMemoriesControlOptions) {
               }
             })
 
-            const { fileName } = await uploadVideoCloudflare(file, {
+            const { videoId } = await uploadVideoCloudflare(file, {
               prefix: 'concert-memories',
               acceptedFileTypes,
               onUploadProgress: progress => {
@@ -138,7 +138,7 @@ export function useMemoriesControl(options: UseMemoriesControlOptions) {
                     const newItems = [...memoryFileItems]
                     newItems[index] = {
                       ...item,
-                      cloudflare_file_id: fileName,
+                      cloudflare_file_id: videoId,
                       isLoading: false,
                       isSuccess: true,
                     }

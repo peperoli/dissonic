@@ -123,7 +123,9 @@ function MemoryItem({
 }) {
   const fileUrl = memoryFileItem.file
     ? URL.createObjectURL(memoryFileItem.file)
-    : getCloudflareImageUrl(memoryFileItem.cloudflare_file_id)
+    : memoryFileItem.cloudflare_file_id
+      ? getCloudflareImageUrl(memoryFileItem.cloudflare_file_id)
+      : null
   const t = useTranslations('MultiFileInput')
   const videoRef = useRef<HTMLVideoElement>(null)
   const [isPaused, setIsPaused] = useState(true)
@@ -193,13 +195,19 @@ function MemoryItem({
                 style={{ width: memoryFileItem.progress + '%' }}
                 className={clsx(
                   'h-1 rounded transition-[width]',
-                  memoryFileItem.error ? 'bg-red' : memoryFileItem.isSuccess ? 'bg-venom' : 'bg-blue'
+                  memoryFileItem.error
+                    ? 'bg-red'
+                    : memoryFileItem.isSuccess
+                      ? 'bg-venom'
+                      : 'bg-blue'
                 )}
               />
             </div>
             <div className="flex justify-between">
               {memoryFileItem.isLoading ? (
-                <span className="text-blue">Uploading ... {memoryFileItem.progress.toFixed(2)} %</span>
+                <span className="text-blue">
+                  Uploading ... {memoryFileItem.progress.toFixed(2)} %
+                </span>
               ) : memoryFileItem.isSuccess ? (
                 <span className="text-venom">Uploaded</span>
               ) : null}
@@ -220,14 +228,14 @@ function MemoryItem({
           />
         </div>
         <div className="overflow-hidden">
-              <SelectField
-                label="Band"
-                name="bandId"
-                items={bands.map(band => ({ id: band.id, name: band.name }))}
-                allItems={bands}
-                value={memoryFileItem.bandId}
-                onValueChange={bandId => setMemoryFileItem({ ...memoryFileItem, bandId })}
-              />
+          <SelectField
+            label="Band"
+            name="bandId"
+            items={bands.map(band => ({ id: band.id, name: band.name }))}
+            allItems={bands}
+            value={memoryFileItem.bandId}
+            onValueChange={bandId => setMemoryFileItem({ ...memoryFileItem, bandId })}
+          />
         </div>
       </div>
     </div>
