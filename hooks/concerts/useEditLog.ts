@@ -1,12 +1,9 @@
-import { deleteFile } from '@/actions/files'
-import { Memory } from '@/components/concerts/ConcertLogForm'
-import { uploadMemory } from '@/lib/uploadMemory'
 import { Tables } from '@/types/supabase'
 import supabase from '@/utils/supabase/client'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
 import toast from 'react-hot-toast'
+import { deleteImageCloudflare, deleteVideoCloudflare } from '@/actions/files'
 
 async function editLog({
   concertId,
@@ -17,17 +14,15 @@ async function editLog({
   memoriesToDelete,
   memoriesToUpdate,
   comment,
-  onUploadProgress,
 }: {
   concertId: number
   userId: string
   bandsToAdd: number[]
   bandsToDelete: number[]
-  memoriesToAdd: Exclude<Memory, Tables<'memories'>>[]
-  memoriesToDelete: Exclude<Memory, { file: File; band_id: number | null }>[]
-  memoriesToUpdate: Exclude<Memory, { file: File; band_id: number | null }>[]
+  memoriesToAdd: Tables<'memories'>[]
+  memoriesToDelete: Tables<'memories'>[]
+  memoriesToUpdate: Tables<'memories'>[]
   comment: Tables<'comments'>['content']
-  onUploadProgress?: (progress: number) => void
 }) {
   const { error: insertBandsError } = await supabase.from('j_bands_seen').insert(
     bandsToAdd.map(bandId => ({
@@ -52,18 +47,27 @@ async function editLog({
     throw deleteBandsSeenError
   }
 
-  await Promise.all(
-    memoriesToAdd.map((memory, index) =>
-      uploadMemory(memory, concertId, {
-        onUploadProgress: progress => onUploadProgress?.(progress),
-      })
-    )
+  const { error: insertMemoriesError } = await supabase.from('memories').insert(
+    memoriesToAdd.map((memory) => ({
+      concert_id: concertId,
+      band_id: memory.band_id,
+      cloudflare_file_id: memory.cloudflare_file_id,
+      file_type: memory.file_type,
+    }))
   )
+
+  if (insertMemoriesError) {
+    throw insertMemoriesError
+  }
 
   try {
     memoriesToDelete.forEach(async memory => {
       try {
-        await deleteFile(memory.file_name)
+        if (memory.file_type?.startsWith('image/')) {
+          await deleteImageCloudflare(memory.cloudflare_file_id)
+        } else if (memory.file_type?.startsWith('video/')) {
+          await deleteVideoCloudflare(memory.cloudflare_file_id)
+        }
 
         const { error } = await supabase
           .from('memories')

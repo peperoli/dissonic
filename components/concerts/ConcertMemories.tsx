@@ -1,5 +1,5 @@
 import { useMemories } from '@/hooks/concerts/useMemories'
-import { getCloudflareThumbnailUrl, getR2ImageUrl, getR2VideoUrl } from '@/lib/cloudflareHelpers'
+import { getCloudflareImageUrl, getCloudflareThumbnailUrl } from '@/lib/cloudflareHelpers'
 import Image from 'next/image'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useTranslations } from 'next-intl'
@@ -81,7 +81,7 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
               <Image
                 src={
                   memory.file_type.startsWith('image/')
-                    ? getR2ImageUrl(memory.cloudflare_file_id, {
+                    ? getCloudflareImageUrl(memory.cloudflare_file_id, {
                         width: 300,
                         height: 300,
                         fit: 'cover',
@@ -171,7 +171,7 @@ function MemoryItem({ memory }: { memory: Memory }) {
       <div className="">
         {memory.file_type.startsWith('image/') ? (
           <Image
-            src={getR2ImageUrl(memory.cloudflare_file_id, { width: 800 })}
+            src={getCloudflareImageUrl(memory.cloudflare_file_id, { width: 800 })}
             alt=""
             width={1000}
             height={1000}
@@ -179,7 +179,7 @@ function MemoryItem({ memory }: { memory: Memory }) {
             className="max-h-full rounded-lg object-cover"
           />
         ) : (
-          <VideoPlayer src={getR2VideoUrl(memory.cloudflare_file_id, { width: 800 })} />
+          <VideoPlayer src={getCloudflareThumbnailUrl(memory.cloudflare_file_id, { width: 800 })} />
         )}
         <div className="absolute bottom-0 left-0 m-2 flex flex-col items-start gap-1">
           {memory.band && (

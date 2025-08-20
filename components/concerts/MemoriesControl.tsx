@@ -4,46 +4,43 @@ import { FileIcon, PauseIcon, PlayIcon, XIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
-import { Control, Controller, useFieldArray } from 'react-hook-form'
+import {
+  Control,
+  Controller,
+  useFieldArray,
+  useForm,
+  UseFormSetValue,
+  UseFormWatch,
+} from 'react-hook-form'
 import { Button } from '../Button'
 import { SelectField } from '../forms/SelectField'
 import { MemoryFileItem, useMemoriesControl } from '@/hooks/helpers/useMemoriesControl'
 import { LogFields } from './ConcertLogForm'
-import { getAssetUrl } from '@/lib/getAssetUrl'
-import { getR2ImageUrl } from '@/lib/cloudflareHelpers'
+import { getCloudflareImageUrl } from '@/lib/cloudflareHelpers'
 
 export function MemoriesControl({
   label,
   name,
-  control,
+  memoryFileItems,
+  setMemoryFileItems,
   acceptedFileTypes,
   bands,
   concertId,
 }: {
   label: string
   name: string
-  control: Control<LogFields>
+  memoryFileItems: MemoryFileItem[]
+  setMemoryFileItems: (items: MemoryFileItem[]) => void
   acceptedFileTypes?: string[]
   bands: Band[]
   concertId: number | null
 }) {
-  const {
-    fields: memoryFileItems,
-    append,
-    remove,
-    update
-  } = useFieldArray({
-    control,
-    name: 'memories',
-  })
-
   const { isDragActive, onDrag, onDrop, onChange } = useMemoriesControl({
     bucketName: 'concert-memories',
     folder: concertId?.toString(),
     acceptedFileTypes,
     memoryFileItems,
-    append,
-    update
+    setMemoryFileItems,
   })
   const ref = useRef(null)
   const t = useTranslations('MultiFileInput')
@@ -86,14 +83,19 @@ export function MemoriesControl({
         </div>
       </label>
       <div className="mt-2 grid gap-4 rounded-lg bg-slate-750 p-4">
-        {memoryFileItems.map((fileItem, index) => {
+        {memoryFileItems.map((memoryFileItem, index) => {
           return (
             <MemoryItem
-              fileItem={fileItem}
-              control={control}
+              memoryFileItem={memoryFileItem}
+              setMemoryFileItem={item => {
+                const newItems = [...memoryFileItems]
+                newItems[index] = item
+                setMemoryFileItems(newItems)
+              }}
               index={index}
               onRemove={() => {
-                remove(index)
+                const newItems = memoryFileItems.filter((_, i) => i !== index)
+                setMemoryFileItems(newItems)
               }}
               bands={bands}
               key={index}
@@ -107,19 +109,21 @@ export function MemoriesControl({
 }
 
 function MemoryItem({
-  fileItem,
-  control,
+  memoryFileItem,
+  setMemoryFileItem,
   index,
   onRemove,
   bands,
 }: {
-  fileItem: MemoryFileItem
-  control: Control<LogFields>
+  memoryFileItem: MemoryFileItem
+  setMemoryFileItem: (item: MemoryFileItem) => void
   index: number
   onRemove: () => void
   bands: Band[]
 }) {
-  const fileUrl = fileItem.file ? URL.createObjectURL(fileItem.file) : getR2ImageUrl(fileItem.fileName)
+  const fileUrl = memoryFileItem.file
+    ? URL.createObjectURL(memoryFileItem.file)
+    : getCloudflareImageUrl(memoryFileItem.cloudflare_file_id)
   const t = useTranslations('MultiFileInput')
   const videoRef = useRef<HTMLVideoElement>(null)
   const [isPaused, setIsPaused] = useState(true)
@@ -155,9 +159,9 @@ function MemoryItem({
   return (
     <div className="flex w-full gap-4 text-left text-sm">
       <div className="relative grid size-22 flex-none place-content-center rounded-md bg-slate-700">
-        {fileItem.file?.type.startsWith('image/') ? (
+        {memoryFileItem.file?.type.startsWith('image/') ? (
           <Image src={fileUrl} alt="" fill className="rounded-md object-contain" />
-        ) : fileItem.file?.type.startsWith('video/') ? (
+        ) : memoryFileItem.file?.type.startsWith('video/') ? (
           <>
             <video
               src={fileUrl}
@@ -183,23 +187,25 @@ function MemoryItem({
       <div className="grid w-full">
         <div className="flex w-full gap-2">
           <div className="mb-2 grid w-full">
-            <span className="truncate">{fileItem.file?.name}</span>
+            <span className="truncate">{memoryFileItem.file?.name}</span>
             <div className="my-1 h-1 w-full rounded bg-slate-700">
               <div
-                style={{ width: fileItem.progress + '%' }}
+                style={{ width: memoryFileItem.progress + '%' }}
                 className={clsx(
                   'h-1 rounded transition-[width]',
-                  fileItem.error ? 'bg-red' : fileItem.isSuccess ? 'bg-venom' : 'bg-blue'
+                  memoryFileItem.error ? 'bg-red' : memoryFileItem.isSuccess ? 'bg-venom' : 'bg-blue'
                 )}
               />
             </div>
             <div className="flex justify-between">
-              {fileItem.isLoading ? (
-                <span className="text-blue">Uploading ... {fileItem.progress.toFixed(2)} %</span>
-              ) : fileItem.isSuccess ? (
+              {memoryFileItem.isLoading ? (
+                <span className="text-blue">Uploading ... {memoryFileItem.progress.toFixed(2)} %</span>
+              ) : memoryFileItem.isSuccess ? (
                 <span className="text-venom">Uploaded</span>
               ) : null}
-              <span className="text-slate-300">{fileItem.file ? formatSize(fileItem.file.size) : null}</span>
+              <span className="text-slate-300">
+                {memoryFileItem.file ? formatSize(memoryFileItem.file.size) : null}
+              </span>
             </div>
           </div>
           <Button
@@ -214,20 +220,14 @@ function MemoryItem({
           />
         </div>
         <div className="overflow-hidden">
-          <Controller
-            name={`memories.${index}.bandId`}
-            control={control}
-            render={({ field: { value, onChange } }) => (
               <SelectField
                 label="Band"
                 name="bandId"
                 items={bands.map(band => ({ id: band.id, name: band.name }))}
                 allItems={bands}
-                value={value}
-                onValueChange={onChange}
+                value={memoryFileItem.bandId}
+                onValueChange={bandId => setMemoryFileItem({ ...memoryFileItem, bandId })}
               />
-            )}
-          />
         </div>
       </div>
     </div>

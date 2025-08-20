@@ -1,11 +1,13 @@
+import { LogFields } from '@/components/concerts/ConcertLogForm'
 import { uploadImageCloudflare } from '@/lib/uploadImageCloudflare'
 import { uploadVideoCloudflare } from '@/lib/uploadVideoCloudflare'
 import { Tables } from '@/types/supabase'
 import { ChangeEvent, DragEvent, useMemo, useState } from 'react'
+import { UseFormSetValue } from 'react-hook-form'
 
 export type MemoryFileItem = {
-  file?: File
-  fileName: string
+  file: File | null
+  cloudflare_file_id: string | null
   preview: string
   isLoading: boolean
   progress: number
@@ -42,8 +44,7 @@ type UseMemoriesControlOptions = {
    */
   maxFiles?: number
   memoryFileItems: MemoryFileItem[]
-  append: (items: MemoryFileItem | MemoryFileItem[]) => void
-  update: (index: number, item: MemoryFileItem) => void
+  setMemoryFileItems: (items: MemoryFileItem[]) => void
 }
 
 export function useMemoriesControl(options: UseMemoriesControlOptions) {
@@ -54,8 +55,7 @@ export function useMemoriesControl(options: UseMemoriesControlOptions) {
     maxFileSize = Number.POSITIVE_INFINITY,
     maxFiles = Number.POSITIVE_INFINITY,
     memoryFileItems,
-    append,
-    update,
+    setMemoryFileItems,
   } = options
   const [dragActive, setDragActive] = useState(false)
   const isSuccess = useMemo(
@@ -65,10 +65,11 @@ export function useMemoriesControl(options: UseMemoriesControlOptions) {
   )
 
   function addFiles(files: File[]) {
-    append(
+    setMemoryFileItems(
       files.map(file => ({
         file,
-        fileName: '',
+        cloudflare_file_id: null,
+        file_type: file.type,
         preview: URL.createObjectURL(file),
         isLoading: false,
         progress: 0,
@@ -84,31 +85,64 @@ export function useMemoriesControl(options: UseMemoriesControlOptions) {
       files.map(async file => {
         try {
           if (file.type.startsWith('image/')) {
-            const { fileName } = await uploadImageCloudflare(file, {
+            const { imageId } = await uploadImageCloudflare(file, {
               prefix: 'concert-memories',
               acceptedFileTypes,
             })
 
             memoryFileItems.forEach((item, index) => {
               if (item.file?.name === file.name) {
-                update(index, { ...item, fileName, isLoading: false, isSuccess: true })
+                const newItems = [...memoryFileItems]
+                newItems[index] = {
+                  ...item,
+                  cloudflare_file_id: imageId,
+                  isLoading: false,
+                  isSuccess: true,
+                }
+                setMemoryFileItems(newItems)
               }
             })
           } else if (file.type.startsWith('video/')) {
+            // Set initial loading state for video upload
+            memoryFileItems.forEach((item, index) => {
+              if (item.file?.name === file.name) {
+                const newItems = [...memoryFileItems]
+                newItems[index] = {
+                  ...item,
+                  isLoading: true,
+                  progress: 0,
+                }
+                setMemoryFileItems(newItems)
+              }
+            })
+
             const { fileName } = await uploadVideoCloudflare(file, {
               prefix: 'concert-memories',
               acceptedFileTypes,
               onUploadProgress: progress => {
                 memoryFileItems.forEach((item, index) => {
                   if (item.file?.name === file.name) {
-                    update(index, { ...item, isLoading: true, progress })
+                    const newItems = [...memoryFileItems]
+                    newItems[index] = {
+                      ...item,
+                      progress,
+                      isLoading: true,
+                    }
+                    setMemoryFileItems(newItems)
                   }
                 })
               },
               onSuccess: () => {
                 memoryFileItems.forEach((item, index) => {
                   if (item.file?.name === file.name) {
-                    update(index, { ...item, fileName, isLoading: false, isSuccess: true })
+                    const newItems = [...memoryFileItems]
+                    newItems[index] = {
+                      ...item,
+                      cloudflare_file_id: fileName,
+                      isLoading: false,
+                      isSuccess: true,
+                    }
+                    setMemoryFileItems(newItems)
                   }
                 })
               },
@@ -116,12 +150,15 @@ export function useMemoriesControl(options: UseMemoriesControlOptions) {
           }
         } catch (error) {
           memoryFileItems.forEach((item, index) => {
-            if (item.file?.name === file.name)
-              update(index, {
+            if (item.file?.name === file.name) {
+              const newItems = [...memoryFileItems]
+              newItems[index] = {
                 ...item,
                 isLoading: false,
                 error: error instanceof Error ? error.message : JSON.stringify(error),
-              })
+              }
+              setMemoryFileItems(newItems)
+            }
           })
         }
       })

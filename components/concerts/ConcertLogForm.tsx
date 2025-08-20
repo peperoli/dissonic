@@ -44,8 +44,9 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
       memories:
         initialMemories?.map(memory => ({
           ...memory,
+          file: null,
+          cloudflare_file_id: null,
           bandId: memory.band_id,
-          fileName: '',
           preview: '',
           isLoading: false,
           progress: 100,
@@ -61,29 +62,28 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
   const addLog = useAddLog()
   const editLog = useEditLog()
   const t = useTranslations('ConcertLogForm')
-  const [uploadProgress, setUploadProgress] = useState(0)
   const isPending = addLog.isPending || editLog.isPending
   const isSuccess = addLog.isSuccess || editLog.isSuccess
-
-  const { data: uploadUrlData } = useQuery({
-    queryKey: ['direct-upload-url'],
-    queryFn: async () => {
-      return await getImageUploadUrl()
-    },
-  })
 
   function onSubmit(formData: LogFields) {
     const { bandsSeen, memories, comment } = formData
     const initialBandsSeenIds = initialBandsSeen?.map(item => item?.band_id)
     const bandsToAdd = bandsSeen.filter(item => !initialBandsSeenIds?.includes(item))
     const bandsToDelete = initialBandsSeenIds?.filter(item => !bandsSeen.includes(item)) ?? []
-    const memoriesIds = memories.filter(memory => 'id' in memory).map(memory => memory.id)
-    const memoriesToAdd = memories.filter(memory => 'file' in memory)
-    const memoriesToDelete =
-      initialMemories?.filter(initialMemory => !memoriesIds.includes(initialMemory.id)) ?? []
-    const memoriesToUpdate = memories
+    const initialMemoriesIds = initialMemories?.map(memory => memory.cloudflare_file_id) ?? []
+    const memoriesIds = memories
       .filter(memory => 'id' in memory)
-      .filter(memory => initialMemories?.some(initialMemory => initialMemory.id === memory.id))
+      .map(memory => memory.cloudflare_file_id)
+    const memoriesToAdd = memories.filter(
+      memory => !initialMemoriesIds.includes(memory.cloudflare_file_id)
+    )
+    const memoriesToDelete =
+      initialMemories?.filter(
+        initialMemory => !memoriesIds.includes(initialMemory.cloudflare_file_id)
+      ) ?? []
+    const memoriesToUpdate = memories.filter(memory =>
+      initialMemoriesIds.includes(memory.cloudflare_file_id)
+    )
 
     if (!session || !concert) {
       return
@@ -107,11 +107,6 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
         memoriesToDelete,
         memoriesToUpdate,
         comment,
-        onUploadProgress: progress => {
-          if (progress) {
-            setUploadProgress(progress)
-          }
-        },
       })
     }
   }
@@ -141,13 +136,20 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
             )}
           />
         </fieldset>
-        <MemoriesControl
+        <Controller
           name="memories"
           control={control}
-          label={t('memories')}
-          acceptedFileTypes={['image/*', 'video/*']}
-          bands={concert?.bands || []}
-          concertId={concert?.id ?? null}
+          render={({ field }) => (
+            <MemoriesControl
+              name="memories"
+              memoryFileItems={field.value}
+              setMemoryFileItems={field.onChange}
+              label={t('memories')}
+              acceptedFileTypes={['image/*', 'video/*']}
+              bands={concert?.bands || []}
+              concertId={concert?.id ?? null}
+            />
+          )}
         />
         <TextArea
           {...register('comment')}
@@ -156,14 +158,7 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
         />
         <div className="sticky bottom-0 z-10 mt-auto flex gap-4 bg-slate-800 py-4 md:static md:z-0 md:justify-end md:pb-0 [&>*]:flex-1">
           <Button onClick={close} label={t('cancel')} />
-          <button type="submit" className="btn btn-primary" disabled={isPending}>
-            {isPending ? t('saving') : t('save')}
-            {uploadProgress > 0 && (
-              <span className="ml-2 text-sm text-slate-300">
-                ({Math.round(uploadProgress * 100)}%)
-              </span>
-            )}
-          </button>
+          <Button type="submit" label={t('save')} appearance='primary' loading={isPending} />
         </div>
       </form>
     </>

@@ -1,5 +1,3 @@
-import { Memory } from '@/components/concerts/ConcertLogForm'
-import { uploadMemory } from '@/lib/uploadMemory'
 import { Tables } from '@/types/supabase'
 import supabase from '@/utils/supabase/client'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -16,7 +14,7 @@ async function addLog({
   concertId: number
   userId: string
   bandsToAdd: number[]
-  memoriesToAdd: Exclude<Memory, Tables<'memories'>>[]
+  memoriesToAdd: Tables<'memories'>[]
   comment: Tables<'comments'>['content']
 }) {
   const { error: insertBandsError } = await supabase.from('j_bands_seen').insert(
@@ -31,13 +29,19 @@ async function addLog({
     throw insertBandsError
   }
 
-  await Promise.all(
-    memoriesToAdd.map(memory =>
-      uploadMemory(memory, concertId, progress => {
-        console.log(`Upload progress: ${Math.round(progress * 100)}%`)
-      })
-    )
+  const { error: insertMemoriesError } = await supabase.from('memories').insert(
+    memoriesToAdd.map((memory) => ({
+      concert_id: concertId,
+      band_id: memory.band_id,
+      cloudflare_file_id: memory.cloudflare_file_id,
+      file_type: memory.file_type,
+    }))
   )
+
+  if (insertMemoriesError) {
+    throw insertMemoriesError
+  }
+
 
   if (!!comment?.length) {
     const { error: insertCommentError } = await supabase

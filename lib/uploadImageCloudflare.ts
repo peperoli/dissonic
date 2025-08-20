@@ -7,11 +7,11 @@ export async function uploadImageCloudflare(
     acceptedFileTypes?: string[]
   }
 ) {
-  const { id, uploadURL } = await getImageUploadUrl()
+  const { imageId, uploadURL } = await getImageUploadUrl()
   const fileExtension = file.type.split('/').at(-1)
   const fileName = options?.prefix
-    ? `${options.prefix}-${id}.${fileExtension}`
-    : `${id}.${fileExtension}`
+    ? `${options.prefix}-${imageId}.${fileExtension}`
+    : `${imageId}.${fileExtension}`
   const formData = new FormData()
   formData.append('file', file, fileName)
 
@@ -25,5 +25,5 @@ export async function uploadImageCloudflare(
     throw new Error(`Failed to upload file: ${file.name}`)
   }
 
-  return { fileName }
+  return { imageId }
 }
