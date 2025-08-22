@@ -8,10 +8,10 @@ export type ActivityItemT = Database['public']['Views']['activities']['Row'] & {
 }
 
 async function fetchData({
-  params,
+  username,
   searchParams,
 }: {
-  params: { username: string }
+  username: string
   searchParams: { size?: string }
 }) {
   const supabase = await createClient()
@@ -19,7 +19,7 @@ async function fetchData({
   const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('id')
-    .eq('username', params.username)
+    .eq('username', username)
     .single()
 
   if (profileError) {
@@ -45,9 +45,12 @@ export default async function ActivityPage(props: {
   params: Promise<{ username: string }>
   searchParams: Promise<{ size?: string }>
 }) {
-  const params = await props.params
+  const { username } = await props.params
   const searchParams = await props.searchParams
-  const { profileId, ...activities } = await fetchData({ params, searchParams })
+  const { profileId, ...activities } = await fetchData({
+    username: decodeURIComponent(username),
+    searchParams,
+  })
 
   return (
     <section className="grid gap-6">

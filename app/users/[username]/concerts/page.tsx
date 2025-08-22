@@ -19,6 +19,6 @@ async function fetchData(username: string) {
 
 export default async function Page({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params
-  const { profile } = await fetchData(username)
+  const { profile } = await fetchData(decodeURIComponent(username))
   return <ConcertList profileId={profile.id} />
 }

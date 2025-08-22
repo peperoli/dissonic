@@ -42,7 +42,7 @@ export default async function SettingsPage() {
 
   return (
     <main className="container">
-      <Link href={`/users/${profile.username}`} className="btn btn-small btn-tertiary mb-2">
+      <Link href={`/users/${encodeURIComponent(profile.username)}`} className="btn btn-small btn-tertiary mb-2">
         <ArrowLeft className="size-icon" />
         {t('profile')}
       </Link>

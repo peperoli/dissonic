@@ -42,7 +42,7 @@ function LocationUserItem({
       </DrawerTitle>
       <div className="flex items-center justify-between border-b border-slate-700 pb-4">
         <UserItem user={profile} description={t('nConcerts', { count })} />
-        <Link href={`/users/${profile.username}`} className="btn btn-secondary btn-small">
+        <Link href={`/users/${encodeURIComponent(profile.username)}`} className="btn btn-secondary btn-small">
           {t('showProfile')}
         </Link>
       </div>

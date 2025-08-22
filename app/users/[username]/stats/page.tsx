@@ -29,7 +29,7 @@ async function fetchData(username: string) {
 
 export default async function Page({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params
-  const { profile, session } = await fetchData(username)
+  const { profile, session } = await fetchData(decodeURIComponent(username))
   return (
     <section className="grid gap-4">
       {session && session.user.id !== profile.id && <Comparison profileId={profile.id} />}
