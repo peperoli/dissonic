@@ -39,7 +39,7 @@ async function fetchData(username: string) {
 
 export default async function Page({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params
-  const { user, profile, friends } = await fetchData(username)
+  const { user, profile, friends } = await fetchData(decodeURIComponent(username))
   const t = await getTranslations('FriendsPage')
   const acceptedFriends = friends.filter(item => !item.pending)
   const isOwnProfile = user?.id === profile.id

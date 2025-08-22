@@ -8,10 +8,10 @@ import { InfoIcon } from 'lucide-react'
 import { getLocale, getTranslations } from 'next-intl/server'
 
 async function fetchData({
-  params,
+  username,
   searchParams,
 }: {
-  params: { username: string }
+  username: string
   searchParams: { size?: string }
 }) {
   const supabase = await createClient()
@@ -19,7 +19,7 @@ async function fetchData({
   const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('id')
-    .eq('username', params.username)
+    .eq('username', username)
     .single()
 
   if (profileError) {
@@ -71,7 +71,7 @@ export default async function ContributionsPage(props: {
   params: Promise<{ username: string }>
   searchParams: Promise<{ size?: string }>
 }) {
-  const params = await props.params
+  const { username } = await props.params
   const searchParams = await props.searchParams
   const {
     contributions,
@@ -80,7 +80,7 @@ export default async function ContributionsPage(props: {
     addedBandsCount,
     addedLocationsCount,
   } = await fetchData({
-    params,
+    username: decodeURIComponent(username),
     searchParams,
   })
   const locale = await getLocale()

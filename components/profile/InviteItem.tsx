@@ -67,7 +67,7 @@ export const InviteItem = ({ inviteData, type }: InviteItemType) => {
   if (invite && profile) {
     return (
       <div className="flex flex-wrap items-center gap-2 md:gap-4">
-        <Link href={`/users/${profile.username}`}>
+        <Link href={`/users/${encodeURIComponent(profile.username)}`}>
           <UserItem user={profile} />
         </Link>
         <div className="flex w-full gap-2 md:ml-auto md:w-fit">

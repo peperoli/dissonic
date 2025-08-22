@@ -18,7 +18,7 @@ export const UserItem = ({ profileStat, index }: UserItemProps) => {
   const avatarUrl = getAssetUrl('avatars', profileStat.avatar_path, profileStat.updated_at)
 
   return (
-    <Link href={`/users/${profileStat.username}`} className="block">
+    <Link href={`/users/${encodeURIComponent(profileStat.username!)}`} className="block">
       <div className="relative grid aspect-square place-content-center rounded-full bg-blue">
         {avatarUrl ? (
           <Image

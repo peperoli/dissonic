@@ -15,12 +15,12 @@ export async function generateMetadata(
 ) {
   const { username } = await params
   const t = await getTranslations('ProfileLayout')
-  const { profile } = await fetchData(username)
+  const { profile } = await fetchData(decodeURIComponent(username))
   const avatarUrl = getAssetUrl('avatars', profile.avatar_path, profile.updated_at)
   const parentImages = (await parent).openGraph?.images || []
 
   return {
-    title: t('title', { username }),
+    title: t('title', { username: decodeURIComponent(username) }),
     openGraph: {
       images: avatarUrl ? [avatarUrl] : parentImages,
     },
@@ -67,7 +67,7 @@ export default async function ProfileLayout({
   params: Promise<{ username: string }>
 }>) {
   const { username } = await params
-  const { profile, user, friend } = await fetchData(username)
+  const { profile, user, friend } = await fetchData(decodeURIComponent(username))
   const t = await getTranslations('ProfileLayout')
 
   const tabs = [
