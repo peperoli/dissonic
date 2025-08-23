@@ -1,20 +1,20 @@
 import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 import { getCounts, ItemCount } from '@/lib/getCounts'
-import { Band, Location } from '@/types/types'
 import { useEffect, useState, JSX } from 'react'
 import { Button } from '../Button'
 import { useTranslations } from 'next-intl'
+import { Tables } from '@/types/supabase'
 
 type TopGridProps = {
   headline: string
 } & (
   | {
-      items: Band[]
-      Item: ({ topItem }: { topItem: ItemCount & Band }) => JSX.Element
+      items: Tables<'bands'>[]
+      Item: ({ topItem }: { topItem: ItemCount & Tables<'bands'> }) => JSX.Element
     }
   | {
-      items: Location[]
-      Item: ({ topItem }: { topItem: ItemCount & Location }) => JSX.Element
+      items: Tables<'locations'>[]
+      Item: ({ topItem }: { topItem: ItemCount & Tables<'locations'> }) => JSX.Element
     }
 )
 
@@ -22,7 +22,7 @@ export const TopGrid = ({ headline, items, Item }: TopGridProps) => {
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const [visibleItems, setVisibleItems] = useState(9)
   const t = useTranslations('TopGrid')
-  const itemCounts = getCounts<Band | Location>(items).filter(item => item.count > 1)
+  const itemCounts = getCounts<Tables<'bands'> | Tables<'locations'>>(items).filter(item => item.count > 1)
 
   useEffect(() => {
     if (isDesktop) {

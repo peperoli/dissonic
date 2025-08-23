@@ -1,7 +1,6 @@
 'use client'
 
 import { useSession } from '@/hooks/auth/useSession'
-import { useBandsSeen } from '@/hooks/bands/useBandsSeen'
 import { Tooltip } from '../shared/Tooltip'
 import { UserItem } from '../shared/UserItem'
 import { useProfile } from '@/hooks/profiles/useProfile'
@@ -10,6 +9,42 @@ import { Tables } from '@/types/supabase'
 import { useTranslations } from 'next-intl'
 import clsx from 'clsx'
 import { CalendarIcon, GuitarIcon, MapPinIcon } from 'lucide-react'
+import supabase from '@/utils/supabase/client'
+import { useQuery } from '@tanstack/react-query'
+
+async function fetchBandsSeen(profileId?: string) {
+  let countQuery = supabase.from('j_bands_seen').select('*', { count: 'estimated', head: true })
+
+  if (profileId) {
+    countQuery = countQuery.eq('user_id', profileId)
+  }
+
+  const { count } = await countQuery
+  const perPage = 1000
+  const maxPage = count ? Math.ceil(count / perPage) : 1
+  const queries = []
+
+  for (let page = 1; page <= maxPage; page++) {
+    let query = supabase
+      .from('j_bands_seen')
+      .select('*, concert:concerts(location_id)')
+      .range((page - 1) * perPage, page * perPage - 1)
+
+    if (profileId) {
+      query = query.eq('user_id', profileId)
+    }
+
+    queries.push(query)
+  }
+
+  const responses = await Promise.all(queries)
+
+  if (responses.some(({ error }) => error)) {
+    throw responses.find(({ error }) => error)
+  }
+
+  return responses.flatMap(({ data }) => data).filter(bandSeen => bandSeen !== null)
+}
 
 export function ComparisonChart({
   user1,
@@ -22,12 +57,10 @@ export function ComparisonChart({
   user1: Profile
   user2: Profile
   user1BandsSeen: (Tables<'j_bands_seen'> & {
-    concert: Tables<'concerts'> | null
-    band: Tables<'bands'> | null
+    concert: Pick<Tables<'concerts'>, 'location_id'> | null
   })[]
   user2BandsSeen: (Tables<'j_bands_seen'> & {
-    concert: Tables<'concerts'> | null
-    band: Tables<'bands'> | null
+    concert: Pick<Tables<'concerts'>, 'location_id'> | null
   })[]
   resourceType: 'concerts' | 'bands' | 'locations'
   size?: 'sm' | 'md'
@@ -170,8 +203,14 @@ export function Comparison({ profileId }: { profileId: string }) {
   const { data: session } = useSession()
   const { data: sessionProfile } = useProfile(session?.user.id ?? null)
   const { data: profile } = useProfile(profileId)
-  const { data: bandsSeen1 } = useBandsSeen({ userId: session?.user.id })
-  const { data: bandsSeen2 } = useBandsSeen({ userId: profileId })
+  const { data: bandsSeen1 } = useQuery({
+    queryKey: ['bandsSeenComparison', session?.user.id],
+    queryFn: () => fetchBandsSeen(session?.user.id),
+  })
+  const { data: bandsSeen2 } = useQuery({
+    queryKey: ['bandsSeenComparison', profileId],
+    queryFn: () => fetchBandsSeen(profileId),
+  })
   const t = useTranslations('Comparison')
 
   if (!sessionProfile || !profile || !bandsSeen1 || !bandsSeen2) {
