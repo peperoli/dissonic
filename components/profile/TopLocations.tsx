@@ -1,17 +1,52 @@
 'use client'
 
-import { useBandsSeen } from '@/hooks/bands/useBandsSeen'
 import { TopGrid } from './TopGrid'
 import { getUniqueObjects } from '@/lib/getUniqueObjects'
 import { useTranslations } from 'next-intl'
 import { ItemCount } from '@/lib/getCounts'
-import { Location } from '@/types/types'
 import { MapPin } from 'lucide-react'
 import Link from 'next/link'
 import { getAssetUrl } from '@/lib/getAssetUrl'
 import Image from 'next/image'
+import supabase from '@/utils/supabase/client'
+import { useQuery } from '@tanstack/react-query'
+import { Tables } from '@/types/supabase'
 
-export const LocationItem = ({ topItem }: { topItem: ItemCount & Location }) => {
+async function fetchBandsSeen(profileId?: string) {
+  let countQuery = supabase.from('j_bands_seen').select('*', { count: 'estimated', head: true })
+
+  if (profileId) {
+    countQuery = countQuery.eq('user_id', profileId)
+  }
+
+  const { count } = await countQuery
+  const perPage = 1000
+  const maxPage = count ? Math.ceil(count / perPage) : 1
+  const queries = []
+
+  for (let page = 1; page <= maxPage; page++) {
+    let query = supabase
+      .from('j_bands_seen')
+      .select('*, concert:concerts(id, location:locations(*))')
+      .range((page - 1) * perPage, page * perPage - 1)
+
+    if (profileId) {
+      query = query.eq('user_id', profileId)
+    }
+
+    queries.push(query)
+  }
+
+  const responses = await Promise.all(queries)
+
+  if (responses.some(({ error }) => error)) {
+    throw responses.find(({ error }) => error)
+  }
+
+  return responses.flatMap(({ data }) => data).filter(bandSeen => bandSeen !== null)
+}
+
+export const LocationItem = ({ topItem }: { topItem: ItemCount & Tables<'locations'> }) => {
   const imageUrl = getAssetUrl('ressources', topItem.image, topItem.updated_at)
   const t = useTranslations('TopLocations')
 
@@ -34,7 +69,10 @@ export const LocationItem = ({ topItem }: { topItem: ItemCount & Location }) => 
 }
 
 export function TopLocations({ profileId }: { profileId?: string }) {
-  const { data: bandsSeen, status: bandsSeenStatus } = useBandsSeen({ userId: profileId })
+  const { data: bandsSeen, status: bandsSeenStatus } = useQuery({
+    queryKey: ['bandsSeenTopLocations', profileId],
+    queryFn: () => fetchBandsSeen(profileId),
+  })
   const t = useTranslations('TopLocations')
   const concertsSeen = getUniqueObjects(
     bandsSeen?.map(item => ({
