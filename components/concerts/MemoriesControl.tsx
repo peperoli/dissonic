@@ -1,37 +1,52 @@
 import { Band } from '@/types/types'
 import clsx from 'clsx'
-import { FileIcon, PauseIcon, PlayIcon, XIcon } from 'lucide-react'
+import { FileIcon, XIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { Button } from '../Button'
 import { SelectField } from '../forms/SelectField'
-import { MemoryFileItem, useMemoriesControl } from '@/hooks/helpers/useMemoriesControl'
+import { FileItem, useMemoriesControl } from '@/hooks/helpers/useMemoriesControl'
 import { getCloudflareImageUrl } from '@/lib/cloudflareHelpers'
+import { TablesInsert } from '@/types/supabase'
 
 export function MemoriesControl({
   label,
   name,
-  // memoryFileItems,
-  // setMemoryFileItems,
+  value,
+  onValueChange,
   acceptedFileTypes,
   bands,
   concertId,
 }: {
   label: string
   name: string
-  memoryFileItems: MemoryFileItem[]
-  setMemoryFileItems: (items: MemoryFileItem[]) => void
+  value: TablesInsert<'memories'>[]
+  onValueChange: (value: TablesInsert<'memories'>[]) => void
   acceptedFileTypes?: string[]
   bands: Band[]
   concertId: number | null
 }) {
-  const { isDragActive, onDrag, onDrop, onChange, memoryFileItems, setMemoryFileItems } =
-    useMemoriesControl({
-      acceptedFileTypes,
-    })
+  const { isDragActive, onDrag, onDrop, onChange, fileItems, setFileItems } = useMemoriesControl({
+    prefix: 'concert-memories',
+    acceptedFileTypes,
+  })
   const ref = useRef(null)
   const t = useTranslations('MultiFileInput')
+
+  useEffect(() => {
+    if (!concertId) return
+
+    const filteredFileItems = fileItems.filter(fileItem => fileItem.fileId != null)
+    onValueChange(
+      filteredFileItems.map(fileItem => ({
+        cloudflare_file_id: fileItem.fileId!,
+        file_type: fileItem.file.type,
+        band_id: fileItem.bandId,
+        concert_id: concertId,
+      }))
+    )
+  }, [fileItems.length, fileItems.map(fileItem => fileItem.fileId).join(',')])
 
   return (
     <div className="grid">
@@ -71,19 +86,19 @@ export function MemoriesControl({
         </div>
       </label>
       <div className="mt-2 grid gap-4 rounded-lg bg-slate-750 p-4">
-        {memoryFileItems.map((memoryFileItem, index) => {
+        {fileItems.map((fileItem, index) => {
           return (
             <MemoryItem
-              memoryFileItem={memoryFileItem}
-              setMemoryFileItem={item => {
-                const newItems = [...memoryFileItems]
+              fileItem={fileItem}
+              setFileItem={item => {
+                const newItems = [...fileItems]
                 newItems[index] = item
-                setMemoryFileItems(newItems)
+                setFileItems(newItems)
               }}
               index={index}
               onRemove={() => {
-                const newItems = memoryFileItems.filter((_, i) => i !== index)
-                setMemoryFileItems(newItems)
+                const newItems = fileItems.filter((_, i) => i !== index)
+                setFileItems(newItems)
               }}
               bands={bands}
               key={index}
@@ -91,32 +106,30 @@ export function MemoriesControl({
           )
         })}
       </div>
-      <pre className="max-w-xl overflow-auto">{JSON.stringify(memoryFileItems, null, 2)}</pre>
+      <pre className="max-w-xl overflow-auto">{JSON.stringify(fileItems, null, 2)}</pre>
     </div>
   )
 }
 
 function MemoryItem({
-  memoryFileItem,
-  setMemoryFileItem,
+  fileItem,
+  setFileItem,
   index,
   onRemove,
   bands,
 }: {
-  memoryFileItem: MemoryFileItem
-  setMemoryFileItem: (item: MemoryFileItem) => void
+  fileItem: FileItem
+  setFileItem: (item: FileItem) => void
   index: number
   onRemove: () => void
   bands: Band[]
 }) {
-  const fileUrl = memoryFileItem.file
-    ? URL.createObjectURL(memoryFileItem.file)
-    : memoryFileItem.cloudflare_file_id
-      ? getCloudflareImageUrl(memoryFileItem.cloudflare_file_id)
+  const fileUrl = fileItem.file
+    ? URL.createObjectURL(fileItem.file)
+    : fileItem.fileId
+      ? getCloudflareImageUrl(fileItem.fileId)
       : null
   const t = useTranslations('MultiFileInput')
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const [isPaused, setIsPaused] = useState(true)
 
   function formatSize(bytes: number) {
     if (bytes < 1024 ** 2) {
@@ -126,50 +139,19 @@ function MemoryItem({
     }
   }
 
-  useEffect(() => {
-    if (videoRef.current) {
-      if (!videoRef.current.paused) {
-        setIsPaused(false)
-      }
-    }
-  }, [videoRef.current])
-
-  function togglePlay() {
-    if (videoRef.current) {
-      if (videoRef.current.paused) {
-        videoRef.current.play()
-        setIsPaused(false)
-      } else {
-        videoRef.current.pause()
-        setIsPaused(true)
-      }
-    }
-  }
-
   return (
     <div className="flex w-full gap-4 text-left text-sm">
       <div className="relative grid size-22 flex-none place-content-center rounded-md bg-slate-700">
-        {memoryFileItem.file?.type.startsWith('image/') ? (
+        {fileItem.file?.type.startsWith('image/') && fileUrl ? (
           <Image src={fileUrl} alt="" fill className="rounded-md object-contain" />
-        ) : memoryFileItem.file?.type.startsWith('video/') ? (
-          <>
-            <video
-              src={fileUrl}
-              ref={videoRef}
-              className="absolute inset-0 size-full rounded-md object-cover"
-            />
-            <Button
-              label={t('play')}
-              icon={
-                isPaused ? <PlayIcon className="size-icon" /> : <PauseIcon className="size-icon" />
-              }
-              contentType="icon"
-              size="small"
-              appearance="secondary"
-              onClick={togglePlay}
-              className="relative"
-            />
-          </>
+        ) : fileItem.file?.type.startsWith('video/') && fileUrl ? (
+          <video
+            src={fileUrl}
+            autoPlay
+            muted
+            playsInline
+            className="absolute inset-0 size-full rounded-md object-contain"
+          />
         ) : (
           <FileIcon className="text-xl" />
         )}
@@ -177,30 +159,24 @@ function MemoryItem({
       <div className="grid w-full">
         <div className="flex w-full gap-2">
           <div className="mb-2 grid w-full">
-            <span className="truncate">{memoryFileItem.file?.name}</span>
+            <span className="truncate">{fileItem.file?.name}</span>
             <div className="my-1 h-1 w-full rounded bg-slate-700">
               <div
-                style={{ width: memoryFileItem.progress + '%' }}
+                style={{ width: fileItem.progress + '%' }}
                 className={clsx(
                   'h-1 rounded transition-[width]',
-                  memoryFileItem.error
-                    ? 'bg-red'
-                    : memoryFileItem.isSuccess
-                      ? 'bg-venom'
-                      : 'bg-blue'
+                  fileItem.error ? 'bg-red' : fileItem.isSuccess ? 'bg-venom' : 'bg-blue'
                 )}
               />
             </div>
             <div className="flex justify-between">
-              {memoryFileItem.isLoading ? (
-                <span className="text-blue">
-                  Uploading ... {memoryFileItem.progress.toFixed(2)} %
-                </span>
-              ) : memoryFileItem.isSuccess ? (
+              {fileItem.isLoading ? (
+                <span className="text-blue">Uploading ... {fileItem.progress.toFixed(2)} %</span>
+              ) : fileItem.isSuccess ? (
                 <span className="text-venom">Uploaded</span>
               ) : null}
               <span className="text-slate-300">
-                {memoryFileItem.file ? formatSize(memoryFileItem.file.size) : null}
+                {fileItem.file ? formatSize(fileItem.file.size) : null}
               </span>
             </div>
           </div>
@@ -221,8 +197,8 @@ function MemoryItem({
             name="bandId"
             items={bands.map(band => ({ id: band.id, name: band.name }))}
             allItems={bands}
-            value={memoryFileItem.bandId}
-            onValueChange={bandId => setMemoryFileItem({ ...memoryFileItem, bandId })}
+            value={fileItem.bandId}
+            onValueChange={bandId => setFileItem({ ...fileItem, bandId })}
           />
         </div>
       </div>

@@ -9,19 +9,16 @@ import * as Checkbox from '@radix-ui/react-checkbox'
 import clsx from 'clsx'
 import { useTranslations } from 'next-intl'
 import { useParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useSession } from '../../hooks/auth/useSession'
 import { Button } from '../Button'
 import { TextArea } from '../forms/TextArea'
-import { getImageUploadUrl } from '@/actions/files'
-import { useQuery } from '@tanstack/react-query'
 import { MemoriesControl } from './MemoriesControl'
-import { MemoryFileItem } from '@/hooks/helpers/useMemoriesControl'
 
 export type LogFields = {
   bandsSeen: number[]
-  memories: MemoryFileItem[]
+  memories: Tables<'memories'>[]
   comment: string
 }
 
@@ -41,18 +38,7 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
         concert?.bands_seen
           ?.filter(bandSeen => bandSeen.user_id === session?.user.id)
           .map(bandSeen => bandSeen.band_id) ?? [],
-      memories:
-        initialMemories?.map(memory => ({
-          ...memory,
-          file: null,
-          cloudflare_file_id: null,
-          bandId: memory.band_id,
-          preview: '',
-          isLoading: false,
-          progress: 100,
-          isSuccess: true,
-          error: null,
-        })) ?? [],
+      memories: initialMemories ?? [],
       comment: comments?.[0]?.content || '',
     },
   })
@@ -142,8 +128,8 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
           render={({ field }) => (
             <MemoriesControl
               name="memories"
-              memoryFileItems={field.value}
-              setMemoryFileItems={field.onChange}
+              value={field.value}
+              onValueChange={field.onChange}
               label={t('memories')}
               acceptedFileTypes={['image/*', 'video/*']}
               bands={concert?.bands || []}
@@ -158,7 +144,7 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
         />
         <div className="sticky bottom-0 z-10 mt-auto flex gap-4 bg-slate-800 py-4 md:static md:z-0 md:justify-end md:pb-0 [&>*]:flex-1">
           <Button onClick={close} label={t('cancel')} />
-          <Button type="submit" label={t('save')} appearance='primary' loading={isPending} />
+          <Button type="submit" label={t('save')} appearance="primary" loading={isPending} />
         </div>
       </form>
     </>

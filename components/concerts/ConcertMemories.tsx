@@ -1,5 +1,9 @@
 import { useMemories } from '@/hooks/concerts/useMemories'
-import { getCloudflareImageUrl, getCloudflareThumbnailUrl } from '@/lib/cloudflareHelpers'
+import {
+  getCloudflareImageUrl,
+  getCloudflareThumbnailUrl,
+  getCloudflareVideoUrl,
+} from '@/lib/cloudflareHelpers'
 import Image from 'next/image'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useTranslations } from 'next-intl'
@@ -11,6 +15,7 @@ import { UserItem } from '../shared/UserItem'
 import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
 import supabase from '@/utils/supabase/client'
+import ReactPlayer from 'react-player'
 
 async function fetchMemoriesCount(concertId: number, fileType?: 'image/' | 'video/') {
   let query = supabase.from('memories').select('id', { count: 'exact' }).eq('concert_id', concertId)
@@ -87,10 +92,9 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
                         fit: 'cover',
                       })
                     : getCloudflareThumbnailUrl(memory.cloudflare_file_id, {
-                        time: '10s',
+                        time: '1s',
                         width: 300,
                         height: 300,
-                        fit: 'cover',
                       })
                 }
                 alt=""
@@ -179,7 +183,24 @@ function MemoryItem({ memory }: { memory: Memory }) {
             className="max-h-full rounded-lg object-cover"
           />
         ) : (
-          <VideoPlayer src={getCloudflareThumbnailUrl(memory.cloudflare_file_id, { width: 800 })} />
+          <ReactPlayer
+            src={getCloudflareVideoUrl(memory.cloudflare_file_id)}
+            controls
+            light={
+              <Image
+                src={getCloudflareThumbnailUrl(memory.cloudflare_file_id, { width: 800 })}
+                alt=""
+                width={1000}
+                height={1000}
+                unoptimized
+                className="max-h-full rounded-lg object-cover"
+              />
+            }
+            style={{
+          width: "100%",
+          height: "100%",
+        }}
+          />
         )}
         <div className="absolute bottom-0 left-0 m-2 flex flex-col items-start gap-1">
           {memory.band && (

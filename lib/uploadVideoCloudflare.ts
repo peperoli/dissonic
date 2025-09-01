@@ -39,6 +39,7 @@ export async function uploadVideoCloudflare(
 
         if (!videoId) {
           reject(new Error('Failed to extract video ID from upload URL'))
+          return
         }
 
         resolve({ fileName, videoId })

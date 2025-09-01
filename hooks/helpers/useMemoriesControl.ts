@@ -2,9 +2,9 @@ import { uploadImageCloudflare } from '@/lib/uploadImageCloudflare'
 import { uploadVideoCloudflare } from '@/lib/uploadVideoCloudflare'
 import { ChangeEvent, DragEvent, useMemo, useState } from 'react'
 
-export type MemoryFileItem = {
+export type FileItem = {
   file: File
-  cloudflare_file_id: string | null
+  fileId: string | null
   preview: string
   isLoading: boolean
   progress: number
@@ -13,10 +13,10 @@ export type MemoryFileItem = {
   bandId: number | null
 }
 
-export function useMemoriesControl(options: { acceptedFileTypes?: string[] }) {
-  const { acceptedFileTypes = [] } = options
+export function useMemoriesControl(options: { prefix?: string; acceptedFileTypes?: string[] }) {
+  const { prefix, acceptedFileTypes = [] } = options
   const [dragActive, setDragActive] = useState(false)
-  const [fileItems, setFileItems] = useState<MemoryFileItem[]>([])
+  const [fileItems, setFileItems] = useState<FileItem[]>([])
 
   const isSuccess = useMemo(
     () => fileItems.length > 0 && fileItems.every(item => !item.error && item.isSuccess),
@@ -28,7 +28,7 @@ export function useMemoriesControl(options: { acceptedFileTypes?: string[] }) {
       ...prevItems,
       ...files.map(file => ({
         file,
-        cloudflare_file_id: null,
+        fileId: null,
         preview: URL.createObjectURL(file),
         isLoading: true,
         progress: 0,
@@ -45,20 +45,20 @@ export function useMemoriesControl(options: { acceptedFileTypes?: string[] }) {
         try {
           if (file.type.startsWith('image/')) {
             const { imageId } = await uploadImageCloudflare(file, {
-              prefix: 'concert-memories',
+              prefix,
               acceptedFileTypes,
             })
 
             setFileItems(prevItems =>
               prevItems.map(item =>
                 item.file.name === file.name
-                  ? { ...item, cloudflare_file_id: imageId, isLoading: false, isSuccess: true }
+                  ? { ...item, fileId: imageId, isLoading: false, isSuccess: true }
                   : item
               )
             )
           } else if (file.type.startsWith('video/')) {
             const { videoId } = await uploadVideoCloudflare(file, {
-              prefix: 'concert-memories',
+              prefix,
               acceptedFileTypes,
               onUploadProgress: progress => {
                 setFileItems(prevItems =>
@@ -72,7 +72,7 @@ export function useMemoriesControl(options: { acceptedFileTypes?: string[] }) {
             setFileItems(prevItems =>
               prevItems.map(item =>
                 item.file.name === file.name
-                  ? { ...item, cloudflare_file_id: videoId, isLoading: false, isSuccess: true }
+                  ? { ...item, fileId: videoId, isLoading: false, isSuccess: true }
                   : item
               )
             )
@@ -127,8 +127,8 @@ export function useMemoriesControl(options: { acceptedFileTypes?: string[] }) {
   }
 
   return {
-    memoryFileItems: fileItems,
-    setMemoryFileItems: setFileItems,
+    fileItems,
+    setFileItems,
     isDragActive: dragActive,
     onDrag,
     onDrop,
