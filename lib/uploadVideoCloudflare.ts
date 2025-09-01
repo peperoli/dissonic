@@ -6,7 +6,6 @@ export async function uploadVideoCloudflare(
     prefix?: string
     acceptedFileTypes?: string[]
     onUploadProgress?: (progress: number) => void
-    onSuccess?: () => void
   }
 ) {
   const fileName = `concert-memories-${file.name}`
@@ -42,9 +41,6 @@ export async function uploadVideoCloudflare(
           reject(new Error('Failed to extract video ID from upload URL'))
         }
 
-        if (options?.onSuccess) {
-          options.onSuccess()
-        }
         resolve({ fileName, videoId })
       },
     })

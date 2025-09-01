@@ -4,25 +4,16 @@ import { FileIcon, PauseIcon, PlayIcon, XIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
-import {
-  Control,
-  Controller,
-  useFieldArray,
-  useForm,
-  UseFormSetValue,
-  UseFormWatch,
-} from 'react-hook-form'
 import { Button } from '../Button'
 import { SelectField } from '../forms/SelectField'
 import { MemoryFileItem, useMemoriesControl } from '@/hooks/helpers/useMemoriesControl'
-import { LogFields } from './ConcertLogForm'
 import { getCloudflareImageUrl } from '@/lib/cloudflareHelpers'
 
 export function MemoriesControl({
   label,
   name,
-  memoryFileItems,
-  setMemoryFileItems,
+  // memoryFileItems,
+  // setMemoryFileItems,
   acceptedFileTypes,
   bands,
   concertId,
@@ -35,13 +26,10 @@ export function MemoriesControl({
   bands: Band[]
   concertId: number | null
 }) {
-  const { isDragActive, onDrag, onDrop, onChange } = useMemoriesControl({
-    bucketName: 'concert-memories',
-    folder: concertId?.toString(),
-    acceptedFileTypes,
-    memoryFileItems,
-    setMemoryFileItems,
-  })
+  const { isDragActive, onDrag, onDrop, onChange, memoryFileItems, setMemoryFileItems } =
+    useMemoriesControl({
+      acceptedFileTypes,
+    })
   const ref = useRef(null)
   const t = useTranslations('MultiFileInput')
 
