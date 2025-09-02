@@ -639,8 +639,10 @@ export type Database = {
           concert_id: number
           created_at: string
           file_type: string
+          height: number | null
           id: number
           user_id: string
+          width: number | null
         }
         Insert: {
           band_id?: number | null
@@ -648,8 +650,10 @@ export type Database = {
           concert_id: number
           created_at?: string
           file_type: string
+          height?: number | null
           id?: number
           user_id?: string
+          width?: number | null
         }
         Update: {
           band_id?: number | null
@@ -657,8 +661,10 @@ export type Database = {
           concert_id?: number
           created_at?: string
           file_type?: string
+          height?: number | null
           id?: number
           user_id?: string
+          width?: number | null
         }
         Relationships: [
           {

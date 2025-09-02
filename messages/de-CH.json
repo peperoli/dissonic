@@ -219,9 +219,9 @@
   "useEditLog": {
     "logUpdated": "Log aktualisiert"
   },
-  "MultiFileInput": {
-    "dragOrBrowseFiles": "Dateien hinziehen oder <span>durchsuchen</span>",
-    "play": "Abspielen",
+  "MemoriesControl": {
+    "dropFilesHere": "Dateien hier ablegen",
+    "dragOrBrowseMediaFiles": "Bild- und Videodateien hinziehen oder <span>durchsuchen</span>",
     "remove": "Entfernen"
   },
   "Memories": {

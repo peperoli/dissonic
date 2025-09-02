@@ -5940,7 +5940,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cloudflare-video-element@npm:^1.3.3":
+"cloudflare-video-element@npm:^1.3.3, cloudflare-video-element@npm:^1.3.4":
   version: 1.3.4
   resolution: "cloudflare-video-element@npm:1.3.4"
   checksum: 10c0/8efbe0452d91ef57da8ba0b57bc5c48674934a1197d71896852fceaee5307fee67c9e61fc246997bf54e8b11b70d049b499e15581ecbad6af5160bcc0e4fc3c1
@@ -6116,6 +6116,7 @@ __metadata:
     "@vercel/analytics": "npm:^1.5.0"
     autoprefixer: "npm:^10.4.16"
     cloudflare: "npm:^4.5.0"
+    cloudflare-video-element: "npm:^1.3.4"
     clsx: "npm:^2.1.1"
     eslint: "npm:^9.23.0"
     eslint-config-next: "npm:^15.2.4"
@@ -6124,6 +6125,7 @@ __metadata:
     ics: "npm:^3.8.1"
     jwt-decode: "npm:^4.0.0"
     lucide-react: "npm:^0.483.0"
+    media-chrome: "npm:^4.13.0"
     next: "npm:^15.3.4"
     next-intl: "npm:^3.25.0"
     next-pwa: "npm:^5.6.0"
@@ -9511,6 +9513,15 @@ __metadata:
   version: 1.1.0
   resolution: "math-intrinsics@npm:1.1.0"
   checksum: 10c0/7579ff94e899e2f76ab64491d76cf606274c874d8f2af4a442c016bd85688927fcfca157ba6bf74b08e9439dc010b248ce05b96cc7c126a354c3bae7fcb48b7f
+  languageName: node
+  linkType: hard
+
+"media-chrome@npm:^4.13.0":
+  version: 4.13.0
+  resolution: "media-chrome@npm:4.13.0"
+  dependencies:
+    ce-la-react: "npm:^0.3.0"
+  checksum: 10c0/1e943862ca3d5ebd78ed11c8365fbc9a43db888d394aaf1bdc2ea24c8e18abf49c555ee6f3e2174dafa02260e69c2625ee579d5e00b4c3298902369d1e27de57
   languageName: node
   linkType: hard
 

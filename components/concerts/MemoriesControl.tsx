@@ -1,14 +1,18 @@
 import { Band } from '@/types/types'
 import clsx from 'clsx'
-import { FileIcon, XIcon } from 'lucide-react'
+import { CheckIcon, FileIcon, XIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { useEffect, useRef } from 'react'
 import { Button } from '../Button'
 import { SelectField } from '../forms/SelectField'
 import { FileItem, useMemoriesControl } from '@/hooks/helpers/useMemoriesControl'
-import { getCloudflareImageUrl } from '@/lib/cloudflareHelpers'
-import { TablesInsert } from '@/types/supabase'
+import {
+  getCloudflareImageUrl,
+  getCloudflareThumbnailUrl,
+  getCloudflareVideoUrl,
+} from '@/lib/cloudflareHelpers'
+import { Tables, TablesInsert } from '@/types/supabase'
 
 export function MemoriesControl({
   label,
@@ -21,18 +25,30 @@ export function MemoriesControl({
 }: {
   label: string
   name: string
-  value: TablesInsert<'memories'>[]
+  value: Tables<'memories'>[]
   onValueChange: (value: TablesInsert<'memories'>[]) => void
   acceptedFileTypes?: string[]
   bands: Band[]
   concertId: number | null
 }) {
-  const { isDragActive, onDrag, onDrop, onChange, fileItems, setFileItems } = useMemoriesControl({
-    prefix: 'concert-memories',
-    acceptedFileTypes,
-  })
+  const { isDragActive, onDrag, onDrop, onChange, fileItems, setFileItems } = useMemoriesControl(
+    value.map(item => ({
+      file: { name: null, type: item.file_type, size: null },
+      fileId: item.cloudflare_file_id,
+      preview: null,
+      isLoading: false,
+      progress: 100,
+      error: null,
+      isSuccess: true,
+      bandId: item.band_id,
+    })),
+    {
+      prefix: 'concert-memories',
+      acceptedFileTypes,
+    }
+  )
   const ref = useRef(null)
-  const t = useTranslations('MultiFileInput')
+  const t = useTranslations('MemoriesControl')
 
   useEffect(() => {
     if (!concertId) return
@@ -76,8 +92,8 @@ export function MemoriesControl({
         >
           <span className="text-center text-slate-300">
             {isDragActive
-              ? 'Dateien hier ablegen'
-              : t.rich('dragOrBrowseFiles', {
+              ? t('dropFilesHere')
+              : t.rich('dragOrBrowseMediaFiles', {
                   span: chunk => (
                     <span className="cursor-pointer font-bold hover:text-venom">{chunk}</span>
                   ),
@@ -106,7 +122,6 @@ export function MemoriesControl({
           )
         })}
       </div>
-      <pre className="max-w-xl overflow-auto">{JSON.stringify(fileItems, null, 2)}</pre>
     </div>
   )
 }
@@ -124,11 +139,8 @@ function MemoryItem({
   onRemove: () => void
   bands: Band[]
 }) {
-  const fileUrl = fileItem.preview
-    ? fileItem.preview
-    : fileItem.fileId
-      ? getCloudflareImageUrl(fileItem.fileId)
-      : null
+  const imagePreview =
+    fileItem.preview || (fileItem.fileId && getCloudflareImageUrl(fileItem.fileId))
   const t = useTranslations('MultiFileInput')
 
   function formatSize(bytes: number) {
@@ -142,24 +154,33 @@ function MemoryItem({
   return (
     <div className="flex w-full gap-4 text-left text-sm">
       <div className="relative grid size-22 flex-none place-content-center rounded-md bg-slate-700">
-        {fileItem.file?.type.startsWith('image/') && fileUrl ? (
-          <Image src={fileUrl} alt="" fill className="rounded-md object-contain" />
-        ) : fileItem.file?.type.startsWith('video/') && fileUrl ? (
-          <video
-            src={fileUrl}
-            autoPlay
-            muted
-            playsInline
-            className="absolute inset-0 size-full rounded-md object-contain"
-          />
-        ) : (
-          <FileIcon className="text-xl" />
+        {fileItem.file.type.startsWith('image/') && imagePreview && (
+          <Image src={imagePreview} alt="" fill className="rounded-md object-contain" />
         )}
+        {fileItem.file.type.startsWith('video/') &&
+          (fileItem.preview ? (
+            <video
+              src={fileItem.preview}
+              autoPlay
+              muted
+              playsInline
+              className="absolute inset-0 size-full rounded-md object-contain"
+            />
+          ) : fileItem.fileId ? (
+            <video
+              src={getCloudflareVideoUrl(fileItem.fileId)}
+              autoPlay
+              muted
+              playsInline
+              className="absolute inset-0 size-full rounded-md object-contain"
+            />
+          ) : (
+            <FileIcon className="text-xl" />
+          ))}
       </div>
       <div className="grid w-full">
         <div className="flex w-full gap-2">
           <div className="mb-2 grid w-full">
-            <span className="truncate">{fileItem.file?.name}</span>
             <div className="my-1 h-1 w-full rounded bg-slate-700">
               <div
                 style={{ width: fileItem.progress + '%' }}
@@ -173,12 +194,16 @@ function MemoryItem({
               {fileItem.error ? (
                 <span className="text-red">Error: {fileItem.error}</span>
               ) : fileItem.isLoading ? (
-                <span className="text-blue">Uploading ... {fileItem.progress}&#8200;%</span>
+                <span className="text-blue">
+                  Uploading ... {fileItem.progress > 0 && <>{fileItem.progress}&#8200;%</>}
+                </span>
               ) : fileItem.isSuccess ? (
-                <span className="text-venom">Uploaded</span>
+                <span className="text-venom">
+                  <CheckIcon className="size-icon" />
+                </span>
               ) : null}
               <span className="text-slate-300">
-                {fileItem.file ? formatSize(fileItem.file.size) : null}
+                {fileItem.file.size ? formatSize(fileItem.file.size) : null}
               </span>
             </div>
           </div>
@@ -193,7 +218,7 @@ function MemoryItem({
             className="ml-auto"
           />
         </div>
-        <div className="overflow-hidden">
+        <div>
           <SelectField
             label="Band"
             name="bandId"

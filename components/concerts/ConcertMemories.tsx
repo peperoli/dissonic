@@ -1,21 +1,17 @@
 import { useMemories } from '@/hooks/concerts/useMemories'
-import {
-  getCloudflareImageUrl,
-  getCloudflareThumbnailUrl,
-  getCloudflareVideoUrl,
-} from '@/lib/cloudflareHelpers'
+import { getCloudflareImageUrl, getCloudflareThumbnailUrl } from '@/lib/cloudflareHelpers'
 import Image from 'next/image'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useTranslations } from 'next-intl'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { MaximizeIcon, Volume2Icon, VolumeOffIcon, XIcon } from 'lucide-react'
+import { XIcon } from 'lucide-react'
 import { Memory } from '@/types/types'
 import { UserItem } from '../shared/UserItem'
 import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
 import supabase from '@/utils/supabase/client'
-import ReactPlayer from 'react-player'
+import { VideoPlayer } from '../shared/VideoPlayer'
 
 async function fetchMemoriesCount(concertId: number, fileType?: 'image/' | 'video/') {
   let query = supabase.from('memories').select('id', { count: 'exact' }).eq('concert_id', concertId)
@@ -171,6 +167,9 @@ function MemoryItem({ memory }: { memory: Memory }) {
     <li
       id={memory.id.toString()}
       className="relative grid flex-none snap-center place-content-center rounded-lg bg-slate-700"
+      style={{
+        aspectRatio: (memory.width ?? 1) / (memory.height ?? 1),
+      }}
     >
       <div className="">
         {memory.file_type.startsWith('image/') ? (
@@ -183,24 +182,7 @@ function MemoryItem({ memory }: { memory: Memory }) {
             className="max-h-full rounded-lg object-cover"
           />
         ) : (
-          <ReactPlayer
-            src={getCloudflareVideoUrl(memory.cloudflare_file_id)}
-            controls
-            light={
-              <Image
-                src={getCloudflareThumbnailUrl(memory.cloudflare_file_id, { width: 800 })}
-                alt=""
-                width={1000}
-                height={1000}
-                unoptimized
-                className="max-h-full rounded-lg object-cover"
-              />
-            }
-            style={{
-          width: "100%",
-          height: "100%",
-        }}
-          />
+          <VideoPlayer videoId={memory.cloudflare_file_id} />
         )}
         <div className="absolute bottom-0 left-0 m-2 flex flex-col items-start gap-1">
           {memory.band && (
@@ -217,70 +199,5 @@ function MemoryItem({ memory }: { memory: Memory }) {
         </div>
       </div>
     </li>
-  )
-}
-
-function VideoPlayer({ src }: { src: string }) {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [currentTime, setCurrentTime] = useState(0)
-  const [isMuted, setIsMuted] = useState(false)
-
-  function formatTime(seconds: number) {
-    const mins = Math.floor(seconds / 60)
-    const secs = Math.floor(seconds % 60)
-    return `${mins}:${secs < 10 ? `0${secs}` : secs}`
-  }
-
-  function togglePlay() {
-    if (videoRef.current === null) return
-    if (!isPlaying) {
-      videoRef.current?.play()
-    } else {
-      videoRef.current?.pause()
-    }
-  }
-
-  function toggleMuted() {
-    if (videoRef.current === null) return
-    videoRef.current.muted = !isMuted
-    setIsMuted(!isMuted)
-  }
-
-  return (
-    <div className="relative">
-      <video
-        ref={videoRef}
-        src={src}
-        loop
-        muted={isMuted}
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
-        onTimeUpdate={event => setCurrentTime(event.currentTarget.currentTime)}
-        onClick={togglePlay}
-      />
-      <div className="absolute bottom-0 right-0 m-1 flex gap-2">
-        <div className="rounded-md bg-slate-900/50 p-2">
-          {isPlaying ? (
-            <>{formatTime(currentTime ?? 0)}</>
-          ) : (
-            <>{formatTime(videoRef.current?.duration ?? 0)}</>
-          )}
-        </div>
-        <button className="rounded-md bg-slate-900/50 p-2" onClick={toggleMuted}>
-          {isMuted ? (
-            <VolumeOffIcon className="size-icon" />
-          ) : (
-            <Volume2Icon className="size-icon" />
-          )}
-        </button>
-        <button
-          className="rounded-md bg-slate-900/50 p-2"
-          onClick={() => videoRef.current?.requestFullscreen()}
-        >
-          <MaximizeIcon className="size-icon" />
-        </button>
-      </div>
-    </div>
   )
 }

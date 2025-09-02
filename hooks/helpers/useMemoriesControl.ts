@@ -3,7 +3,7 @@ import { uploadVideoCloudflare } from '@/lib/uploadVideoCloudflare'
 import { ChangeEvent, DragEvent, useMemo, useState } from 'react'
 
 export type FileItem = {
-  file: File
+  file: File | { name: null; type: string; size: null }
   fileId: string | null
   preview: string | null
   isLoading: boolean
@@ -13,10 +13,13 @@ export type FileItem = {
   bandId: number | null
 }
 
-export function useMemoriesControl(options: { prefix?: string; acceptedFileTypes?: string[] }) {
+export function useMemoriesControl(
+  defaultValue: FileItem[],
+  options: { prefix?: string; acceptedFileTypes?: string[] }
+) {
   const { prefix, acceptedFileTypes = [] } = options
   const [dragActive, setDragActive] = useState(false)
-  const [fileItems, setFileItems] = useState<FileItem[]>([])
+  const [fileItems, setFileItems] = useState<FileItem[]>(defaultValue)
 
   const isSuccess = useMemo(
     () => fileItems.length > 0 && fileItems.every(item => !item.error && item.isSuccess),
@@ -51,8 +54,8 @@ export function useMemoriesControl(options: { prefix?: string; acceptedFileTypes
 
             setFileItems(prevItems =>
               prevItems.map(item =>
-                item.file.name === file.name
-                  ? { ...item, fileId: imageId, isLoading: false, isSuccess: true }
+                item.file?.name === file.name
+                  ? { ...item, fileId: imageId, isLoading: false, progress: 100, isSuccess: true }
                   : item
               )
             )
@@ -63,7 +66,7 @@ export function useMemoriesControl(options: { prefix?: string; acceptedFileTypes
               onUploadProgress: progress => {
                 setFileItems(prevItems =>
                   prevItems.map(item =>
-                    item.file.name === file.name ? { ...item, isLoading: true, progress } : item
+                    item.file?.name === file.name ? { ...item, isLoading: true, progress } : item
                   )
                 )
               },
@@ -71,7 +74,7 @@ export function useMemoriesControl(options: { prefix?: string; acceptedFileTypes
 
             setFileItems(prevItems =>
               prevItems.map(item =>
-                item.file.name === file.name
+                item.file?.name === file.name
                   ? { ...item, fileId: videoId, isLoading: false, isSuccess: true }
                   : item
               )
@@ -81,7 +84,7 @@ export function useMemoriesControl(options: { prefix?: string; acceptedFileTypes
           console.error(error)
           setFileItems(prevItems =>
             prevItems.map(item =>
-              item.file.name === file.name
+              item.file?.name === file.name
                 ? {
                     ...item,
                     isLoading: false,

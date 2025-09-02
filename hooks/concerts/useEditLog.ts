@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
 import toast from 'react-hot-toast'
 import { deleteImageCloudflare, deleteVideoCloudflare } from '@/actions/files'
+import Cloudflare from 'cloudflare'
 
 async function editLog({
   concertId,
@@ -47,44 +48,50 @@ async function editLog({
     throw deleteBandsSeenError
   }
 
-  const { error: insertMemoriesError } = await supabase.from('memories').insert(
-    memoriesToAdd.map((memory) => ({
-      concert_id: concertId,
-      band_id: memory.band_id,
-      cloudflare_file_id: memory.cloudflare_file_id,
-      file_type: memory.file_type,
-    }))
+  const memoriesWithDimensions = await Promise.all(
+    memoriesToAdd.map(async memory => {
+      if (memory.file_type.startsWith('video/')) {
+        const response = await fetch(
+          `/api/cloudflare/get-video-details?videoId=${memory.cloudflare_file_id}`
+        )
+        const video: Cloudflare.Stream.Video = await response.json()
+
+        return {
+          ...memory,
+          concert_id: concertId,
+          width: video.input?.width,
+          height: video.input?.height,
+        }
+      } else {
+        return {
+          ...memory,
+          concert_id: concertId,
+        }
+      }
+    })
   )
+
+  const { error: insertMemoriesError } = await supabase
+    .from('memories')
+    .insert(memoriesWithDimensions)
 
   if (insertMemoriesError) {
     throw insertMemoriesError
   }
 
   try {
-    memoriesToDelete.forEach(async memory => {
-      try {
-        if (memory.file_type?.startsWith('image/')) {
-          await deleteImageCloudflare(memory.cloudflare_file_id)
-        } else if (memory.file_type?.startsWith('video/')) {
-          await deleteVideoCloudflare(memory.cloudflare_file_id)
-        }
+    const { error } = await supabase
+      .from('memories')
+      .delete()
+      .eq('concert_id', concertId)
+      .in(
+        'id',
+        memoriesToDelete.map(memory => memory.id)
+      )
 
-        const { error } = await supabase
-          .from('memories')
-          .delete()
-          .eq('concert_id', concertId)
-          .in(
-            'id',
-            memoriesToDelete.map(memory => memory.id)
-          )
-
-        if (error) {
-          throw error
-        }
-      } catch (error) {
-        throw error
-      }
-    })
+    if (error) {
+      throw error
+    }
 
     memoriesToUpdate.forEach(async memory => {
       const { error } = await supabase

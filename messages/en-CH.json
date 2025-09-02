@@ -219,8 +219,9 @@
   "useEditLog": {
     "logUpdated": "Log updated"
   },
-  "MultiFileInput": {
-    "dragOrBrowseFiles": "Drag or <span>browse</span> files",
+  "MemoriesControl": {
+    "dropFilesHere": "Drop files here",
+    "dragOrBrowseMediaFiles": "Drag or <span>browse</span> media files",
     "remove": "Remove"
   },
   "Memories": {
