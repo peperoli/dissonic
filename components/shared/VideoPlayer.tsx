@@ -1,6 +1,4 @@
-import { getCloudflareVideoUrl } from '@/lib/cloudflareHelpers'
 import { PauseIcon, PlayIcon, Volume2Icon, VolumeXIcon } from 'lucide-react'
-import 'cloudflare-video-element'
 import ReactPlayer from 'react-player'
 import {
   MediaProvider,
@@ -9,34 +7,50 @@ import {
   useMediaRef,
   MediaActionTypes,
 } from 'media-chrome/react/media-store'
+import { ReactPlayerProps } from 'react-player/types'
 
-function Video({ videoId }: { videoId: string }) {
+function Video({
+  src,
+  ...playerProps
+}: { src: string } & Pick<ReactPlayerProps, 'muted' | 'autoPlay' | 'loop'>) {
   const mediaRef = useMediaRef()
 
   return (
     <ReactPlayer
       ref={mediaRef}
-      src={getCloudflareVideoUrl(videoId)}
+      src={src}
       preload="auto"
-      controls={false}
-      muted
+      // controls={false}
+      playsInline
       crossOrigin=""
       style={{
+        position: 'absolute',
+        inset: 0,
         width: '100%',
         height: '100%',
       }}
+      {...playerProps}
     />
   )
 }
 
-export const VideoPlayer = ({ videoId }: { videoId: string }) => {
+export const VideoPlayer = ({
+  src,
+  hiddenControls,
+  ...playerProps
+}: {
+  src: string
+  hiddenControls?: boolean
+} & Pick<ReactPlayerProps, 'muted' | 'autoPlay' | 'loop'>) => {
   return (
     <MediaProvider>
-      <Video videoId={videoId} />
-      <div className="absolute bottom-0 flex justify-center w-full bg-slate-900/50">
-        <PlayButton />
-        <MuteButton />
-      </div>
+      <Video src={src} {...playerProps} />
+      {!hiddenControls && (
+        <div className="absolute left-0 bottom-0 flex w-full justify-center bg-slate-900/50">
+          <PlayButton />
+          <MuteButton />
+        </div>
+      )}
     </MediaProvider>
   )
 }
@@ -55,7 +69,7 @@ function PlayButton() {
         })
       }}
       aria-label={mediaPaused ? 'Play' : 'Pause'}
-      className='p-2'
+      className="p-2"
     >
       {mediaPaused ? <PlayIcon /> : <PauseIcon />}
     </button>
@@ -75,7 +89,7 @@ function MuteButton() {
         })
       }}
       aria-label={mediaMuted ? 'Unmute' : 'Mute'}
-      className='p-2'
+      className="p-2"
     >
       {mediaMuted ? <VolumeXIcon /> : <Volume2Icon />}
     </button>

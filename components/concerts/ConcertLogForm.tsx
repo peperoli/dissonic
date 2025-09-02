@@ -70,7 +70,9 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
     const memoriesToUpdate = memories.filter(memory =>
       initialMemoriesIds.includes(memory.cloudflare_file_id)
     )
+    console.log(memoriesToDelete)
 
+    return
     if (!session || !concert) {
       return
     }

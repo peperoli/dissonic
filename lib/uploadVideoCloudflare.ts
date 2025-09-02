@@ -24,7 +24,7 @@ export async function uploadVideoCloudflare(
       },
       onProgress: function (bytesUploaded, bytesTotal) {
         const progress = Math.round((bytesUploaded / bytesTotal) * 100)
-        console.log(progress)
+
         if (options?.onUploadProgress) {
           options.onUploadProgress(progress)
         }

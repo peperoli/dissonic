@@ -1,5 +1,5 @@
 import { useMemories } from '@/hooks/concerts/useMemories'
-import { getCloudflareImageUrl, getCloudflareThumbnailUrl } from '@/lib/cloudflareHelpers'
+import { getCloudflareImageUrl, getCloudflareThumbnailUrl, getCloudflareVideoUrl } from '@/lib/cloudflareHelpers'
 import Image from 'next/image'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useTranslations } from 'next-intl'
@@ -182,7 +182,7 @@ function MemoryItem({ memory }: { memory: Memory }) {
             className="max-h-full rounded-lg object-cover"
           />
         ) : (
-          <VideoPlayer videoId={memory.cloudflare_file_id} />
+          <VideoPlayer src={getCloudflareVideoUrl(memory.cloudflare_file_id)} />
         )}
         <div className="absolute bottom-0 left-0 m-2 flex flex-col items-start gap-1">
           {memory.band && (

@@ -1,18 +1,14 @@
 import { Band } from '@/types/types'
 import clsx from 'clsx'
-import { CheckIcon, FileIcon, XIcon } from 'lucide-react'
+import { CheckIcon, PlaySquareIcon, XIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import Image from 'next/image'
 import { useEffect, useRef } from 'react'
 import { Button } from '../Button'
 import { SelectField } from '../forms/SelectField'
 import { FileItem, useMemoriesControl } from '@/hooks/helpers/useMemoriesControl'
-import {
-  getCloudflareImageUrl,
-  getCloudflareThumbnailUrl,
-  getCloudflareVideoUrl,
-} from '@/lib/cloudflareHelpers'
+import { getCloudflareImageUrl, getCloudflareVideoUrl } from '@/lib/cloudflareHelpers'
 import { Tables, TablesInsert } from '@/types/supabase'
+import { VideoPlayer } from '../shared/VideoPlayer'
 
 export function MemoriesControl({
   label,
@@ -140,8 +136,8 @@ function MemoryItem({
   bands: Band[]
 }) {
   const imagePreview =
-    fileItem.preview || (fileItem.fileId && getCloudflareImageUrl(fileItem.fileId))
-  const t = useTranslations('MultiFileInput')
+    fileItem.preview || (fileItem.fileId && getCloudflareImageUrl(fileItem.fileId, { width: 300 }))
+  const t = useTranslations('MemoriesControl')
 
   function formatSize(bytes: number) {
     if (bytes < 1024 ** 2) {
@@ -155,7 +151,11 @@ function MemoryItem({
     <div className="flex w-full gap-4 text-left text-sm">
       <div className="relative grid size-22 flex-none place-content-center rounded-md bg-slate-700">
         {fileItem.file.type.startsWith('image/') && imagePreview && (
-          <Image src={imagePreview} alt="" fill className="rounded-md object-contain" />
+          <img
+            src={imagePreview}
+            alt=""
+            className="absolute inset-0 size-full rounded-md object-contain"
+          />
         )}
         {fileItem.file.type.startsWith('video/') &&
           (fileItem.preview ? (
@@ -167,16 +167,16 @@ function MemoryItem({
               className="absolute inset-0 size-full rounded-md object-contain"
             />
           ) : fileItem.fileId ? (
-            <video
+            <VideoPlayer
               src={getCloudflareVideoUrl(fileItem.fileId)}
+              hiddenControls
               autoPlay
               muted
-              playsInline
-              className="absolute inset-0 size-full rounded-md object-contain"
             />
-          ) : (
-            <FileIcon className="text-xl" />
-          ))}
+          ) : null)}
+        {fileItem.file.type.startsWith('video/') && (
+          <PlaySquareIcon className="absolute right-0 m-2 size-icon" />
+        )}
       </div>
       <div className="grid w-full">
         <div className="flex w-full gap-2">

@@ -59,8 +59,8 @@ async function editLog({
         return {
           ...memory,
           concert_id: concertId,
-          width: video.input?.width,
-          height: video.input?.height,
+          width: video.input?.width ?? null,
+          height: video.input?.height ?? null,
         }
       } else {
         return {
