@@ -5,7 +5,7 @@ import { ChangeEvent, DragEvent, useMemo, useState } from 'react'
 export type FileItem = {
   file: File
   fileId: string | null
-  preview: string
+  preview: string | null
   isLoading: boolean
   progress: number
   error: string | null

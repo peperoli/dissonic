@@ -19,9 +19,6 @@ export async function uploadVideoCloudflare(
         name: fileName,
         type: file.type,
       },
-      uploadDataDuringCreation: true,
-      removeFingerprintOnSuccess: true, // Important if you want to allow re-uploading the same file https://github.com/tus/tus-js-client/blob/main/docs/api.md#removefingerprintonsuccess
-
       onError: function (error) {
         reject(error)
       },

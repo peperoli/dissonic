@@ -124,8 +124,8 @@ function MemoryItem({
   onRemove: () => void
   bands: Band[]
 }) {
-  const fileUrl = fileItem.file
-    ? URL.createObjectURL(fileItem.file)
+  const fileUrl = fileItem.preview
+    ? fileItem.preview
     : fileItem.fileId
       ? getCloudflareImageUrl(fileItem.fileId)
       : null
@@ -170,8 +170,10 @@ function MemoryItem({
               />
             </div>
             <div className="flex justify-between">
-              {fileItem.isLoading ? (
-                <span className="text-blue">Uploading ... {fileItem.progress.toFixed(2)} %</span>
+              {fileItem.error ? (
+                <span className="text-red">Error: {fileItem.error}</span>
+              ) : fileItem.isLoading ? (
+                <span className="text-blue">Uploading ... {fileItem.progress}&#8200;%</span>
               ) : fileItem.isSuccess ? (
                 <span className="text-venom">Uploaded</span>
               ) : null}
