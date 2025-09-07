@@ -1,36 +1,4 @@
-// export function getR2ImageUrl(
-//   fileName: string,
-//   options: {
-//     width?: number
-//     height?: number
-//     fit?: 'contain' | 'scale-down' | 'cover'
-//     format?: string
-//     quality?: number
-//   } = {
-//     format: 'auto',
-//   }
-// ) {
-//   const optionsString = Object.entries(options)
-//     .map(([key, value]) => `${key}=${value}`)
-//     .join(',')
-//   return `https://dissonic.ch/cdn-cgi/image/${optionsString}/https://dissonic.ch/${fileName}`
-// }
-
-import { object } from 'zod'
-
-// export function getR2VideoUrl(
-//   fileName: string,
-//   options?: {
-//     width?: number
-//     height?: number
-//     fit?: 'contain' | 'scale-down' | 'cover'
-//   }
-// ) {
-//   const optionsString = Object.entries({ mode: 'video', ...options })
-//     .map(([key, value]) => `${key}=${value}`)
-//     .join(',')
-//   return `https://dissonic.ch/cdn-cgi/media/${optionsString}/https://dissonic.ch/${fileName}`
-// }
+import Cloudflare from 'cloudflare'
 
 export function getCloudflareImageUrl(
   imageId: string,
@@ -64,4 +32,15 @@ export function getCloudflareThumbnailUrl(
   )
 
   return `https://customer-bwyzo46pfd5dc1rh.cloudflarestream.com/${videoId}/thumbnails/thumbnail.jpg?${searchParams.toString()}`
+}
+
+export async function getCloudflareVideoDimensions(videoId: string) {
+  const response = await fetch(`/api/cloudflare/get-video-details?videoId=${videoId}`)
+
+  const video: Cloudflare.Stream.Video = await response.json()
+
+  return {
+    width: video.input?.width ?? null,
+    height: video.input?.height ?? null,
+  }
 }

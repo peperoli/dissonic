@@ -1,18 +1,18 @@
-import { Tables } from '@/types/supabase'
+import { Tables, TablesInsert } from '@/types/supabase'
 import supabase from '@/utils/supabase/client'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
 import toast from 'react-hot-toast'
-import { deleteImageCloudflare, deleteVideoCloudflare } from '@/actions/files'
-import Cloudflare from 'cloudflare'
+import { MemoryFileItem } from '../helpers/useMemoriesControl'
+import { getCloudflareVideoDimensions } from '@/lib/cloudflareHelpers'
 
 async function editLog({
   concertId,
   userId,
   bandsToAdd,
   bandsToDelete,
-  memoriesToAdd,
-  memoriesToDelete,
+  memoryFileItemsToAdd,
+  memoryIdsToDelete,
   memoriesToUpdate,
   comment,
 }: {
@@ -20,9 +20,9 @@ async function editLog({
   userId: string
   bandsToAdd: number[]
   bandsToDelete: number[]
-  memoriesToAdd: Tables<'memories'>[]
-  memoriesToDelete: Tables<'memories'>[]
-  memoriesToUpdate: Tables<'memories'>[]
+  memoryFileItemsToAdd: MemoryFileItem[]
+  memoryIdsToDelete: number[]
+  memoriesToUpdate: Pick<Tables<'memories'>, 'id' | 'band_id'>[]
   comment: Tables<'comments'>['content']
 }) {
   const { error: insertBandsError } = await supabase.from('j_bands_seen').insert(
@@ -48,32 +48,31 @@ async function editLog({
     throw deleteBandsSeenError
   }
 
-  const memoriesWithDimensions = await Promise.all(
-    memoriesToAdd.map(async memory => {
-      if (memory.file_type.startsWith('video/')) {
-        const response = await fetch(
-          `/api/cloudflare/get-video-details?videoId=${memory.cloudflare_file_id}`
-        )
-        const video: Cloudflare.Stream.Video = await response.json()
+  const memoriesToAdd = await Promise.all(
+    memoryFileItemsToAdd
+      .filter(memoryFileItem => memoryFileItem.fileId != null)
+      .map(async memoryFileItem => {
+        let dimensions: { width: number | null; height: number | null } = {
+          width: null,
+          height: null,
+        }
+
+        if (memoryFileItem.file.type.startsWith('video/')) {
+          dimensions = await getCloudflareVideoDimensions(memoryFileItem.fileId!)
+        }
 
         return {
-          ...memory,
+          cloudflare_file_id: memoryFileItem.fileId!,
+          file_type: memoryFileItem.file.type,
+          band_id: memoryFileItem.bandId,
           concert_id: concertId,
-          width: video.input?.width ?? null,
-          height: video.input?.height ?? null,
-        }
-      } else {
-        return {
-          ...memory,
-          concert_id: concertId,
-        }
-      }
-    })
+          width: dimensions.width,
+          height: dimensions.height,
+        } satisfies TablesInsert<'memories'>
+      })
   )
 
-  const { error: insertMemoriesError } = await supabase
-    .from('memories')
-    .insert(memoriesWithDimensions)
+  const { error: insertMemoriesError } = await supabase.from('memories').insert(memoriesToAdd)
 
   if (insertMemoriesError) {
     throw insertMemoriesError
@@ -84,10 +83,7 @@ async function editLog({
       .from('memories')
       .delete()
       .eq('concert_id', concertId)
-      .in(
-        'id',
-        memoriesToDelete.map(memory => memory.id)
-      )
+      .in('id', memoryIdsToDelete)
 
     if (error) {
       throw error

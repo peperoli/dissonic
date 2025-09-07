@@ -1,25 +1,26 @@
 import { uploadImageCloudflare } from '@/lib/uploadImageCloudflare'
 import { uploadVideoCloudflare } from '@/lib/uploadVideoCloudflare'
-import { ChangeEvent, DragEvent, useMemo, useState } from 'react'
+import { ChangeEvent, Dispatch, DragEvent, SetStateAction, useMemo, useState } from 'react'
 
-export type FileItem = {
-  file: File | { name: null; type: string; size: null }
+export type MemoryFileItem = {
+  id?: number
+  file: File | { name?: null; type: string; size?: null }
   fileId: string | null
-  preview: string | null
-  isLoading: boolean
-  progress: number
-  error: string | null
+  preview?: string | null
+  isLoading?: boolean
+  progress?: number | null
+  error?: string | null
   isSuccess: boolean
   bandId: number | null
 }
 
 export function useMemoriesControl(
-  defaultValue: FileItem[],
+  fileItems: MemoryFileItem[],
+  setFileItems: Dispatch<SetStateAction<MemoryFileItem[]>>,
   options: { prefix?: string; acceptedFileTypes?: string[] }
 ) {
   const { prefix, acceptedFileTypes = [] } = options
   const [dragActive, setDragActive] = useState(false)
-  const [fileItems, setFileItems] = useState<FileItem[]>(defaultValue)
 
   const isSuccess = useMemo(
     () => fileItems.length > 0 && fileItems.every(item => !item.error && item.isSuccess),
@@ -130,8 +131,6 @@ export function useMemoriesControl(
   }
 
   return {
-    fileItems,
-    setFileItems,
     isDragActive: dragActive,
     onDrag,
     onDrop,

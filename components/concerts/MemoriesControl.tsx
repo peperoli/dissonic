@@ -2,63 +2,34 @@ import { Band } from '@/types/types'
 import clsx from 'clsx'
 import { CheckIcon, PlaySquareIcon, XIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useEffect, useRef } from 'react'
+import { Dispatch, SetStateAction, useRef } from 'react'
 import { Button } from '../Button'
 import { SelectField } from '../forms/SelectField'
-import { FileItem, useMemoriesControl } from '@/hooks/helpers/useMemoriesControl'
+import { MemoryFileItem, useMemoriesControl } from '@/hooks/helpers/useMemoriesControl'
 import { getCloudflareImageUrl, getCloudflareVideoUrl } from '@/lib/cloudflareHelpers'
-import { Tables, TablesInsert } from '@/types/supabase'
 import { VideoPlayer } from '../shared/VideoPlayer'
 
 export function MemoriesControl({
   label,
   name,
-  value,
-  onValueChange,
+  fileItems,
+  setFileItems,
   acceptedFileTypes,
   bands,
-  concertId,
 }: {
   label: string
   name: string
-  value: Tables<'memories'>[]
-  onValueChange: (value: TablesInsert<'memories'>[]) => void
+  fileItems: MemoryFileItem[]
+  setFileItems: Dispatch<SetStateAction<MemoryFileItem[]>>
   acceptedFileTypes?: string[]
   bands: Band[]
-  concertId: number | null
 }) {
-  const { isDragActive, onDrag, onDrop, onChange, fileItems, setFileItems } = useMemoriesControl(
-    value.map(item => ({
-      file: { name: null, type: item.file_type, size: null },
-      fileId: item.cloudflare_file_id,
-      preview: null,
-      isLoading: false,
-      progress: 100,
-      error: null,
-      isSuccess: true,
-      bandId: item.band_id,
-    })),
-    {
-      prefix: 'concert-memories',
-      acceptedFileTypes,
-    }
-  )
+  const { isDragActive, onDrag, onDrop, onChange } = useMemoriesControl(fileItems, setFileItems, {
+    prefix: 'concert-memories',
+    acceptedFileTypes,
+  })
   const ref = useRef(null)
   const t = useTranslations('MemoriesControl')
-
-  useEffect(() => {
-    if (!concertId) return
-
-    const filteredFileItems = fileItems.filter(fileItem => fileItem.fileId != null)
-    onValueChange(
-      filteredFileItems.map(fileItem => ({
-        cloudflare_file_id: fileItem.fileId!,
-        file_type: fileItem.file.type,
-        band_id: fileItem.bandId,
-        concert_id: concertId,
-      }))
-    )
-  }, [fileItems.length, fileItems.map(fileItem => fileItem.fileId).join(',')])
 
   return (
     <div className="grid">
@@ -129,8 +100,8 @@ function MemoryItem({
   onRemove,
   bands,
 }: {
-  fileItem: FileItem
-  setFileItem: (item: FileItem) => void
+  fileItem: MemoryFileItem
+  setFileItem: (item: MemoryFileItem) => void
   index: number
   onRemove: () => void
   bands: Band[]
@@ -195,7 +166,7 @@ function MemoryItem({
                 <span className="text-red">Error: {fileItem.error}</span>
               ) : fileItem.isLoading ? (
                 <span className="text-blue">
-                  Uploading ... {fileItem.progress > 0 && <>{fileItem.progress}&#8200;%</>}
+                  Uploading ... {(fileItem.progress ?? 0) > 0 && <>{fileItem.progress}&#8200;%</>}
                 </span>
               ) : fileItem.isSuccess ? (
                 <span className="text-venom">

@@ -3,22 +3,21 @@ import { useComments } from '@/hooks/concerts/useComments'
 import { useConcert } from '@/hooks/concerts/useConcert'
 import { useEditLog } from '@/hooks/concerts/useEditLog'
 import { useMemories } from '@/hooks/concerts/useMemories'
-import { Tables } from '@/types/supabase'
 import { ListItem } from '@/types/types'
 import * as Checkbox from '@radix-ui/react-checkbox'
 import clsx from 'clsx'
 import { useTranslations } from 'next-intl'
 import { useParams } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useSession } from '../../hooks/auth/useSession'
 import { Button } from '../Button'
 import { TextArea } from '../forms/TextArea'
 import { MemoriesControl } from './MemoriesControl'
+import { MemoryFileItem } from '@/hooks/helpers/useMemoriesControl'
 
 export type LogFields = {
   bandsSeen: number[]
-  memories: Tables<'memories'>[]
   comment: string
 }
 
@@ -38,10 +37,19 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
         concert?.bands_seen
           ?.filter(bandSeen => bandSeen.user_id === session?.user.id)
           .map(bandSeen => bandSeen.band_id) ?? [],
-      memories: initialMemories ?? [],
       comment: comments?.[0]?.content || '',
     },
   })
+  const [memoryFileItems, setMemoryFileItems] = useState<MemoryFileItem[]>(
+    initialMemories?.map(memory => ({
+      id: memory.id,
+      file: { type: memory.file_type },
+      fileId: memory.cloudflare_file_id,
+      bandId: memory.band_id,
+      preview: null,
+      isSuccess: true,
+    })) ?? []
+  )
   const initialBandsSeen = concert?.bands_seen
     ?.filter(item => item?.user_id === session?.user.id)
     .filter(item => typeof item !== 'undefined')
@@ -52,27 +60,27 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
   const isSuccess = addLog.isSuccess || editLog.isSuccess
 
   function onSubmit(formData: LogFields) {
-    const { bandsSeen, memories, comment } = formData
+    const { bandsSeen, comment } = formData
     const initialBandsSeenIds = initialBandsSeen?.map(item => item?.band_id)
     const bandsToAdd = bandsSeen.filter(item => !initialBandsSeenIds?.includes(item))
     const bandsToDelete = initialBandsSeenIds?.filter(item => !bandsSeen.includes(item)) ?? []
-    const initialMemoriesIds = initialMemories?.map(memory => memory.cloudflare_file_id) ?? []
-    const memoriesIds = memories
-      .filter(memory => 'id' in memory)
-      .map(memory => memory.cloudflare_file_id)
-    const memoriesToAdd = memories.filter(
-      memory => !initialMemoriesIds.includes(memory.cloudflare_file_id)
-    )
-    const memoriesToDelete =
-      initialMemories?.filter(
-        initialMemory => !memoriesIds.includes(initialMemory.cloudflare_file_id)
-      ) ?? []
-    const memoriesToUpdate = memories.filter(memory =>
-      initialMemoriesIds.includes(memory.cloudflare_file_id)
-    )
-    console.log(memoriesToDelete)
+    const initialMemoryIds = initialMemories?.map(memory => memory.id) ?? []
+    const memoryIds = memoryFileItems.map(memoryFileItem => memoryFileItem.id)
+    const memoryFileItemsToAdd = memoryFileItems.filter(memoryFileItem => !memoryFileItem.id)
+    const memoryIdsToDelete =
+      initialMemories
+        ?.map(memory => memory.id)
+        .filter(initialMemoryId => !memoryIds.includes(initialMemoryId)) ?? []
+    const memoriesToUpdate = memoryFileItems
+      .filter(memoryFileItem => memoryFileItem.id != undefined)
+      .filter(memoryFileItem => initialMemoryIds.includes(memoryFileItem.id!))
+      .map(memoryFileItem => ({
+        id: memoryFileItem.id!,
+        band_id: memoryFileItem.bandId,
+      }))
 
-    return
+    console.log(memoryFileItemsToAdd, memoriesToUpdate, memoryIdsToDelete)
+
     if (!session || !concert) {
       return
     }
@@ -82,7 +90,7 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
         concertId: concert.id,
         userId: session.user.id,
         bandsToAdd,
-        memoriesToAdd,
+        memoryFileItemsToAdd,
         comment,
       })
     } else {
@@ -91,8 +99,8 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
         userId: session.user.id,
         bandsToAdd,
         bandsToDelete,
-        memoriesToAdd,
-        memoriesToDelete,
+        memoryFileItemsToAdd,
+        memoryIdsToDelete,
         memoriesToUpdate,
         comment,
       })
@@ -124,20 +132,13 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
             )}
           />
         </fieldset>
-        <Controller
-          name="memories"
-          control={control}
-          render={({ field }) => (
-            <MemoriesControl
-              name="memories"
-              value={field.value}
-              onValueChange={field.onChange}
-              label={t('memories')}
-              acceptedFileTypes={['image/*', 'video/*']}
-              bands={concert?.bands || []}
-              concertId={concert?.id ?? null}
-            />
-          )}
+        <MemoriesControl
+          name="memoryFileItems"
+          fileItems={memoryFileItems}
+          setFileItems={setMemoryFileItems}
+          label={t('memories')}
+          acceptedFileTypes={['image/*', 'video/*']}
+          bands={concert?.bands || []}
         />
         <TextArea
           {...register('comment')}
