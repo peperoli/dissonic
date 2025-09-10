@@ -34,13 +34,10 @@ export function getCloudflareThumbnailUrl(
   return `https://customer-bwyzo46pfd5dc1rh.cloudflarestream.com/${videoId}/thumbnails/thumbnail.jpg?${searchParams.toString()}`
 }
 
-export async function getCloudflareVideoDimensions(videoId: string) {
+export async function getCloudflareVideoDetails(videoId: string) {
   const response = await fetch(`/api/cloudflare/get-video-details?videoId=${videoId}`)
 
   const video: Cloudflare.Stream.Video = await response.json()
 
-  return {
-    width: video.input?.width ?? null,
-    height: video.input?.height ?? null,
-  }
+  return video
 }

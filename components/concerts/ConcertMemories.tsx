@@ -1,11 +1,15 @@
 import { useMemories } from '@/hooks/concerts/useMemories'
-import { getCloudflareImageUrl, getCloudflareThumbnailUrl, getCloudflareVideoUrl } from '@/lib/cloudflareHelpers'
+import {
+  getCloudflareImageUrl,
+  getCloudflareThumbnailUrl,
+  getCloudflareVideoUrl,
+} from '@/lib/cloudflareHelpers'
 import Image from 'next/image'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { XIcon } from 'lucide-react'
+import { PlayIcon, XIcon } from 'lucide-react'
 import { Memory } from '@/types/types'
 import { UserItem } from '../shared/UserItem'
 import Link from 'next/link'
@@ -98,6 +102,17 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
                 unoptimized
                 className="rounded-lg object-cover"
               />
+              {memory.file_type.startsWith('video/') && (
+                <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded bg-slate-900/70 p-1 text-sm">
+                  <PlayIcon className="size-icon fill-white" />
+                  {memory.duration && (
+                    <span>
+                      {Math.floor(memory.duration / 60)}:
+                      {(memory.duration % 60).toString().padStart(2, '0')}
+                    </span>
+                  )}
+                </div>
+              )}
               {index === 3 && (memoriesCount ?? 0) > 4 && (
                 <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-900/50 text-xl backdrop-blur">
                   +{(memoriesCount ?? 0) - 4}
@@ -184,10 +199,7 @@ function MemoryItem({ memory }: { memory: Memory }) {
         ) : (
           <VideoPlayer src={getCloudflareVideoUrl(memory.cloudflare_file_id)} />
         )}
-        <div className="absolute bottom-0 left-0 m-2 flex flex-col items-start gap-1">
-          {memory.band && (
-            <div className="rounded-md bg-slate-900/50 px-2 py-1 font-bold">{memory.band.name}</div>
-          )}
+        <div className="absolute inset-0 bottom-auto m-2 flex flex-col items-start gap-1">
           {memory.profile && (
             <Link
               href={`/users/${memory.profile.id}`}
@@ -195,6 +207,9 @@ function MemoryItem({ memory }: { memory: Memory }) {
             >
               <UserItem user={memory.profile} size="sm" />
             </Link>
+          )}
+          {memory.band && (
+            <div className="rounded-md bg-slate-900/50 px-2 py-1 font-bold">{memory.band.name}</div>
           )}
         </div>
       </div>

@@ -638,6 +638,7 @@ export type Database = {
           cloudflare_file_id: string
           concert_id: number
           created_at: string
+          duration: number | null
           file_type: string
           height: number | null
           id: number
@@ -649,6 +650,7 @@ export type Database = {
           cloudflare_file_id: string
           concert_id: number
           created_at?: string
+          duration?: number | null
           file_type: string
           height?: number | null
           id?: number
@@ -660,6 +662,7 @@ export type Database = {
           cloudflare_file_id?: string
           concert_id?: number
           created_at?: string
+          duration?: number | null
           file_type?: string
           height?: number | null
           id?: number
