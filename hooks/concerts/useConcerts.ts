@@ -26,7 +26,7 @@ const fetchConcerts = async (options?: ConcertFetchOptions) => {
     if (startDate) {
       query = query.gt('date_start', startDate.toISOString())
     }
-    
+
     if (endDate) {
       query = query.lte('date_start', endDate.toISOString())
     }
@@ -76,15 +76,16 @@ const fetchConcerts = async (options?: ConcertFetchOptions) => {
     filteredQuery = filteredQuery.limit(options.bandsSize, { referencedTable: 'j_concert_bands' })
   }
 
-  const { data, count, error } = await filteredQuery
-    .order('item_index', { referencedTable: 'j_concert_bands', ascending: true })
-    .overrideTypes<Concert[], { merge: false }>()
+  const { data, count, error } = await filteredQuery.order('item_index', {
+    referencedTable: 'j_concert_bands',
+    ascending: true,
+  })
 
   if (error) {
     throw error
   }
 
-  return { data, count }
+  return { data: data as Concert[], count }
 }
 
 export const useConcerts = (

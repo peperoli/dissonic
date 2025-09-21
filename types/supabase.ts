@@ -802,9 +802,6 @@ export type Database = {
         Row: {
           bands: Database["public"]["Tables"]["bands"]["Row"][] | null
           bands_count: number | null
-          bands_seen:
-            | Database["public"]["Tables"]["j_bands_seen"]["Row"][]
-            | null
           concert_bands:
             | Database["public"]["Tables"]["j_concert_bands"]["Row"][]
             | null
