@@ -10,6 +10,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { TruncatedList } from 'react-truncate-list'
 import { ConcertDate } from './ConcertDate'
+import { useQuery } from '@tanstack/react-query'
+import supabase from '@/utils/supabase/client'
 
 interface ConcertCardProps {
   concert: Concert
@@ -17,13 +19,28 @@ interface ConcertCardProps {
 }
 
 export const ConcertCard = ({ concert, nested }: ConcertCardProps) => {
-  const fanIds = new Set(concert?.bands_seen?.map(item => item?.user_id ?? ''))
+  const { data: allBandsSeen } = useQuery({
+    queryKey: ['bandsSeen', concert.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('j_bands_seen')
+        .select('band_id, user_id')
+        .eq('concert_id', concert.id)
+
+      if (error) {
+        throw error
+      }
+
+      return data
+    },
+  })
+  const fanIds = new Set(allBandsSeen?.map(item => item?.user_id ?? ''))
   const { data: profiles } = useProfiles({ ids: [...fanIds] }, fanIds.size > 0)
   const { data: session } = useSession()
   const { data: spotifyArtist } = useSpotifyArtist(concert.bands[0]?.spotify_artist_id, {
     enabled: !concert.bands[0]?.spotify_artist_images,
   })
-  const bandsSeen = concert.bands_seen?.filter(item => item?.user_id === session?.user.id)
+  const bandsSeen = allBandsSeen?.filter(item => item?.user_id === session?.user.id)
   const picture =
     (concert.bands[0]?.spotify_artist_images as SpotifyArtist['images'])?.[2] ||
     spotifyArtist?.images?.[2]
