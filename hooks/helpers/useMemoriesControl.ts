@@ -1,17 +1,19 @@
 import { uploadImageCloudflare } from '@/lib/uploadImageCloudflare'
 import { uploadVideoCloudflare } from '@/lib/uploadVideoCloudflare'
+import { Tables } from '@/types/supabase'
 import { ChangeEvent, Dispatch, DragEvent, SetStateAction, useMemo, useState } from 'react'
 
 export type MemoryFileItem = {
-  id?: number
+  id?: Tables<'memories'>['id']
+  fileId: Tables<'memories'>['file_id'] | null
+  bandId: Tables<'memories'>['band_id']
+  duration: Tables<'memories'>['duration']
   file: File | { name?: null; type: string; size?: null }
-  fileId: string | null
   preview?: string | null
   isLoading?: boolean
   progress?: number | null
   error?: string | null
   isSuccess: boolean
-  bandId: number | null
 }
 
 export function useMemoriesControl(
@@ -33,12 +35,13 @@ export function useMemoriesControl(
       ...files.map(file => ({
         file,
         fileId: null,
+        bandId: null,
+        duration: null,
         preview: URL.createObjectURL(file),
         isLoading: true,
         progress: 0,
         error: null,
         isSuccess: false,
-        bandId: null,
       })),
     ])
   }

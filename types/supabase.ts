@@ -635,10 +635,10 @@ export type Database = {
       memories: {
         Row: {
           band_id: number | null
-          cloudflare_file_id: string
           concert_id: number
           created_at: string
           duration: number | null
+          file_id: string
           file_type: string
           height: number | null
           id: number
@@ -647,10 +647,10 @@ export type Database = {
         }
         Insert: {
           band_id?: number | null
-          cloudflare_file_id: string
           concert_id: number
           created_at?: string
           duration?: number | null
+          file_id: string
           file_type: string
           height?: number | null
           id?: number
@@ -659,10 +659,10 @@ export type Database = {
         }
         Update: {
           band_id?: number | null
-          cloudflare_file_id?: string
           concert_id?: number
           created_at?: string
           duration?: number | null
+          file_id?: string
           file_type?: string
           height?: number | null
           id?: number

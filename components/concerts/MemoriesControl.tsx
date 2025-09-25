@@ -143,10 +143,19 @@ function MemoryItem({
               hiddenControls
               autoPlay
               muted
+              loop
             />
           ) : null)}
         {fileItem.file.type.startsWith('video/') && (
-          <PlaySquareIcon className="absolute right-0 m-2 size-icon" />
+          <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded bg-slate-900/70 p-1 text-sm">
+            <PlaySquareIcon className="size-icon" />
+            {fileItem.duration && (
+              <span>
+                {Math.floor(fileItem.duration / 60)}:
+                {(fileItem.duration % 60).toString().padStart(2, '0')}
+              </span>
+            )}
+          </div>
         )}
       </div>
       <div className="grid w-full">

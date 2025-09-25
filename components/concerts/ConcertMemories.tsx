@@ -9,7 +9,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { PlayIcon, XIcon } from 'lucide-react'
+import { PlaySquareIcon, XIcon } from 'lucide-react'
 import { Memory } from '@/types/types'
 import { UserItem } from '../shared/UserItem'
 import Link from 'next/link'
@@ -86,12 +86,12 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
               <Image
                 src={
                   memory.file_type.startsWith('image/')
-                    ? getCloudflareImageUrl(memory.cloudflare_file_id, {
+                    ? getCloudflareImageUrl(memory.file_id, {
                         width: 300,
                         height: 300,
                         fit: 'cover',
                       })
-                    : getCloudflareThumbnailUrl(memory.cloudflare_file_id, {
+                    : getCloudflareThumbnailUrl(memory.file_id, {
                         time: '1s',
                         width: 300,
                         height: 300,
@@ -104,7 +104,7 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
               />
               {memory.file_type.startsWith('video/') && (
                 <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded bg-slate-900/70 p-1 text-sm">
-                  <PlayIcon className="size-icon fill-white" />
+                  <PlaySquareIcon className="size-icon" />
                   {memory.duration && (
                     <span>
                       {Math.floor(memory.duration / 60)}:
@@ -189,7 +189,7 @@ function MemoryItem({ memory }: { memory: Memory }) {
       <div className="">
         {memory.file_type.startsWith('image/') ? (
           <Image
-            src={getCloudflareImageUrl(memory.cloudflare_file_id, { width: 800 })}
+            src={getCloudflareImageUrl(memory.file_id, { width: 800 })}
             alt=""
             width={1000}
             height={1000}
@@ -197,7 +197,7 @@ function MemoryItem({ memory }: { memory: Memory }) {
             className="max-h-full rounded-lg object-cover"
           />
         ) : (
-          <VideoPlayer src={getCloudflareVideoUrl(memory.cloudflare_file_id)} />
+          <VideoPlayer src={getCloudflareVideoUrl(memory.file_id)} />
         )}
         <div className="absolute inset-0 bottom-auto m-2 flex flex-col items-start gap-1">
           {memory.profile && (

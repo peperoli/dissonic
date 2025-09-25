@@ -18,6 +18,7 @@ function Video({
   ...playerProps
 }: { src: string } & Pick<ReactPlayerProps, 'muted' | 'autoPlay' | 'loop'>) {
   const mediaRef = useMediaRef()
+  console.log(playerProps)
 
   return (
     <ReactPlayer
@@ -26,13 +27,15 @@ function Video({
       preload="auto"
       playsInline
       crossOrigin=""
+      autoPlay
+      muted={true}
       style={{
         position: 'absolute',
         inset: 0,
         width: '100%',
         height: '100%',
       }}
-      {...playerProps}
+      // {...playerProps}
     />
   )
 }
@@ -76,7 +79,6 @@ function VideoWrapper({
   }
 
   useEffect(() => {
-    console.log(mediaPaused, visibleControls)
     if (!mediaPaused) {
       const timeout = setTimeout(() => {
         setVisibleControls(false)

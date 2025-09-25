@@ -1,5 +1,7 @@
 import { Tables, TablesInsert, TablesUpdate } from './supabase'
 
+export type Nullable<T> = { [K in keyof T]: T[K] | null };
+
 export type ExtendedRes<TData> = {
   data: TData
   count: number | null

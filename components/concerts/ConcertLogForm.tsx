@@ -44,8 +44,9 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
     initialMemories?.map(memory => ({
       id: memory.id,
       file: { type: memory.file_type },
-      fileId: memory.cloudflare_file_id,
+      fileId: memory.file_id,
       bandId: memory.band_id,
+      duration: memory.duration,
       preview: null,
       isSuccess: true,
     })) ?? []

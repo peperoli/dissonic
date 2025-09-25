@@ -52,7 +52,7 @@ async function addLog({
         }
 
         return {
-          cloudflare_file_id: memoryFileItem.fileId!,
+          file_id: memoryFileItem.fileId!,
           file_type: memoryFileItem.file.type,
           band_id: memoryFileItem.bandId,
           concert_id: concertId,

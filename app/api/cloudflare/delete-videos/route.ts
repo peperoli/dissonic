@@ -5,7 +5,7 @@ export async function GET() {
   const cloudflareStreamEndpoint = `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/stream`
   const supabase = await createClient()
 
-  const { data: memories, error } = await supabase.from('memories').select('cloudflare_file_id')
+  const { data: memories, error } = await supabase.from('memories').select('file_id')
 
   if (error) {
     console.error('Error fetching memories:', error)
@@ -20,7 +20,7 @@ export async function GET() {
   }).then(res => res.json())
 
   listVideosData.result.forEach(async (item: any) => {
-    if (memories.some(memory => memory.cloudflare_file_id === item.uid)) return
+    if (memories.some(memory => memory.file_id === item.uid)) return
 
     const response = await fetch(`${cloudflareStreamEndpoint}/${item.uid}`, {
       method: 'DELETE',
