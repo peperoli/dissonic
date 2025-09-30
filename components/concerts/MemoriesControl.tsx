@@ -206,6 +206,7 @@ function MemoryItem({
             allItems={bands}
             value={fileItem.bandId}
             onValueChange={bandId => setFileItem({ ...fileItem, bandId })}
+            isClearable
           />
         </div>
       </div>
