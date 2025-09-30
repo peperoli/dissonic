@@ -80,8 +80,6 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
         band_id: memoryFileItem.bandId,
       }))
 
-    console.log(memoryFileItemsToAdd, memoriesToUpdate, memoryIdsToDelete)
-
     if (!session || !concert) {
       return
     }

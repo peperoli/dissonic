@@ -65,7 +65,7 @@ async function editLog({
             width: videoDetails.input?.width ?? null,
             height: videoDetails.input?.height ?? null,
           }
-          duration = videoDetails.duration ?? null
+          duration = videoDetails.duration ? Math.round(videoDetails.duration) : null
         }
 
         return {
@@ -168,6 +168,9 @@ export function useEditLog() {
     onSuccess: ({ concertId }) => {
       queryClient.invalidateQueries({ queryKey: ['concert', concertId] })
       queryClient.invalidateQueries({ queryKey: ['memories', concertId] })
+      queryClient.invalidateQueries({ queryKey: ['image-memories-count', concertId] })
+      queryClient.invalidateQueries({ queryKey: ['video-memories-count', concertId] })
+      queryClient.invalidateQueries({ queryKey: ['memories-count', concertId] })
       queryClient.invalidateQueries({ queryKey: ['comments', concertId] })
       toast.success(t('logUpdated'))
     },

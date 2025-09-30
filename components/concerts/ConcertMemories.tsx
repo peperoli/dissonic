@@ -114,8 +114,8 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
                 </div>
               )}
               {index === 3 && (memoriesCount ?? 0) > 4 && (
-                <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-900/50 text-xl backdrop-blur">
-                  +{(memoriesCount ?? 0) - 4}
+                <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-900/50 text-xl backdrop-blur-sm">
+                  <div className="btn btn-small btn-secondary !bg-slate-900/70">+{(memoriesCount ?? 0) - 4}</div>
                 </div>
               )}
             </li>
@@ -149,8 +149,9 @@ function Lightbox({
   return (
     <Dialog.Root {...dialogProps}>
       <Dialog.Portal>
-        <Dialog.Overlay /> {/* Dialog Overlay is needed to prevent scrolling */}
-        <Dialog.Content className="fixed inset-0 z-50 mx-auto max-w-xl snap-both snap-mandatory overflow-y-auto scroll-smooth bg-slate-900 md:snap-none">
+        <Dialog.Overlay className="fixed inset-0 bg-slate-900" />{' '}
+        {/* Dialog Overlay is needed to prevent scrolling */}
+        <Dialog.Content className="fixed inset-0 z-50 mx-auto max-w-xl overflow-y-auto scroll-smooth bg-slate-900">
           <div className="flex items-center gap-2 p-4">
             <Dialog.Title className="mb-0">{t('memories')}</Dialog.Title>
             {!!imageMemoriesCount && (
@@ -181,7 +182,7 @@ function MemoryItem({ memory }: { memory: Memory }) {
   return (
     <li
       id={memory.id.toString()}
-      className="relative grid flex-none snap-center place-content-center rounded-lg bg-slate-700"
+      className="relative grid flex-none place-content-center rounded-lg bg-slate-700"
       style={{
         aspectRatio: (memory.width ?? 1) / (memory.height ?? 1),
       }}

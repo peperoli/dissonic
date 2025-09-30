@@ -48,7 +48,7 @@ async function addLog({
             width: videoDetails.input?.width ?? null,
             height: videoDetails.input?.height ?? null,
           }
-          duration = videoDetails.duration ?? null
+          duration = videoDetails.duration ? Math.round(videoDetails.duration) : null
         }
 
         return {
@@ -95,6 +95,9 @@ export function useAddLog() {
     onSuccess: ({ concertId }) => {
       queryClient.invalidateQueries({ queryKey: ['concert', concertId] })
       queryClient.invalidateQueries({ queryKey: ['memories', concertId] })
+      queryClient.invalidateQueries({ queryKey: ['image-memories-count', concertId] })
+      queryClient.invalidateQueries({ queryKey: ['video-memories-count', concertId] })
+      queryClient.invalidateQueries({ queryKey: ['memories-count', concertId] })
       queryClient.invalidateQueries({ queryKey: ['comments', concertId] })
       toast.success(t('logAdded'))
     },

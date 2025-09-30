@@ -1,4 +1,4 @@
-import { PauseIcon, PlayIcon } from 'lucide-react'
+import { Loader2Icon, PauseIcon, PlayIcon } from 'lucide-react'
 import ReactPlayer from 'react-player'
 import {
   MediaProvider,
@@ -18,7 +18,6 @@ function Video({
   ...playerProps
 }: { src: string } & Pick<ReactPlayerProps, 'muted' | 'autoPlay' | 'loop'>) {
   const mediaRef = useMediaRef()
-  console.log(playerProps)
 
   return (
     <ReactPlayer
@@ -27,15 +26,13 @@ function Video({
       preload="auto"
       playsInline
       crossOrigin=""
-      autoPlay
-      muted={true}
       style={{
         position: 'absolute',
         inset: 0,
         width: '100%',
         height: '100%',
       }}
-      // {...playerProps}
+      {...playerProps}
     />
   )
 }
@@ -45,6 +42,7 @@ export function VideoPlayer({
 }: {
   src: string
   hiddenControls?: boolean
+  size?: 'sm' | 'md'
 } & Pick<ReactPlayerProps, 'muted' | 'autoPlay' | 'loop'>) {
   return (
     <MediaProvider>
@@ -56,13 +54,16 @@ export function VideoPlayer({
 function VideoWrapper({
   src,
   hiddenControls,
+  size = 'md',
   ...playerProps
 }: {
   src: string
   hiddenControls?: boolean
+  size?: 'sm' | 'md'
 } & Pick<ReactPlayerProps, 'muted' | 'autoPlay' | 'loop'>) {
   const [visibleControls, setVisibleControls] = useState(true)
   const mediaPaused = useMediaSelector(state => state.mediaPaused)
+  const mediaLoading = useMediaSelector(state => state.mediaLoading)
 
   function showControls() {
     setVisibleControls(true)
@@ -99,25 +100,31 @@ function VideoWrapper({
       <Video src={src} {...playerProps} />
       {!hiddenControls && (
         <div
-        onClick={event => event.stopPropagation()}
+          onClick={event => event.stopPropagation()}
           className={clsx(visibleControls ? '' : 'opacity-0 transition group-hover:opacity-100')}
         >
+          {mediaLoading && (
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+              <LoadingIndicator size={size} />
+            </div>
+          )}
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-            <PlayButton />
+            <PlayButton size={size} />
           </div>
-          <SeekBar />
+          {size !== 'sm' && <SeekBar />}
         </div>
       )}
     </div>
   )
 }
 
-function PlayButton() {
+function PlayButton({ size }: { size?: 'sm' | 'md' }) {
   const dispatch = useMediaDispatch()
   const mediaPaused = useMediaSelector(state => state.mediaPaused)
 
   return (
     <button
+      type="button"
       onClick={() => {
         dispatch({
           type: mediaPaused
@@ -126,14 +133,25 @@ function PlayButton() {
         })
       }}
       aria-label={mediaPaused ? 'Play' : 'Pause'}
-      className="grid size-16 place-content-center rounded-full bg-black/50"
+      className={clsx(
+        'grid place-content-center rounded-full bg-black/50',
+        size === 'sm' ? 'size-8' : 'size-16'
+      )}
     >
       {mediaPaused ? (
-        <PlayIcon className="size-6 fill-white" />
+        <PlayIcon className={clsx('fill-white', size === 'sm' ? 'size-icon' : 'size-6')} />
       ) : (
-        <PauseIcon className="size-6 fill-white" />
+        <PauseIcon className={clsx('fill-white', size === 'sm' ? 'size-icon' : 'size-6')} />
       )}
     </button>
+  )
+}
+
+function LoadingIndicator({ size }: { size?: 'sm' | 'md' }) {
+  return (
+    <Loader2Icon
+      className={clsx('animate-spin text-white', size === 'sm' ? 'size-6' : 'size-12')}
+    />
   )
 }
 

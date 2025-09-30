@@ -138,25 +138,8 @@ function MemoryItem({
               className="absolute inset-0 size-full rounded-md object-contain"
             />
           ) : fileItem.fileId ? (
-            <VideoPlayer
-              src={getCloudflareVideoUrl(fileItem.fileId)}
-              hiddenControls
-              autoPlay
-              muted
-              loop
-            />
+            <VideoPlayer src={getCloudflareVideoUrl(fileItem.fileId)} size="sm" />
           ) : null)}
-        {fileItem.file.type.startsWith('video/') && (
-          <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded bg-slate-900/70 p-1 text-sm">
-            <PlaySquareIcon className="size-icon" />
-            {fileItem.duration && (
-              <span>
-                {Math.floor(fileItem.duration / 60)}:
-                {(fileItem.duration % 60).toString().padStart(2, '0')}
-              </span>
-            )}
-          </div>
-        )}
       </div>
       <div className="grid w-full">
         <div className="flex w-full gap-2">
@@ -170,7 +153,7 @@ function MemoryItem({
                 )}
               />
             </div>
-            <div className="flex justify-between">
+            <div>
               {fileItem.error ? (
                 <span className="text-red">Error: {fileItem.error}</span>
               ) : fileItem.isLoading ? (
@@ -182,9 +165,6 @@ function MemoryItem({
                   <CheckIcon className="size-icon" />
                 </span>
               ) : null}
-              <span className="text-slate-300">
-                {fileItem.file.size ? formatSize(fileItem.file.size) : null}
-              </span>
             </div>
           </div>
           <Button

@@ -29,7 +29,7 @@ export const Select = ({ name, items, isLoading, fixedHeight, ...props }: Select
       searchRef.current.select()
     }
     // @ts-expect-error
-  }, [props.values.length, props.value])
+  }, [props.values?.length, props.value])
   return (
     <>
       {props.searchable && (
