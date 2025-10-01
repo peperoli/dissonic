@@ -1,5 +1,7 @@
 import { Tables, TablesInsert, TablesUpdate } from './supabase'
 
+export type Nullable<T> = { [K in keyof T]: T[K] | null };
+
 export type ExtendedRes<TData> = {
   data: TData
   count: number | null
@@ -137,7 +139,7 @@ export type AddLocation = TablesInsert<'locations'>
 
 export type Country = { id: number; iso2: string }
 
-export type Profile = Tables<'profiles'> & {
+export type Profile = Omit<Tables<'profiles'>, 'last_searched'> & {
   friends?: { count: number }[]
 }
 
@@ -178,4 +180,9 @@ export type SpotifyArtist = {
   external_urls: {
     spotify: string
   }
+}
+
+export type Memory = Tables<'memories'> & {
+  band: Pick<Tables<'bands'>, 'id' | 'name'> | null
+  profile?: Pick<Tables<'profiles'>, 'id' | 'username' | 'role' | 'avatar_path' | 'updated_at'> | null
 }

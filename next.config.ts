@@ -13,6 +13,9 @@ const nextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: 'i.scdn.co' },
       { protocol: 'https', hostname: 'saehmgtoacwmofqbbaff.supabase.co' },
+      { protocol: 'https', hostname: 'dissonic.ch' },
+      { protocol: 'https', hostname: 'imagedelivery.net' },
+      { protocol: 'https', hostname: 'customer-bwyzo46pfd5dc1rh.cloudflarestream.com' },
     ],
   },
   redirects: async () => {

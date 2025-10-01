@@ -38,8 +38,3 @@ export async function saveLastQueryState(
   )
   cookieStore.set(`${resource}LastQueryState`, `?${searchParams.toString()}`)
 }
-
-export async function setBandListHintPreference(bandListHint: 'hide' | 'show') {
-  const cookieStore = await cookies()
-  cookieStore.set('bandListHint', bandListHint, { maxAge: YEAR })
-}

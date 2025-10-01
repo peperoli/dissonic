@@ -21,6 +21,9 @@ const retrieveSession = async () => {
   const sessionWithRole = {
     ...session,
     user_role: 'user_role' in jwt ? (jwt.user_role as Enums<'app_role'>) : null,
+    isMod:
+      'user_role' in jwt ? jwt.user_role === 'moderator' || jwt.user_role === 'developer' : false,
+    isDev: 'user_role' in jwt ? jwt.user_role === 'developer' : false,
   }
 
   return sessionWithRole

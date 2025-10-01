@@ -3,9 +3,8 @@ import { Concert } from '@/types/types'
 import { createClient } from '@/utils/supabase/server'
 import { ConcertsPage } from '@/components/concerts/ConcertsPage'
 
-async function fetchData(view: { userView: string }) {
+async function fetchData({ userView }: { userView: string }) {
   const supabase = await createClient()
-  const { userView } = view
 
   const {
     data: { user },
@@ -74,12 +73,8 @@ async function fetchData(view: { userView: string }) {
 
 export default async function Page() {
   const cookieStore = await cookies()
-  const userView = cookieStore.get('concertsUserView')?.value
-  const view = {
-    range: 'past',
-    userView: userView || 'global',
-  }
-  const { concerts, user } = await fetchData(view)
+  const userView = cookieStore.get('concertsUserView')?.value || 'global'
+  const { concerts, user } = await fetchData({ userView })
 
-  return <ConcertsPage concerts={concerts} currentUser={user} view={view} />
+  return <ConcertsPage concerts={concerts} currentUser={user} />
 }

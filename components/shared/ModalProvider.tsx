@@ -6,7 +6,6 @@ import { parseAsStringLiteral, useQueryState } from 'nuqs'
 import Modal from '../Modal'
 import { DialogTitle } from '@radix-ui/react-dialog'
 import { useTranslations } from 'next-intl'
-import { SearchForm } from '../layout/SearchForm'
 import clsx from 'clsx'
 
 function Loader() {
@@ -18,6 +17,10 @@ const ConcertForm = dynamic(() => import('../concerts/Form').then(mod => mod.For
 })
 const DeleteConcertForm = dynamic(
   () => import('../concerts/DeleteConcertForm').then(mod => mod.DeleteConcertForm),
+  { loading: () => <Loader /> }
+)
+const ConcertLogForm = dynamic(
+  () => import('../concerts/ConcertLogForm').then(mod => mod.ConcertLogForm),
   { loading: () => <Loader /> }
 )
 const DeleteCommentForm = dynamic(
@@ -49,11 +52,16 @@ const RemoveFriendForm = dynamic(
   () => import('../profile/RemoveFriendForm').then(mod => mod.RemoveFriendForm),
   { loading: () => <Loader /> }
 )
+const SearchForm = dynamic(() => import('../layout/SearchForm').then(mod => mod.SearchForm), {
+  loading: () => <Loader />,
+})
 
 export const modalPaths = [
   'add-concert',
   'edit-concert',
   'delete-concert',
+  'add-log',
+  'edit-log',
   'delete-comment',
   'add-band',
   'edit-band',
@@ -78,6 +86,8 @@ export const ModalProvider = () => {
     'add-concert': { title: t('addConcert'), component: ConcertForm },
     'edit-concert': { title: t('editConcert'), component: ConcertForm },
     'delete-concert': { title: t('deleteConcert'), component: DeleteConcertForm },
+    'add-log': { title: t('addLog'), component: ConcertLogForm },
+    'edit-log': { title: t('editLog'), component: ConcertLogForm },
     'delete-comment': { title: t('deleteComment'), component: DeleteCommentForm },
     'add-band': { title: t('addBand'), component: BandForm },
     'edit-band': { title: t('editBand'), component: BandForm },
