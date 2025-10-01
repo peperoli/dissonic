@@ -1,14 +1,29 @@
 import { useQuery } from '@tanstack/react-query'
 import supabase from '@/utils/supabase/client'
+import { CornerRightDown } from 'lucide-react'
 
-async function fetchMemories({concertId, size}: { concertId?: number, size?: number }) {
+async function fetchMemories({
+  concertId,
+  userId,
+  size,
+}: {
+  concertId?: number
+  userId?: string
+  size?: number
+}) {
   let query = supabase
     .from('memories')
-    .select('*, band:bands(id, name), profile:profiles(id, username, role, avatar_path, updated_at)')
+    .select(
+      '*, band:bands(id, name), profile:profiles(id, username, role, avatar_path, updated_at)'
+    )
     .order('created_at', { ascending: false })
 
   if (concertId) {
     query = query.eq('concert_id', concertId)
+  }
+
+  if (userId) {
+    query = query.eq('user_id', userId)
   }
 
   if (size) {
@@ -24,9 +39,14 @@ async function fetchMemories({concertId, size}: { concertId?: number, size?: num
   return data
 }
 
-export function useMemories(fetchOptions: { concertId?: number, size?: number }) {
+export function useMemories(fetchOptions: {
+  concertId?: number
+  userId?: string
+  size?: number
+}) {
+  const { concertId, userId, size } = fetchOptions
   return useQuery({
-    queryKey: ['memories', fetchOptions.concertId, fetchOptions.size],
+    queryKey: ['memories', concertId, userId, size],
     queryFn: () => fetchMemories(fetchOptions),
   })
 }

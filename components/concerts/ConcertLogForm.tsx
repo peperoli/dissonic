@@ -25,7 +25,7 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
   const { id: concertId } = useParams<{ id?: string }>()
   const { data: concert } = useConcert(concertId ? parseInt(concertId) : null)
   const { data: session } = useSession()
-  const { data: initialMemories } = useMemories({ concertId: concert?.id })
+  const { data: initialMemories } = useMemories({ concertId: concert?.id, userId: session?.user.id })
   const { data: comments } = useComments({
     concertId: concert?.id ?? null,
     userId: session?.user.id,

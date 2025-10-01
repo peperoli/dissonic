@@ -1,6 +1,6 @@
 import { Band } from '@/types/types'
 import clsx from 'clsx'
-import { CheckIcon, PlaySquareIcon, XIcon } from 'lucide-react'
+import { CheckIcon, UploadIcon, XIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Dispatch, SetStateAction, useRef } from 'react'
 import { Button } from '../Button'
@@ -57,38 +57,43 @@ export function MemoriesControl({
             !isDragActive && 'border-dashed'
           )}
         >
-          <span className="text-center text-slate-300">
-            {isDragActive
-              ? t('dropFilesHere')
-              : t.rich('dragOrBrowseMediaFiles', {
-                  span: chunk => (
-                    <span className="cursor-pointer font-bold hover:text-venom">{chunk}</span>
-                  ),
-                })}
+          <span className="flex flex-col items-center text-center">
+            <UploadIcon className="mb-2 size-icon" />
+            {isDragActive ? (
+              <p>{t('dropFilesHere')}</p>
+            ) : (
+              <p>
+                <span className="cursor-pointer font-bold hover:text-venom">{t('browse')}</span>
+                <span className="hidden md:inline"> {t('orDragFilesHere')}</span>
+              </p>
+            )}
+            <small className="text-slate-300">{t('fileUploadInstructions')}</small>
           </span>
         </div>
       </label>
-      <div className="mt-2 grid gap-4 rounded-lg bg-slate-750 p-4">
-        {fileItems.map((fileItem, index) => {
-          return (
-            <MemoryItem
-              fileItem={fileItem}
-              setFileItem={item => {
-                const newItems = [...fileItems]
-                newItems[index] = item
-                setFileItems(newItems)
-              }}
-              index={index}
-              onRemove={() => {
-                const newItems = fileItems.filter((_, i) => i !== index)
-                setFileItems(newItems)
-              }}
-              bands={bands}
-              key={index}
-            />
-          )
-        })}
-      </div>
+      {fileItems.length > 0 && (
+        <div className="mt-2 grid gap-4 rounded-lg bg-slate-750 p-4">
+          {fileItems.map((fileItem, index) => {
+            return (
+              <MemoryItem
+                fileItem={fileItem}
+                setFileItem={item => {
+                  const newItems = [...fileItems]
+                  newItems[index] = item
+                  setFileItems(newItems)
+                }}
+                index={index}
+                onRemove={() => {
+                  const newItems = fileItems.filter((_, i) => i !== index)
+                  setFileItems(newItems)
+                }}
+                bands={bands}
+                key={index}
+              />
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }

@@ -66,7 +66,7 @@ export function useMemoriesControl(
           } else if (file.type.startsWith('video/')) {
             const { videoId } = await uploadVideoCloudflare(file, {
               prefix,
-              acceptedFileTypes,
+              maxDuration: 60,
               onUploadProgress: progress => {
                 setFileItems(prevItems =>
                   prevItems.map(item =>

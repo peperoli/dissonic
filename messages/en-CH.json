@@ -221,7 +221,9 @@
   },
   "MemoriesControl": {
     "dropFilesHere": "Drop files here",
-    "dragOrBrowseMediaFiles": "Drag or <span>browse</span> media files",
+    "browse": "Browse",
+    "orDragFilesHere": "or drag files here",
+    "fileUploadInstructions": "Images and videos (max. 60 seconds)",
     "remove": "Remove"
   },
   "Memories": {

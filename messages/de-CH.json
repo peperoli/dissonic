@@ -221,7 +221,9 @@
   },
   "MemoriesControl": {
     "dropFilesHere": "Dateien hier ablegen",
-    "dragOrBrowseMediaFiles": "Bild- und Videodateien hinziehen oder <span>durchsuchen</span>",
+    "browse": "Durchsuchen",
+    "orDragFilesHere": "oder Dateien hier hinziehen",
+    "fileUploadInstructions": "Bilder und Videos (max. 60 Sekunden)",
     "remove": "Entfernen"
   },
   "Memories": {

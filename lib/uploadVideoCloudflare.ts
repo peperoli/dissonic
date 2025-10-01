@@ -4,11 +4,35 @@ export async function uploadVideoCloudflare(
   file: File,
   options?: {
     prefix?: string
-    acceptedFileTypes?: string[]
+    maxDuration?: number // in seconds
     onUploadProgress?: (progress: number) => void
   }
 ) {
   const fileName = `concert-memories-${file.name}`
+
+  if (!file.type.startsWith('video/')) {
+    throw new Error(`File type ${file.type} is not accepted.`)
+  }
+
+  if (options?.maxDuration) {
+    const duration = await new Promise<number>((resolve, reject) => {
+      const video = document.createElement('video')
+      video.preload = 'metadata'
+      video.onloadedmetadata = function () {
+        window.URL.revokeObjectURL(video.src)
+        resolve(video.duration)
+      }
+      video.onerror = function () {
+        reject(new Error('Failed to load video metadata'))
+      }
+      video.src = URL.createObjectURL(file)
+    })
+    if (duration > options.maxDuration) {
+      throw new Error(
+        `Video duration ${Math.round(duration)}s exceeds maximum allowed duration of ${options.maxDuration}s.`
+      )
+    }
+  }
 
   return new Promise<{ fileName: string; videoId: string }>((resolve, reject) => {
     const upload = new tus.Upload(file, {
@@ -43,18 +67,6 @@ export async function uploadVideoCloudflare(
       },
     })
 
-    // Check if there are any previous uploads to continue.
-    upload
-      .findPreviousUploads()
-      .then(function (previousUploads) {
-        // Found previous uploads so we select the first one.
-        if (previousUploads.length) {
-          upload.resumeFromPreviousUpload(previousUploads[0])
-        }
-
-        // Start the upload
-        upload.start()
-      })
-      .catch(reject)
+    upload.start()
   })
 }

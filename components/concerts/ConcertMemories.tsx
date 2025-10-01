@@ -115,7 +115,9 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
               )}
               {index === 3 && (memoriesCount ?? 0) > 4 && (
                 <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-900/50 text-xl backdrop-blur-sm">
-                  <div className="btn btn-small btn-secondary !bg-slate-900/70">+{(memoriesCount ?? 0) - 4}</div>
+                  <div className="btn btn-small btn-secondary !bg-slate-900/70">
+                    +{(memoriesCount ?? 0) - 4}
+                  </div>
                 </div>
               )}
             </li>
@@ -144,13 +146,17 @@ function Lightbox({
   videoMemoriesCount?: number | null
 } & Dialog.DialogProps) {
   const { data: memories } = useMemories({ concertId })
+  const [metadataIsVisible, setMetadataIsVisible] = useState(true)
   const t = useTranslations('Memories')
+
+  function toggleMetadata() {
+    setMetadataIsVisible(!metadataIsVisible)
+  }
 
   return (
     <Dialog.Root {...dialogProps}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-slate-900" />{' '}
-        {/* Dialog Overlay is needed to prevent scrolling */}
+        <Dialog.Overlay className="fixed inset-0 bg-slate-900" />
         <Dialog.Content className="fixed inset-0 z-50 mx-auto max-w-xl overflow-y-auto scroll-smooth bg-slate-900">
           <div className="flex items-center gap-2 p-4">
             <Dialog.Title className="mb-0">{t('memories')}</Dialog.Title>
@@ -170,7 +176,14 @@ function Lightbox({
             </Dialog.Close>
           </div>
           <ul className="flex flex-col gap-2 px-2 pb-2">
-            {memories?.map(memory => <MemoryItem key={memory.id} memory={memory} />)}
+            {memories?.map(memory => (
+              <MemoryItem
+                key={memory.id}
+                memory={memory}
+                metadataIsVisible={metadataIsVisible}
+                toggleMetadata={toggleMetadata}
+              />
+            ))}
           </ul>
         </Dialog.Content>
       </Dialog.Portal>
@@ -178,28 +191,37 @@ function Lightbox({
   )
 }
 
-function MemoryItem({ memory }: { memory: Memory }) {
+function MemoryItem({
+  memory,
+  metadataIsVisible,
+  toggleMetadata,
+}: {
+  memory: Memory
+  metadataIsVisible: boolean
+  toggleMetadata: () => void
+}) {
   return (
     <li
       id={memory.id.toString()}
+      onClick={toggleMetadata}
       className="relative grid flex-none place-content-center rounded-lg bg-slate-700"
       style={{
-        aspectRatio: (memory.width ?? 1) / (memory.height ?? 1),
+        aspectRatio: memory.width && memory.height ? memory.width / memory.height : undefined,
       }}
     >
-      <div className="">
-        {memory.file_type.startsWith('image/') ? (
-          <Image
-            src={getCloudflareImageUrl(memory.file_id, { width: 800 })}
-            alt=""
-            width={1000}
-            height={1000}
-            unoptimized
-            className="max-h-full rounded-lg object-cover"
-          />
-        ) : (
-          <VideoPlayer src={getCloudflareVideoUrl(memory.file_id)} />
-        )}
+      {memory.file_type.startsWith('image/') ? (
+        <Image
+          src={getCloudflareImageUrl(memory.file_id, { width: 800 })}
+          alt=""
+          width={1000}
+          height={1000}
+          unoptimized
+          className="max-h-full rounded-lg object-cover"
+        />
+      ) : (
+        <VideoPlayer src={getCloudflareVideoUrl(memory.file_id)} />
+      )}
+      {metadataIsVisible && (
         <div className="absolute inset-0 bottom-auto m-2 flex flex-col items-start gap-1">
           {memory.profile && (
             <Link
@@ -213,7 +235,7 @@ function MemoryItem({ memory }: { memory: Memory }) {
             <div className="rounded-md bg-slate-900/50 px-2 py-1 font-bold">{memory.band.name}</div>
           )}
         </div>
-      </div>
+      )}
     </li>
   )
 }
