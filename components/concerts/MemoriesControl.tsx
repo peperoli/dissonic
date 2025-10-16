@@ -82,7 +82,6 @@ export function MemoriesControl({
                   newItems[index] = item
                   setFileItems(newItems)
                 }}
-                index={index}
                 onRemove={() => {
                   const newItems = fileItems.filter((_, i) => i !== index)
                   setFileItems(newItems)
@@ -101,13 +100,11 @@ export function MemoriesControl({
 function MemoryItem({
   fileItem,
   setFileItem,
-  index,
   onRemove,
   bands,
 }: {
   fileItem: MemoryFileItem
   setFileItem: (item: MemoryFileItem) => void
-  index: number
   onRemove: () => void
   bands: Band[]
 }) {
@@ -115,16 +112,8 @@ function MemoryItem({
     fileItem.preview || (fileItem.fileId && getCloudflareImageUrl(fileItem.fileId, { width: 300 }))
   const t = useTranslations('MemoriesControl')
 
-  function formatSize(bytes: number) {
-    if (bytes < 1024 ** 2) {
-      return (bytes / 1024).toFixed(1) + ' KB'
-    } else {
-      return (bytes / 1024 ** 2).toFixed(1) + ' MB'
-    }
-  }
-
   return (
-    <div className="flex w-full gap-4 text-left text-sm">
+    <div className="flex w-full gap-4 text-left">
       <div className="relative grid size-22 flex-none place-content-center rounded-md bg-slate-700">
         {fileItem.file.type.startsWith('image/') && imagePreview && (
           <img

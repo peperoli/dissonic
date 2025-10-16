@@ -25,7 +25,10 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
   const { id: concertId } = useParams<{ id?: string }>()
   const { data: concert } = useConcert(concertId ? parseInt(concertId) : null)
   const { data: session } = useSession()
-  const { data: initialMemories } = useMemories({ concertId: concert?.id, userId: session?.user.id })
+  const { data: initialMemories, status: memoriesStatus } = useMemories({
+    concertId: concert?.id,
+    userId: session?.user.id,
+  })
   const { data: comments } = useComments({
     concertId: concert?.id ?? null,
     userId: session?.user.id,
@@ -40,17 +43,7 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
       comment: comments?.[0]?.content || '',
     },
   })
-  const [memoryFileItems, setMemoryFileItems] = useState<MemoryFileItem[]>(
-    initialMemories?.map(memory => ({
-      id: memory.id,
-      file: { type: memory.file_type },
-      fileId: memory.file_id,
-      bandId: memory.band_id,
-      duration: memory.duration,
-      preview: null,
-      isSuccess: true,
-    })) ?? []
-  )
+  const [memoryFileItems, setMemoryFileItems] = useState<MemoryFileItem[]>([])
   const initialBandsSeen = concert?.bands_seen
     ?.filter(item => item?.user_id === session?.user.id)
     .filter(item => typeof item !== 'undefined')
@@ -59,6 +52,20 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
   const t = useTranslations('ConcertLogForm')
   const isPending = addLog.isPending || editLog.isPending
   const isSuccess = addLog.isSuccess || editLog.isSuccess
+
+  useEffect(() => {
+    if (memoriesStatus === 'success' && initialMemories) {
+      setMemoryFileItems(initialMemories?.map(memory => ({
+        id: memory.id,
+        file: { type: memory.file_type },
+        fileId: memory.file_id,
+        bandId: memory.band_id,
+        duration: memory.duration,
+        preview: null,
+        isSuccess: true,
+      })))
+    }
+  }, [memoriesStatus])
 
   function onSubmit(formData: LogFields) {
     const { bandsSeen, comment } = formData
