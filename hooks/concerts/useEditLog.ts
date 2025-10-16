@@ -123,8 +123,7 @@ async function editLog({
       const { error: updateCommentError } = await supabase
         .from('comments')
         .update({ concert_id: concertId, content: comment })
-        .eq('concert_id', concertId)
-        .eq('user_id', userId)
+        .eq('id', existingComment.id)
 
       if (updateCommentError) {
         throw updateCommentError
