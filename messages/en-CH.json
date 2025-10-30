@@ -107,7 +107,8 @@
     "Email not confirmed": "The e-mail address has not yet been confirmed.",
     "youDontHaveAnAccountYet": "You don’t have an account yet?",
     "letsGetStarted": "Then let’s get started!",
-    "signUp": "Sign up"
+    "signUp": "Sign up",
+    "resendConfirmationEmail": "Resend confirmation e-mail"
   },
   "useSignIn": {
     "loggedIn": "Login successful"
@@ -128,7 +129,13 @@
     "passwordLengthError": "The password must be at least 12 characters long.",
     "updatePasswordSuccess": "Success! You can now login with your new password."
   },
-    "ConcertsNav": {
+  "ResendConfirmationPage": {
+    "resendConfirmation": "Resend confirmation",
+    "resendConfirmationDescription": "Enter your e-mail address to receive the confirmation e-mail again.",
+    "email": "E-mail",
+    "resendConfirmationSuccess": "Success! You will shortly receive an e-mail in which you can confirm your e-mail address."
+  },
+  "ConcertsNav": {
     "past": "Until today",
     "future": "Future"
   },

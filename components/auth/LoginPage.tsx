@@ -30,6 +30,7 @@ export default function LoginPage() {
       resetField('password')
     }
   }, [status])
+
   return (
     <main className="container-sm">
       <h1>{t('loginToTrackConcerts')}</h1>
@@ -71,11 +72,16 @@ export default function LoginPage() {
         </form>
         <OAuthButtons />
       </section>
-      <h3 className="mt-10">{t('youDontHaveAnAccountYet')}</h3>
-      <p className="mb-4">{t('letsGetStarted')}</p>
-      <Link href="/signup" className="btn btn-small btn-secondary">
-        {t('signUp')}
-      </Link>
+      <section className="mt-10">
+        <Link href="/resend-confirmation" className="btn btn-small btn-secondary">
+          {t('resendConfirmationEmail')}
+        </Link>
+        <h3 className="mt-10">{t('youDontHaveAnAccountYet')}</h3>
+        <p className="mb-4">{t('letsGetStarted')}</p>
+        <Link href="/signup" className="btn btn-small btn-secondary">
+          {t('signUp')}
+        </Link>
+      </section>
     </main>
   )
 }
