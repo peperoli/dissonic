@@ -34,7 +34,10 @@ export function MemoriesControl({
   return (
     <div className="grid">
       <label htmlFor={name}>
-        <div className="mb-2 text-sm text-slate-300">{label}</div>
+        <div className="mb-2 text-sm text-slate-300">
+          {label}{' '}
+          <span className="rounded bg-slate-300 px-0.5 text-xs font-bold text-slate-850">Beta</span>
+        </div>
         <input
           type="file"
           id={name}

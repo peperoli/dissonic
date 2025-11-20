@@ -229,7 +229,8 @@
   "Memories": {
     "memories": "Erinnerungen",
     "nImages": "{count, plural, =1 {ein Bild} other {# Bilder}}",
-    "nVideos": "{count, plural, =1 {ein Video} other {# Videos}}"
+    "nVideos": "{count, plural, =1 {ein Video} other {# Videos}}",
+    "addMemory": "Erinnerung hinzufügen"
   },
   "ConcertCommunity": {
     "loading": "Laden ...",

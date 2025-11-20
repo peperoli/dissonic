@@ -9,13 +9,15 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { PlaySquareIcon, XIcon } from 'lucide-react'
+import { PlaySquareIcon, PlusIcon, XIcon } from 'lucide-react'
 import { Memory } from '@/types/types'
 import { UserItem } from '../shared/UserItem'
 import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
 import supabase from '@/utils/supabase/client'
 import { VideoPlayer } from '../shared/VideoPlayer'
+import { Button } from '../Button'
+import { useModal } from '../shared/ModalProvider'
 
 async function fetchMemoriesCount(concertId: number, fileType?: 'image/' | 'video/') {
   let query = supabase.from('memories').select('id', { count: 'exact' }).eq('concert_id', concertId)
@@ -50,16 +52,16 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
   const t = useTranslations('Memories')
   const [lightboxIsOpen, setLightboxIsOpen] = useState(false)
   const { push } = useRouter()
-
-  if (!memories?.length) {
-    return null
-  }
+  const [_, setModal] = useModal()
 
   return (
     <>
       <section className="rounded-lg bg-slate-800 p-4 md:p-6">
-        <div className="flex items-baseline gap-2">
-          <h2>{t('memories')}</h2>
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <h2 className="mb-0">{t('memories')}</h2>
+          <span className="rounded-md bg-slate-300 px-1 text-sm font-bold text-slate-850">
+            Beta
+          </span>
           {!!imageMemoriesCount && (
             <span className="text-sm text-slate-300">
               &bull; {t('nImages', { count: imageMemoriesCount })}
@@ -71,9 +73,16 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
               &bull; {t('nVideos', { count: videoMemoriesCount })}
             </span>
           )}
+          <Button
+            label={t('addMemory')}
+            onClick={() => setModal('edit-log')}
+            icon={<PlusIcon className="size-icon" />}
+            size="small"
+            className="md:ml-auto"
+          />
         </div>
         <ul className="grid grid-cols-2 gap-2 md:grid-cols-4">
-          {memories.map((memory, index) => (
+          {memories?.map((memory, index) => (
             <li
               key={memory.id}
               role="button"
@@ -158,8 +167,11 @@ function Lightbox({
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-slate-900" />
         <Dialog.Content className="fixed inset-0 z-50 mx-auto max-w-xl overflow-y-auto scroll-smooth bg-slate-900">
-          <div className="flex items-center gap-2 p-4">
+          <div className="flex flex-wrap items-center gap-2 p-4">
             <Dialog.Title className="mb-0">{t('memories')}</Dialog.Title>
+            <span className="rounded-md bg-slate-300 px-1 text-sm font-bold text-slate-850">
+              Beta
+            </span>
             {!!imageMemoriesCount && (
               <span className="text-sm text-slate-300">
                 &bull; {t('nImages', { count: imageMemoriesCount })}
