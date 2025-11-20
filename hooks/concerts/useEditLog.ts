@@ -14,7 +14,6 @@ async function editLog({
   memoryFileItemsToAdd,
   memoryIdsToDelete,
   memoriesToUpdate,
-  comment,
 }: {
   concertId: number
   userId: string
@@ -23,7 +22,6 @@ async function editLog({
   memoryFileItemsToAdd: MemoryFileItem[]
   memoryIdsToDelete: number[]
   memoriesToUpdate: Pick<Tables<'memories'>, 'id' | 'band_id'>[]
-  comment: Tables<'comments'>['content']
 }) {
   const { error: insertBandsError } = await supabase.from('j_bands_seen').insert(
     bandsToAdd.map(bandId => ({
@@ -111,46 +109,6 @@ async function editLog({
     throw error
   }
 
-  if (!!comment?.length) {
-    const { data: existingComment } = await supabase
-      .from('comments')
-      .select('id')
-      .eq('concert_id', concertId)
-      .eq('user_id', userId)
-      .single()
-
-    if (existingComment) {
-      const { error: updateCommentError } = await supabase
-        .from('comments')
-        .update({ concert_id: concertId, content: comment })
-        .eq('id', existingComment.id)
-
-      if (updateCommentError) {
-        throw updateCommentError
-      }
-    } else {
-      const { error: insertCommentError } = await supabase.from('comments').insert({
-        concert_id: concertId,
-        user_id: userId,
-        content: comment,
-      })
-
-      if (insertCommentError) {
-        throw insertCommentError
-      }
-    }
-  } else {
-    const { error: deleteCommentError } = await supabase
-      .from('comments')
-      .delete()
-      .eq('concert_id', concertId)
-      .eq('user_id', userId)
-
-    if (deleteCommentError) {
-      throw deleteCommentError
-    }
-  }
-
   return { concertId }
 }
 
@@ -170,7 +128,6 @@ export function useEditLog() {
       queryClient.invalidateQueries({ queryKey: ['image-memories-count', concertId] })
       queryClient.invalidateQueries({ queryKey: ['video-memories-count', concertId] })
       queryClient.invalidateQueries({ queryKey: ['memories-count', concertId] })
-      queryClient.invalidateQueries({ queryKey: ['comments', concertId] })
       toast.success(t('logUpdated'))
     },
   })

@@ -11,13 +11,11 @@ async function addLog({
   userId,
   bandsToAdd,
   memoryFileItemsToAdd,
-  comment,
 }: {
   concertId: number
   userId: string
   bandsToAdd: number[]
   memoryFileItemsToAdd: MemoryFileItem[]
-  comment: Tables<'comments'>['content']
 }) {
   const { error: insertBandsError } = await supabase.from('j_bands_seen').insert(
     bandsToAdd.map(bandId => ({
@@ -67,16 +65,6 @@ async function addLog({
 
   if (insertMemoriesError) {
     throw insertMemoriesError
-  }
-
-  if (!!comment?.length) {
-    const { error: insertCommentError } = await supabase
-      .from('comments')
-      .insert({ concert_id: concertId, content: comment })
-
-    if (insertCommentError) {
-      throw insertCommentError
-    }
   }
 
   return { concertId }

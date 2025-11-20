@@ -1,5 +1,4 @@
 import { useAddLog } from '@/hooks/concerts/useAddLog'
-import { useComments } from '@/hooks/concerts/useComments'
 import { useConcert } from '@/hooks/concerts/useConcert'
 import { useEditLog } from '@/hooks/concerts/useEditLog'
 import { useMemories } from '@/hooks/concerts/useMemories'
@@ -12,13 +11,11 @@ import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useSession } from '../../hooks/auth/useSession'
 import { Button } from '../Button'
-import { TextArea } from '../forms/TextArea'
 import { MemoriesControl } from './MemoriesControl'
 import { MemoryFileItem } from '@/hooks/helpers/useMemoriesControl'
 
 export type LogFields = {
   bandsSeen: number[]
-  comment: string
 }
 
 export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () => void }) {
@@ -29,18 +26,12 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
     concertId: concert?.id,
     userId: session?.user.id,
   })
-  const { data: comments } = useComments({
-    concertId: concert?.id ?? null,
-    userId: session?.user.id,
-    includeReplies: false,
-  })
-  const { register, control, handleSubmit } = useForm<LogFields>({
+  const { control, handleSubmit } = useForm<LogFields>({
     values: {
       bandsSeen:
         concert?.bands_seen
           ?.filter(bandSeen => bandSeen.user_id === session?.user.id)
           .map(bandSeen => bandSeen.band_id) ?? [],
-      comment: comments?.[0]?.content || '',
     },
   })
   const [memoryFileItems, setMemoryFileItems] = useState<MemoryFileItem[]>([])
@@ -55,20 +46,22 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
 
   useEffect(() => {
     if (memoriesStatus === 'success' && initialMemories) {
-      setMemoryFileItems(initialMemories?.map(memory => ({
-        id: memory.id,
-        file: { type: memory.file_type },
-        fileId: memory.file_id,
-        bandId: memory.band_id,
-        duration: memory.duration,
-        preview: null,
-        isSuccess: true,
-      })))
+      setMemoryFileItems(
+        initialMemories?.map(memory => ({
+          id: memory.id,
+          file: { type: memory.file_type },
+          fileId: memory.file_id,
+          bandId: memory.band_id,
+          duration: memory.duration,
+          preview: null,
+          isSuccess: true,
+        }))
+      )
     }
   }, [memoriesStatus])
 
   function onSubmit(formData: LogFields) {
-    const { bandsSeen, comment } = formData
+    const { bandsSeen } = formData
     const initialBandsSeenIds = initialBandsSeen?.map(item => item?.band_id)
     const bandsToAdd = bandsSeen.filter(item => !initialBandsSeenIds?.includes(item))
     const bandsToDelete = initialBandsSeenIds?.filter(item => !bandsSeen.includes(item)) ?? []
@@ -97,7 +90,6 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
         userId: session.user.id,
         bandsToAdd,
         memoryFileItemsToAdd,
-        comment,
       })
     } else {
       editLog.mutate({
@@ -108,7 +100,6 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
         memoryFileItemsToAdd,
         memoryIdsToDelete,
         memoriesToUpdate,
-        comment,
       })
     }
   }
@@ -145,11 +136,6 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
           label={t('memories')}
           acceptedFileTypes={['image/*', 'video/*']}
           bands={concert?.bands || []}
-        />
-        <TextArea
-          {...register('comment')}
-          label={t('comment')}
-          placeholder={t('commentPlaceholder')}
         />
         <div className="sticky bottom-0 z-10 mt-auto flex gap-4 bg-slate-800 py-4 md:static md:z-0 md:justify-end md:pb-0 [&>*]:flex-1">
           <Button onClick={close} label={t('cancel')} />
