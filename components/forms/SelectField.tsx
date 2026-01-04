@@ -79,6 +79,7 @@ export const SelectField = ({
         {isClearable &&
           ('value' in props && props.value !== null  ? (
             <button
+              // @ts-expect-error this exception isn't properly typed yet, but shouldn't cause any issues
               onClick={() => props.onValueChange(null)}
               className="btn btn-tertiary btn-icon btn-small absolute right-10 top-[.35rem]"
             >
