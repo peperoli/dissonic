@@ -230,6 +230,7 @@
     "memories": "Memories",
     "nImages": "{count, plural, =1 {# image} other {# images}}",
     "nVideos": "{count, plural, =1 {# video} other {# videos}}",
+    "noMemoriesYet": "No memories yet. Add your first images or videos!",
     "addMemory": "Add memory"
   },
   "ConcertCommunity": {

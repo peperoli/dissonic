@@ -13,7 +13,7 @@ export type SelectProps = {
   isLoading?: boolean
   fixedHeight?: boolean
 } & (
-  | { multiple?: false; value: number | null; onValueChange: (value: number) => void }
+  | { multiple?: false; value: number | null; onValueChange: (value: number | null) => void }
   | { multiple: true; values: number[]; onValuesChange: (values: number[]) => void }
 ) &
   (

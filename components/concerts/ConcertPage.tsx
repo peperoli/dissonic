@@ -12,11 +12,12 @@ import { Lineup } from './Lineup'
 import {
   ArchiveIcon,
   ArchiveRestoreIcon,
-  ArrowLeft, CalendarPlusIcon,
+  ArrowLeft,
+  CalendarPlusIcon,
   Edit,
   LinkIcon,
   MapPin,
-  Trash
+  Trash,
 } from 'lucide-react'
 import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 import Image from 'next/image'
@@ -190,7 +191,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
           </div>
         </header>
         <Lineup concert={concert} />
-        <ConcertMemories concertId={concert.id} />
+        {!isFutureOrToday && <ConcertMemories concertId={concert.id} />}
         <ConcertCommunity concert={concert} />
         {isFutureOrToday && <ConcertInfo concert={concert} />}
         {concert.bands && <SimpleConcertStats bands={concert.bands} />}

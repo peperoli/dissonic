@@ -35,7 +35,7 @@ export function MemoriesControl({
     <div className="grid">
       <label htmlFor={name}>
         <div className="mb-2 text-sm text-slate-300">
-          {label}{' '}
+          {label} (optional){' '}
           <span className="rounded bg-slate-300 px-0.5 text-xs font-bold text-slate-850">Beta</span>
         </div>
         <input

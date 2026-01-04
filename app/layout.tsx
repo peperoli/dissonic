@@ -16,7 +16,7 @@ import { content, theme } from '../tailwind.config'
 import { AlertCircleIcon, CheckCircleIcon } from 'lucide-react'
 import * as Tooltip from '@radix-ui/react-tooltip'
 import { cookies } from 'next/headers'
-import { CookiesContext, CookiesProvider } from 'contexts/cookies'
+import { CookiesProvider } from 'contexts/cookies'
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('RootLayout')

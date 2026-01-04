@@ -8,7 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { data: concerts } = await supabase.from('concerts_full').select('id')
   const { data: bands } = await supabase.from('bands').select('id').eq('is_archived', false)
   const { data: locations } = await supabase.from('locations').select('id').eq('is_archived', false)
-  const { data: profiles } = await supabase.from('profiles').select('id')
+  const { data: profiles } = await supabase.from('profiles').select('username')
 
   return [
     {
@@ -47,7 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...(profiles?.map(
       profile =>
         ({
-          url: `${baseUrl}/profiles/${profile.id}`,
+          url: `${baseUrl}/profiles/${encodeURIComponent(profile.username)}`,
           lastModified: new Date(),
           changeFrequency: 'weekly',
           priority: 0.7,

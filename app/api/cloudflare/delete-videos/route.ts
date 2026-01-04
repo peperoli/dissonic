@@ -19,20 +19,22 @@ export async function GET() {
     },
   }).then(res => res.json())
 
-  listVideosData.result.forEach(async (item: any) => {
-    if (memories.some(memory => memory.file_id === item.uid)) return
+  await Promise.all(
+    listVideosData.result.map(async (item: any) => {
+      if (memories.some(memory => memory.file_id === item.uid)) return
 
-    const response = await fetch(`${cloudflareStreamEndpoint}/${item.uid}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
-      },
+      const response = await fetch(`${cloudflareStreamEndpoint}/${item.uid}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+        },
+      })
+
+      if (!response.ok) {
+        console.error(`Failed to delete video ${item.uid}: ${response.statusText}`)
+      }
     })
-
-    if (!response.ok) {
-      console.error(`Failed to delete video ${item.uid}: ${response.statusText}`)
-    }
-  })
+  )
 
   return new NextResponse(null)
 }

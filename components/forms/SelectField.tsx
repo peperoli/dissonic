@@ -77,9 +77,8 @@ export const SelectField = ({
           )}
         </Dialog.Trigger>
         {isClearable &&
-          ('value' in props && props.value !== null ? (
+          ('value' in props && props.value !== null  ? (
             <button
-              // @ts-expect-error
               onClick={() => props.onValueChange(null)}
               className="btn btn-tertiary btn-icon btn-small absolute right-10 top-[.35rem]"
             >

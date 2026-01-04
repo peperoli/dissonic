@@ -57,11 +57,13 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
   return (
     <>
       <section className="rounded-lg bg-slate-800 p-4 md:p-6">
-        <div className="mb-4 flex flex-wrap items-center gap-2">
-          <h2 className="mb-0">{t('memories')}</h2>
-          <span className="rounded-md bg-slate-300 px-1 text-sm font-bold text-slate-850">
-            Beta
-          </span>
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+          <h2 className="mb-0">
+            {t('memories')}{' '}
+            <span className="rounded-md bg-slate-300 px-1 text-sm font-bold text-slate-850">
+              Beta
+            </span>
+          </h2>
           {!!imageMemoriesCount && (
             <span className="text-sm text-slate-300">
               &bull; {t('nImages', { count: imageMemoriesCount })}
@@ -82,55 +84,59 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
           />
         </div>
         <ul className="grid grid-cols-2 gap-2 md:grid-cols-4">
-          {memories?.map((memory, index) => (
-            <li
-              key={memory.id}
-              role="button"
-              onClick={() => {
-                setLightboxIsOpen(true)
-                push(`#${memory.id}`)
-              }}
-              className="relative aspect-square rounded-lg bg-slate-700"
-            >
-              <Image
-                src={
-                  memory.file_type.startsWith('image/')
-                    ? getCloudflareImageUrl(memory.file_id, {
-                        width: 300,
-                        height: 300,
-                        fit: 'cover',
-                      })
-                    : getCloudflareThumbnailUrl(memory.file_id, {
-                        time: '1s',
-                        width: 300,
-                        height: 300,
-                      })
-                }
-                alt=""
-                fill
-                unoptimized
-                className="rounded-lg object-cover"
-              />
-              {memory.file_type.startsWith('video/') && (
-                <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded bg-slate-900/70 p-1 text-sm">
-                  <PlaySquareIcon className="size-icon" />
-                  {memory.duration && (
-                    <span>
-                      {Math.floor(memory.duration / 60)}:
-                      {(memory.duration % 60).toString().padStart(2, '0')}
-                    </span>
-                  )}
-                </div>
-              )}
-              {index === 3 && (memoriesCount ?? 0) > 4 && (
-                <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-900/50 text-xl backdrop-blur-sm">
-                  <div className="btn btn-small btn-secondary !bg-slate-900/70">
-                    +{(memoriesCount ?? 0) - 4}
+          {memories?.length ? (
+            memories.map((memory, index) => (
+              <li
+                key={memory.id}
+                role="button"
+                onClick={() => {
+                  setLightboxIsOpen(true)
+                  push(`#${memory.id}`)
+                }}
+                className="relative aspect-square rounded-lg bg-slate-700"
+              >
+                <Image
+                  src={
+                    memory.file_type.startsWith('image/')
+                      ? getCloudflareImageUrl(memory.file_id, {
+                          width: 300,
+                          height: 300,
+                          fit: 'cover',
+                        })
+                      : getCloudflareThumbnailUrl(memory.file_id, {
+                          time: '1s',
+                          width: 300,
+                          height: 300,
+                        })
+                  }
+                  alt=""
+                  fill
+                  unoptimized
+                  className="rounded-lg object-cover"
+                />
+                {memory.file_type.startsWith('video/') && (
+                  <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded bg-slate-900/70 p-1 text-sm">
+                    <PlaySquareIcon className="size-icon" />
+                    {memory.duration && (
+                      <span>
+                        {Math.floor(memory.duration / 60)}:
+                        {(memory.duration % 60).toString().padStart(2, '0')}
+                      </span>
+                    )}
                   </div>
-                </div>
-              )}
-            </li>
-          ))}
+                )}
+                {index === 3 && (memoriesCount ?? 0) > 4 && (
+                  <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-900/50 text-xl backdrop-blur-sm">
+                    <div className="btn btn-small btn-secondary !bg-slate-900/70">
+                      +{(memoriesCount ?? 0) - 4}
+                    </div>
+                  </div>
+                )}
+              </li>
+            ))
+          ) : (
+            <p className="col-span-full text-sm text-slate-300">{t('noMemoriesYet')}</p>
+          )}
         </ul>
       </section>
       <Lightbox
@@ -237,7 +243,7 @@ function MemoryItem({
         <div className="absolute inset-0 bottom-auto m-2 flex flex-col items-start gap-1">
           {memory.profile && (
             <Link
-              href={`/users/${memory.profile.id}`}
+              href={`/users/${encodeURIComponent(memory.profile.username)}`}
               className="group/user-item rounded-md bg-slate-900/50 p-2"
             >
               <UserItem user={memory.profile} size="sm" />

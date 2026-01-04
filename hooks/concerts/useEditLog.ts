@@ -95,16 +95,18 @@ async function editLog({
       throw error
     }
 
-    memoriesToUpdate.forEach(async memory => {
-      const { error } = await supabase
-        .from('memories')
-        .update({ band_id: memory.band_id })
-        .eq('id', memory.id)
+    await Promise.all(
+      memoriesToUpdate.map(async memory => {
+        const { error } = await supabase
+          .from('memories')
+          .update({ band_id: memory.band_id })
+          .eq('id', memory.id)
 
-      if (error) {
-        throw error
-      }
-    })
+        if (error) {
+          throw error
+        }
+      })
+    )
   } catch (error) {
     throw error
   }

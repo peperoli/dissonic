@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 import supabase from '@/utils/supabase/client'
-import { CornerRightDown } from 'lucide-react'
 
 async function fetchMemories({
   concertId,
