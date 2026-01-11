@@ -109,7 +109,8 @@
     "Email not confirmed": "Die E-Mail-Adresse wurde noch nicht bestätigt.",
     "youDontHaveAnAccountYet": "Du hast noch kein Konto?",
     "letsGetStarted": "Dann nichts wie los!",
-    "signUp": "Registrieren"
+    "signUp": "Registrieren",
+    "resendConfirmationEmail": "Bestätigungs-E-Mail erneut senden"
   },
   "useSignIn": {
     "loggedIn": "Anmeldung erfolgreich"
@@ -129,6 +130,12 @@
     "newPassword": "Neues Passwort",
     "passwordLengthError": "Das Passwort muss mindestens 12 Zeichen lang sein.",
     "updatePasswordSuccess": "Erfolgreich! Du kannst dich jetzt mit deinem neuen Passwort anmelden."
+  },
+  "ResendConfirmationPage": {
+    "resendConfirmation": "Bestätigung erneut senden",
+    "resendConfirmationDescription": "Gib deine E-Mail-Adresse ein, um die Bestätigungs-E-Mail erneut zu erhalten.",
+    "email": "E-Mail",
+    "resendConfirmationSuccess": "Erfolgreich! Du erhältst in Kürze eine E-Mail, um deine E-Mail-Adresse zu bestätigen."
   },
   "ConcertsNav": {
     "past": "Bis heute",

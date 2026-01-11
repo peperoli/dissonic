@@ -48,3 +48,15 @@ export async function unlinkIdentity(identity: UserIdentity) {
     throw error
   }
 }
+
+export async function resendConfirmationEmail(formData: { email: string }) {
+  const supabase = await createClient()
+
+  const { error } = await supabase.auth.resend({
+    type: 'signup',
+    email: formData.email,
+  })
+  if (error) {
+    throw error
+  }
+}
