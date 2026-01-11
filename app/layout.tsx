@@ -16,7 +16,6 @@ import { content, theme } from '../tailwind.config'
 import { AlertCircleIcon, CheckCircleIcon } from 'lucide-react'
 import * as Tooltip from '@radix-ui/react-tooltip'
 import { cookies } from 'next/headers'
-import { CookiesProvider } from 'contexts/cookies'
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('RootLayout')
@@ -74,22 +73,15 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <QueryProvider>
           <NextIntlClientProvider messages={messages}>
             <Tooltip.Provider delayDuration={200}>
-              <CookiesProvider
-                cookies={{
-                  concertsUserView: cookieStore.get('concertsUserView')?.value ?? 'global',
-                  concertsRange: cookieStore.get('concertsRange')?.value ?? 'past',
-                }}
-              >
-                <NavBar />
-                <div className="md:flex">
-                  <Navigation />
-                  {children}
-                </div>
-                <Footer />
-                <Suspense>
-                  <ModalProvider />
-                </Suspense>
-              </CookiesProvider>
+              <NavBar />
+              <div className="md:flex">
+                <Navigation />
+                {children}
+              </div>
+              <Footer />
+              <Suspense>
+                <ModalProvider />
+              </Suspense>
             </Tooltip.Provider>
             <Toaster
               toastOptions={{

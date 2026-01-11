@@ -76,5 +76,5 @@ export default async function Page() {
   const userView = cookieStore.get('concertsUserView')?.value || 'global'
   const { concerts, user } = await fetchData({ userView })
 
-  return <ConcertsPage concerts={concerts} currentUser={user} />
+  return <ConcertsPage concerts={concerts} currentUser={user} view={{ range: 'past', userView }} />
 }

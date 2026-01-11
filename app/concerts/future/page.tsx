@@ -32,5 +32,11 @@ async function fetchData() {
 export default async function Page() {
   const { concerts, user } = await fetchData()
 
-  return <ConcertsPage concerts={concerts} currentUser={user} />
+  return (
+    <ConcertsPage
+      concerts={concerts}
+      currentUser={user}
+      view={{ range: 'future', userView: 'global' }}
+    />
+  )
 }
