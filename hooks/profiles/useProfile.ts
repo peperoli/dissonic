@@ -5,7 +5,7 @@ import supabase from '@/utils/supabase/client'
 const fetchProfile = async (userId: string | null, username?: string | null): Promise<Profile> => {
   let query = supabase
     .from('profiles')
-    .select('*, friends!receiver_id(count)')
+    .select('id, username, role, avatar_path, created_at, updated_at, friends!receiver_id(count)')
     .eq('friends.pending', true)
 
   if (userId) {

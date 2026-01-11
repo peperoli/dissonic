@@ -2,7 +2,7 @@ import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import { FieldError } from 'react-hook-form'
 import { Select, SelectProps } from './Select'
-import { ChevronDown, Loader2 } from 'lucide-react'
+import { ChevronDown, Loader2, XIcon } from 'lucide-react'
 import { TruncatedList } from 'react-truncate-list'
 import * as Dialog from '@radix-ui/react-dialog'
 import useMediaQuery from '@/hooks/helpers/useMediaQuery'
@@ -13,9 +13,17 @@ type SelectFieldProps = {
   label: string
   allItems: ListItem[] | undefined
   error?: FieldError
+  isClearable?: boolean
 } & SelectProps
 
-export const SelectField = ({ label, items, allItems, error, ...props }: SelectFieldProps) => {
+export const SelectField = ({
+  label,
+  items,
+  allItems,
+  error,
+  isClearable,
+  ...props
+}: SelectFieldProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const t = useTranslations('SelectField')
@@ -55,7 +63,7 @@ export const SelectField = ({ label, items, allItems, error, ...props }: SelectF
         <Dialog.Trigger aria-label={label} className="form-control">
           <div
             className={clsx(
-              'form-input !pr-12 text-left',
+              'form-input truncate !pr-12 text-left',
               error ? 'border-yellow' : 'border-slate-500'
             )}
           >
@@ -63,11 +71,28 @@ export const SelectField = ({ label, items, allItems, error, ...props }: SelectF
           </div>
           <label>{label}</label>
           {!items ? (
-            <Loader2 className="pointer-events-none absolute right-[18px] top-[18px] size-icon animate-spin" />
+            <Loader2 className="pointer-events-none absolute right-[.9rem] top-[.9rem] size-icon animate-spin" />
           ) : (
-            <ChevronDown className="pointer-events-none absolute right-[18px] top-[18px] size-icon" />
+            <ChevronDown className="pointer-events-none absolute right-[.9rem] top-[.9rem] size-icon" />
           )}
         </Dialog.Trigger>
+        {isClearable &&
+          ('value' in props && props.value !== null  ? (
+            <button
+              // @ts-expect-error this exception isn't properly typed yet, but shouldn't cause any issues
+              onClick={() => props.onValueChange(null)}
+              className="btn btn-tertiary btn-icon btn-small absolute right-10 top-[.35rem]"
+            >
+              <XIcon className="size-icon" />
+            </button>
+          ) : 'values' in props && props.values.length > 0 ? (
+            <button
+              onClick={() => props.onValuesChange([])}
+              className="btn btn-tertiary btn-icon btn-small absolute right-10 top-[.35rem]"
+            >
+              <XIcon className="size-icon" />
+            </button>
+          ) : null)}
         {error && <div className="mt-1 text-sm text-yellow">{t('pleaseSelectAnOption')}</div>}
         <Dialog.Content className="fixed inset-0 z-20 flex min-w-full flex-col overflow-hidden bg-slate-700 p-4 shadow-xl md:absolute md:inset-auto md:mt-1 md:rounded-lg">
           <Dialog.Title className="sr-only">{label}</Dialog.Title>

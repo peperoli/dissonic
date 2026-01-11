@@ -15,6 +15,8 @@ import resolveConfig from 'tailwindcss/resolveConfig'
 import { content, theme } from '../tailwind.config'
 import { AlertCircleIcon, CheckCircleIcon } from 'lucide-react'
 import * as Tooltip from '@radix-ui/react-tooltip'
+import { cookies } from 'next/headers'
+import { CookiesProvider } from 'contexts/cookies'
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('RootLayout')
@@ -64,6 +66,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const locale = await getLocale()
   const messages = await getMessages()
   const fullConfig = resolveConfig({ content, theme })
+  const cookieStore = await cookies()
 
   return (
     <html lang={locale} className={`${albertSans.variable} ${firaCode.variable}`}>
@@ -71,15 +74,22 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <QueryProvider>
           <NextIntlClientProvider messages={messages}>
             <Tooltip.Provider delayDuration={200}>
-              <NavBar />
-              <div className="md:flex">
-                <Navigation />
-                {children}
-              </div>
-              <Footer />
-              <Suspense>
-                <ModalProvider />
-              </Suspense>
+              <CookiesProvider
+                cookies={{
+                  concertsUserView: cookieStore.get('concertsUserView')?.value ?? 'global',
+                  concertsRange: cookieStore.get('concertsRange')?.value ?? 'past',
+                }}
+              >
+                <NavBar />
+                <div className="md:flex">
+                  <Navigation />
+                  {children}
+                </div>
+                <Footer />
+                <Suspense>
+                  <ModalProvider />
+                </Suspense>
+              </CookiesProvider>
             </Tooltip.Provider>
             <Toaster
               toastOptions={{
@@ -88,18 +98,18 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
                   color: fullConfig.theme.colors.white,
                 },
                 success: {
-                  icon: <CheckCircleIcon className="size-icon text-venom flex-none" />,
+                  icon: <CheckCircleIcon className="size-icon flex-none text-venom" />,
                   duration: 5000,
                 },
                 error: {
-                  icon: <AlertCircleIcon className="size-icon text-red flex-none" />,
+                  icon: <AlertCircleIcon className="size-icon flex-none text-red" />,
                   duration: 10000,
                 },
               }}
             />
           </NextIntlClientProvider>
         </QueryProvider>
-        <Analytics />
+        {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
   )

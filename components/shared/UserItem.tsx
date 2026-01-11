@@ -8,7 +8,7 @@ import { Tooltip } from './Tooltip'
 import { useTranslations } from 'next-intl'
 
 type UserItemProps = {
-  user: Profile
+  user: Pick<Profile, 'id' | 'username' | 'avatar_path' | 'updated_at' | 'role'>
   description?: ReactElement | string | null
   size?: 'lg' | 'md' | 'sm'
   usernameIsHidden?: boolean
@@ -60,7 +60,7 @@ export const UserItem = ({
   return (
     <div
       className={clsx(
-        'flex cursor-pointer items-center rounded-full group-hover/user-item:bg-slate-700',
+        'flex items-center rounded-full group-hover/user-item:cursor-pointer group-hover/user-item:bg-slate-700',
         (size === 'md' || size === 'sm') && '-m-1 p-1',
         avatarRight && 'flex-row-reverse'
       )}
@@ -75,14 +75,21 @@ export const UserItem = ({
             size === 'sm' && 'mx-2 text-sm'
           )}
         >
-          <div className={clsx("line-clamp-1 inline-flex items-center", size === 'lg' ? 'gap-x-2' : 'gap-x-1')}>
+          <div
+            className={clsx(
+              'line-clamp-1 inline-flex items-center',
+              size === 'lg' ? 'gap-x-2' : 'gap-x-1'
+            )}
+          >
             <ConditionalTag className="mb-0 truncate">{user.username}</ConditionalTag>
             {user.role && (
               <span
                 className={clsx(
-                  'rounded-md  font-bold text-slate-850',
-                  user.role === 'developer' ? 'bg-gradient-to-r from-blue to-venom' : 'bg-slate-300',
-                  size === 'lg' ? 'text-base px-2' : 'text-sm px-1',
+                  'rounded-md font-bold text-slate-850',
+                  user.role === 'developer'
+                    ? 'bg-gradient-to-r from-blue to-venom'
+                    : 'bg-slate-300',
+                  size === 'lg' ? 'px-2 text-base' : 'px-1 text-sm'
                 )}
               >
                 {t(user.role)}

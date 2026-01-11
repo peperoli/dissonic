@@ -8,13 +8,11 @@ import { Button } from '../Button'
 import { Comments } from './Comments'
 import { notFound, usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
-import { BandList } from './BandList'
+import { Lineup } from './Lineup'
 import {
   ArchiveIcon,
   ArchiveRestoreIcon,
   ArrowLeft,
-  BadgeCheckIcon,
-  BadgeMinus,
   CalendarPlusIcon,
   Edit,
   LinkIcon,
@@ -34,20 +32,15 @@ import { ShareButton } from '../shared/ShareButton'
 import { useArchiveConcert } from '@/hooks/concerts/useArchiveConcert'
 import { useRestoreConcert } from '@/hooks/concerts/useRestoreConcert'
 import { StatusBanner } from '../forms/StatusBanner'
-import { Tooltip } from '../shared/Tooltip'
 import { getIcsFile } from '@/lib/getIcsFile'
+import { ConcertMemories } from './ConcertMemories'
 
 type ConcertPageProps = {
   initialConcert: Concert
   concertQueryState?: string
-  bandListHintPreference?: string
 }
 
-export const ConcertPage = ({
-  initialConcert,
-  concertQueryState,
-  bandListHintPreference,
-}: ConcertPageProps) => {
+export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPageProps) => {
   const { data: concert } = useConcert(initialConcert.id, { placeholderData: initialConcert })
   const { data: session } = useSession()
   const { data: spotifyArtist } = useSpotifyArtist(concert?.bands?.[0]?.spotify_artist_id ?? null, {
@@ -197,27 +190,8 @@ export const ConcertPage = ({
             </Link>
           </div>
         </header>
-        <section className="rounded-lg bg-slate-800 p-4 md:p-6">
-          <div className="flex items-baseline gap-2">
-            <h2>{t('lineup')}</h2>
-            <span className="inline-flex gap-1 text-sm text-slate-300">
-              {t('nBands', { count: concert.bands.length })}
-              {isMod &&
-                (concert.resource_status === 'complete' ? (
-                  <Tooltip content={t('complete')} triggerOnClick>
-                    <BadgeCheckIcon className="size-icon text-venom" />
-                  </Tooltip>
-                ) : concert.resource_status === 'incomplete_lineup' ? (
-                  <Tooltip content={t('incompleteLineup')} triggerOnClick>
-                    <BadgeMinus className="size-icon text-yellow" />
-                  </Tooltip>
-                ) : null)}
-            </span>
-          </div>
-          {concert.bands && (
-            <BandList concert={concert} bandListHintPreference={bandListHintPreference} />
-          )}
-        </section>
+        <Lineup concert={concert} />
+        {!isFutureOrToday && <ConcertMemories concertId={concert.id} />}
         <ConcertCommunity concert={concert} />
         {isFutureOrToday && <ConcertInfo concert={concert} />}
         {concert.bands && <SimpleConcertStats bands={concert.bands} />}

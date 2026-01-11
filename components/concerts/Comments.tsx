@@ -15,7 +15,7 @@ export const Comments = () => {
   const { concert } = useConcertContext()
   const { data: session } = useSession()
   const { register, watch, handleSubmit, reset } = useForm<Comment>()
-  const { data: comments } = useComments(concert.id)
+  const { data: comments } = useComments({ concertId: concert.id })
   const { mutate, status } = useAddComment()
   const { push } = useRouter()
   const pathname = usePathname()
