@@ -61,6 +61,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
   const image =
     (concert.bands?.[0]?.spotify_artist_images as SpotifyArtist['images'])?.[0] ||
     spotifyArtist?.images?.[0]
+  const isFuture = new Date(concert.date_start) > new Date()
   const isFutureOrToday =
     new Date(concert.date_start).setHours(0) >= new Date().setHours(0, 0, 0, 0)
 
@@ -191,7 +192,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
           </div>
         </header>
         <Lineup concert={concert} />
-        {!isFutureOrToday && <ConcertMemories concertId={concert.id} />}
+        {!isFuture && <ConcertMemories concertId={concert.id} />}
         <ConcertCommunity concert={concert} />
         {isFutureOrToday && <ConcertInfo concert={concert} />}
         {concert.bands && <SimpleConcertStats bands={concert.bands} />}
