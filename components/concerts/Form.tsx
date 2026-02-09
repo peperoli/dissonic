@@ -8,7 +8,7 @@ import { EditBandsButton } from './EditBandsButton'
 import { SelectField } from '../forms/SelectField'
 import { SegmentedControl } from '../controls/SegmentedControl'
 import { useFestivalRoots } from '@/hooks/concerts/useFestivalRoots'
-import { Fragment, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ChevronDownIcon, Plus } from 'lucide-react'
 import Modal from '../Modal'
 import { FestivalRootForm } from './FestivalRootForm'
@@ -19,7 +19,7 @@ import { useParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
 import { useSession } from '@/hooks/auth/useSession'
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
+import { Disclosure } from '../shared/Disclosure'
 import clsx from 'clsx'
 import * as RadioGroup from '@radix-ui/react-radio-group'
 
@@ -252,21 +252,20 @@ export const Form = ({ close, isNew }: FormProps) => {
         {new Date(watch('date_start')).setHours(0) >= new Date().setHours(0, 0, 0, 0) ? (
           <FutureConcertFields />
         ) : (
-          <Disclosure>
-            <DisclosurePanel className="grid gap-6">
-              <FutureConcertFields />
-            </DisclosurePanel>
-            <DisclosureButton as={Fragment}>
-              {({ open }) => (
-                <Button
-                  label={open ? t('showLess') : t('showMore')}
-                  icon={<ChevronDownIcon className={clsx('size-icon', open && 'rotate-180')} />}
-                  size="small"
-                  appearance="tertiary"
-                />
+          <Disclosure.Root>
+            <Disclosure.Trigger className="btn btn-small btn-tertiary">
+              {/* @ts-expect-error */}
+              {({ isOpen }) => (
+                <>
+                  {isOpen ? t('showLess') : t('showMore')}
+                  <ChevronDownIcon className={clsx('size-icon', isOpen && 'rotate-180')} />
+                </>
               )}
-            </DisclosureButton>
-          </Disclosure>
+            </Disclosure.Trigger>
+            <Disclosure.Content className="grid gap-6 mt-3">
+              <FutureConcertFields />
+            </Disclosure.Content>
+          </Disclosure.Root>
         )}
         {isMod && (
           <Controller

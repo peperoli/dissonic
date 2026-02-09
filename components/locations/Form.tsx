@@ -5,7 +5,7 @@ import { TextField } from '../forms/TextField'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { SelectField } from '../forms/SelectField'
 import { useCountries } from '@/hooks/useCountries'
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
+import { Disclosure } from '../shared/Disclosure'
 import { ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
 import { Fragment, useState } from 'react'
@@ -148,26 +148,25 @@ export const Form = ({ close, isNew }: FormProps) => {
           />
         )}
       />
-      <Disclosure>
-        <DisclosurePanel className="grid gap-6">
+      <Disclosure.Root>
+        <Disclosure.Content className="grid gap-6">
           <TextField {...register('alt_names')} label={`${t('altNames')} ${t('optional')}`} />
           <TextField
             {...register('website')}
             label={`${t('website')} ${t('optional')}`}
             placeholder="https://hallenstadion.ch/"
           />
-        </DisclosurePanel>
-        <DisclosureButton as={Fragment}>
-          {({ open }) => (
-            <Button
-              label={open ? t('showLess') : t('showMore')}
-              icon={<ChevronDown className={clsx('size-icon', open && 'rotate-180')} />}
-              size="small"
-              appearance="tertiary"
-            />
+        </Disclosure.Content>
+        <Disclosure.Trigger className="btn btn-small btn-tertiary">
+          {/* @ts-expect-error */}
+          {({ isOpen }) => (
+            <>
+              {isOpen ? t('showLess') : t('showMore')}
+              <ChevronDown className={clsx('size-icon', isOpen && 'rotate-180')} />
+            </>
           )}
-        </DisclosureButton>
-      </Disclosure>
+        </Disclosure.Trigger>
+      </Disclosure.Root>
       <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:justify-end [&>*]:flex-1">
         <Button onClick={close} label={t('cancel')} />
         <Button
