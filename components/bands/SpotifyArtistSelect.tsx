@@ -1,7 +1,7 @@
 import { useSpotifySearch } from '../../hooks/spotify/useSpotifySearch'
 import Image from 'next/image'
 import { SpotifyArtist } from '../../types/types'
-import { Popover, PopoverBackdrop, PopoverButton, PopoverPanel } from '@headlessui/react'
+import { Popover } from '../shared/Popover'
 import { Check, ChevronDown, LinkIcon } from 'lucide-react'
 import { Button } from '../Button'
 import { useEffect, useState } from 'react'
@@ -70,8 +70,8 @@ export const SpotifyArtistSelect = ({ bandName, value, onChange }: SpotifyArtist
   }, [value])
 
   return (
-    <Popover className="relative">
-      <PopoverButton className="w-full rounded-lg border border-slate-500 bg-slate-750 px-4 pb-3 pt-1 text-left accent-white">
+    <Popover.Root>
+      <Popover.Trigger className="w-full rounded-lg border border-slate-500 bg-slate-750 px-4 pb-3 pt-1 text-left accent-white">
         <span className="mb-2 inline-block w-max text-xs text-slate-300">{t('spotifyLink')}</span>
         <span className="flex items-center gap-3">
           {value !== null && (
@@ -93,9 +93,8 @@ export const SpotifyArtistSelect = ({ bandName, value, onChange }: SpotifyArtist
           <span>{value !== null ? selectedArtist?.name : t('noLink')}</span>
           <ChevronDown className="ml-auto size-icon" />
         </span>
-      </PopoverButton>
-      <PopoverBackdrop className="fixed inset-0 bg-black opacity-30 md:hidden" />
-      <PopoverPanel className="fixed inset-8 z-20 overflow-auto rounded-lg bg-slate-700 p-2 md:absolute md:inset-auto md:mt-1 md:max-h-72 md:w-full">
+      </Popover.Trigger>
+      <Popover.Content className="fixed inset-8 z-20 overflow-auto rounded-lg bg-slate-700 p-2 md:absolute md:inset-auto md:mt-1 md:max-h-72 md:w-full">
         {({ close }) => {
           function handleChange(value: SpotifyArtist | null) {
             onChange(value)
@@ -131,7 +130,7 @@ export const SpotifyArtistSelect = ({ bandName, value, onChange }: SpotifyArtist
             </>
           )
         }}
-      </PopoverPanel>
-    </Popover>
+      </Popover.Content>
+    </Popover.Root>
   )
 }

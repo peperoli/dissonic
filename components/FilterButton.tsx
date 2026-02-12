@@ -5,7 +5,7 @@ import { ListItem } from '@/types/types'
 import { TruncatedList } from 'react-truncate-list'
 import clsx from 'clsx'
 import * as Dialog from '@radix-ui/react-dialog'
-import * as Popover from '@radix-ui/react-popover'
+import { Popover } from './shared/Popover'
 import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 import { useTranslations } from 'next-intl'
 
@@ -22,7 +22,6 @@ type FilterButtonProps = {
   label: string
   items?: ListItem[]
   size?: 'md' | 'sm'
-  side?: Popover.PopoverContentProps['side']
   appearance?: 'secondary' | 'tertiary'
   children: ReactNode
 } & (MultiSelectProps | SingleSelectProps)
@@ -32,12 +31,11 @@ export const FilterButton = ({
   type = 'multiselect',
   items,
   size = 'md',
-  side,
   appearance = 'secondary',
   children,
   ...props
 }: FilterButtonProps) => {
-  const [open, setOpen] = useState(false)
+  const [isOpen, setOpen] = useState(false)
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const t = useTranslations('FilterButton')
   const close = () => setOpen(false)
@@ -89,7 +87,7 @@ export const FilterButton = ({
           <div>{items?.find(item => item.id === props.selectedId)?.name}</div>
         )}
       </div>
-      <ChevronDown className={clsx('ml-auto size-icon flex-none', open && 'rotate-180')} />
+      <ChevronDown className={clsx('ml-auto size-icon flex-none', isOpen && 'rotate-180')} />
     </button>
   )
 
@@ -109,13 +107,9 @@ export const FilterButton = ({
   if (isDesktop) {
     return (
       <div className="relative">
-        <Popover.Root open={open} onOpenChange={setOpen}>
+        <Popover.Root>
           <Popover.Trigger asChild>{triggerButton}</Popover.Trigger>
-          <Popover.Content
-            side={side}
-            sideOffset={4}
-            className="relative z-20 flex flex-col rounded-lg bg-slate-700 p-4 shadow-xl"
-          >
+          <Popover.Content className="z-20 mt-1 flex-col rounded-lg bg-slate-700 p-4 text-white shadow-xl [&:popover-open]:flex">
             {children}
             {submitButton}
           </Popover.Content>
@@ -126,7 +120,7 @@ export const FilterButton = ({
 
   return (
     <div className="relative">
-      <Dialog.Root open={open} onOpenChange={setOpen}>
+      <Dialog.Root open={isOpen} onOpenChange={setOpen}>
         <Dialog.Trigger asChild>{triggerButton}</Dialog.Trigger>
         <Dialog.Portal>
           <Dialog.Content className="fixed inset-0 z-20 flex flex-col overflow-hidden bg-slate-700 p-4 shadow-xl">

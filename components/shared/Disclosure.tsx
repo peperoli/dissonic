@@ -9,7 +9,7 @@ function useDisclosureContext() {
   const context = useContext(DisclosureContext)
 
   if (!context) {
-    throw new Error('Disclosure components must be used within a Disclosure')
+    throw new Error('Disclosure components must be used within a Disclosure.Root')
   }
 
   return context
@@ -43,22 +43,22 @@ export function Disclosure({
   )
 }
 
-export function DisclosureTrigger({
+function DisclosureTrigger({
   children,
   ...props
 }: {
-  children: ({ isOpen }: { isOpen: boolean }) => ReactNode
-} & HTMLAttributes<HTMLElement>) {
+  children: ((params: { isOpen: boolean }) => ReactNode) | ReactNode
+} & Omit<HTMLAttributes<HTMLElement>, 'children'>) {
   const { isOpen } = useDisclosureContext()
 
   return (
-    <summary data-state={isOpen ? 'open' : 'closed'} {...props}>
-      {children({ isOpen })}
+    <summary data-state={isOpen ? 'open' : 'closed'} {...props} style={{ cursor: 'pointer' }}>
+      {typeof children === 'function' ? children({ isOpen }) : children}
     </summary>
   )
 }
 
-export function DisclosureContent({
+function DisclosureContent({
   children,
   ...props
 }: { children: ReactNode } & HTMLAttributes<HTMLDivElement>) {

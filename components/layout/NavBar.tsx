@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import Logo from './Logo'
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useLogOut } from '../../hooks/auth/useLogOut'
 import { useProfile } from '../../hooks/profiles/useProfile'
@@ -16,6 +15,7 @@ import { useTranslations } from 'next-intl'
 import { useModal } from '../shared/ModalProvider'
 import LogoHorns from './LogoHorns'
 import useMediaQuery from '@/hooks/helpers/useMediaQuery'
+import { Popover } from '../shared/Popover'
 
 export const NavBar = () => {
   const { data: session } = useSession()
@@ -89,39 +89,40 @@ export const NavBar = () => {
         </span>
       </button>
       {profile ? (
-        <Menu as="div" className="relative ml-auto flex-shrink-0">
-          <MenuButton className="group/user-item">
-            <UserItem user={profile} avatarRight usernameIsHidden={!isDesktop} />
-          </MenuButton>
-          <MenuItems className="absolute right-0 z-30 mt-1 w-40 rounded-lg bg-slate-700 p-2 shadow-xl">
-            {menuItems.map((item, index) => {
-              const ConditionalWrapper = item.href ? Link : 'button'
-              const Icon = item.icon
-              return (
-                <MenuItem key={index}>
-                  {({ focus }) => (
-                    <ConditionalWrapper
-                      href={item.href!}
-                      onClick={item.onClick}
-                      className={clsx(
-                        'flex w-full items-center gap-2 rounded px-2 py-1',
-                        focus && 'bg-slate-600'
-                      )}
-                    >
-                      <Icon className="size-icon text-slate-300" />
-                      {item.label}
-                      {!!item.badge && item.badge > 0 && (
-                        <span className="min-w-4 rounded bg-venom px-1 text-center text-sm text-slate-850">
-                          {item.badge}
-                        </span>
-                      )}
-                    </ConditionalWrapper>
-                  )}
-                </MenuItem>
-              )
-            })}
-          </MenuItems>
-        </Menu>
+        <div className="group/user-item ml-auto flex-shrink-0">
+          <Popover.Root>
+            <Popover.Trigger>
+              <UserItem user={profile} avatarRight usernameIsHidden={!isDesktop} />
+            </Popover.Trigger>
+            <Popover.Content className="z-30 mt-2 w-40 rounded-lg bg-slate-700 p-2 text-white shadow-xl">
+              <ul>
+                {menuItems.map((item, index) => {
+                  const ConditionalWrapper = item.href ? Link : 'button'
+                  const Icon = item.icon
+                  return (
+                    <li key={index}>
+                      <ConditionalWrapper
+                        href={item.href!}
+                        onClick={item.onClick}
+                        className={clsx(
+                          'flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-slate-600'
+                        )}
+                      >
+                        <Icon className="size-icon text-slate-300" />
+                        {item.label}
+                        {!!item.badge && item.badge > 0 && (
+                          <span className="min-w-4 rounded bg-venom px-1 text-center text-sm text-slate-850">
+                            {item.badge}
+                          </span>
+                        )}
+                      </ConditionalWrapper>
+                    </li>
+                  )
+                })}
+              </ul>
+            </Popover.Content>
+          </Popover.Root>
+        </div>
       ) : (
         <div className="ml-auto flex gap-4">
           <Link href="/signup" className="btn btn-tertiary max-md:hidden">

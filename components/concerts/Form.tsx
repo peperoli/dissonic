@@ -254,7 +254,6 @@ export const Form = ({ close, isNew }: FormProps) => {
         ) : (
           <Disclosure.Root>
             <Disclosure.Trigger className="btn btn-small btn-tertiary">
-              {/* @ts-expect-error */}
               {({ isOpen }) => (
                 <>
                   {isOpen ? t('showLess') : t('showMore')}
