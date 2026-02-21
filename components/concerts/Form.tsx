@@ -10,7 +10,7 @@ import { SegmentedControl } from '../controls/SegmentedControl'
 import { useFestivalRoots } from '@/hooks/concerts/useFestivalRoots'
 import { useEffect, useState } from 'react'
 import { ChevronDownIcon, Plus } from 'lucide-react'
-import Modal from '../Modal'
+import { Modal } from '../Modal'
 import { FestivalRootForm } from './FestivalRootForm'
 import { useAddConcert } from '@/hooks/concerts/useAddConcert'
 import { useConcert } from '@/hooks/concerts/useConcert'
@@ -108,6 +108,7 @@ export const Form = ({ close, isNew }: FormProps) => {
           <TextField
             type="time"
             {...register('doors_time')}
+            step={300}
             label={`${t('doorsTime')} ${t('optional')}`}
             placeholder="18:30"
             grouped="start"
@@ -115,6 +116,7 @@ export const Form = ({ close, isNew }: FormProps) => {
           <TextField
             type="time"
             {...register('show_time')}
+            step={300}
             label={`${t('showTime')} ${t('optional')}`}
             placeholder="19:00"
             grouped="end"
@@ -261,7 +263,7 @@ export const Form = ({ close, isNew }: FormProps) => {
                 </>
               )}
             </Disclosure.Trigger>
-            <Disclosure.Content className="grid gap-6 mt-3">
+            <Disclosure.Content className="mt-3 grid gap-6">
               <FutureConcertFields />
             </Disclosure.Content>
           </Disclosure.Root>
@@ -309,7 +311,7 @@ export const Form = ({ close, isNew }: FormProps) => {
           />
         </div>
       </form>
-      <Modal open={isOpen} onOpenChange={setIsOpen}>
+      <Modal isOpen={isOpen} setOpen={setIsOpen}>
         <FestivalRootForm close={() => setIsOpen(false)} />
       </Modal>
     </>

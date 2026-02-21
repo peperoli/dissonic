@@ -9,8 +9,8 @@ import { MailIcon, UnlinkIcon } from 'lucide-react'
 import { useUserIdentities } from '@/hooks/auth/useUserIdentities'
 import toast from 'react-hot-toast'
 import { useQueryState } from 'nuqs'
-import Modal from '../Modal'
-import { DialogTitle } from '@radix-ui/react-dialog'
+import { Modal } from '../Modal'
+import { DialogTitle } from '../shared/Dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGoogle, faMicrosoft } from '@fortawesome/free-brands-svg-icons'
 
@@ -26,7 +26,10 @@ function IdentityItem({
   const closeModal = () => setModal(null)
   const { mutate, isPending } = useMutation({
     mutationFn: () => unlinkIdentity(identity),
-    onError: error => { console.error(error); toast.error(error.message)},
+    onError: error => {
+      console.error(error)
+      toast.error(error.message)
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user-identities'] })
       closeModal()
@@ -82,7 +85,7 @@ function IdentityItem({
           )}
         </div>
       </li>
-      <Modal open={modal !== null} onOpenChange={isOpen => !isOpen && closeModal()}>
+      <Modal isOpen={modal !== null} setOpen={isOpen => !isOpen && closeModal()}>
         <DialogTitle>{t('unlinkProvider')}</DialogTitle>
         <p>
           {t.rich('doYouReallyWantToUnlinkThisProvider', {
@@ -113,11 +116,17 @@ export function OAuthSettings({
   const t = useTranslations('OAuthSettings')
   const linkGoogle = useMutation({
     mutationFn: () => linkIdentity('google'),
-    onError: error => { console.error(error); toast.error(error.message)},
+    onError: error => {
+      console.error(error)
+      toast.error(error.message)
+    },
   })
   const linkMicrosoft = useMutation({
     mutationFn: () => linkIdentity('azure'),
-    onError: error => { console.error(error); toast.error(error.message)},
+    onError: error => {
+      console.error(error)
+      toast.error(error.message)
+    },
   })
 
   return (

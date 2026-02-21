@@ -1,10 +1,10 @@
 import { Button } from './Button'
 import { ReactNode, useEffect, useState } from 'react'
-import { ChevronDown, X } from 'lucide-react'
+import { ChevronDownIcon, XIcon } from 'lucide-react'
 import { ListItem } from '@/types/types'
 import { TruncatedList } from 'react-truncate-list'
 import clsx from 'clsx'
-import * as Dialog from '@radix-ui/react-dialog'
+import { Dialog } from './shared/Dialog'
 import { Popover } from './shared/Popover'
 import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 import { useTranslations } from 'next-intl'
@@ -35,7 +35,7 @@ export const FilterButton = ({
   children,
   ...props
 }: FilterButtonProps) => {
-  const [isOpen, setOpen] = useState(false)
+  const [, setOpen] = useState(false)
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const t = useTranslations('FilterButton')
   const close = () => setOpen(false)
@@ -46,57 +46,58 @@ export const FilterButton = ({
     close()
   }, ['selectedId' in props && props.selectedId])
 
-  const triggerButton = (
-    <button
-      type="button"
-      className={clsx(
-        'flex w-full items-center gap-2 whitespace-nowrap',
-        size === 'md' && 'rounded-lg px-4 py-2',
-        size === 'sm' && 'rounded-md px-3 py-1.5 text-sm',
-        appearance === 'secondary' &&
-          (hasValues ? 'bg-gradient-to-r from-blue/20 to-venom/20' : 'bg-slate-700')
-      )}
-    >
-      <div className="flex w-full">
-        {hasValues ? <span className="text-slate-300">{label}:&nbsp;</span> : label}
-        {type === 'range' && count > 0 && 'submittedValues' in props && props.submittedValues && (
-          <div>
-            {Math.min(...props.submittedValues)}&thinsp;&ndash;&thinsp;
-            {Math.max(...props.submittedValues)}
-          </div>
+  function triggerButton({ isOpen }: { isOpen?: boolean }) {
+    return (
+      <button
+        type="button"
+        className={clsx(
+          'flex items-center gap-2 whitespace-nowrap',
+          size === 'md' && 'rounded-lg px-4 py-2',
+          size === 'sm' && 'rounded-md px-3 py-1.5 text-sm',
+          appearance === 'secondary' &&
+            (hasValues ? 'bg-gradient-to-r from-blue/20 to-venom/20' : 'bg-slate-700')
         )}
-        {type === 'multiselect' &&
-          count > 0 &&
-          'submittedValues' in props &&
-          props.submittedValues && (
-            <TruncatedList
-              renderTruncator={({ hiddenItemsCount }) => <div>+{hiddenItemsCount}</div>}
-              className="flex w-full items-center overflow-auto"
-            >
-              {items
-                ?.filter(item => props.submittedValues?.includes(item.id))
-                .map((item, index) => (
-                  <span key={item.id}>
-                    {item.name}
-                    {index + 1 < count && <>,&nbsp;</>}
-                  </span>
-                ))}
-            </TruncatedList>
+      >
+        <div className="flex w-full">
+          {hasValues ? <span className="text-slate-300">{label}:&nbsp;</span> : label}
+          {type === 'range' && count > 0 && 'submittedValues' in props && props.submittedValues && (
+            <div>
+              {Math.min(...props.submittedValues)}&thinsp;&ndash;&thinsp;
+              {Math.max(...props.submittedValues)}
+            </div>
           )}
-        {type === 'singleselect' && 'selectedId' in props && (
-          <div>{items?.find(item => item.id === props.selectedId)?.name}</div>
-        )}
-      </div>
-      <ChevronDown className={clsx('ml-auto size-icon flex-none', isOpen && 'rotate-180')} />
-    </button>
-  )
+          {type === 'multiselect' &&
+            count > 0 &&
+            'submittedValues' in props &&
+            props.submittedValues && (
+              <TruncatedList
+                renderTruncator={({ hiddenItemsCount }) => <div>+{hiddenItemsCount}</div>}
+                className="flex w-full items-center overflow-auto"
+              >
+                {items
+                  ?.filter(item => props.submittedValues?.includes(item.id))
+                  .map((item, index) => (
+                    <span key={item.id}>
+                      {item.name}
+                      {index + 1 < count && <>,&nbsp;</>}
+                    </span>
+                  ))}
+              </TruncatedList>
+            )}
+          {type === 'singleselect' && 'selectedId' in props && (
+            <div>{items?.find(item => item.id === props.selectedId)?.name}</div>
+          )}
+        </div>
+        <ChevronDownIcon className={clsx('ml-auto size-icon flex-none', isOpen && 'rotate-180')} />
+      </button>
+    )
+  }
 
   const submitButton =
     'onSubmit' in props ? (
       <Button
         onClick={() => {
           props.onSubmit(props.selectedIds)
-          close()
         }}
         label={t('save')}
         appearance="primary"
@@ -106,38 +107,43 @@ export const FilterButton = ({
 
   if (isDesktop) {
     return (
-      <div className="relative">
-        <Popover.Root>
-          <Popover.Trigger asChild>{triggerButton}</Popover.Trigger>
-          <Popover.Content className="z-20 mt-1 flex-col rounded-lg bg-slate-700 p-4 text-white shadow-xl [&:popover-open]:flex">
-            {children}
-            {submitButton}
-          </Popover.Content>
-        </Popover.Root>
-      </div>
+      <Popover.Root>
+        {({ isOpen }) => (
+          <>
+            <Popover.Trigger asChild>{triggerButton({ isOpen })}</Popover.Trigger>
+            <Popover.Content className="z-20 mt-1 flex-col rounded-lg bg-slate-700 p-4 shadow-xl [&:popover-open]:flex">
+              {children}
+              {submitButton}
+            </Popover.Content>
+          </>
+        )}
+      </Popover.Root>
     )
   }
 
   return (
-    <div className="relative">
-      <Dialog.Root open={isOpen} onOpenChange={setOpen}>
-        <Dialog.Trigger asChild>{triggerButton}</Dialog.Trigger>
-        <Dialog.Portal>
-          <Dialog.Content className="fixed inset-0 z-20 flex flex-col overflow-hidden bg-slate-700 p-4 shadow-xl">
-            <div className="mb-2 flex items-center justify-between gap-4">
-              <Dialog.Title className="mb-0 capitalize">{label}</Dialog.Title>
-              <Button
-                onClick={() => close()}
-                label={t('close')}
-                contentType="icon"
-                icon={<X className="size-icon" />}
-              />
-            </div>
-            {children}
-            {submitButton}
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
-    </div>
+    <Dialog.Root>
+      {({ isOpen }) => (
+        <>
+          <Dialog.Trigger asChild>{triggerButton({ isOpen })}</Dialog.Trigger>
+          <Dialog.Portal>
+            <Dialog.Content className="z-20 size-full flex-col overflow-hidden bg-slate-700 p-4 shadow-xl open:flex">
+              <div className="mb-2 flex items-center justify-between gap-4">
+                <Dialog.Title className="mb-0 capitalize">{label}</Dialog.Title>
+                <Dialog.Close asChild>
+                  <Button
+                    label={t('close')}
+                    contentType="icon"
+                    icon={<XIcon className="size-icon" />}
+                  />
+                </Dialog.Close>
+              </div>
+              {children}
+              <Dialog.Close asChild>{submitButton}</Dialog.Close>
+            </Dialog.Content>
+          </Dialog.Portal>
+        </>
+      )}
+    </Dialog.Root>
   )
 }

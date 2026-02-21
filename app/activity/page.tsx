@@ -8,7 +8,7 @@ import { ActivityTypeFilter } from '@/components/activity/ActivityTypeFilter'
 import { ViewFilter } from '@/components/activity/ViewFilter'
 import { jwtDecode } from 'jwt-decode'
 
-export async function generateMetadata() {
+export async function generateMetadata(): Promise<{ title: string }> {
   const t = await getTranslations('ActivityPage')
 
   return {

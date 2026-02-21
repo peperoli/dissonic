@@ -10,6 +10,10 @@
     font-size: clamp(16px, 1.75vw, 20px);
   }
 
+  body:has(dialog[open]) {
+    overflow: hidden;
+  }
+
   h1,
   .h1 {
     @apply mb-6 text-3xl font-bold md:text-4xl;
@@ -46,6 +50,11 @@
 
   small {
     @apply text-sm;
+  }
+
+  dialog {
+    /* style resets */
+    @apply text-inherit m-0 size-auto max-h-none max-w-none bg-transparent;
   }
 }
 

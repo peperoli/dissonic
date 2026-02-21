@@ -17,14 +17,14 @@ export function Tooltip({
   if (triggerOnClick) {
     return (
       <Popover.Root>
-        {({ open, close }) => (
+        {({ show, close }) => (
           <>
-            <Popover.Trigger asChild onMouseOver={open} onMouseLeave={close}>
+            <Popover.Trigger asChild onMouseOver={show} onMouseLeave={close}>
               {children}
             </Popover.Trigger>
             <Popover.Content
               side="top"
-              className="z-30 max-w-72 rounded-lg border border-slate-800 bg-slate-900 p-2 text-sm text-white shadow-lg"
+              className="z-30 max-w-72 rounded-lg border border-slate-800 bg-slate-900 p-2 text-sm shadow-lg"
               {...props}
             >
               {content}

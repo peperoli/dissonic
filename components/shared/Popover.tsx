@@ -1,21 +1,24 @@
 import {
-  Children,
-  cloneElement,
   createContext,
+  Dispatch,
   HTMLAttributes,
-  isValidElement,
   ReactNode,
   RefObject,
+  SetStateAction,
   useContext,
   useId,
   useRef,
+  useState,
 } from 'react'
 import { createPortal } from 'react-dom'
+import { ButtonSlot } from '../helpers/slots'
 
 const PopoverContext = createContext<{
   id: string
   popoverRef: RefObject<HTMLDialogElement | null>
-  open: () => void
+  isOpen: boolean
+  setOpen: Dispatch<SetStateAction<boolean>>
+  show: () => void
   close: () => void
 } | null>(null)
 
@@ -32,17 +35,18 @@ function usePopoverContext() {
 export function Popover({
   children,
 }: {
-  children: ((params: { open: () => void; close: () => void }) => ReactNode) | ReactNode
+  children: ((args: { isOpen: boolean; show: () => void; close: () => void }) => ReactNode) | ReactNode
 }) {
-  const id = useId()
   const popoverRef = useRef<HTMLDialogElement>(null)
+  const [isOpen, setOpen] = useState(false)
+  const id = useId()
 
-  function open() {
-    popoverRef.current?.showPopover()
+  function show() {
+    popoverRef.current?.show()
   }
 
   function close() {
-    popoverRef.current?.hidePopover()
+    popoverRef.current?.close()
   }
 
   return (
@@ -50,11 +54,13 @@ export function Popover({
       value={{
         popoverRef,
         id,
-        open,
+        isOpen,
+        setOpen,
+        show,
         close,
       }}
     >
-      {typeof children === 'function' ? children({ open, close }) : children}
+      {typeof children === 'function' ? children({ isOpen, show, close }) : children}
     </PopoverContext.Provider>
   )
 }
@@ -64,13 +70,13 @@ function PopoverTrigger({
   ...props
 }: HTMLAttributes<HTMLButtonElement> &
   ({ asChild?: false } | { asChild: true; children: ReactNode })) {
-  const { id } = usePopoverContext()
+  const { id, isOpen, show } = usePopoverContext()
   const Composition = asChild ? ButtonSlot : 'button'
 
   return (
     <Composition
       type="button"
-      popoverTarget={id}
+      onClick={isOpen ? close : show}
       // @ts-expect-error
       style={{ anchorName: `--${id}` }}
       {...props}
@@ -78,40 +84,21 @@ function PopoverTrigger({
   )
 }
 
-function ButtonSlot({
-  children,
-  ...props
-}: HTMLAttributes<HTMLButtonElement> & { children?: ReactNode }) {
-  if (Children.count(children) > 1) {
-    throw new Error('Popover.Trigger with asChild only accepts a single child element')
-  }
-
-  if (isValidElement(children)) {
-    return cloneElement(children, {
-      ...props,
-      // @ts-expect-error
-      ...children.props,
-    })
-  }
-
-  return null
-}
-
 function PopoverContent({
   side = 'bottom',
   children,
   ...props
-}: Omit<HTMLAttributes<HTMLDivElement>, 'children'> & {
+}: Omit<HTMLAttributes<HTMLDialogElement>, 'children'> & {
   side?: 'top' | 'right' | 'bottom' | 'left'
   children: ((params: { close: () => void }) => ReactNode) | ReactNode
 }) {
-  const { popoverRef, id, close } = usePopoverContext()
+  const { popoverRef, id, close, setOpen } = usePopoverContext()
 
   return createPortal(
     <dialog
       ref={popoverRef}
-      popover="auto"
-      id={id}
+      closedby="any"
+      onToggle={event => setOpen(event.currentTarget.open)}
       // @ts-expect-error
       style={{ positionAnchor: `--${id}`, positionArea: side }}
       {...props}

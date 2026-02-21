@@ -35,6 +35,7 @@ module.exports = {
       black: '#000',
       transparent: 'transparent',
       current: 'currentColor',
+      inherit: 'inherit',
     },
     boxShadow: {
       md: '0 2px 8px rgba(0, 0, 0, 0.2)',

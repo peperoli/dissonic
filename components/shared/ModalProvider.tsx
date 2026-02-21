@@ -3,8 +3,8 @@
 import { Loader2 } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { parseAsStringLiteral, useQueryState } from 'nuqs'
-import Modal from '../Modal'
-import { DialogTitle } from '@radix-ui/react-dialog'
+import { Modal } from '../Modal'
+import { DialogTitle } from '../shared/Dialog'
 import { useTranslations } from 'next-intl'
 import clsx from 'clsx'
 
@@ -107,8 +107,8 @@ export const ModalProvider = () => {
 
   return (
     <Modal
-      open={modal !== null && !!modals[modal]}
-      onOpenChange={isOpen => !isOpen && close()}
+      isOpen={modal !== null && !!modals[modal]}
+      setOpen={isOpen => !isOpen && close()}
       closeOnClickOutside={modal === 'search'}
     >
       <DialogTitle className={clsx(modal === 'search' && 'sr-only')}>{title}</DialogTitle>

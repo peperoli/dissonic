@@ -5,13 +5,11 @@ import { Button } from '../Button'
 import { useSession } from '@/hooks/auth/useSession'
 import { useModal } from '../shared/ModalProvider'
 import { usePathname, useRouter } from 'next/navigation'
-import * as Dialog from '@radix-ui/react-dialog'
+import { Dialog } from '../shared/Dialog'
 import { GuitarPlusIcon } from './GuitarPlusIcon'
-import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 
 export const SpeedDial = () => {
-  const [isOpen, setIsOpen] = useState(false)
   const { data: session } = useSession()
   const [_, setModal] = useModal()
   const { push } = useRouter()
@@ -19,7 +17,7 @@ export const SpeedDial = () => {
   const t = useTranslations('SpeedDial')
 
   return (
-    <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog.Root>
       <div className="fixed bottom-16 right-0 z-20 m-4 md:bottom-0">
         <Dialog.Trigger asChild>
           <Button
@@ -31,17 +29,11 @@ export const SpeedDial = () => {
         </Dialog.Trigger>
       </div>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-slate-800/90" />
-        <Dialog.Content className="fixed bottom-0 right-0 z-50 flex flex-col items-end justify-end gap-4 p-4">
+        <Dialog.Content className="bottom-0 right-0 z-50 open:flex flex-col items-end justify-end gap-4 p-4 backdrop:bg-slate-800/90">
           <Dialog.Title className="sr-only">{t('addResource')}</Dialog.Title>
-          <button
+          <Dialog.Close
             onClick={
-              session
-                ? () => {
-                    setIsOpen(false)
-                    setModal('add-location')
-                  }
-                : () => push(`/login?redirect=${pathname}`)
+              session ? () => setModal('add-location') : () => push(`/login?redirect=${pathname}`)
             }
             className="flex items-center gap-2"
           >
@@ -51,15 +43,10 @@ export const SpeedDial = () => {
             <div className="btn btn-icon btn-primary">
               <MapPinPlus className="size-icon" />
             </div>
-          </button>
+          </Dialog.Close>
           <button
             onClick={
-              session
-                ? () => {
-                    setIsOpen(false)
-                    setModal('add-band')
-                  }
-                : () => push(`/login?redirect=${pathname}`)
+              session ? () => setModal('add-band') : () => push(`/login?redirect=${pathname}`)
             }
             className="flex items-center gap-2"
           >
@@ -72,12 +59,7 @@ export const SpeedDial = () => {
           </button>
           <button
             onClick={
-              session
-                ? () => {
-                    setIsOpen(false)
-                    setModal('add-concert')
-                  }
-                : () => push(`/login?redirect=${pathname}`)
+              session ? () => setModal('add-concert') : () => push(`/login?redirect=${pathname}`)
             }
             className="flex items-center gap-2"
           >
