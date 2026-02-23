@@ -22,13 +22,15 @@ export function Tooltip({
             <Popover.Trigger asChild onMouseOver={show} onMouseLeave={close}>
               {children}
             </Popover.Trigger>
-            <Popover.Content
-              side="top"
-              className="z-30 max-w-72 rounded-lg border border-slate-800 bg-slate-900 p-2 text-sm shadow-lg"
-              {...props}
-            >
-              {content}
-            </Popover.Content>
+            <Popover.Portal>
+              <Popover.Content
+                side="top"
+                className="z-30 max-w-72 rounded-lg border border-slate-800 bg-slate-900 p-2 text-sm shadow-lg"
+                {...props}
+              >
+                {content}
+              </Popover.Content>
+            </Popover.Portal>
           </>
         )}
       </Popover.Root>

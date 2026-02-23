@@ -10,7 +10,7 @@
     font-size: clamp(16px, 1.75vw, 20px);
   }
 
-  body:has(dialog[open]) {
+  body:has(dialog:modal) {
     overflow: hidden;
   }
 

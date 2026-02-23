@@ -2,10 +2,12 @@ import {
   createContext,
   Dispatch,
   HTMLAttributes,
+  ReactElement,
   ReactNode,
   RefObject,
   SetStateAction,
   useContext,
+  useEffect,
   useId,
   useRef,
   useState,
@@ -35,7 +37,9 @@ function usePopoverContext() {
 export function Popover({
   children,
 }: {
-  children: ((args: { isOpen: boolean; show: () => void; close: () => void }) => ReactNode) | ReactNode
+  children:
+    | ((args: { isOpen: boolean; show: () => void; close: () => void }) => ReactNode)
+    | ReactNode
 }) {
   const popoverRef = useRef<HTMLDialogElement>(null)
   const [isOpen, setOpen] = useState(false)
@@ -84,6 +88,18 @@ function PopoverTrigger({
   )
 }
 
+export function PopoverPortal({ children }: { children: ReactNode }) {
+  const ref = useRef<HTMLElement | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    ref.current = document.body
+    setMounted(true)
+  }, [])
+
+  return mounted && ref.current ? createPortal(children, ref.current) : children
+}
+
 function PopoverContent({
   side = 'bottom',
   children,
@@ -94,7 +110,7 @@ function PopoverContent({
 }) {
   const { popoverRef, id, close, setOpen } = usePopoverContext()
 
-  return createPortal(
+  return (
     <dialog
       ref={popoverRef}
       closedby="any"
@@ -104,11 +120,23 @@ function PopoverContent({
       {...props}
     >
       {typeof children === 'function' ? children({ close }) : children}
-    </dialog>,
-    document.body
+    </dialog>
   )
+}
+
+function PopoverClose({
+  asChild,
+  ...props
+}: HTMLAttributes<HTMLButtonElement> &
+  ({ asChild?: false } | { asChild: true; children: ReactElement })) {
+  const { close } = usePopoverContext()
+  const Composition = asChild ? ButtonSlot : 'button'
+
+  return <Composition type="button" onClick={close} {...props} />
 }
 
 Popover.Root = Popover
 Popover.Trigger = PopoverTrigger
+Popover.Portal = PopoverPortal
 Popover.Content = PopoverContent
+Popover.Close = PopoverClose

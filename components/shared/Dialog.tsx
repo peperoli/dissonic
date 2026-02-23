@@ -78,11 +78,10 @@ export function Dialog({ isOpen, setOpen, children }: DialogProps) {
   )
 }
 
-export function DialogTrigger({
-  asChild,
-  ...props
-}: HTMLAttributes<HTMLButtonElement> &
-  ({ asChild?: false } | { asChild: true; children: ReactNode })) {
+export type DialogTriggerProps = HTMLAttributes<HTMLButtonElement> &
+  ({ asChild?: false } | { asChild: true; children: ReactNode })
+
+export function DialogTrigger({ asChild, ...props }: DialogTriggerProps) {
   const { show } = useDialogContext()
   const Composition = asChild ? ButtonSlot : 'button'
 
@@ -124,11 +123,12 @@ export function DialogContent({
   )
 }
 
-export function DialogTitle({
-  as,
-  children,
-  ...props
-}: HTMLAttributes<HTMLHeadingElement> & { as?: string; children: ReactNode }) {
+export type DialogTitleProps = HTMLAttributes<HTMLHeadingElement> & {
+  as?: string
+  children: ReactNode
+}
+
+export function DialogTitle({ as, children, ...props }: DialogTitleProps) {
   const HeadingTag = as ? as : 'h2'
 
   return <HeadingTag {...props}>{children}</HeadingTag>
