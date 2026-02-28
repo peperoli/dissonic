@@ -53,7 +53,6 @@ export function Dialog({ isOpen, setOpen, children }: DialogProps) {
   }
 
   useLayoutEffect(() => {
-    console.log('isOpen changed', isOpen)
     if (dialogRef.current?.open && !isOpen) {
       close()
     } else if (!dialogRef.current?.open && isOpen) {
