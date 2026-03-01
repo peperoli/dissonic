@@ -6,13 +6,12 @@ import {
   RefObject,
   SetStateAction,
   useContext,
-  useEffect,
   useLayoutEffect,
   useRef,
   useState,
 } from 'react'
 import { ButtonSlot } from '../helpers/slots'
-import { createPortal } from 'react-dom'
+import { Portal } from '../helpers/Portal'
 
 const DialogContext = createContext<{
   dialogRef: RefObject<HTMLDialogElement | null>
@@ -20,6 +19,7 @@ const DialogContext = createContext<{
   setOpen: Dispatch<SetStateAction<boolean>>
   show: () => void
   close: () => void
+  shouldCloseOnClickOutside?: boolean
 } | null>(null)
 
 function useDialogContext() {
@@ -35,12 +35,14 @@ function useDialogContext() {
 export type DialogProps = {
   isOpen?: boolean
   setOpen?: Dispatch<SetStateAction<boolean>>
+  shouldCloseOnClickOutside?: boolean
+
   children:
     | ((args: { isOpen: boolean; show: () => void; close: () => void }) => ReactNode)
     | ReactNode
 }
 
-export function Dialog({ isOpen, setOpen, children }: DialogProps) {
+export function Dialog({ isOpen, setOpen, shouldCloseOnClickOutside, children }: DialogProps) {
   const dialogRef = useRef<HTMLDialogElement | null>(null)
   const [internalOpen, setInternalOpen] = useState(false)
 
@@ -68,6 +70,7 @@ export function Dialog({ isOpen, setOpen, children }: DialogProps) {
         setOpen: setOpen ?? setInternalOpen,
         show,
         close,
+        shouldCloseOnClickOutside,
       }}
     >
       {typeof children === 'function'
@@ -87,27 +90,13 @@ export function DialogTrigger({ asChild, ...props }: DialogTriggerProps) {
   return <Composition type="button" onClick={show} {...props} />
 }
 
-export function DialogPortal({ children }: { children: ReactNode }) {
-  const ref = useRef<HTMLElement | null>(null)
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    ref.current = document.body
-    setMounted(true)
-  }, [])
-
-  return mounted && ref.current ? createPortal(children, ref.current) : children
-}
-
 export function DialogContent({
   children,
-  shouldCloseOnClickOutside,
   ...props
 }: HTMLAttributes<HTMLDialogElement> & {
   children: ReactNode
-  shouldCloseOnClickOutside?: boolean
 }) {
-  const { dialogRef, setOpen } = useDialogContext()
+  const { dialogRef, setOpen, shouldCloseOnClickOutside } = useDialogContext()
 
   return (
     <dialog
@@ -146,7 +135,7 @@ export function DialogClose({
 
 Dialog.Root = Dialog
 Dialog.Trigger = DialogTrigger
-Dialog.Portal = DialogPortal
+Dialog.Portal = Portal
 Dialog.Content = DialogContent
 Dialog.Title = DialogTitle
 Dialog.Close = DialogClose

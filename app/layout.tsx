@@ -14,8 +14,6 @@ import { Toaster } from 'react-hot-toast'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import { content, theme } from '../tailwind.config'
 import { AlertCircleIcon, CheckCircleIcon } from 'lucide-react'
-import * as Tooltip from '@radix-ui/react-tooltip'
-import { cookies } from 'next/headers'
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('RootLayout')
@@ -65,14 +63,12 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const locale = await getLocale()
   const messages = await getMessages()
   const fullConfig = resolveConfig({ content, theme })
-  const cookieStore = await cookies()
 
   return (
     <html lang={locale} className={`${albertSans.variable} ${firaCode.variable}`}>
       <body className="flex min-h-screen flex-col bg-slate-850 text-white">
         <QueryProvider>
           <NextIntlClientProvider messages={messages}>
-            <Tooltip.Provider delayDuration={200}>
               <NavBar />
               <div className="md:flex">
                 <Navigation />
@@ -82,7 +78,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               <Suspense>
                 <ModalProvider />
               </Suspense>
-            </Tooltip.Provider>
             <Toaster
               toastOptions={{
                 style: {

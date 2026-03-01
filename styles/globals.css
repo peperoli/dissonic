@@ -56,6 +56,10 @@
     /* style resets */
     @apply text-inherit m-0 size-auto max-h-none max-w-none bg-transparent;
   }
+
+  [popover] {
+    @apply text-inherit bg-transparent;
+  }
 }
 
 @layer components {

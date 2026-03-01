@@ -17,7 +17,7 @@ export const SpeedDial = () => {
   const t = useTranslations('SpeedDial')
 
   return (
-    <Dialog.Root>
+    <Dialog.Root shouldCloseOnClickOutside>
       <div className="fixed bottom-16 right-0 z-20 m-4 md:bottom-0">
         <Dialog.Trigger asChild>
           <Button
@@ -29,7 +29,7 @@ export const SpeedDial = () => {
         </Dialog.Trigger>
       </div>
       <Dialog.Portal>
-        <Dialog.Content className="bottom-0 right-0 z-50 open:flex flex-col items-end justify-end gap-4 p-4 backdrop:bg-slate-800/90">
+        <Dialog.Content className="left-auto top-auto bottom-0 right-0 z-50 open:flex flex-col items-end gap-4 p-4 backdrop:bg-slate-800/90">
           <Dialog.Title className="sr-only">{t('addResource')}</Dialog.Title>
           <Dialog.Close
             onClick={

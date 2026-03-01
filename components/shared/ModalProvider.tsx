@@ -109,7 +109,7 @@ export const ModalProvider = () => {
     <Modal
       isOpen={modal !== null && !!modals[modal]}
       setOpen={isOpen => !isOpen && close()}
-      closeOnClickOutside={modal === 'search'}
+      shouldCloseOnClickOutside={modal === 'search'}
     >
       <DialogTitle className={clsx(modal === 'search' && 'sr-only')}>{title}</DialogTitle>
       {ModalContent && <ModalContent isNew={modal?.startsWith('add')} close={close} />}

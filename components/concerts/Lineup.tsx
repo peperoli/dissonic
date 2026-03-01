@@ -29,11 +29,11 @@ export function Lineup({ concert }: { concert: Concert }) {
           &bull; {t('nBands', { count: concert.bands.length })}
           {session?.isMod &&
             (concert.resource_status === 'complete' ? (
-              <Tooltip content={t('complete')} triggerOnClick>
+              <Tooltip content={t('complete')} shouldToggleOnClick>
                 <BadgeCheckIcon className="size-icon text-venom" />
               </Tooltip>
             ) : concert.resource_status === 'incomplete_lineup' ? (
-              <Tooltip content={t('incompleteLineup')} triggerOnClick>
+              <Tooltip content={t('incompleteLineup')} shouldToggleOnClick>
                 <BadgeMinusIcon className="size-icon text-yellow" />
               </Tooltip>
             ) : null)}

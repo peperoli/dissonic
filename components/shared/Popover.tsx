@@ -7,13 +7,12 @@ import {
   RefObject,
   SetStateAction,
   useContext,
-  useEffect,
   useId,
   useRef,
   useState,
 } from 'react'
-import { createPortal } from 'react-dom'
 import { ButtonSlot } from '../helpers/slots'
+import { Portal } from '../helpers/Portal'
 
 const PopoverContext = createContext<{
   id: string
@@ -88,18 +87,6 @@ function PopoverTrigger({
   )
 }
 
-export function PopoverPortal({ children }: { children: ReactNode }) {
-  const ref = useRef<HTMLElement | null>(null)
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    ref.current = document.body
-    setMounted(true)
-  }, [])
-
-  return mounted && ref.current ? createPortal(children, ref.current) : children
-}
-
 function PopoverContent({
   side = 'bottom',
   children,
@@ -137,6 +124,6 @@ function PopoverClose({
 
 Popover.Root = Popover
 Popover.Trigger = PopoverTrigger
-Popover.Portal = PopoverPortal
+Popover.Portal = Portal
 Popover.Content = PopoverContent
 Popover.Close = PopoverClose

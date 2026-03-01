@@ -107,7 +107,7 @@ export function ComparisonChart({
       )}
       <div className="flex w-full items-center gap-1">
         <Tooltip
-          triggerOnClick
+          shouldToggleOnClick
           content={
             <>
               <strong>
@@ -134,7 +134,7 @@ export function ComparisonChart({
           />
         </Tooltip>
         <Tooltip
-          triggerOnClick
+          shouldToggleOnClick
           content={
             <>
               <strong>{t(`count_${resourceType}`, { count: shared.size })}</strong>
@@ -157,7 +157,7 @@ export function ComparisonChart({
           />
         </Tooltip>
         <Tooltip
-          triggerOnClick
+          shouldToggleOnClick
           content={
             <>
               <strong>
