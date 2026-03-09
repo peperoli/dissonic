@@ -58,7 +58,7 @@ export function Tooltip({
       <Portal>
         <TooltipContent
           side="top"
-          className="z-30 mb-0.5 max-w-72 rounded-lg border border-slate-800 bg-slate-900 p-2 text-sm shadow-lg transition delay-100"
+          className="z-30 mb-0.5 max-w-72 rounded-lg border border-slate-800 bg-slate-900 p-2 text-sm shadow-lg"
         >
           {content}
         </TooltipContent>

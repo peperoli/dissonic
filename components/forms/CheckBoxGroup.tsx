@@ -1,6 +1,5 @@
 import { ListItem } from '@/types/types'
-import * as Checkbox from '@radix-ui/react-checkbox'
-import { CheckIcon } from 'lucide-react'
+import clsx from 'clsx'
 
 type CheckBoxGroupProps = {
   name: string
@@ -23,21 +22,40 @@ export const CheckBoxGroup = ({ name, items, values, onValuesChange }: CheckBoxG
       {items.map(item => (
         <li key={item.id}>
           <label className="flex w-full items-center gap-3 rounded px-2 py-1.5 hover:bg-slate-600">
-            <Checkbox.Root
+            <Checkbox
               name={name}
               value={item.name}
-              checked={values.includes(item.id)}
+              isChecked={values.includes(item.id)}
               onCheckedChange={() => handleChange(item.id)}
-              className="grid size-4 flex-none place-content-center rounded border-2 border-slate-300 bg-white/5 data-[state=checked]:border-venom data-[state=checked]:bg-venom"
-            >
-              <Checkbox.Indicator>
-                <CheckIcon className="size-3 text-slate-850" strokeWidth={4} />
-              </Checkbox.Indicator>
-            </Checkbox.Root>
+            />
             {item.name}
           </label>
         </li>
       ))}
     </ul>
+  )
+}
+
+function Checkbox({
+  isChecked,
+  onCheckedChange,
+  ...props
+}: {
+  name: string
+  value: string
+  isChecked?: boolean
+  onCheckedChange?: (checked: boolean) => void
+}) {
+  return (
+    <input
+      type="checkbox"
+      checked={isChecked}
+      onChange={event => (onCheckedChange ? onCheckedChange(event.target.checked) : undefined)}
+      className={clsx(
+        'checkbox grid size-4 flex-none appearance-none place-content-center rounded border-2 border-slate-300 bg-white/5 accent-venom',
+        'checked:border-venom checked:bg-venom'
+      )}
+      {...props}
+    />
   )
 }
