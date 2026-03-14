@@ -8,7 +8,7 @@ type CheckBoxGroupProps = {
   onValuesChange: (values: number[]) => void
 }
 
-export const CheckBoxGroup = ({ name, items, values, onValuesChange }: CheckBoxGroupProps) => {
+export function CheckBoxGroup({ name, items, values, onValuesChange }: CheckBoxGroupProps) {
   function handleChange(id: number) {
     if (values.includes(id)) {
       onValuesChange(values.filter(item => item !== id))
@@ -36,7 +36,7 @@ export const CheckBoxGroup = ({ name, items, values, onValuesChange }: CheckBoxG
   )
 }
 
-function Checkbox({
+export function Checkbox({
   isChecked,
   onCheckedChange,
   ...props
@@ -52,7 +52,7 @@ function Checkbox({
       checked={isChecked}
       onChange={event => (onCheckedChange ? onCheckedChange(event.target.checked) : undefined)}
       className={clsx(
-        'checkbox grid size-4 flex-none appearance-none place-content-center rounded border-2 border-slate-300 bg-white/5 accent-venom',
+        'checkbox grid size-4 flex-none appearance-none place-content-center rounded border-2 border-slate-300 bg-white/5',
         'checked:border-venom checked:bg-venom'
       )}
       {...props}

@@ -21,7 +21,7 @@ import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
 import { useSession } from '@/hooks/auth/useSession'
 import { Disclosure } from '../shared/Disclosure'
 import clsx from 'clsx'
-import * as RadioGroup from '@radix-ui/react-radio-group'
+import { RadioButton } from '../forms/RadioGroup'
 
 type FormProps = {
   isNew?: boolean
@@ -77,8 +77,8 @@ export const Form = ({ close, isNew }: FormProps) => {
   const isSimilar = !!(isNew && similarConcerts?.count)
   const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
   const resourceStatusItems = [
-    { id: 'complete', name: t('complete') },
-    { id: 'incomplete_lineup', name: t('incompleteLineup') },
+    { value: 'complete', label: t('complete') },
+    { value: 'incomplete_lineup', label: t('incompleteLineup') },
   ]
 
   useEffect(() => {
@@ -275,28 +275,23 @@ export const Form = ({ close, isNew }: FormProps) => {
             render={({ field: { value, onChange } }) => (
               <fieldset>
                 <legend className="mb-1 text-sm text-slate-300">{t('resourceStatus')}</legend>
-                <RadioGroup.Root
-                  name="resource_status"
-                  value={value ?? undefined}
-                  onValueChange={value => onChange(value)}
-                  orientation="vertical"
-                >
-                  <ul className="w-full">
-                    {resourceStatusItems.map(item => (
-                      <li key={item.id}>
-                        <label className="flex w-full items-center gap-3 rounded px-2 py-1.5 hover:bg-slate-600">
-                          <RadioGroup.Item
-                            value={item.id}
-                            className="grid size-4 flex-none place-content-center rounded-full border-2 border-slate-300 bg-white/5 data-[state=checked]:border-venom data-[state=checked]:bg-venom"
-                          >
-                            <RadioGroup.Indicator className="size-3 rounded-lg border-3 border-slate-850 bg-venom" />
-                          </RadioGroup.Item>
-                          {item.name}
-                        </label>
-                      </li>
-                    ))}
-                  </ul>
-                </RadioGroup.Root>
+                <ul className="w-full">
+                  {resourceStatusItems.map(item => (
+                    <li key={item.value}>
+                      <label className="flex w-full items-center gap-3 rounded px-2 py-1.5 hover:bg-slate-600">
+                        <RadioButton
+                          name="resource_status"
+                          value={item.value}
+                          isChecked={value === item.value}
+                          onCheckedChange={isChecked =>
+                            isChecked ? onChange(item.value) : undefined
+                          }
+                        />
+                        {item.label}
+                      </label>
+                    </li>
+                  ))}
+                </ul>
               </fieldset>
             )}
           />
