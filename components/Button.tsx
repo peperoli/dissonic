@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { forwardRef, HTMLAttributes, ReactElement } from 'react'
+import { HTMLAttributes, ReactElement } from 'react'
 import { Loader2 } from 'lucide-react'
 import { Tooltip } from './shared/Tooltip'
 
@@ -16,73 +16,65 @@ type ButtonProps = {
   danger?: boolean
 } & HTMLAttributes<HTMLButtonElement>
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      type = 'button',
-      label,
-      appearance = 'secondary',
-      contentType = 'text',
-      icon,
-      loading,
-      disabled,
-      size = 'medium',
-      block,
-      danger,
-      className,
-      ...props
-    },
-    ref
-  ) => {
-    if (contentType === 'icon') {
-      return (
-        <Tooltip content={label}>
-          <button
-            type={type}
-            ref={ref}
-            disabled={disabled || loading}
-            className={clsx(
-              'btn btn-icon',
-              appearance === 'primary' && 'btn-primary',
-              appearance === 'secondary' && 'btn-secondary',
-              appearance === 'tertiary' && 'btn-tertiary',
-              size === 'small' && 'btn-small',
-              block && 'btn-block',
-              danger && 'btn-danger',
-              className
-            )}
-            {...props}
-          >
-            {loading ? <Loader2 className="absolute size-icon animate-spin" /> : icon}
-          </button>
-        </Tooltip>
-      )
-    }
-
+export function Button({
+  type = 'button',
+  label,
+  appearance = 'secondary',
+  contentType = 'text',
+  icon,
+  loading,
+  disabled,
+  size = 'medium',
+  block,
+  danger,
+  className,
+  ...props
+}: ButtonProps) {
+  if (contentType === 'icon') {
     return (
-      <button
-        type={type}
-        ref={ref}
-        disabled={disabled || loading}
-        className={clsx(
-          'btn',
-          appearance === 'primary' && 'btn-primary',
-          appearance === 'secondary' && 'btn-secondary',
-          appearance === 'tertiary' && 'btn-tertiary',
-          size === 'small' && 'btn-small',
-          block && 'btn-block',
-          danger && 'btn-danger',
-          className
-        )}
-        {...props}
-      >
-        {loading && <Loader2 className="absolute size-icon animate-spin" />}
-        <span className={clsx('flex items-center gap-2', loading && 'opacity-0')}>
-          {icon}
-          {label}
-        </span>
-      </button>
+      <Tooltip content={label}>
+        <button
+          type={type}
+          disabled={disabled || loading}
+          className={clsx(
+            'btn btn-icon',
+            appearance === 'primary' && 'btn-primary',
+            appearance === 'secondary' && 'btn-secondary',
+            appearance === 'tertiary' && 'btn-tertiary',
+            size === 'small' && 'btn-small',
+            block && 'btn-block',
+            danger && 'btn-danger',
+            className
+          )}
+          {...props}
+        >
+          {loading ? <Loader2 className="absolute size-icon animate-spin" /> : icon}
+        </button>
+      </Tooltip>
     )
   }
-)
-Button.displayName = 'Button'
+
+  return (
+    <button
+      type={type}
+      disabled={disabled || loading}
+      className={clsx(
+        'btn',
+        appearance === 'primary' && 'btn-primary',
+        appearance === 'secondary' && 'btn-secondary',
+        appearance === 'tertiary' && 'btn-tertiary',
+        size === 'small' && 'btn-small',
+        block && 'btn-block',
+        danger && 'btn-danger',
+        className
+      )}
+      {...props}
+    >
+      {loading && <Loader2 className="absolute size-icon animate-spin" />}
+      <span className={clsx('flex items-center gap-2', loading && 'opacity-0')}>
+        {icon}
+        {label}
+      </span>
+    </button>
+  )
+}

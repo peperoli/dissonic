@@ -2,20 +2,23 @@
 
 import {
   createContext,
+  Dispatch,
   HTMLAttributes,
   ReactNode,
-  RefObject,
+  SetStateAction,
   useContext,
-  useId,
-  useRef,
+  useState,
 } from 'react'
-import { ButtonSlot } from '../helpers/slots'
+import { usePopper } from 'react-popper'
 import { Portal } from '../helpers/Portal'
+import { ButtonSlot } from '../helpers/slots'
 
 const TooltipContext = createContext<{
-  id: string
-  tooltipRef: RefObject<HTMLDivElement | null>
   toggle: () => void
+  setReferenceElement: Dispatch<SetStateAction<HTMLButtonElement | null>>
+  setPopperElement: Dispatch<SetStateAction<HTMLDivElement | null>>
+  popperStyles: ReturnType<typeof usePopper>['styles']
+  popperAttributes: ReturnType<typeof usePopper>['attributes']
 } | null>(null)
 
 function useTooltipContext() {
@@ -37,29 +40,32 @@ export function Tooltip({
   content: ReactNode
   shouldToggleOnClick?: boolean
 }) {
-  const tooltipRef = useRef<HTMLDivElement>(null)
-  const id = useId()
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null)
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null)
+  const { update, styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: 'top',
+  })
 
-  function toggle() {
-    tooltipRef.current?.togglePopover()
+  async function toggle() {
+    popperElement?.togglePopover()
+    update?.()
   }
 
   return (
     <TooltipContext.Provider
       value={{
-        tooltipRef,
-        id,
         toggle,
+        setReferenceElement,
+        setPopperElement,
+        popperStyles: styles,
+        popperAttributes: attributes,
       }}
     >
       <TooltipTrigger asChild shouldToggleOnClick={shouldToggleOnClick}>
         {children}
       </TooltipTrigger>
       <Portal>
-        <TooltipContent
-          side="top"
-          className="z-30 mb-0.5 max-w-72 rounded-lg border border-slate-800 bg-slate-900 p-2 text-sm shadow-lg"
-        >
+        <TooltipContent className="z-30 mb-0.5 max-w-72 rounded-lg border border-slate-800 bg-slate-900 p-2 text-sm shadow-lg">
           {content}
         </TooltipContent>
       </Portal>
@@ -75,7 +81,7 @@ function TooltipTrigger({
   shouldToggleOnClick?: boolean
   triggerOnHover?: boolean
 } & ({ asChild?: false } | { asChild: true; children: ReactNode })) {
-  const { id, toggle } = useTooltipContext()
+  const { toggle, setReferenceElement } = useTooltipContext()
   const Composition = asChild ? ButtonSlot : 'button'
 
   return (
@@ -84,29 +90,26 @@ function TooltipTrigger({
       onClick={shouldToggleOnClick ? toggle : undefined}
       onMouseEnter={toggle}
       onMouseLeave={toggle}
-      // @ts-expect-error
-      style={{ anchorName: `--${id}` }}
+      ref={setReferenceElement}
       {...props}
     />
   )
 }
 
 function TooltipContent({
-  side = 'bottom',
   children,
   ...props
-}: Omit<HTMLAttributes<HTMLDialogElement>, 'children'> & {
-  side?: 'top' | 'right' | 'bottom' | 'left'
+}: Omit<HTMLAttributes<HTMLDivElement>, 'children'> & {
   children: ((params: { close: () => void }) => ReactNode) | ReactNode
 }) {
-  const { tooltipRef, id } = useTooltipContext()
+  const { setPopperElement, popperStyles, popperAttributes } = useTooltipContext()
 
   return (
     <div
-      ref={tooltipRef}
+      ref={setPopperElement}
       popover="auto"
-      // @ts-expect-error
-      style={{ positionAnchor: `--${id}`, positionArea: side }}
+      style={popperStyles.popper}
+      {...popperAttributes.popper}
       {...props}
     >
       {typeof children === 'function' ? children({ close }) : children}
