@@ -52,6 +52,9 @@ module.exports = {
         15: '3.75rem',
         22: '5.5rem',
       },
+      width: {
+        'anchor-width': 'anchor-size(width)',
+      },
       minWidth: {
         48: '12rem',
       },

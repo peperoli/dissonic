@@ -258,7 +258,7 @@ export const RangeSliderWrapper = ({
         maxValue={maxValue}
         setMaxValue={setMaxValue}
       />
-      <div className="mb-2 flex gap-8">
+      <div className="mb-2 flex justify-between gap-3">
         <NumberField
           id="min"
           unit={unit}

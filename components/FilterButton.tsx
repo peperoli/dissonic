@@ -101,7 +101,7 @@ export const FilterButton = ({
         }}
         label={t('save')}
         appearance="primary"
-        className="mt-2"
+        className="mt-2 w-full"
       />
     ) : null
 
@@ -111,9 +111,9 @@ export const FilterButton = ({
         {({ isOpen }) => (
           <>
             <Popover.Trigger asChild>{triggerButton({ isOpen })}</Popover.Trigger>
-            <Popover.Content className="z-20 mt-1 flex-col rounded-lg bg-slate-700 p-4 shadow-xl [&:popover-open]:flex">
+            <Popover.Content className="z-20 mt-1 w-[calc(anchor-size(width)+2rem)] flex-col rounded-lg bg-slate-700 p-4 shadow-xl [&:popover-open]:flex">
               {children}
-              {submitButton}
+              <Popover.Close asChild>{submitButton}</Popover.Close>
             </Popover.Content>
           </>
         )}

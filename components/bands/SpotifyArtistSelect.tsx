@@ -94,7 +94,7 @@ export const SpotifyArtistSelect = ({ bandName, value, onChange }: SpotifyArtist
           <ChevronDown className="ml-auto size-icon" />
         </span>
       </Popover.Trigger>
-      <Popover.Content className="fixed inset-8 z-20 overflow-auto rounded-lg bg-slate-700 p-2 md:absolute md:inset-auto md:mt-1 md:max-h-72 md:w-full">
+      <Popover.Content className="fixed inset-8 z-20 overflow-auto rounded-lg bg-slate-700 p-2 md:absolute md:inset-auto md:mt-1 md:max-h-72 md:w-anchor-width">
         {({ close }) => {
           function handleChange(value: SpotifyArtist | null) {
             onChange(value)

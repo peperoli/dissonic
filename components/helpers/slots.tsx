@@ -21,6 +21,14 @@ export function ButtonSlot({
     return cloneElement(children as ReactElement<any>, {
       ...props,
       ...childProps,
+      onClick: (event: React.MouseEvent<any>) => {
+        if (childProps.onClick) {
+          childProps.onClick(event)
+        }
+        if (props.onClick) {
+          props.onClick(event)
+        }
+      },
       style: childProps.style
         ? {
             ...props.style,

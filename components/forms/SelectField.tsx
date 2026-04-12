@@ -58,56 +58,54 @@ export const SelectField = ({
   }
 
   return (
-    <div className="relative">
-      <OverlayRoot>
-        {({ close }) => (
-          <>
-            {'value' in props && <AutoClose value={props.value} close={close} />}
-            <OverlayTrigger aria-label={label} className="form-control">
-              <div
-                className={clsx(
-                  'form-input truncate !pr-12 text-left',
-                  error ? 'border-yellow' : 'border-slate-500'
-                )}
+    <OverlayRoot>
+      {({ close }) => (
+        <>
+          {'value' in props && <AutoClose value={props.value} close={close} />}
+          <OverlayTrigger aria-label={label} className="form-control">
+            <div
+              className={clsx(
+                'form-input truncate !pr-12 text-left',
+                error ? 'border-yellow' : 'border-slate-500'
+              )}
+            >
+              {getValue()}
+            </div>
+            <label>{label}</label>
+            {!items ? (
+              <Loader2 className="pointer-events-none absolute right-[.9rem] top-[.9rem] size-icon animate-spin" />
+            ) : (
+              <ChevronDown className="pointer-events-none absolute right-[.9rem] top-[.9rem] size-icon" />
+            )}
+          </OverlayTrigger>
+          {isClearable &&
+            ('value' in props && props.value !== null ? (
+              <button
+                // @ts-expect-error this exception isn't properly typed yet, but shouldn't cause any issues
+                onClick={() => props.onValueChange(null)}
+                className="btn btn-tertiary btn-icon btn-small absolute right-10 top-[.35rem]"
               >
-                {getValue()}
-              </div>
-              <label>{label}</label>
-              {!items ? (
-                <Loader2 className="pointer-events-none absolute right-[.9rem] top-[.9rem] size-icon animate-spin" />
-              ) : (
-                <ChevronDown className="pointer-events-none absolute right-[.9rem] top-[.9rem] size-icon" />
-              )}
-            </OverlayTrigger>
-            {isClearable &&
-              ('value' in props && props.value !== null ? (
-                <button
-                  // @ts-expect-error this exception isn't properly typed yet, but shouldn't cause any issues
-                  onClick={() => props.onValueChange(null)}
-                  className="btn btn-tertiary btn-icon btn-small absolute right-10 top-[.35rem]"
-                >
-                  <XIcon className="size-icon" />
-                </button>
-              ) : 'values' in props && props.values.length > 0 ? (
-                <button
-                  onClick={() => props.onValuesChange([])}
-                  className="btn btn-tertiary btn-icon btn-small absolute right-10 top-[.35rem]"
-                >
-                  <XIcon className="size-icon" />
-                </button>
-              ) : null)}
-            {error && <div className="mt-1 text-sm text-yellow">{t('pleaseSelectAnOption')}</div>}
-            <OverlayContent className="inset-0 z-20 min-w-full flex-col overflow-hidden bg-slate-700 p-4 shadow-xl open:flex md:inset-auto md:mt-1 md:rounded-lg">
-              <Dialog.Title className="sr-only">{label}</Dialog.Title>
-              <Select items={items} {...props} />
-              {'values' in props && (
-                <OverlayClose className="btn btn-primary">{t('save')}</OverlayClose>
-              )}
-            </OverlayContent>
-          </>
-        )}
-      </OverlayRoot>
-    </div>
+                <XIcon className="size-icon" />
+              </button>
+            ) : 'values' in props && props.values.length > 0 ? (
+              <button
+                onClick={() => props.onValuesChange([])}
+                className="btn btn-tertiary btn-icon btn-small absolute right-10 top-[.35rem]"
+              >
+                <XIcon className="size-icon" />
+              </button>
+            ) : null)}
+          {error && <div className="mt-1 text-sm text-yellow">{t('pleaseSelectAnOption')}</div>}
+          <OverlayContent className="inset-0 z-20 flex-col overflow-hidden bg-slate-700 p-4 shadow-xl open:flex md:inset-auto md:mt-1 md:w-anchor-width md:rounded-lg">
+            <Dialog.Title className="sr-only">{label}</Dialog.Title>
+            <Select items={items} {...props} />
+            {'values' in props && (
+              <OverlayClose className="btn btn-primary">{t('save')}</OverlayClose>
+            )}
+          </OverlayContent>
+        </>
+      )}
+    </OverlayRoot>
   )
 }
 

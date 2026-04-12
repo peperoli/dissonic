@@ -1,19 +1,16 @@
 'use client'
 
-import { CalendarPlus, MapPinPlus, Plus } from 'lucide-react'
-import { Button } from '../Button'
 import { useSession } from '@/hooks/auth/useSession'
-import { useModal } from '../shared/ModalProvider'
-import { usePathname, useRouter } from 'next/navigation'
-import { Dialog } from '../shared/Dialog'
-import { GuitarPlusIcon } from './GuitarPlusIcon'
+import { CalendarPlus, MapPinPlus, Plus } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { usePathname, useRouter } from 'next/navigation'
+import { ReactElement } from 'react'
+import { Button } from '../Button'
+import { Dialog } from '../shared/Dialog'
+import { modalPaths, useModal } from '../shared/ModalProvider'
+import { GuitarPlusIcon } from './GuitarPlusIcon'
 
 export const SpeedDial = () => {
-  const { data: session } = useSession()
-  const [_, setModal] = useModal()
-  const { push } = useRouter()
-  const pathname = usePathname()
   const t = useTranslations('SpeedDial')
 
   return (
@@ -29,49 +26,55 @@ export const SpeedDial = () => {
         </Dialog.Trigger>
       </div>
       <Dialog.Portal>
-        <Dialog.Content className="left-auto top-auto bottom-0 right-0 z-50 open:flex flex-col items-end gap-4 p-4 backdrop:bg-slate-800/90">
+        <Dialog.Content className="bottom-0 left-auto right-0 top-auto z-50 flex-col items-end gap-4 p-4 backdrop:bg-slate-800/90 open:flex">
           <Dialog.Title className="sr-only">{t('addResource')}</Dialog.Title>
-          <Dialog.Close
-            onClick={
-              session ? () => setModal('add-location') : () => push(`/login?redirect=${pathname}`)
-            }
-            className="flex items-center gap-2"
-          >
-            <div className="rounded-lg border border-slate-800 bg-slate-850 p-2 text-sm font-bold shadow-lg">
-              {t('addLocation')}
-            </div>
-            <div className="btn btn-icon btn-primary">
-              <MapPinPlus className="size-icon" />
-            </div>
-          </Dialog.Close>
-          <button
-            onClick={
-              session ? () => setModal('add-band') : () => push(`/login?redirect=${pathname}`)
-            }
-            className="flex items-center gap-2"
-          >
-            <div className="rounded-lg border border-slate-800 bg-slate-850 p-2 text-sm font-bold shadow-lg">
-              {t('addBand')}
-            </div>
-            <div className="btn btn-icon btn-primary">
-              <GuitarPlusIcon className="size-icon" />
-            </div>
-          </button>
-          <button
-            onClick={
-              session ? () => setModal('add-concert') : () => push(`/login?redirect=${pathname}`)
-            }
-            className="flex items-center gap-2"
-          >
-            <div className="rounded-lg border border-slate-800 bg-slate-850 p-2 text-sm font-bold shadow-lg">
-              {t('addConcert')}
-            </div>
-            <div className="btn btn-icon btn-primary">
-              <CalendarPlus className="size-icon" />
-            </div>
-          </button>
+
+          <DialButton
+            modal="add-location"
+            label={t('addLocation')}
+            icon={<MapPinPlus className="size-icon" />}
+          />
+          <DialButton
+            modal="add-band"
+            label={t('addBand')}
+            icon={<GuitarPlusIcon className="size-icon" />}
+          />
+          <DialButton
+            modal="add-concert"
+            label={t('addConcert')}
+            icon={<CalendarPlus className="size-icon" />}
+          />
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
+  )
+}
+
+function DialButton({
+  modal,
+  label,
+  icon,
+}: {
+  modal: (typeof modalPaths)[number]
+  label: string
+  icon: ReactElement
+}) {
+  const { data: session } = useSession()
+  const [, setModal] = useModal()
+  const { push } = useRouter()
+  const pathname = usePathname()
+
+  return (
+    <Dialog.Close asChild>
+      <button
+        onClick={session ? () => setModal(modal) : () => push(`/login?redirect=${pathname}`)}
+        className="flex items-center gap-2"
+      >
+        <div className="rounded-lg border border-slate-800 bg-slate-850 p-2 text-sm font-bold shadow-lg">
+          {label}
+        </div>
+        <div className="btn btn-icon btn-primary">{icon}</div>
+      </button>
+    </Dialog.Close>
   )
 }

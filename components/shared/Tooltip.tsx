@@ -17,8 +17,7 @@ const TooltipContext = createContext<{
   toggle: () => void
   setReferenceElement: Dispatch<SetStateAction<HTMLButtonElement | null>>
   setPopperElement: Dispatch<SetStateAction<HTMLDivElement | null>>
-  popperStyles: ReturnType<typeof usePopper>['styles']
-  popperAttributes: ReturnType<typeof usePopper>['attributes']
+  popper: ReturnType<typeof usePopper>
 } | null>(null)
 
 function useTooltipContext() {
@@ -42,13 +41,13 @@ export function Tooltip({
 }) {
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null)
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null)
-  const { update, styles, attributes } = usePopper(referenceElement, popperElement, {
+  const popper = usePopper(referenceElement, popperElement, {
     placement: 'top',
   })
 
   async function toggle() {
     popperElement?.togglePopover()
-    update?.()
+    popper.update?.()
   }
 
   return (
@@ -57,8 +56,7 @@ export function Tooltip({
         toggle,
         setReferenceElement,
         setPopperElement,
-        popperStyles: styles,
-        popperAttributes: attributes,
+        popper,
       }}
     >
       <TooltipTrigger asChild shouldToggleOnClick={shouldToggleOnClick}>
@@ -88,8 +86,8 @@ function TooltipTrigger({
     <Composition
       type="button"
       onClick={shouldToggleOnClick ? toggle : undefined}
-      onMouseEnter={toggle}
-      onMouseLeave={toggle}
+      onMouseEnter={shouldToggleOnClick ? undefined : toggle}
+      onMouseLeave={shouldToggleOnClick ? undefined : toggle}
       ref={setReferenceElement}
       {...props}
     />
@@ -102,14 +100,14 @@ function TooltipContent({
 }: Omit<HTMLAttributes<HTMLDivElement>, 'children'> & {
   children: ((params: { close: () => void }) => ReactNode) | ReactNode
 }) {
-  const { setPopperElement, popperStyles, popperAttributes } = useTooltipContext()
+  const { setPopperElement, popper } = useTooltipContext()
 
   return (
     <div
       ref={setPopperElement}
       popover="auto"
-      style={popperStyles.popper}
-      {...popperAttributes.popper}
+      style={popper.styles.popper}
+      {...popper.attributes.popper}
       {...props}
     >
       {typeof children === 'function' ? children({ close }) : children}

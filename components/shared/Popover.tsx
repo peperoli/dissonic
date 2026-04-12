@@ -114,8 +114,8 @@ function PopoverContent({
 function PopoverClose({
   asChild,
   ...props
-}: HTMLAttributes<HTMLButtonElement> &
-  ({ asChild?: false } | { asChild: true; children: ReactElement })) {
+}: Omit<HTMLAttributes<HTMLButtonElement>, 'type' | 'onClick'> &
+  ({ asChild?: false } | { asChild: true; children: ReactNode })) {
   const { close } = usePopoverContext()
   const Composition = asChild ? ButtonSlot : 'button'
 

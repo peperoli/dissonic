@@ -125,7 +125,7 @@ export function DialogTitle({ as, children, ...props }: DialogTitleProps) {
 export function DialogClose({
   asChild,
   ...props
-}: HTMLAttributes<HTMLButtonElement> &
+}: Omit<HTMLAttributes<HTMLButtonElement>, 'type' | 'onClick'> &
   ({ asChild?: false } | { asChild: true; children: ReactNode })) {
   const { close } = useDialogContext()
   const Composition = asChild ? ButtonSlot : 'button'
