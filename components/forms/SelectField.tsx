@@ -77,24 +77,24 @@ export const SelectField = ({
             ) : (
               <ChevronDown className="pointer-events-none absolute right-[.9rem] top-[.9rem] size-icon" />
             )}
+            {isClearable &&
+              ('value' in props && props.value !== null ? (
+                <button
+                  // @ts-expect-error this exception isn't properly typed yet, but shouldn't cause any issues
+                  onClick={() => props.onValueChange(null)}
+                  className="btn btn-tertiary btn-icon btn-small absolute right-10 top-[.5rem]"
+                >
+                  <XIcon className="size-icon" />
+                </button>
+              ) : 'values' in props && props.values.length > 0 ? (
+                <button
+                  onClick={() => props.onValuesChange([])}
+                  className="btn btn-tertiary btn-icon btn-small absolute right-10 top-[.5rem]"
+                >
+                  <XIcon className="size-icon" />
+                </button>
+              ) : null)}
           </OverlayTrigger>
-          {isClearable &&
-            ('value' in props && props.value !== null ? (
-              <button
-                // @ts-expect-error this exception isn't properly typed yet, but shouldn't cause any issues
-                onClick={() => props.onValueChange(null)}
-                className="btn btn-tertiary btn-icon btn-small absolute right-10 top-[.35rem]"
-              >
-                <XIcon className="size-icon" />
-              </button>
-            ) : 'values' in props && props.values.length > 0 ? (
-              <button
-                onClick={() => props.onValuesChange([])}
-                className="btn btn-tertiary btn-icon btn-small absolute right-10 top-[.35rem]"
-              >
-                <XIcon className="size-icon" />
-              </button>
-            ) : null)}
           {error && <div className="mt-1 text-sm text-yellow">{t('pleaseSelectAnOption')}</div>}
           <OverlayContent className="inset-0 z-20 flex-col overflow-hidden bg-slate-700 p-4 shadow-xl open:flex md:inset-auto md:mt-1 md:w-anchor-width md:rounded-lg">
             <Dialog.Title className="sr-only">{label}</Dialog.Title>

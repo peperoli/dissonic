@@ -3,6 +3,7 @@ import {
   cloneElement,
   HTMLAttributes,
   isValidElement,
+  MouseEvent,
   ReactElement,
   ReactNode,
 } from 'react'
@@ -21,7 +22,7 @@ export function ButtonSlot({
     return cloneElement(children as ReactElement<any>, {
       ...props,
       ...childProps,
-      onClick: (event: React.MouseEvent<any>) => {
+      onClick: (event: MouseEvent<any>) => {
         if (childProps.onClick) {
           childProps.onClick(event)
         }

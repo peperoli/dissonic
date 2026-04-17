@@ -15,7 +15,9 @@ import { ButtonSlot } from '../helpers/slots'
 
 const TooltipContext = createContext<{
   toggle: () => void
-  setReferenceElement: Dispatch<SetStateAction<HTMLButtonElement | null>>
+  show: () => void
+  hide: () => void
+  setReferenceElement: Dispatch<SetStateAction<HTMLElement | null>>
   setPopperElement: Dispatch<SetStateAction<HTMLDivElement | null>>
   popper: ReturnType<typeof usePopper>
 } | null>(null)
@@ -39,7 +41,7 @@ export function Tooltip({
   content: ReactNode
   shouldToggleOnClick?: boolean
 }) {
-  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null)
+  const [referenceElement, setReferenceElement] = useState<HTMLElement | null>(null)
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null)
   const popper = usePopper(referenceElement, popperElement, {
     placement: 'top',
@@ -50,10 +52,20 @@ export function Tooltip({
     popper.update?.()
   }
 
+  async function show() {
+    popperElement?.showPopover()
+    popper.update?.()
+  }
+  async function hide() {
+    popperElement?.hidePopover()
+  }
+
   return (
     <TooltipContext.Provider
       value={{
         toggle,
+        show,
+        hide,
         setReferenceElement,
         setPopperElement,
         popper,
@@ -79,15 +91,15 @@ function TooltipTrigger({
   shouldToggleOnClick?: boolean
   triggerOnHover?: boolean
 } & ({ asChild?: false } | { asChild: true; children: ReactNode })) {
-  const { toggle, setReferenceElement } = useTooltipContext()
+  const { toggle, show, hide, setReferenceElement } = useTooltipContext()
   const Composition = asChild ? ButtonSlot : 'button'
 
   return (
     <Composition
       type="button"
       onClick={shouldToggleOnClick ? toggle : undefined}
-      onMouseEnter={shouldToggleOnClick ? undefined : toggle}
-      onMouseLeave={shouldToggleOnClick ? undefined : toggle}
+      onMouseEnter={shouldToggleOnClick ? undefined : show}
+      onMouseLeave={shouldToggleOnClick ? undefined : hide}
       ref={setReferenceElement}
       {...props}
     />
@@ -98,7 +110,7 @@ function TooltipContent({
   children,
   ...props
 }: Omit<HTMLAttributes<HTMLDivElement>, 'children'> & {
-  children: ((params: { close: () => void }) => ReactNode) | ReactNode
+  children: ReactNode
 }) {
   const { setPopperElement, popper } = useTooltipContext()
 
@@ -110,7 +122,7 @@ function TooltipContent({
       {...popper.attributes.popper}
       {...props}
     >
-      {typeof children === 'function' ? children({ close }) : children}
+      {children}
     </div>
   )
 }

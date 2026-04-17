@@ -1,3 +1,5 @@
+'use client'
+
 import { createContext, HTMLAttributes, ReactNode, useContext, useState } from 'react'
 
 const DisclosureContext = createContext<{
@@ -24,19 +26,13 @@ export function Disclosure({
   HTMLAttributes<HTMLDetailsElement>,
   'open' | 'onToggle'
 >) {
-  const [isOpen, setOpen] = useState(false)
+  const [internalIsOpen, internalSetOpen] = useState(false)
+  const isOpen = controlledIsOpen ?? internalIsOpen
+  const setOpen = controlledSetOpen ?? internalSetOpen
 
   return (
     <DisclosureContext.Provider value={{ isOpen, setOpen }}>
-      <details
-        open={controlledIsOpen !== undefined ? controlledIsOpen : isOpen}
-        onToggle={event =>
-          controlledSetOpen
-            ? controlledSetOpen(event.currentTarget.open)
-            : setOpen(event.currentTarget.open)
-        }
-        {...props}
-      >
+      <details open={isOpen} onToggle={event => setOpen(event.currentTarget.open)} {...props}>
         {children}
       </details>
     </DisclosureContext.Provider>

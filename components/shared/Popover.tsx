@@ -1,8 +1,9 @@
+'use client'
+
 import {
   createContext,
   Dispatch,
   HTMLAttributes,
-  ReactElement,
   ReactNode,
   RefObject,
   SetStateAction,
@@ -73,7 +74,7 @@ function PopoverTrigger({
   ...props
 }: HTMLAttributes<HTMLButtonElement> &
   ({ asChild?: false } | { asChild: true; children: ReactNode })) {
-  const { id, isOpen, show } = usePopoverContext()
+  const { id, isOpen, show, close } = usePopoverContext()
   const Composition = asChild ? ButtonSlot : 'button'
 
   return (

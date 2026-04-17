@@ -130,7 +130,7 @@ export const ReactionControl = ({ comment, reactions, user }: ReactionControlPro
           <Popover.Trigger aria-label="Reagieren" className="btn btn-icon btn-small">
             <SmilePlus className="size-icon" />
           </Popover.Trigger>
-          <Popover.Content className="z-10 mt-1 [&:popover-open]:grid grid-cols-4 w-32 rounded-lg bg-slate-700 shadow-xl">
+          <Popover.Content className="z-10 mt-1 open:grid grid-cols-4 w-32 rounded-lg bg-slate-700 shadow-xl">
             {({ close }) => (
               <>
                 {Object.keys(reactionIcons).map(key => (

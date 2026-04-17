@@ -1,3 +1,5 @@
+'use client'
+
 import {
   createContext,
   Dispatch,
@@ -42,9 +44,16 @@ export type DialogProps = {
     | ReactNode
 }
 
-export function Dialog({ isOpen, setOpen, shouldCloseOnClickOutside, children }: DialogProps) {
+export function Dialog({
+  isOpen: controlledIsOpen,
+  setOpen: controlledSetOpen,
+  shouldCloseOnClickOutside,
+  children,
+}: DialogProps) {
   const dialogRef = useRef<HTMLDialogElement | null>(null)
-  const [internalOpen, setInternalOpen] = useState(false)
+  const [internalOpen, internalSetOpen] = useState(false)
+  const isOpen = controlledIsOpen ?? internalOpen
+  const setOpen = controlledSetOpen ?? internalSetOpen
 
   function show() {
     dialogRef.current?.showModal()
@@ -66,15 +75,15 @@ export function Dialog({ isOpen, setOpen, shouldCloseOnClickOutside, children }:
     <DialogContext.Provider
       value={{
         dialogRef,
-        isOpen: isOpen ?? internalOpen,
-        setOpen: setOpen ?? setInternalOpen,
+        isOpen,
+        setOpen,
         show,
         close,
         shouldCloseOnClickOutside,
       }}
     >
       {typeof children === 'function'
-        ? children({ isOpen: isOpen ?? internalOpen, show, close })
+        ? children({ isOpen, show, close })
         : children}
     </DialogContext.Provider>
   )

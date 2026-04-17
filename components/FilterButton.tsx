@@ -35,16 +35,10 @@ export const FilterButton = ({
   children,
   ...props
 }: FilterButtonProps) => {
-  const [, setOpen] = useState(false)
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const t = useTranslations('FilterButton')
-  const close = () => setOpen(false)
   const count = ('submittedValues' in props && props.submittedValues?.length) || 0
   const hasValues = count > 0 || ('selectedId' in props && props !== null)
-
-  useEffect(() => {
-    close()
-  }, ['selectedId' in props && props.selectedId])
 
   function triggerButton({ isOpen }: { isOpen?: boolean }) {
     return (
@@ -111,7 +105,7 @@ export const FilterButton = ({
         {({ isOpen }) => (
           <>
             <Popover.Trigger asChild>{triggerButton({ isOpen })}</Popover.Trigger>
-            <Popover.Content className="z-20 mt-1 w-[calc(anchor-size(width)+2rem)] flex-col rounded-lg bg-slate-700 p-4 shadow-xl [&:popover-open]:flex">
+            <Popover.Content className="z-20 mt-1 w-[calc(anchor-size(width)+2rem)] flex-col rounded-lg bg-slate-700 p-4 shadow-xl">
               {children}
               <Popover.Close asChild>{submitButton}</Popover.Close>
             </Popover.Content>
