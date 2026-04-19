@@ -11,7 +11,7 @@ export async function signInWithOAuth(provider: Provider, next: string | null) {
     provider,
     options: {
       redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback?next=${next ?? '/'}`,
-      scopes: provider === 'azure' ? 'email' : undefined,
+      scopes: provider === 'google' ? 'https://www.googleapis.com/auth/userinfo.email' : 'email',
     },
   })
 
