@@ -35,8 +35,11 @@ export async function GET(request: Request) {
   console.log('Received auth callback with code:', code, ', headers:', request.headers, 'and next:', next)
 
   if (!code) {
-    console.error('No code provided in auth callback.')
-    return NextResponse.redirect(new URL('/signup', request.url))
+    return NextResponse.redirect(
+      `${origin}/api/auth/callback-error?${new URLSearchParams({
+        error: 'No code provided in auth callback.',
+      }).toString()}`
+    )
   }
 
   const supabase = await createClient()
@@ -49,8 +52,12 @@ export async function GET(request: Request) {
   console.log('Auth callback session exchange result:', { user, sessionError })
 
   if (sessionError) {
-    console.error(sessionError.message)
-    return NextResponse.redirect(new URL('/signup', request.url))
+    return NextResponse.redirect(
+      `${origin}/api/auth/callback-error?${new URLSearchParams({
+        error: 'Failed to exchange code for session.',
+        error_description: sessionError.message,
+      }).toString()}`
+    )
   }
 
   if (user) {
@@ -61,7 +68,12 @@ export async function GET(request: Request) {
       .maybeSingle()
 
     if (profileError) {
-      throw profileError
+      return NextResponse.redirect(
+        `${origin}/api/auth/callback-error?${new URLSearchParams({
+          error: 'Failed to lookup user profile.',
+          error_description: profileError.message,
+        }).toString()}`
+      )
     }
 
     console.log('User profile lookup result:', { profile })
@@ -76,7 +88,12 @@ export async function GET(request: Request) {
       })
 
       if (insertProfileError) {
-        throw insertProfileError
+        return NextResponse.redirect(
+          `${origin}/api/auth/callback-error?${new URLSearchParams({
+            error: 'Failed to create user profile.',
+            error_description: insertProfileError.message,
+          }).toString()}`
+        )
       }
     }
   }
