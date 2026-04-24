@@ -32,6 +32,8 @@ export async function GET(request: Request) {
     )
   }
 
+  console.log('Received auth callback with code:', code, 'and next:', next)
+
   if (!code) {
     console.error('No code provided in auth callback.')
     return NextResponse.redirect(new URL('/signup', request.url))
@@ -43,6 +45,8 @@ export async function GET(request: Request) {
     data: { user },
     error: sessionError,
   } = await supabase.auth.exchangeCodeForSession(code)
+
+  console.log('Auth callback session exchange result:', { user, sessionError })
 
   if (sessionError) {
     console.error(sessionError.message)
@@ -59,6 +63,8 @@ export async function GET(request: Request) {
     if (profileError) {
       throw profileError
     }
+
+    console.log('User profile lookup result:', { profile })
 
     if (!profile) {
       // create a new profile for the user if it doesn't exist already
