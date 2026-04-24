@@ -13,7 +13,11 @@ export async function GET(request: Request) {
   const next = sanitizeNext(searchParams.get('next'))
 
   if (provider !== 'azure' && provider !== 'google') {
-    return NextResponse.json({ error: 'Invalid provider' }, { status: 400 })
+    return NextResponse.redirect(
+      `${origin}/api/auth/callback-error?${new URLSearchParams({
+        error: 'Unsupported provider',
+      }).toString()}`
+    )
   }
 
   const callbackUrl = new URL('/api/auth/callback', origin)
@@ -28,12 +32,23 @@ export async function GET(request: Request) {
   })
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 })
+    console.error(error)
+    return NextResponse.redirect(
+      `${origin}/api/auth/callback-error?${new URLSearchParams({
+        error: 'Failed to initiate OAuth sign-in.',
+      }).toString()}`
+    )
   }
 
   if (!data.url) {
-    return NextResponse.json({ error: 'Missing OAuth redirect URL' }, { status: 500 })
+    return NextResponse.redirect(
+      `${origin}/api/auth/callback-error?${new URLSearchParams({
+        error: 'Failed to initiate OAuth sign-in.',
+      }).toString()}`
+    )
   }
 
-  return NextResponse.redirect(data.url)
+  return NextResponse.redirect(data.url, {
+    headers: request.headers,
+  })
 }

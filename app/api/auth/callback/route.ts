@@ -48,10 +48,10 @@ export async function GET(request: Request) {
   } = await supabase.auth.exchangeCodeForSession(code)
 
   if (sessionError) {
+    console.error(sessionError)
     return NextResponse.redirect(
       `${origin}/api/auth/callback-error?${new URLSearchParams({
         error: 'Failed to exchange code for session.',
-        error_description: sessionError.message,
       }).toString()}`
     )
   }
@@ -64,10 +64,10 @@ export async function GET(request: Request) {
       .maybeSingle()
 
     if (profileError) {
+      console.error(profileError)
       return NextResponse.redirect(
         `${origin}/api/auth/callback-error?${new URLSearchParams({
           error: 'Failed to lookup user profile.',
-          error_description: profileError.message,
         }).toString()}`
       )
     }
@@ -82,10 +82,10 @@ export async function GET(request: Request) {
       })
 
       if (insertProfileError) {
+        console.error(insertProfileError)
         return NextResponse.redirect(
           `${origin}/api/auth/callback-error?${new URLSearchParams({
             error: 'Failed to create user profile.',
-            error_description: insertProfileError.message,
           }).toString()}`
         )
       }
@@ -99,12 +99,8 @@ export async function GET(request: Request) {
     // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
     return NextResponse.redirect(`${origin}${next}`)
   } else if (forwardedHost) {
-    return NextResponse.redirect(`https://${forwardedHost}${next}`, {
-      headers: request.headers,
-    })
+    return NextResponse.redirect(`https://${forwardedHost}${next}`)
   } else {
-    return NextResponse.redirect(`${origin}${next}`, {
-      headers: request.headers,
-    })
+    return NextResponse.redirect(`${origin}${next}`)
   }
 }
