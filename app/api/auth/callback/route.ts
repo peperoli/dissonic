@@ -33,8 +33,11 @@ export async function GET(request: Request) {
   }
 
   if (!code) {
-    console.error('No code provided in auth callback.')
-    return NextResponse.redirect(new URL('/signup', request.url))
+    return NextResponse.redirect(
+      `${origin}/api/auth/callback-error?${new URLSearchParams({
+        error: 'No code provided in auth callback.',
+      }).toString()}`
+    )
   }
 
   const supabase = await createClient()
@@ -45,8 +48,12 @@ export async function GET(request: Request) {
   } = await supabase.auth.exchangeCodeForSession(code)
 
   if (sessionError) {
-    console.error(sessionError.message)
-    return NextResponse.redirect(new URL('/signup', request.url))
+    console.error(sessionError)
+    return NextResponse.redirect(
+      `${origin}/api/auth/callback-error?${new URLSearchParams({
+        error: 'Failed to exchange code for session.',
+      }).toString()}`
+    )
   }
 
   if (user) {
@@ -57,7 +64,12 @@ export async function GET(request: Request) {
       .maybeSingle()
 
     if (profileError) {
-      throw profileError
+      console.error(profileError)
+      return NextResponse.redirect(
+        `${origin}/api/auth/callback-error?${new URLSearchParams({
+          error: 'Failed to lookup user profile.',
+        }).toString()}`
+      )
     }
 
     if (!profile) {
@@ -70,7 +82,12 @@ export async function GET(request: Request) {
       })
 
       if (insertProfileError) {
-        throw insertProfileError
+        console.error(insertProfileError)
+        return NextResponse.redirect(
+          `${origin}/api/auth/callback-error?${new URLSearchParams({
+            error: 'Failed to create user profile.',
+          }).toString()}`
+        )
       }
     }
   }

@@ -8,7 +8,7 @@ import { TextField } from '../forms/TextField'
 import { useSignUp, type SignUpFormData } from '@/hooks/auth/useSignUp'
 import { useTranslations } from 'next-intl'
 import { StatusBanner } from '../forms/StatusBanner'
-import { OAuthButtons } from '../auth/OAuthButtons'
+import { OAuthButton } from '../auth/OAuthButton'
 
 export const Form = () => {
   const {
@@ -77,7 +77,11 @@ export const Form = () => {
           className="mt-6"
         />
       )}
-      <OAuthButtons />
+      <div className="mt-6 grid gap-3">
+        <span className="section-headline">{t('or')}</span>
+        <OAuthButton provider="google" />
+        <OAuthButton provider="azure" />
+      </div>
     </section>
   )
 }
