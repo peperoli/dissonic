@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
+import { headers } from 'next/headers'
 
 function sanitizeNext(nextParam: string | null): string {
   if (!nextParam) return '/'
@@ -22,6 +23,7 @@ export async function GET(request: Request) {
   const next = sanitizeNext(searchParams.get('next'))
   const error = searchParams.get('error')
   const errorDescription = searchParams.get('error_description')
+  const headersList = await headers()
 
   if (error) {
     return NextResponse.redirect(
@@ -32,7 +34,7 @@ export async function GET(request: Request) {
     )
   }
 
-  console.log('Received auth callback with code:', code, 'and next:', next)
+  console.log('Received auth callback with code:', code, ', headers:', headersList, 'and next:', next)
 
   if (!code) {
     console.error('No code provided in auth callback.')
@@ -88,8 +90,12 @@ export async function GET(request: Request) {
     // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
     return NextResponse.redirect(`${origin}${next}`)
   } else if (forwardedHost) {
-    return NextResponse.redirect(`https://${forwardedHost}${next}`)
+    return NextResponse.redirect(`https://${forwardedHost}${next}`, {
+      headers: headersList,
+    })
   } else {
-    return NextResponse.redirect(`${origin}${next}`)
+    return NextResponse.redirect(`${origin}${next}`, {
+      headers: headersList,
+    })
   }
 }
