@@ -32,8 +32,6 @@ export async function GET(request: Request) {
     )
   }
 
-  console.log('Received auth callback with code:', code, ', headers:', request.headers, 'and next:', next)
-
   if (!code) {
     return NextResponse.redirect(
       `${origin}/api/auth/callback-error?${new URLSearchParams({
@@ -48,8 +46,6 @@ export async function GET(request: Request) {
     data: { user },
     error: sessionError,
   } = await supabase.auth.exchangeCodeForSession(code)
-
-  console.log('Auth callback session exchange result:', { user, sessionError })
 
   if (sessionError) {
     return NextResponse.redirect(
@@ -75,8 +71,6 @@ export async function GET(request: Request) {
         }).toString()}`
       )
     }
-
-    console.log('User profile lookup result:', { profile })
 
     if (!profile) {
       // create a new profile for the user if it doesn't exist already

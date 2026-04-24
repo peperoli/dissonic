@@ -91,10 +91,10 @@
     "createAccount": "Konto erstellen",
     "emailAlreadyInUseError": "Diese E-Mail ist bereits mit einem Benutzer verknüpft.",
     "genericError": "Es ist ein Fehler aufgetreten. Bitte versuche es erneut.",
-    "successMessage": "Erfolgreich! Bestätige deine E-Mail-Adresse, um dein Benutzerkonto zu aktivieren."
+    "successMessage": "Erfolgreich! Bestätige deine E-Mail-Adresse, um dein Benutzerkonto zu aktivieren.",
+    "or": "oder"
   },
-  "OAuthButtons": {
-    "or": "oder",
+  "OAuthButton": {
     "continueWithGoogle": "Mit Google fortfahren",
     "continueWithMicrosoft": "Mit Microsoft fortfahren"
   },
@@ -107,10 +107,11 @@
     "forgotPassword": "Passwort vergessen?",
     "Invalid login credentials": "Die E-Mail-Adresse oder das Passwort ist nicht korrekt.",
     "Email not confirmed": "Die E-Mail-Adresse wurde noch nicht bestätigt.",
+    "or": "oder",
+    "resendConfirmationEmail": "Bestätigungs-E-Mail erneut senden",
     "youDontHaveAnAccountYet": "Du hast noch kein Konto?",
     "letsGetStarted": "Dann nichts wie los!",
-    "signUp": "Registrieren",
-    "resendConfirmationEmail": "Bestätigungs-E-Mail erneut senden"
+    "signUp": "Registrieren"
   },
   "useSignIn": {
     "loggedIn": "Anmeldung erfolgreich"

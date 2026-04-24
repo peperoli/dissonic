@@ -7,23 +7,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGoogle, faMicrosoft } from '@fortawesome/free-brands-svg-icons'
 import { useTransition } from 'react'
 
-export function OAuthButtons() {
-  const t = useTranslations('OAuthButtons')
-
-  return (
-    <div className="mt-6 grid gap-3">
-      <span className="section-headline">{t('or')}</span>
-      <OAuthButton provider="google" />
-      <OAuthButton provider="azure" />
-    </div>
-  )
-}
-
 export function OAuthButton({ provider }: { provider: 'google' | 'azure' }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const searchParams = useSearchParams()
-  const t = useTranslations('OAuthButtons')
+  const t = useTranslations('OAuthButton')
   const redirect = searchParams.get('redirect')
   const nextParam = encodeURIComponent(redirect ?? '/')
 
