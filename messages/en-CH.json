@@ -91,10 +91,10 @@
     "createAccount": "Create account",
     "emailAlreadyInUseError": "This e-mail address is already linked to a user.",
     "successMessage": "Success! You will shortly receive an e-mail in which you can confirm your registration.",
-    "genericError": "An error has occurred. Please try again."
+    "genericError": "An error has occurred. Please try again.",
+    "or": "or"
   },
-  "OAuthButtons": {
-    "or": "or",
+  "OAuthButton": {
     "continueWithGoogle": "Continue with Google",
     "continueWithMicrosoft": "Continue with Microsoft"
   },
@@ -107,10 +107,11 @@
     "forgotPassword": "Forgot password?",
     "Invalid login credentials": "The e-mail address or password is incorrect.",
     "Email not confirmed": "The e-mail address has not yet been confirmed.",
+    "or": "or",
+    "resendConfirmationEmail": "Resend confirmation e-mail",
     "youDontHaveAnAccountYet": "You don’t have an account yet?",
     "letsGetStarted": "Then let’s get started!",
-    "signUp": "Sign up",
-    "resendConfirmationEmail": "Resend confirmation e-mail"
+    "signUp": "Sign up"
   },
   "useSignIn": {
     "loggedIn": "Login successful"

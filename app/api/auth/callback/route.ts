@@ -33,8 +33,11 @@ export async function GET(request: Request) {
   }
 
   if (!code) {
-    console.error('No code provided in auth callback.')
-    return NextResponse.redirect(new URL('/signup', request.url))
+    return NextResponse.redirect(
+      `${origin}/api/auth/callback-error?${new URLSearchParams({
+        error: 'No code provided in auth callback.',
+      }).toString()}`
+    )
   }
 
   const supabase = await createClient()
@@ -45,8 +48,12 @@ export async function GET(request: Request) {
   } = await supabase.auth.exchangeCodeForSession(code)
 
   if (sessionError) {
-    console.error(sessionError.message)
-    return NextResponse.redirect(new URL('/signup', request.url))
+    return NextResponse.redirect(
+      `${origin}/api/auth/callback-error?${new URLSearchParams({
+        error: 'Failed to exchange code for session.',
+        error_description: sessionError.message,
+      }).toString()}`
+    )
   }
 
   if (user) {
@@ -57,7 +64,12 @@ export async function GET(request: Request) {
       .maybeSingle()
 
     if (profileError) {
-      throw profileError
+      return NextResponse.redirect(
+        `${origin}/api/auth/callback-error?${new URLSearchParams({
+          error: 'Failed to lookup user profile.',
+          error_description: profileError.message,
+        }).toString()}`
+      )
     }
 
     if (!profile) {
@@ -70,7 +82,12 @@ export async function GET(request: Request) {
       })
 
       if (insertProfileError) {
-        throw insertProfileError
+        return NextResponse.redirect(
+          `${origin}/api/auth/callback-error?${new URLSearchParams({
+            error: 'Failed to create user profile.',
+            error_description: insertProfileError.message,
+          }).toString()}`
+        )
       }
     }
   }
@@ -82,8 +99,12 @@ export async function GET(request: Request) {
     // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
     return NextResponse.redirect(`${origin}${next}`)
   } else if (forwardedHost) {
-    return NextResponse.redirect(`https://${forwardedHost}${next}`)
+    return NextResponse.redirect(`https://${forwardedHost}${next}`, {
+      headers: request.headers,
+    })
   } else {
-    return NextResponse.redirect(`${origin}${next}`)
+    return NextResponse.redirect(`${origin}${next}`, {
+      headers: request.headers,
+    })
   }
 }

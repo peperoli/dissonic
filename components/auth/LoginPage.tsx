@@ -9,7 +9,7 @@ import { StatusBanner } from './../forms/StatusBanner'
 import { emailRegex } from '../../lib/emailRegex'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
-import { OAuthButtons } from './OAuthButtons'
+import { OAuthButton } from './OAuthButton'
 
 export default function LoginPage() {
   const {
@@ -70,7 +70,11 @@ export default function LoginPage() {
             />
           )}
         </form>
-        <OAuthButtons />
+        <div className="mt-6 grid gap-3">
+          <span className="section-headline">{t('or')}</span>
+          <OAuthButton provider="google" />
+          <OAuthButton provider="azure" />
+        </div>
       </section>
       <section className="mt-10">
         <Link href="/resend-confirmation" className="btn btn-small btn-secondary">
