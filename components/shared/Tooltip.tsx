@@ -4,6 +4,7 @@ import { createContext, HTMLAttributes, ReactNode, useContext } from 'react'
 import { Portal } from '../helpers/Portal'
 import { ButtonSlot } from '../helpers/slots'
 import { autoUpdate, shift, useFloating } from '@floating-ui/react-dom'
+import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 
 const TooltipContext = createContext<{
   toggle: () => void
@@ -79,14 +80,15 @@ function TooltipTrigger({
   triggerOnHover?: boolean
 } & ({ asChild?: false } | { asChild: true; children: ReactNode })) {
   const { toggle, show, hide, floating } = useTooltipContext()
+  const isHoverable = useMediaQuery('(hover: hover) and (pointer: fine)')
   const Composition = asChild ? ButtonSlot : 'button'
 
   return (
     <Composition
       type="button"
       onClick={shouldToggleOnClick ? toggle : undefined}
-      onMouseEnter={show}
-      onMouseLeave={hide}
+      onMouseEnter={isHoverable ? show : undefined}
+      onMouseLeave={isHoverable ? hide : undefined}
       ref={floating.refs.setReference}
       {...props}
     />
