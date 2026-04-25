@@ -54,11 +54,11 @@
 
   dialog {
     /* style resets */
-    @apply text-inherit m-0 size-auto max-h-none max-w-none bg-transparent;
+    @apply m-0 size-auto max-h-none max-w-none bg-transparent text-inherit;
   }
 
   [popover] {
-    @apply text-inherit bg-transparent;
+    @apply m-0 bg-transparent text-inherit;
   }
 }
 

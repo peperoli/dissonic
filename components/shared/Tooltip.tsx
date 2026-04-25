@@ -1,25 +1,15 @@
 'use client'
 
-import {
-  createContext,
-  Dispatch,
-  HTMLAttributes,
-  ReactNode,
-  SetStateAction,
-  useContext,
-  useState,
-} from 'react'
-import { usePopper } from 'react-popper'
+import { createContext, HTMLAttributes, ReactNode, useContext } from 'react'
 import { Portal } from '../helpers/Portal'
 import { ButtonSlot } from '../helpers/slots'
+import { autoUpdate, shift, useFloating } from '@floating-ui/react-dom'
 
 const TooltipContext = createContext<{
   toggle: () => void
   show: () => void
   hide: () => void
-  setReferenceElement: Dispatch<SetStateAction<HTMLElement | null>>
-  setPopperElement: Dispatch<SetStateAction<HTMLDivElement | null>>
-  popper: ReturnType<typeof usePopper>
+  floating: ReturnType<typeof useFloating>
 } | null>(null)
 
 function useTooltipContext() {
@@ -41,23 +31,22 @@ export function Tooltip({
   content: ReactNode
   shouldToggleOnClick?: boolean
 }) {
-  const [referenceElement, setReferenceElement] = useState<HTMLElement | null>(null)
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null)
-  const popper = usePopper(referenceElement, popperElement, {
+  const floating = useFloating({
     placement: 'top',
+    strategy: 'absolute',
+    whileElementsMounted: autoUpdate,
+    middleware: [shift()],
   })
 
   async function toggle() {
-    popperElement?.togglePopover()
-    popper.update?.()
+    floating.elements.floating?.togglePopover()
   }
 
   async function show() {
-    popperElement?.showPopover()
-    popper.update?.()
+    floating.elements.floating?.showPopover()
   }
   async function hide() {
-    popperElement?.hidePopover()
+    floating.elements.floating?.hidePopover()
   }
 
   return (
@@ -66,9 +55,7 @@ export function Tooltip({
         toggle,
         show,
         hide,
-        setReferenceElement,
-        setPopperElement,
-        popper,
+        floating,
       }}
     >
       <TooltipTrigger asChild shouldToggleOnClick={shouldToggleOnClick}>
@@ -91,16 +78,16 @@ function TooltipTrigger({
   shouldToggleOnClick?: boolean
   triggerOnHover?: boolean
 } & ({ asChild?: false } | { asChild: true; children: ReactNode })) {
-  const { toggle, show, hide, setReferenceElement } = useTooltipContext()
+  const { toggle, show, hide, floating } = useTooltipContext()
   const Composition = asChild ? ButtonSlot : 'button'
 
   return (
     <Composition
       type="button"
       onClick={shouldToggleOnClick ? toggle : undefined}
-      onMouseEnter={shouldToggleOnClick ? undefined : show}
-      onMouseLeave={shouldToggleOnClick ? undefined : hide}
-      ref={setReferenceElement}
+      onMouseEnter={show}
+      onMouseLeave={hide}
+      ref={floating.refs.setReference}
       {...props}
     />
   )
@@ -112,16 +99,10 @@ function TooltipContent({
 }: Omit<HTMLAttributes<HTMLDivElement>, 'children'> & {
   children: ReactNode
 }) {
-  const { setPopperElement, popper } = useTooltipContext()
+  const { floating } = useTooltipContext()
 
   return (
-    <div
-      ref={setPopperElement}
-      popover="auto"
-      style={popper.styles.popper}
-      {...popper.attributes.popper}
-      {...props}
-    >
+    <div ref={floating.refs.setFloating} popover="auto" style={floating.floatingStyles} {...props}>
       {children}
     </div>
   )
