@@ -68,14 +68,14 @@ const Sector = ({ name, value, percentage, angle, index, totalAngle }: SectorPro
 
   if (angle === 360) {
     return (
-      <Tooltip content={tooltipContent} triggerOnClick>
+      <Tooltip content={tooltipContent} shouldToggleOnClick>
         <circle cx={RADIUS} cy={RADIUS} r={RADIUS} className={clsx(fillColors[index], 'stroke-[8] stroke-slate-800')} />
       </Tooltip>
     )
   }
 
   return (
-    <Tooltip content={tooltipContent} triggerOnClick>
+    <Tooltip content={tooltipContent} shouldToggleOnClick>
       <path d={d} className={clsx(fillColors[index], 'stroke-[8] stroke-slate-800')} />
     </Tooltip>
   )

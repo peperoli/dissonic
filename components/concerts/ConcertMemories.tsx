@@ -5,7 +5,7 @@ import {
   getCloudflareVideoUrl,
 } from '@/lib/cloudflareHelpers'
 import Image from 'next/image'
-import * as Dialog from '@radix-ui/react-dialog'
+import { Dialog, type DialogProps } from '../shared/Dialog'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -143,8 +143,8 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
         concertId={concertId}
         imageMemoriesCount={imageMemoriesCount}
         videoMemoriesCount={videoMemoriesCount}
-        open={lightboxIsOpen}
-        onOpenChange={setLightboxIsOpen}
+        isOpen={lightboxIsOpen}
+        setOpen={setLightboxIsOpen}
       />
     </>
   )
@@ -159,7 +159,7 @@ function Lightbox({
   concertId: number
   imageMemoriesCount?: number | null
   videoMemoriesCount?: number | null
-} & Dialog.DialogProps) {
+} & Pick<DialogProps, 'isOpen' | 'setOpen'>) {
   const { data: memories } = useMemories({ concertId })
   const [metadataIsVisible, setMetadataIsVisible] = useState(true)
   const t = useTranslations('Memories')
@@ -171,8 +171,7 @@ function Lightbox({
   return (
     <Dialog.Root {...dialogProps}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-slate-900" />
-        <Dialog.Content className="fixed inset-0 z-50 mx-auto max-w-xl overflow-y-auto scroll-smooth bg-slate-900">
+        <Dialog.Content className="backdrop:bg-slate-900 fixed inset-0 z-50 mx-auto max-w-xl overflow-y-auto scroll-smooth bg-slate-900">
           <div className="flex flex-wrap items-center gap-2 p-4">
             <Dialog.Title className="mb-0">{t('memories')}</Dialog.Title>
             <span className="rounded-md bg-slate-300 px-1 text-sm font-bold text-slate-850">

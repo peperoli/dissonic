@@ -8,9 +8,9 @@ import { EditBandsButton } from './EditBandsButton'
 import { SelectField } from '../forms/SelectField'
 import { SegmentedControl } from '../controls/SegmentedControl'
 import { useFestivalRoots } from '@/hooks/concerts/useFestivalRoots'
-import { Fragment, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ChevronDownIcon, Plus } from 'lucide-react'
-import Modal from '../Modal'
+import { Modal } from '../Modal'
 import { FestivalRootForm } from './FestivalRootForm'
 import { useAddConcert } from '@/hooks/concerts/useAddConcert'
 import { useConcert } from '@/hooks/concerts/useConcert'
@@ -19,9 +19,9 @@ import { useParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
 import { useSession } from '@/hooks/auth/useSession'
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
+import { Disclosure } from '../shared/Disclosure'
 import clsx from 'clsx'
-import * as RadioGroup from '@radix-ui/react-radio-group'
+import { RadioButton } from '../forms/RadioGroup'
 
 type FormProps = {
   isNew?: boolean
@@ -77,8 +77,8 @@ export const Form = ({ close, isNew }: FormProps) => {
   const isSimilar = !!(isNew && similarConcerts?.count)
   const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
   const resourceStatusItems = [
-    { id: 'complete', name: t('complete') },
-    { id: 'incomplete_lineup', name: t('incompleteLineup') },
+    { value: 'complete', label: t('complete') },
+    { value: 'incomplete_lineup', label: t('incompleteLineup') },
   ]
 
   useEffect(() => {
@@ -108,6 +108,7 @@ export const Form = ({ close, isNew }: FormProps) => {
           <TextField
             type="time"
             {...register('doors_time')}
+            step={300}
             label={`${t('doorsTime')} ${t('optional')}`}
             placeholder="18:30"
             grouped="start"
@@ -115,6 +116,7 @@ export const Form = ({ close, isNew }: FormProps) => {
           <TextField
             type="time"
             {...register('show_time')}
+            step={300}
             label={`${t('showTime')} ${t('optional')}`}
             placeholder="19:00"
             grouped="end"
@@ -252,21 +254,19 @@ export const Form = ({ close, isNew }: FormProps) => {
         {new Date(watch('date_start')).setHours(0) >= new Date().setHours(0, 0, 0, 0) ? (
           <FutureConcertFields />
         ) : (
-          <Disclosure>
-            <DisclosurePanel className="grid gap-6">
-              <FutureConcertFields />
-            </DisclosurePanel>
-            <DisclosureButton as={Fragment}>
-              {({ open }) => (
-                <Button
-                  label={open ? t('showLess') : t('showMore')}
-                  icon={<ChevronDownIcon className={clsx('size-icon', open && 'rotate-180')} />}
-                  size="small"
-                  appearance="tertiary"
-                />
+          <Disclosure.Root>
+            <Disclosure.Trigger className="btn btn-small btn-tertiary">
+              {({ isOpen }) => (
+                <>
+                  {isOpen ? t('showLess') : t('showMore')}
+                  <ChevronDownIcon className={clsx('size-icon', isOpen && 'rotate-180')} />
+                </>
               )}
-            </DisclosureButton>
-          </Disclosure>
+            </Disclosure.Trigger>
+            <Disclosure.Content className="mt-3 grid gap-6">
+              <FutureConcertFields />
+            </Disclosure.Content>
+          </Disclosure.Root>
         )}
         {isMod && (
           <Controller
@@ -275,28 +275,23 @@ export const Form = ({ close, isNew }: FormProps) => {
             render={({ field: { value, onChange } }) => (
               <fieldset>
                 <legend className="mb-1 text-sm text-slate-300">{t('resourceStatus')}</legend>
-                <RadioGroup.Root
-                  name="resource_status"
-                  value={value ?? undefined}
-                  onValueChange={value => onChange(value)}
-                  orientation="vertical"
-                >
-                  <ul className="w-full">
-                    {resourceStatusItems.map(item => (
-                      <li key={item.id}>
-                        <label className="flex w-full items-center gap-3 rounded px-2 py-1.5 hover:bg-slate-600">
-                          <RadioGroup.Item
-                            value={item.id}
-                            className="grid size-4 flex-none place-content-center rounded-full border-2 border-slate-300 bg-white/5 data-[state=checked]:border-venom data-[state=checked]:bg-venom"
-                          >
-                            <RadioGroup.Indicator className="size-3 rounded-lg border-3 border-slate-850 bg-venom" />
-                          </RadioGroup.Item>
-                          {item.name}
-                        </label>
-                      </li>
-                    ))}
-                  </ul>
-                </RadioGroup.Root>
+                <ul className="w-full">
+                  {resourceStatusItems.map(item => (
+                    <li key={item.value}>
+                      <label className="flex w-full items-center gap-3 rounded px-2 py-1.5 hover:bg-slate-600">
+                        <RadioButton
+                          name="resource_status"
+                          value={item.value}
+                          isChecked={value === item.value}
+                          onCheckedChange={isChecked =>
+                            isChecked ? onChange(item.value) : undefined
+                          }
+                        />
+                        {item.label}
+                      </label>
+                    </li>
+                  ))}
+                </ul>
               </fieldset>
             )}
           />
@@ -311,7 +306,7 @@ export const Form = ({ close, isNew }: FormProps) => {
           />
         </div>
       </form>
-      <Modal open={isOpen} onOpenChange={setIsOpen}>
+      <Modal isOpen={isOpen} setOpen={setIsOpen}>
         <FestivalRootForm close={() => setIsOpen(false)} />
       </Modal>
     </>

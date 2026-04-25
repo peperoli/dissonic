@@ -133,31 +133,31 @@ export default async function ContributionsPage(props: {
       {!!contributionsCount && (
         <ul className="grid grid-cols-2 gap-4 md:grid-cols-4">
           <li className="rounded-lg bg-slate-800 p-4">
-            <p className="h2 mb-0 inline-flex items-center gap-2">
+            <div className="h2 mb-0 inline-flex items-center gap-2">
               {contributionsCount}
               <Tooltip content={t('contributionsHint')}>
                 <InfoIcon className="size-icon text-sm" />
               </Tooltip>
-            </p>
+            </div>
             <span className="text-sm">
               {t('contributionsTotal', { count: contributionsCount })}
             </span>
           </li>
           {!!addedConcertsCount && (
             <li className="rounded-lg bg-slate-800 p-4">
-              <p className="h2 mb-0">{addedConcertsCount}</p>
+              <div className="h2 mb-0">{addedConcertsCount}</div>
               <span className="text-sm">{t('concertsAdded', { count: addedConcertsCount })}</span>
             </li>
           )}
           {!!addedBandsCount && (
             <li className="rounded-lg bg-slate-800 p-4">
-              <p className="h2 mb-0">{addedBandsCount}</p>
+              <div className="h2 mb-0">{addedBandsCount}</div>
               <span className="text-sm">{t('bandsAdded', { count: addedBandsCount })}</span>
             </li>
           )}
           {!!addedLocationsCount && (
             <li className="rounded-lg bg-slate-800 p-4">
-              <p className="h2 mb-0">{addedLocationsCount}</p>
+              <div className="h2 mb-0">{addedLocationsCount}</div>
               <span className="text-sm">{t('locationsAdded', { count: addedLocationsCount })}</span>
             </li>
           )}

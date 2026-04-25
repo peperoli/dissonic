@@ -175,17 +175,15 @@ function MemoryItem({
             className="ml-auto"
           />
         </div>
-        <div>
-          <SelectField
-            label="Band"
-            name="bandId"
-            items={bands.map(band => ({ id: band.id, name: band.name }))}
-            allItems={bands}
-            value={fileItem.bandId}
-            onValueChange={bandId => setFileItem({ ...fileItem, bandId })}
-            isClearable
-          />
-        </div>
+        <SelectField
+          label="Band"
+          name="bandId"
+          items={bands.map(band => ({ id: band.id, name: band.name }))}
+          allItems={bands}
+          value={fileItem.bandId}
+          onValueChange={bandId => setFileItem({ ...fileItem, bandId })}
+          isClearable
+        />
       </div>
     </div>
   )

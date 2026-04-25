@@ -35,6 +35,7 @@ module.exports = {
       black: '#000',
       transparent: 'transparent',
       current: 'currentColor',
+      inherit: 'inherit',
     },
     boxShadow: {
       md: '0 2px 8px rgba(0, 0, 0, 0.2)',
@@ -50,6 +51,9 @@ module.exports = {
         13: '3.25rem',
         15: '3.75rem',
         22: '5.5rem',
+      },
+      width: {
+        'anchor-width': 'anchor-size(width)',
       },
       minWidth: {
         48: '12rem',

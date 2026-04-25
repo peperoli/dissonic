@@ -20,7 +20,7 @@ import { FetchStatus } from '@tanstack/react-query'
 import { SpinnerIcon } from '../layout/SpinnerIcon'
 import { Reorder } from 'framer-motion'
 import { useLocale, useTranslations } from 'next-intl'
-import { DialogTitle } from '@radix-ui/react-dialog'
+import { DialogTitle } from '../shared/Dialog'
 
 type InsertHereProps = {
   reorderItems: () => void

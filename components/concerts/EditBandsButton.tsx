@@ -4,7 +4,7 @@ import { useBands } from '../../hooks/bands/useBands'
 import { useDebounce } from '../../hooks/helpers/useDebounce'
 import { ReorderableListItem } from '../../types/types'
 import { ListManager } from '../forms/ListManager'
-import Modal from '../Modal'
+import { Modal } from '../Modal'
 import clsx from 'clsx'
 import { TruncatedList } from 'react-truncate-list'
 import { useTranslations } from 'next-intl'
@@ -82,11 +82,9 @@ export const EditBandsButton = ({ value, onChange, error }: EditBandsButtonProps
           </div>
           <EditIcon className="size-icon flex-none" />
         </button>
-        {error && (
-          <div className="mt-1 text-sm text-yellow">{t('pleaseSelectAtLeastOneBand')}</div>
-        )}
+        {error && <div className="mt-1 text-sm text-yellow">{t('pleaseSelectAtLeastOneBand')}</div>}
       </div>
-      <Modal open={isOpen} onOpenChange={setIsOpen} fullHeight>
+      <Modal isOpen={isOpen} setOpen={setIsOpen} fullHeight>
         <BandsListManager initialListItems={value} onSave={onSave} />
       </Modal>
     </>

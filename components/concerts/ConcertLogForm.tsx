@@ -3,7 +3,6 @@ import { useConcert } from '@/hooks/concerts/useConcert'
 import { useEditLog } from '@/hooks/concerts/useEditLog'
 import { useMemories } from '@/hooks/concerts/useMemories'
 import { ListItem } from '@/types/types'
-import * as Checkbox from '@radix-ui/react-checkbox'
 import clsx from 'clsx'
 import { useTranslations } from 'next-intl'
 import { useParams } from 'next/navigation'
@@ -171,15 +170,21 @@ function ToggleGroup({
         const isChecked = values.includes(item.id)
         return (
           <li key={item.id}>
-            <Checkbox.Root
-              name={name}
-              value={item.name}
-              checked={isChecked}
-              onCheckedChange={() => handleChange(item.id)}
+            <label
+              htmlFor={item.id.toString()}
               className={clsx('btn btn-tag', isChecked && 'btn-seen')}
             >
+              <input
+                type="checkbox"
+                id={item.id.toString()}
+                name={name}
+                value={item.name}
+                checked={isChecked}
+                onChange={() => handleChange(item.id)}
+                className="sr-only"
+              />
               {item.name}
-            </Checkbox.Root>
+            </label>
           </li>
         )
       })}

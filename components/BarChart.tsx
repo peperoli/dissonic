@@ -52,7 +52,7 @@ const Bar = ({
           {name}
         </>
       }
-      triggerOnClick
+      shouldToggleOnClick
     >
       <rect
         x={x}

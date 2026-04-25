@@ -1,41 +1,35 @@
 'use client'
 
 import useMediaQuery from '@/hooks/helpers/useMediaQuery'
-import * as Dialog from '@radix-ui/react-dialog'
+import { ReactNode, useRef } from 'react'
+import { Dialog } from './Dialog'
+import type { DialogTitleProps, DialogTriggerProps } from './Dialog'
 import { useAnimate, useDragControls, useMotionValue } from 'framer-motion'
-import { ReactNode, useRef, useState, createContext, useContext } from 'react'
 import { MotionDiv } from '../helpers/motion'
-
-const DialogContext = createContext<[boolean, (value: boolean) => void]>([false, () => {}])
 
 export function DrawerTrigger({
   children,
   ...props
-}: { children: ReactNode } & Dialog.DialogTriggerProps) {
-  const [_, setIsOpen] = useContext(DialogContext)
+}: { children: ReactNode } & DialogTriggerProps) {
   return (
-    <button type="button" aria-haspopup="dialog" onClick={() => setIsOpen(true)} {...props}>
+    <button type="button" {...props}>
       {children}
     </button>
   )
 }
 
-export function DrawerTitle({
-  children,
-  ...props
-}: { children: ReactNode } & Dialog.DialogTitleProps) {
+export function DrawerTitle({ children, ...props }: { children: ReactNode } & DialogTitleProps) {
   return <Dialog.Title {...props}>{children}</Dialog.Title>
 }
 
 export function Drawer({ children, trigger }: { children: ReactNode; trigger: ReactNode }) {
-  const [isOpen, setIsOpen] = useState(false)
   const [scope, animate] = useAnimate()
   const modalRef = useRef<HTMLDivElement | null>(null)
   const controls = useDragControls()
   const y = useMotionValue(0)
   const isDesktop = useMediaQuery('(min-width: 768px)')
 
-  async function handleClose() {
+  async function handleClose(close: () => void) {
     animate(scope.current, { opacity: [1, 0] })
 
     const yStart = typeof y.get() === 'number' ? y.get() : 0
@@ -44,23 +38,25 @@ export function Drawer({ children, trigger }: { children: ReactNode; trigger: Re
     if (modalRef.current) {
       await animate(modalRef.current, { y: [yStart, isDesktop ? '10%' : height] })
     }
-    setIsOpen(false)
+    
+    close()
   }
+
   return (
-    <DialogContext.Provider value={[isOpen, setIsOpen]}>
-      <Dialog.Root>
-        {trigger}
-        {isOpen && (
-          <Dialog.Portal forceMount>
-            <Dialog.Overlay forceMount asChild>
-              <MotionDiv
-                ref={scope}
-                onClick={handleClose}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 md:items-start md:p-16"
-              >
-                <Dialog.Content forceMount asChild>
+    <Dialog.Root>
+      {({ isOpen, close }) => (
+        <>
+          <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>
+          <Dialog.Portal>
+            <Dialog.Content>
+              {isOpen && (
+                <MotionDiv
+                  ref={scope}
+                  onClick={() => handleClose(close)}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 md:items-start md:p-16"
+                >
                   <MotionDiv
                     ref={modalRef}
                     onClick={e => e.stopPropagation()}
@@ -70,7 +66,7 @@ export function Drawer({ children, trigger }: { children: ReactNode; trigger: Re
                     transition={{ ease: 'easeInOut' }}
                     onDragEnd={() => {
                       if (y.get() > 100) {
-                        handleClose()
+                        handleClose(close)
                       }
                     }}
                     drag="y"
@@ -78,7 +74,7 @@ export function Drawer({ children, trigger }: { children: ReactNode; trigger: Re
                     dragListener={false}
                     dragConstraints={{ top: 0, bottom: 0 }}
                     dragElastic={{ top: 0, bottom: 1 }}
-                    className="flex h-[75vh] w-full flex-col content-start bg-slate-800 px-6 pb-6 md:h-fit md:max-h-full md:max-w-md md:rounded-lg md:p-8"
+                    className="mx-auto mt-auto flex h-[75vh] w-full flex-col content-start bg-slate-800 px-6 pb-6 md:mt-16 md:h-fit md:max-h-full md:max-w-md md:rounded-lg md:p-8"
                   >
                     <button
                       aria-label="Griff"
@@ -89,12 +85,12 @@ export function Drawer({ children, trigger }: { children: ReactNode; trigger: Re
                     </button>
                     {children}
                   </MotionDiv>
-                </Dialog.Content>
-              </MotionDiv>
-            </Dialog.Overlay>
+                </MotionDiv>
+              )}
+            </Dialog.Content>
           </Dialog.Portal>
-        )}
-      </Dialog.Root>
-    </DialogContext.Provider>
+        </>
+      )}
+    </Dialog.Root>
   )
 }
