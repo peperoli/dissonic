@@ -104,7 +104,7 @@ function PopoverContent({
       closedby="any"
       onToggle={event => setOpen(event.currentTarget.open)}
       // @ts-expect-error
-      style={{ positionAnchor: `--${id}`, positionArea: side }}
+      style={{ positionAnchor: `--${id}`, positionArea: side, positionTryFallbacks: 'flip-block' }}
       {...props}
     >
       {typeof children === 'function' ? children({ close }) : children}
