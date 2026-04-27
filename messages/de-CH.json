@@ -46,7 +46,8 @@
     "githubRepository": "Github Repository",
     "feedback": "Feedback",
     "contributions": "Bearbeitungen",
-    "globalStats": "Globale Statistiken"
+    "globalStats": "Globale Statistiken",
+    "privacyPolicy": "Datenschutzerklärung"
   },
   "LanguageSelect": {
     "language": "Sprache"

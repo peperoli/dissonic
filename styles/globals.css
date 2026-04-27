@@ -44,6 +44,37 @@
     }
   }
 
+  .richtext {
+    & > *:not(:first-child) {
+      @apply mt-4;
+    }
+
+    a {
+      @apply text-venom underline;
+    }
+
+    ul {
+      @apply list-disc pl-6;
+    }
+
+    ol {
+      @apply list-decimal pl-6;
+    }
+
+    hr {
+      @apply border-slate-750 border-t-2;
+    }
+
+    table {
+      @apply border-collapse;
+
+      th,
+      td {
+        @apply border-2 border-slate-750 px-4 py-2 text-left;
+      }
+    }
+  }
+
   strong {
     @apply font-bold;
   }

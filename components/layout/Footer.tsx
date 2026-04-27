@@ -27,6 +27,9 @@ export const Footer = () => {
         <a href="/global-stats" className="text-sm hover:underline">
           {t('globalStats')}
         </a>
+        <a href="/privacy-policy" className="text-sm hover:underline">
+          {t('privacyPolicy')}
+        </a>
       </div>
       <div className="text-sm text-slate-300">
         made with {'<3 />'} by{' '}
