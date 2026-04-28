@@ -1,12 +1,11 @@
 import { Concert } from '@/types/types'
 import { createClient } from '@/utils/supabase/server'
 import { ConcertsPage } from '@/components/concerts/ConcertsPage'
+import { Temporal } from '@js-temporal/polyfill'
 
 async function fetchData() {
   const supabase = await createClient()
-  const today = new Date()
-  const tomorrow = new Date(today)
-  tomorrow.setDate(tomorrow.getDate() + 1)
+  const tomorrow = Temporal.Now.plainDateISO().add({ days: 1 })
 
   const {
     data: { user },
@@ -15,7 +14,7 @@ async function fetchData() {
   const { data, count, error } = await supabase
     .from('concerts_full')
     .select('*, bands:j_concert_bands(*, ...bands(*, genres(*)))', { count: 'estimated' })
-    .gte('date_start', tomorrow.toISOString())
+    .gte('date_start', tomorrow.toString())
     .order('date_start', { ascending: true })
     .order('item_index', { referencedTable: 'j_concert_bands', ascending: true })
     .limit(25)

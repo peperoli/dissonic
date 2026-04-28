@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
+import { Temporal } from '@js-temporal/polyfill'
 
 function sanitizeNext(nextParam: string | null): string {
   if (!nextParam) return '/'
@@ -78,7 +79,7 @@ export async function GET(request: Request) {
         id: user.id,
         username: user.user_metadata.full_name
           ? encodeURIComponent(slugUsername(user.user_metadata.full_name))
-          : new Date().getTime().toString(),
+          : Temporal.Instant.from(Temporal.Now.instant()).epochMilliseconds.toString(),
       })
 
       if (insertProfileError) {
