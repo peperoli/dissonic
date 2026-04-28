@@ -903,6 +903,12 @@ export type Database = {
           spotify_artist_images: Json | null
           youtube_url: string | null
         }[]
+        SetofOptions: {
+          from: "*"
+          to: "bands"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       compare_concerts_seen: {
         Args: { user_1_id: string; user_2_id: string }
@@ -922,11 +928,14 @@ export type Database = {
           show_time: string | null
           source_link: string | null
         }[]
+        SetofOptions: {
+          from: "*"
+          to: "concerts"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
-      custom_access_token_hook: {
-        Args: { event: Json }
-        Returns: Json
-      }
+      custom_access_token_hook: { Args: { event: Json }; Returns: Json }
       json_matches_schema: {
         Args: { instance: Json; schema: Json }
         Returns: boolean
@@ -935,10 +944,7 @@ export type Database = {
         Args: { instance: Json; schema: Json }
         Returns: boolean
       }
-      jsonschema_is_valid: {
-        Args: { schema: Json }
-        Returns: boolean
-      }
+      jsonschema_is_valid: { Args: { schema: Json }; Returns: boolean }
       jsonschema_validation_errors: {
         Args: { instance: Json; schema: Json }
         Returns: string[]
@@ -946,6 +952,12 @@ export type Database = {
       search_bands: {
         Args: { search_string: string }
         Returns: Database["public"]["CompositeTypes"]["band_with_genres"][]
+        SetofOptions: {
+          from: "*"
+          to: "band_with_genres"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       search_countries: {
         Args: { search_string: string }
@@ -958,6 +970,12 @@ export type Database = {
           name_de: string
           name_en: string | null
         }[]
+        SetofOptions: {
+          from: "*"
+          to: "countries"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       search_festival_roots: {
         Args: { search_string: string }
@@ -970,6 +988,12 @@ export type Database = {
           name: string
           website: string | null
         }[]
+        SetofOptions: {
+          from: "*"
+          to: "festival_roots"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       search_genres: {
         Args: { search_string: string }
@@ -977,10 +1001,22 @@ export type Database = {
           id: number
           name: string
         }[]
+        SetofOptions: {
+          from: "*"
+          to: "genres"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       search_global: {
         Args: { search_string: string }
         Returns: Database["public"]["CompositeTypes"]["search_result"][]
+        SetofOptions: {
+          from: "*"
+          to: "search_result"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       search_locations: {
         Args: { search_string: string }
@@ -998,15 +1034,14 @@ export type Database = {
           website: string | null
           zip_code: string | null
         }[]
+        SetofOptions: {
+          from: "*"
+          to: "locations"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
-      unaccent: {
-        Args: { "": string }
-        Returns: string
-      }
-      unaccent_init: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
+      unaccent: { Args: { "": string }; Returns: string }
     }
     Enums: {
       app_role: "developer" | "moderator"

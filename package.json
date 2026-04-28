@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate-db-types": "supabase gen types typescript > types/supabase.ts --project-id"
+    "generate-db-types": "supabase gen types typescript > types/supabase.d.ts --project-id"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.835.0",
@@ -58,7 +58,7 @@
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "supabase": "2.24.3",
-    "typescript": "^5.8.3"
+    "typescript": "^6.0.3"
   },
   "packageManager": "yarn@4.5.1",
   "resolutions": {

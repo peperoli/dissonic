@@ -1,4 +1,4 @@
-import { ActivityItemT } from 'app/activity/page'
+import { ActivityItemT } from '@/app/activity/page'
 import { ActivityItem } from './ActivityItem'
 import { Tables } from '@/types/supabase'
 

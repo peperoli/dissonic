@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { ProfileStat } from 'app/users/page'
+import { ProfileStat } from '@/app/users/page'
 import { getRelativeTime } from '@/lib/relativeTime'
 import { CrownIcon, UserIcon } from 'lucide-react'
 import { getAssetUrl } from '@/lib/getAssetUrl'

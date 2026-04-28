@@ -1,6 +1,6 @@
 'use client'
 
-import type { ActivityItemT } from 'app/activity/page'
+import type { ActivityItemT } from '@/app/activity/page'
 import { UserItem } from '../shared/UserItem'
 import Link from 'next/link'
 import { getRelativeTime } from '@/lib/relativeTime'

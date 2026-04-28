@@ -1,8 +1,7 @@
-import { Database } from '@/types/supabase'
 import { ActivityFetchOptions, ExtendedRes, QueryOptions } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { ActivityItemT } from 'app/activity/page'
+import { ActivityItemT } from '@/app/activity/page'
 
 async function fetchActivities(options: ActivityFetchOptions) {
   const {

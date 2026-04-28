@@ -1,6 +1,6 @@
 import { ContributionFetchOptions } from '@/types/types'
 import { useQuery } from '@tanstack/react-query'
-import supabase from 'utils/supabase/client'
+import supabase from '@/utils/supabase/client'
 
 export const relatedResourceTypes = {
   concerts: ['j_concert_bands'],
