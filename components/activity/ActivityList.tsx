@@ -11,6 +11,7 @@ import { getMediumDate } from '@/lib/date'
 import { useView } from '@/components/activity/ViewFilter'
 import { useActivityType } from '@/components/activity/ActivityTypeFilter'
 import { useSession } from '@/hooks/auth/useSession'
+import { Temporal } from '@js-temporal/polyfill'
 
 export function ActivityList({
   activities: placeholderData,
@@ -37,28 +38,28 @@ export function ActivityList({
   const groupedItems = groupByDateAndTime(activities?.data as ActivityItemT[])
 
   function groupByDateAndTime(items: ActivityItemT[]) {
-    type DateGroup<T> = { date: string; items: T[] }
+    type DateGroup<T> = { date: Temporal.PlainDate; items: T[] }
     type TimeGroup<T> = {
-      time: number
+      time: Temporal.PlainTime
       userId: string | null
       concertId: number | null
       items: T[]
     }
 
     return items.reduce<DateGroup<TimeGroup<ActivityItemT>>[]>((acc, item) => {
-      const date = getMediumDate(item.created_at, locale)
-      const time = new Date(item.created_at).getTime()
+      const date = Temporal.PlainDate.from(item.created_at)
+      const time = Temporal.PlainTime.from(item.created_at)
       const userId = item.user_id?.[0] ?? null
       const concertId = item.concert?.id ?? null
 
-      let dateGroup = acc.find(group => group.date === date)
+      let dateGroup = acc.find(group => group.date.equals(date))
       if (!dateGroup) {
         dateGroup = { date, items: [] }
         acc.push(dateGroup)
       }
 
       let timeGroup = dateGroup.items.find(
-        group => group.time === time && group.userId === userId && group.concertId === concertId
+        group => group.time.equals(time) && group.userId === userId && group.concertId === concertId
       )
       if (!timeGroup) {
         timeGroup = { time, userId, concertId, items: [] }
@@ -74,11 +75,11 @@ export function ActivityList({
     <>
       {activities?.count === 0 && <p className="mb-4 text-slate-300">{t('noEntriesFound')}</p>}
       {groupedItems.map(dateGroup => (
-        <section key={dateGroup.date}>
-          <h2 className="section-headline">{dateGroup.date}</h2>
+        <section key={dateGroup.date.toString()}>
+          <h2 className="section-headline">{getMediumDate(dateGroup.date, locale)}</h2>
           <ul className="grid gap-2">
             {dateGroup.items.map(timeGroup => (
-              <ActivityGroup key={timeGroup.time} timeGroup={timeGroup} />
+              <ActivityGroup key={timeGroup.time.toString()} timeGroup={timeGroup} />
             ))}
           </ul>
         </section>

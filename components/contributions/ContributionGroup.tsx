@@ -1,10 +1,11 @@
 import { ContributionItem } from './ContributionItem'
 import { Tables } from '@/types/supabase'
+import { Temporal } from '@js-temporal/polyfill'
 
 export const ContributionGroup = ({
   timeGroup,
 }: {
-  timeGroup: { time: number; userId: string | null; items: Tables<'contributions'>[] }
+  timeGroup: { time: Temporal.PlainTime; userId: string | null; items: Tables<'contributions'>[] }
 }) => {
   const bandIds = timeGroup.items
     .filter(item => item.resource_type === 'j_concert_bands')
