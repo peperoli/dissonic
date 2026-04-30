@@ -34,6 +34,7 @@ import { useRestoreConcert } from '@/hooks/concerts/useRestoreConcert'
 import { StatusBanner } from '../forms/StatusBanner'
 import { getIcsFile } from '@/lib/getIcsFile'
 import { ConcertMemories } from './ConcertMemories'
+import { Temporal } from '@js-temporal/polyfill'
 
 type ConcertPageProps = {
   initialConcert: Concert
@@ -61,9 +62,10 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
   const image =
     (concert.bands?.[0]?.spotify_artist_images as SpotifyArtist['images'])?.[0] ||
     spotifyArtist?.images?.[0]
-  const isFuture = new Date(concert.date_start) > new Date()
-  const isFutureOrToday =
-    new Date(concert.date_start).setHours(0) >= new Date().setHours(0, 0, 0, 0)
+  const dateStart = Temporal.PlainDate.from(concert.date_start)
+  const dateEnd = concert.date_end ? Temporal.PlainDate.from(concert.date_end) : null
+  const isFuture = Temporal.PlainDate.compare(dateStart, Temporal.Now.plainDateISO()) === 1
+  const isFutureOrToday = Temporal.PlainDate.compare(dateStart, Temporal.Now.plainDateISO()) >= 0
 
   return (
     <ConcertContext.Provider value={{ concert }}>
@@ -160,11 +162,11 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
           />
           <div className="relative grid size-full content-end justify-start p-4 md:p-6">
             <div className="mb-4 flex w-fit items-center">
-              <ConcertDate date={new Date(concert.date_start)} isFirst contrast />
-              {concert.date_end && concert.date_end !== concert.date_start && (
+              <ConcertDate date={dateStart} isFirst contrast />
+              {dateEnd && !dateEnd.equals(dateStart) && (
                 <>
                   <div className="w-2 border-t border-white/20 md:w-4" />
-                  <ConcertDate date={new Date(concert.date_end)} contrast />
+                  <ConcertDate date={dateEnd} contrast />
                 </>
               )}
             </div>
@@ -179,7 +181,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
             {concert.name && <div className="font-bold">{concert.name}</div>}
             <h1 className="mb-2">
               {concert.festival_root
-                ? `${concert.festival_root?.name} ${new Date(concert.date_start).getFullYear()}`
+                ? `${concert.festival_root?.name} ${dateStart.year}`
                 : concert.bands?.[0]?.name}
             </h1>
             <Link
@@ -216,12 +218,12 @@ function ConcertDate({
   isFirst,
   contrast,
 }: {
-  date: Date
+  date: Temporal.PlainDate
   isFirst?: boolean
   contrast?: boolean
 }) {
   const locale = useLocale()
-  const isCurrentYear = date.getFullYear() === new Date().getFullYear()
+  const isCurrentYear = date.year === Temporal.Now.plainDateISO().year
   return (
     <div
       className={clsx(
@@ -240,17 +242,17 @@ function ConcertDate({
       {isCurrentYear ? (
         <>
           <span className="text-2xl font-bold leading-none">
-            {date.toLocaleDateString(locale, { day: 'numeric' })}
+            {date.toLocaleString(locale, { day: 'numeric' })}
           </span>
-          <span className="text-sm">{date.toLocaleDateString(locale, { month: 'short' })}</span>
+          <span className="text-sm">{date.toLocaleString(locale, { month: 'short' })}</span>
         </>
       ) : (
         <>
           <div className="flex gap-1">
-            <span className="font-bold">{date.toLocaleDateString(locale, { day: 'numeric' })}</span>
-            <span>{date.toLocaleDateString(locale, { month: 'short' })}</span>
+            <span className="font-bold">{date.toLocaleString(locale, { day: 'numeric' })}</span>
+            <span>{date.toLocaleString(locale, { month: 'short' })}</span>
           </div>
-          <span className="text-sm">{date.getFullYear()}</span>
+          <span className="text-sm">{date.year}</span>
         </>
       )}
     </div>

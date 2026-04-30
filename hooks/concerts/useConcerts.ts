@@ -24,11 +24,11 @@ const fetchConcerts = async (options?: ConcertFetchOptions) => {
     const endDate = options.dateRange[1]
 
     if (startDate) {
-      query = query.gt('date_start', startDate.toISOString())
+      query = query.gt('date_start', startDate.toString())
     }
 
     if (endDate) {
-      query = query.lte('date_start', endDate.toISOString())
+      query = query.lte('date_start', endDate.toString())
     }
   }
 

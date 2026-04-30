@@ -12,6 +12,7 @@ import { TruncatedList } from 'react-truncate-list'
 import { ConcertDate } from './ConcertDate'
 import { useQuery } from '@tanstack/react-query'
 import supabase from '@/utils/supabase/client'
+import { Temporal } from '@js-temporal/polyfill'
 
 interface ConcertCardProps {
   concert: Concert
@@ -44,8 +45,8 @@ export const ConcertCard = ({ concert, nested }: ConcertCardProps) => {
   const picture =
     (concert.bands[0]?.spotify_artist_images as SpotifyArtist['images'])?.[2] ||
     spotifyArtist?.images?.[2]
-  const dateStart = new Date(concert.date_start)
-  const dateEnd = concert.date_end ? new Date(concert.date_end) : null
+  const dateStart = Temporal.PlainDate.from(concert.date_start)
+  const dateEnd = concert.date_end ? Temporal.PlainDate.from(concert.date_end) : null
 
   return (
     <Link
@@ -73,7 +74,7 @@ export const ConcertCard = ({ concert, nested }: ConcertCardProps) => {
         {concert.festival_root && (
           <p className="line-clamp-1 text-sm font-bold">
             <span className="justify-self-start rounded-md bg-white px-1 text-slate-850">
-              {concert.festival_root.name} {dateStart.getFullYear()}
+              {concert.festival_root.name} {dateStart.year}
             </span>
             <span className="text-slate-300">&nbsp;&bull; {concert.location?.city}</span>
           </p>

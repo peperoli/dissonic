@@ -13,6 +13,7 @@ import { Modal } from '../Modal'
 import { DialogTitle } from '../shared/Dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGoogle, faMicrosoft } from '@fortawesome/free-brands-svg-icons'
+import { Temporal } from '@js-temporal/polyfill'
 
 function IdentityItem({
   identity,
@@ -41,7 +42,10 @@ function IdentityItem({
   const linkedAt = identity.created_at ? (
     <p className="text-sm text-slate-300">
       {t('linkedAtDate', {
-        date: new Date(identity.created_at).toLocaleDateString(locale),
+        date: Temporal.Instant.from(identity.created_at).toLocaleString(locale, {
+          dateStyle: 'short',
+          timeStyle: 'short',
+        }),
       })}
     </p>
   ) : null

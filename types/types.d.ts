@@ -1,3 +1,4 @@
+import { Temporal } from '@js-temporal/polyfill';
 import { Tables, TablesInsert, TablesUpdate } from './supabase'
 
 export type Nullable<T> = { [K in keyof T]: T[K] | null };
@@ -10,7 +11,7 @@ export type ExtendedRes<TData> = {
 export type ConcertFetchOptions = {
   bands?: number[] | null
   locations?: number[] | null
-  dateRange?: [Date | null, Date | null] | null
+  dateRange?: [Temporal.PlainDate | null, Temporal.PlainDate | null] | null
   years?: number[] | null
   festivalRoots?: number[] | null
   bandsSeenUsers?: string[] | null

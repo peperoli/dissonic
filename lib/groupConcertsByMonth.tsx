@@ -1,8 +1,9 @@
-import { Concert } from "@/types/types"
+import { Concert } from '@/types/types'
+import { Temporal } from '@js-temporal/polyfill'
 
 export function groupConcertsByMonth(concerts: Concert[], locale: string) {
   const groupedConcerts = concerts.reduce((acc: { [key: string]: Concert[] }, concert) => {
-    const month = new Date(concert.date_start).toLocaleDateString(locale, {
+    const month = Temporal.PlainYearMonth.from(concert.date_start).toLocaleString(locale, {
       month: 'long',
       year: 'numeric',
     })

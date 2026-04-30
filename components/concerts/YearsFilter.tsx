@@ -4,6 +4,7 @@ import { SpinnerIcon } from '../layout/SpinnerIcon'
 import { FilterButton } from './../FilterButton'
 import { RangeSliderWrapper } from './../RangeFilter'
 import { useTranslations } from 'next-intl'
+import { Temporal } from '@js-temporal/polyfill'
 
 type YearsRangeSliderProps = {
   selectedOptions: number[]
@@ -14,7 +15,7 @@ const YearsRangeSlider = ({ ...props }: YearsRangeSliderProps) => {
   const { data: concertDates, isPending } = useConcertDates()
   const t = useTranslations('YearsFilter')
   const concertYears = concertDates
-    ?.map(item => item.date_start && new Date(item.date_start).getFullYear())
+    ?.map(item => item.date_start && Temporal.PlainDate.from(item.date_start).year)
     .filter(item => typeof item === 'number')
 
   if (!concertYears || concertYears.length === 0 || isPending) {
@@ -24,7 +25,9 @@ const YearsRangeSlider = ({ ...props }: YearsRangeSliderProps) => {
       </div>
     )
   }
-  return <RangeSliderWrapper unit={t('year')} options={concertYears} isLoading={isPending} {...props} />
+  return (
+    <RangeSliderWrapper unit={t('year')} options={concertYears} isLoading={isPending} {...props} />
+  )
 }
 
 interface YearsFilterProps {

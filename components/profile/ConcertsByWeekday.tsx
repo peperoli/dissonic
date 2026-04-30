@@ -5,6 +5,7 @@ import { getUniqueObjects } from '@/lib/getUniqueObjects'
 import { useLocale, useTranslations } from 'next-intl'
 import supabase from '@/utils/supabase/client'
 import { useQuery } from '@tanstack/react-query'
+import { Temporal } from '@js-temporal/polyfill'
 
 async function fetchBandsSeen(profileId?: string) {
   let countQuery = supabase.from('j_bands_seen').select('*', { count: 'estimated', head: true })
@@ -46,20 +47,19 @@ export const ConcertsByWeekday = ({ profileId }: { profileId?: string }) => {
     queryFn: () => fetchBandsSeen(profileId),
   })
   const t = useTranslations('ConcertsByWeekday')
-  const locale = useLocale()
 
   if (!bandsSeen || bandsSeen.length === 0) {
     return null
   }
 
   const concerts = getUniqueObjects(bandsSeen.map(band => band.concert))
-  let concertsPerWeekday = Array.from({ length: 7 }, (_, day) => ({
-    name: new Date(0, 0, day).toLocaleDateString(locale, { weekday: 'long' }),
-    value: concerts.filter(concert => new Date(concert.date_start).getDay() === day).length,
+  const weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+  const concertsPerWeekday = weekdays.map((day, index) => ({
+    name: t(day),
+    value: concerts.filter(
+      concert => Temporal.PlainDate.from(concert.date_start).dayOfWeek === index + 1
+    ).length,
   }))
-  const sunday = concertsPerWeekday.slice(0, 1)
-  const withoutSunday = concertsPerWeekday.slice(1)
-  concertsPerWeekday = withoutSunday.concat(sunday)
 
   return (
     <div className="rounded-lg bg-slate-800 p-6">

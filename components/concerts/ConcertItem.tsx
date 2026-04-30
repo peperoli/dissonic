@@ -8,6 +8,7 @@ import { Tables } from '@/types/supabase'
 import { Fragment } from 'react'
 import { SpotifyArtist } from '@/types/types'
 import { ConcertDate } from './ConcertDate'
+import { Temporal } from '@js-temporal/polyfill'
 
 export function ConcertItem({
   concert,
@@ -24,8 +25,8 @@ export function ConcertItem({
   const image =
     (concert.bands?.[0]?.spotify_artist_images as SpotifyArtist['images'])?.at(-1) ||
     spotifyArtist?.images?.[2]
-  const dateStart = new Date(concert.date_start)
-  const dateEnd = concert.date_end ? new Date(concert.date_end) : null
+  const dateStart = Temporal.PlainDate.from(concert.date_start)
+  const dateEnd = concert.date_end ? Temporal.PlainDate.from(concert.date_end) : null
 
   return (
     <Link href={`/concerts/${concert.id}`} className="flex gap-4 rounded-lg p-2 hover:bg-slate-700">
@@ -46,7 +47,7 @@ export function ConcertItem({
       <div className="grid content-start">
         {concert.festival_root && (
           <div className="line-clamp-1 justify-self-start rounded-md bg-white px-1 text-sm font-bold text-slate-850">
-            {concert.festival_root.name} {dateStart.getFullYear()}
+            {concert.festival_root.name} {dateStart.year}
           </div>
         )}
         {concert.name && <div className="truncate text-sm font-bold">{concert.name}</div>}

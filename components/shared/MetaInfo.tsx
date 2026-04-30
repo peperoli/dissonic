@@ -1,4 +1,5 @@
 import { useContributionsCount } from '@/hooks/contributions/useContributionsCount'
+import { Temporal } from '@js-temporal/polyfill'
 import { InfoIcon } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
@@ -16,6 +17,9 @@ export const MetaInfo = ({ createdAt, creator, resourceType, resourceId }: MetaI
   const { data: contributionsCount } = useContributionsCount({ resourceType, resourceId })
   const t = useTranslations('MetaInfo')
   const locale = useLocale()
+  const createdAtDate = createdAt
+    ? Temporal.Instant.from(createdAt).toLocaleString(locale, { dateStyle: 'short' })
+    : null
 
   if (!createdAt && !creator && !contributionsCount) {
     return null
@@ -27,7 +31,7 @@ export const MetaInfo = ({ createdAt, creator, resourceType, resourceId }: MetaI
       {createdAt && creator && (
         <p>
           {t.rich('createdAtDateByUser', {
-            date: new Date(createdAt).toLocaleDateString(locale),
+            date: createdAtDate,
             link: chunks => (
               <Link href={`/users/${creator.username}`} className="text-white hover:underline">
                 {chunks}
@@ -37,9 +41,7 @@ export const MetaInfo = ({ createdAt, creator, resourceType, resourceId }: MetaI
           })}
         </p>
       )}
-      {createdAt && !creator && (
-        <p>{t('createdAtDate', { date: new Date(createdAt).toLocaleDateString(locale) })}</p>
-      )}
+      {createdAt && !creator && <p>{t('createdAtDate', { date: createdAtDate })}</p>}
       {!!contributionsCount && (
         <Link
           href={`/contributions?resourceType=${resourceType}&resourceId=${resourceId}`}

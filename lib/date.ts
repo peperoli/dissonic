@@ -18,3 +18,12 @@ export function getFullMonth(month: number, locale: Temporal.LocalesArgument) {
     month: 'long',
   })
 }
+
+export function isValidDate(date: string) {
+  try {
+    Temporal.PlainDate.from(date)
+    return true
+  } catch {
+    return false
+  }
+}
