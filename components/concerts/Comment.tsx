@@ -153,7 +153,7 @@ function EditCommentForm({
     mutate({
       id: comment.id,
       content: formData.new_content,
-      edited_at: Temporal.Now.plainDateTimeISO().toString(),
+      edited_at: Temporal.Now.instant().toString(),
     })
   }
 

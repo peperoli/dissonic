@@ -45,11 +45,11 @@ async function fetchBandsSeen(profileId?: string) {
 
 function getLongestStreak(concertDates: Tables<'concerts'>['date_start'][]) {
   const sortedConcertDates = Array.from(
-    new Set(concertDates.map(date => Temporal.PlainYearMonth.from(date)))
+    new Set(concertDates.map(date => Temporal.PlainYearMonth.from(date).toString()))
   ).sort((a, b) => Temporal.PlainYearMonth.compare(a, b))
   const streaks: { start: Temporal.PlainYearMonth; end: Temporal.PlainYearMonth }[] = []
   for (let i = 0; i < sortedConcertDates.length; i++) {
-    const date = sortedConcertDates[i]
+    const date = Temporal.PlainYearMonth.from(sortedConcertDates[i])
     const matchingStreak = streaks.find(
       streak =>
         (streak.end.year === date.year && streak.end.month + 1 === date.month) ||

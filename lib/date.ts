@@ -1,6 +1,6 @@
 import { Temporal } from '@js-temporal/polyfill'
 
-export function getMediumDate(date: string | Temporal.PlainDate, locale: Temporal.LocalesArgument) {
+export function getMediumDate(date: string | Temporal.PlainDate | Temporal.Instant, locale: Temporal.LocalesArgument) {
   if (typeof date === 'string') {
     date = Temporal.PlainDate.from(date)
   }

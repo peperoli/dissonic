@@ -1,11 +1,11 @@
 import { Temporal } from '@js-temporal/polyfill'
 
-export function getRelativeTimeFormatOptions(date: string | Temporal.PlainDateTime) {
+export function getRelativeTimeFormatOptions(date: string | Temporal.Instant) {
   if (typeof date === 'string') {
-    date = Temporal.PlainDateTime.from(date)
+    date = Temporal.Instant.from(date)
   }
 
-  const currentDate = Temporal.Now.plainDateTimeISO()
+  const currentDate = Temporal.Now.instant()
   const diff = date.since(currentDate).total({ unit: 'millisecond' })
   const diffSeconds = diff / 1000
   const diffMinutes = diffSeconds / 60
@@ -31,7 +31,7 @@ export function getRelativeTimeFormatOptions(date: string | Temporal.PlainDateTi
 }
 
 export function getRelativeTime(
-  date: string | Temporal.PlainDateTime,
+  date: string | Temporal.Instant,
   locale: Intl.LocalesArgument
 ) {
   const formatOptions = getRelativeTimeFormatOptions(date)

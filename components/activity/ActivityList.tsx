@@ -47,8 +47,9 @@ export function ActivityList({
     }
 
     return items.reduce<DateGroup<TimeGroup<ActivityItemT>>[]>((acc, item) => {
-      const date = Temporal.PlainDate.from(item.created_at)
-      const time = Temporal.PlainTime.from(item.created_at)
+      const zonedCreatedAt = Temporal.Instant.from(item.created_at).toZonedDateTimeISO('UTC')
+      const date = zonedCreatedAt.toPlainDate()
+      const time = zonedCreatedAt.toPlainTime()
       const userId = item.user_id?.[0] ?? null
       const concertId = item.concert?.id ?? null
 

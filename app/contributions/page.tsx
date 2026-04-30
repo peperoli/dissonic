@@ -77,8 +77,9 @@ export default async function ContributionsPage(props: {
     }
 
     return items.reduce<DateGroup<TimeGroup<Tables<'contributions'>>>[]>((acc, item) => {
-      const date = Temporal.PlainDate.from(item.timestamp)
-      const time = Temporal.PlainTime.from(item.timestamp)
+      const zonedTimestamp = Temporal.Instant.from(item.timestamp).toZonedDateTimeISO('UTC')
+      const date = zonedTimestamp.toPlainDate()
+      const time = zonedTimestamp.toPlainTime()
       const userId = item.user_id?.[0] ?? null
       const resourceType = item.resource_type
       const resourceId = item.resource_id
