@@ -1,7 +1,6 @@
 import { Concert } from '@/types/types'
 import { createClient } from '@/utils/supabase/server'
 import { ConcertsPage } from '@/components/concerts/ConcertsPage'
-import { Temporal } from '@js-temporal/polyfill'
 
 async function fetchData() {
   const supabase = await createClient()

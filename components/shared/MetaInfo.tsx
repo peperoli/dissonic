@@ -1,5 +1,4 @@
 import { useContributionsCount } from '@/hooks/contributions/useContributionsCount'
-import { Intl, Temporal } from '@js-temporal/polyfill'
 import { InfoIcon } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'

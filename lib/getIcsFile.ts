@@ -2,7 +2,6 @@ import { Concert } from '@/types/types'
 import * as ics from 'ics'
 import { saveAs } from 'file-saver'
 import toast from 'react-hot-toast'
-import { Temporal } from '@js-temporal/polyfill'
 
 export function getIcsFile(concert: Concert) {
   const pathname = window.location.pathname

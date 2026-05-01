@@ -34,7 +34,6 @@ import { User } from '@supabase/supabase-js'
 import { saveLastQueryState, setViewPreference } from '@/actions/preferences'
 import { groupConcertsByMonth } from '@/lib/groupConcertsByMonth'
 import { ConcertsNav } from '../layout/ConcertsNav'
-import { Temporal } from '@js-temporal/polyfill'
 
 export function ConcertsPage({
   concerts: initialConcerts,

@@ -9,7 +9,6 @@ import { ContributionFetchOptions } from '@/types/types'
 import { createClient } from '@/utils/supabase/server'
 import { getLocale, getTranslations } from 'next-intl/server'
 import { redirect } from 'next/navigation'
-import { Temporal } from '@js-temporal/polyfill'
 
 async function fetchData({ searchParams }: { searchParams: ContributionFetchOptions }) {
   const supabase = await createClient()

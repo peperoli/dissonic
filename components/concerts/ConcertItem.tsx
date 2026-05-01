@@ -8,7 +8,6 @@ import { Tables } from '@/types/supabase'
 import { Fragment } from 'react'
 import { SpotifyArtist } from '@/types/types'
 import { ConcertDate } from './ConcertDate'
-import { Temporal } from '@js-temporal/polyfill'
 
 export function ConcertItem({
   concert,

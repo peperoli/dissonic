@@ -14,6 +14,7 @@ import { Toaster } from 'react-hot-toast'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import { content, theme } from '../tailwind.config'
 import { AlertCircleIcon, CheckCircleIcon } from 'lucide-react'
+import 'temporal-polyfill/global'
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('RootLayout')

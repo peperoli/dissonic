@@ -34,7 +34,6 @@ import { useRestoreConcert } from '@/hooks/concerts/useRestoreConcert'
 import { StatusBanner } from '../forms/StatusBanner'
 import { getIcsFile } from '@/lib/getIcsFile'
 import { ConcertMemories } from './ConcertMemories'
-import { Intl, Temporal } from '@js-temporal/polyfill'
 
 type ConcertPageProps = {
   initialConcert: Concert

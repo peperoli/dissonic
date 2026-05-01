@@ -8,7 +8,6 @@ import { useBandsSeen } from '@/hooks/bands/useBandsSeen'
 import { ConcertItem } from '../concerts/ConcertItem'
 import { Drawer, DrawerTitle, DrawerTrigger } from '../shared/Drawer'
 import { useTranslations } from 'next-intl'
-import { Temporal } from '@js-temporal/polyfill'
 
 function BandUserItem({ band, profile, count }: { band: Band; profile: Profile; count: number }) {
   const { data: bandsSeen } = useBandsSeen({ userId: profile.id, bandId: band.id, bandsSize: 5 })

@@ -1,4 +1,3 @@
-import { Intl, Temporal } from '@js-temporal/polyfill'
 import { useLocale, useTranslations } from 'next-intl'
 
 export const ConcertDate = ({

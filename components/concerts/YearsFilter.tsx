@@ -4,7 +4,6 @@ import { SpinnerIcon } from '../layout/SpinnerIcon'
 import { FilterButton } from './../FilterButton'
 import { RangeSliderWrapper } from './../RangeFilter'
 import { useTranslations } from 'next-intl'
-import { Temporal } from '@js-temporal/polyfill'
 
 type YearsRangeSliderProps = {
   selectedOptions: number[]

@@ -12,7 +12,6 @@ import { TruncatedList } from 'react-truncate-list'
 import { ConcertDate } from './ConcertDate'
 import { useQuery } from '@tanstack/react-query'
 import supabase from '@/utils/supabase/client'
-import { Temporal } from '@js-temporal/polyfill'
 
 interface ConcertCardProps {
   concert: Concert

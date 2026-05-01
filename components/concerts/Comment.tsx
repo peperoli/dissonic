@@ -15,7 +15,6 @@ import clsx from 'clsx'
 import { UserItem } from '../shared/UserItem'
 import { useLocale, useTranslations } from 'next-intl'
 import { useAddComment } from '@/hooks/concerts/useAddComment'
-import { Temporal } from '@js-temporal/polyfill'
 
 export function CommentItem({ comment }: { comment: Comment }) {
   const { data: session } = useSession()

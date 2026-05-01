@@ -1,8 +1,7 @@
-import { Intl, Temporal } from '@js-temporal/polyfill'
 
 export function getMediumDate(
   date: string | Temporal.PlainDate | Temporal.Instant,
-  locale: Temporal.LocalesArgument
+  locale: Intl.LocalesArgument
 ) {
   const formatter = new Intl.DateTimeFormat(locale, {
     weekday: 'short',
@@ -20,7 +19,7 @@ export function getMediumDate(
 
 export function getYearMonth(
   yearMonth: string | Temporal.PlainYearMonth,
-  locale: Temporal.LocalesArgument
+  locale: Intl.LocalesArgument
 ) {
   const formatter = new Intl.DateTimeFormat(locale, {
     year: 'numeric',
@@ -34,7 +33,7 @@ export function getYearMonth(
   return formatter.format(yearMonth.toPlainDate({ day: 1 }))
 }
 
-export function getFullMonth(month: number, locale: Temporal.LocalesArgument) {
+export function getFullMonth(month: number, locale: Intl.LocalesArgument) {
   const formatter = new Intl.DateTimeFormat(locale, { month: 'long' })
   
   return formatter.format(Temporal.PlainDate.from({ year: 1970, month, day: 1 }))

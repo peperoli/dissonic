@@ -13,7 +13,6 @@ import { Modal } from '../Modal'
 import { DialogTitle } from '../shared/Dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGoogle, faMicrosoft } from '@fortawesome/free-brands-svg-icons'
-import { Intl, Temporal } from '@js-temporal/polyfill'
 
 function IdentityItem({
   identity,

@@ -7,7 +7,6 @@ import { Tables } from '@/types/supabase'
 import { useLocale, useTranslations } from 'next-intl'
 import { useQuery } from '@tanstack/react-query'
 import supabase from '@/utils/supabase/client'
-import { Temporal } from '@js-temporal/polyfill'
 import { getYearMonth } from '@/lib/date'
 
 async function fetchBandsSeen(profileId?: string) {

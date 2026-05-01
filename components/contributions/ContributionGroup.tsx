@@ -1,6 +1,5 @@
 import { ContributionItem } from './ContributionItem'
 import { Tables } from '@/types/supabase'
-import { Temporal } from '@js-temporal/polyfill'
 
 export const ContributionGroup = ({
   timeGroup,

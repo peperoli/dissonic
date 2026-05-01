@@ -22,7 +22,6 @@ import { useSession } from '@/hooks/auth/useSession'
 import { Disclosure } from '../shared/Disclosure'
 import clsx from 'clsx'
 import { RadioButton } from '../forms/RadioGroup'
-import { Temporal } from '@js-temporal/polyfill'
 import { isValidDate } from '@/lib/date'
 
 type FormProps = {

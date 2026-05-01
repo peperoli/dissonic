@@ -6,7 +6,6 @@ import { Tables } from '@/types/supabase'
 import { createClient } from '@/utils/supabase/server'
 import { InfoIcon } from 'lucide-react'
 import { getLocale, getTranslations } from 'next-intl/server'
-import { Temporal } from '@js-temporal/polyfill'
 
 async function fetchData({
   username,

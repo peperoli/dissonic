@@ -5,7 +5,6 @@ import { getUniqueObjects } from '@/lib/getUniqueObjects'
 import { useLocale, useTranslations } from 'next-intl'
 import supabase from '@/utils/supabase/client'
 import { useQuery } from '@tanstack/react-query'
-import { Temporal } from '@js-temporal/polyfill'
 
 async function fetchBandsSeen(profileId?: string) {
   let countQuery = supabase.from('j_bands_seen').select('*', { count: 'estimated', head: true })
