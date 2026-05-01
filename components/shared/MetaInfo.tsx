@@ -1,5 +1,5 @@
 import { useContributionsCount } from '@/hooks/contributions/useContributionsCount'
-import { Temporal } from '@js-temporal/polyfill'
+import { Intl, Temporal } from '@js-temporal/polyfill'
 import { InfoIcon } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
@@ -17,8 +17,9 @@ export const MetaInfo = ({ createdAt, creator, resourceType, resourceId }: MetaI
   const { data: contributionsCount } = useContributionsCount({ resourceType, resourceId })
   const t = useTranslations('MetaInfo')
   const locale = useLocale()
+  const formatter = new Intl.DateTimeFormat(locale, { dateStyle: 'short' })
   const createdAtDate = createdAt
-    ? Temporal.Instant.from(createdAt).toLocaleString(locale, { dateStyle: 'short' })
+    ? formatter.format(Temporal.Instant.from(createdAt))
     : null
 
   if (!createdAt && !creator && !contributionsCount) {

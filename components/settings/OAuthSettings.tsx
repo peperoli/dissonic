@@ -13,7 +13,7 @@ import { Modal } from '../Modal'
 import { DialogTitle } from '../shared/Dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGoogle, faMicrosoft } from '@fortawesome/free-brands-svg-icons'
-import { Temporal } from '@js-temporal/polyfill'
+import { Intl, Temporal } from '@js-temporal/polyfill'
 
 function IdentityItem({
   identity,
@@ -39,13 +39,14 @@ function IdentityItem({
   })
   const t = useTranslations('OAuthSettings')
   const locale = useLocale()
+  const formatter = new Intl.DateTimeFormat(locale, {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  })
   const linkedAt = identity.created_at ? (
     <p className="text-sm text-slate-300">
       {t('linkedAtDate', {
-        date: Temporal.Instant.from(identity.created_at).toLocaleString(locale, {
-          dateStyle: 'short',
-          timeStyle: 'short',
-        }),
+        date: formatter.format(Temporal.Instant.from(identity.created_at)),
       })}
     </p>
   ) : null

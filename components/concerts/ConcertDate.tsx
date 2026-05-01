@@ -1,4 +1,4 @@
-import { Temporal } from '@js-temporal/polyfill'
+import { Intl, Temporal } from '@js-temporal/polyfill'
 import { useLocale, useTranslations } from 'next-intl'
 
 export const ConcertDate = ({
@@ -16,24 +16,24 @@ export const ConcertDate = ({
     <p className="truncate text-sm">
       {dateEnd
         ? t('dateStartToDateEnd', {
-            dateStart: dateStart.toLocaleString(locale, {
+            dateStart: new Intl.DateTimeFormat(locale, {
               weekday: 'short',
               day: 'numeric',
               month: 'numeric',
-            }),
-            dateEnd: dateEnd.toLocaleString(locale, {
+            }).format(dateStart),
+            dateEnd: new Intl.DateTimeFormat(locale, {
               weekday: 'short',
               day: 'numeric',
               month: 'numeric',
               year: isCurrentYear ? undefined : 'numeric',
-            }),
+            }).format(dateEnd),
           })
-        : dateStart.toLocaleString(locale, {
+        : new Intl.DateTimeFormat(locale, {
             weekday: 'long',
             day: 'numeric',
             month: 'long',
             year: isCurrentYear ? undefined : 'numeric',
-          })}
+          }).format(dateStart)}
     </p>
   )
 }

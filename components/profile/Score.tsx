@@ -8,6 +8,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import { useQuery } from '@tanstack/react-query'
 import supabase from '@/utils/supabase/client'
 import { Temporal } from '@js-temporal/polyfill'
+import { getYearMonth } from '@/lib/date'
 
 async function fetchBandsSeen(profileId?: string) {
   let countQuery = supabase.from('j_bands_seen').select('*', { count: 'estimated', head: true })
@@ -88,11 +89,6 @@ export function Score({ profileId }: { profileId?: string }) {
   const concertsSeen = new Set(bandsSeen?.map(item => item.concert_id))
   const locationsSeen = new Set(bandsSeen?.map(item => item.concert.location_id))
   const streak = getLongestStreak(bandsSeen?.map(item => item.concert.date_start) ?? [])
-  const formatOptions: Intl.DateTimeFormatOptions = {
-    month: 'long',
-    year: 'numeric',
-    calendar: 'iso8601',
-  }
 
   if (bandsSeenStatus === 'pending') {
     return (
@@ -128,8 +124,8 @@ export function Score({ profileId }: { profileId?: string }) {
               content={
                 <>
                   {t('dToD', {
-                    startDate: streak.start.toLocaleString(locale, formatOptions),
-                    endDate: streak.end.toLocaleString(locale, formatOptions),
+                    startDate: getYearMonth(streak.start, locale),
+                    endDate: getYearMonth(streak.end, locale),
                   })}
                   <br />
                   {t('minOneConcertPerMonth')}

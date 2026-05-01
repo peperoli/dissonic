@@ -34,7 +34,7 @@ import { useRestoreConcert } from '@/hooks/concerts/useRestoreConcert'
 import { StatusBanner } from '../forms/StatusBanner'
 import { getIcsFile } from '@/lib/getIcsFile'
 import { ConcertMemories } from './ConcertMemories'
-import { Temporal } from '@js-temporal/polyfill'
+import { Intl, Temporal } from '@js-temporal/polyfill'
 
 type ConcertPageProps = {
   initialConcert: Concert
@@ -224,6 +224,16 @@ function ConcertDate({
 }) {
   const locale = useLocale()
   const isCurrentYear = date.year === Temporal.Now.plainDateISO().year
+  const formattedParts = new Intl.DateTimeFormat(locale, {
+    day: 'numeric',
+    month: 'short',
+  }).formatToParts(date)
+  const formattedDay = formattedParts
+    .filter(part => part.type !== 'month')
+    .map(part => part.value)
+    .join('')
+  const formattedMonth = formattedParts.find(part => part.type === 'month')?.value
+
   return (
     <div
       className={clsx(
@@ -241,16 +251,14 @@ function ConcertDate({
     >
       {isCurrentYear ? (
         <>
-          <span className="text-2xl font-bold leading-none">
-            {date.toLocaleString(locale, { day: 'numeric' })}
-          </span>
-          <span className="text-sm">{date.toLocaleString(locale, { month: 'short' })}</span>
+          <span className="text-2xl font-bold leading-none">{formattedDay}</span>
+          <span className="text-sm">{formattedMonth}</span>
         </>
       ) : (
         <>
           <div className="flex gap-1">
-            <span className="font-bold">{date.toLocaleString(locale, { day: 'numeric' })}</span>
-            <span>{date.toLocaleString(locale, { month: 'short' })}</span>
+            <span className="font-bold">{formattedDay}</span>
+            <span>{formattedMonth}</span>
           </div>
           <span className="text-sm">{date.year}</span>
         </>
