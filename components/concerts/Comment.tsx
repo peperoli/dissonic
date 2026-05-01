@@ -20,15 +20,14 @@ export function CommentItem({ comment }: { comment: Comment }) {
   const { data: session } = useSession()
   const { data: profile } = useProfile(comment.user_id)
   const [isEditing, setIsEditing] = useState(false)
-  const [modal, setModal] = useModal()
-  const [commentId, setCommentId] = useQueryState(
+  const [, setModal] = useModal()
+  const [, setCommentId] = useQueryState(
     'commentId',
     parseAsInteger.withOptions({ history: 'push' })
   )
   const [parentId, setParentId] = useState<number | null>(null)
   const t = useTranslations('Comment')
   const locale = useLocale()
-  const createdAt = new Date(comment.created_at)
   const isOwnComment = session?.user.id === comment.user_id
 
   return (
@@ -53,7 +52,7 @@ export function CommentItem({ comment }: { comment: Comment }) {
           {profile && <UserItem user={profile} size="sm" />}
           <span className="mr-2 text-slate-300">&bull;</span>
           <span className="text-slate-300">
-            {getRelativeTime(comment.edited_at || createdAt, locale)}
+            {getRelativeTime(comment.edited_at || comment.created_at, locale)}
             {comment.edited_at && ` ${t('edited')}`}
           </span>
         </div>
@@ -153,7 +152,7 @@ function EditCommentForm({
     mutate({
       id: comment.id,
       content: formData.new_content,
-      edited_at: new Date().toISOString(),
+      edited_at: Temporal.Now.instant().toString(),
     })
   }
 

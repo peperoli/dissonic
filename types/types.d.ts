@@ -10,7 +10,7 @@ export type ExtendedRes<TData> = {
 export type ConcertFetchOptions = {
   bands?: number[] | null
   locations?: number[] | null
-  dateRange?: [Date | null, Date | null] | null
+  dateRange?: [Temporal.PlainDate | null, Temporal.PlainDate | null] | null
   years?: number[] | null
   festivalRoots?: number[] | null
   bandsSeenUsers?: string[] | null

@@ -66,9 +66,9 @@ export default async function ContributionsPage(props: {
   const groupedContributions = groupByDateAndTime(contributions)
 
   function groupByDateAndTime(items: Tables<'contributions'>[]) {
-    type DateGroup<T> = { date: string; items: T[] }
+    type DateGroup<T> = { date: Temporal.PlainDate; items: T[] }
     type TimeGroup<T> = {
-      time: number
+      time: Temporal.PlainTime
       userId: string | null
       resourceType: string
       resourceId: number | null
@@ -76,13 +76,14 @@ export default async function ContributionsPage(props: {
     }
 
     return items.reduce<DateGroup<TimeGroup<Tables<'contributions'>>>[]>((acc, item) => {
-      const date = getMediumDate(item.timestamp, locale)
-      const time = new Date(item.timestamp).getTime()
+      const zonedTimestamp = Temporal.Instant.from(item.timestamp).toZonedDateTimeISO('UTC')
+      const date = zonedTimestamp.toPlainDate()
+      const time = zonedTimestamp.toPlainTime()
       const userId = item.user_id?.[0] ?? null
       const resourceType = item.resource_type
       const resourceId = item.resource_id
 
-      let dateGroup = acc.find(group => group.date === date)
+      let dateGroup = acc.find(group => group.date.equals(date))
       if (!dateGroup) {
         dateGroup = { date, items: [] }
         acc.push(dateGroup)
@@ -90,7 +91,7 @@ export default async function ContributionsPage(props: {
 
       let timeGroup = dateGroup.items.find(
         group =>
-          group.time === time &&
+          group.time.equals(time) &&
           group.userId === userId &&
           group.resourceId === resourceId &&
           group.resourceType === resourceType
@@ -115,11 +116,11 @@ export default async function ContributionsPage(props: {
       {contributions.length === 0 && <p className="mb-4 text-slate-300">{t('noEntriesFound')}</p>}
       <div className="grid gap-6">
         {groupedContributions.map(dateGroup => (
-          <section key={dateGroup.date}>
-            <h2 className="section-headline">{dateGroup.date}</h2>
+          <section key={dateGroup.date.toString()}>
+            <h2 className="section-headline">{getMediumDate(dateGroup.date, locale)}</h2>
             <ul className="grid gap-2">
               {dateGroup.items.map(timeGroup => (
-                <ContributionGroup key={timeGroup.time} timeGroup={timeGroup} />
+                <ContributionGroup key={timeGroup.time.toString()} timeGroup={timeGroup} />
               ))}
             </ul>
           </section>

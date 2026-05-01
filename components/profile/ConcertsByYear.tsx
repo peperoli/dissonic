@@ -63,7 +63,7 @@ export const ConcertsByYear = ({ profileId }: { profileId?: string }) => {
   const start = Math.min(...concerts?.map(concert => parseInt(concert.date_start.slice(0, 4))))
   const end = Math.max(...concerts?.map(concert => parseInt(concert.date_start.slice(0, 4))))
   const years = Array.from({ length: end - start + 1 }, (_, i) => start + i)
-  const months = Array.from({ length: 12 }, (_, i) => 0 + i)
+  const months = Array.from({ length: 12 }, (_, i) => i + 1)
   const yearItems = [
     { id: -1, name: t('allTime') },
     ...[...years].reverse().map(year => ({
@@ -83,21 +83,18 @@ export const ConcertsByYear = ({ profileId }: { profileId?: string }) => {
   }))
   const concertsPerMonth = months.map(month => ({
     name: getFullMonth(month, locale),
-    value: concerts.filter(
-      concert =>
-        new Date(concert.date_start).getFullYear() === selectedYear &&
-        new Date(concert.date_start).getMonth() === month
-    ).length,
+    value: concerts.filter(concert => {
+      const concertDate = Temporal.PlainDate.from(concert.date_start)
+      return concertDate.year === selectedYear && concertDate.month === month
+    }).length,
   }))
   const bandsPerMonth = months.map(month => ({
     name: getFullMonth(month, locale),
     value:
-      bandsSeen.filter(
-        band =>
-          band.concert &&
-          new Date(band.concert.date_start).getFullYear() === selectedYear &&
-          new Date(band.concert.date_start).getMonth() === month
-      ).length || 0,
+      bandsSeen.filter(band => {
+        const concertDate = band.concert ? Temporal.PlainDate.from(band.concert?.date_start) : null
+        return concertDate?.year === selectedYear && concertDate?.month === month
+      }).length || 0,
   }))
 
   return (

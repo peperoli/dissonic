@@ -13,7 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     {
       url: baseUrl,
-      lastModified: new Date(),
+      lastModified: Temporal.Now.instant().toString(),
       changeFrequency: 'yearly',
       priority: 1,
     },
@@ -21,7 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       concert =>
         ({
           url: `${baseUrl}/concerts/${concert.id}`,
-          lastModified: new Date(),
+          lastModified: Temporal.Now.instant().toString(),
           changeFrequency: 'weekly',
           priority: 0.7,
         }) as const
@@ -30,7 +30,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       band =>
         ({
           url: `${baseUrl}/bands/${band.id}`,
-          lastModified: new Date(),
+          lastModified: Temporal.Now.instant().toString(),
           changeFrequency: 'weekly',
           priority: 0.7,
         }) as const
@@ -39,7 +39,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       location =>
         ({
           url: `${baseUrl}/locations/${location.id}`,
-          lastModified: new Date(),
+          lastModified: Temporal.Now.instant().toString(),
           changeFrequency: 'weekly',
           priority: 0.7,
         }) as const
@@ -48,7 +48,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       profile =>
         ({
           url: `${baseUrl}/profiles/${encodeURIComponent(profile.username)}`,
-          lastModified: new Date(),
+          lastModified: Temporal.Now.instant().toString(),
           changeFrequency: 'weekly',
           priority: 0.7,
         }) as const

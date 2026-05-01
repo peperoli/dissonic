@@ -22,6 +22,7 @@ import { useSession } from '@/hooks/auth/useSession'
 import { Disclosure } from '../shared/Disclosure'
 import clsx from 'clsx'
 import { RadioButton } from '../forms/RadioGroup'
+import { isValidDate } from '@/lib/date'
 
 type FormProps = {
   isNew?: boolean
@@ -31,7 +32,7 @@ type FormProps = {
 export const Form = ({ close, isNew }: FormProps) => {
   const { id: concertId } = useParams<{ id?: string }>()
   const { data: concert } = useConcert(concertId ? parseInt(concertId) : null)
-  const today = new Date().toISOString().split('T')[0]
+  const today = Temporal.Now.plainDateISO().toString()
   const {
     register,
     control,
@@ -47,15 +48,17 @@ export const Form = ({ close, isNew }: FormProps) => {
   const editConcert = useEditConcert()
   const { status } = isNew ? addConcert : editConcert
   const [isOpen, setIsOpen] = useState(false)
-  const dateStart = watch('date_start')
+  const dateStart = isValidDate(watch('date_start'))
+    ? Temporal.PlainDate.from(watch('date_start'))
+    : null
+  const isFutureOrToday =
+    !!dateStart && Temporal.PlainDate.compare(dateStart, Temporal.Now.plainDateISO()) >= 0
   const bands = watch('bands')
   const locationId = watch('location_id')
   const [similarConcertsSize, setSimilarConcertsSize] = useState(3)
   const { data: similarConcerts } = useConcerts({
     enabled: !!(dateStart && bands?.length && locationId),
-    years: dateStart
-      ? [new Date(dateStart).getFullYear(), new Date(dateStart).getFullYear()]
-      : null,
+    years: dateStart ? [dateStart.year, dateStart.year] : null,
     bands: bands?.map(item => item.id),
     locations: locationId ? [locationId] : null,
     size: similarConcertsSize,
@@ -251,7 +254,7 @@ export const Form = ({ close, isNew }: FormProps) => {
             setSimilarItemsSize={setSimilarConcertsSize}
           />
         )}
-        {new Date(watch('date_start')).setHours(0) >= new Date().setHours(0, 0, 0, 0) ? (
+        {isFutureOrToday ? (
           <FutureConcertFields />
         ) : (
           <Disclosure.Root>

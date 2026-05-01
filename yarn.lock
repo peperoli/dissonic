@@ -5349,6 +5349,7 @@ __metadata:
     react-truncate-list: "npm:^1.0.3"
     supabase: "npm:2.24.3"
     tailwindcss: "npm:^3.4.17"
+    temporal-polyfill: "npm:^0.3.2"
     tus-js-client: "npm:^4.3.1"
     typescript: "npm:^6.0.3"
     zod: "npm:^3.25.56"
@@ -11350,6 +11351,22 @@ __metadata:
   version: 2.0.0
   resolution: "temp-dir@npm:2.0.0"
   checksum: 10c0/b1df969e3f3f7903f3426861887ed76ba3b495f63f6d0c8e1ce22588679d9384d336df6064210fda14e640ed422e2a17d5c40d901f60e161c99482d723f4d309
+  languageName: node
+  linkType: hard
+
+"temporal-polyfill@npm:^0.3.2":
+  version: 0.3.2
+  resolution: "temporal-polyfill@npm:0.3.2"
+  dependencies:
+    temporal-spec: "npm:0.3.1"
+  checksum: 10c0/762795c94e1b6cb0574541d0b09f805ff23b0a2c9d0356ab3fc0205e390a3bce73e047de2fdc54c7d149d6e6d781aa1d95aa62afa5de4c83cb79c129b0e502da
+  languageName: node
+  linkType: hard
+
+"temporal-spec@npm:0.3.1":
+  version: 0.3.1
+  resolution: "temporal-spec@npm:0.3.1"
+  checksum: 10c0/e38eae391bd59ae675f1925a65c8ef302933cf9ce98efedaf2e69269e8c36f2b5d486cd3084367f04a6c1ea0289b925690c0df20a73f0c4629b531775924e850
   languageName: node
   linkType: hard
 

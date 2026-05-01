@@ -70,9 +70,7 @@ export function ConcertsPage({
   })
   const [, setModal] = useQueryState('modal', parseAsStringLiteral(modalPaths))
   const [, startTransition] = useTransition()
-  const today = new Date(new Date().setHours(0, 0, 0, 0))
-  const tomorrow = new Date(today)
-  tomorrow.setDate(tomorrow.getDate() + 1)
+  const tomorrow = Temporal.Now.plainDateISO().add({ days: 1 })
 
   function getView() {
     if (!currentUser) return

@@ -78,7 +78,7 @@ export async function GET(request: Request) {
         id: user.id,
         username: user.user_metadata.full_name
           ? encodeURIComponent(slugUsername(user.user_metadata.full_name))
-          : new Date().getTime().toString(),
+          : Temporal.Instant.from(Temporal.Now.instant()).epochMilliseconds.toString(),
       })
 
       if (insertProfileError) {

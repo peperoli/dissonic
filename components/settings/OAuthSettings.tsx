@@ -38,10 +38,14 @@ function IdentityItem({
   })
   const t = useTranslations('OAuthSettings')
   const locale = useLocale()
+  const formatter = new Intl.DateTimeFormat(locale, {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  })
   const linkedAt = identity.created_at ? (
     <p className="text-sm text-slate-300">
       {t('linkedAtDate', {
-        date: new Date(identity.created_at).toLocaleDateString(locale),
+        date: formatter.format(Temporal.Instant.from(identity.created_at)),
       })}
     </p>
   ) : null

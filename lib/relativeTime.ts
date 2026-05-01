@@ -1,10 +1,11 @@
-export function getRelativeTimeFormatOptions(date: string | number | Date) {
-  if (typeof date === 'string' || typeof date === 'number') {
-    date = new Date(date)
+
+export function getRelativeTimeFormatOptions(date: string | Temporal.Instant) {
+  if (typeof date === 'string') {
+    date = Temporal.Instant.from(date)
   }
 
-  const currentDate = new Date()
-  const diff = date.getTime() - currentDate.getTime()
+  const currentDate = Temporal.Now.instant()
+  const diff = date.since(currentDate).total({ unit: 'millisecond' })
   const diffSeconds = diff / 1000
   const diffMinutes = diffSeconds / 60
   const diffHours = diffMinutes / 60
@@ -28,7 +29,10 @@ export function getRelativeTimeFormatOptions(date: string | number | Date) {
   return formatOptions
 }
 
-export function getRelativeTime(date: string | number | Date, locale: Intl.LocalesArgument) {
+export function getRelativeTime(
+  date: string | Temporal.Instant,
+  locale: Intl.LocalesArgument
+) {
   const formatOptions = getRelativeTimeFormatOptions(date)
   const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto', style: 'narrow' })
 

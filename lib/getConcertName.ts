@@ -9,7 +9,7 @@ export function getConcertName(concert: Concert | undefined, locale: string) {
   const date = getMediumDate(concert.date_start, locale)
 
   if (concert.festival_root) {
-    return `${concert.festival_root.name} ${new Date(concert.date_start).getFullYear()}`
+    return `${concert.festival_root.name} ${Temporal.PlainDate.from(concert.date_start).year}`
   } else if (concert.name) {
     return `${concert.name} | ${date}`
   } else {

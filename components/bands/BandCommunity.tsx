@@ -34,7 +34,7 @@ function BandUserItem({ band, profile, count }: { band: Band; profile: Profile; 
       <div className="relative -mb-6 overflow-y-auto pb-6 pt-4 md:pb-8">
         <ul className="grid">
           {concerts
-            ?.sort((a, b) => new Date(b.date_start).getTime() - new Date(a.date_start).getTime())
+            ?.sort((a, b) => Temporal.PlainDate.compare(b.date_start, a.date_start))
             .map(item => (
               <li key={item.id}>
                 <ConcertItem concert={item} />

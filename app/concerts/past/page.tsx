@@ -13,7 +13,7 @@ async function fetchData({ userView }: { userView: string }) {
   let { data: concertIds, error: concertIdsError } = await supabase
     .from('concerts_full')
     .select('id, date_start, bands_seen:j_bands_seen(user_id)')
-    .lte('date_start', new Date().toISOString())
+    .lte('date_start', Temporal.Now.plainDateISO().toString())
 
   if (!concertIds) {
     throw concertIdsError

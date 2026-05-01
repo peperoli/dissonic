@@ -16,6 +16,10 @@ export const MetaInfo = ({ createdAt, creator, resourceType, resourceId }: MetaI
   const { data: contributionsCount } = useContributionsCount({ resourceType, resourceId })
   const t = useTranslations('MetaInfo')
   const locale = useLocale()
+  const formatter = new Intl.DateTimeFormat(locale, { dateStyle: 'short' })
+  const createdAtDate = createdAt
+    ? formatter.format(Temporal.Instant.from(createdAt))
+    : null
 
   if (!createdAt && !creator && !contributionsCount) {
     return null
@@ -27,7 +31,7 @@ export const MetaInfo = ({ createdAt, creator, resourceType, resourceId }: MetaI
       {createdAt && creator && (
         <p>
           {t.rich('createdAtDateByUser', {
-            date: new Date(createdAt).toLocaleDateString(locale),
+            date: createdAtDate,
             link: chunks => (
               <Link href={`/users/${creator.username}`} className="text-white hover:underline">
                 {chunks}
@@ -37,9 +41,7 @@ export const MetaInfo = ({ createdAt, creator, resourceType, resourceId }: MetaI
           })}
         </p>
       )}
-      {createdAt && !creator && (
-        <p>{t('createdAtDate', { date: new Date(createdAt).toLocaleDateString(locale) })}</p>
-      )}
+      {createdAt && !creator && <p>{t('createdAtDate', { date: createdAtDate })}</p>}
       {!!contributionsCount && (
         <Link
           href={`/contributions?resourceType=${resourceType}&resourceId=${resourceId}`}

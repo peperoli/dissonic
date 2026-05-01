@@ -1,32 +1,38 @@
 import { useLocale, useTranslations } from 'next-intl'
 
-export const ConcertDate = ({ dateStart, dateEnd }: { dateStart: Date; dateEnd?: Date | null }) => {
+export const ConcertDate = ({
+  dateStart,
+  dateEnd,
+}: {
+  dateStart: Temporal.PlainDate
+  dateEnd?: Temporal.PlainDate | null
+}) => {
   const t = useTranslations('ConcertDate')
   const locale = useLocale()
-  const isCurrentYear = dateStart.getFullYear() === new Date().getFullYear()
+  const isCurrentYear = dateStart.year === Temporal.Now.plainDateISO().year
 
   return (
     <p className="truncate text-sm">
       {dateEnd
         ? t('dateStartToDateEnd', {
-            dateStart: dateStart.toLocaleDateString(locale, {
+            dateStart: new Intl.DateTimeFormat(locale, {
               weekday: 'short',
               day: 'numeric',
               month: 'numeric',
-            }),
-            dateEnd: dateEnd.toLocaleDateString(locale, {
+            }).format(dateStart),
+            dateEnd: new Intl.DateTimeFormat(locale, {
               weekday: 'short',
               day: 'numeric',
               month: 'numeric',
               year: isCurrentYear ? undefined : 'numeric',
-            }),
+            }).format(dateEnd),
           })
-        : dateStart.toLocaleDateString(locale, {
+        : new Intl.DateTimeFormat(locale, {
             weekday: 'long',
             day: 'numeric',
             month: 'long',
             year: isCurrentYear ? undefined : 'numeric',
-          })}
+          }).format(dateStart)}
     </p>
   )
 }

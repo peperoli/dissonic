@@ -563,7 +563,14 @@
     "bandsSeenMultipleTimes": "Mehrmals gesehene Bands"
   },
   "ConcertsByWeekday": {
-    "concertsByWeekday": "Konzerte pro Wochentag"
+    "concertsByWeekday": "Konzerte pro Wochentag",
+    "monday": "Montag",
+    "tuesday": "Dienstag",
+    "wednesday": "Mittwoch",
+    "thursday": "Donnerstag",
+    "friday": "Freitag",
+    "saturday": "Samstag",
+    "sunday": "Sonntag"
   },
   "ConcertsByYear": {
     "unitPerTimeUnit": "{unit, select, concerts {Konzerte} other {Bands}} pro {timeUnit, select, year {Jahr} other {Monat}}",

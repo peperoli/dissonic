@@ -7,8 +7,7 @@ import { Tables } from '@/types/supabase'
 import { useLocale, useTranslations } from 'next-intl'
 import { useQuery } from '@tanstack/react-query'
 import supabase from '@/utils/supabase/client'
-
-const MONTH_MS = 1000 * 60 * 60 * 24 * 30.44
+import { getYearMonth } from '@/lib/date'
 
 async function fetchBandsSeen(profileId?: string) {
   let countQuery = supabase.from('j_bands_seen').select('*', { count: 'estimated', head: true })
@@ -44,19 +43,19 @@ async function fetchBandsSeen(profileId?: string) {
   return responses.flatMap(({ data }) => data).filter(bandSeen => bandSeen !== null)
 }
 
-function getLongestStreak(concerts: Tables<'concerts'>['date_start'][]) {
-  const sortedConcerts = concerts.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
-  const streaks: { start: Date; end: Date }[] = []
-  for (let i = 0; i < sortedConcerts.length; i++) {
-    const date = new Date(sortedConcerts[i])
+function getLongestStreak(concertDates: Tables<'concerts'>['date_start'][]) {
+  const sortedConcertDates = Array.from(
+    new Set(concertDates.map(date => Temporal.PlainYearMonth.from(date).toString()))
+  ).sort((a, b) => Temporal.PlainYearMonth.compare(a, b))
+  const streaks: { start: Temporal.PlainYearMonth; end: Temporal.PlainYearMonth }[] = []
+  for (let i = 0; i < sortedConcertDates.length; i++) {
+    const date = Temporal.PlainYearMonth.from(sortedConcertDates[i])
     const matchingStreak = streaks.find(
       streak =>
-        (streak.end.getFullYear() === date.getFullYear() &&
-          streak.end.getMonth() + 1 === date.getMonth()) ||
-        (streak.end.getFullYear() + 1 === date.getFullYear() &&
-          streak.end.getMonth() === 11 &&
-          date.getMonth() === 0)
+        (streak.end.year === date.year && streak.end.month + 1 === date.month) ||
+        (streak.end.year + 1 === date.year && streak.end.month === 12 && date.month === 1)
     )
+
     if (matchingStreak) {
       matchingStreak.end = date
     } else {
@@ -67,11 +66,15 @@ function getLongestStreak(concerts: Tables<'concerts'>['date_start'][]) {
     }
   }
 
-  return streaks.length > 0
-    ? streaks
-        .map(streak => ({ ...streak, diff: streak.end.getTime() - streak.start.getTime() }))
-        .sort((a, b) => b.diff - a.diff)[0]
-    : null
+  return streaks
+    .map(streak => ({
+      ...streak,
+      diff: streak.end
+        .since(streak.start)
+        .total({ unit: 'months', relativeTo: streak.start.toString() + '-01' }),
+    }))
+    .sort((a, b) => b.diff - a.diff)
+    .at(0)
 }
 
 export function Score({ profileId }: { profileId?: string }) {
@@ -83,10 +86,8 @@ export function Score({ profileId }: { profileId?: string }) {
   const locale = useLocale()
   const uniqueBandsSeen = new Set(bandsSeen?.map(item => item.band_id))
   const concertsSeen = new Set(bandsSeen?.map(item => item.concert_id))
-  const locationsSeen = new Set(bandsSeen?.map(item => item.concert?.location_id))
-  const streak = getLongestStreak(
-    Array.from(new Set(bandsSeen?.map(item => item.concert?.date_start ?? '')))
-  )
+  const locationsSeen = new Set(bandsSeen?.map(item => item.concert.location_id))
+  const streak = getLongestStreak(bandsSeen?.map(item => item.concert.date_start) ?? [])
 
   if (bandsSeenStatus === 'pending') {
     return (
@@ -115,23 +116,15 @@ export function Score({ profileId }: { profileId?: string }) {
       </div>
       {streak && (
         <div className="rounded-lg bg-radial-gradient from-slate-500/50 px-2 py-6 text-center">
-          <div className="text-[1.75rem] font-bold leading-none">
-            {Math.ceil(streak.diff / MONTH_MS + 1)}
-          </div>
+          <div className="text-[1.75rem] font-bold leading-none">{Math.ceil(streak.diff) + 1}</div>
           <div className="flex justify-center gap-1">
             <span className="truncate">{t('longestStreak')}</span>
             <Tooltip
               content={
                 <>
                   {t('dToD', {
-                    startDate: streak.start.toLocaleDateString(locale, {
-                      month: 'long',
-                      year: 'numeric',
-                    }),
-                    endDate: streak.end.toLocaleDateString(locale, {
-                      month: 'long',
-                      year: 'numeric',
-                    }),
+                    startDate: getYearMonth(streak.start, locale),
+                    endDate: getYearMonth(streak.end, locale),
                   })}
                   <br />
                   {t('minOneConcertPerMonth')}

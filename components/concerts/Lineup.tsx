@@ -18,7 +18,8 @@ export function Lineup({ concert }: { concert: Concert }) {
   const pathname = usePathname()
   const t = useTranslations('Lineup')
   const hasBandsSeen = bandsSeen && bandsSeen.length > 0
-  const isFutureConcert = new Date(concert.date_start) > new Date()
+  const isFutureConcert =
+    Temporal.PlainDate.compare(concert.date_start, Temporal.Now.plainDateISO()) === 1
   const [_, setModal] = useModal()
 
   return (

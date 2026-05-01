@@ -4,7 +4,7 @@ import { Tables } from '@/types/supabase'
 export const ContributionGroup = ({
   timeGroup,
 }: {
-  timeGroup: { time: number; userId: string | null; items: Tables<'contributions'>[] }
+  timeGroup: { time: Temporal.PlainTime; userId: string | null; items: Tables<'contributions'>[] }
 }) => {
   const bandIds = timeGroup.items
     .filter(item => item.resource_type === 'j_concert_bands')

@@ -46,7 +46,7 @@ export const InviteItem = ({ inviteData, type }: InviteItemType) => {
     try {
       const { error } = await supabase
         .from('friends')
-        .update({ pending: false, accepted_at: new Date().toISOString() })
+        .update({ pending: false, accepted_at: Temporal.Now.instant().toString() })
         .eq('sender_id', invite.sender_id)
         .eq('receiver_id', invite.receiver_id)
 
