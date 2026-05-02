@@ -7,20 +7,21 @@ function sanitizeNext(nextParam: string | null): string {
 }
 
 export async function GET(request: Request) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
   const supabase = await createClient()
-  const { searchParams, origin } = new URL(request.url)
+  const { searchParams } = new URL(request.url)
   const provider = searchParams.get('provider')
   const next = sanitizeNext(searchParams.get('next'))
 
   if (provider !== 'azure' && provider !== 'google') {
     return NextResponse.redirect(
-      `${origin}/api/auth/callback-error?${new URLSearchParams({
+      `${baseUrl}/api/auth/callback-error?${new URLSearchParams({
         error: 'Unsupported provider',
       }).toString()}`
     )
   }
 
-  const callbackUrl = new URL('/api/auth/callback', origin)
+  const callbackUrl = new URL('/api/auth/callback', baseUrl)
   callbackUrl.searchParams.set('next', next)
 
   const { data, error } = await supabase.auth.signInWithOAuth({
@@ -34,7 +35,7 @@ export async function GET(request: Request) {
   if (error) {
     console.error(error)
     return NextResponse.redirect(
-      `${origin}/api/auth/callback-error?${new URLSearchParams({
+      `${baseUrl}/api/auth/callback-error?${new URLSearchParams({
         error: 'Failed to initiate OAuth sign-in.',
       }).toString()}`
     )
@@ -42,7 +43,7 @@ export async function GET(request: Request) {
 
   if (!data.url) {
     return NextResponse.redirect(
-      `${origin}/api/auth/callback-error?${new URLSearchParams({
+      `${baseUrl}/api/auth/callback-error?${new URLSearchParams({
         error: 'Failed to initiate OAuth sign-in.',
       }).toString()}`
     )

@@ -17,7 +17,8 @@ function slugUsername(input: string): string {
 }
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url)
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+  const { searchParams } = new URL(request.url)
   const code = searchParams.get('code')
   const next = sanitizeNext(searchParams.get('next'))
   const error = searchParams.get('error')
@@ -25,7 +26,7 @@ export async function GET(request: Request) {
 
   if (error) {
     return NextResponse.redirect(
-      `${origin}/api/auth/callback-error?${new URLSearchParams({
+      `${baseUrl}/api/auth/callback-error?${new URLSearchParams({
         error,
         error_description: errorDescription ?? '',
       }).toString()}`
@@ -34,7 +35,7 @@ export async function GET(request: Request) {
 
   if (!code) {
     return NextResponse.redirect(
-      `${origin}/api/auth/callback-error?${new URLSearchParams({
+      `${baseUrl}/api/auth/callback-error?${new URLSearchParams({
         error: 'No code provided in auth callback.',
       }).toString()}`
     )
@@ -50,7 +51,7 @@ export async function GET(request: Request) {
   if (sessionError) {
     console.error(sessionError)
     return NextResponse.redirect(
-      `${origin}/api/auth/callback-error?${new URLSearchParams({
+      `${baseUrl}/api/auth/callback-error?${new URLSearchParams({
         error: 'Failed to exchange code for session.',
       }).toString()}`
     )
@@ -66,7 +67,7 @@ export async function GET(request: Request) {
     if (profileError) {
       console.error(profileError)
       return NextResponse.redirect(
-        `${origin}/api/auth/callback-error?${new URLSearchParams({
+        `${baseUrl}/api/auth/callback-error?${new URLSearchParams({
           error: 'Failed to lookup user profile.',
         }).toString()}`
       )
@@ -84,7 +85,7 @@ export async function GET(request: Request) {
       if (insertProfileError) {
         console.error(insertProfileError)
         return NextResponse.redirect(
-          `${origin}/api/auth/callback-error?${new URLSearchParams({
+          `${baseUrl}/api/auth/callback-error?${new URLSearchParams({
             error: 'Failed to create user profile.',
           }).toString()}`
         )
@@ -97,10 +98,10 @@ export async function GET(request: Request) {
 
   if (isDevEnv) {
     // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
-    return NextResponse.redirect(`${origin}${next}`)
+    return NextResponse.redirect(`${baseUrl}${next}`)
   } else if (forwardedHost) {
     return NextResponse.redirect(`https://${forwardedHost}${next}`)
   } else {
-    return NextResponse.redirect(`${origin}${next}`)
+    return NextResponse.redirect(`${baseUrl}${next}`)
   }
 }
