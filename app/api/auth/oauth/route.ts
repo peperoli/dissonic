@@ -22,6 +22,7 @@ export async function GET(request: Request) {
 
   const callbackUrl = new URL('/api/auth/callback', origin)
   callbackUrl.searchParams.set('next', next)
+  console.log('Callback URL:', callbackUrl.toString())
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,

@@ -23,6 +23,8 @@ export async function GET(request: Request) {
   const error = searchParams.get('error')
   const errorDescription = searchParams.get('error_description')
 
+  console.log('Auth callback received with code:', code, 'error:', error, 'error_description:', errorDescription)
+
   if (error) {
     return NextResponse.redirect(
       `${origin}/api/auth/callback-error?${new URLSearchParams({
