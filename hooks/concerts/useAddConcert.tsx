@@ -44,7 +44,7 @@ const addConcert = async (concert: AddConcert) => {
 }
 
 export const useAddConcert = () => {
-  const [_, setModal] = useModal()
+  const [, setModal] = useModal()
   const queryClient = useQueryClient()
   const t = useTranslations('useAddConcert')
 

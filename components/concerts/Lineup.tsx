@@ -20,7 +20,7 @@ export function Lineup({ concert }: { concert: Concert }) {
   const hasBandsSeen = bandsSeen && bandsSeen.length > 0
   const isFutureConcert =
     Temporal.PlainDate.compare(concert.date_start, Temporal.Now.plainDateISO()) === 1
-  const [_, setModal] = useModal()
+  const [, setModal] = useModal()
 
   return (
     <section className="rounded-lg bg-slate-800 p-4 md:p-6">

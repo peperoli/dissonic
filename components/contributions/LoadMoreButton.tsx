@@ -15,7 +15,7 @@ export function LoadMoreButton({
   isLoading?: boolean
   shallow?: UseQueryStateOptions<number>['shallow']
 }) {
-  const [_, setSize] = useSize(shallow !== undefined ? { shallow } : undefined)
+  const [, setSize] = useSize(shallow !== undefined ? { shallow } : undefined)
   const t = useTranslations('LoadMoreButton')
   return (
     <div className="flex justify-center">

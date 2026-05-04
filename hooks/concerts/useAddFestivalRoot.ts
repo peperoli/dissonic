@@ -15,7 +15,7 @@ const addFestivalRoot = async (formData: TablesInsert<'festival_roots'>) => {
 
 export const useAddFestivalRoot = () => {
   const queryClient = useQueryClient()
-  const [_, setModal] = useModal()
+  const [, setModal] = useModal()
   const t = useTranslations('useAddFestivalRoot')
 
   return useMutation({

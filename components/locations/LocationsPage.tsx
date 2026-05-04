@@ -2,7 +2,6 @@
 
 import { PlusIcon } from 'lucide-react'
 import { Table } from '../Table'
-import { TableRow } from '../TableRow'
 import { useEffect, useState } from 'react'
 import { SearchField } from '../forms/SearchField'
 import { Button } from '../Button'
@@ -15,7 +14,7 @@ import { useSession } from '../../hooks/auth/useSession'
 import { useModal } from '../shared/ModalProvider'
 import { StatusBanner } from '../forms/StatusBanner'
 import { SpeedDial } from '../layout/SpeedDial'
-import { useLocale, useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import { LocationTableRow } from './LocationTableRow'
 
 interface LocationsPageProps {
@@ -33,13 +32,11 @@ export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
     page: currentPage,
     size: perPage,
   })
-  const [_, setModal] = useModal()
+  const [, setModal] = useModal()
   const { data: session } = useSession()
   const { push } = useRouter()
   const pathname = usePathname()
   const t = useTranslations('LocationsPage')
-  const locale = useLocale()
-  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
 
   useEffect(() => {
     if (query) {

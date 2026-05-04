@@ -77,7 +77,7 @@ const editBand = async (formData: EditBand) => {
 
 export const useEditBand = () => {
   const queryClient = useQueryClient()
-  const [_, setModal] = useQueryState('modal', { history: 'push' })
+  const [, setModal] = useQueryState('modal', { history: 'push' })
   const t = useTranslations('useEditBand')
 
   return useMutation({

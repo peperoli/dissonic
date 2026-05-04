@@ -55,7 +55,7 @@ const editLocation = async (
 
 export const useEditLocation = () => {
   const queryClient = useQueryClient()
-  const [_, setModal] = useQueryState('modal', { history: 'push' })
+  const [, setModal] = useQueryState('modal', { history: 'push' })
   const t = useTranslations('useEditLocation')
 
   return useMutation({

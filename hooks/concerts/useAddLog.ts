@@ -1,4 +1,4 @@
-import { Tables, TablesInsert } from '@/types/supabase'
+import { TablesInsert } from '@/types/supabase'
 import supabase from '@/utils/supabase/client'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'

@@ -52,7 +52,7 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
   const t = useTranslations('Memories')
   const [lightboxIsOpen, setLightboxIsOpen] = useState(false)
   const { push } = useRouter()
-  const [_, setModal] = useModal()
+  const [, setModal] = useModal()
 
   return (
     <>

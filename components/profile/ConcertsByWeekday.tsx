@@ -2,7 +2,7 @@
 
 import { BarChart } from '../BarChart'
 import { getUniqueObjects } from '@/lib/getUniqueObjects'
-import { useLocale, useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import supabase from '@/utils/supabase/client'
 import { useQuery } from '@tanstack/react-query'
 

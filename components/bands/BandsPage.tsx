@@ -47,7 +47,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
     size: perPage,
   })
   const { data: session } = useSession()
-  const [_, setModal] = useModal()
+  const [, setModal] = useModal()
   const { push } = useRouter()
   const pathname = usePathname()
   const t = useTranslations('BandsPage')
