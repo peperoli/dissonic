@@ -37,7 +37,6 @@ export const Form = ({ close }: FormProps) => {
   const editProfile = useEditProfile()
   const t = useTranslations('ProfileForm')
   const usernames = profiles?.map(item => item.username)
-
   const { push } = useRouter()
 
   const onSubmit: SubmitHandler<
@@ -47,10 +46,15 @@ export const Form = ({ close }: FormProps) => {
   }
 
   useEffect(() => {
-    if (editProfile.status === 'success') {
-      dirtyFields.username ? push(`/users/${watch('username')}`) : close()
+    if (editProfile.status !== 'success') return
+
+    if (dirtyFields.username) {
+      push(`/users/${watch('username')}`)
     }
+
+    close()
   }, [editProfile.status])
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5">
       <Controller
@@ -61,9 +65,7 @@ export const Form = ({ close }: FormProps) => {
             fileSize: value =>
               !(value instanceof File) || value.size < 1024 * 1024 || t('fileSizeError'),
             fileType: value =>
-              !(value instanceof File) ||
-              value.type.startsWith('image') ||
-              t('fileTypeError'),
+              !(value instanceof File) || value.type.startsWith('image') || t('fileTypeError'),
           },
         }}
         render={({ field }) => (

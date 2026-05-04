@@ -78,8 +78,8 @@ export function ConcertsPage({
     if (view.userView === 'friends' && friends)
       return [
         ...new Set([
-          ...friends?.map(item => item.sender_id),
-          ...friends?.map(item => item.receiver_id),
+          ...friends.map(item => item.sender_id),
+          ...friends.map(item => item.receiver_id),
         ]),
       ]
   }

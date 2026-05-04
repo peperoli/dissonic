@@ -81,7 +81,7 @@ export const Form = ({ close, isNew }: FormProps) => {
       {isSimilar && (
         <SimilarItemsWarning
           itemType="locations"
-          similarItems={similarLocations!}
+          similarItems={similarLocations}
           similarItemsSize={similarLocationsSize}
           setSimilarItemsSize={setSimilarLocationsSize}
         />

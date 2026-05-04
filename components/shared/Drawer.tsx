@@ -38,7 +38,7 @@ export function Drawer({ children, trigger }: { children: ReactNode; trigger: Re
     if (modalRef.current) {
       await animate(modalRef.current, { y: [yStart, isDesktop ? '10%' : height] })
     }
-    
+
     close()
   }
 
@@ -62,7 +62,7 @@ export function Drawer({ children, trigger }: { children: ReactNode; trigger: Re
                     onClick={e => e.stopPropagation()}
                     initial={{ y: isDesktop ? '10%' : '100%' }}
                     animate={{ y: '0%' }}
-                    style={{ y }}
+                    style={{ y: y.get() }}
                     transition={{ ease: 'easeInOut' }}
                     onDragEnd={() => {
                       if (y.get() > 100) {

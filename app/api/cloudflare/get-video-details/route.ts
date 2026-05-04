@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   })
 
   const video = await client.stream.get(videoId, {
-    account_id: process.env.CLOUDFLARE_ACCOUNT_ID!,
+    account_id: process.env.CLOUDFLARE_ACCOUNT_ID,
   })
 
   return NextResponse.json(video)
