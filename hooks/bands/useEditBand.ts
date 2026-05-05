@@ -10,69 +10,61 @@ const editBand = async (formData: EditBand) => {
     throw new Error('Band ID is required')
   }
 
-  try {
-    const { data: oldBand, error: oldGenresError } = await supabase
-      .from('bands')
-      .select('id, genres(*)')
-      .eq('id', formData.id)
-      .single()
+  const { data: oldBand, error: oldGenresError } = await supabase
+    .from('bands')
+    .select('id, genres(*)')
+    .eq('id', formData.id)
+    .single()
 
-    if (oldGenresError) {
-      throw oldGenresError
-    }
-
-    const { error: editBandError } = await supabase
-      .from('bands')
-      .update({
-        name: formData.name,
-        country_id: formData.country_id,
-        spotify_artist_id: formData.spotify_artist_id,
-        spotify_artist_images: formData.spotify_artist_images,
-        alt_names: formData.alt_names,
-        youtube_url: formData.youtube_url,
-      })
-      .eq('id', formData.id)
-
-    if (editBandError) {
-      throw editBandError
-    }
-
-    try {
-      const addGenres: Genre[] = formData.genres.filter(
-        item => !oldBand.genres.find(item2 => item.id === item2.id)
-      )
-      const deleteGenres: Genre[] = oldBand.genres.filter(
-        item => !formData.genres.find(item2 => item.id === item2.id)
-      )
-
-      const { error: deleteGenresError } = await supabase
-        .from('j_band_genres')
-        .delete()
-        .eq('band_id', formData.id)
-        .in(
-          'genre_id',
-          deleteGenres.map(item => item.id)
-        )
-
-      if (deleteGenresError) {
-        throw deleteGenresError
-      }
-
-      const { error: addGenresError } = await supabase
-        .from('j_band_genres')
-        .insert(addGenres.map(genre => ({ band_id: formData.id!, genre_id: genre.id })))
-
-      if (addGenresError) {
-        throw addGenresError
-      }
-    } catch (error) {
-      throw error
-    }
-
-    return { bandId: formData.id, spotifyArtistId: formData.spotify_artist_id }
-  } catch (error) {
-    throw error
+  if (oldGenresError) {
+    throw oldGenresError
   }
+
+  const { error: editBandError } = await supabase
+    .from('bands')
+    .update({
+      name: formData.name,
+      country_id: formData.country_id,
+      spotify_artist_id: formData.spotify_artist_id,
+      spotify_artist_images: formData.spotify_artist_images,
+      alt_names: formData.alt_names,
+      youtube_url: formData.youtube_url,
+    })
+    .eq('id', formData.id)
+
+  if (editBandError) {
+    throw editBandError
+  }
+
+  const addGenres: Genre[] = formData.genres.filter(
+    item => !oldBand.genres.find(item2 => item.id === item2.id)
+  )
+  const deleteGenres: Genre[] = oldBand.genres.filter(
+    item => !formData.genres.find(item2 => item.id === item2.id)
+  )
+
+  const { error: deleteGenresError } = await supabase
+    .from('j_band_genres')
+    .delete()
+    .eq('band_id', formData.id)
+    .in(
+      'genre_id',
+      deleteGenres.map(item => item.id)
+    )
+
+  if (deleteGenresError) {
+    throw deleteGenresError
+  }
+
+  const { error: addGenresError } = await supabase
+    .from('j_band_genres')
+    .insert(addGenres.map(genre => ({ band_id: formData.id!, genre_id: genre.id })))
+
+  if (addGenresError) {
+    throw addGenresError
+  }
+
+  return { bandId: formData.id, spotifyArtistId: formData.spotify_artist_id }
 }
 
 export const useEditBand = () => {
@@ -82,7 +74,10 @@ export const useEditBand = () => {
 
   return useMutation({
     mutationFn: editBand,
-    onError: error => { console.error(error); toast.error(error.message)},
+    onError: error => {
+      console.error(error)
+      toast.error(error.message)
+    },
     onSuccess: ({ bandId, spotifyArtistId }) => {
       queryClient.invalidateQueries({ queryKey: ['band', bandId] })
       queryClient.invalidateQueries({ queryKey: ['spotifyArtist', spotifyArtistId] })

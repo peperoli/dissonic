@@ -84,32 +84,28 @@ async function editLog({
     throw insertMemoriesError
   }
 
-  try {
-    const { error } = await supabase
-      .from('memories')
-      .delete()
-      .eq('concert_id', concertId)
-      .in('id', memoryIdsToDelete)
+  const { error } = await supabase
+    .from('memories')
+    .delete()
+    .eq('concert_id', concertId)
+    .in('id', memoryIdsToDelete)
 
-    if (error) {
-      throw error
-    }
-
-    await Promise.all(
-      memoriesToUpdate.map(async memory => {
-        const { error } = await supabase
-          .from('memories')
-          .update({ band_id: memory.band_id })
-          .eq('id', memory.id)
-
-        if (error) {
-          throw error
-        }
-      })
-    )
-  } catch (error) {
+  if (error) {
     throw error
   }
+
+  await Promise.all(
+    memoriesToUpdate.map(async memory => {
+      const { error } = await supabase
+        .from('memories')
+        .update({ band_id: memory.band_id })
+        .eq('id', memory.id)
+
+      if (error) {
+        throw error
+      }
+    })
+  )
 
   return { concertId }
 }
