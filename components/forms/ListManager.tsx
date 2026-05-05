@@ -79,7 +79,7 @@ const ListItem = ({
       <Reorder.Item
         value={band}
         dragListener={false}
-        // @ts-expect-error
+        // @ts-expect-error - framer-motion item doesn't have className in types
         className={clsx(
           'group flex items-center gap-4 rounded-lg p-2',
           selectedToReorder && 'bg-venom/10'
@@ -323,7 +323,7 @@ export const ListManager = ({
             values={listItems}
             onReorder={setListItems}
             axis="y"
-            // @ts-expect-error
+            // @ts-expect-error - framer-motion doesn't have className in types
             className="my-2 grid h-[calc(100%-1rem)] content-start py-4"
           >
             {listItems.map((listItem, index) => (
@@ -344,7 +344,7 @@ export const ListManager = ({
               searchResults.map((searchResult, index) => (
                 <SearchResult
                   key={searchResult.id}
-                  // @ts-expect-error
+                  // @ts-expect-error - ref could be null, but it won't
                   ref={el => (itemsRef.current[index] = el)}
                   band={searchResult}
                   index={index}

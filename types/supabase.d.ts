@@ -951,10 +951,21 @@ export type Database = {
       }
       search_bands: {
         Args: { search_string: string }
-        Returns: Database["public"]["CompositeTypes"]["band_with_genres"][]
+        Returns: {
+          alt_names: string | null
+          country_id: number | null
+          created_at: string | null
+          creator_id: string | null
+          id: number
+          is_archived: boolean
+          name: string
+          spotify_artist_id: string | null
+          spotify_artist_images: Json | null
+          youtube_url: string | null
+        }[]
         SetofOptions: {
           from: "*"
-          to: "band_with_genres"
+          to: "bands"
           isOneToOne: false
           isSetofReturn: true
         }
@@ -1059,10 +1070,6 @@ export type Database = {
       resources: "concerts" | "bands" | "locations"
     }
     CompositeTypes: {
-      band_with_genres: {
-        id: number | null
-        genres: number[] | null
-      }
       search_result: {
         type: string | null
         id: number | null

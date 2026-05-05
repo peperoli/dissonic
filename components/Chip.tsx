@@ -1,9 +1,9 @@
 import clsx from 'clsx'
-import Link from 'next/link'
+import { ConditionalLinkTag } from './helpers/ConditionalLinkTag'
 
 type ChipProps = {
   label: string
-  onClick?: (() => void) | null
+  onClick?: () => void
   href?: string
   size?: 'md' | 'sm'
   count?: number
@@ -18,12 +18,9 @@ export const Chip = ({
   count,
   color = 'secondary',
 }: ChipProps) => {
-  const ConditionalWrapper = onClick ? 'button' : href ? Link : 'div'
   return (
-    <ConditionalWrapper
-      type={onClick ? 'button' : undefined}
-      onClick={onClick ?? undefined}
-      // @ts-expect-error
+    <ConditionalLinkTag
+      onClick={onClick}
       href={href}
       className={clsx(
         'flex w-fit items-center justify-center border-2 disabled:cursor-not-allowed disabled:opacity-30',
@@ -47,7 +44,7 @@ export const Chip = ({
           {count}
         </div>
       )}
-    </ConditionalWrapper>
+    </ConditionalLinkTag>
   )
 }
 Chip.displayName = 'Chip'

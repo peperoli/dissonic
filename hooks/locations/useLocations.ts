@@ -4,44 +4,43 @@ import { getPagination } from '@/lib/getPagination'
 import { ExtendedRes, Location, LocationFetchOptions, QueryOptions } from '@/types/types'
 
 async function fetchLocations(options?: LocationFetchOptions): Promise<ExtendedRes<Location[]>> {
-  function getQuery(type: 'data' | 'count') {
-    const [from, to] = getPagination(options?.page, options?.size)
+  const [from, to] = getPagination(options?.page, options?.size)
+  const searchString = options?.search && options.search.length > 1 ? options.search : null
 
-    let query =
-      type === 'count'
-        ? supabase.from('locations').select('*', { count: 'estimated', head: true })
-        : supabase.from('locations').select('*, country:countries(id, iso2)')
+  let countQuery = (
+    searchString
+      ? supabase.rpc(
+          'search_locations',
+          { search_string: searchString },
+          { count: 'estimated', head: true }
+        )
+      : supabase.from('locations').select('*', { count: 'estimated', head: true })
+  )
+    .eq('is_archived', false)
+    .order('name')
 
-    if (options?.search && options.search.length > 1) {
-      // @ts-expect-error
-      query =
-        type === 'count'
-          ? supabase.rpc(
-              'search_locations',
-              { search_string: options.search },
-              { count: 'estimated', head: true }
-            )
-          : supabase
-              .rpc('search_locations', { search_string: options.search })
-              .select('*, country:countries(id, iso2)')
-    }
+  let dataQuery = (
+    searchString
+      ? supabase.rpc('search_locations', { search_string: searchString })
+      : supabase.from('locations')
+  )
+    .select('*, country:countries(id, iso2)')
+    .eq('is_archived', false)
+    .order('name')
 
-    query = query.eq('is_archived', false).order('name')
-
-    if (options?.ids && options.ids.length > 0) {
-      query = query.in('id', options.ids)
-    }
-
-    if (options?.page || options?.size) {
-      query = query.range(from, to)
-    }
-
-    return query
+  if (options?.ids && options.ids.length > 0) {
+    countQuery = countQuery.in('id', options.ids)
+    dataQuery = dataQuery.in('id', options.ids)
   }
 
-  const { data, error } = await getQuery('data')
+  if (options?.page || options?.size) {
+    countQuery = countQuery.range(from, to)
+    dataQuery = dataQuery.range(from, to)
+  }
 
-  const { count } = await getQuery('count')
+  const { count } = await countQuery
+
+  const { data, error } = await dataQuery
 
   if (error) {
     throw error

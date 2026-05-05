@@ -22,18 +22,17 @@ export async function saveLastQueryState(
 ) {
   const cookieStore = await cookies()
   const searchParams = new URLSearchParams(
-    // @ts-expect-error
     Object.fromEntries(
-      Object.entries(queryStates)
-        .filter(([, value]) => typeof value !== undefined && value !== null)
-        .map(([key, value]) => {
-          if (Array.isArray(value)) {
-            return [key, value.join(',')]
-          } else if (typeof value === 'boolean') {
-            return [key, value.toString()]
-          }
-          return [key, value]
-        })
+      Object.entries(queryStates).flatMap(([key, value]) => {
+        if (value === null || value === undefined) {
+          return []
+        } else if (Array.isArray(value)) {
+          return [[key, value.join(',')]]
+        } else if (typeof value === 'number' || typeof value === 'boolean') {
+          return [[key, value.toString()]]
+        }
+        return [[key, value]]
+      })
     )
   )
   cookieStore.set(`${resource}LastQueryState`, `?${searchParams.toString()}`)

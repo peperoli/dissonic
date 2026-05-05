@@ -16,6 +16,7 @@ import { useModal } from '../shared/ModalProvider'
 import LogoHorns from './LogoHorns'
 import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 import { Popover } from '../shared/Popover'
+import { ConditionalLinkTag } from '../helpers/ConditionalLinkTag'
 
 export const NavBar = () => {
   const { data: session } = useSession()
@@ -97,12 +98,11 @@ export const NavBar = () => {
             <Popover.Content className="z-30 mt-2 w-40 rounded-lg bg-slate-700 p-2 text-white shadow-xl">
               <ul>
                 {menuItems.map((item, index) => {
-                  const ConditionalWrapper = item.href ? Link : 'button'
                   const Icon = item.icon
                   return (
                     <li key={index}>
-                      <ConditionalWrapper
-                        href={item.href!}
+                      <ConditionalLinkTag
+                        href={item.href}
                         onClick={item.onClick}
                         className={clsx(
                           'flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-slate-600'
@@ -115,7 +115,7 @@ export const NavBar = () => {
                             {item.badge}
                           </span>
                         )}
-                      </ConditionalWrapper>
+                      </ConditionalLinkTag>
                     </li>
                   )
                 })}

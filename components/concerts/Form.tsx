@@ -40,7 +40,7 @@ export const Form = ({ close, isNew }: FormProps) => {
     watch,
     handleSubmit,
     formState: { errors },
-    // @ts-expect-error
+    // @ts-expect-error - override types to allow passing default values
   } = useForm<AddConcert>({
     defaultValues: isNew ? { is_festival: false, date_start: today } : concert,
   })
