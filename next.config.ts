@@ -1,13 +1,18 @@
-const withPWA = require('next-pwa')({
+import type { NextConfig } from 'next'
+import createNextIntlPlugin from 'next-intl/plugin'
+// @ts-expect-error - don't care about types for next-pwa
+import createNextPWAPlugin from 'next-pwa'
+
+const withPWA = createNextPWAPlugin({
   dest: 'public',
   disable: process.env.NODE_ENV === 'development',
   scope: '/app',
   skipWaiting: true,
 })
 
-const withNextIntl = require('next-intl/plugin')()
+const withNextIntl = createNextIntlPlugin()
 
-const nextConfig = {
+const nextConfig: NextConfig = {
   reactStrictMode: true,
   images: {
     remotePatterns: [
@@ -53,4 +58,4 @@ const nextConfig = {
   },
 }
 
-module.exports = withPWA(withNextIntl(nextConfig))
+export default withPWA(withNextIntl(nextConfig))
