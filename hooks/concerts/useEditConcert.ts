@@ -6,14 +6,16 @@ import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
 
 const editConcert = async (newConcert: EditConcert) => {
-  if (!newConcert.id) {
+  const concertId = newConcert.id
+
+  if (!concertId) {
     throw new Error('Concert ID is required')
   }
 
   const { data: oldConcert, error: oldConcertError } = await supabase
     .from('concerts')
     .select('id, bands!j_concert_bands(*)')
-    .eq('id', newConcert.id)
+    .eq('id', concertId)
     .single()
 
   if (oldConcertError) {
@@ -34,29 +36,31 @@ const editConcert = async (newConcert: EditConcert) => {
       source_link: newConcert.source_link,
       resource_status: newConcert.resource_status,
     })
-    .eq('id', newConcert.id)
+    .eq('id', concertId)
 
   if (editConcertError) {
     throw editConcertError
   }
 
   const addBands = newConcert.bands?.filter(
-    item => !oldConcert.bands?.find(item2 => item.id === item2.id)
+    item => !oldConcert.bands.find(item2 => item.id === item2.id)
   )
-  const deleteBands = oldConcert.bands?.filter(
+  const deleteBands = oldConcert.bands.filter(
     item => !newConcert.bands?.find(item2 => item.id === item2.id)
   )
 
-  const { error: addBandsError } = await supabase.from('j_concert_bands').insert(
-    addBands?.map((item, index) => ({
-      concert_id: newConcert.id!,
-      band_id: item.id,
-      item_index: index,
-    })) ?? []
-  )
+  if (addBands?.length) {
+    const { error: addBandsError } = await supabase.from('j_concert_bands').insert(
+      addBands.map((item, index) => ({
+        concert_id: concertId,
+        band_id: item.id,
+        item_index: index,
+      }))
+    )
 
-  if (addBandsError) {
-    throw addBandsError
+    if (addBandsError) {
+      throw addBandsError
+    }
   }
 
   await Promise.all(
@@ -64,7 +68,7 @@ const editConcert = async (newConcert: EditConcert) => {
       const { error: editBandsError } = await supabase
         .from('j_concert_bands')
         .update({ item_index: index })
-        .eq('concert_id', newConcert.id!)
+        .eq('concert_id', concertId)
         .eq('band_id', band.id)
 
       if (editBandsError) {
@@ -73,11 +77,11 @@ const editConcert = async (newConcert: EditConcert) => {
     }) ?? []
   )
 
-  if (deleteBands) {
+  if (deleteBands.length) {
     const { count } = await supabase
       .from('j_bands_seen')
       .select('*', { count: 'estimated' })
-      .eq('concert_id', newConcert.id)
+      .eq('concert_id', concertId)
       .in(
         'band_id',
         deleteBands.map(item => item.id)
@@ -90,7 +94,7 @@ const editConcert = async (newConcert: EditConcert) => {
     const { error: deleteBandsError } = await supabase
       .from('j_concert_bands')
       .delete()
-      .eq('concert_id', newConcert.id)
+      .eq('concert_id', concertId)
       .in(
         'band_id',
         deleteBands.map(item => item.id)
@@ -101,7 +105,7 @@ const editConcert = async (newConcert: EditConcert) => {
     }
   }
 
-  return { concertId: newConcert.id }
+  return { concertId }
 }
 
 export const useEditConcert = () => {

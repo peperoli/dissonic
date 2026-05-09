@@ -84,14 +84,16 @@ async function editLog({
     throw insertMemoriesError
   }
 
-  const { error } = await supabase
-    .from('memories')
-    .delete()
-    .eq('concert_id', concertId)
-    .in('id', memoryIdsToDelete)
+  if (memoryIdsToDelete.length) {
+    const { error } = await supabase
+      .from('memories')
+      .delete()
+      .eq('concert_id', concertId)
+      .in('id', memoryIdsToDelete)
 
-  if (error) {
-    throw error
+    if (error) {
+      throw error
+    }
   }
 
   await Promise.all(

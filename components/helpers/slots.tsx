@@ -17,12 +17,12 @@ export function ButtonSlot({
   }
 
   if (isValidElement(children)) {
-    const childProps = children.props as HTMLAttributes<any>
+    const childProps = children.props as HTMLAttributes<HTMLButtonElement>
 
-    return cloneElement(children as ReactElement<any>, {
+    return cloneElement(children as ReactElement<HTMLAttributes<HTMLButtonElement>>, {
       ...props,
       ...childProps,
-      onClick: (event: MouseEvent<any>) => {
+      onClick: (event: MouseEvent<HTMLButtonElement>) => {
         if (childProps.onClick) {
           childProps.onClick(event)
         }

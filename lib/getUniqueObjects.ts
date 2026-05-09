@@ -1,6 +1,5 @@
 interface ObjectWithId {
   id: string | number
-  [key: string]: any
 }
 
 export function getUniqueObjects<T extends ObjectWithId>(arrayOfObjects: (T | null | undefined)[]): NonNullable<T>[] {

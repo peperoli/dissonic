@@ -8,9 +8,7 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
   const searchString = options?.search && options.search.length > 1 ? options.search : null
 
   let countQuery = searchString
-    ? supabase
-        .rpc('search_bands', { search_string: searchString }, { count: 'exact', head: true })
-        .select('id, genres!inner(id)')
+    ? supabase.rpc('search_bands', { search_string: searchString }, { count: 'exact', head: true })
     : supabase.from('bands').select('id, genres!inner(id)', { count: 'exact', head: true })
 
   if (options?.ids && options.ids.length > 0) {
@@ -34,9 +32,7 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
   for (let page = 1; page <= maxPage; page++) {
     let filterQuery = (
       searchString
-        ? supabase
-            .rpc('search_bands', { search_string: searchString })
-            .select('id, genres!inner(id)')
+        ? supabase.rpc('search_bands', { search_string: searchString })
         : supabase.from('bands').select('id, genres!inner(id)')
     )
       .eq('is_archived', false)

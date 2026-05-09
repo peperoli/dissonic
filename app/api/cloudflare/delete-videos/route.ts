@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/server'
+import type { Video } from 'cloudflare/resources/stream/stream'
 import { NextResponse } from 'next/server'
 
 export async function GET() {
@@ -20,7 +21,7 @@ export async function GET() {
   }).then(res => res.json())
 
   await Promise.all(
-    listVideosData.result.map(async (item: any) => {
+    listVideosData.result.map(async (item: Video) => {
       if (memories.some(memory => memory.file_id === item.uid)) return
 
       const response = await fetch(`${cloudflareStreamEndpoint}/${item.uid}`, {

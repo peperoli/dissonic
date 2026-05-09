@@ -12,7 +12,7 @@ import {
 import Image from 'next/image'
 import { forwardRef, KeyboardEvent, useEffect, useRef, useState } from 'react'
 import { useSpotifyArtist } from '../../hooks/spotify/useSpotifyArtist'
-import { ReorderableListItem } from '../../types/types'
+import { Band, ReorderableListItem, SpotifyArtist } from '../../types/types'
 import { Button } from '../Button'
 import clsx from 'clsx'
 import { reorderList } from '../../lib/reorderList'
@@ -46,7 +46,7 @@ const InsertHere = ({ reorderItems, isDown }: InsertHereProps) => {
 }
 
 type ListItemProps = {
-  band: ReorderableListItem
+  band: ReorderableListItem<Band>
   index: number
   removeItem: () => void
   selectItemToReorder: () => void
@@ -69,7 +69,8 @@ const ListItem = ({
   const locale = useLocale()
   const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
   const selectedToReorder = selectedItemToReorder === index
-  const image = band.spotify_artist_images?.[2] || spotifyArtist?.images?.[2]
+  const image =
+    (band.spotify_artist_images as SpotifyArtist['images'])?.[2] || spotifyArtist?.images?.[2]
 
   return (
     <>
@@ -139,7 +140,7 @@ const ListItem = ({
 }
 
 type SearchResultProps = {
-  band: ReorderableListItem
+  band: ReorderableListItem<Band>
   index: number
   selected: boolean
   addItem: () => void
@@ -154,7 +155,8 @@ const SearchResult = forwardRef<HTMLButtonElement, SearchResultProps>(
     })
     const t = useTranslations('ListManager')
     const locale = useLocale()
-    const image = band.spotify_artist_images?.[2] || spotifyArtist?.images?.[2]
+    const image =
+      (band.spotify_artist_images as SpotifyArtist['images'])?.[2] || spotifyArtist?.images?.[2]
     const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
     return (
       <button
@@ -206,12 +208,12 @@ const SearchResult = forwardRef<HTMLButtonElement, SearchResultProps>(
 SearchResult.displayName = 'SearchResult'
 
 type ListManagerProps = {
-  searchResults: ReorderableListItem[]
+  searchResults: ReorderableListItem<Band>[]
   fetchStatus: FetchStatus
-  initialListItems: ReorderableListItem[]
+  initialListItems: ReorderableListItem<Band>[]
   search: string
   setSearch: (search: string) => void
-  onSave: (items: ReorderableListItem[]) => void
+  onSave: (items: ReorderableListItem<Band>[]) => void
 }
 
 export const ListManager = ({
@@ -250,8 +252,8 @@ export const ListManager = ({
     }
   }
 
-  function addItem(searchResult: ReorderableListItem) {
-    setListItems([...listItems, { ...searchResult, index: listItems.length }])
+  function addItem(searchResult: ReorderableListItem<Band>) {
+    setListItems([...listItems, { ...searchResult, item_index: listItems.length }])
     setSearch('')
     searchRef.current?.focus()
     setTimeout(() => {

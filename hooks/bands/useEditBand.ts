@@ -1,19 +1,21 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { EditBand, Genre } from '@/types/types'
+import { EditBand } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
 
 const editBand = async (formData: EditBand) => {
-  if (!formData.id) {
+  const bandId = formData.id
+
+  if (!bandId) {
     throw new Error('Band ID is required')
   }
 
   const { data: oldBand, error: oldGenresError } = await supabase
     .from('bands')
     .select('id, genres(*)')
-    .eq('id', formData.id)
+    .eq('id', bandId)
     .single()
 
   if (oldGenresError) {
@@ -30,41 +32,43 @@ const editBand = async (formData: EditBand) => {
       alt_names: formData.alt_names,
       youtube_url: formData.youtube_url,
     })
-    .eq('id', formData.id)
+    .eq('id', bandId)
 
   if (editBandError) {
     throw editBandError
   }
 
-  const addGenres: Genre[] = formData.genres.filter(
+  const addGenres = formData.genres.filter(
     item => !oldBand.genres.find(item2 => item.id === item2.id)
   )
-  const deleteGenres: Genre[] = oldBand.genres.filter(
+  const deleteGenres = oldBand.genres.filter(
     item => !formData.genres.find(item2 => item.id === item2.id)
   )
 
-  const { error: deleteGenresError } = await supabase
-    .from('j_band_genres')
-    .delete()
-    .eq('band_id', formData.id)
-    .in(
-      'genre_id',
-      deleteGenres.map(item => item.id)
-    )
+  if (deleteGenres.length) {
+    const { error: deleteGenresError } = await supabase
+      .from('j_band_genres')
+      .delete()
+      .eq('band_id', bandId)
+      .in(
+        'genre_id',
+        deleteGenres.map(item => item.id)
+      )
 
-  if (deleteGenresError) {
-    throw deleteGenresError
+    if (deleteGenresError) {
+      throw deleteGenresError
+    }
   }
 
   const { error: addGenresError } = await supabase
     .from('j_band_genres')
-    .insert(addGenres.map(genre => ({ band_id: formData.id!, genre_id: genre.id })))
+    .insert(addGenres.map(genre => ({ band_id: bandId, genre_id: genre.id })))
 
   if (addGenresError) {
     throw addGenresError
   }
 
-  return { bandId: formData.id, spotifyArtistId: formData.spotify_artist_id }
+  return { bandId, spotifyArtistId: formData.spotify_artist_id }
 }
 
 export const useEditBand = () => {
