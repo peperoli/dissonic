@@ -4,7 +4,7 @@ import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 import { ReactNode, useRef } from 'react'
 import { Dialog } from './Dialog'
 import type { DialogTitleProps, DialogTriggerProps } from './Dialog'
-import { useAnimate, useDragControls, useMotionValue } from 'framer-motion'
+import { useAnimate, useDragControls, useMotionValue } from 'motion/react'
 import { MotionDiv } from '../helpers/motion'
 
 export function DrawerTrigger({
@@ -62,7 +62,8 @@ export function Drawer({ children, trigger }: { children: ReactNode; trigger: Re
                     onClick={e => e.stopPropagation()}
                     initial={{ y: isDesktop ? '10%' : '100%' }}
                     animate={{ y: '0%' }}
-                    style={{ y: y.get() }}
+                    // @ts-expect-error - see https://github.com/motiondivision/motion/issues/2887
+                    style={{ y }}
                     transition={{ ease: 'easeInOut' }}
                     onDragEnd={() => {
                       if (y.get() > 100) {

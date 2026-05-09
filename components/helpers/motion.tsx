@@ -1,4 +1,4 @@
-import { HTMLMotionProps, motion } from 'framer-motion'
+import { HTMLMotionProps, motion } from 'motion/react'
 import { forwardRef, HTMLAttributes, ReactNode } from 'react'
 
 type MotionDivProps = { children?: ReactNode } & HTMLMotionProps<'div'> &

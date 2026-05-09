@@ -18,7 +18,7 @@ import clsx from 'clsx'
 import { reorderList } from '../../lib/reorderList'
 import { FetchStatus } from '@tanstack/react-query'
 import { SpinnerIcon } from '../layout/SpinnerIcon'
-import { Reorder } from 'framer-motion'
+import { Reorder } from 'motion/react'
 import { useLocale, useTranslations } from 'next-intl'
 import { DialogTitle } from '../shared/Dialog'
 
@@ -79,7 +79,6 @@ const ListItem = ({
       <Reorder.Item
         value={band}
         dragListener={false}
-        // @ts-expect-error - framer-motion item doesn't have className in types
         className={clsx(
           'group flex items-center gap-4 rounded-lg p-2',
           selectedToReorder && 'bg-venom/10'
@@ -323,7 +322,6 @@ export const ListManager = ({
             values={listItems}
             onReorder={setListItems}
             axis="y"
-            // @ts-expect-error - framer-motion doesn't have className in types
             className="my-2 grid h-[calc(100%-1rem)] content-start py-4"
           >
             {listItems.map((listItem, index) => (
