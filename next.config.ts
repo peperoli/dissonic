@@ -2,6 +2,9 @@ import type { NextConfig } from 'next'
 import createNextIntlPlugin from 'next-intl/plugin'
 // @ts-expect-error - don't care about types for next-pwa
 import createNextPWAPlugin from 'next-pwa'
+import { validateEnv } from './lib/validateEnv'
+
+validateEnv()
 
 const withPWA = createNextPWAPlugin({
   dest: 'public',

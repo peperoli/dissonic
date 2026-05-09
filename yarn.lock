@@ -5610,7 +5610,7 @@ __metadata:
     tus-js-client: "npm:^4.3.1"
     typescript: "npm:^6.0.3"
     typescript-eslint: "npm:^8.59.1"
-    zod: "npm:^3.25.56"
+    zod: "npm:^4.4.3"
   languageName: unknown
   linkType: soft
 
@@ -12956,9 +12956,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.25.56":
-  version: 3.25.56
-  resolution: "zod@npm:3.25.56"
-  checksum: 10c0/3800f01d4b1df932b91354eb1e648f69cc7e5561549e6d2bf83827d930a5f33bbf92926099445f6fc1ebb64ca9c6513ef9ae5e5409cfef6325f354bcf6fc9a24
+"zod@npm:^4.4.3":
+  version: 4.4.3
+  resolution: "zod@npm:4.4.3"
+  checksum: 10c0/7ea31b558e88f9faf44f31dd185e2e1cbf51fed3081787fb96cc2534749b50c0acfc6da7f0922a7353ed092dd358c7d50c28ea96c94d04af64191bd33152eca3
   languageName: node
   linkType: hard

@@ -1,13 +1,8 @@
-declare namespace NodeJS {
-  export interface ProcessEnv {
-    NEXT_PUBLIC_SUPABASE_URL: string
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: string
-    NEXT_PUBLIC_SPOTIFY_CLIENT_ID: string
-    NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET: string
-    CLOUDFLARE_ACCOUNT_ID: string
-    CLOUDFLARE_API_TOKEN: string
-    NEXT_PUBLIC_CLOUDFLARE_ACCOUNT_HASH: string
-    MAINTENANCE_MODE: string
-    NEXT_PUBLIC_BASE_URL: string
+import { EnvSchema } from '@/lib/validateEnv'
+
+declare global {
+  namespace NodeJS {
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+    interface ProcessEnv extends EnvSchema {}
   }
 }
