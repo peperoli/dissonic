@@ -2,6 +2,7 @@ import { cookies } from 'next/headers'
 import { Concert } from '@/types/types'
 import { createClient } from '@/utils/supabase/server'
 import { ConcertsPage } from '@/components/concerts/ConcertsPage'
+import { Temporal } from 'temporal-polyfill'
 
 async function fetchData({ userView }: { userView: string }) {
   const supabase = await createClient()

@@ -11,6 +11,7 @@ import { getMediumDate } from '@/lib/date'
 import { useView } from '@/components/activity/ViewFilter'
 import { useActivityType } from '@/components/activity/ActivityTypeFilter'
 import { useSession } from '@/hooks/auth/useSession'
+import { Temporal } from 'temporal-polyfill'
 
 export function ActivityList({
   activities: placeholderData,

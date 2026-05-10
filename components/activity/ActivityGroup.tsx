@@ -1,6 +1,7 @@
 import { ActivityItemT } from '@/app/activity/page'
 import { ActivityItem } from './ActivityItem'
 import { Tables } from '@/types/supabase'
+import { Temporal } from 'temporal-polyfill'
 
 export const ActivityGroup = ({
   timeGroup,

@@ -1,6 +1,7 @@
 import { useContributionsCount } from '@/hooks/contributions/useContributionsCount'
 import { InfoIcon } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
+import { Temporal, Intl } from 'temporal-polyfill'
 import Link from 'next/link'
 
 type MetaInfoProps = {

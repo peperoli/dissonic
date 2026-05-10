@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import type { MetadataRoute } from 'next'
+import { Temporal } from 'temporal-polyfill'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient()

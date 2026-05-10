@@ -1,3 +1,4 @@
+import { Temporal } from 'temporal-polyfill'
 
 export function getRelativeTimeFormatOptions(date: string | Temporal.Instant) {
   if (typeof date === 'string') {

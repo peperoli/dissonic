@@ -1,5 +1,6 @@
 import { Concert } from '@/types/types'
 import { getMediumDate } from './date'
+import { Temporal } from 'temporal-polyfill'
 
 export function getConcertName(concert: Concert | undefined, locale: string) {
   if (!concert) {

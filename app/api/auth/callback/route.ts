@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
+import { Temporal } from 'temporal-polyfill'
 
 function sanitizeNext(nextParam: string | null): string {
   if (!nextParam) return '/'
