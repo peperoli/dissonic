@@ -7,6 +7,7 @@ import supabase from '../../utils/supabase/client'
 import { Button } from '../Button'
 import { UserItem } from '../shared/UserItem'
 import { useTranslations } from 'next-intl'
+import { Temporal } from 'temporal-polyfill'
 
 type InviteItemType = {
   inviteData: Friend

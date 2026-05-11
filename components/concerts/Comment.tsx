@@ -14,6 +14,7 @@ import { getRelativeTime } from '@/lib/relativeTime'
 import clsx from 'clsx'
 import { UserItem } from '../shared/UserItem'
 import { useLocale, useTranslations } from 'next-intl'
+import { Temporal } from 'temporal-polyfill'
 import { useAddComment } from '@/hooks/concerts/useAddComment'
 
 export function CommentItem({ comment }: { comment: Comment }) {

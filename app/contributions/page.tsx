@@ -8,6 +8,7 @@ import { Tables } from '@/types/supabase'
 import { ContributionFetchOptions } from '@/types/types'
 import { createClient } from '@/utils/supabase/server'
 import { getLocale, getTranslations } from 'next-intl/server'
+import { Temporal } from 'temporal-polyfill'
 import { redirect } from 'next/navigation'
 
 async function fetchData({ searchParams }: { searchParams: ContributionFetchOptions }) {

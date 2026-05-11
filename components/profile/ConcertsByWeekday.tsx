@@ -3,6 +3,7 @@
 import { BarChart } from '../BarChart'
 import { getUniqueObjects } from '@/lib/getUniqueObjects'
 import { useTranslations } from 'next-intl'
+import { Temporal } from 'temporal-polyfill'
 import supabase from '@/utils/supabase/client'
 import { useQuery } from '@tanstack/react-query'
 

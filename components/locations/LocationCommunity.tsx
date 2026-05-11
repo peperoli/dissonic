@@ -9,6 +9,7 @@ import { getUniqueObjects } from '@/lib/getUniqueObjects'
 import { ConcertItem } from '../concerts/ConcertItem'
 import { Drawer, DrawerTitle, DrawerTrigger } from '../shared/Drawer'
 import { useTranslations } from 'next-intl'
+import { Temporal } from 'temporal-polyfill'
 
 function LocationUserItem({
   location,

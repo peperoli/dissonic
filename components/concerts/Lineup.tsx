@@ -8,6 +8,7 @@ import { BadgeCheckIcon, BadgeMinusIcon, Edit, Plus } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useModal } from '../shared/ModalProvider'
 import { Tooltip } from '../shared/Tooltip'
+import { Temporal } from 'temporal-polyfill'
 
 export function Lineup({ concert }: { concert: Concert }) {
   const { data: session } = useSession()
