@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 import supabase from '@/utils/supabase/client'
-import { Profile } from '@/types/types'
 
 const fetchLocationProfiles = async (locationId: number) => {
   const { data: bandsSeen, error } = await supabase

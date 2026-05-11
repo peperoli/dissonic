@@ -2,16 +2,17 @@ import { EditIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useBands } from '../../hooks/bands/useBands'
 import { useDebounce } from '../../hooks/helpers/useDebounce'
-import { ReorderableListItem } from '../../types/types'
+import { Band, ReorderableListItem } from '../../types/types'
 import { ListManager } from '../forms/ListManager'
 import { Modal } from '../Modal'
 import clsx from 'clsx'
 import { TruncatedList } from 'react-truncate-list'
 import { useTranslations } from 'next-intl'
+import { FieldError, Merge } from 'react-hook-form'
 
 type BandsListManagerProps = {
-  initialListItems: ReorderableListItem[]
-  onSave: (items: ReorderableListItem[]) => void
+  initialListItems: ReorderableListItem<Band>[]
+  onSave: (items: ReorderableListItem<Band>[]) => void
 }
 
 const BandsListManager = ({ initialListItems, onSave }: BandsListManagerProps) => {
@@ -34,16 +35,16 @@ const BandsListManager = ({ initialListItems, onSave }: BandsListManagerProps) =
 }
 
 type EditBandsButtonProps = {
-  value: ReorderableListItem[]
-  onChange: (value: ReorderableListItem[]) => void
-  error?: any
+  value: ReorderableListItem<Band>[]
+  onChange: (value: ReorderableListItem<Band>[]) => void
+  error?: Merge<FieldError, { message: string; type: string; ref?: unknown }> | undefined
 }
 
 export const EditBandsButton = ({ value, onChange, error }: EditBandsButtonProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const t = useTranslations('EditBandsButton')
 
-  function onSave(items: ReorderableListItem[]) {
+  function onSave(items: ReorderableListItem<Band>[]) {
     onChange(items)
     setIsOpen(false)
   }

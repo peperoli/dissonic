@@ -158,12 +158,11 @@ export type AddFriend = TablesInsert<'friends'>
 export type ListItem<IdType = number> = {
   id: IdType
   name: string
-  [key: string]: any
 }
 
-export type ReorderableListItem = ListItem & {
+export type ReorderableListItem<T = unknown> = ListItem & {
   item_index: number | null
-}
+} & T
 
 export type SpotifyArtist = {
   id: string

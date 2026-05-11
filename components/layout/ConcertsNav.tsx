@@ -8,7 +8,7 @@ import Link from 'next/link'
 import clsx from 'clsx'
 
 export function ConcertsNav() {
-  const [_, startTransition] = useTransition()
+  const [, startTransition] = useTransition()
   const t = useTranslations('ConcertsNav')
 
   function handleClick(value: 'past' | 'future') {

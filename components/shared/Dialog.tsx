@@ -110,7 +110,6 @@ export function DialogContent({
   return (
     <dialog
       ref={dialogRef}
-      // @ts-expect-error
       closedby={shouldCloseOnClickOutside ? 'any' : undefined}
       onToggle={event => setOpen(event.currentTarget.open)}
       {...props}

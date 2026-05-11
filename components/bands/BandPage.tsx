@@ -45,7 +45,7 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
   const { data: concertsCount } = useConcertsCount({ bands: [initialBand.id] })
   const archiveBand = useArchiveBand()
   const restoreBand = useRestoreBand()
-  const [_, setModal] = useModal()
+  const [, setModal] = useModal()
   const { data: session } = useSession()
   const { push } = useRouter()
   const pathname = usePathname()

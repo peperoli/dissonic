@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, SetStateAction } from 'react'
+import React, { Dispatch, FC, FocusEvent, SetStateAction } from 'react'
 
 interface NumberFieldProps {
   id: string
@@ -7,7 +7,7 @@ interface NumberFieldProps {
   max?: number
   value: number
   setValue: Dispatch<SetStateAction<number>>
-  onBlur?: any
+  onBlur?: (event: FocusEvent<HTMLInputElement>) => void
 }
 
 export const NumberField: FC<NumberFieldProps> = ({ id, unit, min, max, value, setValue, onBlur }) => {
@@ -19,7 +19,7 @@ export const NumberField: FC<NumberFieldProps> = ({ id, unit, min, max, value, s
         max={max}
         type="number"
         value={value}
-        onBlur={event => onBlur(event)}
+        onBlur={onBlur}
         onChange={event => setValue(Number(event.target.value))}
         style={{ MozAppearance: 'textfield' }}
         className="block w-full m-0 pl-4 pr-12 py-3 rounded-lg border border-slate-500 bg-slate-700 accent-white appearance-none"

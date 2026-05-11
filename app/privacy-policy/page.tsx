@@ -100,7 +100,7 @@ export default function PrivacyPolicyPage() {
       <h2 id="webanalyse-vercel-analytics">6. Webanalyse (Vercel Analytics)</h2>
       <p>
         Diese Website verwendet Vercel Analytics, einen datenschutzfreundlichen Analysedienst von
-        Vercel Inc. (USA). Dabei werden aggregierte Nutzungsdaten erhoben (aufgerufene Seiten,
+        Vercel Inc.&nbsp;(USA). Dabei werden aggregierte Nutzungsdaten erhoben (aufgerufene Seiten,
         Herkunftsland, Gerättyp, Verweildauer). Es werden keine Cookies gesetzt und keine
         personenbezogenen Daten dauerhaft gespeichert; IP-Adressen werden nicht protokolliert.
         Rechtsgrundlage: überwiegendes berechtigtes Interesse (Art. 31 Abs. 1 revDSG). Weitere

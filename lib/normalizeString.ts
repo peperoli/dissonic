@@ -9,5 +9,5 @@ export function normalizeString(string?: string) {
     ?.toLowerCase()
     .replace(/\s+/g, '') // Remove spaces
     .replace(pattern, char => b.charAt(a.indexOf(char))) // Replace special characters
-    .replace(/[^\w\-]+/g, '') // Remove all non-word characters
+    .replace(/[^\w-]+/g, '') // Remove all non-word characters
 }

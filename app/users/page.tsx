@@ -1,11 +1,11 @@
-import { SpeedDial } from '@/components/layout/SpeedDial'
 import { SortSelect } from '@/components/users/SortSelect'
 import { UserItem } from '@/components/users/UserItem'
 import { Database } from '@/types/supabase'
 import { createClient } from '@/utils/supabase/server'
+import { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
-export async function generateMetadata() {
+export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('UsersPage')
 
   return {

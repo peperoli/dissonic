@@ -1,7 +1,7 @@
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { useConcerts } from '../../hooks/concerts/useConcerts'
 import { useLocations } from '../../hooks/locations/useLocations'
-import { AddConcert, ReorderableListItem } from '../../types/types'
+import { AddConcert, Band, ReorderableListItem } from '../../types/types'
 import { Button } from '../Button'
 import { TextField } from '../forms/TextField'
 import { EditBandsButton } from './EditBandsButton'
@@ -41,7 +41,7 @@ export const Form = ({ close, isNew }: FormProps) => {
     watch,
     handleSubmit,
     formState: { errors },
-    // @ts-expect-error
+    // @ts-expect-error - override types to allow passing default values
   } = useForm<AddConcert>({
     defaultValues: isNew ? { is_festival: false, date_start: today } : concert,
   })
@@ -209,11 +209,11 @@ export const Form = ({ close, isNew }: FormProps) => {
           rules={{ required: true }}
           render={({ field: { value = [], onChange } }) => (
             <EditBandsButton
-              value={value as ReorderableListItem[]}
-              onChange={onChange as (value: ReorderableListItem[]) => void}
+              value={value as ReorderableListItem<Band>[]}
+              onChange={onChange as (value: ReorderableListItem<Band>[]) => void}
               error={errors.bands}
             />
-          )}
+          )} 
         />
         <Controller
           name="location_id"

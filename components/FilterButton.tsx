@@ -1,5 +1,5 @@
 import { Button } from './Button'
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode } from 'react'
 import { ChevronDownIcon, XIcon } from 'lucide-react'
 import { ListItem } from '@/types/types'
 import { TruncatedList } from 'react-truncate-list'

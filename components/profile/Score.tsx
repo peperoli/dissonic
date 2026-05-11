@@ -100,7 +100,10 @@ export function Score({ profileId }: { profileId?: string }) {
 
   return (
     <section
-      className={clsx('mb-4 grid gap-4', true ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-3')}
+      className={clsx(
+        'mb-4 grid gap-4',
+        streak?.diff ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-3'
+      )}
     >
       <h2 className="sr-only">{t('score')}</h2>
       <div className="rounded-lg bg-radial-gradient from-venom/50 px-2 py-6 text-center">
@@ -115,7 +118,7 @@ export function Score({ profileId }: { profileId?: string }) {
         <div className="text-[1.75rem] font-bold leading-none">{locationsSeen.size}</div>
         {t('locations')}
       </div>
-      {streak && (
+      {!!streak?.diff && (
         <div className="rounded-lg bg-radial-gradient from-slate-500/50 px-2 py-6 text-center">
           <div className="text-[1.75rem] font-bold leading-none">{Math.ceil(streak.diff) + 1}</div>
           <div className="flex justify-center gap-1">

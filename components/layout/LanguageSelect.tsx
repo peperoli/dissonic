@@ -4,12 +4,11 @@ import { useLocale, useTranslations } from 'next-intl'
 import { FilterButton } from '../FilterButton'
 import { Select } from '../forms/Select'
 import { setLocale } from '@/actions/i18n'
-import { ListItem } from '@/types/types'
 
 export const LanguageSelect = () => {
   const t = useTranslations('LanguageSelect')
   const locale = useLocale()
-  const languageItems: ListItem[] = [
+  const languageItems = [
     { id: 0, name: 'English', locale: 'en-CH' },
     { id: 1, name: 'Deutsch', locale: 'de-CH' },
   ]

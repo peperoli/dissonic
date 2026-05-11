@@ -28,8 +28,8 @@ export const Select = ({ name, items, isLoading, fixedHeight, ...props }: Select
     if (searchRef.current && !props.multiple && props.searchable && props.searchQuery) {
       searchRef.current.select()
     }
-    // @ts-expect-error
-  }, [props.values?.length, props.value])
+  }, ['values' in props && props.values?.length, 'value' in props && props.value])
+
   return (
     <>
       {props.searchable && (

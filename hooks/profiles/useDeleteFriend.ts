@@ -18,7 +18,7 @@ async function deleteFriend({ friendId, userId }: { friendId: string; userId: st
 
 export function useDeleteFriend() {
   const queryClient = useQueryClient()
-  const [_, setModal] = useQueryState('modal', { history: 'push' })
+  const [, setModal] = useQueryState('modal', { history: 'push' })
   const t = useTranslations('useDeleteFriend')
 
   return useMutation({

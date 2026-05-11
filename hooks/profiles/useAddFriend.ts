@@ -17,7 +17,7 @@ const addFriend = async (friend: AddFriend) => {
 
 export const useAddFriend = () => {
   const queryClient = useQueryClient()
-  const [_, setModal] = useModal()
+  const [, setModal] = useModal()
   const t = useTranslations('useAddFriend')
 
   return useMutation({

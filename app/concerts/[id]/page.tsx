@@ -6,14 +6,14 @@ import supabase from '../../../utils/supabase/client'
 import { notFound } from 'next/navigation'
 import { getLocale } from 'next-intl/server'
 import { getConcertName } from '@/lib/getConcertName'
-import { ResolvingMetadata } from 'next'
+import { Metadata, ResolvingMetadata } from 'next'
 import { fetchSpotifyToken } from '@/hooks/spotify/useSpotifyToken'
 import { fetchSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 
 export async function generateMetadata(
   props: { params: Promise<{ id: string }> },
   parent: ResolvingMetadata
-) {
+): Promise<Metadata> {
   const params = await props.params
   const concert = await fetchConcert(params)
   const locale = await getLocale()
@@ -37,6 +37,7 @@ export async function generateMetadata(
       },
     }
   } catch (error) {
+    console.error('Error fetching Spotify data for metadata generation:', error)
     return { title: `${concertName} • Dissonic` }
   }
 }

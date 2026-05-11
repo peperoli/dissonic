@@ -5,19 +5,11 @@ import supabase from '@/utils/supabase/client'
 
 const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[]>> => {
   const [from, to] = getPagination(options?.page, options?.size)
+  const searchString = options?.search && options.search.length > 1 ? options.search : null
 
-  let countQuery = supabase
-    .from('bands')
-    .select('id, genres!inner(id)', { count: 'exact', head: true })
-
-  if (options?.search && options.search.length > 1) {
-    // @ts-expect-error
-    countQuery = supabase.rpc(
-      'search_bands',
-      { search_string: options.search },
-      { count: 'exact', head: true }
-    )
-  }
+  let countQuery = searchString
+    ? supabase.rpc('search_bands', { search_string: searchString }, { count: 'exact', head: true })
+    : supabase.from('bands').select('id, genres!inner(id)', { count: 'exact', head: true })
 
   if (options?.ids && options.ids.length > 0) {
     countQuery = countQuery.in('id', options.ids)
@@ -38,16 +30,13 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
   const filterQueries = []
 
   for (let page = 1; page <= maxPage; page++) {
-    let filterQuery = supabase
-      .from('bands')
-      .select('id, genres!inner(id)')
+    let filterQuery = (
+      searchString
+        ? supabase.rpc('search_bands', { search_string: searchString })
+        : supabase.from('bands').select('id, genres!inner(id)')
+    )
       .eq('is_archived', false)
       .range((page - 1) * ROWS_PER_PAGE, page * ROWS_PER_PAGE - 1)
-
-    if (options?.search && options.search.length > 1) {
-      // @ts-expect-error
-      filterQuery = supabase.rpc('search_bands', { search_string: options.search })
-    }
 
     if (options?.ids && options.ids.length > 0) {
       filterQuery = filterQuery.in('id', options.ids)
@@ -70,8 +59,9 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
     throw responses.find(({ error }) => error)
   }
 
-  let filteredBandIds = responses
-    .flatMap(({ data }) => data)
+  const filteredBandIds = responses
+    .map(({ data }) => data)
+    .flat()
     .filter(band => band !== null)
     .map(band => band.id)
 

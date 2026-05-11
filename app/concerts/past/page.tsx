@@ -11,7 +11,7 @@ async function fetchData({ userView }: { userView: string }) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  let { data: concertIds, error: concertIdsError } = await supabase
+  const { data: concertIds, error: concertIdsError } = await supabase
     .from('concerts_full')
     .select('id, date_start, bands_seen:j_bands_seen(user_id)')
     .lte('date_start', Temporal.Now.plainDateISO().toString())
@@ -20,9 +20,11 @@ async function fetchData({ userView }: { userView: string }) {
     throw concertIdsError
   }
 
+  let filteredConcertIds = concertIds
+
   if (user) {
     if (userView === 'user') {
-      concertIds = concertIds.filter(concert =>
+      filteredConcertIds = concertIds.filter(concert =>
         concert.bands_seen.find(band => band.user_id === user.id)
       )
     } else if (userView === 'friends') {
@@ -46,7 +48,7 @@ async function fetchData({ userView }: { userView: string }) {
         ]),
       ]
 
-      concertIds = concertIds.filter(concert =>
+      filteredConcertIds = concertIds.filter(concert =>
         concert.bands_seen.find(band => friendIds?.includes(band.user_id))
       )
     }
@@ -57,7 +59,7 @@ async function fetchData({ userView }: { userView: string }) {
     .select('*, bands:j_concert_bands(*, ...bands(*, genres(*)))', { count: 'estimated' })
     .in(
       'id',
-      concertIds.map(concert => concert.id)
+      filteredConcertIds.map(concert => concert.id)
     )
     .order('date_start', { ascending: false })
     .order('item_index', { referencedTable: 'j_concert_bands', ascending: true })

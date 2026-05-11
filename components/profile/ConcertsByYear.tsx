@@ -61,8 +61,8 @@ export const ConcertsByYear = ({ profileId }: { profileId?: string }) => {
   }
 
   const concerts = getUniqueObjects(bandsSeen.map(band => band.concert))
-  const start = Math.min(...concerts?.map(concert => parseInt(concert.date_start.slice(0, 4))))
-  const end = Math.max(...concerts?.map(concert => parseInt(concert.date_start.slice(0, 4))))
+  const start = Math.min(...concerts.map(concert => parseInt(concert.date_start.slice(0, 4))))
+  const end = Math.max(...concerts.map(concert => parseInt(concert.date_start.slice(0, 4))))
   const years = Array.from({ length: end - start + 1 }, (_, i) => start + i)
   const months = Array.from({ length: 12 }, (_, i) => i + 1)
   const yearItems = [

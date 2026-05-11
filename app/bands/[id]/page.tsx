@@ -6,12 +6,12 @@ import { notFound } from 'next/navigation'
 import { fetchSpotifyToken } from '@/hooks/spotify/useSpotifyToken'
 import { fetchSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 import { SpotifyArtist } from '@/types/types'
-import { ResolvingMetadata } from 'next'
+import { Metadata, ResolvingMetadata } from 'next'
 
 export async function generateMetadata(
   props: { params: Promise<{ id: string }> },
   parent: ResolvingMetadata
-) {
+): Promise<Metadata> {
   const params = await props.params
   const band = await fetchData(params)
 
@@ -29,6 +29,7 @@ export async function generateMetadata(
       },
     }
   } catch (error) {
+    console.error('Error fetching Spotify data for metadata generation:', error)
     return {
       title: `${band.name} • Dissonic`,
     }

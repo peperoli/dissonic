@@ -55,8 +55,8 @@ export const FriendItem = ({
   friend: Profile | null
   profileId: string
 }) => {
-  const [_, setModal] = useModal()
-  const [__, setFriendId] = useQueryState('friendId', { history: 'push' })
+  const [, setModal] = useModal()
+  const [, setFriendId] = useQueryState('friendId', { history: 'push' })
   const { data: session } = useSession()
   const { data: profile } = useProfile(profileId)
   const t = useTranslations('FriendItem')

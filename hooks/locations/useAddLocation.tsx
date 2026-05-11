@@ -55,7 +55,7 @@ const addLocation = async (formData: AddLocation & { imageFile: File | string | 
 
 export const useAddLocation = () => {
   const queryClient = useQueryClient()
-  const [_, setModal] = useQueryState('modal', { history: 'push' })
+  const [, setModal] = useQueryState('modal', { history: 'push' })
   const t = useTranslations('useAddLocation')
 
   return useMutation({

@@ -7,7 +7,7 @@ import { Tables } from '@/types/supabase'
 import { useTranslations } from 'next-intl'
 
 export function ToggleFriendButton({ friend }: { friend: Tables<'friends'> | null }) {
-  const [_, setModal] = useModal()
+  const [, setModal] = useModal()
   const t = useTranslations('ToggleFriendButton')
   const isFriend = !!friend && !friend.pending
 

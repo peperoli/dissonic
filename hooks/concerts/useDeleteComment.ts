@@ -13,7 +13,7 @@ const deleteComment = async (commentId: number) => {
 
 export const useDeleteComment = () => {
   const queryClient = useQueryClient()
-  const [_, setModal] = useQueryState('modal', { history: 'push' })
+  const [, setModal] = useQueryState('modal', { history: 'push' })
   return useMutation({
     mutationFn: deleteComment,
     onError: error => {

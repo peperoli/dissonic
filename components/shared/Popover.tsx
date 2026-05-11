@@ -81,7 +81,6 @@ function PopoverTrigger({
     <Composition
       type="button"
       onClick={isOpen ? close : show}
-      // @ts-expect-error
       style={{ anchorName: `--${id}` }}
       {...props}
     />
@@ -103,7 +102,6 @@ function PopoverContent({
       ref={popoverRef}
       closedby="any"
       onToggle={event => setOpen(event.currentTarget.open)}
-      // @ts-expect-error
       style={{ positionAnchor: `--${id}`, positionArea: side, positionTryFallbacks: 'flip-block' }}
       {...props}
     >

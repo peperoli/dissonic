@@ -84,7 +84,7 @@ async function editLog({
     throw insertMemoriesError
   }
 
-  try {
+  if (memoryIdsToDelete.length) {
     const { error } = await supabase
       .from('memories')
       .delete()
@@ -94,22 +94,20 @@ async function editLog({
     if (error) {
       throw error
     }
-
-    await Promise.all(
-      memoriesToUpdate.map(async memory => {
-        const { error } = await supabase
-          .from('memories')
-          .update({ band_id: memory.band_id })
-          .eq('id', memory.id)
-
-        if (error) {
-          throw error
-        }
-      })
-    )
-  } catch (error) {
-    throw error
   }
+
+  await Promise.all(
+    memoriesToUpdate.map(async memory => {
+      const { error } = await supabase
+        .from('memories')
+        .update({ band_id: memory.band_id })
+        .eq('id', memory.id)
+
+      if (error) {
+        throw error
+      }
+    })
+  )
 
   return { concertId }
 }

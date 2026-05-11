@@ -3,11 +3,14 @@ import { Genre, GenreFetchOptions } from '../../types/types'
 import supabase from '../../utils/supabase/client'
 
 const fetchGenres = async (options?: GenreFetchOptions): Promise<Genre[]> => {
-  let query = supabase.from('genres').select('*').order('name')
-
-  if (options?.search && options.search.length > 1) {
-    query = supabase.rpc('search_genres', { search_string: options.search })
-  }
+  const searchString = options?.search && options.search.length > 1 ? options.search : null
+  let query = (
+    searchString
+      ? supabase.rpc('search_genres', { search_string: searchString })
+      : supabase.from('genres')
+  )
+    .select('*')
+    .order('name')
 
   if (options?.ids && options.ids.length > 0) {
     query = query.in('id', options.ids)

@@ -81,12 +81,12 @@ export function LocationCommunity({ location }: { location: Location }) {
       <h2>{t('fans')}</h2>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
         {locationProfiles
-          .filter(item => !!item.profile && !!item.count)
-          .sort((a, b) => b.count! - a.count!)
+          .filter(item => !!item.profile)
+          .sort((a, b) => (b.count ?? 0) - (a.count ?? 0))
           .map(item => (
             <LocationUserItem
               profile={item.profile!}
-              count={item.count!}
+              count={item.count ?? 0}
               location={location}
               key={item.profile?.id}
             />

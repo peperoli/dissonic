@@ -8,7 +8,7 @@ import { useCountries } from '@/hooks/useCountries'
 import { Disclosure } from '../shared/Disclosure'
 import { ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import { useParams } from 'next/navigation'
 import { useLocation } from '@/hooks/locations/useLocation'
 import { useEditLocation } from '@/hooks/locations/useEditLocation'
@@ -81,7 +81,7 @@ export const Form = ({ close, isNew }: FormProps) => {
       {isSimilar && (
         <SimilarItemsWarning
           itemType="locations"
-          similarItems={similarLocations!}
+          similarItems={similarLocations}
           similarItemsSize={similarLocationsSize}
           setSimilarItemsSize={setSimilarLocationsSize}
         />

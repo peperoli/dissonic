@@ -3,17 +3,17 @@ import supabase from '../utils/supabase/client'
 import { useQuery } from '@tanstack/react-query'
 
 const fetchCountries = async (options?: CountryFetchOptions) => {
-  let query = supabase.from('countries').select('*').order('name_en')
+  const searchString = options?.search && options.search.length > 1 ? options.search : null
 
-  if (options?.search && options.search.length > 1) {
-    query = supabase.rpc('search_countries', { search_string: options.search })
-  }
+  let query = searchString
+    ? supabase.rpc('search_countries', { search_string: searchString })
+    : supabase.from('countries').select('*')
 
   if (options?.ids && options.ids.length > 0) {
     query = query.in('id', options.ids)
   }
 
-  const { data, error } = await query
+  const { data, error } = await query.order('name_en')
 
   if (error) {
     throw error

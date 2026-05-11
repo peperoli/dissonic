@@ -4,7 +4,7 @@ import { Temporal } from 'temporal-polyfill'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient()
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
 
   const { data: concerts } = await supabase.from('concerts_full').select('id')
   const { data: bands } = await supabase.from('bands').select('id').eq('is_archived', false)

@@ -54,7 +54,7 @@ export const ReactionToggle = ({
     } else {
       addReaction.mutate()
     }
-    close && close()
+    close?.()
   }
   return (
     <div className="relative">

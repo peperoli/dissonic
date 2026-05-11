@@ -49,7 +49,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
   })
   const archiveConcert = useArchiveConcert()
   const restoreConcert = useRestoreConcert()
-  const [_, setModal] = useModal()
+  const [, setModal] = useModal()
   const { push } = useRouter()
   const pathname = usePathname()
   const t = useTranslations('ConcertPage')

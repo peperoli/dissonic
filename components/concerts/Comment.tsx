@@ -30,6 +30,7 @@ export function CommentItem({ comment }: { comment: Comment }) {
   const t = useTranslations('Comment')
   const locale = useLocale()
   const isOwnComment = session?.user.id === comment.user_id
+  const replies = comment.replies ?? []
 
   return (
     <>
@@ -112,11 +113,11 @@ export function CommentItem({ comment }: { comment: Comment }) {
           />
         )}
       </div>
-      {!!comment.replies?.length && (
+      {!!replies.length && (
         <div className="grid gap-5">
-          {comment.replies.map((reply, index) => (
+          {replies.map((reply, index) => (
             <div className="relative" key={reply.id}>
-              {index + 1 < comment.replies!.length && (
+              {index + 1 < replies.length && (
                 <div className="absolute -bottom-7 top-0 flex w-5 flex-col items-center">
                   <div className="h-full w-px bg-slate-500" />
                 </div>

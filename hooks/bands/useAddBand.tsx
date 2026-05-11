@@ -37,7 +37,7 @@ const addBand = async (band: AddBand) => {
 
 export const useAddBand = () => {
   const queryClient = useQueryClient()
-  const [_, setModal] = useQueryState('modal', { history: 'push' })
+  const [, setModal] = useQueryState('modal', { history: 'push' })
   const t = useTranslations('useAddBand')
 
   return useMutation({
