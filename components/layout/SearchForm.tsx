@@ -13,10 +13,18 @@ import { LocationItem } from '../locations/LocationItem'
 import { SegmentedControl } from '../controls/SegmentedControl'
 import { useDebounce } from '@/hooks/helpers/useDebounce'
 import { useLastSearched, useSaveLastSearched } from '@/hooks/search/lastSearched'
+import { algoliasearch } from 'algoliasearch'
+import { Hits, InstantSearch, SearchBox } from 'react-instantsearch'
+import { SearchIcon, XIcon } from 'lucide-react'
+import { SpinnerIcon } from './SpinnerIcon'
 
 export type SearchResult = Database['public']['CompositeTypes']['search_result']
 
 export function SearchForm() {
+  const searchClient = algoliasearch(
+    process.env.NEXT_PUBLIC_ALGOLIA_APP_ID,
+    process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY
+  )
   const [searchString, setSearchString] = useState('')
   const [selectedType, setSelectedType] = useState('all')
   const debouncedSearchString = useDebounce(searchString, 100)
@@ -43,12 +51,29 @@ export function SearchForm() {
   return (
     <section>
       <div className="sticky top-0 z-10 -m-4 grid gap-4 bg-slate-800 p-4">
-        <SearchField
+        <InstantSearch searchClient={searchClient} indexName="global_index">
+          <SearchBox
+            placeholder="Search ..."
+            // @ts-expect-error - algolia and lucide props not compatible
+            submitIconComponent={SearchIcon}
+            loadingIconComponent={SpinnerIcon}
+            // @ts-expect-error - algolia and lucide props not compatible
+            resetIconComponent={XIcon}
+            classNames={{
+              form: 'form-control',
+              input: 'min-w-48 !pl-10',
+              submit: 'absolute top-1/2 ml-3 size-icon -translate-y-1/2',
+              loadingIndicator: 'absolute right-0 m-2.5 size-icon animate-spin text-slate-300',
+              reset: 'btn btn-icon btn-small absolute right-0 m-1 size-icon',
+            }}
+          />
+        </InstantSearch>
+        {/* <SearchField
           name="globalSearch"
           query={searchString}
           setQuery={setSearchString}
           isLoading={isFetching}
-        />
+        /> */}
         {(!!lastSearched?.length || !!searchString.length) && (
           <SegmentedControl
             options={[
@@ -62,6 +87,7 @@ export function SearchForm() {
           />
         )}
       </div>
+      <Hits hitComponent={({ hit }) => <SearchResultItem result={hit} />} />
       {!searchString.length
         ? lastSearched && (
             <div className="mt-6">

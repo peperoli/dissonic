@@ -9,6 +9,9 @@ const envSchema = z.object({
   CLOUDFLARE_ACCOUNT_ID: z.string().min(1),
   CLOUDFLARE_API_TOKEN: z.string().min(1),
   NEXT_PUBLIC_CLOUDFLARE_ACCOUNT_HASH: z.string().min(1),
+  NEXT_PUBLIC_ALGOLIA_APP_ID: z.string().min(1),
+  ALGOLIA_WRITE_API_KEY: z.string().min(1),
+  NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY: z.string().min(1),
 })
 
 export type EnvSchema = z.infer<typeof envSchema>
