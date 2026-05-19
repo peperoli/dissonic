@@ -44,19 +44,15 @@ export async function GET() {
 
   const algoliaRecords = searchRecords.map(record => ({
     objectID: `${record.type}-${record.id}`,
-    type: record.type,
-    name: record.name,
-    image: record.image,
-    url: `/${record.type}/${record.id}`,
+    ...record,
   }))
 
   try {
-    const bla = await algolia.replaceAllObjects({
+    await algolia.replaceAllObjects({
       indexName: 'global_index',
       objects: algoliaRecords,
     })
-    console.log('Algolia indexing response:', bla)
-    return new Response('Successfully indexed objects!', { status: 200 })
+    return new Response(`Successfully saved ${searchRecords.length} records!`, { status: 200 })
   } catch (err) {
     console.error('Error indexing objects:', err)
     return new Response('Failed to index objects', { status: 500 })

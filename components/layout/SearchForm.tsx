@@ -1,21 +1,18 @@
 'use client'
 
-import { useState } from 'react'
-import { SearchField } from '../forms/SearchField'
-import { useSearch } from '@/hooks/search/useSearch'
+import { useLastSearched, useSaveLastSearched } from '@/hooks/search/lastSearched'
 import { Database } from '@/types/supabase'
-import { useTranslations } from 'next-intl'
 import { Band, Concert, Location } from '@/types/types'
-import { ConcertItem } from '../concerts/ConcertItem'
+import { algoliasearch } from 'algoliasearch'
+import { SearchIcon, XIcon } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { useState } from 'react'
+import { InstantSearch, RefinementList, SearchBox, useHits } from 'react-instantsearch'
 import { Button } from '../Button'
 import { BandItem } from '../bands/BandItem'
-import { LocationItem } from '../locations/LocationItem'
+import { ConcertItem } from '../concerts/ConcertItem'
 import { SegmentedControl } from '../controls/SegmentedControl'
-import { useDebounce } from '@/hooks/helpers/useDebounce'
-import { useLastSearched, useSaveLastSearched } from '@/hooks/search/lastSearched'
-import { algoliasearch } from 'algoliasearch'
-import { Hits, InstantSearch, SearchBox } from 'react-instantsearch'
-import { SearchIcon, XIcon } from 'lucide-react'
+import { LocationItem } from '../locations/LocationItem'
 import { SpinnerIcon } from './SpinnerIcon'
 
 export type SearchResult = Database['public']['CompositeTypes']['search_result']
@@ -25,34 +22,26 @@ export function SearchForm() {
     process.env.NEXT_PUBLIC_ALGOLIA_APP_ID,
     process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY
   )
-  const [searchString, setSearchString] = useState('')
   const [selectedType, setSelectedType] = useState('all')
-  const debouncedSearchString = useDebounce(searchString, 100)
+  const [isHitsVisible, setIsHitsVisible] = useState(false)
   const { data: lastSearched } = useLastSearched()
-
-  const { data: searchResults, isFetching } = useSearch({
-    searchString: debouncedSearchString,
-    type: selectedType === 'all' ? null : selectedType,
-  })
   const t = useTranslations('SearchForm')
-
-  function groupResultsByType(results: SearchResult[]) {
-    const groupedResults: Record<string, typeof results> = {}
-    results?.forEach(result => {
-      const type = result.type as string
-      if (!groupedResults[type]) {
-        groupedResults[type] = []
-      }
-      groupedResults[type].push(result)
-    })
-    return Object.entries(groupedResults)
-  }
 
   return (
     <section>
       <div className="sticky top-0 z-10 -m-4 grid gap-4 bg-slate-800 p-4">
         <InstantSearch searchClient={searchClient} indexName="global_index">
           <SearchBox
+            queryHook={(query, search) => {
+              let timerId = null
+              setIsHitsVisible(query.length > 0)
+
+              if (timerId) {
+                clearTimeout(timerId)
+              }
+
+              timerId = setTimeout(() => search(query), 100)
+            }}
             placeholder="Search ..."
             // @ts-expect-error - algolia and lucide props not compatible
             submitIconComponent={SearchIcon}
@@ -67,62 +56,72 @@ export function SearchForm() {
               reset: 'btn btn-icon btn-small absolute right-0 m-1 size-icon',
             }}
           />
-        </InstantSearch>
-        {/* <SearchField
-          name="globalSearch"
-          query={searchString}
-          setQuery={setSearchString}
-          isLoading={isFetching}
-        /> */}
-        {(!!lastSearched?.length || !!searchString.length) && (
-          <SegmentedControl
-            options={[
-              { value: 'all', label: t('all') },
-              { value: 'concerts', label: t('concerts') },
-              { value: 'bands', label: t('bands') },
-              { value: 'locations', label: t('locations') },
-            ]}
-            value={selectedType}
-            onValueChange={setSelectedType}
-          />
-        )}
-      </div>
-      <Hits hitComponent={({ hit }) => <SearchResultItem result={hit} />} />
-      {!searchString.length
-        ? lastSearched && (
-            <div className="mt-6">
-              <h2 className="h3">{t('lastSearched')}</h2>
-              <ul>
-                {lastSearched
-                  ?.filter(result => selectedType === 'all' || result.type === selectedType)
-                  .map(result => {
-                    return <SearchResultItem key={result.id} result={result} />
-                  })}
-              </ul>
-            </div>
-          )
-        : groupResultsByType(searchResults ?? []).map(([type, results]) => {
-            return (
-              <div key={type} className="mt-6">
-                <div className="flex items-center justify-between">
-                  <h2 className="h3">{t(type)}</h2>
-                  {selectedType === 'all' && results.length > 3 && (
-                    <Button
-                      label={t('showAll')}
-                      onClick={() => setSelectedType(type)}
-                      size="small"
-                    />
-                  )}
-                </div>
+          <RefinementList attribute="type" />
+          {(!!lastSearched?.length || isHitsVisible) && (
+            <SegmentedControl
+              options={[
+                { value: 'all', label: t('all') },
+                { value: 'concerts', label: t('concerts') },
+                { value: 'bands', label: t('bands') },
+                { value: 'locations', label: t('locations') },
+              ]}
+              value={selectedType}
+              onValueChange={setSelectedType}
+            />
+          )}
+          {isHitsVisible ? (
+            <CustomHits selectedType={selectedType} setSelectedType={setSelectedType} />
+          ) : (
+            lastSearched && (
+              <div className="mt-6">
+                <h2 className="h3">{t('lastSearched')}</h2>
                 <ul>
-                  {results?.slice(0, selectedType === 'all' ? 3 : undefined).map(result => {
-                    return <SearchResultItem key={result.id} result={result} />
-                  })}
+                  {lastSearched
+                    ?.filter(result => selectedType === 'all' || result.type === selectedType)
+                    .map(result => {
+                      return <SearchResultItem key={result.id} result={result} />
+                    })}
                 </ul>
               </div>
             )
-          })}
+          )}
+        </InstantSearch>
+      </div>
     </section>
+  )
+}
+
+function CustomHits({
+  selectedType,
+  setSelectedType,
+}: {
+  selectedType: string
+  setSelectedType: (type: string) => void
+}) {
+  const { items, results } = useHits<SearchResult>()
+  const groupedResults = Object.groupBy(items, item => item.type ?? 'unknown')
+  const t = useTranslations('SearchForm')
+  console.log('Algolia search results:', results)
+  console.log('Algolia search items:', items)
+
+  return (
+    <div>
+      {Object.entries(groupedResults).map(([type, results]) => (
+        <div key={type} className="mt-6">
+          <div className="flex items-center justify-between">
+            <h2 className="h3">{t(type)}</h2>
+            {selectedType === 'all' && results?.length > 3 && (
+              <Button label={t('showAll')} onClick={() => setSelectedType(type)} size="small" />
+            )}
+          </div>
+          <ul>
+            {results?.slice(0, selectedType === 'all' ? 3 : undefined).map(result => {
+              return <SearchResultItem key={result.id} result={result} />
+            })}
+          </ul>
+        </div>
+      ))}
+    </div>
   )
 }
 
