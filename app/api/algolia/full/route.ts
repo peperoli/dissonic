@@ -1,6 +1,8 @@
 import { createClient } from '@/utils/supabase/server'
 import { algoliasearch } from 'algoliasearch'
 
+const INDEX_NAME = 'global_index'
+
 export async function GET() {
   const supabase = await createClient()
   const algolia = algoliasearch(
@@ -49,8 +51,23 @@ export async function GET() {
 
   try {
     await algolia.replaceAllObjects({
-      indexName: 'global_index',
+      indexName: INDEX_NAME,
       objects: algoliaRecords,
+    })
+    await algolia.setSettings({
+      indexName: INDEX_NAME,
+      indexSettings: {
+        searchableAttributes: [
+          'name',
+          'bands',
+          'location',
+          'genres',
+          'festival_root',
+          'city',
+          'country',
+        ],
+        attributesForFaceting: ['type'],
+      },
     })
     return new Response(`Successfully saved ${searchRecords.length} records!`, { status: 200 })
   } catch (err) {

@@ -6,8 +6,8 @@ import { Band, Concert, Location } from '@/types/types'
 import { algoliasearch } from 'algoliasearch'
 import { SearchIcon, XIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
-import { InstantSearch, RefinementList, SearchBox, useHits } from 'react-instantsearch'
+import { useEffect, useRef, useState } from 'react'
+import { InstantSearch, SearchBox, useHits, useMenu } from 'react-instantsearch'
 import { Button } from '../Button'
 import { BandItem } from '../bands/BandItem'
 import { ConcertItem } from '../concerts/ConcertItem'
@@ -22,10 +22,18 @@ export function SearchForm() {
     process.env.NEXT_PUBLIC_ALGOLIA_APP_ID,
     process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY
   )
-  const [selectedType, setSelectedType] = useState('all')
   const [isHitsVisible, setIsHitsVisible] = useState(false)
+  const timerId = useRef<ReturnType<typeof setTimeout> | null>(null)
   const { data: lastSearched } = useLastSearched()
   const t = useTranslations('SearchForm')
+
+  useEffect(() => {
+    return () => {
+      if (timerId.current) {
+        clearTimeout(timerId.current)
+      }
+    }
+  }, [])
 
   return (
     <section>
@@ -33,14 +41,13 @@ export function SearchForm() {
         <InstantSearch searchClient={searchClient} indexName="global_index">
           <SearchBox
             queryHook={(query, search) => {
-              let timerId = null
               setIsHitsVisible(query.length > 0)
 
-              if (timerId) {
-                clearTimeout(timerId)
+              if (timerId.current) {
+                clearTimeout(timerId.current)
               }
 
-              timerId = setTimeout(() => search(query), 100)
+              timerId.current = setTimeout(() => search(query), 100)
             }}
             placeholder="Search ..."
             // @ts-expect-error - algolia and lucide props not compatible
@@ -56,31 +63,19 @@ export function SearchForm() {
               reset: 'btn btn-icon btn-small absolute right-0 m-1 size-icon',
             }}
           />
-          <RefinementList attribute="type" />
-          {(!!lastSearched?.length || isHitsVisible) && (
-            <SegmentedControl
-              options={[
-                { value: 'all', label: t('all') },
-                { value: 'concerts', label: t('concerts') },
-                { value: 'bands', label: t('bands') },
-                { value: 'locations', label: t('locations') },
-              ]}
-              value={selectedType}
-              onValueChange={setSelectedType}
-            />
-          )}
           {isHitsVisible ? (
-            <CustomHits selectedType={selectedType} setSelectedType={setSelectedType} />
+            <>
+              <CustomMenu />
+              <CustomHits />
+            </>
           ) : (
             lastSearched && (
-              <div className="mt-6">
+              <div>
                 <h2 className="h3">{t('lastSearched')}</h2>
                 <ul>
-                  {lastSearched
-                    ?.filter(result => selectedType === 'all' || result.type === selectedType)
-                    .map(result => {
-                      return <SearchResultItem key={result.id} result={result} />
-                    })}
+                  {lastSearched.map(result => {
+                    return <SearchResultItem key={result.id} result={result} />
+                  })}
                 </ul>
               </div>
             )
@@ -91,36 +86,52 @@ export function SearchForm() {
   )
 }
 
-function CustomHits({
-  selectedType,
-  setSelectedType,
-}: {
-  selectedType: string
-  setSelectedType: (type: string) => void
-}) {
-  const { items, results } = useHits<SearchResult>()
-  const groupedResults = Object.groupBy(items, item => item.type ?? 'unknown')
+function CustomMenu() {
+  const { items, refine } = useMenu({ attribute: 'type', sortBy: ['count:desc'] })
   const t = useTranslations('SearchForm')
-  console.log('Algolia search results:', results)
-  console.log('Algolia search items:', items)
+
+  return (
+    <SegmentedControl
+      options={[
+        { value: 'all', label: t('all') },
+        ...items.map(item => ({ value: item.value, label: t(item.value), count: item.count })),
+      ]}
+      value={items.find(item => item.isRefined)?.value || 'all'}
+      onValueChange={value => refine(value === 'all' ? '' : value)}
+    />
+  )
+}
+
+function CustomHits() {
+  const { items: hits } = useHits<SearchResult>()
+  const { items: menuItems, refine } = useMenu({ attribute: 'type' })
+  const groupedHits = Object.groupBy(hits, hit => hit.type ?? 'unknown')
+  const t = useTranslations('SearchForm')
+  const selectedType = menuItems.find(item => item.isRefined)?.value ?? 'all'
 
   return (
     <div>
-      {Object.entries(groupedResults).map(([type, results]) => (
-        <div key={type} className="mt-6">
-          <div className="flex items-center justify-between">
-            <h2 className="h3">{t(type)}</h2>
-            {selectedType === 'all' && results?.length > 3 && (
-              <Button label={t('showAll')} onClick={() => setSelectedType(type)} size="small" />
-            )}
+      {Object.entries(groupedHits).map(([type, hits]) => {
+        if (!hits?.length) {
+          return null
+        }
+
+        return (
+          <div key={type} className="mt-6">
+            <div className="flex items-center justify-between">
+              <h2 className="h3">{t(type)}</h2>
+              {selectedType === 'all' && hits.length > 3 && (
+                <Button label={t('showAll')} onClick={() => refine(type)} size="small" />
+              )}
+            </div>
+            <ul>
+              {hits.slice(0, selectedType === 'all' ? 3 : undefined).map(result => {
+                return <SearchResultItem key={result.id} result={result} />
+              })}
+            </ul>
           </div>
-          <ul>
-            {results?.slice(0, selectedType === 'all' ? 3 : undefined).map(result => {
-              return <SearchResultItem key={result.id} result={result} />
-            })}
-          </ul>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }

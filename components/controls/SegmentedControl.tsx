@@ -1,8 +1,8 @@
 import clsx from 'clsx'
 import { LucideIcon } from 'lucide-react'
 
-type SegmentedControlProps = {
-  options: { value: string; label: string; icon?: LucideIcon }[]
+export type SegmentedControlProps = {
+  options: { value: string; label: string; icon?: LucideIcon; count?: number }[]
   value: string
   onValueChange: (value: string) => void
   iconOnly?: boolean
@@ -31,6 +31,11 @@ export function SegmentedControl({
           >
             {option.icon && <option.icon className="size-icon" />}
             <span className={clsx(iconOnly && 'sr-only')}>{option.label}</span>
+            {option.count !== undefined && (
+              <div className={clsx('min-w-4 rounded bg-slate-700 px-1 text-center text-sm')}>
+                {option.count}
+              </div>
+            )}
           </button>
         ))}
       </fieldset>
