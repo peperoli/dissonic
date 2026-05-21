@@ -6,6 +6,7 @@ import { Temporal } from 'temporal-polyfill'
 
 async function fetchData({ userView }: { userView: string }) {
   const supabase = await createClient()
+  const today = Temporal.Now.plainDateISO()
 
   const {
     data: { user },
@@ -14,7 +15,7 @@ async function fetchData({ userView }: { userView: string }) {
   const { data: concertIds, error: concertIdsError } = await supabase
     .from('concerts_full')
     .select('id, date_start, bands_seen:j_bands_seen(user_id)')
-    .lte('date_start', Temporal.Now.plainDateISO().toString())
+    .lte('date_start', today.toString())
 
   if (!concertIds) {
     throw concertIdsError

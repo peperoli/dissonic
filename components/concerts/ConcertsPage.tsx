@@ -71,7 +71,8 @@ export function ConcertsPage({
   })
   const [, setModal] = useQueryState('modal', parseAsStringLiteral(modalPaths))
   const [, startTransition] = useTransition()
-  const tomorrow = Temporal.Now.plainDateISO().add({ days: 1 })
+  const today = Temporal.Now.plainDateISO()
+  const tomorrow = today.add({ days: 1 })
 
   function getView() {
     if (!currentUser) return
@@ -90,7 +91,7 @@ export function ConcertsPage({
     placeholderData: initialConcerts,
     bands: selectedBands,
     locations: selectedLocations,
-    dateRange: initialView.range === 'future' ? [tomorrow, null] : [null, tomorrow],
+    dateRange: initialView.range === 'future' ? [tomorrow, null] : [null, today],
     years: selectedYears,
     festivalRoots: selectedFestivalRoots,
     bandsSeenUsers:
