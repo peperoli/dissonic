@@ -3,6 +3,7 @@ import supabase from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import toast from 'react-hot-toast'
+import { deleteSearchRecord } from '@/actions/algolia'
 
 const deleteLocation = async (locationId: number) => {
   const { error } = await supabase.from('locations').delete().eq('id', locationId)
@@ -10,6 +11,8 @@ const deleteLocation = async (locationId: number) => {
   if (error) {
     throw error
   }
+
+  await deleteSearchRecord(`locations-${locationId}`)
 }
 
 export const useDeleteLocation = () => {

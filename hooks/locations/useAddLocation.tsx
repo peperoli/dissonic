@@ -5,9 +5,10 @@ import { useQueryState } from 'nuqs'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
+import { addSearchRecord } from '@/actions/algolia'
 
 const addLocation = async (formData: AddLocation & { imageFile: File | string | null }) => {
-  const { data, error } = await supabase
+  const { data: newLocation, error } = await supabase
     .from('locations')
     .insert({
       name: formData.name,
@@ -17,7 +18,7 @@ const addLocation = async (formData: AddLocation & { imageFile: File | string | 
       alt_names: formData.alt_names,
       website: formData.website,
     })
-    .select()
+    .select('*, country:countries(iso2)')
     .single()
 
   if (error) {
@@ -26,7 +27,7 @@ const addLocation = async (formData: AddLocation & { imageFile: File | string | 
 
   const imagePath =
     formData.imageFile instanceof File
-      ? `locations/${data.id}.${formData.imageFile?.name.split('.').at(-1)}`
+      ? `locations/${newLocation.id}.${formData.imageFile?.name.split('.').at(-1)}`
       : formData.imageFile
 
   if (formData.imageFile && imagePath) {
@@ -43,14 +44,31 @@ const addLocation = async (formData: AddLocation & { imageFile: File | string | 
       .update({
         image: imagePath,
       })
-      .eq('id', data.id)
+      .eq('id', newLocation.id)
 
     if (updateImageError) {
       throw updateImageError
     }
   }
 
-  return { locationId: data.id }
+  await addSearchRecord({
+    type: 'locations',
+    id: newLocation.id,
+    search_strings: null,
+    image: imagePath,
+    name: newLocation.name,
+    festival_root: null,
+    date_start: null,
+    date_end: null,
+    bands: null,
+    location: null,
+    genres: null,
+    country: newLocation.country?.iso2 || null,
+    spotify_artist_id: null,
+    city: newLocation.city,
+  })
+
+  return { locationId: newLocation.id }
 }
 
 export const useAddLocation = () => {

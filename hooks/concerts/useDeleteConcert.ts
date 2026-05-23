@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { Concert } from '@/types/types'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
+import { deleteSearchRecord } from '@/actions/algolia'
 
 const deleteConcert = async (concertId: Concert['id']) => {
   const { error } = await supabase.from('concerts').delete().eq('id', concertId)
@@ -11,6 +12,8 @@ const deleteConcert = async (concertId: Concert['id']) => {
   if (error) {
     throw error
   }
+
+  await deleteSearchRecord(`concerts-${concertId}`)
 }
 
 export const useDeleteConcert = () => {

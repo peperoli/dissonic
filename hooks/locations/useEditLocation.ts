@@ -4,6 +4,7 @@ import { useQueryState } from 'nuqs'
 import { TablesInsert } from '@/types/supabase'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
+import { editSearchRecord } from '@/actions/algolia'
 
 const editLocation = async (
   formData: TablesInsert<'locations'> & { imageFile: File | string | null }
@@ -33,7 +34,7 @@ const editLocation = async (
     }
   }
 
-  const { error } = await supabase
+  const { data: newLocation, error } = await supabase
     .from('locations')
     .update({
       name: formData.name,
@@ -45,10 +46,19 @@ const editLocation = async (
       image: imagePath,
     })
     .eq('id', formData.id)
+    .select('*, country:countries(iso2)')
+    .single()
 
   if (error) {
     throw error
   }
+
+  await editSearchRecord(`locations-${formData.id}`, {
+    image: imagePath,
+    name: newLocation.name,
+    country: newLocation.country?.iso2,
+    city: newLocation.city,
+  })
 
   return { locationId: formData.id }
 }
@@ -60,7 +70,10 @@ export const useEditLocation = () => {
 
   return useMutation({
     mutationFn: editLocation,
-    onError: error => { console.error(error); toast.error(error.message)},
+    onError: error => {
+      console.error(error)
+      toast.error(error.message)
+    },
     onSuccess: ({ locationId }) => {
       queryClient.invalidateQueries({ queryKey: ['location', locationId] })
       setModal(null)
