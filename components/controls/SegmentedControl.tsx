@@ -15,14 +15,14 @@ export function SegmentedControl({
   iconOnly,
 }: SegmentedControlProps) {
   return (
-    <div className="-mx-4 overflow-x-auto px-4">
-      <fieldset className="flex w-full rounded-lg bg-slate-750 p-1 md:w-fit">
+    <div className="overflow-x-auto md:w-fit rounded-lg bg-slate-750">
+      <div className="flex w-full p-1 md:w-fit">
         {options.map(option => (
           <button
             type="button"
             onClick={() => onValueChange(option.value)}
             className={clsx(
-              'flex w-full min-w-12 items-center justify-center gap-2 whitespace-nowrap rounded-md px-2 py-1 md:w-fit md:flex-none',
+              'flex min-w-12 shrink-0 grow items-center justify-center gap-1 whitespace-nowrap rounded-md px-2 py-1 md:w-fit md:flex-none',
               option.value === value
                 ? 'bg-gradient-to-r from-blue/20 to-venom/20 text-white shadow-lg'
                 : 'text-slate-300'
@@ -32,13 +32,15 @@ export function SegmentedControl({
             {option.icon && <option.icon className="size-icon" />}
             <span className={clsx(iconOnly && 'sr-only')}>{option.label}</span>
             {option.count !== undefined && (
-              <div className={clsx('min-w-4 rounded bg-slate-700 px-1 text-center text-sm')}>
+              <div
+                className={clsx('min-w-4 flex-none rounded bg-slate-700 px-1 text-center text-sm')}
+              >
                 {option.count}
               </div>
             )}
           </button>
         ))}
-      </fieldset>
+      </div>
     </div>
   )
 }

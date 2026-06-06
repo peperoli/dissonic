@@ -30,6 +30,7 @@
   },
   "SearchForm": {
     "all": "Alle",
+    "noResults": "Keine Ergebnisse für «{query}».",
     "lastSearched": "Zuletzt gesucht",
     "concerts": "Konzerte",
     "bands": "Bands",

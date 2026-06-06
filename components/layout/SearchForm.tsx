@@ -6,8 +6,8 @@ import { Band, Concert, Location } from '@/types/types'
 import { algoliasearch } from 'algoliasearch'
 import { SearchIcon, XIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useEffect, useRef, useState } from 'react'
-import { InstantSearch, SearchBox, useHits, useMenu } from 'react-instantsearch'
+import { ReactNode, useEffect, useRef, useState } from 'react'
+import { InstantSearch, SearchBox, useHits, useInstantSearch, useMenu } from 'react-instantsearch'
 import { Button } from '../Button'
 import { BandItem } from '../bands/BandItem'
 import { ConcertItem } from '../concerts/ConcertItem'
@@ -64,10 +64,10 @@ export function SearchForm() {
             }}
           />
           {isHitsVisible ? (
-            <>
+            <NoResultsBoundary>
               <CustomMenu />
               <CustomHits />
-            </>
+            </NoResultsBoundary>
           ) : (
             lastSearched && (
               <div>
@@ -134,6 +134,26 @@ function CustomHits() {
       })}
     </div>
   )
+}
+
+function NoResultsBoundary({ children }: { children: ReactNode }) {
+  const { results, indexUiState } = useInstantSearch()
+  const t = useTranslations('SearchForm')
+
+  // The `__isArtificial` flag makes sure not to display the No Results message
+  // when no hits have been returned.
+  if (!results.__isArtificial && results.nbHits === 0) {
+    return (
+      <>
+        <div>
+          <p className="text-slate-300">{t('noResults', { query: indexUiState.query })}</p>
+        </div>
+        <div hidden>{children}</div>
+      </>
+    )
+  }
+
+  return children
 }
 
 function SearchResultItem({ result }: { result: SearchResult }) {
