@@ -69,7 +69,7 @@ export async function GET() {
         attributesForFaceting: ['type'],
       },
     })
-    return new Response(`Successfully saved ${searchRecords.length} records!`, { status: 200 })
+    return new Response(`Successfully saved ${algoliaRecords.length} records!`, { status: 200 })
   } catch (err) {
     console.error('Error indexing objects:', err)
     return new Response('Failed to index objects', { status: 500 })
