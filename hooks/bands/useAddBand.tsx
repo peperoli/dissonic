@@ -5,7 +5,7 @@ import { useQueryState } from 'nuqs'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { addSearchRecord } from '@/actions/algolia'
+import { addBandRecord, addGlobalRecord } from '@/actions/algolia'
 
 const addBand = async (formData: AddBand) => {
   const { data: newBand, error: bandError } = await supabase
@@ -33,22 +33,25 @@ const addBand = async (formData: AddBand) => {
     throw genresError
   }
 
-  await addSearchRecord({
-    type: 'bands',
-    id: newBand.id,
-    search_strings: null,
-    image: null,
-    name: newBand.name,
-    festival_root:  null,
-    date_start: null,
-    date_end: null,
-    bands: null,
-    location: null,
-    genres: formData.genres.map(genre => genre.name),
-    country: newBand.country?.iso2 || null,
-    spotify_artist_id: newBand.spotify_artist_id,
-    city: null,
-  })
+  await Promise.all([
+    addGlobalRecord({
+      type: 'bands',
+      id: newBand.id,
+      search_strings: null,
+      image: null,
+      name: newBand.name,
+      festival_root: null,
+      date_start: null,
+      date_end: null,
+      bands: null,
+      location: null,
+      genres: formData.genres.map(genre => genre.name),
+      country: newBand.country?.iso2 || null,
+      spotify_artist_id: newBand.spotify_artist_id,
+      city: null,
+    }),
+    addBandRecord({...newBand, genres: formData.genres }),
+  ])
 
   return { bandId: newBand.id }
 }

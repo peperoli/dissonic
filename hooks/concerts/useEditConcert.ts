@@ -4,7 +4,7 @@ import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
-import { editSearchRecord } from '@/actions/algolia'
+import { editGlobalRecord } from '@/actions/algolia'
 
 const editConcert = async (formData: EditConcert) => {
   const concertId = formData.id
@@ -108,7 +108,7 @@ const editConcert = async (formData: EditConcert) => {
     }
   }
 
-  await editSearchRecord(`concerts-${concertId}`, {
+  await editGlobalRecord(`concerts-${concertId}`, {
     name: newConcert.is_festival ? null : newConcert.name,
     festival_root: newConcert.festival_root?.name,
     date_start: newConcert.date_start,

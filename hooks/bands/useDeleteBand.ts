@@ -12,7 +12,10 @@ const deleteBand = async (bandId: number) => {
     throw error
   }
 
-  await deleteSearchRecord(`bands-${bandId}`)
+  await Promise.all([
+    deleteSearchRecord('global_index', `bands-${bandId}`),
+    deleteSearchRecord('bands', bandId.toString()),
+  ])
 }
 
 export const useDeleteBand = () => {

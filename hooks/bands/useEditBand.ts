@@ -4,7 +4,7 @@ import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
-import { editSearchRecord } from '@/actions/algolia'
+import { editBandRecord, editGlobalRecord } from '@/actions/algolia'
 
 const editBand = async (formData: EditBand) => {
   const bandId = formData.id
@@ -71,12 +71,15 @@ const editBand = async (formData: EditBand) => {
     throw addGenresError
   }
 
-  await editSearchRecord(`bands-${bandId}`, {
-    name: newBand.name,
-    genres: formData.genres.map(genre => genre.name),
-    country: newBand.country?.iso2,
-    spotify_artist_id: newBand.spotify_artist_id,
-  })
+  await Promise.all([
+    editGlobalRecord(`bands-${bandId}`, {
+      name: newBand.name,
+      genres: formData.genres.map(genre => genre.name),
+      country: newBand.country?.iso2,
+      spotify_artist_id: newBand.spotify_artist_id,
+    }),
+    editBandRecord(bandId.toString(), { ...newBand, genres: formData.genres }),
+  ])
 
   return { bandId, spotifyArtistId: newBand.spotify_artist_id }
 }

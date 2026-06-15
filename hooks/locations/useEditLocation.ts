@@ -4,7 +4,7 @@ import { useQueryState } from 'nuqs'
 import { TablesInsert } from '@/types/supabase'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
-import { editSearchRecord } from '@/actions/algolia'
+import { editGlobalRecord } from '@/actions/algolia'
 
 const editLocation = async (
   formData: TablesInsert<'locations'> & { imageFile: File | string | null }
@@ -53,7 +53,7 @@ const editLocation = async (
     throw error
   }
 
-  await editSearchRecord(`locations-${formData.id}`, {
+  await editGlobalRecord(`locations-${formData.id}`, {
     image: imagePath,
     name: newLocation.name,
     country: newLocation.country?.iso2,

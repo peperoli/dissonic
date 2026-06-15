@@ -2,16 +2,17 @@
 
 import { Database } from '@/types/supabase'
 import { algoliasearch } from 'algoliasearch'
+import type { AddBand, EditBand } from '@/types/types'
+import { BandRecord } from '@/types/algolia'
 
-const INDEX_NAME = 'global_index'
+async function createAlgoliaClient() {
+  return algoliasearch(process.env.NEXT_PUBLIC_ALGOLIA_APP_ID, process.env.ALGOLIA_WRITE_API_KEY)
+}
 
-export async function addSearchRecord(
+export async function addGlobalRecord(
   record: Database['public']['Views']['search_records']['Row']
 ) {
-  const algolia = algoliasearch(
-    process.env.NEXT_PUBLIC_ALGOLIA_APP_ID,
-    process.env.ALGOLIA_WRITE_API_KEY
-  )
+  const algolia = await createAlgoliaClient()
 
   const algoliaRecord = {
     objectID: `${record.type}-${record.id}`,
@@ -19,36 +20,71 @@ export async function addSearchRecord(
   }
 
   await algolia.saveObject({
-    indexName: INDEX_NAME,
+    indexName: 'global_index',
     body: algoliaRecord,
   })
 }
 
-export async function editSearchRecord(
+export async function addBandRecord(
+  record: AddBand & { id: number; country?: { iso2: string } | null }
+) {
+  const algolia = await createAlgoliaClient()
+
+  await algolia.saveObject({
+    indexName: 'bands',
+    body: {
+      objectID: record.id.toString(),
+      id: record.id,
+      name: record.name,
+      alt_names: record.alt_names,
+      country: record.country?.iso2 || null,
+      genres: record.genres.map(genre => genre.name),
+      spotify_artist_id: record.spotify_artist_id,
+      spotify_artist_images: record.spotify_artist_images,
+    } as BandRecord,
+  })
+}
+
+export async function editGlobalRecord(
   objectID: string,
   record: Partial<Database['public']['Views']['search_records']['Row']>
 ) {
-  const algolia = algoliasearch(
-    process.env.NEXT_PUBLIC_ALGOLIA_APP_ID,
-    process.env.ALGOLIA_WRITE_API_KEY
-  )
+  const algolia = await createAlgoliaClient()
 
   await algolia.partialUpdateObject({
-    indexName: INDEX_NAME,
+    indexName: 'global_index',
     objectID,
     attributesToUpdate: record,
     createIfNotExists: false,
   })
 }
 
-export async function deleteSearchRecord(objectID: string) {
-  const algolia = algoliasearch(
-    process.env.NEXT_PUBLIC_ALGOLIA_APP_ID,
-    process.env.ALGOLIA_WRITE_API_KEY
-  )
+export async function editBandRecord(
+  objectID: string,
+  record: EditBand & { id: number; country?: { iso2: string } | null }
+) {
+  const algolia = await createAlgoliaClient()
+  
+  await algolia.partialUpdateObject({
+    indexName: 'bands',
+    objectID,
+    attributesToUpdate: {
+      name: record.name,
+      alt_names: record.alt_names,
+      country: record.country?.iso2 || null,
+      genres: record.genres.map(genre => genre.name),
+      spotify_artist_id: record.spotify_artist_id,
+      spotify_artist_images: record.spotify_artist_images,
+    } as BandRecord,
+    createIfNotExists: false,
+  })
+}
+
+export async function deleteSearchRecord(indexName: 'global_index' | 'bands', objectID: string) {
+  const algolia = await createAlgoliaClient()
 
   await algolia.deleteObject({
-    indexName: INDEX_NAME,
+    indexName,
     objectID,
   })
 }

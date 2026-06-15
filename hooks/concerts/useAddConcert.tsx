@@ -5,7 +5,7 @@ import { useModal } from '@/components/shared/ModalProvider'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { addSearchRecord } from '@/actions/algolia'
+import { addGlobalRecord } from '@/actions/algolia'
 
 const addConcert = async (formData: AddConcert) => {
   const { data: newConcert, error: addConcertError } = await supabase
@@ -41,7 +41,7 @@ const addConcert = async (formData: AddConcert) => {
     throw addBandsError
   }
 
-  await addSearchRecord({
+  await addGlobalRecord({
     type: 'concerts',
     id: newConcert.id,
     search_strings: null,

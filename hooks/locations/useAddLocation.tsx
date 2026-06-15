@@ -5,7 +5,7 @@ import { useQueryState } from 'nuqs'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { addSearchRecord } from '@/actions/algolia'
+import { addGlobalRecord } from '@/actions/algolia'
 
 const addLocation = async (formData: AddLocation & { imageFile: File | string | null }) => {
   const { data: newLocation, error } = await supabase
@@ -51,7 +51,7 @@ const addLocation = async (formData: AddLocation & { imageFile: File | string | 
     }
   }
 
-  await addSearchRecord({
+  await addGlobalRecord({
     type: 'locations',
     id: newLocation.id,
     search_strings: null,
