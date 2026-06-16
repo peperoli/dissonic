@@ -8,14 +8,16 @@ import { useTranslations } from 'next-intl'
 import { DialogTitle } from '../../shared/Dialog'
 import { ListManagerContent } from './Content'
 import { InstantSearch } from 'react-instantsearch'
-import { algoliasearch } from 'algoliasearch'
+import { searchClient } from '@algolia/client-search'
 import { ListManagerProvider } from './Context'
 import { SearchBox as CustomSearchBox } from './SearchBox'
 
-const searchClient = algoliasearch(
-  process.env.NEXT_PUBLIC_ALGOLIA_APP_ID,
-  process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY
-)
+function createAlgoliaClient() {
+  return searchClient(
+    process.env.NEXT_PUBLIC_ALGOLIA_APP_ID,
+    process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY
+  )
+}
 
 export const ListManager = ({
   initialListItems,
@@ -94,7 +96,7 @@ export const ListManager = ({
             className="ml-auto flex-none"
           />
         </div>
-        <InstantSearch searchClient={searchClient} indexName="bands">
+        <InstantSearch searchClient={createAlgoliaClient()} indexName="bands">
           <div className="order-last mt-auto flex gap-4 md:order-none md:mt-4">
             <CustomSearchBox ref={searchRef} />
             <Button onClick={() => onSave(listItems)} label={t('done')} appearance="primary" />

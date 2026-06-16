@@ -3,7 +3,7 @@
 import { useLastSearched, useSaveLastSearched } from '@/hooks/search/lastSearched'
 import { Database } from '@/types/supabase'
 import { Band, Concert, Location } from '@/types/types'
-import { algoliasearch } from 'algoliasearch'
+import { searchClient } from '@algolia/client-search'
 import { SearchIcon, XIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { ReactNode, useEffect, useRef, useState } from 'react'
@@ -17,11 +17,15 @@ import { SpinnerIcon } from './SpinnerIcon'
 
 export type SearchResult = Database['public']['CompositeTypes']['search_result']
 
-export function SearchForm() {
-  const searchClient = algoliasearch(
+function createAlgoliaClient() {
+  return searchClient(
     process.env.NEXT_PUBLIC_ALGOLIA_APP_ID,
     process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY
   )
+}
+
+
+export function SearchForm() {
   const [isHitsVisible, setIsHitsVisible] = useState(false)
   const timerId = useRef<ReturnType<typeof setTimeout> | null>(null)
   const { data: lastSearched } = useLastSearched()
@@ -38,7 +42,7 @@ export function SearchForm() {
   return (
     <section>
       <div className="sticky top-0 z-10 -m-4 grid gap-4 bg-slate-800 p-4">
-        <InstantSearch searchClient={searchClient} indexName="global_index">
+        <InstantSearch searchClient={createAlgoliaClient()} indexName="global_index">
           <SearchBox
             queryHook={(query, search) => {
               setIsHitsVisible(query.length > 0)

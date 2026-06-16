@@ -1,12 +1,12 @@
 import { BandRecord } from '@/types/algolia'
 import { createClient } from '@/utils/supabase/server'
-import { algoliasearch } from 'algoliasearch'
+import { searchClient } from '@algolia/client-search'
 
 const INDEX_NAME = 'bands'
 
 export async function GET() {
   const supabase = await createClient()
-  const algolia = algoliasearch(
+  const algolia = searchClient(
     process.env.NEXT_PUBLIC_ALGOLIA_APP_ID,
     process.env.ALGOLIA_WRITE_API_KEY
   )
