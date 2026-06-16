@@ -29,6 +29,8 @@ export async function addBandRecord(
   record: AddBand & { id: number; country?: { iso2: string } | null }
 ) {
   const algolia = await createAlgoliaClient()
+  const regionNamesDe = new Intl.DisplayNames('de', { type: 'region' })
+  const regionNamesEn = new Intl.DisplayNames('en', { type: 'region' })
 
   await algolia.saveObject({
     indexName: 'bands',
@@ -37,7 +39,8 @@ export async function addBandRecord(
       id: record.id,
       name: record.name,
       alt_names: record.alt_names,
-      country: record.country?.iso2 || null,
+      country_de: record.country?.iso2 ? regionNamesDe.of(record.country.iso2) : null,
+      country_en: record.country?.iso2 ? regionNamesEn.of(record.country.iso2) : null,
       genres: record.genres.map(genre => genre.name),
       spotify_artist_id: record.spotify_artist_id,
       spotify_artist_images: record.spotify_artist_images,
@@ -64,14 +67,17 @@ export async function editBandRecord(
   record: EditBand & { id: number; country?: { iso2: string } | null }
 ) {
   const algolia = await createAlgoliaClient()
-  
+  const regionNamesDe = new Intl.DisplayNames('de', { type: 'region' })
+  const regionNamesEn = new Intl.DisplayNames('en', { type: 'region' })
+
   await algolia.partialUpdateObject({
     indexName: 'bands',
     objectID,
     attributesToUpdate: {
       name: record.name,
       alt_names: record.alt_names,
-      country: record.country?.iso2 || null,
+      country_de: record.country?.iso2 ? regionNamesDe.of(record.country.iso2) : null,
+      country_en: record.country?.iso2 ? regionNamesEn.of(record.country.iso2) : null,
       genres: record.genres.map(genre => genre.name),
       spotify_artist_id: record.spotify_artist_id,
       spotify_artist_images: record.spotify_artist_images,

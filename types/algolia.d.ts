@@ -5,7 +5,8 @@ export type BandRecord = {
   id: number
   name: string
   alt_names: string | null
-  country: string | null
+  country_de: string | null
+  country_en: string | null
   genres: string[]
   spotify_artist_id: string | null
   spotify_artist_images: Json | null

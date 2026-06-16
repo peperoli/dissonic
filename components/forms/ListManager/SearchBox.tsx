@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl'
 import React, { useState, RefObject } from 'react'
 import { useInstantSearch, useSearchBox } from 'react-instantsearch'
 
-export function SearchBox({ ref: inputRef }: { ref: RefObject<HTMLInputElement | null> }) {
+export function SearchBox({ ref: inputRef }: { ref?: RefObject<HTMLInputElement | null> }) {
   const { query, refine } = useSearchBox()
   const { status } = useInstantSearch()
   const [inputValue, setInputValue] = useState(query)
@@ -26,7 +26,7 @@ export function SearchBox({ ref: inputRef }: { ref: RefObject<HTMLInputElement |
           event.preventDefault()
           event.stopPropagation()
 
-          if (inputRef.current) {
+          if (inputRef?.current) {
             inputRef.current.blur()
           }
         }}
@@ -36,7 +36,7 @@ export function SearchBox({ ref: inputRef }: { ref: RefObject<HTMLInputElement |
 
           setQuery('')
 
-          if (inputRef.current) {
+          if (inputRef?.current) {
             inputRef.current.focus()
           }
         }}

@@ -53,11 +53,14 @@ export async function GET() {
   }
 
   const bands = responses.flatMap(({ data }) => data || [])
+  const regionNamesDe = new Intl.DisplayNames('de', { type: 'region' })
+  const regionNamesEn = new Intl.DisplayNames('en', { type: 'region' })
 
   const algoliaRecords: BandRecord[] = bands.map(band => ({
     objectID: band.id.toString(),
     ...band,
-    country: band.country?.iso2 || null,
+    country_de: band.country?.iso2 ? regionNamesDe.of(band.country.iso2) : null,
+    country_en: band.country?.iso2 ? regionNamesEn.of(band.country.iso2) : null,
     genres: band.genres.map(genre => genre.name),
   }))
 
@@ -69,7 +72,12 @@ export async function GET() {
     await algolia.setSettings({
       indexName: INDEX_NAME,
       indexSettings: {
-        searchableAttributes: ['name', 'alt_names', 'country', 'genres'],
+        searchableAttributes: ['name', 'alt_names', 'country_de', 'country_en', 'genres'],
+        attributesForFaceting: [
+          'searchable(country_de)',
+          'searchable(country_en)',
+          'searchable(genres)',
+        ],
       },
     })
     return new Response(`Successfully saved ${algoliaRecords.length} records!`, { status: 200 })
