@@ -31,8 +31,8 @@ export async function GET() {
         `id,
         name,
         alt_names,
-        country:countries(iso2),
-        genres(name),
+        country:countries(id, iso2),
+        genres(id, name),
         spotify_artist_id,
         spotify_artist_images`
       )
@@ -59,9 +59,14 @@ export async function GET() {
   const algoliaRecords: BandRecord[] = bands.map(band => ({
     objectID: band.id.toString(),
     ...band,
-    country_de: band.country?.iso2 ? regionNamesDe.of(band.country.iso2) : null,
-    country_en: band.country?.iso2 ? regionNamesEn.of(band.country.iso2) : null,
-    genres: band.genres.map(genre => genre.name),
+    country: band.country
+      ? {
+          ...band.country,
+          name_de: regionNamesDe.of(band.country.iso2) ?? null,
+          name_en: regionNamesEn.of(band.country.iso2) ?? null,
+        }
+      : null,
+    genres: band.genres,
   }))
 
   try {
@@ -72,11 +77,19 @@ export async function GET() {
     await algolia.setSettings({
       indexName: INDEX_NAME,
       indexSettings: {
-        searchableAttributes: ['name', 'alt_names', 'country_de', 'country_en', 'genres'],
+        searchableAttributes: [
+          'name',
+          'alt_names',
+          'country.name_de',
+          'country.name_en',
+          'genres.name',
+        ],
         attributesForFaceting: [
-          'searchable(country_de)',
-          'searchable(country_en)',
-          'searchable(genres)',
+          'country.id',
+          'searchable(country.name_de)',
+          'searchable(country.name_en)',
+          'genres.id',
+          'searchable(genres.name)',
         ],
       },
     })

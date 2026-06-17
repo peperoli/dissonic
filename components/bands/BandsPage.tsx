@@ -5,8 +5,7 @@ import { Table } from '../Table'
 import { SearchField } from '../forms/SearchField'
 import { Button } from '../Button'
 import { Pagination, usePagination } from '../layout/Pagination'
-import { Band, ExtendedRes } from '../../types/types'
-import { useBands } from '../../hooks/bands/useBands'
+import { Band } from '../../types/types'
 import { useDebounce } from '../../hooks/helpers/useDebounce'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
@@ -20,12 +19,9 @@ import { Plus, RotateCcw } from 'lucide-react'
 import { SpeedDial } from '../layout/SpeedDial'
 import { useTranslations } from 'next-intl'
 import { saveLastQueryState } from '@/actions/preferences'
+import { useAlgoliaBands } from '@/hooks/bands/useAlgoliaBands'
 
-interface BandsPageProps {
-  initialBands: ExtendedRes<Band[]>
-}
-
-export const BandsPage = ({ initialBands }: BandsPageProps) => {
+export function BandsPage() {
   const perPage = 25
   const [currentPage, setCurrentPage] = usePagination()
   const [selectedCountries, setSelectedCountries] = useQueryState(
@@ -38,8 +34,7 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
   )
   const [query, setQuery] = useState('')
   const debounceQuery = useDebounce(query, 200)
-  const { data: bands } = useBands({
-    placeholderData: initialBands,
+  const { data: bands, isError } = useAlgoliaBands({
     countries: selectedCountries,
     genres: selectedGenres,
     search: debounceQuery,
@@ -108,16 +103,17 @@ export const BandsPage = ({ initialBands }: BandsPageProps) => {
             />
           )}
         </div>
-        {!bands ? (
+
+        {isError ? (
           <StatusBanner
             statusType="error"
             message="Es ist ein Fehler aufgetreten. Bitte versuche es später erneut."
             className="container"
           />
-        ) : !bands.data.length ? (
+        ) : !bands?.count ? (
           <StatusBanner statusType="info" message={t('noEntriesFound')} />
         ) : (
-          bands.data.map(band => <BandTableRow key={band.id} band={band} />)
+          bands.hits.map(band => <BandTableRow key={band.id} band={band} />)
         )}
         <Pagination entriesCount={bands?.count ?? 0} perPage={perPage} />
       </Table>
