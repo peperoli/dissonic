@@ -29,6 +29,13 @@ export function CheckBoxGroup({ name, items, values, onValuesChange }: CheckBoxG
               onCheckedChange={() => handleChange(item.id)}
             />
             {item.name}
+            {item.count !== undefined && (
+              <div
+                className={clsx('min-w-4 flex-none ml-auto rounded bg-slate-600 px-1 text-center text-sm')}
+              >
+                {item.count}
+              </div>
+            )}
           </label>
         </li>
       ))}

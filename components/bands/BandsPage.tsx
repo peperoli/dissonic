@@ -5,7 +5,6 @@ import { Table } from '../Table'
 import { SearchField } from '../forms/SearchField'
 import { Button } from '../Button'
 import { Pagination, usePagination } from '../layout/Pagination'
-import { Band } from '../../types/types'
 import { useDebounce } from '../../hooks/helpers/useDebounce'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
@@ -86,8 +85,16 @@ export function BandsPage() {
             query={query}
             setQuery={setQuery}
           />
-          <CountryFilter values={selectedCountries} onSubmit={setSelectedCountries} />
-          <GenreFilter values={selectedGenres} onSubmit={setSelectedGenres} />
+          <CountryFilter
+            values={selectedCountries}
+            onSubmit={setSelectedCountries}
+            facetCounts={bands?.facets['country.id'] ?? {}}
+          />
+          <GenreFilter
+            values={selectedGenres}
+            onSubmit={setSelectedGenres}
+            facetCounts={bands?.facets['genres.id'] ?? {}}
+          />
         </div>
         <div className="flex items-center gap-4">
           <div className="my-4 text-sm text-slate-300">
@@ -103,7 +110,6 @@ export function BandsPage() {
             />
           )}
         </div>
-
         {isError ? (
           <StatusBanner
             statusType="error"

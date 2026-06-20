@@ -14,11 +14,11 @@ async function fetchAlgoliaBands(options: BandFetchOptions | undefined) {
   const algolia = createAlgoliaClient()
   const filters: string[] = []
 
-  if (options?.countries) {
+  if (options?.countries && options.countries.length > 0) {
     filters.push(options.countries.map(country => `country.id:${country}`).join(' OR '))
   }
 
-  if (options?.genres) {
+  if (options?.genres && options.genres.length > 0) {
     filters.push(options.genres.map(genre => `genres.id:${genre}`).join(' OR '))
   }
 
@@ -30,10 +30,18 @@ async function fetchAlgoliaBands(options: BandFetchOptions | undefined) {
       filters: filters.map(filter => `(${filter})`).join(' AND '),
       facets: ['country.id', 'genres.id'],
       page: (options?.page || 1) - 1,
+      maxValuesPerFacet: 1000,
     },
   })
 
-  return { hits: response.hits, count: response.nbHits }
+  return {
+    hits: response.hits,
+    count: response.nbHits,
+    facets: response.facets as {
+      'genres.id': Record<number, number>
+      'country.id': Record<number, number>
+    },
+  }
 }
 
 export function useAlgoliaBands(fetchOptions: BandFetchOptions) {

@@ -158,6 +158,7 @@ export type AddFriend = TablesInsert<'friends'>
 export type ListItem<IdType = number> = {
   id: IdType
   name: string
+  count?: number
 }
 
 export type ReorderableListItem<T = unknown> = ListItem & {
