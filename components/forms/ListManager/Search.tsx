@@ -5,8 +5,8 @@ import { CheckIcon, PlusCircleIcon, XCircleIcon } from 'lucide-react'
 import clsx from 'clsx'
 import { Band, ReorderableListItem } from '../../../types/types'
 import { BandItem } from './BandItem'
-import { BandRecord } from '@/app/api/algolia/bands/route'
 import { useListManager } from './Context'
+import { BandRecord } from '@/types/algolia'
 
 type SearchResultProps = {
   ref: RefObject<HTMLButtonElement | null>
@@ -132,8 +132,8 @@ function CustomHits() {
           id: hit.id,
           name: hit.name,
           alt_names: hit.alt_names,
-          country: hit.country ? { iso2: hit.country } : null,
-          genres: hit.genres.map(genre => ({ name: genre })),
+          country: hit.country,
+          genres: hit.genres,
           spotify_artist_id: hit.spotify_artist_id,
           spotify_artist_images: hit.spotify_artist_images,
           item_index: null,

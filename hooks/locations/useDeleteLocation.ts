@@ -12,7 +12,7 @@ const deleteLocation = async (locationId: number) => {
     throw error
   }
 
-  await deleteSearchRecord(`locations-${locationId}`)
+  await deleteSearchRecord('global_index', `locations-${locationId}`)
 }
 
 export const useDeleteLocation = () => {
