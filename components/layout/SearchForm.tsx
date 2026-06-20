@@ -3,7 +3,6 @@
 import { useLastSearched, useSaveLastSearched } from '@/hooks/search/lastSearched'
 import { Database } from '@/types/supabase'
 import { Band, Concert, Location } from '@/types/types'
-import { searchClient } from '@algolia/client-search'
 import { SearchIcon, XIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { ReactNode, useEffect, useRef, useState } from 'react'
@@ -14,16 +13,9 @@ import { ConcertItem } from '../concerts/ConcertItem'
 import { SegmentedControl } from '../controls/SegmentedControl'
 import { LocationItem } from '../locations/LocationItem'
 import { SpinnerIcon } from './SpinnerIcon'
+import { createAlgoliaClient } from '@/utils/algolia/client'
 
 export type SearchResult = Database['public']['CompositeTypes']['search_result']
-
-function createAlgoliaClient() {
-  return searchClient(
-    process.env.NEXT_PUBLIC_ALGOLIA_APP_ID,
-    process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY
-  )
-}
-
 
 export function SearchForm() {
   const [isHitsVisible, setIsHitsVisible] = useState(false)

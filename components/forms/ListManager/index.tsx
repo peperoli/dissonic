@@ -8,16 +8,9 @@ import { useTranslations } from 'next-intl'
 import { DialogTitle } from '../../shared/Dialog'
 import { ListManagerContent } from './Content'
 import { InstantSearch } from 'react-instantsearch'
-import { searchClient } from '@algolia/client-search'
 import { ListManagerProvider } from './Context'
 import { SearchBox as CustomSearchBox } from './SearchBox'
-
-function createAlgoliaClient() {
-  return searchClient(
-    process.env.NEXT_PUBLIC_ALGOLIA_APP_ID,
-    process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY
-  )
-}
+import { createAlgoliaClient } from '@/utils/algolia/client'
 
 export const ListManager = ({
   initialListItems,

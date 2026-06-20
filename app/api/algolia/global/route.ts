@@ -1,14 +1,11 @@
+import { createAlgoliaClient } from '@/utils/algolia/server'
 import { createClient } from '@/utils/supabase/server'
-import { searchClient } from '@algolia/client-search'
 
 const INDEX_NAME = 'global_index'
 
 export async function GET() {
   const supabase = await createClient()
-  const algolia = searchClient(
-    process.env.NEXT_PUBLIC_ALGOLIA_APP_ID,
-    process.env.ALGOLIA_WRITE_API_KEY
-  )
+  const algolia = await createAlgoliaClient()
 
   const { count, error: countError } = await supabase
     .from('search_records')

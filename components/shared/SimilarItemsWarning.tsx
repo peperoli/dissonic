@@ -6,6 +6,7 @@ import { Band, Concert, ExtendedRes, FestivalRoot, Location } from '@/types/type
 import { BandItem } from '../bands/BandItem'
 import { ConcertItem } from '../concerts/ConcertItem'
 import { LocationItem } from '../locations/LocationItem'
+import { BandRecord } from '@/types/algolia'
 
 export function SimilarItemsWarning({
   itemType,
@@ -17,7 +18,7 @@ export function SimilarItemsWarning({
   setSimilarItemsSize: (size: number) => void
 } & (
   | { itemType: 'concerts'; similarItems: ExtendedRes<Concert[]> }
-  | { itemType: 'bands'; similarItems: ExtendedRes<Band[]> }
+  | { itemType: 'bands'; similarItems: ExtendedRes<BandRecord[]> }
   | { itemType: 'locations'; similarItems: ExtendedRes<Location[]> }
   | { itemType: 'festivalRoots'; similarItems: ExtendedRes<FestivalRoot[]> }
 )) {
@@ -37,19 +38,30 @@ export function SimilarItemsWarning({
         ) : null}
       </div>
       <ul className="mt-4 grid">
-        {similarItems.data.map(item => (
-          <li key={item.id}>
-            {itemType === 'bands' ? (
-              <BandItem band={item as Band} />
-            ) : itemType === 'concerts' ? (
-              <ConcertItem concert={item as Concert} />
-            ) : itemType === 'locations' ? (
-              <LocationItem location={item as Location} />
-            ) : itemType === 'festivalRoots' ? (
-              <FestivalRootItem festivalRoot={item as FestivalRoot} />
-            ) : null}
-          </li>
-        ))}
+        {itemType === 'concerts' ? (
+          similarItems.data.map(item => <ConcertItem concert={item} />)
+        ) : itemType === 'bands' ? (
+          <>
+            {similarItems.data.map(item => (
+              <BandItem
+                band={
+                  {
+                    id: item.id,
+                    name: item.name,
+                    country: item.country,
+                    genres: item.genres,
+                    spotify_artist_id: item.spotify_artist_id,
+                    spotify_artist_images: item.spotify_artist_images,
+                  } as Band
+                }
+              />
+            ))}
+          </>
+        ) : itemType === 'locations' ? (
+          similarItems.data.map(item => <LocationItem location={item} />)
+        ) : itemType === 'festivalRoots' ? (
+          similarItems.data.map(item => <FestivalRootItem festivalRoot={item} />)
+        ) : null}
         {similarItems.count && similarItems.count > 3 && (
           <Button
             label={similarItemsSize === 3 ? t('showAll') : t('showLess')}

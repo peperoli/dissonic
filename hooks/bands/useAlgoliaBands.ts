@@ -1,14 +1,7 @@
-import { BandFetchOptions } from '@/types/types'
+import { BandFetchOptions, QueryOptions } from '@/types/types'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { searchClient } from '@algolia/client-search'
 import { BandRecord } from '@/types/algolia'
-
-function createAlgoliaClient() {
-  return searchClient(
-    process.env.NEXT_PUBLIC_ALGOLIA_APP_ID,
-    process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY
-  )
-}
+import { createAlgoliaClient } from '@/utils/algolia/client'
 
 async function fetchAlgoliaBands(options: BandFetchOptions | undefined) {
   const algolia = createAlgoliaClient()
@@ -25,8 +18,8 @@ async function fetchAlgoliaBands(options: BandFetchOptions | undefined) {
   const response = await algolia.searchSingleIndex<BandRecord>({
     indexName: 'bands',
     searchParams: {
-      query: options?.search || '',
-      hitsPerPage: 25,
+      query: options?.search,
+      hitsPerPage: options?.size ?? 25,
       filters: filters.map(filter => `(${filter})`).join(' AND '),
       facets: ['country.id', 'genres.id'],
       page: (options?.page || 1) - 1,
@@ -35,8 +28,8 @@ async function fetchAlgoliaBands(options: BandFetchOptions | undefined) {
   })
 
   return {
-    hits: response.hits,
-    count: response.nbHits,
+    data: response.hits,
+    count: response.nbHits ?? null,
     facets: response.facets as {
       'genres.id': Record<number, number>
       'country.id': Record<number, number>
@@ -44,10 +37,13 @@ async function fetchAlgoliaBands(options: BandFetchOptions | undefined) {
   }
 }
 
-export function useAlgoliaBands(fetchOptions: BandFetchOptions) {
+export function useAlgoliaBands(options: BandFetchOptions & Pick<QueryOptions<unknown>, 'enabled'>) {
+  const { enabled, ...fetchOptions } = options
+
   return useQuery({
     queryKey: ['algolia-bands', fetchOptions],
     queryFn: () => fetchAlgoliaBands(fetchOptions),
     placeholderData: previousData => keepPreviousData(previousData),
+    enabled: enabled !== false,
   })
 }

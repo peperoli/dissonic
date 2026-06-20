@@ -1,13 +1,9 @@
 'use server'
 
 import { Database } from '@/types/supabase'
-import { searchClient } from '@algolia/client-search'
 import type { AddBand, EditBand } from '@/types/types'
 import { BandRecord } from '@/types/algolia'
-
-async function createAlgoliaClient() {
-  return searchClient(process.env.NEXT_PUBLIC_ALGOLIA_APP_ID, process.env.ALGOLIA_WRITE_API_KEY)
-}
+import { createAlgoliaClient } from '@/utils/algolia/server'
 
 export async function addGlobalRecord(
   record: Database['public']['Views']['search_records']['Row']

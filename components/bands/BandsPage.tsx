@@ -119,7 +119,7 @@ export function BandsPage() {
         ) : !bands?.count ? (
           <StatusBanner statusType="info" message={t('noEntriesFound')} />
         ) : (
-          bands.hits.map(band => <BandTableRow key={band.id} band={band} />)
+          bands.data.map(band => <BandTableRow key={band.id} band={band} />)
         )}
         <Pagination entriesCount={bands?.count ?? 0} perPage={perPage} />
       </Table>
