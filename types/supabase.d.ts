@@ -17,7 +17,7 @@ export type Database = {
       bands: {
         Row: {
           alt_names: string | null
-          country_id: number | null
+          country_id: number
           created_at: string | null
           creator_id: string | null
           id: number
@@ -29,7 +29,7 @@ export type Database = {
         }
         Insert: {
           alt_names?: string | null
-          country_id?: number | null
+          country_id: number
           created_at?: string | null
           creator_id?: string | null
           id?: number
@@ -41,7 +41,7 @@ export type Database = {
         }
         Update: {
           alt_names?: string | null
-          country_id?: number | null
+          country_id?: number
           created_at?: string | null
           creator_id?: string | null
           id?: number
@@ -569,7 +569,7 @@ export type Database = {
         Row: {
           alt_names: string | null
           city: string
-          country_id: number | null
+          country_id: number
           created_at: string | null
           creator_id: string | null
           id: number
@@ -583,7 +583,7 @@ export type Database = {
         Insert: {
           alt_names?: string | null
           city: string
-          country_id?: number | null
+          country_id: number
           created_at?: string | null
           creator_id?: string | null
           id?: number
@@ -597,7 +597,7 @@ export type Database = {
         Update: {
           alt_names?: string | null
           city?: string
-          country_id?: number | null
+          country_id?: number
           created_at?: string | null
           creator_id?: string | null
           id?: number
@@ -893,7 +893,7 @@ export type Database = {
         Args: { user_1_id: string; user_2_id: string }
         Returns: {
           alt_names: string | null
-          country_id: number | null
+          country_id: number
           created_at: string | null
           creator_id: string | null
           id: number
@@ -953,7 +953,7 @@ export type Database = {
         Args: { search_string: string }
         Returns: {
           alt_names: string | null
-          country_id: number | null
+          country_id: number
           created_at: string | null
           creator_id: string | null
           id: number
@@ -1034,7 +1034,7 @@ export type Database = {
         Returns: {
           alt_names: string | null
           city: string
-          country_id: number | null
+          country_id: number
           created_at: string | null
           creator_id: string | null
           id: number

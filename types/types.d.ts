@@ -44,6 +44,7 @@ export type FestivalRootFetchOptions = {
 export type LocationFetchOptions = {
   ids?: number[] | null
   search?: string
+  countries?: number[] | null
   size?: number
   page?: number
 }
@@ -137,6 +138,8 @@ export type Location = Tables<'locations'> & {
 }
 
 export type AddLocation = TablesInsert<'locations'>
+
+export type EditLocation = TablesUpdate<'locations'>
 
 export type Country = { id: number; iso2: string }
 

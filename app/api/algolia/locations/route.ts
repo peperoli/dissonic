@@ -1,20 +1,20 @@
-import { BandRecord } from '@/types/algolia'
+import { LocationRecord } from '@/types/algolia'
 import { createAlgoliaClient } from '@/utils/algolia/server'
 import { createClient } from '@/utils/supabase/server'
 
-const INDEX_NAME = 'bands'
+const INDEX_NAME = 'locations'
 
 export async function GET() {
   const supabase = await createClient()
   const algolia = await createAlgoliaClient()
 
   const { count, error: countError } = await supabase
-    .from('bands')
+    .from('locations')
     .select('*', { count: 'exact', head: true })
 
   if (countError) {
-    console.error('Error counting bands:', countError)
-    return new Response('Failed to count bands', { status: 500 })
+    console.error('Error counting locations:', countError)
+    return new Response('Failed to count locations', { status: 500 })
   }
 
   const ROWS_PER_PAGE = 1000
@@ -23,15 +23,16 @@ export async function GET() {
 
   for (let page = 1; page <= maxPage; page++) {
     const query = supabase
-      .from('bands')
+      .from('locations')
       .select(
         `id,
         name,
         alt_names,
+        zip_code,
+        city,
         country:countries(id, iso2),
-        genres(id, name),
-        spotify_artist_id,
-        spotify_artist_images`
+        image,
+        updated_at`
       )
       .neq('is_archived', true)
       .range((page - 1) * ROWS_PER_PAGE, page * ROWS_PER_PAGE - 1)
@@ -43,27 +44,26 @@ export async function GET() {
 
   if (responses.some(({ error }) => error)) {
     console.error(
-      'Error fetching bands:',
+      'Error fetching locations:',
       responses.find(({ error }) => error)
     )
-    return new Response('Failed to fetch bands', { status: 500 })
+    return new Response('Failed to fetch locations', { status: 500 })
   }
 
-  const bands = responses.flatMap(({ data }) => data || [])
+  const locations = responses.flatMap(({ data }) => data || [])
   const regionNamesDe = new Intl.DisplayNames('de', { type: 'region' })
   const regionNamesEn = new Intl.DisplayNames('en', { type: 'region' })
 
-  const algoliaRecords: BandRecord[] = bands.map(band => ({
-    objectID: band.id.toString(),
-    ...band,
-    country: band.country
+  const algoliaRecords: LocationRecord[] = locations.map(location => ({
+    objectID: location.id.toString(),
+    ...location,
+    country: location.country
       ? {
-          ...band.country,
-          name_de: regionNamesDe.of(band.country.iso2) ?? null,
-          name_en: regionNamesEn.of(band.country.iso2) ?? null,
+          ...location.country,
+          name_de: regionNamesDe.of(location.country.iso2) ?? null,
+          name_en: regionNamesEn.of(location.country.iso2) ?? null,
         }
       : null,
-    genres: band.genres,
   }))
 
   try {
@@ -77,16 +77,15 @@ export async function GET() {
         searchableAttributes: [
           'name',
           'alt_names',
+          'zip_code',
+          'city',
           'country.name_de',
           'country.name_en',
-          'genres.name',
         ],
         attributesForFaceting: [
           'country.id',
           'searchable(country.name_de)',
           'searchable(country.name_en)',
-          'genres.id',
-          'searchable(genres.name)',
         ],
         customRanking: ['asc(name)'],
       },

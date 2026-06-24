@@ -1,21 +1,23 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
-import { TablesInsert } from '@/types/supabase'
+import { EditLocation } from '@/types/types'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
-import { editGlobalRecord } from '@/actions/algolia'
+import { editGlobalRecord, editLocationRecord } from '@/actions/algolia'
 
 const editLocation = async (
-  formData: TablesInsert<'locations'> & { imageFile: File | string | null }
+  formData: EditLocation & { imageFile: File | string | null }
 ) => {
-  if (!formData.id) {
+  const locationId = formData.id
+
+  if (!locationId) {
     throw new Error('Location ID is required')
   }
 
   const imagePath =
     formData.imageFile instanceof File
-      ? `locations/${formData.id}.${formData.imageFile?.name.split('.').at(-1)}`
+      ? `locations/${locationId}.${formData.imageFile?.name.split('.').at(-1)}`
       : formData.image
 
   if (formData.imageFile instanceof File && imagePath) {
@@ -45,7 +47,7 @@ const editLocation = async (
       website: formData.website,
       image: imagePath,
     })
-    .eq('id', formData.id)
+    .eq('id', locationId)
     .select('*, country:countries(iso2)')
     .single()
 
@@ -53,14 +55,17 @@ const editLocation = async (
     throw error
   }
 
-  await editGlobalRecord(`locations-${formData.id}`, {
-    image: imagePath,
-    name: newLocation.name,
-    country: newLocation.country?.iso2,
-    city: newLocation.city,
-  })
+  await Promise.all([
+    editGlobalRecord(`locations-${locationId}`, {
+      name: newLocation.name,
+      country: newLocation.country?.iso2,
+      city: newLocation.city,
+      image: imagePath,
+    }),
+    editLocationRecord(locationId.toString(), newLocation),
+  ])
 
-  return { locationId: formData.id }
+  return { locationId }
 }
 
 export const useEditLocation = () => {

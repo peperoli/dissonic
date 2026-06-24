@@ -5,7 +5,7 @@ import { useQueryState } from 'nuqs'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { addGlobalRecord } from '@/actions/algolia'
+import { addGlobalRecord, addLocationRecord } from '@/actions/algolia'
 
 const addLocation = async (formData: AddLocation & { imageFile: File | string | null }) => {
   const { data: newLocation, error } = await supabase
@@ -51,22 +51,25 @@ const addLocation = async (formData: AddLocation & { imageFile: File | string | 
     }
   }
 
-  await addGlobalRecord({
-    type: 'locations',
-    id: newLocation.id,
-    search_strings: null,
-    image: imagePath,
-    name: newLocation.name,
-    festival_root: null,
-    date_start: null,
-    date_end: null,
-    bands: null,
-    location: null,
-    genres: null,
-    country: newLocation.country?.iso2 || null,
-    spotify_artist_id: null,
-    city: newLocation.city,
-  })
+  await Promise.all([
+    addGlobalRecord({
+      type: 'locations',
+      id: newLocation.id,
+      search_strings: null,
+      image: imagePath,
+      name: newLocation.name,
+      festival_root: null,
+      date_start: null,
+      date_end: null,
+      bands: null,
+      location: null,
+      genres: null,
+      country: newLocation.country?.iso2 || null,
+      spotify_artist_id: null,
+      city: newLocation.city,
+    }),
+    addLocationRecord(newLocation),
+  ])
 
   return { locationId: newLocation.id }
 }

@@ -18,3 +18,20 @@ export type BandRecord = {
   spotify_artist_id: string | null
   spotify_artist_images: Json | null
 }
+
+export type LocationRecord = {
+  objectID: string
+  id: number
+  name: string
+  alt_names: string | null
+  zip_code: string | null
+  city: string
+  country: {
+    id: number
+    iso2: string
+    name_de: string | null
+    name_en: string | null
+  } | null
+  image: string | null
+  updated_at: string | null
+}

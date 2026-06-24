@@ -5,8 +5,6 @@ import { Table } from '../Table'
 import { useEffect, useState } from 'react'
 import { SearchField } from '../forms/SearchField'
 import { Button } from '../Button'
-import { ExtendedRes, Location } from '../../types/types'
-import { useLocations } from '../../hooks/locations/useLocations'
 import { useDebounce } from '../../hooks/helpers/useDebounce'
 import { Pagination, usePagination } from '../layout/Pagination'
 import { usePathname, useRouter } from 'next/navigation'
@@ -16,18 +14,14 @@ import { StatusBanner } from '../forms/StatusBanner'
 import { SpeedDial } from '../layout/SpeedDial'
 import { useTranslations } from 'next-intl'
 import { LocationTableRow } from './LocationTableRow'
+import { useAlgoliaLocations } from '@/hooks/locations/useAlgoliaLocations'
 
-interface LocationsPageProps {
-  initialLocations: ExtendedRes<Location[]>
-}
-
-export const LocationsPage = ({ initialLocations }: LocationsPageProps) => {
+export function LocationsPage() {
   const [query, setQuery] = useState('')
   const debounceQuery = useDebounce(query, 200)
   const perPage = 25
   const [currentPage, setCurrentPage] = usePagination()
-  const { data: locations } = useLocations({
-    placeholderData: initialLocations,
+  const { data: locations } = useAlgoliaLocations({
     search: debounceQuery,
     page: currentPage,
     size: perPage,
