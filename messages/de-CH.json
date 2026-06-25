@@ -451,6 +451,7 @@
     "addLocation": "Lokal hinzufügen",
     "searchLocation": "Lokal suchen ...",
     "nEntries": "{count, plural, =1 {# Eintrag} other {# Einträge}}",
+    "reset": "Zurücksetzen",
     "noEntriesFound": "Keine Einträge gefunden."
   },
   "LocationPage": {

@@ -37,7 +37,10 @@ export async function editGlobalRecord(
   })
 }
 
-export async function deleteSearchRecord(indexName: 'global_index' | 'bands', objectID: string) {
+export async function deleteSearchRecord(
+  indexName: 'global_index' | 'bands' | 'locations',
+  objectID: string
+) {
   const algolia = await createAlgoliaClient()
 
   await algolia.deleteObject({
