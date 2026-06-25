@@ -62,6 +62,8 @@ export async function GET() {
           'festival_root',
           'city',
           'country',
+          'date_start',
+          'date_end',
         ],
         attributesForFaceting: ['type'],
       },

@@ -15,7 +15,7 @@ export function SegmentedControl({
   iconOnly,
 }: SegmentedControlProps) {
   return (
-    <div className="overflow-x-auto md:w-fit rounded-lg bg-slate-750">
+    <div className="overflow-x-auto rounded-lg bg-slate-750 md:w-fit">
       <div className="flex w-full p-1 md:w-fit">
         {options.map(option => (
           <button
@@ -32,9 +32,7 @@ export function SegmentedControl({
             {option.icon && <option.icon className="size-icon" />}
             <span className={clsx(iconOnly && 'sr-only')}>{option.label}</span>
             {option.count !== undefined && (
-              <div
-                className={clsx('min-w-4 flex-none rounded bg-slate-700 px-1 text-center text-sm')}
-              >
+              <div className="min-w-4 flex-none rounded bg-slate-700 px-1 text-center text-sm">
                 {option.count}
               </div>
             )}

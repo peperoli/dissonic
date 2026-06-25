@@ -1,155 +1,126 @@
 'use client'
 
-import { useLastSearched, useSaveLastSearched } from '@/hooks/search/lastSearched'
+import { useState } from 'react'
+import { SearchField } from '../forms/SearchField'
+import { useGlobalSearch } from '@/hooks/search/useGlobalSearch'
 import { Database } from '@/types/supabase'
-import { Band, Concert, Location } from '@/types/types'
-import { SearchIcon, XIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { ReactNode, useEffect, useRef, useState } from 'react'
-import { InstantSearch, SearchBox, useHits, useInstantSearch, useMenu } from 'react-instantsearch'
+import { Band, Concert, Location } from '@/types/types'
+import { ConcertItem } from '../concerts/ConcertItem'
 import { Button } from '../Button'
 import { BandItem } from '../bands/BandItem'
-import { ConcertItem } from '../concerts/ConcertItem'
-import { SegmentedControl } from '../controls/SegmentedControl'
 import { LocationItem } from '../locations/LocationItem'
-import { SpinnerIcon } from './SpinnerIcon'
-import { createAlgoliaClient } from '@/utils/algolia/client'
+import { SegmentedControl } from '../controls/SegmentedControl'
+import { useDebounce } from '@/hooks/helpers/useDebounce'
+import { useLastSearched, useSaveLastSearched } from '@/hooks/search/lastSearched'
 
 export type SearchResult = Database['public']['CompositeTypes']['search_result']
 
 export function SearchForm() {
-  const [isHitsVisible, setIsHitsVisible] = useState(false)
-  const timerId = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [searchString, setSearchString] = useState('')
+  const [selectedType, setSelectedType] = useState('all')
+  const debouncedSearchString = useDebounce(searchString, 100)
   const { data: lastSearched } = useLastSearched()
+
+  const { data: searchResults, isFetching } = useGlobalSearch({
+    search: debouncedSearchString,
+    type: selectedType === 'all' ? null : selectedType,
+  })
   const t = useTranslations('SearchForm')
 
-  useEffect(() => {
-    return () => {
-      if (timerId.current) {
-        clearTimeout(timerId.current)
+  function groupResultsByType(results: SearchResult[]) {
+    const groupedResults: Record<string, typeof results> = {}
+    results?.forEach(result => {
+      const type = result.type as string
+      if (!groupedResults[type]) {
+        groupedResults[type] = []
       }
-    }
-  }, [])
+      groupedResults[type].push(result)
+    })
+    return Object.entries(groupedResults)
+  }
 
   return (
     <section>
       <div className="sticky top-0 z-10 -m-4 grid gap-4 bg-slate-800 p-4">
-        <InstantSearch searchClient={createAlgoliaClient()} indexName="global_index">
-          <SearchBox
-            queryHook={(query, search) => {
-              setIsHitsVisible(query.length > 0)
-
-              if (timerId.current) {
-                clearTimeout(timerId.current)
-              }
-
-              timerId.current = setTimeout(() => search(query), 100)
-            }}
-            placeholder="Search ..."
-            // @ts-expect-error - algolia and lucide props not compatible
-            submitIconComponent={SearchIcon}
-            loadingIconComponent={SpinnerIcon}
-            // @ts-expect-error - algolia and lucide props not compatible
-            resetIconComponent={XIcon}
-            classNames={{
-              form: 'form-control',
-              input: 'min-w-48 !pl-10',
-              submit: 'absolute top-1/2 ml-3 size-icon -translate-y-1/2',
-              loadingIndicator: 'absolute right-0 m-2.5 size-icon animate-spin text-slate-300',
-              reset: 'btn btn-icon btn-small absolute right-0 m-1 size-icon',
-            }}
+        <SearchField
+          name="globalSearch"
+          query={searchString}
+          setQuery={setSearchString}
+          isLoading={isFetching}
+        />
+        {(!!lastSearched?.length || !!searchString.length) && (
+          <SegmentedControl
+            options={[
+              {
+                value: 'all',
+                label: t('all'),
+                count: searchResults?.count ?? 0,
+              },
+              {
+                value: 'concerts',
+                label: t('concerts'),
+                count: searchResults?.facets?.type?.concerts ?? 0,
+              },
+              {
+                value: 'bands',
+                label: t('bands'),
+                count: searchResults?.facets?.type?.bands ?? 0,
+              },
+              {
+                value: 'locations',
+                label: t('locations'),
+                count: searchResults?.facets?.type?.locations ?? 0,
+              },
+            ]}
+            value={selectedType}
+            onValueChange={setSelectedType}
           />
-          {isHitsVisible ? (
-            <NoResultsBoundary>
-              <CustomMenu />
-              <CustomHits />
-            </NoResultsBoundary>
-          ) : (
-            lastSearched && (
-              <div>
-                <h2 className="h3">{t('lastSearched')}</h2>
-                <ul>
-                  {lastSearched.map(result => {
-                    return <SearchResultItem key={result.id} result={result} />
-                  })}
-                </ul>
-              </div>
-            )
-          )}
-        </InstantSearch>
+        )}
       </div>
-    </section>
-  )
-}
-
-function CustomMenu() {
-  const { items, refine } = useMenu({ attribute: 'type', sortBy: ['count:desc'] })
-  const t = useTranslations('SearchForm')
-
-  return (
-    <SegmentedControl
-      options={[
-        { value: 'all', label: t('all') },
-        ...items.map(item => ({ value: item.value, label: t(item.value), count: item.count })),
-      ]}
-      value={items.find(item => item.isRefined)?.value || 'all'}
-      onValueChange={value => refine(value === 'all' ? '' : value)}
-    />
-  )
-}
-
-function CustomHits() {
-  const { items: hits } = useHits<SearchResult>()
-  const { items: menuItems, refine } = useMenu({ attribute: 'type' })
-  const groupedHits = Object.groupBy(hits, hit => hit.type ?? 'unknown')
-  const t = useTranslations('SearchForm')
-  const selectedType = menuItems.find(item => item.isRefined)?.value ?? 'all'
-
-  return (
-    <div>
-      {Object.entries(groupedHits).map(([type, hits]) => {
-        if (!hits?.length) {
-          return null
-        }
-
-        return (
-          <div key={type} className="mt-6">
-            <div className="flex items-center justify-between">
-              <h2 className="h3">{t(type)}</h2>
-              {selectedType === 'all' && hits.length > 3 && (
-                <Button label={t('showAll')} onClick={() => refine(type)} size="small" />
-              )}
-            </div>
+      {!searchString.length ? (
+        lastSearched && (
+          <div className="mt-6">
+            <h2 className="h3">{t('lastSearched')}</h2>
             <ul>
-              {hits.slice(0, selectedType === 'all' ? 3 : undefined).map(result => {
-                return <SearchResultItem key={result.id} result={result} />
-              })}
+              {lastSearched
+                ?.filter(result => selectedType === 'all' || result.type === selectedType)
+                .map(result => {
+                  return <SearchResultItem key={result.id} result={result} />
+                })}
             </ul>
           </div>
         )
-      })}
-    </div>
-  )
-}
-
-function NoResultsBoundary({ children }: { children: ReactNode }) {
-  const { results, indexUiState } = useInstantSearch()
-  const t = useTranslations('SearchForm')
-
-  // The `__isArtificial` flag makes sure not to display the No Results message
-  // when no hits have been returned.
-  if (!results.__isArtificial && results.nbHits === 0) {
-    return (
-      <>
-        <div>
-          <p className="text-slate-300">{t('noResults', { query: indexUiState.query })}</p>
+      ) : searchResults?.count === 0 ? (
+        <div className="mt-6">
+          <p className="text-slate-300">{t('noResults', { query: searchString })}</p>
         </div>
-        <div hidden>{children}</div>
-      </>
-    )
-  }
-
-  return children
+      ) : (
+        groupResultsByType(searchResults?.data ?? []).map(([type, results]) => {
+          return (
+            <div key={type} className="mt-6">
+              {selectedType === 'all' && results.length > 3 && (
+                <div className="flex items-center justify-between">
+                  <h2 className="h3">
+                    {t(type)}
+                    <span className="ml-2 min-w-4 flex-none rounded bg-slate-700 px-1 text-center text-sm font-normal">
+                      {searchResults?.facets.type[type]}
+                    </span>
+                  </h2>
+                  <Button label={t('showAll')} onClick={() => setSelectedType(type)} size="small" />
+                </div>
+              )}
+              <ul>
+                {results?.slice(0, selectedType === 'all' ? 3 : undefined).map(result => {
+                  return <SearchResultItem key={result.id} result={result} />
+                })}
+              </ul>
+            </div>
+          )
+        })
+      )}
+    </section>
+  )
 }
 
 function SearchResultItem({ result }: { result: SearchResult }) {
@@ -201,9 +172,9 @@ function SearchResultItem({ result }: { result: SearchResult }) {
           location={
             {
               id: result.id,
-              image: result.image,
               name: result.name,
               city: result.city,
+              image: result.image,
             } as Location
           }
         />

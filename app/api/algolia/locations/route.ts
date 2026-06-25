@@ -88,6 +88,7 @@ export async function GET() {
           'searchable(country.name_en)',
         ],
         customRanking: ['asc(name)'],
+        decompoundedAttributes: { de: ['name', 'alt_names'] },
       },
     })
     return new Response(`Successfully saved ${algoliaRecords.length} records!`, { status: 200 })
