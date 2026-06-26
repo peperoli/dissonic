@@ -99,7 +99,7 @@ export function SearchForm() {
         groupResultsByType(searchResults?.data ?? []).map(([type, results]) => {
           return (
             <div key={type} className="mt-6">
-              {selectedType === 'all' && results.length > 3 && (
+              {selectedType === 'all' && (
                 <div className="flex items-center justify-between">
                   <h2 className="h3">
                     {t(type)}
@@ -107,7 +107,13 @@ export function SearchForm() {
                       {searchResults?.facets.type[type]}
                     </span>
                   </h2>
-                  <Button label={t('showAll')} onClick={() => setSelectedType(type)} size="small" />
+                  {results.length > 3 && (
+                    <Button
+                      label={t('showAll')}
+                      onClick={() => setSelectedType(type)}
+                      size="small"
+                    />
+                  )}
                 </div>
               )}
               <ul>
