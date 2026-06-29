@@ -1,30 +1,35 @@
 import { createContext, Dispatch, ReactNode, RefObject, SetStateAction, useContext } from 'react'
-import { KeyboardEvent } from 'react'
-import { Band, ReorderableListItem } from '../../../types/types'
+import { Band, ReorderableListItem } from '../../types/types'
+import { BandRecord } from '@/types/algolia'
 
 type ListManagerContextValue = {
+  // refs
+  searchRef: RefObject<HTMLInputElement | null>
+  scrollContainerRef: RefObject<HTMLDivElement | null>
+  itemsRef: RefObject<(HTMLButtonElement | null)[]>
+  // list state
   listItems: ReorderableListItem<Band>[]
   setListItems: Dispatch<SetStateAction<ReorderableListItem<Band>[]>>
   selectedItemToReorder: number | null
   setSelectedItemToReorder: Dispatch<SetStateAction<number | null>>
-  searchRef: RefObject<HTMLInputElement | null>
-  scrollContainerRef: RefObject<HTMLDivElement | null>
-  itemsRef: RefObject<(HTMLButtonElement | null)[]>
-  queryHook: (query: string, search: (query: string) => void) => void
-  handleKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void
-  removeItem: (id: number) => void
   reorderItems: (start: number, end: number) => void
+  // search state
+  searchQuery: string
+  setSearchQuery: Dispatch<SetStateAction<string>>
+  searchResults: BandRecord[]
+  searchResultsCount: number
+  isSearchFetching: boolean
 }
 
 const ListManagerContext = createContext<ListManagerContextValue | null>(null)
 
-export const ListManagerProvider = ({
+export function ListManagerProvider({
   value,
   children,
 }: {
   value: ListManagerContextValue
   children: ReactNode
-}) => {
+}) {
   return <ListManagerContext.Provider value={value}>{children}</ListManagerContext.Provider>
 }
 
