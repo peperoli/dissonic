@@ -13,7 +13,10 @@ const deleteConcert = async (concertId: Concert['id']) => {
     throw error
   }
 
-  await deleteSearchRecord('global_index', `concerts-${concertId}`)
+  await Promise.all([
+    deleteSearchRecord('global_index', `concerts-${concertId}`),
+    deleteSearchRecord('concerts', concertId.toString()),
+  ])
 }
 
 export const useDeleteConcert = () => {
@@ -23,7 +26,10 @@ export const useDeleteConcert = () => {
 
   return useMutation({
     mutationFn: deleteConcert,
-    onError: error => { console.error(error); toast.error(error.message)},
+    onError: error => {
+      console.error(error)
+      toast.error(error.message)
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['concerts'] })
       router.push('/')

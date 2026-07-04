@@ -5,7 +5,7 @@ import { useModal } from '@/components/shared/ModalProvider'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { addGlobalRecord } from '@/actions/algolia'
+import { addConcertRecord, addGlobalRecord } from '@/actions/algolia'
 
 const addConcert = async (formData: AddConcert) => {
   const { data: newConcert, error: addConcertError } = await supabase
@@ -22,7 +22,11 @@ const addConcert = async (formData: AddConcert) => {
       source_link: formData.source_link,
       resource_status: formData.resource_status,
     })
-    .select('*, festival_root:festival_roots(name), location:locations(*, country:countries(iso2))')
+    .select(
+      `*,
+      festival_root:festival_roots(id, name),
+      location:locations(*, name, alt_names, city, country:countries(iso2))`
+    )
     .single()
 
   if (addConcertError) {
@@ -41,22 +45,26 @@ const addConcert = async (formData: AddConcert) => {
     throw addBandsError
   }
 
-  await addGlobalRecord({
-    type: 'concerts',
-    id: newConcert.id,
-    search_strings: null,
-    image: (formData.bands?.[0]?.spotify_artist_images as SpotifyArtist['images'])?.[0]?.url || null,
-    name: newConcert.is_festival ? null : newConcert.name,
-    festival_root: newConcert.festival_root?.name || null,
-    date_start: newConcert.date_start,
-    date_end: newConcert.date_end,
-    bands: formData.bands ?? [],
-    location: newConcert.location.name,
-    genres: null,
-    country: newConcert.location.country?.iso2 || null,
-    spotify_artist_id: formData.bands?.[0]?.spotify_artist_id || null,
-    city: newConcert.location.city,
-  })
+  await Promise.all([
+    addGlobalRecord({
+      type: 'concerts',
+      id: newConcert.id,
+      search_strings: null,
+      image:
+        (formData.bands?.[0]?.spotify_artist_images as SpotifyArtist['images'])?.[0]?.url || null,
+      name: newConcert.is_festival ? null : newConcert.name,
+      festival_root: newConcert.festival_root?.name || null,
+      date_start: newConcert.date_start,
+      date_end: newConcert.date_end,
+      bands: formData.bands ?? [],
+      location: newConcert.location.name,
+      genres: null,
+      country: newConcert.location.country?.iso2 || null,
+      spotify_artist_id: formData.bands?.[0]?.spotify_artist_id || null,
+      city: newConcert.location.city,
+    }),
+    addConcertRecord({ ...newConcert, bands: formData.bands ?? [] }),
+  ])
 
   return { concertId: newConcert.id }
 }

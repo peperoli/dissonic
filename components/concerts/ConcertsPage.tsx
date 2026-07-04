@@ -4,7 +4,7 @@ import { useEffect, useTransition } from 'react'
 import { Button } from '../Button'
 import { BookUserIcon, GlobeIcon, PlusIcon, UserIcon } from 'lucide-react'
 import { Concert, ExtendedRes } from '../../types/types'
-import { useConcerts } from '../../hooks/concerts/useConcerts'
+import { useConcerts } from '@/hooks/concerts/useConcerts'
 import { ConcertCard } from './ConcertCard'
 import { BandFilter } from './BandFilter'
 import { LocationFilter } from './LocationFilter'
@@ -35,6 +35,7 @@ import { saveLastQueryState, setViewPreference } from '@/actions/preferences'
 import { groupConcertsByMonth } from '@/lib/groupConcertsByMonth'
 import { ConcertsNav } from '../layout/ConcertsNav'
 import { Temporal } from 'temporal-polyfill'
+import { useConcertsFacets } from '@/hooks/concerts/useConcertsFacets'
 
 export function ConcertsPage({
   concerts: initialConcerts,
@@ -98,6 +99,15 @@ export function ConcertsPage({
     sort,
     size,
     bandsSize: 5,
+  })
+  const { data: concertsFacets } = useConcertsFacets({
+    bands: selectedBands,
+    locations: selectedLocations,
+    dateRange: initialView.range === 'future' ? [tomorrow, null] : [null, tomorrow],
+    years: selectedYears,
+    festivalRoots: selectedFestivalRoots,
+    bandsSeenUsers:
+      initialView.range !== 'future' ? (selectedUserId ? [selectedUserId] : getView()) : null,
   })
   const { push } = useRouter()
   const isDesktop = useMediaQuery('(min-width: 768px)')
@@ -164,10 +174,22 @@ export function ConcertsPage({
       <ConcertsNav />
       <section className="-mx-4 grid gap-4 bg-radial-gradient from-blue/20 p-5 md:mx-auto md:rounded-2xl">
         <div className="scrollbar-hidden -mx-4 flex gap-2 overflow-x-auto px-4 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible">
-          <BandFilter values={selectedBands} onSubmit={setSelectedBands} />
-          <LocationFilter values={selectedLocations} onSubmit={setSelectedLocations} />
+          <BandFilter
+            values={selectedBands}
+            onSubmit={setSelectedBands}
+            facetCounts={concertsFacets?.['bands.id'] ?? {}}
+          />
+          <LocationFilter
+            values={selectedLocations}
+            onSubmit={setSelectedLocations}
+            facetCounts={concertsFacets?.['location.id'] ?? {}}
+          />
           <YearsFilter values={selectedYears} onSubmit={setSelectedYears} />
-          <FestivalRootFilter values={selectedFestivalRoots} onSubmit={setSelectedFestivalRoots} />
+          <FestivalRootFilter
+            values={selectedFestivalRoots}
+            onSubmit={setSelectedFestivalRoots}
+            facetCounts={concertsFacets?.['festival_root.id'] ?? {}}
+          />
         </div>
         <div className="flex items-center gap-4">
           <div className="my-1.5 text-sm text-slate-300">

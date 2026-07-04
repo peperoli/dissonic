@@ -21,12 +21,12 @@ const CountryMultiSelect = ({
     <Select
       name="Land"
       items={countries
-        ?.sort((a, b) => (facetCounts[b.id] ?? 0) - (facetCounts[a.id] ?? 0))
-        .map(item => ({
+        ?.map(item => ({
           id: item.id,
           name: regionNames.of(item.iso2) ?? item.iso2,
           count: facetCounts[item.id] ?? 0,
-        }))}
+        }))
+        .sort((a, b) => b.count - a.count)}
       searchable
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
@@ -61,7 +61,6 @@ export const CountryFilter = ({
       items={countries?.map(country => ({
         id: country.id,
         name: country.iso2,
-        count: facetCounts[country.id] ?? 0,
       }))}
       selectedIds={selectedIds}
       submittedValues={submittedValues}

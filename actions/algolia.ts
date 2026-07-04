@@ -1,9 +1,18 @@
 'use server'
 
-import { Database } from '@/types/supabase'
-import type { AddBand, AddLocation, EditBand, EditLocation, Nullable } from '@/types/types'
-import { BandRecord, LocationRecord } from '@/types/algolia'
+import { Database, Json } from '@/types/supabase'
+import type {
+  AddBand,
+  AddConcert,
+  AddLocation,
+  EditBand,
+  EditConcert,
+  EditLocation,
+  Nullable,
+} from '@/types/types'
+import { BandRecord, ConcertRecord, LocationRecord } from '@/types/algolia'
 import { createAlgoliaClient } from '@/utils/algolia/server'
+import { getUnixTimestamp } from '@/lib/date'
 
 // Global search index functions
 
@@ -38,7 +47,7 @@ export async function editGlobalRecord(
 }
 
 export async function deleteSearchRecord(
-  indexName: 'global_index' | 'bands' | 'locations',
+  indexName: 'global_index' | 'concerts' | 'bands' | 'locations',
   objectID: string
 ) {
   const algolia = await createAlgoliaClient()
@@ -46,6 +55,91 @@ export async function deleteSearchRecord(
   await algolia.deleteObject({
     indexName,
     objectID,
+  })
+}
+
+// Concert index functions
+
+export async function addConcertRecord(
+  concert: AddConcert & {
+    id: number
+    festival_root: { id: number; name: string } | null
+    bands: {
+      id: number
+      name: string
+      alt_names: string | null
+      spotify_artist_id: string | null
+      spotify_artist_images: Json | null
+    }[]
+    location: { id: number; name: string; alt_names: string | null; city: string }
+  }
+) {
+  const algolia = await createAlgoliaClient()
+
+  await algolia.saveObject({
+    indexName: 'concerts',
+    body: {
+      objectID: concert.id.toString(),
+      id: concert.id,
+      festival_root: concert.festival_root,
+      date_start: concert.date_start,
+      date_start_unix: getUnixTimestamp(concert.date_start),
+      date_end: concert.date_end ?? null,
+      date_end_unix: concert.date_end ? getUnixTimestamp(concert.date_end) : null,
+      bands: concert.bands.map((band, index) => ({
+        id: band.id,
+        name: band.name,
+        alt_names: band.alt_names ?? null,
+        spotify_artist_id: index === 0 ? band.spotify_artist_id : null,
+        spotify_artist_images: index === 0 ? band.spotify_artist_images : null,
+      })),
+      bands_count: concert.bands.length,
+      location: concert.location,
+      name: concert.name ?? null,
+      fan_ids: [],
+    } satisfies ConcertRecord,
+  })
+}
+
+export async function editConcertRecord(
+  objectID: string,
+  concert: EditConcert & {
+    id: number
+    festival_root: { id: number; name: string } | null
+    bands: {
+      id: number
+      name: string
+      alt_names: string | null
+      spotify_artist_id: string | null
+      spotify_artist_images: Json | null
+    }[]
+    location: { id: number; name: string; alt_names: string | null; city: string }
+    fan_ids?: { value: string; _operation: string }
+  }
+) {
+  const algolia = await createAlgoliaClient()
+
+  await algolia.partialUpdateObject({
+    indexName: 'concerts',
+    objectID,
+    attributesToUpdate: {
+      festival_root: concert.festival_root,
+      date_start: concert.date_start ?? null,
+      date_start_unix: concert.date_start ? getUnixTimestamp(concert.date_start) : null,
+      date_end: concert.date_end ?? null,
+      date_end_unix: concert.date_end ? getUnixTimestamp(concert.date_end) : null,
+      bands: concert.bands.map((band, index) => ({
+        id: band.id,
+        name: band.name,
+        alt_names: band.alt_names ?? null,
+        spotify_artist_id: index === 0 ? band.spotify_artist_id : null,
+        spotify_artist_images: index === 0 ? band.spotify_artist_images : null,
+      })),
+      bands_count: concert.bands.length,
+      location: concert.location,
+      name: concert.name ?? null,
+    } as ConcertRecord,
+    createIfNotExists: false,
   })
 }
 

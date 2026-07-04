@@ -1,5 +1,34 @@
 import { Json } from './supabase'
 
+export type ConcertRecord = {
+  objectID: string
+  id: number
+  festival_root: {
+    id: number
+    name: string
+  } | null
+  date_start: string
+  date_start_unix?: number
+  date_end: string | null
+  date_end_unix?: number | null
+  bands: {
+    id: number
+    name: string
+    alt_names: string | null
+    spotify_artist_id: string | null
+    spotify_artist_images: Json | null
+  }[]
+  bands_count: number
+  location: {
+    id: number
+    name: string
+    alt_names: string | null
+    city: string
+  }
+  name: string | null
+  fan_ids: string[]
+}
+
 export type BandRecord = {
   objectID: string
   id: number

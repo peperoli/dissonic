@@ -4,7 +4,7 @@ import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
-import { editGlobalRecord } from '@/actions/algolia'
+import { editConcertRecord, editGlobalRecord } from '@/actions/algolia'
 
 const editConcert = async (formData: EditConcert) => {
   const concertId = formData.id
@@ -38,7 +38,11 @@ const editConcert = async (formData: EditConcert) => {
       resource_status: formData.resource_status,
     })
     .eq('id', concertId)
-    .select('*, festival_root:festival_roots(name), location:locations(*, country:countries(iso2))')
+    .select(
+      `*,
+      festival_root:festival_roots(id, name),
+      location:locations(*, name, alt_names, city, country:countries(iso2))`
+    )
     .single()
 
   if (newConcertError) {
@@ -108,17 +112,20 @@ const editConcert = async (formData: EditConcert) => {
     }
   }
 
-  await editGlobalRecord(`concerts-${concertId}`, {
-    name: newConcert.is_festival ? null : newConcert.name,
-    festival_root: newConcert.festival_root?.name,
-    date_start: newConcert.date_start,
-    date_end: newConcert.date_end,
-    bands: formData.bands,
-    location: newConcert.location.name,
-    country: newConcert.location.country?.iso2,
-    spotify_artist_id: formData.bands?.[0]?.spotify_artist_id,
-    city: newConcert.location.city,
-  })
+  await Promise.all([
+    editGlobalRecord(`concerts-${concertId}`, {
+      name: newConcert.is_festival ? null : newConcert.name,
+      festival_root: newConcert.festival_root?.name,
+      date_start: newConcert.date_start,
+      date_end: newConcert.date_end,
+      bands: formData.bands,
+      location: newConcert.location.name,
+      country: newConcert.location.country?.iso2,
+      spotify_artist_id: formData.bands?.[0]?.spotify_artist_id,
+      city: newConcert.location.city,
+    }),
+    editConcertRecord(concertId.toString(), { ...newConcert, bands: formData.bands ?? [] }),
+  ])
 
   return { concertId }
 }

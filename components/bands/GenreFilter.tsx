@@ -19,12 +19,12 @@ const GenreMultiSelect = ({
     <Select
       name="Genre"
       items={genres
-        ?.sort((a, b) => (facetCounts[b.id] ?? 0) - (facetCounts[a.id] ?? 0))
-        .map(item => ({
+        ?.map(item => ({
           id: item.id,
           name: item.name,
           count: facetCounts[item.id] ?? 0,
-        }))}
+        }))
+        .sort((a, b) => b.count - a.count)}
       searchable
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}

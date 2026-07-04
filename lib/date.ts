@@ -48,3 +48,11 @@ export function isValidDate(date: string) {
     return false
   }
 }
+
+export function getUnixTimestamp(date: string | Temporal.PlainDate) {
+  if (typeof date === 'string') {
+    date = Temporal.PlainDate.from(date)
+  }
+
+  return date.toZonedDateTime('UTC').epochMilliseconds / 1000
+}
