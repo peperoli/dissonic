@@ -1,6 +1,6 @@
 'use server'
 
-import { Database, Json } from '@/types/supabase'
+import { Json } from '@/types/supabase'
 import type {
   AddBand,
   AddConcert,
@@ -10,44 +10,12 @@ import type {
   EditLocation,
   Nullable,
 } from '@/types/types'
-import { BandRecord, ConcertRecord, LocationRecord } from '@/types/algolia'
+import { AlgoliaIndex, BandRecord, ConcertRecord, LocationRecord } from '@/types/algolia'
 import { createAlgoliaClient } from '@/utils/algolia/server'
 import { getUnixTimestamp } from '@/lib/date'
 
-// Global search index functions
-
-export async function addGlobalRecord(
-  record: Database['public']['Views']['search_records']['Row']
-) {
-  const algolia = await createAlgoliaClient()
-
-  const algoliaRecord = {
-    objectID: `${record.type}-${record.id}`,
-    ...record,
-  }
-
-  await algolia.saveObject({
-    indexName: 'global_index',
-    body: algoliaRecord,
-  })
-}
-
-export async function editGlobalRecord(
-  objectID: string,
-  record: Partial<Database['public']['Views']['search_records']['Row']>
-) {
-  const algolia = await createAlgoliaClient()
-
-  await algolia.partialUpdateObject({
-    indexName: 'global_index',
-    objectID,
-    attributesToUpdate: record,
-    createIfNotExists: false,
-  })
-}
-
 export async function deleteSearchRecord(
-  indexName: 'global_index' | 'concerts' | 'bands' | 'locations',
+  indexName: AlgoliaIndex,
   objectID: string
 ) {
   const algolia = await createAlgoliaClient()
@@ -77,9 +45,9 @@ export async function addConcertRecord(
   const algolia = await createAlgoliaClient()
 
   await algolia.saveObject({
-    indexName: 'concerts',
+    indexName: AlgoliaIndex.Concerts,
     body: {
-      objectID: concert.id.toString(),
+      objectID: `${AlgoliaIndex.Concerts}-${concert.id}`,
       id: concert.id,
       festival_root: concert.festival_root,
       date_start: concert.date_start,
@@ -120,7 +88,7 @@ export async function editConcertRecord(
   const algolia = await createAlgoliaClient()
 
   await algolia.partialUpdateObject({
-    indexName: 'concerts',
+    indexName: AlgoliaIndex.Concerts,
     objectID,
     attributesToUpdate: {
       festival_root: concert.festival_root,
@@ -153,9 +121,9 @@ export async function addBandRecord(
   const regionNamesEn = new Intl.DisplayNames('en', { type: 'region' })
 
   await algolia.saveObject({
-    indexName: 'bands',
+    indexName: AlgoliaIndex.Bands,
     body: {
-      objectID: record.id.toString(),
+      objectID: `${AlgoliaIndex.Bands}-${record.id}`,
       id: record.id,
       name: record.name,
       alt_names: record.alt_names ?? null,
@@ -183,7 +151,7 @@ export async function editBandRecord(
   const regionNamesEn = new Intl.DisplayNames('en', { type: 'region' })
 
   await algolia.partialUpdateObject({
-    indexName: 'bands',
+    indexName: AlgoliaIndex.Bands,
     objectID,
     attributesToUpdate: {
       name: record.name ?? null,
@@ -213,9 +181,9 @@ export async function addLocationRecord(
   const regionNamesEn = new Intl.DisplayNames('en', { type: 'region' })
 
   await algolia.saveObject({
-    indexName: 'locations',
+    indexName: AlgoliaIndex.Locations,
     body: {
-      objectID: location.id.toString(),
+      objectID: `${AlgoliaIndex.Locations}-${location.id}`,
       id: location.id,
       name: location.name,
       alt_names: location.alt_names ?? null,
@@ -244,7 +212,7 @@ export async function editLocationRecord(
   const regionNamesEn = new Intl.DisplayNames('en', { type: 'region' })
 
   await algolia.partialUpdateObject({
-    indexName: 'locations',
+    indexName: AlgoliaIndex.Locations,
     objectID,
     attributesToUpdate: {
       name: location.name ?? null,

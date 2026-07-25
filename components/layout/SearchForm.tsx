@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { SearchField } from '../forms/SearchField'
 import { useGlobalSearch } from '@/hooks/search/useGlobalSearch'
-import { Database } from '@/types/supabase'
 import { useTranslations } from 'next-intl'
 import { Band, Concert, Location } from '@/types/types'
 import { ConcertItem } from '../concerts/ConcertItem'
@@ -13,32 +12,20 @@ import { LocationItem } from '../locations/LocationItem'
 import { SegmentedControl } from '../controls/SegmentedControl'
 import { useDebounce } from '@/hooks/helpers/useDebounce'
 import { useLastSearched, useSaveLastSearched } from '@/hooks/search/lastSearched'
+import { BandRecord, ConcertRecord, AlgoliaIndex, LocationRecord } from '@/types/algolia'
 
-export type SearchResult = Database['public']['CompositeTypes']['search_result']
+export type SearchResult = ConcertRecord | BandRecord | LocationRecord
 
 export function SearchForm() {
   const [searchString, setSearchString] = useState('')
   const [selectedType, setSelectedType] = useState('all')
   const debouncedSearchString = useDebounce(searchString, 100)
   const { data: lastSearched } = useLastSearched()
-
   const { data: searchResults, isFetching } = useGlobalSearch({
     search: debouncedSearchString,
     type: selectedType === 'all' ? null : selectedType,
   })
   const t = useTranslations('SearchForm')
-
-  function groupResultsByType(results: SearchResult[]) {
-    const groupedResults: Record<string, typeof results> = {}
-    results?.forEach(result => {
-      const type = result.type as string
-      if (!groupedResults[type]) {
-        groupedResults[type] = []
-      }
-      groupedResults[type].push(result)
-    })
-    return Object.entries(groupedResults)
-  }
 
   return (
     <section>
@@ -96,29 +83,36 @@ export function SearchForm() {
           <p className="text-slate-300">{t('noResults', { query: searchString })}</p>
         </div>
       ) : (
-        groupResultsByType(searchResults?.data ?? []).map(([type, results]) => {
+        searchResults?.data.map(response => {
+          const indexName = response.index as AlgoliaIndex
           return (
-            <div key={type} className="mt-6">
+            <div key={response.index} className="mt-6">
               {selectedType === 'all' && (
                 <div className="flex items-center justify-between">
                   <h2 className="h3">
-                    {t(type)}
+                    {t(indexName)}
                     <span className="ml-2 min-w-4 flex-none rounded bg-slate-700 px-1 text-center text-sm font-normal">
-                      {searchResults?.facets.type[type]}
+                      {searchResults?.facets.type[indexName]}
                     </span>
                   </h2>
-                  {results.length > 3 && (
+                  {(response.nbHits ?? 0) > 3 && (
                     <Button
                       label={t('showAll')}
-                      onClick={() => setSelectedType(type)}
+                      onClick={() => setSelectedType(indexName)}
                       size="small"
                     />
                   )}
                 </div>
               )}
               <ul>
-                {results?.slice(0, selectedType === 'all' ? 3 : undefined).map(result => {
-                  return <SearchResultItem key={result.id} result={result} />
+                {response.hits?.slice(0, selectedType === 'all' ? 3 : undefined).map(hit => {
+                  return (
+                    <SearchResultItem
+                      key={`${response.index}${hit.id}`}
+                      result={hit}
+                      indexName={response.index}
+                    />
+                  )
                 })}
               </ul>
             </div>
@@ -129,15 +123,16 @@ export function SearchForm() {
   )
 }
 
-function SearchResultItem({ result }: { result: SearchResult }) {
+function SearchResultItem({ result, indexName }: { result: SearchResult; indexName?: string }) {
   const { data: lastSearched } = useLastSearched()
   const saveLastSearched = useSaveLastSearched()
+  const concert = result as ConcertRecord
+  const band = result as BandRecord
+  const location = result as LocationRecord
 
   function handleClick() {
     if (lastSearched) {
-      const withoutDuplicates = lastSearched.filter(
-        item => !(item.type === result.type && item.id === result.id)
-      )
+      const withoutDuplicates = lastSearched.filter(item => item.objectID !== result.objectID)
       saveLastSearched.mutate([result, ...withoutDuplicates].slice(0, 20))
     } else {
       saveLastSearched.mutate([result])
@@ -145,42 +140,42 @@ function SearchResultItem({ result }: { result: SearchResult }) {
   }
 
   return (
-    <li key={`${result.type}${result.id}`} onClick={handleClick}>
-      {result.type === 'concerts' ? (
+    <li onClick={handleClick}>
+      {indexName === 'concerts' ? (
         <ConcertItem
           concert={
             {
-              id: result.id,
-              name: result.name,
-              festival_root: result.festival_root ? { name: result.festival_root } : null,
-              date_start: result.date_start,
-              date_end: result.date_end,
-              bands: result.bands,
-              location: { name: result.location, city: result.city },
+              id: concert.id,
+              name: concert.name,
+              festival_root: concert.festival_root,
+              date_start: concert.date_start,
+              date_end: concert.date_end,
+              bands: concert.bands,
+              location: concert.location,
             } as Concert
           }
         />
-      ) : result.type === 'bands' ? (
+      ) : indexName === 'bands' ? (
         <BandItem
           band={
             {
-              id: result.id,
-              name: result.name,
-              country: { iso2: result.country },
-              genres: result.genres?.map(item => ({ name: item })),
-              spotify_artist_images: result.image ? [{ url: result.image }] : null,
-              spotify_artist_id: result.spotify_artist_id,
+              id: band.id,
+              name: band.name,
+              country: band.country,
+              genres: band.genres,
+              spotify_artist_images: band.spotify_artist_images,
+              spotify_artist_id: band.spotify_artist_id,
             } as Band
           }
         />
-      ) : result.type === 'locations' ? (
+      ) : indexName === 'locations' ? (
         <LocationItem
           location={
             {
-              id: result.id,
-              name: result.name,
-              city: result.city,
-              image: result.image,
+              id: location.id,
+              name: location.name,
+              city: location.city,
+              image: location.image,
             } as Location
           }
         />

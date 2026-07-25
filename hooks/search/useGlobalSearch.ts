@@ -1,27 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { createAlgoliaClient } from '@/utils/algolia/client'
-import { SearchResult } from '@/components/layout/SearchForm'
-
-function getSortedTypes(sortedHits: Pick<SearchResult, 'type'>[]) {
-  const types = ['concerts', 'bands', 'locations'] as const
-  const sortedTypes = []
-  const seen = new Set()
-  for (const hit of sortedHits) {
-    if (!seen.has(hit.type)) {
-      seen.add(hit.type)
-      sortedTypes.push(hit.type)
-    }
-  }
-
-  // fallback for types that are not in the first 20 search results
-  for (const type of types) {
-    if (!seen.has(type)) {
-      sortedTypes.push(type)
-    }
-  }
-
-  return sortedTypes
-}
+import { BandRecord, ConcertRecord, AlgoliaIndex, LocationRecord } from '@/types/algolia'
 
 type GlobalSearchFetchOptions = {
   search: string
@@ -30,37 +9,33 @@ type GlobalSearchFetchOptions = {
 
 async function fetchGlobalSearch(options: GlobalSearchFetchOptions) {
   const algolia = createAlgoliaClient()
+  const types = [AlgoliaIndex.Concerts, AlgoliaIndex.Bands, AlgoliaIndex.Locations] as const
 
-  const rankingAndFacetsResult = await algolia.searchSingleIndex<Pick<SearchResult, 'type'>>({
-    indexName: 'global_index',
-    searchParams: {
-      query: options.search,
-      attributesToRetrieve: ['type'],
-      facets: ['type'],
-      hitsPerPage: 20, // Enough to get the best hits in most cases
-      analytics: false,
-    },
-  })
-
-  const sortedTypes = getSortedTypes(rankingAndFacetsResult.hits)
-
-  const typeQueries = sortedTypes
+  const typeQueries = types
     .filter(type => options.type === null || options.type === type)
     .map(t => ({
-      indexName: 'global_index',
+      indexName: t,
       params: {
         query: options.search,
         hitsPerPage: options.type !== t ? 4 : 1000,
-        filters: `type:${t}`,
+        getRankingInfo: true,
       },
     }))
 
-  const { results: typeResults } = await algolia.searchForHits<SearchResult>([...typeQueries])
+  const { results: typeResults } = await algolia.searchForHits<
+    ConcertRecord | BandRecord | LocationRecord
+  >([...typeQueries])
 
   return {
-    data: typeResults.flatMap(result => result.hits),
-    count: rankingAndFacetsResult.nbHits,
-    facets: rankingAndFacetsResult.facets as { type: Record<string, number> },
+    data: typeResults.sort(
+      (a, b) => a.hits[0]._rankingInfo!.nbTypos - b.hits[0]._rankingInfo!.nbTypos
+    ),
+    count: typeResults.reduce((sum, result) => sum + (result.nbHits || 0), 0),
+    facets: {
+      type: Object.fromEntries(
+        types.map(t => [t, typeResults.find(result => result.index === t)?.nbHits ?? 0])
+      ),
+    },
   }
 }
 
@@ -68,7 +43,7 @@ export function useGlobalSearch(options: GlobalSearchFetchOptions & { enabled?: 
   const { enabled, ...fetchOptions } = options
 
   return useQuery({
-    queryKey: ['algolia-bands', fetchOptions],
+    queryKey: ['search-global', fetchOptions],
     queryFn: () => fetchGlobalSearch(fetchOptions),
     placeholderData: previousData => keepPreviousData(previousData),
     enabled: enabled !== false,

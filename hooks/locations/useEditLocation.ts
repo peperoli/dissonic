@@ -4,7 +4,8 @@ import { useQueryState } from 'nuqs'
 import { EditLocation } from '@/types/types'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
-import { editGlobalRecord, editLocationRecord } from '@/actions/algolia'
+import { editLocationRecord } from '@/actions/algolia'
+import { AlgoliaIndex } from '@/types/algolia'
 
 const editLocation = async (
   formData: EditLocation & { imageFile: File | string | null }
@@ -56,13 +57,7 @@ const editLocation = async (
   }
 
   await Promise.all([
-    editGlobalRecord(`locations-${locationId}`, {
-      name: newLocation.name,
-      country: newLocation.country?.iso2,
-      city: newLocation.city,
-      image: imagePath,
-    }),
-    editLocationRecord(locationId.toString(), newLocation),
+    editLocationRecord(`${AlgoliaIndex.Locations}-${locationId}`, newLocation),
   ])
 
   return { locationId }

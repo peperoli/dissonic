@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { HTMLAttributes } from 'react'
+import { HTMLAttributes, ReactNode } from 'react'
 
 export function ConditionalLinkTag({
   children,
@@ -7,7 +7,7 @@ export function ConditionalLinkTag({
   href,
   ...props
 }: {
-  children: React.ReactNode
+  children: ReactNode
   onClick?: () => void
   href?: string
 } & HTMLAttributes<HTMLElement>) {

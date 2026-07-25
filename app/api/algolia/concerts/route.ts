@@ -1,9 +1,9 @@
 import { getUnixTimestamp } from '@/lib/date'
-import { ConcertRecord } from '@/types/algolia'
+import { AlgoliaIndex, ConcertRecord } from '@/types/algolia'
 import { createAlgoliaClient } from '@/utils/algolia/server'
 import { createClient } from '@/utils/supabase/server'
 
-const INDEX_NAME = 'concerts'
+const INDEX_NAME = AlgoliaIndex.Concerts
 
 export async function GET() {
   const supabase = await createClient()
@@ -55,7 +55,7 @@ export async function GET() {
   const concerts = responses.flatMap(({ data }) => data || [])
 
   const algoliaRecords: ConcertRecord[] = concerts.map(concert => ({
-    objectID: concert.id.toString(),
+    objectID: `${INDEX_NAME}-${concert.id}`,
     ...concert,
     date_start_unix: getUnixTimestamp(concert.date_start),
     date_end_unix: concert.date_end ? getUnixTimestamp(concert.date_end) : null,

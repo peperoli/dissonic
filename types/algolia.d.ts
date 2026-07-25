@@ -1,5 +1,11 @@
 import { Json } from './supabase'
 
+enum AlgoliaIndex {
+  Concerts = 'concerts',
+  Bands = 'bands',
+  Locations = 'locations',
+} 
+
 export type ConcertRecord = {
   objectID: string
   id: number
