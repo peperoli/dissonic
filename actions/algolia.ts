@@ -10,12 +10,12 @@ import type {
   EditLocation,
   Nullable,
 } from '@/types/types'
-import { AlgoliaIndexT, BandRecord, ConcertRecord, LocationRecord } from '@/types/algolia'
+import { BandRecord, ConcertRecord, LocationRecord } from '@/types/algolia'
 import { createAlgoliaClient } from '@/utils/algolia/server'
 import { getUnixTimestamp } from '@/lib/date'
 import { AlgoliaIndex } from '@/lib/algolia'
 
-export async function deleteSearchRecord(indexName: AlgoliaIndexT, objectID: string) {
+export async function deleteSearchRecord(indexName: `${AlgoliaIndex}`, objectID: string) {
   const algolia = await createAlgoliaClient()
 
   await algolia.deleteObject({

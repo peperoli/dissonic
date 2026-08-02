@@ -1,11 +1,9 @@
 import { AlgoliaIndex } from '@/lib/algolia'
 import { Json } from './supabase'
 
-export type AlgoliaIndexT = `${AlgoliaIndex}`
-
 export type ConcertRecord = {
   objectID: `${AlgoliaIndex.Concerts}-${number}`
-  type: 'concerts'
+  type: AlgoliaIndex.Concerts
   id: number
   festival_root: {
     id: number

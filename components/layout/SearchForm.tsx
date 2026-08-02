@@ -12,7 +12,8 @@ import { LocationItem } from '../locations/LocationItem'
 import { SegmentedControl } from '../controls/SegmentedControl'
 import { useDebounce } from '@/hooks/helpers/useDebounce'
 import { useLastSearched, useSaveLastSearched } from '@/hooks/search/lastSearched'
-import { AlgoliaIndexT, BandRecord, ConcertRecord, LocationRecord } from '@/types/algolia'
+import { BandRecord, ConcertRecord, LocationRecord } from '@/types/algolia'
+import { AlgoliaIndex } from '@/lib/algolia'
 
 export type SearchResult = ConcertRecord | BandRecord | LocationRecord
 
@@ -45,18 +46,18 @@ export function SearchForm() {
                 count: searchResults?.count ?? 0,
               },
               {
-                value: 'concerts',
-                label: t('concerts'),
+                value: AlgoliaIndex.Concerts,
+                label: t(AlgoliaIndex.Concerts),
                 count: searchResults?.facets?.type?.concerts ?? 0,
               },
               {
-                value: 'bands',
-                label: t('bands'),
+                value: AlgoliaIndex.Bands,
+                label: t(AlgoliaIndex.Bands),
                 count: searchResults?.facets?.type?.bands ?? 0,
               },
               {
-                value: 'locations',
-                label: t('locations'),
+                value: AlgoliaIndex.Locations,
+                label: t(AlgoliaIndex.Locations),
                 count: searchResults?.facets?.type?.locations ?? 0,
               },
             ]}
@@ -71,11 +72,9 @@ export function SearchForm() {
             <h2 className="h3">{t('lastSearched')}</h2>
             <ul>
               {lastSearched
-                ?.filter(
-                  result => selectedType === 'all' || result.objectID.startsWith(selectedType)
-                )
+                ?.filter(result => selectedType === 'all' || result.type === selectedType)
                 .map(result => {
-                  return <SearchResultItem key={result.id} result={result} />
+                  return <SearchResultItem key={result.objectID} result={result} />
                 })}
             </ul>
           </div>
@@ -86,7 +85,7 @@ export function SearchForm() {
         </div>
       ) : (
         searchResults?.data.map(response => {
-          const indexName = response.index as AlgoliaIndexT
+          const indexName = response.index as `$${AlgoliaIndex}`
 
           if (response.nbHits === 0) {
             return null
