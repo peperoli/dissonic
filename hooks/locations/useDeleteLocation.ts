@@ -12,7 +12,7 @@ const deleteLocation = async (locationId: number) => {
     throw error
   }
 
-  await deleteSearchRecord('locations', locationId.toString())
+  await deleteSearchRecord('locations', `locations-${locationId}`)
 }
 
 export const useDeleteLocation = () => {

@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 import toast from 'react-hot-toast'
 import { MemoryFileItem } from '../helpers/useMemoriesControl'
 import { getCloudflareVideoDetails } from '@/lib/cloudflareHelpers'
-import { createAlgoliaClient } from '@/utils/algolia/server'
+import { addConcertFanId } from '@/actions/algolia'
 
 async function addLog({
   concertId,
@@ -31,18 +31,7 @@ async function addLog({
   }
 
   if (bandsToAdd.length > 0) {
-    const algolia = await createAlgoliaClient()
-
-    await algolia.partialUpdateObject({
-      indexName: 'concerts',
-      objectID: concertId.toString(),
-      attributesToUpdate: {
-        fan_ids: {
-          value: userId,
-          _operation: 'AddUnique',
-        },
-      },
-    })
+    await addConcertFanId(`concerts-${concertId}`, userId)
   }
 
   const memoriesToAdd = await Promise.all(

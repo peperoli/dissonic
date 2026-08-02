@@ -85,7 +85,7 @@ export function SearchForm() {
         </div>
       ) : (
         searchResults?.data.map(response => {
-          const indexName = response.index as `$${AlgoliaIndex}`
+          const indexName = response.index as `${AlgoliaIndex}`
 
           if (response.nbHits === 0) {
             return null
@@ -111,7 +111,7 @@ export function SearchForm() {
                 </div>
               )}
               <ul>
-                {response.hits?.slice(0, selectedType === 'all' ? 3 : undefined).map(hit => {
+                {response.hits.map(hit => {
                   return <SearchResultItem key={hit.objectID} result={hit} />
                 })}
               </ul>

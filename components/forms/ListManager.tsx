@@ -10,7 +10,7 @@ import {
   ArrowDownUpIcon,
 } from 'lucide-react'
 import Image from 'next/image'
-import { KeyboardEvent, RefObject, useEffect, useRef, useState } from 'react'
+import { KeyboardEvent, Ref, useEffect, useRef, useState } from 'react'
 import { useSpotifyArtist } from '../../hooks/spotify/useSpotifyArtist'
 import { Band, ReorderableListItem, SpotifyArtist } from '../../types/types'
 import { Button } from '../Button'
@@ -230,7 +230,7 @@ function Search() {
   function handleKeyNavigation(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     if (event.key === 'ArrowUp' && index > 0) {
       itemsRef.current[index - 1]?.focus()
-    } else if (event.key === 'ArrowDown' && index < searchResultsCount - 1) {
+    } else if (event.key === 'ArrowDown' && index < searchResults.length - 1) {
       itemsRef.current[index + 1]?.focus()
     }
   }
@@ -245,8 +245,9 @@ function Search() {
         searchResults.map((searchResult, index) => (
           <SearchResult
             key={searchResult.id}
-            // @ts-expect-error - ref could be null, but it won't
-            ref={el => (itemsRef.current[index] = el)}
+            ref={el => {
+              itemsRef.current[index] = el
+            }}
             band={searchResult}
             index={index}
             selected={!!listItems.find(item => searchResult.id === item.id)}
@@ -383,7 +384,7 @@ function SearchResult({
   removeItem,
   handleKeyNavigation,
 }: {
-  ref: RefObject<HTMLButtonElement | null>
+  ref: Ref<HTMLButtonElement | null>
   band: BandRecord
   index: number
   selected: boolean

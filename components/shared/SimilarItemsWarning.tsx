@@ -39,28 +39,42 @@ export function SimilarItemsWarning({
       </div>
       <ul className="mt-4 grid">
         {itemType === 'concerts' ? (
-          similarItems.data.map(item => <ConcertItem concert={item} />)
+          similarItems.data.map(item => (
+            <li key={item.id}>
+              <ConcertItem concert={item} />
+            </li>
+          ))
         ) : itemType === 'bands' ? (
           <>
             {similarItems.data.map(item => (
-              <BandItem
-                band={
-                  {
-                    id: item.id,
-                    name: item.name,
-                    country: item.country,
-                    genres: item.genres,
-                    spotify_artist_id: item.spotify_artist_id,
-                    spotify_artist_images: item.spotify_artist_images,
-                  } as Band
-                }
-              />
+              <li key={item.id}>
+                <BandItem
+                  band={
+                    {
+                      id: item.id,
+                      name: item.name,
+                      country: item.country,
+                      genres: item.genres,
+                      spotify_artist_id: item.spotify_artist_id,
+                      spotify_artist_images: item.spotify_artist_images,
+                    } as Band
+                  }
+                />
+              </li>
             ))}
           </>
         ) : itemType === 'locations' ? (
-          similarItems.data.map(item => <LocationItem location={item} />)
+          similarItems.data.map(item => (
+            <li key={item.id}>
+              <LocationItem location={item} />
+            </li>
+          ))
         ) : itemType === 'festivalRoots' ? (
-          similarItems.data.map(item => <FestivalRootItem festivalRoot={item} />)
+          similarItems.data.map(item => (
+            <li key={item.id}>
+              <FestivalRootItem festivalRoot={item} />
+            </li>
+          ))
         ) : null}
         {similarItems.count && similarItems.count > 3 && (
           <Button

@@ -15,7 +15,7 @@ import { createAlgoliaClient } from '@/utils/algolia/server'
 import { getUnixTimestamp } from '@/lib/date'
 import { AlgoliaIndex } from '@/lib/algolia'
 
-export async function deleteSearchRecord(indexName: `${AlgoliaIndex}`, objectID: string) {
+export async function deleteSearchRecord(indexName: `${AlgoliaIndex}`, objectID: `${AlgoliaIndex}-${number}`) {
   const algolia = await createAlgoliaClient()
 
   await algolia.deleteObject({
@@ -110,6 +110,33 @@ export async function editConcertRecord(
   })
 }
 
+export async function addConcertFanId(objectID: ConcertRecord['objectID'], userId: string) {
+  const algolia = await createAlgoliaClient()
+
+  await algolia.partialUpdateObject({
+    indexName: AlgoliaIndex.Concerts,
+    objectID,
+    attributesToUpdate: {
+      fan_ids: {
+        value: userId,
+        _operation: 'AddUnique',
+      },
+    },
+  })
+}
+
+export async function updateConcertFanIds(objectID: ConcertRecord['objectID'], fanIds: string[]) {
+  const algolia = await createAlgoliaClient()
+
+  await algolia.partialUpdateObject({
+    indexName: AlgoliaIndex.Concerts,
+    objectID,
+    attributesToUpdate: {
+      fan_ids: fanIds,
+    },
+  })
+}
+
 // Band index functions
 
 export async function addBandRecord(
@@ -158,6 +185,7 @@ export async function editBandRecord(
       alt_names: record.alt_names ?? null,
       country: record.country
         ? {
+            id: record.country_id,
             iso2: record.country.iso2,
             name_de: regionNamesDe.of(record.country.iso2) ?? null,
             name_en: regionNamesEn.of(record.country.iso2) ?? null,
@@ -222,6 +250,7 @@ export async function editLocationRecord(
       city: location.city ?? null,
       country: location.country
         ? {
+            id: location.country_id,
             iso2: location.country.iso2,
             name_de: regionNamesDe.of(location.country.iso2) ?? null,
             name_en: regionNamesEn.of(location.country.iso2) ?? null,

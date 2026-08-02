@@ -24,6 +24,8 @@ function sortByFirstHitRanking(a: SearchResponse, b: SearchResponse) {
     diff = aRankingInfo.firstMatchedWord - bRankingInfo.firstMatchedWord
   }
 
+  console.log(diff)
+
   return diff
 }
 
@@ -31,20 +33,20 @@ async function searchGlobal(options: SearchGlobalFetchOptions) {
   const algolia = createAlgoliaClient()
   const types = [AlgoliaIndex.Concerts, AlgoliaIndex.Bands, AlgoliaIndex.Locations] as const
 
-  const typeQueries = types
-    .filter(type => options.type === null || options.type === type)
-    .map(t => ({
-      indexName: t,
-      params: {
-        query: options.search,
-        hitsPerPage: options.type !== t ? 4 : 1000,
-        getRankingInfo: true,
-      },
-    }))
+  const typeQueries = types.map(t => ({
+    indexName: t,
+    params: {
+      query: options.search,
+      hitsPerPage: !options.type ? 3 : options.type === t ? 1000 : 0,
+      getRankingInfo: true,
+    },
+  }))
 
   const { results: typeResults } = await algolia.searchForHits<
     ConcertRecord | BandRecord | LocationRecord
   >([...typeQueries])
+
+  console.log('typeResults', typeResults) // Debugging line to check the results
 
   return {
     data: typeResults.toSorted(sortByFirstHitRanking),

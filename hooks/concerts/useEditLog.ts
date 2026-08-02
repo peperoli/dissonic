@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 import toast from 'react-hot-toast'
 import { MemoryFileItem } from '../helpers/useMemoriesControl'
 import { getCloudflareVideoDetails } from '@/lib/cloudflareHelpers'
-import { createAlgoliaClient } from '@/utils/algolia/server'
+import { updateConcertFanIds } from '@/actions/algolia'
 
 async function editLog({
   concertId,
@@ -56,15 +56,10 @@ async function editLog({
     throw concertFanIdsError
   }
 
-  const algolia = await createAlgoliaClient()
-
-  await algolia.partialUpdateObject({
-    indexName: 'concerts',
-    objectID: concertId.toString(),
-    attributesToUpdate: {
-      fan_ids: concertFanIds.map(fan => fan.user_id),
-    },
-  })
+  await updateConcertFanIds(
+    `concerts-${concertId}`,
+    concertFanIds.map(fan => (fan.user_id ? fan.user_id : '')).filter(Boolean)
+  )
 
   const memoriesToAdd = await Promise.all(
     memoryFileItemsToAdd

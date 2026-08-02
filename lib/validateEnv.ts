@@ -25,5 +25,5 @@ export function validateEnv() {
     process.exit(1)
   }
 
-  console.log('✅ Environment variables loaded.')
+  console.info('✅ Environment variables loaded.')
 }

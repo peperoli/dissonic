@@ -12,7 +12,7 @@ const deleteBand = async (bandId: number) => {
     throw error
   }
 
-  await deleteSearchRecord('bands', bandId.toString())
+  await deleteSearchRecord('bands', `bands-${bandId}`)
 }
 
 export const useDeleteBand = () => {

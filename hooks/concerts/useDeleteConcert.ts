@@ -13,7 +13,7 @@ const deleteConcert = async (concertId: Concert['id']) => {
     throw error
   }
 
-  await deleteSearchRecord('concerts', concertId.toString())
+  await deleteSearchRecord('concerts', `concerts-${concertId}`)
 }
 
 export const useDeleteConcert = () => {
