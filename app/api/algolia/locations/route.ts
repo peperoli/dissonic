@@ -1,4 +1,5 @@
-import { AlgoliaIndex, LocationRecord } from '@/types/algolia'
+import { AlgoliaIndex } from '@/lib/algolia'
+import { LocationRecord } from '@/types/algolia'
 import { createAlgoliaClient } from '@/utils/algolia/server'
 import { createClient } from '@/utils/supabase/server'
 
@@ -56,6 +57,7 @@ export async function GET() {
 
   const algoliaRecords: LocationRecord[] = locations.map(location => ({
     objectID: `${INDEX_NAME}-${location.id}`,
+    type: INDEX_NAME,
     ...location,
     country: location.country
       ? {

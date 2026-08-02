@@ -4,7 +4,7 @@ import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
-import { editConcertRecord, editGlobalRecord } from '@/actions/algolia'
+import { editConcertRecord } from '@/actions/algolia'
 
 const editConcert = async (formData: EditConcert) => {
   const concertId = formData.id
@@ -112,20 +112,7 @@ const editConcert = async (formData: EditConcert) => {
     }
   }
 
-  await Promise.all([
-    editGlobalRecord(`concerts-${concertId}`, {
-      name: newConcert.is_festival ? null : newConcert.name,
-      festival_root: newConcert.festival_root?.name,
-      date_start: newConcert.date_start,
-      date_end: newConcert.date_end,
-      bands: formData.bands,
-      location: newConcert.location.name,
-      country: newConcert.location.country?.iso2,
-      spotify_artist_id: formData.bands?.[0]?.spotify_artist_id,
-      city: newConcert.location.city,
-    }),
-    editConcertRecord(concertId.toString(), { ...newConcert, bands: formData.bands ?? [] }),
-  ])
+  await editConcertRecord(`concerts-${concertId}`, { ...newConcert, bands: formData.bands ?? [] })
 
   return { concertId }
 }

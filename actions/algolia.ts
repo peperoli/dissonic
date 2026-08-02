@@ -10,14 +10,12 @@ import type {
   EditLocation,
   Nullable,
 } from '@/types/types'
-import { AlgoliaIndex, BandRecord, ConcertRecord, LocationRecord } from '@/types/algolia'
+import { AlgoliaIndexT, BandRecord, ConcertRecord, LocationRecord } from '@/types/algolia'
 import { createAlgoliaClient } from '@/utils/algolia/server'
 import { getUnixTimestamp } from '@/lib/date'
+import { AlgoliaIndex } from '@/lib/algolia'
 
-export async function deleteSearchRecord(
-  indexName: AlgoliaIndex,
-  objectID: string
-) {
+export async function deleteSearchRecord(indexName: AlgoliaIndexT, objectID: string) {
   const algolia = await createAlgoliaClient()
 
   await algolia.deleteObject({
@@ -48,6 +46,7 @@ export async function addConcertRecord(
     indexName: AlgoliaIndex.Concerts,
     body: {
       objectID: `${AlgoliaIndex.Concerts}-${concert.id}`,
+      type: AlgoliaIndex.Concerts,
       id: concert.id,
       festival_root: concert.festival_root,
       date_start: concert.date_start,
@@ -70,7 +69,7 @@ export async function addConcertRecord(
 }
 
 export async function editConcertRecord(
-  objectID: string,
+  objectID: ConcertRecord['objectID'],
   concert: EditConcert & {
     id: number
     festival_root: { id: number; name: string } | null
@@ -124,6 +123,7 @@ export async function addBandRecord(
     indexName: AlgoliaIndex.Bands,
     body: {
       objectID: `${AlgoliaIndex.Bands}-${record.id}`,
+      type: AlgoliaIndex.Bands,
       id: record.id,
       name: record.name,
       alt_names: record.alt_names ?? null,
@@ -143,7 +143,7 @@ export async function addBandRecord(
 }
 
 export async function editBandRecord(
-  objectID: string,
+  objectID: BandRecord['objectID'],
   record: EditBand & { id: number; country?: { iso2: string } | null }
 ) {
   const algolia = await createAlgoliaClient()
@@ -184,6 +184,7 @@ export async function addLocationRecord(
     indexName: AlgoliaIndex.Locations,
     body: {
       objectID: `${AlgoliaIndex.Locations}-${location.id}`,
+      type: AlgoliaIndex.Locations,
       id: location.id,
       name: location.name,
       alt_names: location.alt_names ?? null,
@@ -204,7 +205,7 @@ export async function addLocationRecord(
 }
 
 export async function editLocationRecord(
-  objectID: string,
+  objectID: LocationRecord['objectID'],
   location: EditLocation & { id: number; country?: { iso2: string } | null }
 ) {
   const algolia = await createAlgoliaClient()

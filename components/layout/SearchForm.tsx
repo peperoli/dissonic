@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { SearchField } from '../forms/SearchField'
-import { useGlobalSearch } from '@/hooks/search/useGlobalSearch'
+import { useSearchGlobal } from '@/hooks/search/useSearchGlobal'
 import { useTranslations } from 'next-intl'
 import { Band, Concert, Location } from '@/types/types'
 import { ConcertItem } from '../concerts/ConcertItem'
@@ -12,7 +12,7 @@ import { LocationItem } from '../locations/LocationItem'
 import { SegmentedControl } from '../controls/SegmentedControl'
 import { useDebounce } from '@/hooks/helpers/useDebounce'
 import { useLastSearched, useSaveLastSearched } from '@/hooks/search/lastSearched'
-import { BandRecord, ConcertRecord, AlgoliaIndex, LocationRecord } from '@/types/algolia'
+import { AlgoliaIndexT, BandRecord, ConcertRecord, LocationRecord } from '@/types/algolia'
 
 export type SearchResult = ConcertRecord | BandRecord | LocationRecord
 
@@ -21,7 +21,7 @@ export function SearchForm() {
   const [selectedType, setSelectedType] = useState('all')
   const debouncedSearchString = useDebounce(searchString, 100)
   const { data: lastSearched } = useLastSearched()
-  const { data: searchResults, isFetching } = useGlobalSearch({
+  const { data: searchResults, isFetching } = useSearchGlobal({
     search: debouncedSearchString,
     type: selectedType === 'all' ? null : selectedType,
   })
@@ -71,7 +71,9 @@ export function SearchForm() {
             <h2 className="h3">{t('lastSearched')}</h2>
             <ul>
               {lastSearched
-                ?.filter(result => selectedType === 'all' || result.type === selectedType)
+                ?.filter(
+                  result => selectedType === 'all' || result.objectID.startsWith(selectedType)
+                )
                 .map(result => {
                   return <SearchResultItem key={result.id} result={result} />
                 })}
@@ -84,7 +86,12 @@ export function SearchForm() {
         </div>
       ) : (
         searchResults?.data.map(response => {
-          const indexName = response.index as AlgoliaIndex
+          const indexName = response.index as AlgoliaIndexT
+
+          if (response.nbHits === 0) {
+            return null
+          }
+
           return (
             <div key={response.index} className="mt-6">
               {selectedType === 'all' && (
@@ -106,13 +113,7 @@ export function SearchForm() {
               )}
               <ul>
                 {response.hits?.slice(0, selectedType === 'all' ? 3 : undefined).map(hit => {
-                  return (
-                    <SearchResultItem
-                      key={`${response.index}${hit.id}`}
-                      result={hit}
-                      indexName={response.index}
-                    />
-                  )
+                  return <SearchResultItem key={hit.objectID} result={hit} />
                 })}
               </ul>
             </div>
@@ -123,12 +124,9 @@ export function SearchForm() {
   )
 }
 
-function SearchResultItem({ result, indexName }: { result: SearchResult; indexName?: string }) {
+function SearchResultItem({ result }: { result: SearchResult }) {
   const { data: lastSearched } = useLastSearched()
   const saveLastSearched = useSaveLastSearched()
-  const concert = result as ConcertRecord
-  const band = result as BandRecord
-  const location = result as LocationRecord
 
   function handleClick() {
     if (lastSearched) {
@@ -141,47 +139,45 @@ function SearchResultItem({ result, indexName }: { result: SearchResult; indexNa
 
   return (
     <li onClick={handleClick}>
-      {indexName === 'concerts' ? (
+      {result.type === 'concerts' ? (
         <ConcertItem
           concert={
             {
-              id: concert.id,
-              name: concert.name,
-              festival_root: concert.festival_root,
-              date_start: concert.date_start,
-              date_end: concert.date_end,
-              bands: concert.bands,
-              location: concert.location,
+              id: result.id,
+              name: result.name,
+              festival_root: result.festival_root,
+              date_start: result.date_start,
+              date_end: result.date_end,
+              bands: result.bands,
+              location: result.location,
             } as Concert
           }
         />
-      ) : indexName === 'bands' ? (
+      ) : result.type === 'bands' ? (
         <BandItem
           band={
             {
-              id: band.id,
-              name: band.name,
-              country: band.country,
-              genres: band.genres,
-              spotify_artist_images: band.spotify_artist_images,
-              spotify_artist_id: band.spotify_artist_id,
+              id: result.id,
+              name: result.name,
+              country: result.country,
+              genres: result.genres,
+              spotify_artist_images: result.spotify_artist_images,
+              spotify_artist_id: result.spotify_artist_id,
             } as Band
           }
         />
-      ) : indexName === 'locations' ? (
+      ) : result.type === 'locations' ? (
         <LocationItem
           location={
             {
-              id: location.id,
-              name: location.name,
-              city: location.city,
-              image: location.image,
+              id: result.id,
+              name: result.name,
+              city: result.city,
+              image: result.image,
             } as Location
           }
         />
-      ) : (
-        <div key={result.id}>{result.name}</div>
-      )}
+      ) : null}
     </li>
   )
 }

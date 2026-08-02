@@ -1,4 +1,5 @@
-import { AlgoliaIndex, BandRecord } from '@/types/algolia'
+import { AlgoliaIndex } from '@/lib/algolia'
+import { BandRecord } from '@/types/algolia'
 import { createAlgoliaClient } from '@/utils/algolia/server'
 import { createClient } from '@/utils/supabase/server'
 
@@ -55,6 +56,7 @@ export async function GET() {
 
   const algoliaRecords: BandRecord[] = bands.map(band => ({
     objectID: `${INDEX_NAME}-${band.id}`,
+    type: INDEX_NAME,
     ...band,
     country: band.country
       ? {

@@ -1,13 +1,33 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { createAlgoliaClient } from '@/utils/algolia/client'
-import { BandRecord, ConcertRecord, AlgoliaIndex, LocationRecord } from '@/types/algolia'
+import { BandRecord, ConcertRecord, LocationRecord } from '@/types/algolia'
+import { AlgoliaIndex } from '@/lib/algolia'
+import { SearchResponse } from '@algolia/client-search'
 
-type GlobalSearchFetchOptions = {
+type SearchGlobalFetchOptions = {
   search: string
   type?: string | null
 }
 
-async function fetchGlobalSearch(options: GlobalSearchFetchOptions) {
+function sortByFirstHitRanking(a: SearchResponse, b: SearchResponse) {
+  let diff = 0
+  const aRankingInfo = a.hits[0]?._rankingInfo
+  const bRankingInfo = b.hits[0]?._rankingInfo
+
+  if (!aRankingInfo || !bRankingInfo) {
+    return 0
+  }
+
+  diff = aRankingInfo.nbTypos - bRankingInfo.nbTypos
+
+  if (diff === 0) {
+    diff = aRankingInfo.firstMatchedWord - bRankingInfo.firstMatchedWord
+  }
+
+  return diff
+}
+
+async function searchGlobal(options: SearchGlobalFetchOptions) {
   const algolia = createAlgoliaClient()
   const types = [AlgoliaIndex.Concerts, AlgoliaIndex.Bands, AlgoliaIndex.Locations] as const
 
@@ -27,9 +47,7 @@ async function fetchGlobalSearch(options: GlobalSearchFetchOptions) {
   >([...typeQueries])
 
   return {
-    data: typeResults.sort(
-      (a, b) => a.hits[0]._rankingInfo!.nbTypos - b.hits[0]._rankingInfo!.nbTypos
-    ),
+    data: typeResults.toSorted(sortByFirstHitRanking),
     count: typeResults.reduce((sum, result) => sum + (result.nbHits || 0), 0),
     facets: {
       type: Object.fromEntries(
@@ -39,12 +57,12 @@ async function fetchGlobalSearch(options: GlobalSearchFetchOptions) {
   }
 }
 
-export function useGlobalSearch(options: GlobalSearchFetchOptions & { enabled?: boolean }) {
+export function useSearchGlobal(options: SearchGlobalFetchOptions & { enabled?: boolean }) {
   const { enabled, ...fetchOptions } = options
 
   return useQuery({
     queryKey: ['search-global', fetchOptions],
-    queryFn: () => fetchGlobalSearch(fetchOptions),
+    queryFn: () => searchGlobal(fetchOptions),
     placeholderData: previousData => keepPreviousData(previousData),
     enabled: enabled !== false,
   })

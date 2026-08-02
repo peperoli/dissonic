@@ -21,7 +21,7 @@ import { Reorder } from 'motion/react'
 import { useTranslations } from 'next-intl'
 import { DialogTitle } from '../shared/Dialog'
 import { useDebounce } from '@/hooks/helpers/useDebounce'
-import { useAlgoliaBands } from '@/hooks/bands/useAlgoliaBands'
+import { useSearchBands } from '@/hooks/bands/useSearchBands'
 import { ListManagerProvider, useListManager } from './ListManagerContext'
 import { BandRecord } from '@/types/algolia'
 
@@ -39,7 +39,7 @@ export const ListManager = ({
   const itemsRef = useRef<(HTMLButtonElement | null)[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const debounceQuery = useDebounce(searchQuery, 200)
-  const { data: searchResults, isFetching } = useAlgoliaBands({
+  const { data: searchResults, isFetching } = useSearchBands({
     search: debounceQuery,
   })
 

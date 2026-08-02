@@ -1,13 +1,11 @@
+import { AlgoliaIndex } from '@/lib/algolia'
 import { Json } from './supabase'
 
-enum AlgoliaIndex {
-  Concerts = 'concerts',
-  Bands = 'bands',
-  Locations = 'locations',
-} 
+export type AlgoliaIndexT = `${AlgoliaIndex}`
 
 export type ConcertRecord = {
-  objectID: string
+  objectID: `${AlgoliaIndex.Concerts}-${number}`
+  type: 'concerts'
   id: number
   festival_root: {
     id: number
@@ -36,7 +34,8 @@ export type ConcertRecord = {
 }
 
 export type BandRecord = {
-  objectID: string
+  objectID: `${AlgoliaIndex.Bands}-${number}`
+  type: AlgoliaIndex.Bands
   id: number
   name: string
   alt_names: string | null
@@ -55,8 +54,9 @@ export type BandRecord = {
 }
 
 export type LocationRecord = {
-  objectID: string
+  objectID: `${AlgoliaIndex.Locations}-${number}`
   id: number
+  type: AlgoliaIndex.Locations
   name: string
   alt_names: string | null
   zip_code: string | null

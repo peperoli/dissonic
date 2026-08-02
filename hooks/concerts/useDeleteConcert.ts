@@ -13,10 +13,7 @@ const deleteConcert = async (concertId: Concert['id']) => {
     throw error
   }
 
-  await Promise.all([
-    deleteSearchRecord('global_index', `concerts-${concertId}`),
-    deleteSearchRecord('concerts', concertId.toString()),
-  ])
+  await deleteSearchRecord('concerts', concertId.toString())
 }
 
 export const useDeleteConcert = () => {

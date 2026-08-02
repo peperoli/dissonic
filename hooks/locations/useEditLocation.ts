@@ -5,7 +5,6 @@ import { EditLocation } from '@/types/types'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
 import { editLocationRecord } from '@/actions/algolia'
-import { AlgoliaIndex } from '@/types/algolia'
 
 const editLocation = async (
   formData: EditLocation & { imageFile: File | string | null }
@@ -57,7 +56,7 @@ const editLocation = async (
   }
 
   await Promise.all([
-    editLocationRecord(`${AlgoliaIndex.Locations}-${locationId}`, newLocation),
+    editLocationRecord(`locations-${locationId}`, newLocation),
   ])
 
   return { locationId }

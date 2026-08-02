@@ -3,7 +3,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { LocationRecord } from '@/types/algolia'
 import { createAlgoliaClient } from '@/utils/algolia/client'
 
-async function fetchAlgoliaLocations(options: LocationFetchOptions | undefined) {
+async function searchLocations(options: LocationFetchOptions | undefined) {
   const algolia = createAlgoliaClient()
   const filters: string[] = []
 
@@ -32,12 +32,12 @@ async function fetchAlgoliaLocations(options: LocationFetchOptions | undefined) 
   }
 }
 
-export function useAlgoliaLocations(options: LocationFetchOptions & Pick<QueryOptions<unknown>, 'enabled'>) {
+export function useSearchLocations(options: LocationFetchOptions & Pick<QueryOptions<unknown>, 'enabled'>) {
   const { enabled, ...fetchOptions } = options
 
   return useQuery({
     queryKey: ['algolia-locations', fetchOptions],
-    queryFn: () => fetchAlgoliaLocations(fetchOptions),
+    queryFn: () => searchLocations(fetchOptions),
     placeholderData: previousData => keepPreviousData(previousData),
     enabled: enabled !== false,
   })

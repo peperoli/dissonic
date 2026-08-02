@@ -3,7 +3,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { BandRecord } from '@/types/algolia'
 import { createAlgoliaClient } from '@/utils/algolia/client'
 
-async function fetchAlgoliaBands(options: BandFetchOptions | undefined) {
+async function searchBands(options: BandFetchOptions | undefined) {
   const algolia = createAlgoliaClient()
   const filters: string[] = []
 
@@ -37,12 +37,12 @@ async function fetchAlgoliaBands(options: BandFetchOptions | undefined) {
   }
 }
 
-export function useAlgoliaBands(options: BandFetchOptions & Pick<QueryOptions<unknown>, 'enabled'>) {
+export function useSearchBands(options: BandFetchOptions & Pick<QueryOptions<unknown>, 'enabled'>) {
   const { enabled, ...fetchOptions } = options
 
   return useQuery({
     queryKey: ['algolia-bands', fetchOptions],
-    queryFn: () => fetchAlgoliaBands(fetchOptions),
+    queryFn: () => searchBands(fetchOptions),
     placeholderData: previousData => keepPreviousData(previousData),
     enabled: enabled !== false,
   })

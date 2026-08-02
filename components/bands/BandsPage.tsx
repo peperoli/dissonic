@@ -18,7 +18,7 @@ import { Plus, RotateCcw } from 'lucide-react'
 import { SpeedDial } from '../layout/SpeedDial'
 import { useTranslations } from 'next-intl'
 import { saveLastQueryState } from '@/actions/preferences'
-import { useAlgoliaBands } from '@/hooks/bands/useAlgoliaBands'
+import { useSearchBands } from '@/hooks/bands/useSearchBands'
 
 export function BandsPage() {
   const perPage = 25
@@ -33,7 +33,7 @@ export function BandsPage() {
   )
   const [query, setQuery] = useState('')
   const debounceQuery = useDebounce(query, 200)
-  const { data: bands, isError } = useAlgoliaBands({
+  const { data: bands, isError } = useSearchBands({
     countries: selectedCountries,
     genres: selectedGenres,
     search: debounceQuery,

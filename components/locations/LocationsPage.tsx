@@ -14,7 +14,7 @@ import { StatusBanner } from '../forms/StatusBanner'
 import { SpeedDial } from '../layout/SpeedDial'
 import { useTranslations } from 'next-intl'
 import { LocationTableRow } from './LocationTableRow'
-import { useAlgoliaLocations } from '@/hooks/locations/useAlgoliaLocations'
+import { useSearchLocations } from '@/hooks/locations/useSearchLocations'
 import { CountryFilter } from '../bands/CountryFilter'
 import { parseAsArrayOf, parseAsInteger, useQueryState } from 'nuqs'
 
@@ -27,7 +27,7 @@ export function LocationsPage() {
     'countries',
     parseAsArrayOf(parseAsInteger)
   )
-  const { data: locations } = useAlgoliaLocations({
+  const { data: locations } = useSearchLocations({
     search: debounceQuery,
     countries: selectedCountries,
     page: currentPage,
