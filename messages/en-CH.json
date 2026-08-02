@@ -30,6 +30,7 @@
   },
   "SearchForm": {
     "all": "All",
+    "noResults": "No results for “{query}”.",
     "lastSearched": "Last searched",
     "concerts": "Concerts",
     "bands": "Bands",
@@ -450,6 +451,7 @@
     "addLocation": "Add location",
     "searchLocation": "Search location ...",
     "nEntries": "{count, plural, =1 {# entry} other {# entries}}",
+    "reset": "Reset",
     "noEntriesFound": "No entries found."
   },
   "LocationPage": {

@@ -12,11 +12,11 @@ import { useState } from 'react'
 import { useParams } from 'next/navigation'
 import { useLocation } from '@/hooks/locations/useLocation'
 import { useEditLocation } from '@/hooks/locations/useEditLocation'
-import { useLocations } from '@/hooks/locations/useLocations'
 import { useLocale, useTranslations } from 'next-intl'
 import { FileInput } from '../forms/FileInput'
 import { getAssetUrl } from '@/lib/getAssetUrl'
 import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
+import { useSimilarLocations } from '@/hooks/locations/useSimilarLocations'
 
 interface FormProps {
   close: () => void
@@ -44,7 +44,7 @@ export const Form = ({ close, isNew }: FormProps) => {
   })
   const name = watch('name')
   const [similarLocationsSize, setSimilarLocationsSize] = useState(3)
-  const { data: similarLocations } = useLocations({
+  const { data: similarLocations } = useSimilarLocations({
     enabled: name.length >= 3,
     search: name,
     size: similarLocationsSize,

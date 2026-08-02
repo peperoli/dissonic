@@ -21,6 +21,15 @@ export function RadioGroup({ name, items, value, onValueChange }: RadioGroupProp
               onCheckedChange={() => onValueChange(item.id)}
             />
             {item.name}
+            {item.count !== undefined && (
+              <div
+                className={clsx(
+                  'ml-auto min-w-4 flex-none rounded bg-slate-600 px-1 text-center text-sm'
+                )}
+              >
+                {item.count}
+              </div>
+            )}
           </label>
         </li>
       ))}

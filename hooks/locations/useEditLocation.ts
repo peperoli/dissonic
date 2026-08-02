@@ -1,20 +1,23 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
-import { TablesInsert } from '@/types/supabase'
+import { EditLocation } from '@/types/types'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
+import { editLocationRecord } from '@/actions/algolia'
 
 const editLocation = async (
-  formData: TablesInsert<'locations'> & { imageFile: File | string | null }
+  formData: EditLocation & { imageFile: File | string | null }
 ) => {
-  if (!formData.id) {
+  const locationId = formData.id
+
+  if (!locationId) {
     throw new Error('Location ID is required')
   }
 
   const imagePath =
     formData.imageFile instanceof File
-      ? `locations/${formData.id}.${formData.imageFile?.name.split('.').at(-1)}`
+      ? `locations/${locationId}.${formData.imageFile?.name.split('.').at(-1)}`
       : formData.image
 
   if (formData.imageFile instanceof File && imagePath) {
@@ -33,7 +36,7 @@ const editLocation = async (
     }
   }
 
-  const { error } = await supabase
+  const { data: newLocation, error } = await supabase
     .from('locations')
     .update({
       name: formData.name,
@@ -44,13 +47,19 @@ const editLocation = async (
       website: formData.website,
       image: imagePath,
     })
-    .eq('id', formData.id)
+    .eq('id', locationId)
+    .select('*, country:countries(iso2)')
+    .single()
 
   if (error) {
     throw error
   }
 
-  return { locationId: formData.id }
+  await Promise.all([
+    editLocationRecord(`locations-${locationId}`, newLocation),
+  ])
+
+  return { locationId }
 }
 
 export const useEditLocation = () => {
@@ -60,7 +69,10 @@ export const useEditLocation = () => {
 
   return useMutation({
     mutationFn: editLocation,
-    onError: error => { console.error(error); toast.error(error.message)},
+    onError: error => {
+      console.error(error)
+      toast.error(error.message)
+    },
     onSuccess: ({ locationId }) => {
       queryClient.invalidateQueries({ queryKey: ['location', locationId] })
       setModal(null)

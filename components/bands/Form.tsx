@@ -1,4 +1,3 @@
-import { useBands } from '../../hooks/bands/useBands'
 import { AddBand, SpotifyArtist } from '../../types/types'
 import { Button } from '../Button'
 import { SpotifyArtistSelect } from './SpotifyArtistSelect'
@@ -18,6 +17,7 @@ import clsx from 'clsx'
 import { useTranslations } from 'use-intl'
 import { useLocale } from 'next-intl'
 import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
+import { useSimilarBands } from '@/hooks/bands/useSimilarBands'
 
 interface FormProps {
   isNew?: boolean
@@ -49,8 +49,8 @@ export const Form = ({ isNew, close }: FormProps) => {
   })
   const name = watch('name')
   const [similarBandsSize, setSimilarBandsSize] = useState(3)
-  const { data: similarBands } = useBands({
-    enabled: name.length >= 3,
+  const { data: similarBands } = useSimilarBands({
+    enabled: name.length >= 1,
     search: name,
     size: similarBandsSize,
   })

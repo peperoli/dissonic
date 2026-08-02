@@ -10,6 +10,7 @@
     "generate-db-types": "supabase gen types typescript > types/supabase.d.ts --project-id"
   },
   "dependencies": {
+    "@algolia/client-search": "^5.55.0",
     "@aws-sdk/client-s3": "^3.835.0",
     "@aws-sdk/s3-request-presigner": "^3.835.0",
     "@floating-ui/react-dom": "^2.1.8",

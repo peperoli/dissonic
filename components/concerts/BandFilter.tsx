@@ -7,15 +7,22 @@ import { useTranslations } from 'next-intl'
 type BandMultiSelectProps = {
   values: number[]
   onValuesChange: (value: number[]) => void
+  facetCounts: Record<number, number>
 }
 
-const BandMultiSelect = ({ ...props }: BandMultiSelectProps) => {
+const BandMultiSelect = ({ facetCounts, ...props }: BandMultiSelectProps) => {
   const [searchQuery, setSearchQuery] = useState('')
   const { data: bands, isPending } = useBands({ search: searchQuery })
   return (
     <Select
       name="band"
-      items={bands?.data}
+      items={bands?.data
+        .map(band => ({
+          id: band.id,
+          name: band.name,
+          count: facetCounts[band.id] ?? 0,
+        }))
+        .sort((a, b) => b.count - a.count)}
       searchable
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
@@ -30,9 +37,10 @@ const BandMultiSelect = ({ ...props }: BandMultiSelectProps) => {
 type BandFilterProps = {
   values: number[] | null
   onSubmit: (value: number[]) => void
+  facetCounts: Record<number, number>
 }
 
-export const BandFilter = ({ values: submittedValues, onSubmit }: BandFilterProps) => {
+export const BandFilter = ({ values: submittedValues, onSubmit, facetCounts }: BandFilterProps) => {
   const { data: bands } = useBands({ ids: submittedValues })
   const [selectedIds, setSelectedIds] = useState<number[]>(submittedValues ?? [])
   const t = useTranslations('BandFilter')
@@ -48,7 +56,11 @@ export const BandFilter = ({ values: submittedValues, onSubmit }: BandFilterProp
       submittedValues={submittedValues}
       onSubmit={onSubmit}
     >
-      <BandMultiSelect values={selectedIds} onValuesChange={setSelectedIds} />
+      <BandMultiSelect
+        values={selectedIds}
+        onValuesChange={setSelectedIds}
+        facetCounts={facetCounts}
+      />
     </FilterButton>
   )
 }

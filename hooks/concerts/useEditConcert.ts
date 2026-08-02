@@ -4,9 +4,10 @@ import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
+import { editConcertRecord } from '@/actions/algolia'
 
-const editConcert = async (newConcert: EditConcert) => {
-  const concertId = newConcert.id
+const editConcert = async (formData: EditConcert) => {
+  const concertId = formData.id
 
   if (!concertId) {
     throw new Error('Concert ID is required')
@@ -22,31 +23,37 @@ const editConcert = async (newConcert: EditConcert) => {
     throw oldConcertError
   }
 
-  const { error: editConcertError } = await supabase
+  const { data: newConcert, error: newConcertError } = await supabase
     .from('concerts')
     .update({
-      name: newConcert.is_festival ? null : newConcert.name,
-      is_festival: newConcert.is_festival,
-      festival_root_id: newConcert.is_festival ? newConcert.festival_root_id : null,
-      date_start: newConcert.date_start,
-      date_end: newConcert.is_festival ? newConcert.date_end : null,
-      location_id: newConcert.location_id,
-      doors_time: newConcert.doors_time || null,
-      show_time: newConcert.show_time || null,
-      source_link: newConcert.source_link,
-      resource_status: newConcert.resource_status,
+      name: formData.is_festival ? null : formData.name,
+      is_festival: formData.is_festival,
+      festival_root_id: formData.is_festival ? formData.festival_root_id : null,
+      date_start: formData.date_start,
+      date_end: formData.is_festival ? formData.date_end : null,
+      location_id: formData.location_id,
+      doors_time: formData.doors_time || null,
+      show_time: formData.show_time || null,
+      source_link: formData.source_link,
+      resource_status: formData.resource_status,
     })
     .eq('id', concertId)
+    .select(
+      `*,
+      festival_root:festival_roots(id, name),
+      location:locations(*, name, alt_names, city, country:countries(iso2))`
+    )
+    .single()
 
-  if (editConcertError) {
-    throw editConcertError
+  if (newConcertError) {
+    throw newConcertError
   }
 
-  const addBands = newConcert.bands?.filter(
+  const addBands = formData.bands?.filter(
     item => !oldConcert.bands.find(item2 => item.id === item2.id)
   )
   const deleteBands = oldConcert.bands.filter(
-    item => !newConcert.bands?.find(item2 => item.id === item2.id)
+    item => !formData.bands?.find(item2 => item.id === item2.id)
   )
 
   if (addBands?.length) {
@@ -64,7 +71,7 @@ const editConcert = async (newConcert: EditConcert) => {
   }
 
   await Promise.all(
-    newConcert.bands?.map(async (band, index) => {
+    formData.bands?.map(async (band, index) => {
       const { error: editBandsError } = await supabase
         .from('j_concert_bands')
         .update({ item_index: index })
@@ -104,6 +111,8 @@ const editConcert = async (newConcert: EditConcert) => {
       throw deleteBandsError
     }
   }
+
+  await editConcertRecord(`concerts-${concertId}`, { ...newConcert, bands: formData.bands ?? [] })
 
   return { concertId }
 }

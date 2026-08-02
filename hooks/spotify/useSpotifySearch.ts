@@ -2,7 +2,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { SpotifyArtist } from '@/types/types'
 import { useSpotifyToken } from './useSpotifyToken'
 
-const fetchSearch = async (
+const search = async (
   bandName: string | null,
   token?: string | null,
   options?: { limit?: number }
@@ -30,7 +30,7 @@ export const useSpotifySearch = (bandName: string | null, options?: { limit?: nu
   const { data: token } = useSpotifyToken()
   return useQuery({
     queryKey: ['spotifySearch', bandName, JSON.stringify(options)],
-    queryFn: () => fetchSearch(bandName, token, options),
+    queryFn: () => search(bandName, token, options),
     enabled: !!token && !!bandName,
     placeholderData: keepPreviousData,
   })

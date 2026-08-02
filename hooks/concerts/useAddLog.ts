@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import toast from 'react-hot-toast'
 import { MemoryFileItem } from '../helpers/useMemoriesControl'
 import { getCloudflareVideoDetails } from '@/lib/cloudflareHelpers'
+import { addConcertFanId } from '@/actions/algolia'
 
 async function addLog({
   concertId,
@@ -27,6 +28,10 @@ async function addLog({
 
   if (insertBandsError) {
     throw insertBandsError
+  }
+
+  if (bandsToAdd.length > 0) {
+    await addConcertFanId(`concerts-${concertId}`, userId)
   }
 
   const memoriesToAdd = await Promise.all(

@@ -4,12 +4,15 @@ import { useCountries } from './../../hooks/useCountries'
 import { Select } from '../forms/Select'
 import { useLocale, useTranslations } from 'next-intl'
 
-type CountryMultiSelectProps = {
+const CountryMultiSelect = ({
+  selectedOptions,
+  setSelectedOptions,
+  facetCounts,
+}: {
   selectedOptions: number[]
   setSelectedOptions: (value: number[]) => void
-}
-
-const CountryMultiSelect = ({ selectedOptions, setSelectedOptions }: CountryMultiSelectProps) => {
+  facetCounts: Record<number, number>
+}) => {
   const [searchQuery, setSearchQuery] = useState('')
   const { data: countries, isPending } = useCountries({ search: searchQuery })
   const locale = useLocale()
@@ -17,10 +20,13 @@ const CountryMultiSelect = ({ selectedOptions, setSelectedOptions }: CountryMult
   return (
     <Select
       name="Land"
-      items={countries?.map(item => ({
-        id: item.id,
-        name: regionNames.of(item.iso2) ?? item.iso2,
-      }))}
+      items={countries
+        ?.map(item => ({
+          id: item.id,
+          name: regionNames.of(item.iso2) ?? item.iso2,
+          count: facetCounts[item.id] ?? 0,
+        }))
+        .sort((a, b) => b.count - a.count)}
       searchable
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
@@ -33,12 +39,15 @@ const CountryMultiSelect = ({ selectedOptions, setSelectedOptions }: CountryMult
   )
 }
 
-type CountryFilterProps = {
+export const CountryFilter = ({
+  values: submittedValues,
+  onSubmit,
+  facetCounts,
+}: {
   values: number[] | null
   onSubmit: (value: number[]) => void
-}
-
-export const CountryFilter = ({ values: submittedValues, onSubmit }: CountryFilterProps) => {
+  facetCounts: Record<number, number>
+}) => {
   const { data: countries } = useCountries({ ids: submittedValues })
   const [selectedIds, setSelectedIds] = useState(submittedValues ?? [])
   const t = useTranslations('CountryFilter')
@@ -49,12 +58,19 @@ export const CountryFilter = ({ values: submittedValues, onSubmit }: CountryFilt
   return (
     <FilterButton
       label={t('country')}
-      items={countries?.map(country => ({ id: country.id, name: country.iso2 }))}
+      items={countries?.map(country => ({
+        id: country.id,
+        name: country.iso2,
+      }))}
       selectedIds={selectedIds}
       submittedValues={submittedValues}
       onSubmit={onSubmit}
     >
-      <CountryMultiSelect selectedOptions={selectedIds} setSelectedOptions={setSelectedIds} />
+      <CountryMultiSelect
+        selectedOptions={selectedIds}
+        setSelectedOptions={setSelectedIds}
+        facetCounts={facetCounts}
+      />
     </FilterButton>
   )
 }

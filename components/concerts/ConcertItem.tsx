@@ -9,15 +9,18 @@ import { Fragment } from 'react'
 import { SpotifyArtist } from '@/types/types'
 import { ConcertDate } from './ConcertDate'
 import { Temporal } from 'temporal-polyfill'
+import { ConcertRecord } from '@/types/algolia'
 
 export function ConcertItem({
   concert,
 }: {
-  concert: Tables<'concerts'> & {
-    festival_root: { name: string } | null
-    bands: Tables<'bands'>[] | null
-    location: Tables<'locations'> | null
-  }
+  concert:
+    | (Tables<'concerts'> & {
+        festival_root: { name: string } | null
+        bands: Tables<'bands'>[] | null
+        location: Tables<'locations'> | null
+      })
+    | ConcertRecord
 }) {
   const { data: spotifyArtist } = useSpotifyArtist(concert.bands?.[0]?.spotify_artist_id ?? null, {
     enabled: !concert.bands?.[0]?.spotify_artist_images,

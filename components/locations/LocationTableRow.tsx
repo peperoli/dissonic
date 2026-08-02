@@ -1,13 +1,13 @@
 'use client'
 
 import { TableRow } from '../TableRow'
-import { Location } from '../../types/types'
 import Image from 'next/image'
 import { MapPinIcon } from 'lucide-react'
 import { useLocale } from 'next-intl'
 import { getAssetUrl } from '@/lib/getAssetUrl'
+import { LocationRecord } from '@/types/algolia'
 
-export function LocationTableRow({ location }: { location: Location }) {
+export function LocationTableRow({ location }: { location: LocationRecord }) {
   const locale = useLocale()
   const imageUrl = getAssetUrl('ressources', location.image, location.updated_at)
   const regionNames = new Intl.DisplayNames(locale, { type: 'region' })

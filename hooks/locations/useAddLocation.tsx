@@ -5,9 +5,10 @@ import { useQueryState } from 'nuqs'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
+import { addLocationRecord } from '@/actions/algolia'
 
 const addLocation = async (formData: AddLocation & { imageFile: File | string | null }) => {
-  const { data, error } = await supabase
+  const { data: newLocation, error } = await supabase
     .from('locations')
     .insert({
       name: formData.name,
@@ -17,7 +18,7 @@ const addLocation = async (formData: AddLocation & { imageFile: File | string | 
       alt_names: formData.alt_names,
       website: formData.website,
     })
-    .select()
+    .select('*, country:countries(iso2)')
     .single()
 
   if (error) {
@@ -26,7 +27,7 @@ const addLocation = async (formData: AddLocation & { imageFile: File | string | 
 
   const imagePath =
     formData.imageFile instanceof File
-      ? `locations/${data.id}.${formData.imageFile?.name.split('.').at(-1)}`
+      ? `locations/${newLocation.id}.${formData.imageFile?.name.split('.').at(-1)}`
       : formData.imageFile
 
   if (formData.imageFile && imagePath) {
@@ -43,14 +44,16 @@ const addLocation = async (formData: AddLocation & { imageFile: File | string | 
       .update({
         image: imagePath,
       })
-      .eq('id', data.id)
+      .eq('id', newLocation.id)
 
     if (updateImageError) {
       throw updateImageError
     }
   }
 
-  return { locationId: data.id }
+  await addLocationRecord(newLocation)
+
+  return { locationId: newLocation.id }
 }
 
 export const useAddLocation = () => {

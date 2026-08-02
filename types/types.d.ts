@@ -1,7 +1,5 @@
 import { Tables, TablesInsert, TablesUpdate } from './supabase'
-import { Temporal, Intl } from 'temporal-polyfill'
-
-export type Nullable<T> = { [K in keyof T]: T[K] | null };
+import { Temporal } from 'temporal-polyfill'
 
 export type ExtendedRes<TData> = {
   data: TData
@@ -44,6 +42,7 @@ export type FestivalRootFetchOptions = {
 export type LocationFetchOptions = {
   ids?: number[] | null
   search?: string
+  countries?: number[] | null
   size?: number
   page?: number
 }
@@ -138,6 +137,8 @@ export type Location = Tables<'locations'> & {
 
 export type AddLocation = TablesInsert<'locations'>
 
+export type EditLocation = TablesUpdate<'locations'>
+
 export type Country = { id: number; iso2: string }
 
 export type Profile = Omit<Tables<'profiles'>, 'last_searched'> & {
@@ -158,6 +159,7 @@ export type AddFriend = TablesInsert<'friends'>
 export type ListItem<IdType = number> = {
   id: IdType
   name: string
+  count?: number
 }
 
 export type ReorderableListItem<T = unknown> = ListItem & {

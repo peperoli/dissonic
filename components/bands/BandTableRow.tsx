@@ -1,17 +1,14 @@
 'use client'
 
 import { TableRow } from '../TableRow'
-import { Band, SpotifyArtist } from '../../types/types'
+import { SpotifyArtist } from '../../types/types'
 import { useSpotifyArtist } from '../../hooks/spotify/useSpotifyArtist'
 import Image from 'next/image'
 import { Guitar } from 'lucide-react'
 import { useLocale } from 'next-intl'
+import { BandRecord } from '@/types/algolia'
 
-type BandTableRowProps = {
-  band: Band
-}
-
-export function BandTableRow({ band }: BandTableRowProps) {
+export function BandTableRow({ band }: { band: BandRecord }) {
   const { data } = useSpotifyArtist(band.spotify_artist_id, {
     enabled: !band.spotify_artist_images,
   })

@@ -2,10 +2,11 @@ import { Button } from '../Button'
 import { AlertTriangle, ChevronDown, TentIcon } from 'lucide-react'
 import clsx from 'clsx'
 import { useTranslations } from 'next-intl'
-import { Band, Concert, ExtendedRes, FestivalRoot, Location } from '@/types/types'
+import { Concert, ExtendedRes, FestivalRoot } from '@/types/types'
 import { BandItem } from '../bands/BandItem'
 import { ConcertItem } from '../concerts/ConcertItem'
 import { LocationItem } from '../locations/LocationItem'
+import { BandRecord, LocationRecord } from '@/types/algolia'
 
 export function SimilarItemsWarning({
   itemType,
@@ -17,8 +18,8 @@ export function SimilarItemsWarning({
   setSimilarItemsSize: (size: number) => void
 } & (
   | { itemType: 'concerts'; similarItems: ExtendedRes<Concert[]> }
-  | { itemType: 'bands'; similarItems: ExtendedRes<Band[]> }
-  | { itemType: 'locations'; similarItems: ExtendedRes<Location[]> }
+  | { itemType: 'bands'; similarItems: ExtendedRes<BandRecord[]> }
+  | { itemType: 'locations'; similarItems: ExtendedRes<LocationRecord[]> }
   | { itemType: 'festivalRoots'; similarItems: ExtendedRes<FestivalRoot[]> }
 )) {
   const t = useTranslations('SimilarItemsWarning')
@@ -39,14 +40,14 @@ export function SimilarItemsWarning({
       <ul className="mt-4 grid">
         {similarItems.data.map(item => (
           <li key={item.id}>
-            {itemType === 'bands' ? (
-              <BandItem band={item as Band} />
-            ) : itemType === 'concerts' ? (
-              <ConcertItem concert={item as Concert} />
-            ) : itemType === 'locations' ? (
-              <LocationItem location={item as Location} />
-            ) : itemType === 'festivalRoots' ? (
-              <FestivalRootItem festivalRoot={item as FestivalRoot} />
+            {'festival_root_id' in item ? (
+              <ConcertItem concert={item} />
+            ) : 'type' in item && item.type === 'bands' ? (
+              <BandItem band={item} />
+            ) : 'type' in item && item.type === 'locations' ? (
+              <LocationItem location={item} />
+            ) : 'default_location_id' in item ? (
+              <FestivalRootItem festivalRoot={item} />
             ) : null}
           </li>
         ))}

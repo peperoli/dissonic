@@ -4,18 +4,27 @@ import { useGenres } from '../../hooks/genres/useGenres'
 import { Select } from '../forms/Select'
 import { useTranslations } from 'next-intl'
 
-type GenreMultiSelectProps = {
+const GenreMultiSelect = ({
+  selectedOptions,
+  setSelectedOptions,
+  facetCounts,
+}: {
   selectedOptions: number[]
   setSelectedOptions: (value: number[]) => void
-}
-
-const GenreMultiSelect = ({ selectedOptions, setSelectedOptions }: GenreMultiSelectProps) => {
+  facetCounts: Record<number, number>
+}) => {
   const [searchQuery, setSearchQuery] = useState('')
   const { data: genres, isPending } = useGenres({ search: searchQuery })
   return (
     <Select
       name="Genre"
-      items={genres}
+      items={genres
+        ?.map(item => ({
+          id: item.id,
+          name: item.name,
+          count: facetCounts[item.id] ?? 0,
+        }))
+        .sort((a, b) => b.count - a.count)}
       searchable
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
@@ -28,12 +37,15 @@ const GenreMultiSelect = ({ selectedOptions, setSelectedOptions }: GenreMultiSel
   )
 }
 
-type GenreFilterProps = {
+export const GenreFilter = ({
+  values: submittedValues,
+  onSubmit,
+  facetCounts,
+}: {
   values: number[] | null
   onSubmit: (value: number[]) => void
-}
-
-export const GenreFilter = ({ values: submittedValues, onSubmit }: GenreFilterProps) => {
+  facetCounts: Record<number, number>
+}) => {
   const { data: genres } = useGenres({ ids: submittedValues })
   const [selectedIds, setSelectedIds] = useState(submittedValues ?? [])
   const t = useTranslations('GenreFilter')
@@ -49,7 +61,11 @@ export const GenreFilter = ({ values: submittedValues, onSubmit }: GenreFilterPr
       submittedValues={submittedValues}
       onSubmit={onSubmit}
     >
-      <GenreMultiSelect selectedOptions={selectedIds} setSelectedOptions={setSelectedIds} />
+      <GenreMultiSelect
+        selectedOptions={selectedIds}
+        setSelectedOptions={setSelectedIds}
+        facetCounts={facetCounts}
+      />
     </FilterButton>
   )
 }
