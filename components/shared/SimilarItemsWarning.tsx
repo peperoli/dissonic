@@ -2,11 +2,11 @@ import { Button } from '../Button'
 import { AlertTriangle, ChevronDown, TentIcon } from 'lucide-react'
 import clsx from 'clsx'
 import { useTranslations } from 'next-intl'
-import { Band, Concert, ExtendedRes, FestivalRoot, Location } from '@/types/types'
+import { Concert, ExtendedRes, FestivalRoot } from '@/types/types'
 import { BandItem } from '../bands/BandItem'
 import { ConcertItem } from '../concerts/ConcertItem'
 import { LocationItem } from '../locations/LocationItem'
-import { BandRecord } from '@/types/algolia'
+import { BandRecord, LocationRecord } from '@/types/algolia'
 
 export function SimilarItemsWarning({
   itemType,
@@ -19,7 +19,7 @@ export function SimilarItemsWarning({
 } & (
   | { itemType: 'concerts'; similarItems: ExtendedRes<Concert[]> }
   | { itemType: 'bands'; similarItems: ExtendedRes<BandRecord[]> }
-  | { itemType: 'locations'; similarItems: ExtendedRes<Location[]> }
+  | { itemType: 'locations'; similarItems: ExtendedRes<LocationRecord[]> }
   | { itemType: 'festivalRoots'; similarItems: ExtendedRes<FestivalRoot[]> }
 )) {
   const t = useTranslations('SimilarItemsWarning')
@@ -38,44 +38,19 @@ export function SimilarItemsWarning({
         ) : null}
       </div>
       <ul className="mt-4 grid">
-        {itemType === 'concerts' ? (
-          similarItems.data.map(item => (
-            <li key={item.id}>
+        {similarItems.data.map(item => (
+          <li key={item.id}>
+            {'festival_root_id' in item ? (
               <ConcertItem concert={item} />
-            </li>
-          ))
-        ) : itemType === 'bands' ? (
-          <>
-            {similarItems.data.map(item => (
-              <li key={item.id}>
-                <BandItem
-                  band={
-                    {
-                      id: item.id,
-                      name: item.name,
-                      country: item.country,
-                      genres: item.genres,
-                      spotify_artist_id: item.spotify_artist_id,
-                      spotify_artist_images: item.spotify_artist_images,
-                    } as Band
-                  }
-                />
-              </li>
-            ))}
-          </>
-        ) : itemType === 'locations' ? (
-          similarItems.data.map(item => (
-            <li key={item.id}>
+            ) : 'type' in item && item.type === 'bands' ? (
+              <BandItem band={item} />
+            ) : 'type' in item && item.type === 'locations' ? (
               <LocationItem location={item} />
-            </li>
-          ))
-        ) : itemType === 'festivalRoots' ? (
-          similarItems.data.map(item => (
-            <li key={item.id}>
+            ) : 'default_location_id' in item ? (
               <FestivalRootItem festivalRoot={item} />
-            </li>
-          ))
-        ) : null}
+            ) : null}
+          </li>
+        ))}
         {similarItems.count && similarItems.count > 3 && (
           <Button
             label={similarItemsSize === 3 ? t('showAll') : t('showLess')}

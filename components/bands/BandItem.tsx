@@ -5,8 +5,9 @@ import { Band, SpotifyArtist } from '../../types/types'
 import { useSpotifyArtist } from '@/hooks/spotify/useSpotifyArtist'
 import Image from 'next/image'
 import { GuitarIcon } from 'lucide-react'
+import { BandRecord } from '@/types/algolia'
 
-export function BandItem({ band }: { band: Band }) {
+export function BandItem({ band }: { band: Band | BandRecord }) {
   const { data: spotifyArtist } = useSpotifyArtist(band.spotify_artist_id, {
     enabled: !band.spotify_artist_images,
   })

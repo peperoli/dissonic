@@ -3,8 +3,9 @@ import { Location } from '../../types/types'
 import { MapPinIcon } from 'lucide-react'
 import { getAssetUrl } from '@/lib/getAssetUrl'
 import Image from 'next/image'
+import { LocationRecord } from '@/types/algolia'
 
-export function LocationItem({ location }: { location: Location }) {
+export function LocationItem({ location }: { location: Location | LocationRecord }) {
   const imageUrl = getAssetUrl('ressources', location.image, location.updated_at)
 
   return (

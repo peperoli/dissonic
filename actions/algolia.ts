@@ -8,14 +8,16 @@ import type {
   EditBand,
   EditConcert,
   EditLocation,
-  Nullable,
 } from '@/types/types'
 import { BandRecord, ConcertRecord, LocationRecord } from '@/types/algolia'
 import { createAlgoliaClient } from '@/utils/algolia/server'
 import { getUnixTimestamp } from '@/lib/date'
 import { AlgoliaIndex } from '@/lib/algolia'
 
-export async function deleteSearchRecord(indexName: `${AlgoliaIndex}`, objectID: `${AlgoliaIndex}-${number}`) {
+export async function deleteSearchRecord(
+  indexName: `${AlgoliaIndex}`,
+  objectID: `${AlgoliaIndex}-${number}`
+) {
   const algolia = await createAlgoliaClient()
 
   await algolia.deleteObject({
@@ -194,7 +196,7 @@ export async function editBandRecord(
       genres: record.genres,
       spotify_artist_id: record.spotify_artist_id ?? null,
       spotify_artist_images: record.spotify_artist_images ?? null,
-    } as Nullable<BandRecord>,
+    } as BandRecord,
     createIfNotExists: false,
   })
 }

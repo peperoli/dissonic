@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { SearchField } from '../forms/SearchField'
 import { useSearchGlobal } from '@/hooks/search/useSearchGlobal'
 import { useTranslations } from 'next-intl'
-import { Band, Concert, Location } from '@/types/types'
 import { ConcertItem } from '../concerts/ConcertItem'
 import { Button } from '../Button'
 import { BandItem } from '../bands/BandItem'
@@ -139,43 +138,11 @@ function SearchResultItem({ result }: { result: SearchResult }) {
   return (
     <li onClick={handleClick}>
       {result.type === 'concerts' ? (
-        <ConcertItem
-          concert={
-            {
-              id: result.id,
-              name: result.name,
-              festival_root: result.festival_root,
-              date_start: result.date_start,
-              date_end: result.date_end,
-              bands: result.bands,
-              location: result.location,
-            } as Concert
-          }
-        />
+        <ConcertItem concert={result} />
       ) : result.type === 'bands' ? (
-        <BandItem
-          band={
-            {
-              id: result.id,
-              name: result.name,
-              country: result.country,
-              genres: result.genres,
-              spotify_artist_images: result.spotify_artist_images,
-              spotify_artist_id: result.spotify_artist_id,
-            } as Band
-          }
-        />
+        <BandItem band={result} />
       ) : result.type === 'locations' ? (
-        <LocationItem
-          location={
-            {
-              id: result.id,
-              name: result.name,
-              city: result.city,
-              image: result.image,
-            } as Location
-          }
-        />
+        <LocationItem location={result} />
       ) : null}
     </li>
   )

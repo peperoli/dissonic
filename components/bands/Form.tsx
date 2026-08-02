@@ -50,7 +50,7 @@ export const Form = ({ isNew, close }: FormProps) => {
   const name = watch('name')
   const [similarBandsSize, setSimilarBandsSize] = useState(3)
   const { data: similarBands } = useSimilarBands({
-    enabled: name.length >= 3,
+    enabled: name.length >= 1,
     search: name,
     size: similarBandsSize,
   })

@@ -1,8 +1,6 @@
 import { Tables, TablesInsert, TablesUpdate } from './supabase'
 import { Temporal } from 'temporal-polyfill'
 
-export type Nullable<T> = { [K in keyof T]: T[K] | null };
-
 export type ExtendedRes<TData> = {
   data: TData
   count: number | null
