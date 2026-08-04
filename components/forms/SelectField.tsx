@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { useEffect } from 'react'
-import { FieldError } from 'react-hook-form'
+import { FieldError, Merge } from 'react-hook-form'
 import { Select, SelectProps } from './Select'
 import { ChevronDown, Loader2, XIcon } from 'lucide-react'
 import { TruncatedList } from 'react-truncate-list'
@@ -12,19 +12,11 @@ import { Popover } from '../shared/Popover'
 
 type SelectFieldProps = {
   label: string
-  allItems: ListItem[] | undefined
-  error?: FieldError
+  error?: Merge<FieldError, unknown>
   isClearable?: boolean
 } & SelectProps
 
-export const SelectField = ({
-  label,
-  items,
-  allItems,
-  error,
-  isClearable,
-  ...props
-}: SelectFieldProps) => {
+export const SelectField = ({ label, items, error, isClearable, ...props }: SelectFieldProps) => {
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const t = useTranslations('SelectField')
   const OverlayRoot = isDesktop ? Popover.Root : Dialog.Root
@@ -33,8 +25,7 @@ export const SelectField = ({
   const OverlayClose = isDesktop ? Popover.Close : Dialog.Close
 
   function getValue() {
-    if ('value' in props && props.value)
-      return allItems?.find(item => item.id === props.value)?.name ?? props.value
+    if ('value' in props && props.value) return props.value.name
 
     if ('values' in props && props.values.length > 0) {
       return (
@@ -45,8 +36,8 @@ export const SelectField = ({
           className="flex"
         >
           {props.values.map((value, index) => (
-            <div key={value} className="whitespace-nowrap">
-              {allItems?.find(item => item.id === value)?.name ?? value}
+            <div key={value.id} className="whitespace-nowrap">
+              {value.name}
               {index + 1 < props.values.length && <>,&nbsp;</>}
             </div>
           ))}
@@ -109,10 +100,10 @@ export const SelectField = ({
   )
 }
 
-function AutoClose({ value, close }: { value: number | null; close: () => void }) {
+function AutoClose({ value, close }: { value: ListItem | null; close: () => void }) {
   useEffect(() => {
     close()
-  }, [value])
+  }, [value?.id])
 
   return null
 }

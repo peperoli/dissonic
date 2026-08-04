@@ -13,8 +13,8 @@ export type SelectProps = {
   isLoading?: boolean
   fixedHeight?: boolean
 } & (
-  | { multiple?: false; value: number | null; onValueChange: (value: number) => void }
-  | { multiple: true; values: number[]; onValuesChange: (values: number[]) => void }
+  | { multiple?: false; value: ListItem | null; onValueChange: (value: ListItem) => void }
+  | { multiple: true; values: ListItem[]; onValuesChange: (values: ListItem[]) => void }
 ) &
   (
     | { searchable?: false }
@@ -25,10 +25,11 @@ export const Select = ({ name, items, isLoading, fixedHeight, ...props }: Select
   const t = useTranslations('Select')
 
   useEffect(() => {
-    if (searchRef.current && !props.multiple && props.searchable && props.searchQuery) {
+    if (searchRef.current && props.multiple && props.searchable) {
       searchRef.current.select()
+      searchRef.current.focus()
     }
-  }, ['values' in props && props.values?.length, 'value' in props && props.value])
+  }, ['values' in props && props.values?.length])
 
   return (
     <>

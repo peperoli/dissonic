@@ -108,7 +108,7 @@ export type AddReaction = TablesInsert<'reactions'>
 export type EditReaction = TablesUpdate<'reactions'>
 
 export type Band = Tables<'bands'> & {
-  country?: Country | null
+  country: Country
   genres: Genre[]
   concerts?: Tables<'concerts'>[] | null
   item_index?: number | null
@@ -116,6 +116,7 @@ export type Band = Tables<'bands'> & {
 }
 
 export type AddBand = TablesInsert<'bands'> & {
+  country: Country
   genres: Genre[]
 }
 

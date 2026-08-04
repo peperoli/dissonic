@@ -4,16 +4,16 @@ import clsx from 'clsx'
 type CheckBoxGroupProps = {
   name: string
   items: ListItem[]
-  values: number[]
-  onValuesChange: (values: number[]) => void
+  values: ListItem[]
+  onValuesChange: (values: ListItem[]) => void
 }
 
 export function CheckBoxGroup({ name, items, values, onValuesChange }: CheckBoxGroupProps) {
-  function handleChange(id: number) {
-    if (values.includes(id)) {
-      onValuesChange(values.filter(item => item !== id))
+  function handleChange(item: ListItem) {
+    if (values.some(value => value.id === item.id)) {
+      onValuesChange(values.filter(value => value.id !== item.id))
     } else {
-      onValuesChange([...values, id])
+      onValuesChange([...values, item])
     }
   }
 
@@ -25,8 +25,8 @@ export function CheckBoxGroup({ name, items, values, onValuesChange }: CheckBoxG
             <Checkbox
               name={name}
               value={item.name}
-              isChecked={values.includes(item.id)}
-              onCheckedChange={() => handleChange(item.id)}
+              isChecked={values.some(value => value.id === item.id)}
+              onCheckedChange={() => handleChange(item)}
             />
             {item.name}
             {item.count !== undefined && (

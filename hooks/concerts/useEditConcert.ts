@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { EditConcert } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
 import { editConcertRecord } from '@/actions/algolia'
+import { ConcertFields } from '@/components/concerts/Form'
 
-const editConcert = async (formData: EditConcert) => {
+const editConcert = async (formData: ConcertFields) => {
   const concertId = formData.id
 
   if (!concertId) {
@@ -28,10 +28,11 @@ const editConcert = async (formData: EditConcert) => {
     .update({
       name: formData.is_festival ? null : formData.name,
       is_festival: formData.is_festival,
-      festival_root_id: formData.is_festival ? formData.festival_root_id : null,
+      festival_root_id:
+        formData.is_festival && formData.festival_root ? formData.festival_root.id : null,
       date_start: formData.date_start,
       date_end: formData.is_festival ? formData.date_end : null,
-      location_id: formData.location_id,
+      location_id: formData.location.id,
       doors_time: formData.doors_time || null,
       show_time: formData.show_time || null,
       source_link: formData.source_link,

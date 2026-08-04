@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { EditBand } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
 import { editBandRecord } from '@/actions/algolia'
+import { BandFields } from '@/components/bands/Form'
 
-const editBand = async (formData: EditBand) => {
+const editBand = async (formData: BandFields) => {
   const bandId = formData.id
 
   if (!bandId) {
@@ -27,9 +27,9 @@ const editBand = async (formData: EditBand) => {
     .from('bands')
     .update({
       name: formData.name,
-      country_id: formData.country_id,
-      spotify_artist_id: formData.spotify_artist_id,
-      spotify_artist_images: formData.spotify_artist_images,
+      country_id: formData.country.id,
+      spotify_artist_id: formData.spotify_artist?.id,
+      spotify_artist_images: formData.spotify_artist?.images ?? null,
       alt_names: formData.alt_names,
       youtube_url: formData.youtube_url,
     })

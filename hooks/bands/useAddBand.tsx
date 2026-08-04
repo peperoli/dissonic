@@ -1,24 +1,24 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { AddBand } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { addBandRecord } from '@/actions/algolia'
+import { BandFields } from '@/components/bands/Form'
 
-const addBand = async (formData: AddBand) => {
+const addBand = async (formData: BandFields) => {
   const { data: newBand, error: bandError } = await supabase
     .from('bands')
     .insert({
       name: formData.name,
-      country_id: formData.country_id,
-      spotify_artist_id: formData.spotify_artist_id,
-      spotify_artist_images: formData.spotify_artist_images,
+      country_id: formData.country.id,
+      spotify_artist_id: formData.spotify_artist?.id,
+      spotify_artist_images: formData.spotify_artist?.images ?? null,
       alt_names: formData.alt_names,
       youtube_url: formData.youtube_url,
     })
-    .select('*, country:countries(iso2)')
+    .select('*, country:countries(id, iso2)')
     .single()
 
   if (bandError) {
@@ -51,6 +51,7 @@ export const useAddBand = () => {
     },
     onSuccess: ({ bandId }) => {
       queryClient.invalidateQueries({ queryKey: ['bands'] })
+      queryClient.invalidateQueries({ queryKey: ['search-bands'] })
       setModal(null)
       toast.success(
         <div className="flex items-center gap-3">

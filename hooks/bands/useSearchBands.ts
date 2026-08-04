@@ -41,7 +41,7 @@ export function useSearchBands(options: BandFetchOptions & Pick<QueryOptions<unk
   const { enabled, ...fetchOptions } = options
 
   return useQuery({
-    queryKey: ['algolia-bands', fetchOptions],
+    queryKey: ['search-bands', fetchOptions],
     queryFn: () => searchBands(fetchOptions),
     placeholderData: previousData => keepPreviousData(previousData),
     enabled: enabled !== false,
