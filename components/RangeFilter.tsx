@@ -3,12 +3,14 @@ import {
   FocusEvent,
   MouseEvent as ReactMouseEvent,
   TouchEvent as ReactTouchEvent,
+  RefObject,
   SetStateAction,
   useEffect,
   useRef,
 } from 'react'
 import { useState } from 'react'
 import { NumberField } from './NumberField'
+import clsx from 'clsx'
 
 interface ChartProps {
   options: number[]
@@ -39,9 +41,10 @@ const Chart = ({ options, initialMin, initialMax, minValue, maxValue }: ChartPro
         <div
           key={item.id}
           style={{ height: (item.count / highestCount) * 100 }}
-          className={`max-w-[0.5rem] flex-1 rounded-sm${
-            item.id >= minValue && item.id <= maxValue ? ' bg-venom' : ' bg-slate-800'
-          }`}
+          className={clsx(
+            'max-w-[0.5rem] flex-1 rounded-sm',
+            item.id >= minValue && item.id <= maxValue ? 'bg-venom' : 'bg-slate-800'
+          )}
         />
       ))}
     </div>
@@ -50,8 +53,7 @@ const Chart = ({ options, initialMin, initialMax, minValue, maxValue }: ChartPro
 
 interface RangeSliderHandleProps {
   side: 'min' | 'max'
-  startPosition: number
-  width: number
+  rangeSliderRef: RefObject<HTMLDivElement | null>
   initialMin: number
   initialMax: number
   value: number
@@ -61,8 +63,7 @@ interface RangeSliderHandleProps {
 
 const RangeSliderHandle = ({
   side,
-  startPosition,
-  width,
+  rangeSliderRef,
   initialMin,
   initialMax,
   value,
@@ -86,13 +87,14 @@ const RangeSliderHandle = ({
 
   function dragMouseMove(event: MouseEvent | TouchEvent) {
     event.preventDefault()
+    const rect = rangeSliderRef.current?.getBoundingClientRect()
 
-    const currentPosition =
-      event instanceof MouseEvent
-        ? event.clientX - startPosition
-        : event.touches[0].clientX - startPosition
+    if (!rect || rect.width <= 0) return
+
+    const clientX = event instanceof MouseEvent ? event.clientX : event.touches[0].clientX
+    const currentPosition = clientX - rect.left
     const currentValue = Math.round(
-      initialMin + (currentPosition / width) * (initialMax - initialMin)
+      initialMin + (currentPosition / rect.width) * (initialMax - initialMin)
     )
     const condition = side === 'min' ? currentValue <= otherValue : currentValue >= otherValue
 
@@ -104,6 +106,8 @@ const RangeSliderHandle = ({
   function dragMouseUp() {
     document.removeEventListener('mousemove', dragMouseMove)
     document.removeEventListener('touchmove', dragMouseMove)
+    document.removeEventListener('mouseup', dragMouseUp)
+    document.removeEventListener('touchend', dragMouseUp)
     setDrag(false)
   }
   return (
@@ -113,7 +117,7 @@ const RangeSliderHandle = ({
       onMouseDown={event => dragMouseDown(event)}
       onTouchStart={event => dragMouseDown(event)}
       className={`absolute h-5 w-5 -translate-x-1/2 transform rounded-full border-2 border-venom bg-slate-700 focus:z-10${
-        drag ? ' origin-center scale-125 transform' : ''
+        drag ? 'origin-center scale-125 transform' : ''
       }`}
       style={{ left: ((value - initialMin) / (initialMax - initialMin)) * 100 + '%' }}
     />
@@ -137,9 +141,7 @@ const RangeSlider = ({
   maxValue,
   setMaxValue,
 }: RangeSliderProps) => {
-  const [startPosition, setStartPosition] = useState(0)
-  const [width, setWidth] = useState(0)
-  const ref = useRef<HTMLDivElement>(null)
+  const rangeSliderRef = useRef<HTMLDivElement>(null)
   const range = initialMax - initialMin
 
   function constrain(value: number) {
@@ -155,14 +157,11 @@ const RangeSlider = ({
   const constrainedMinValue = minValue <= maxValue ? constrain(minValue) : constrain(maxValue)
   const constrainedMaxValue = maxValue >= minValue ? constrain(maxValue) : constrain(minValue)
 
-  useEffect(() => {
-    if (ref.current) {
-      setWidth(ref.current.clientWidth)
-      setStartPosition(ref.current.getBoundingClientRect().left)
-    }
-  }, [])
   return (
-    <div ref={ref} className="relative my-4 flex h-1 w-full items-center rounded-full bg-slate-800">
+    <div
+      ref={rangeSliderRef}
+      className="relative my-4 flex h-1 w-full items-center rounded-full bg-slate-800"
+    >
       <div
         style={{
           left: ((constrainedMinValue - initialMin) / range) * 100 + '%',
@@ -172,8 +171,7 @@ const RangeSlider = ({
       />
       <RangeSliderHandle
         side="min"
-        startPosition={startPosition}
-        width={width}
+        rangeSliderRef={rangeSliderRef}
         initialMin={initialMin}
         initialMax={initialMax}
         value={constrainedMinValue}
@@ -182,8 +180,7 @@ const RangeSlider = ({
       />
       <RangeSliderHandle
         side="max"
-        startPosition={startPosition}
-        width={width}
+        rangeSliderRef={rangeSliderRef}
         initialMin={initialMin}
         initialMax={initialMax}
         value={constrainedMaxValue}
