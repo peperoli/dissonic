@@ -45,6 +45,27 @@ export function Form({ close, isNew }: { isNew?: boolean; close: () => void }) {
   const { id: concertId } = useParams<{ id?: string }>()
   const { data: concert } = useConcert(concertId ? parseInt(concertId) : null)
   const today = Temporal.Now.plainDateISO().toString()
+  const defaultValues: Partial<ConcertFields> = isNew
+    ? { is_festival: false, date_start: today }
+    : {
+        ...concert,
+        bands: concert?.bands.map(band => ({
+          ...band,
+          item_index: band.item_index ?? null,
+        })),
+        location: concert?.location
+          ? {
+              id: concert.location.id,
+              name: `${concert.location.name}, ${concert.location.city}`,
+            }
+          : undefined,
+        festival_root: concert?.festival_root
+          ? {
+              id: concert.festival_root.id,
+              name: concert.festival_root.name,
+            }
+          : null,
+      }
   const {
     register,
     control,
@@ -52,18 +73,9 @@ export function Form({ close, isNew }: { isNew?: boolean; close: () => void }) {
     watch,
     handleSubmit,
     formState: { errors },
+    // @ts-expect-error - type instantiation issue with useForm and defaultValues
   } = useForm<ConcertFields>({
-    defaultValues: isNew
-      ? { is_festival: false, date_start: today }
-      : {
-          ...concert,
-          festival_root: concert?.festival_root
-            ? {
-                id: concert.festival_root.id,
-                name: concert.festival_root.name,
-              }
-            : null,
-        },
+    defaultValues,
   })
   const addConcert = useAddConcert()
   const editConcert = useEditConcert()

@@ -1,13 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
-import { EditLocation } from '@/types/types'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
 import { editLocationRecord } from '@/actions/algolia'
+import { LocationFields } from '@/components/locations/Form'
 
 const editLocation = async (
-  formData: EditLocation & { imageFile: File | string | null }
+  formData: LocationFields
 ) => {
   const locationId = formData.id
 
@@ -42,7 +42,7 @@ const editLocation = async (
       name: formData.name,
       zip_code: formData.zip_code,
       city: formData.city,
-      country_id: formData.country_id,
+      country_id: formData.country.id,
       alt_names: formData.alt_names,
       website: formData.website,
       image: imagePath,

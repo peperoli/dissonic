@@ -58,7 +58,7 @@ const fetchConcerts = async (options?: ConcertFetchOptions) => {
 
   let filteredQuery = supabase
     .from('concerts_full')
-    .select('*, bands:j_concert_bands(*, ...bands(*, genres(*)))', { count: 'estimated' })
+    .select('*, bands:j_concert_bands(item_index, ...bands(*, genres(*)))', { count: 'estimated' })
     .in(
       'id',
       filteredConcerts.map(id => id.id)
@@ -85,7 +85,7 @@ const fetchConcerts = async (options?: ConcertFetchOptions) => {
     throw error
   }
 
-  return { data: data as Concert[], count }
+  return { data: data as unknown as Concert[], count }
 }
 
 export const useConcerts = (

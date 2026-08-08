@@ -7,15 +7,24 @@ import { Loader2 } from 'lucide-react'
 import clsx from 'clsx'
 import { useTranslations } from 'next-intl'
 
+type SingleSelectProps = {
+  multiple?: false
+  value: ListItem | null
+  onValueChange: (value: ListItem) => void
+}
+
+type MultiSelectProps = {
+  multiple: true
+  values: ListItem[]
+  onValuesChange: (values: ListItem[]) => void
+}
+
 export type SelectProps = {
   name: string
   items?: ListItem[]
   isLoading?: boolean
   fixedHeight?: boolean
-} & (
-  | { multiple?: false; value: ListItem | null; onValueChange: (value: ListItem) => void }
-  | { multiple: true; values: ListItem[]; onValuesChange: (values: ListItem[]) => void }
-) &
+} & (SingleSelectProps | MultiSelectProps) &
   (
     | { searchable?: false }
     | { searchable: true; searchQuery: string; setSearchQuery: (query: string) => void }

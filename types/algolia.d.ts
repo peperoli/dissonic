@@ -42,7 +42,7 @@ export type BandRecord = {
     iso2: string
     name_de: string | null
     name_en: string | null
-  } | null
+  }
   genres: {
     id: number
     name: string
