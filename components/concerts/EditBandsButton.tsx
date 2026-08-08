@@ -7,10 +7,11 @@ import clsx from 'clsx'
 import { TruncatedList } from 'react-truncate-list'
 import { useTranslations } from 'next-intl'
 import { FieldError, Merge } from 'react-hook-form'
+import { BandRecord } from '@/types/algolia'
 
 type EditBandsButtonProps = {
   value: ReorderableListItem<Band>[]
-  onChange: (value: ReorderableListItem<Band>[]) => void
+  onChange: (value: ReorderableListItem<Band | BandRecord>[]) => void
   error?: Merge<FieldError, { message: string; type: string; ref?: unknown }> | undefined
 }
 
@@ -18,7 +19,7 @@ export const EditBandsButton = ({ value, onChange, error }: EditBandsButtonProps
   const [isOpen, setIsOpen] = useState(false)
   const t = useTranslations('EditBandsButton')
 
-  function onSave(items: ReorderableListItem<Band>[]) {
+  function onSave(items: ReorderableListItem<Band | BandRecord>[]) {
     onChange(items)
     setIsOpen(false)
   }

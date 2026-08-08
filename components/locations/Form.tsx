@@ -148,7 +148,7 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
             items={countries?.map(item => ({
               id: item.id,
               name: regionNames.of(item.iso2) ?? item.iso2,
-            }))}
+            })) ?? []}
             searchable
             searchQuery={countriesSearchQuery}
             setSearchQuery={setCountriesSearchQuery}

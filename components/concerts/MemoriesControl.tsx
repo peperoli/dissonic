@@ -180,7 +180,7 @@ function MemoryItem({
           name="bandId"
           items={bands.map(band => ({ id: band.id, name: band.name }))}
           value={bands.find(band => band.id === fileItem.bandId) ?? null}
-          onValueChange={value => setFileItem({ ...fileItem, bandId: value?.id })}
+          onValueChange={value => setFileItem({ ...fileItem, bandId: value?.id ?? null })}
           isClearable
         />
       </div>

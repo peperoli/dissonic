@@ -9,34 +9,38 @@ import { useTranslations } from 'next-intl'
 
 type SingleSelectProps = {
   multiple?: false
-  value: ListItem | null
-  onValueChange: (value: ListItem) => void
+  value: number | null
+  onValueChange: (value: number) => void
 }
 
 type MultiSelectProps = {
   multiple: true
-  values: ListItem[]
-  onValuesChange: (values: ListItem[]) => void
+  values: number[]
+  onValuesChange: (values: number[]) => void
 }
 
 export type SelectProps = {
   name: string
-  items?: ListItem[]
+  items: ListItem[]
   isLoading?: boolean
   fixedHeight?: boolean
-} & (SingleSelectProps | MultiSelectProps) &
-  (
-    | { searchable?: false }
-    | { searchable: true; searchQuery: string; setSearchQuery: (query: string) => void }
-  )
-export const Select = ({ name, items, isLoading, fixedHeight, ...props }: SelectProps) => {
+} & (
+  | { searchable?: false }
+  | { searchable: true; searchQuery: string; setSearchQuery: (query: string) => void }
+)
+export const Select = ({
+  name,
+  items,
+  isLoading,
+  fixedHeight,
+  ...props
+}: SelectProps & (SingleSelectProps | MultiSelectProps)) => {
   const searchRef = useRef<HTMLInputElement>(null)
   const t = useTranslations('Select')
 
   useEffect(() => {
-    if (searchRef.current && props.multiple && props.searchable) {
+    if (searchRef.current && props.multiple && props.searchable && props.searchQuery) {
       searchRef.current.select()
-      searchRef.current.focus()
     }
   }, ['values' in props && props.values?.length])
 
@@ -63,7 +67,7 @@ export const Select = ({ name, items, isLoading, fixedHeight, ...props }: Select
           </div>
         ) : (
           <>
-            {items && items.length > 0 ? (
+            {items.length > 0 ? (
               props.multiple ? (
                 <CheckBoxGroup name={name} items={items} {...props} />
               ) : (

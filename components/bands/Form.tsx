@@ -106,7 +106,7 @@ export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) =
             items={countries?.map(item => ({
               id: item.id,
               name: regionNames.of(item.iso2) ?? item.iso2,
-            }))}
+            })) ?? []}
             searchable
             searchQuery={countriesSearchQuery}
             setSearchQuery={setCountriesSearchQuery}
@@ -121,7 +121,7 @@ export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) =
         render={({ field: { value = [], onChange } }) => (
           <SelectField
             name="genres"
-            items={genres}
+            items={genres ?? []}
             multiple
             values={value}
             onValuesChange={onChange}

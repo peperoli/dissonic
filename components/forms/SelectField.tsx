@@ -10,11 +10,25 @@ import { useTranslations } from 'next-intl'
 import { ListItem } from '@/types/types'
 import { Popover } from '../shared/Popover'
 
+type SingleSelectProps = {
+  multiple?: false
+  value: ListItem | null
+  onValueChange: (value: ListItem | null) => void
+}
+
+type MultiSelectProps = {
+  multiple: true
+  values: ListItem[]
+  onValuesChange: (values: ListItem[]) => void
+}
+
 type SelectFieldProps = {
   label: string
   error?: Merge<FieldError, unknown>
   isClearable?: boolean
-} & SelectProps
+  items: ListItem[]
+} & SelectProps &
+  (SingleSelectProps | MultiSelectProps)
 
 export const SelectField = ({ label, items, error, isClearable, ...props }: SelectFieldProps) => {
   const isDesktop = useMediaQuery('(min-width: 768px)')
@@ -71,7 +85,6 @@ export const SelectField = ({ label, items, error, isClearable, ...props }: Sele
             {isClearable &&
               ('value' in props && props.value !== null ? (
                 <button
-                  // @ts-expect-error this exception isn't properly typed yet, but shouldn't cause any issues
                   onClick={() => props.onValueChange(null)}
                   className="btn btn-tertiary btn-icon btn-small absolute right-10 top-[.5rem]"
                 >
@@ -89,7 +102,25 @@ export const SelectField = ({ label, items, error, isClearable, ...props }: Sele
           {error && <div className="mt-1 text-sm text-yellow">{t('pleaseSelectAnOption')}</div>}
           <OverlayContent className="inset-0 z-20 flex-col overflow-hidden bg-slate-700 p-4 shadow-xl open:flex md:inset-auto md:mt-1 md:w-anchor-width md:rounded-lg">
             <Dialog.Title className="sr-only">{label}</Dialog.Title>
-            <Select items={items} {...props} />
+            {'values' in props ? (
+              <Select
+                items={items}
+                {...props}
+                values={props.values.map(value => value.id)}
+                onValuesChange={(values: number[]) =>
+                  props.onValuesChange(items.filter(item => values.includes(item.id)))
+                }
+              />
+            ) : (
+              <Select
+                items={items}
+                {...props}
+                value={props.value?.id ?? null}
+                onValueChange={value =>
+                  props.onValueChange(items.find(item => item.id === value) ?? null)
+                }
+              />
+            )}
             {'values' in props && (
               <OverlayClose className="btn btn-primary">{t('save')}</OverlayClose>
             )}

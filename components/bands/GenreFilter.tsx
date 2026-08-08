@@ -24,7 +24,7 @@ const GenreMultiSelect = ({
           name: item.name,
           count: facetCounts[item.id] ?? 0,
         }))
-        .sort((a, b) => b.count - a.count)}
+        .sort((a, b) => b.count - a.count) ?? []}
       searchable
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}

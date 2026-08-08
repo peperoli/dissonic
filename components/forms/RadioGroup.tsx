@@ -4,8 +4,8 @@ import clsx from 'clsx'
 type RadioGroupProps = {
   name: string
   items: ListItem[]
-  value: ListItem | null
-  onValueChange: (value: ListItem) => void
+  value: number | null
+  onValueChange: (value: number) => void
 }
 
 export function RadioGroup({ name, items, value, onValueChange }: RadioGroupProps) {
@@ -17,8 +17,8 @@ export function RadioGroup({ name, items, value, onValueChange }: RadioGroupProp
             <RadioButton
               name={name}
               value={item.name}
-              isChecked={value?.id === item.id}
-              onCheckedChange={() => onValueChange(item)}
+              isChecked={value === item.id}
+              onCheckedChange={() => onValueChange(item.id)}
             />
             {item.name}
             {item.count !== undefined && (

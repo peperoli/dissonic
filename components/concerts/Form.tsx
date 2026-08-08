@@ -186,7 +186,7 @@ export function Form({ close, isNew }: { isNew?: boolean; close: () => void }) {
               render={({ field: { value = null, onChange } }) => (
                 <SelectField
                   name="festival_root"
-                  items={festivalRoots?.data}
+                  items={festivalRoots?.data ?? []}
                   value={value}
                   onValueChange={onChange}
                   searchable
@@ -233,8 +233,8 @@ export function Form({ close, isNew }: { isNew?: boolean; close: () => void }) {
           rules={{ required: true }}
           render={({ field: { value = [], onChange } }) => (
             <EditBandsButton
-              value={value as ReorderableListItem<Band>[]}
-              onChange={onChange as (value: ReorderableListItem<Band>[]) => void}
+              value={value}
+              onChange={onChange}
               error={errors.bands}
             />
           )}
@@ -251,7 +251,7 @@ export function Form({ close, isNew }: { isNew?: boolean; close: () => void }) {
               items={locations?.data.map(item => ({
                 id: item.id,
                 name: `${item.name}, ${item.city}`,
-              }))}
+              })) ?? []}
               searchable
               searchQuery={locationsSearchQuery}
               setSearchQuery={setLocationsSearchQuery}

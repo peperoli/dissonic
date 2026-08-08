@@ -67,7 +67,7 @@ export const FestivalRootForm = ({ close }: { close: () => void }) => {
             items={locations?.data.map(item => ({
               id: item.id,
               name: `${item.name}, ${item.city}`,
-            }))}
+            })) ?? []}
             searchable
             searchQuery={locationsSearchQuery}
             setSearchQuery={setLocationsSearchQuery}
