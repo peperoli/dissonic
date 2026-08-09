@@ -120,7 +120,7 @@ export function Form({ close, isNew }: { isNew?: boolean; close: () => void }) {
     if (!isNew || !festivalRoot || !defaultLocation) return
 
     setValue('location', defaultLocation)
-  }, [festivalRoot?.id])
+  }, [festivalRoot?.id, defaultLocation?.id])
 
   const onSubmit: SubmitHandler<ConcertFields> = async function (formData) {
     if (isNew) {
