@@ -1,4 +1,4 @@
-import { Band, ListItem, SpotifyArtist } from '../../types/types'
+import { AddBand, ListItem, SpotifyArtist } from '../../types/types'
 import { Button } from '../Button'
 import { SpotifyArtistSelect } from './SpotifyArtistSelect'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
@@ -20,13 +20,13 @@ import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
 import { useSimilarBands } from '@/hooks/bands/useSimilarBands'
 
 export type BandFields = {
-  id: Band['id']
-  name: Band['name']
+  id: AddBand['id']
+  name: AddBand['name']
   country: ListItem
   genres: ListItem[]
   spotify_artist: SpotifyArtist | null
-  alt_names: Band['alt_names']
-  youtube_url: Band['youtube_url']
+  alt_names: AddBand['alt_names']
+  youtube_url: AddBand['youtube_url']
 }
 
 export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) => {

@@ -1,8 +1,8 @@
 import { useAddLocation } from '../../hooks/locations/useAddLocation'
-import { Location } from '../../types/types'
+import { AddLocation } from '../../types/types'
 import { Button } from '../Button'
 import { TextField } from '../forms/TextField'
-import { useForm, SubmitHandler, Controller } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { SelectField } from '../forms/SelectField'
 import { useCountries } from '@/hooks/useCountries'
 import { Disclosure } from '../shared/Disclosure'
@@ -20,14 +20,14 @@ import { useSimilarLocations } from '@/hooks/locations/useSimilarLocations'
 import { ListItem } from '@/types/types'
 
 export type LocationFields = {
-  id: Location['id']
-  name: Location['name']
-  zip_code: Location['zip_code']
-  city: Location['city']
+  id: AddLocation['id']
+  name: AddLocation['name']
+  zip_code: AddLocation['zip_code']
+  city: AddLocation['city']
   country: ListItem
-  alt_names: Location['alt_names']
-  website: Location['website']
-  image: Location['image']
+  alt_names: AddLocation['alt_names']
+  website: AddLocation['website']
+  image: AddLocation['image']
   imageFile: File | string | null
 }
 
@@ -74,14 +74,13 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
   const isSimilar = !!(dirtyFields.name && similarLocations?.count)
   const fileTypes = ['image/jpeg', 'image/webp']
 
-  const onSubmit: SubmitHandler<LocationFields> =
-    async function (formData) {
-      if (isNew) {
-        addLocation.mutate(formData)
-      } else {
-        editLocation.mutate(formData)
-      }
+  async function onSubmit(formData: LocationFields) {
+    if (isNew) {
+      addLocation.mutate(formData)
+    } else {
+      editLocation.mutate(formData)
     }
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
@@ -140,15 +139,17 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
         name="country"
         control={control}
         rules={{ required: true }}
-        render={({ field: { name, value = null, onChange } }) => (
+        render={({ field: { value = null, onChange } }) => (
           <SelectField
-            name={name}
+            name="country"
             value={value}
             onValueChange={onChange}
-            items={countries?.map(item => ({
-              id: item.id,
-              name: regionNames.of(item.iso2) ?? item.iso2,
-            })) ?? []}
+            items={
+              countries?.map(item => ({
+                id: item.id,
+                name: regionNames.of(item.iso2) ?? item.iso2,
+              })) ?? []
+            }
             searchable
             searchQuery={countriesSearchQuery}
             setSearchQuery={setCountriesSearchQuery}

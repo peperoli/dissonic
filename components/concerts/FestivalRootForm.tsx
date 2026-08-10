@@ -3,7 +3,6 @@ import { useLocations } from '../../hooks/locations/useLocations'
 import { Button } from '../Button'
 import { TextField } from '../forms/TextField'
 import { SelectField } from '../forms/SelectField'
-import { Tables } from '@/types/supabase'
 import { useAddFestivalRoot } from '@/hooks/concerts/useAddFestivalRoot'
 import { StatusBanner } from '../forms/StatusBanner'
 import { getErrorMessage } from '@/lib/getErrorMessage'
@@ -11,12 +10,12 @@ import { useFestivalRoots } from '@/hooks/concerts/useFestivalRoots'
 import { useState } from 'react'
 import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
 import { useTranslations } from 'next-intl'
-import { ListItem } from '@/types/types'
+import { FestivalRoot, ListItem } from '@/types/types'
 
 export type FestivalRootFields = {
-  name: Tables<'festival_roots'>['name']
+  name: FestivalRoot['name']
   default_location: ListItem
-  website: Tables<'festival_roots'>['website']
+  website: FestivalRoot['website']
 }
 
 export const FestivalRootForm = ({ close }: { close: () => void }) => {
