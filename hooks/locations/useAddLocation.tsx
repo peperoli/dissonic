@@ -1,20 +1,20 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { AddLocation } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 import { useQueryState } from 'nuqs'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { addLocationRecord } from '@/actions/algolia'
+import { LocationFields } from '@/components/locations/Form'
 
-const addLocation = async (formData: AddLocation & { imageFile: File | string | null }) => {
+const addLocation = async (formData: LocationFields) => {
   const { data: newLocation, error } = await supabase
     .from('locations')
     .insert({
       name: formData.name,
       zip_code: formData.zip_code,
       city: formData.city,
-      country_id: formData.country_id,
+      country_id: formData.country.id,
       alt_names: formData.alt_names,
       website: formData.website,
     })

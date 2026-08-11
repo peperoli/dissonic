@@ -24,8 +24,6 @@ function sortByFirstHitRanking(a: SearchResponse, b: SearchResponse) {
     diff = aRankingInfo.firstMatchedWord - bRankingInfo.firstMatchedWord
   }
 
-  console.log(diff)
-
   return diff
 }
 
@@ -45,8 +43,6 @@ async function searchGlobal(options: SearchGlobalFetchOptions) {
   const { results: typeResults } = await algolia.searchForHits<
     ConcertRecord | BandRecord | LocationRecord
   >([...typeQueries])
-
-  console.log('typeResults', typeResults) // Debugging line to check the results
 
   return {
     data: typeResults.toSorted(sortByFirstHitRanking),

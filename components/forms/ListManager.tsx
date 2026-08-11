@@ -30,9 +30,9 @@ export const ListManager = ({
   onSave,
 }: {
   initialListItems: ReorderableListItem<Band>[]
-  onSave: (items: ReorderableListItem<Band>[]) => void
+  onSave: (items: ReorderableListItem<Band | BandRecord>[]) => void
 }) => {
-  const [listItems, setListItems] = useState(initialListItems)
+  const [listItems, setListItems] = useState<ReorderableListItem<Band | BandRecord>[]>(initialListItems)
   const [selectedItemToReorder, setSelectedItemToReorder] = useState<number | null>(null)
   const searchRef = useRef<HTMLInputElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -205,15 +205,9 @@ function Search() {
     setListItems([
       ...listItems,
       {
-        id: searchResult.id,
-        name: searchResult.name,
-        alt_names: searchResult.alt_names,
-        country: searchResult.country,
-        genres: searchResult.genres,
-        spotify_artist_id: searchResult.spotify_artist_id,
-        spotify_artist_images: searchResult.spotify_artist_images,
+        ...searchResult,
         item_index: listItems.length,
-      } as ReorderableListItem<Band>,
+      },
     ])
     setSearchQuery('')
     searchRef.current?.focus()
@@ -266,7 +260,7 @@ function ListItem({
   removeItem,
   index,
 }: {
-  band: ReorderableListItem<Band>
+  band: ReorderableListItem<Band | BandRecord>
   index: number
   removeItem: () => void
 }) {

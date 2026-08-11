@@ -156,14 +156,12 @@ export async function addBandRecord(
       id: record.id,
       name: record.name,
       alt_names: record.alt_names ?? null,
-      country: record.country
-        ? {
-            id: record.country_id,
-            iso2: record.country.iso2,
-            name_de: regionNamesDe.of(record.country.iso2) ?? null,
-            name_en: regionNamesEn.of(record.country.iso2) ?? null,
-          }
-        : null,
+      country: {
+        id: record.country_id,
+        iso2: record.country.iso2,
+        name_de: regionNamesDe.of(record.country.iso2) ?? null,
+        name_en: regionNamesEn.of(record.country.iso2) ?? null,
+      },
       genres: record.genres,
       spotify_artist_id: record.spotify_artist_id ?? null,
       spotify_artist_images: record.spotify_artist_images ?? null,

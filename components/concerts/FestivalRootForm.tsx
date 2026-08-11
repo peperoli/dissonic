@@ -3,7 +3,6 @@ import { useLocations } from '../../hooks/locations/useLocations'
 import { Button } from '../Button'
 import { TextField } from '../forms/TextField'
 import { SelectField } from '../forms/SelectField'
-import { TablesInsert } from '@/types/supabase'
 import { useAddFestivalRoot } from '@/hooks/concerts/useAddFestivalRoot'
 import { StatusBanner } from '../forms/StatusBanner'
 import { getErrorMessage } from '@/lib/getErrorMessage'
@@ -11,15 +10,16 @@ import { useFestivalRoots } from '@/hooks/concerts/useFestivalRoots'
 import { useState } from 'react'
 import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
 import { useTranslations } from 'next-intl'
+import { FestivalRoot, ListItem } from '@/types/types'
 
-interface FestivalRootFormProps {
-  close: () => void
+export type FestivalRootFields = {
+  name: FestivalRoot['name']
+  default_location: ListItem
+  website: FestivalRoot['website']
 }
 
-export const FestivalRootForm = ({ close }: FestivalRootFormProps) => {
-  const { register, control, watch, handleSubmit, formState } = useForm<
-    TablesInsert<'festival_roots'>
-  >({
+export const FestivalRootForm = ({ close }: { close: () => void }) => {
+  const { register, control, watch, handleSubmit, formState } = useForm<FestivalRootFields>({
     defaultValues: { name: '', website: '' },
   })
   const name = watch('name')
@@ -31,12 +31,11 @@ export const FestivalRootForm = ({ close }: FestivalRootFormProps) => {
   })
   const [locationsSearchQuery, setLocationsSearchQuery] = useState('')
   const { data: locations } = useLocations({ search: locationsSearchQuery })
-  const { data: allLocations } = useLocations()
   const { mutate, status, error } = useAddFestivalRoot()
   const t = useTranslations('FestivalRootForm')
   const isSimilar = !!(formState.dirtyFields.name && similarFestivalRoots?.count)
 
-  async function onSubmit(data: TablesInsert<'festival_roots'>) {
+  async function onSubmit(data: FestivalRootFields) {
     mutate(data)
   }
 
@@ -58,26 +57,22 @@ export const FestivalRootForm = ({ close }: FestivalRootFormProps) => {
         />
       )}
       <Controller
-        name="default_location_id"
+        name="default_location"
         control={control}
         rules={{ required: true }}
         render={({ field: { value = null, onChange } }) => (
           <SelectField
-            name="default_location_id"
+            name="default_location"
             items={locations?.data.map(item => ({
               id: item.id,
               name: `${item.name}, ${item.city}`,
-            }))}
-            allItems={allLocations?.data.map(item => ({
-              id: item.id,
-              name: `${item.name}, ${item.city}`,
-            }))}
+            })) ?? []}
             searchable
             searchQuery={locationsSearchQuery}
             setSearchQuery={setLocationsSearchQuery}
             value={value}
             onValueChange={onChange}
-            error={formState.errors.default_location_id}
+            error={formState.errors.default_location}
             label={t('defaultLocation')}
           />
         )}

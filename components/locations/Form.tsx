@@ -2,7 +2,7 @@ import { useAddLocation } from '../../hooks/locations/useAddLocation'
 import { AddLocation } from '../../types/types'
 import { Button } from '../Button'
 import { TextField } from '../forms/TextField'
-import { useForm, SubmitHandler, Controller } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { SelectField } from '../forms/SelectField'
 import { useCountries } from '@/hooks/useCountries'
 import { Disclosure } from '../shared/Disclosure'
@@ -17,26 +17,42 @@ import { FileInput } from '../forms/FileInput'
 import { getAssetUrl } from '@/lib/getAssetUrl'
 import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
 import { useSimilarLocations } from '@/hooks/locations/useSimilarLocations'
+import { ListItem } from '@/types/types'
 
-interface FormProps {
-  close: () => void
-  isNew?: boolean
+export type LocationFields = {
+  id: AddLocation['id']
+  name: AddLocation['name']
+  zip_code: AddLocation['zip_code']
+  city: AddLocation['city']
+  country: ListItem
+  alt_names: AddLocation['alt_names']
+  website: AddLocation['website']
+  image: AddLocation['image']
+  imageFile: File | string | null
 }
 
-export const Form = ({ close, isNew }: FormProps) => {
+export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) => {
   const { id: locationId } = useParams<{ id?: string }>()
   const { data: location } = useLocation(locationId ? parseInt(locationId) : null)
+  const locale = useLocale()
+  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
   const {
     register,
     control,
     watch,
     handleSubmit,
     formState: { dirtyFields, errors },
-  } = useForm<AddLocation & { imageFile: File | string | null }>({
+  } = useForm<LocationFields>({
     defaultValues: isNew
       ? { name: '', zip_code: '', city: '' }
       : {
           ...location,
+          country: location?.country
+            ? {
+                id: location.country.id,
+                name: regionNames.of(location.country.iso2) ?? location.country.iso2,
+              }
+            : undefined,
           imageFile: location?.image
             ? getAssetUrl('ressources', location.image, location.updated_at)
             : null,
@@ -51,24 +67,20 @@ export const Form = ({ close, isNew }: FormProps) => {
   })
   const [countriesSearchQuery, setCountriesSearchQuery] = useState('')
   const { data: countries } = useCountries({ search: countriesSearchQuery })
-  const { data: allCountries } = useCountries()
   const addLocation = useAddLocation()
   const editLocation = useEditLocation()
   const { status } = isNew ? addLocation : editLocation
   const t = useTranslations('LocationForm')
-  const locale = useLocale()
   const isSimilar = !!(dirtyFields.name && similarLocations?.count)
   const fileTypes = ['image/jpeg', 'image/webp']
-  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
 
-  const onSubmit: SubmitHandler<AddLocation & { imageFile: File | string | null }> =
-    async function (formData) {
-      if (isNew) {
-        addLocation.mutate(formData)
-      } else {
-        editLocation.mutate(formData)
-      }
+  async function onSubmit(formData: LocationFields) {
+    if (isNew) {
+      addLocation.mutate(formData)
+    } else {
+      editLocation.mutate(formData)
     }
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
@@ -124,26 +136,24 @@ export const Form = ({ close, isNew }: FormProps) => {
         </div>
       </div>
       <Controller
-        name="country_id"
+        name="country"
         control={control}
         rules={{ required: true }}
         render={({ field: { value = null, onChange } }) => (
           <SelectField
-            name="country_id"
+            name="country"
             value={value}
             onValueChange={onChange}
-            items={countries?.map(item => ({
-              id: item.id,
-              name: regionNames.of(item.iso2) ?? item.iso2,
-            }))}
-            allItems={allCountries?.map(item => ({
-              id: item.id,
-              name: regionNames.of(item.iso2) ?? item.iso2,
-            }))}
+            items={
+              countries?.map(item => ({
+                id: item.id,
+                name: regionNames.of(item.iso2) ?? item.iso2,
+              })) ?? []
+            }
             searchable
             searchQuery={countriesSearchQuery}
             setSearchQuery={setCountriesSearchQuery}
-            error={errors.country_id}
+            error={errors.country}
             label={t('country')}
           />
         )}

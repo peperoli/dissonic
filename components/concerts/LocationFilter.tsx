@@ -22,7 +22,7 @@ const LocationMultiSelect = ({ facetCounts, ...props }: LocationMultiSelectProps
           name: `${item.name}, ${item.city}`,
           count: facetCounts[item.id] ?? 0,
         }))
-        .sort((a, b) => b.count - a.count)}
+        .sort((a, b) => b.count - a.count) ?? []}
       searchable
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}

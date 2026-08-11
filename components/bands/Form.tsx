@@ -1,4 +1,4 @@
-import { AddBand, SpotifyArtist } from '../../types/types'
+import { AddBand, ListItem, SpotifyArtist } from '../../types/types'
 import { Button } from '../Button'
 import { SpotifyArtistSelect } from './SpotifyArtistSelect'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
@@ -19,12 +19,17 @@ import { useLocale } from 'next-intl'
 import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
 import { useSimilarBands } from '@/hooks/bands/useSimilarBands'
 
-interface FormProps {
-  isNew?: boolean
-  close: () => void
+export type BandFields = {
+  id: AddBand['id']
+  name: AddBand['name']
+  country: ListItem
+  genres: ListItem[]
+  spotify_artist: SpotifyArtist | null
+  alt_names: AddBand['alt_names']
+  youtube_url: AddBand['youtube_url']
 }
 
-export const Form = ({ isNew, close }: FormProps) => {
+export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) => {
   const { id: bandId } = useParams<{ id?: string }>()
   const { data: band } = useBand(bandId ? parseInt(bandId) : null)
   const {
@@ -33,7 +38,7 @@ export const Form = ({ isNew, close }: FormProps) => {
     watch,
     handleSubmit,
     formState: { dirtyFields, errors },
-  } = useForm<Omit<AddBand, 'spotify_artist_images'> & { spotify_artist: SpotifyArtist }>({
+  } = useForm<BandFields>({
     defaultValues: isNew
       ? {
           name: '',
@@ -57,9 +62,7 @@ export const Form = ({ isNew, close }: FormProps) => {
   const [countriesSearchQuery, setCountriesSearchQuery] = useState('')
   const [genresSearchQuery, setGenresSearchQuery] = useState('')
   const { data: countries } = useCountries({ search: countriesSearchQuery })
-  const { data: allCountries } = useCountries()
   const { data: genres } = useGenres({ search: genresSearchQuery })
-  const { data: allGenres } = useGenres()
   const addBand = useAddBand()
   const editBand = useEditBand()
   const t = useTranslations('BandForm')
@@ -68,21 +71,11 @@ export const Form = ({ isNew, close }: FormProps) => {
   const isSimilar = !!(dirtyFields.name && similarBands?.count)
   const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
 
-  const onSubmit: SubmitHandler<AddBand & { spotify_artist: SpotifyArtist }> = async function (
-    formData
-  ) {
+  const onSubmit: SubmitHandler<BandFields> = async function (formData) {
     if (isNew) {
-      addBand.mutate({
-        ...formData,
-        spotify_artist_id: formData.spotify_artist?.id,
-        spotify_artist_images: formData.spotify_artist?.images ?? null,
-      })
+      addBand.mutate(formData)
     } else {
-      editBand.mutate({
-        ...formData,
-        spotify_artist_id: formData.spotify_artist?.id ?? null,
-        spotify_artist_images: formData.spotify_artist?.images ?? null,
-      })
+      editBand.mutate(formData)
     }
   }
   return (
@@ -102,26 +95,22 @@ export const Form = ({ isNew, close }: FormProps) => {
         />
       )}
       <Controller
-        name="country_id"
+        name="country"
         control={control}
         rules={{ required: true }}
         render={({ field: { value = null, onChange } }) => (
           <SelectField
-            name="country_id"
+            name="country"
             value={value}
             onValueChange={onChange}
             items={countries?.map(item => ({
               id: item.id,
               name: regionNames.of(item.iso2) ?? item.iso2,
-            }))}
-            allItems={allCountries?.map(item => ({
-              id: item.id,
-              name: regionNames.of(item.iso2) ?? item.iso2,
-            }))}
+            })) ?? []}
             searchable
             searchQuery={countriesSearchQuery}
             setSearchQuery={setCountriesSearchQuery}
-            error={errors.country_id}
+            error={errors.country}
             label={t('country')}
           />
         )}
@@ -132,13 +121,10 @@ export const Form = ({ isNew, close }: FormProps) => {
         render={({ field: { value = [], onChange } }) => (
           <SelectField
             name="genres"
-            items={genres}
-            allItems={allGenres}
+            items={genres ?? []}
             multiple
-            values={value.map(item => item.id)}
-            onValuesChange={values =>
-              onChange(allGenres?.filter(item => values.includes(item.id)) ?? [])
-            }
+            values={value}
+            onValuesChange={onChange}
             searchable
             searchQuery={genresSearchQuery}
             setSearchQuery={setGenresSearchQuery}

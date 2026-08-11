@@ -14,7 +14,7 @@ const fetchConcert = async (
     .from('concerts')
     .select(
       `*,
-      festival_root:festival_roots(name),
+      festival_root:festival_roots(id, name),
       location:locations(*),
       bands:j_concert_bands(*, ...bands(*, country:countries(id, iso2), genres(*))),
       bands_seen:j_bands_seen(*),

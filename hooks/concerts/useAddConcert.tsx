@@ -1,22 +1,23 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { AddConcert } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 import { useModal } from '@/components/shared/ModalProvider'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { addConcertRecord } from '@/actions/algolia'
+import { ConcertFields } from '@/components/concerts/Form'
 
-const addConcert = async (formData: AddConcert) => {
+const addConcert = async (formData: ConcertFields) => {
   const { data: newConcert, error: addConcertError } = await supabase
     .from('concerts')
     .insert({
       name: formData.is_festival ? null : formData.name,
       is_festival: formData.is_festival,
-      festival_root_id: formData.festival_root_id,
+      festival_root_id:
+        formData.is_festival && formData.festival_root ? formData.festival_root.id : null,
       date_start: formData.date_start,
-      date_end: formData.date_end,
-      location_id: formData.location_id,
+      date_end: formData.is_festival ? formData.date_end : null,
+      location_id: formData.location.id,
       doors_time: formData.doors_time || null,
       show_time: formData.show_time || null,
       source_link: formData.source_link,

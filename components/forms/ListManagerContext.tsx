@@ -8,8 +8,8 @@ type ListManagerContextValue = {
   scrollContainerRef: RefObject<HTMLDivElement | null>
   itemsRef: RefObject<(HTMLButtonElement | null)[]>
   // list state
-  listItems: ReorderableListItem<Band>[]
-  setListItems: Dispatch<SetStateAction<ReorderableListItem<Band>[]>>
+  listItems: ReorderableListItem<Band | BandRecord>[]
+  setListItems: Dispatch<SetStateAction<ReorderableListItem<Band | BandRecord>[]>>
   selectedItemToReorder: number | null
   setSelectedItemToReorder: Dispatch<SetStateAction<number | null>>
   reorderItems: (start: number, end: number) => void

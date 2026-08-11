@@ -58,13 +58,11 @@ export async function GET() {
     objectID: `${INDEX_NAME}-${band.id}`,
     type: INDEX_NAME,
     ...band,
-    country: band.country
-      ? {
-          ...band.country,
-          name_de: regionNamesDe.of(band.country.iso2) ?? null,
-          name_en: regionNamesEn.of(band.country.iso2) ?? null,
-        }
-      : null,
+    country: {
+      ...band.country,
+      name_de: regionNamesDe.of(band.country.iso2) ?? null,
+      name_en: regionNamesEn.of(band.country.iso2) ?? null,
+    },
     genres: band.genres,
   }))
 

@@ -20,13 +20,15 @@ const CountryMultiSelect = ({
   return (
     <Select
       name="Land"
-      items={countries
-        ?.map(item => ({
-          id: item.id,
-          name: regionNames.of(item.iso2) ?? item.iso2,
-          count: facetCounts[item.id] ?? 0,
-        }))
-        .sort((a, b) => b.count - a.count)}
+      items={
+        countries
+          ?.map(item => ({
+            id: item.id,
+            name: regionNames.of(item.iso2) ?? item.iso2,
+            count: facetCounts[item.id] ?? 0,
+          }))
+          .sort((a, b) => b.count - a.count) ?? []
+      }
       searchable
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}

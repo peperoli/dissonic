@@ -7,28 +7,42 @@ import { Loader2 } from 'lucide-react'
 import clsx from 'clsx'
 import { useTranslations } from 'next-intl'
 
+type SingleSelectProps = {
+  multiple?: false
+  value: number | null
+  onValueChange: (value: number) => void
+}
+
+type MultiSelectProps = {
+  multiple: true
+  values: number[]
+  onValuesChange: (values: number[]) => void
+}
+
 export type SelectProps = {
   name: string
-  items?: ListItem[]
+  items: ListItem[]
   isLoading?: boolean
   fixedHeight?: boolean
 } & (
-  | { multiple?: false; value: number | null; onValueChange: (value: number) => void }
-  | { multiple: true; values: number[]; onValuesChange: (values: number[]) => void }
-) &
-  (
-    | { searchable?: false }
-    | { searchable: true; searchQuery: string; setSearchQuery: (query: string) => void }
-  )
-export const Select = ({ name, items, isLoading, fixedHeight, ...props }: SelectProps) => {
+  | { searchable?: false }
+  | { searchable: true; searchQuery: string; setSearchQuery: (query: string) => void }
+)
+export const Select = ({
+  name,
+  items,
+  isLoading,
+  fixedHeight,
+  ...props
+}: SelectProps & (SingleSelectProps | MultiSelectProps)) => {
   const searchRef = useRef<HTMLInputElement>(null)
   const t = useTranslations('Select')
 
   useEffect(() => {
-    if (searchRef.current && !props.multiple && props.searchable && props.searchQuery) {
+    if (searchRef.current && props.multiple && props.searchable && props.searchQuery) {
       searchRef.current.select()
     }
-  }, ['values' in props && props.values?.length, 'value' in props && props.value])
+  }, ['values' in props && props.values?.length])
 
   return (
     <>
@@ -53,7 +67,7 @@ export const Select = ({ name, items, isLoading, fixedHeight, ...props }: Select
           </div>
         ) : (
           <>
-            {items && items.length > 0 ? (
+            {items.length > 0 ? (
               props.multiple ? (
                 <CheckBoxGroup name={name} items={items} {...props} />
               ) : (

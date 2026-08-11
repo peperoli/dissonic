@@ -73,7 +73,7 @@ export type QueryOptions<T> = {
 }
 
 export type Concert = Tables<'concerts'> & {
-  festival_root: { name: string } | null
+  festival_root: { id: number; name: string } | null
   location: Location | null
   bands: Band[]
   bands_seen?: Tables<'j_bands_seen'>[]
@@ -108,7 +108,7 @@ export type AddReaction = TablesInsert<'reactions'>
 export type EditReaction = TablesUpdate<'reactions'>
 
 export type Band = Tables<'bands'> & {
-  country?: Country | null
+  country: Country
   genres: Genre[]
   concerts?: Tables<'concerts'>[] | null
   item_index?: number | null
@@ -116,6 +116,7 @@ export type Band = Tables<'bands'> & {
 }
 
 export type AddBand = TablesInsert<'bands'> & {
+  country: Country
   genres: Genre[]
 }
 
@@ -186,5 +187,8 @@ export type SpotifyArtist = {
 
 export type Memory = Tables<'memories'> & {
   band: Pick<Tables<'bands'>, 'id' | 'name'> | null
-  profile?: Pick<Tables<'profiles'>, 'id' | 'username' | 'role' | 'avatar_path' | 'updated_at'> | null
+  profile?: Pick<
+    Tables<'profiles'>,
+    'id' | 'username' | 'role' | 'avatar_path' | 'updated_at'
+  > | null
 }

@@ -1,7 +1,7 @@
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { useConcerts } from '../../hooks/concerts/useConcerts'
 import { useLocations } from '../../hooks/locations/useLocations'
-import { AddConcert, Band, ReorderableListItem } from '../../types/types'
+import { AddConcert, Band, ListItem, ReorderableListItem } from '../../types/types'
 import { Button } from '../Button'
 import { TextField } from '../forms/TextField'
 import { EditBandsButton } from './EditBandsButton'
@@ -24,16 +24,48 @@ import { Disclosure } from '../shared/Disclosure'
 import clsx from 'clsx'
 import { RadioButton } from '../forms/RadioGroup'
 import { isValidDate } from '@/lib/date'
+import { useLocation } from '@/hooks/locations/useLocation'
 
-type FormProps = {
-  isNew?: boolean
-  close: () => void
+export type ConcertFields = {
+  id: AddConcert['id']
+  name: AddConcert['name']
+  is_festival: AddConcert['is_festival']
+  festival_root: ListItem | null
+  date_start: AddConcert['date_start']
+  date_end: AddConcert['date_end']
+  doors_time: AddConcert['doors_time']
+  show_time: AddConcert['show_time']
+  bands: ReorderableListItem<Band>[]
+  location: ListItem
+  source_link: AddConcert['source_link']
+  resource_status: AddConcert['resource_status']
 }
 
-export const Form = ({ close, isNew }: FormProps) => {
+export function Form({ close, isNew }: { isNew?: boolean; close: () => void }) {
   const { id: concertId } = useParams<{ id?: string }>()
   const { data: concert } = useConcert(concertId ? parseInt(concertId) : null)
   const today = Temporal.Now.plainDateISO().toString()
+  const defaultValues: Partial<ConcertFields> = isNew
+    ? { is_festival: false, date_start: today }
+    : {
+        ...concert,
+        bands: concert?.bands.map(band => ({
+          ...band,
+          item_index: band.item_index ?? null,
+        })),
+        location: concert?.location
+          ? {
+              id: concert.location.id,
+              name: `${concert.location.name}, ${concert.location.city}`,
+            }
+          : undefined,
+        festival_root: concert?.festival_root
+          ? {
+              id: concert.festival_root.id,
+              name: concert.festival_root.name,
+            }
+          : null,
+      }
   const {
     register,
     control,
@@ -41,9 +73,9 @@ export const Form = ({ close, isNew }: FormProps) => {
     watch,
     handleSubmit,
     formState: { errors },
-    // @ts-expect-error - override types to allow passing default values
-  } = useForm<AddConcert>({
-    defaultValues: isNew ? { is_festival: false, date_start: today } : concert,
+    // @ts-expect-error - type instantiation issue with useForm and defaultValues
+  } = useForm<ConcertFields>({
+    defaultValues,
   })
   const addConcert = useAddConcert()
   const editConcert = useEditConcert()
@@ -55,49 +87,42 @@ export const Form = ({ close, isNew }: FormProps) => {
   const isFutureOrToday =
     !!dateStart && Temporal.PlainDate.compare(dateStart, Temporal.Now.plainDateISO()) >= 0
   const bands = watch('bands')
-  const locationId = watch('location_id')
+  const location = watch('location')
   const [similarConcertsSize, setSimilarConcertsSize] = useState(3)
   const { data: similarConcerts } = useConcerts({
-    enabled: !!(dateStart && bands?.length && locationId),
+    enabled: !!(dateStart && bands?.length && location),
     years: dateStart ? [dateStart.year, dateStart.year] : null,
     bands: bands?.map(item => item.id),
-    locations: locationId ? [locationId] : null,
+    locations: location ? [location.id] : null,
     size: similarConcertsSize,
   })
   const [locationsSearchQuery, setLocationsSearchQuery] = useState('')
   const [festivalRootsSearchQuery, setFestivalRootsSearchQuery] = useState('')
   const { data: locations } = useLocations({ search: locationsSearchQuery })
-  const { data: allLocations } = useLocations()
   const isFestival = watch('is_festival')
   const { data: festivalRoots } = useFestivalRoots({
     enabled: isFestival,
     search: festivalRootsSearchQuery,
     sort: { sort_by: 'name', sort_asc: true },
   })
-  const { data: allFestivalRoots } = useFestivalRoots({ enabled: isFestival })
   const t = useTranslations('ConcertForm')
   const { data: session } = useSession()
-  const festivalRootId = watch('festival_root_id')
+  const festivalRoot = watch('festival_root')
   const isSimilar = !!(isNew && similarConcerts?.count)
   const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
   const resourceStatusItems = [
     { value: 'complete', label: t('complete') },
     { value: 'incomplete_lineup', label: t('incompleteLineup') },
   ]
+  const { data: defaultLocation } = useLocation(festivalRoot?.id ?? null, null, !!festivalRoot)
 
   useEffect(() => {
-    if (!festivalRootId || !isNew) return
+    if (!isNew || !festivalRoot || !defaultLocation) return
 
-    const defaultLocationId = festivalRoots?.data.find(
-      item => item.id === festivalRootId
-    )?.default_location_id
+    setValue('location', defaultLocation)
+  }, [festivalRoot?.id, defaultLocation?.id])
 
-    if (!defaultLocationId) return
-
-    setValue('location_id', defaultLocationId)
-  }, [festivalRootId])
-
-  const onSubmit: SubmitHandler<AddConcert> = async function (formData) {
+  const onSubmit: SubmitHandler<ConcertFields> = async function (formData) {
     if (isNew) {
       addConcert.mutate(formData)
     } else {
@@ -155,20 +180,19 @@ export const Form = ({ close, isNew }: FormProps) => {
         {isFestival === true && (
           <>
             <Controller
-              name="festival_root_id"
+              name="festival_root"
               control={control}
               rules={{ required: true }}
               render={({ field: { value = null, onChange } }) => (
                 <SelectField
-                  name="festival_root_id"
-                  items={festivalRoots?.data}
-                  allItems={allFestivalRoots?.data}
+                  name="festival_root"
+                  items={festivalRoots?.data ?? []}
                   value={value}
                   onValueChange={onChange}
                   searchable
                   searchQuery={festivalRootsSearchQuery}
                   setSearchQuery={setFestivalRootsSearchQuery}
-                  error={errors.festival_root_id}
+                  error={errors.festival_root}
                   label={t('festivalRoot')}
                 />
               )}
@@ -209,14 +233,14 @@ export const Form = ({ close, isNew }: FormProps) => {
           rules={{ required: true }}
           render={({ field: { value = [], onChange } }) => (
             <EditBandsButton
-              value={value as ReorderableListItem<Band>[]}
-              onChange={onChange as (value: ReorderableListItem<Band>[]) => void}
+              value={value}
+              onChange={onChange}
               error={errors.bands}
             />
-          )} 
+          )}
         />
         <Controller
-          name="location_id"
+          name="location"
           control={control}
           rules={{ required: true }}
           render={({ field: { value, onChange } }) => (
@@ -227,15 +251,11 @@ export const Form = ({ close, isNew }: FormProps) => {
               items={locations?.data.map(item => ({
                 id: item.id,
                 name: `${item.name}, ${item.city}`,
-              }))}
-              allItems={allLocations?.data.map(item => ({
-                id: item.id,
-                name: `${item.name}, ${item.city}`,
-              }))}
+              })) ?? []}
               searchable
               searchQuery={locationsSearchQuery}
               setSearchQuery={setLocationsSearchQuery}
-              error={errors.location_id}
+              error={errors.location}
               label={t('location')}
             />
           )}

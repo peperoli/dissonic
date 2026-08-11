@@ -36,7 +36,7 @@ export function useSearchLocations(options: LocationFetchOptions & Pick<QueryOpt
   const { enabled, ...fetchOptions } = options
 
   return useQuery({
-    queryKey: ['algolia-locations', fetchOptions],
+    queryKey: ['search-locations', fetchOptions],
     queryFn: () => searchLocations(fetchOptions),
     placeholderData: previousData => keepPreviousData(previousData),
     enabled: enabled !== false,

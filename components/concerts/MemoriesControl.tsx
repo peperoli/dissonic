@@ -179,9 +179,8 @@ function MemoryItem({
           label="Band"
           name="bandId"
           items={bands.map(band => ({ id: band.id, name: band.name }))}
-          allItems={bands}
-          value={fileItem.bandId}
-          onValueChange={bandId => setFileItem({ ...fileItem, bandId })}
+          value={bands.find(band => band.id === fileItem.bandId) ?? null}
+          onValueChange={value => setFileItem({ ...fileItem, bandId: value?.id ?? null })}
           isClearable
         />
       </div>
