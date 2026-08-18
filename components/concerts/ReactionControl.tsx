@@ -18,7 +18,7 @@ type ReactionToggleProps = {
   close?: () => void
   label: string
   contentType?: 'icon'
-  users?: Profile[]
+  users?: Pick<Profile, 'id' | 'username'>[]
 }
 
 export const ReactionToggle = ({
@@ -98,7 +98,7 @@ type ReactionControlProps = {
 }
 
 export const ReactionControl = ({ comment, reactions, user }: ReactionControlProps) => {
-  const reactionCounts: { type: string; count: number; users: Profile[] }[] = []
+  const reactionCounts: { type: string; count: number; users: Pick<Profile, 'id' | 'username'>[] }[] = []
 
   reactions.forEach(item => {
     const matchingReaction = reactionCounts.find(reaction => reaction.type.includes(item.type))

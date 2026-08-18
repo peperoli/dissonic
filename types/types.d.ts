@@ -101,7 +101,9 @@ export type AddComment = TablesInsert<'comments'>
 
 export type EditComment = TablesUpdate<'comments'>
 
-export type Reaction = Tables<'reactions'> & { user: Profile | null }
+export type Reaction = Tables<'reactions'> & {
+  user: Pick<Profile, 'id' | 'username'> | null
+}
 
 export type AddReaction = TablesInsert<'reactions'>
 

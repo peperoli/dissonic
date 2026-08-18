@@ -9,7 +9,7 @@ async function fetchReplies(
 ): Promise<Comment[]> {
   const { data, error } = await supabase
     .from('comments')
-    .select('*, reactions(*, user:profiles(*))')
+    .select('*, reactions(*, user:profiles(id, username))')
     .eq('concert_id', concertId)
     .eq('parent_id', parentId)
     .order('created_at', { ascending: false })
@@ -27,29 +27,17 @@ async function fetchReplies(
   )
 }
 
-async function fetchComments({
-  concertId,
-  userId,
-  includeReplies = true,
-}: {
-  concertId: Concert['id'] | null
-  userId?: Comment['user_id']
-  includeReplies?: boolean
-}): Promise<Comment[]> {
+async function fetchComments(concertId: Concert['id'] | null): Promise<Comment[]> {
   if (!concertId) {
     throw new Error('Concert ID is required to fetch comments')
   }
 
-  let query = supabase
+  const query = supabase
     .from('comments')
-    .select('*, reactions(*, user:profiles(*))')
+    .select('*, reactions(*, user:profiles(id, username))')
     .eq('concert_id', concertId)
     .is('parent_id', null)
     .order('created_at', { ascending: false })
-
-  if (userId) {
-    query = query.eq('user_id', userId)
-  }
 
   const { data, error } = await query
 
@@ -61,19 +49,15 @@ async function fetchComments({
   return Promise.all(
     data.map(async comment => ({
       ...comment,
-      replies: includeReplies ? await fetchReplies(concertId, comment.id) : [],
+      replies: await fetchReplies(concertId, comment.id),
     }))
   )
 }
 
-export const useComments = (options: {
-  concertId: Concert['id'] | null
-  userId?: Comment['user_id']
-  includeReplies?: boolean
-}) => {
+export const useComments = (concertId: Concert['id'] | null) => {
   return useQuery({
-    queryKey: ['comments', JSON.stringify(options)],
-    queryFn: () => fetchComments(options),
-    enabled: !!options.concertId,
+    queryKey: ['comments', concertId],
+    queryFn: () => fetchComments(concertId),
+    enabled: !!concertId,
   })
 }
