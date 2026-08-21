@@ -14,6 +14,7 @@ import { Toaster } from 'react-hot-toast'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import { content, theme } from '../tailwind.config'
 import { AlertCircleIcon, CheckCircleIcon } from 'lucide-react'
+import { DialogPolyfillLoader } from '@/components/helpers/DialogPolyfillLoader'
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('RootLayout')
@@ -97,6 +98,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           </NextIntlClientProvider>
         </QueryProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
+        <DialogPolyfillLoader />
       </body>
     </html>
   )

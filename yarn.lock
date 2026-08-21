@@ -5590,6 +5590,7 @@ __metadata:
     cloudflare: "npm:^4.5.0"
     cloudflare-video-element: "npm:^1.3.4"
     clsx: "npm:^2.1.1"
+    dialog-closedby-polyfill: "npm:^1.3.0"
     eslint: "npm:^9.23.0"
     eslint-config-next: "npm:^15.5.9"
     eslint-plugin-tailwindcss: "npm:3.18.0"
@@ -5933,6 +5934,13 @@ __metadata:
   version: 2.1.2
   resolution: "detect-libc@npm:2.1.2"
   checksum: 10c0/acc675c29a5649fa1fb6e255f993b8ee829e510b6b56b0910666949c80c364738833417d0edb5f90e4e46be17228b0f2b66a010513984e18b15deeeac49369c4
+  languageName: node
+  linkType: hard
+
+"dialog-closedby-polyfill@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "dialog-closedby-polyfill@npm:1.3.0"
+  checksum: 10c0/aa60c4395490923532a9252de721562c71d7ea6031f12e0357c098402dc3407e8009d425c22bc2a6a1e013bb382f31dc653acbcdc65609dff05dc70cc01de7e2
   languageName: node
   linkType: hard
 
