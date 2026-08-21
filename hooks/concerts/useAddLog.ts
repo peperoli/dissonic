@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
 import toast from 'react-hot-toast'
 import { MemoryFileItem } from '../helpers/useMemoriesControl'
-import { getCloudflareVideoDetails } from '@/lib/cloudflareHelpers'
+import { getBunnyVideoDetails } from '@/lib/bunnyHelpers'
 import { addConcertFanId } from '@/actions/algolia'
 
 async function addLog({
@@ -45,13 +45,13 @@ async function addLog({
         let duration: number | null = null
 
         if (memoryFileItem.file.type.startsWith('video/')) {
-          const videoDetails = await getCloudflareVideoDetails(memoryFileItem.fileId!)
+          const videoDetails = await getBunnyVideoDetails(memoryFileItem.fileId!)
 
           dimensions = {
-            width: videoDetails.input?.width ?? null,
-            height: videoDetails.input?.height ?? null,
+            width: videoDetails.width,
+            height: videoDetails.height,
           }
-          duration = videoDetails.duration ? Math.round(videoDetails.duration) : null
+          duration = Math.round(videoDetails.length)
         }
 
         return {

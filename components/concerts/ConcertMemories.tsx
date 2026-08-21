@@ -18,6 +18,7 @@ import supabase from '@/utils/supabase/client'
 import { VideoPlayer } from '../shared/VideoPlayer'
 import { Button } from '../Button'
 import { useModal } from '../shared/ModalProvider'
+import { getBunnyVideoDetails } from '@/lib/bunnyHelpers'
 
 async function fetchMemoriesCount(concertId: number, fileType?: 'image/' | 'video/') {
   let query = supabase.from('memories').select('id', { count: 'exact' }).eq('concert_id', concertId)
@@ -103,11 +104,7 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
                           height: 300,
                           fit: 'cover',
                         })
-                      : getCloudflareThumbnailUrl(memory.file_id, {
-                          time: '1s',
-                          width: 300,
-                          height: 300,
-                        })
+                      : getBunnyVideoDetails(memory.file_id)
                   }
                   alt=""
                   fill

@@ -1,0 +1,51 @@
+import { createHmac, timingSafeEqual } from 'node:crypto'
+import { NextRequest, NextResponse } from 'next/server'
+
+function validateWebhookSignature(
+  rawBody: string,
+  signatureHeader: string | null,
+  signatureVersion: string | null,
+  signatureAlgorithm: string | null,
+  signatureSecret: string
+) {
+  if (signatureVersion !== 'v1') {
+    return false
+  }
+
+  if (signatureAlgorithm !== 'hmac-sha256') {
+    return false
+  }
+
+  const expectedHex = createHmac('sha256', signatureSecret).update(rawBody, 'utf8').digest('hex')
+
+  if (
+    typeof signatureHeader !== 'string' ||
+    signatureHeader.length !== expectedHex.length ||
+    !/^[0-9a-f]+$/i.test(signatureHeader)
+  ) {
+    return false
+  }
+
+  return timingSafeEqual(Buffer.from(expectedHex, 'utf8'), Buffer.from(signatureHeader, 'utf8'))
+}
+
+export async function POST(request: NextRequest) {
+  const signatureSecret = process.env.READ_ONLY_API_KEY
+
+  if (!signatureSecret) {
+    return NextResponse.json({ error: 'Webhook secret is not configured' }, { status: 500 })
+  }
+
+  const rawBody = await request.text()
+  const signature = request.headers.get('x-bunnystream-signature')
+  const version = request.headers.get('x-bunnystream-signature-version')
+  const algorithm = request.headers.get('x-bunnystream-signature-algorithm')
+
+  if (!validateWebhookSignature(rawBody, signature, version, algorithm, signatureSecret)) {
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
+  }
+
+  const data = JSON.parse(rawBody) as unknown
+
+  return NextResponse.json({ ok: true, data })
+}
