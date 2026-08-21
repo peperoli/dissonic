@@ -114,7 +114,11 @@ export function Form({ close, isNew }: { isNew?: boolean; close: () => void }) {
     { value: 'complete', label: t('complete') },
     { value: 'incomplete_lineup', label: t('incompleteLineup') },
   ]
-  const { data: defaultLocation } = useLocation(festivalRoot?.id ?? null, null, !!festivalRoot)
+  const defaultLocationId =
+    festivalRoot && 'default_location_id' in festivalRoot
+      ? (festivalRoot.default_location_id as number)
+      : null
+  const { data: defaultLocation } = useLocation(defaultLocationId, null, !!festivalRoot)
 
   useEffect(() => {
     if (!isNew || !festivalRoot || !defaultLocation) return
@@ -232,11 +236,7 @@ export function Form({ close, isNew }: { isNew?: boolean; close: () => void }) {
           control={control}
           rules={{ required: true }}
           render={({ field: { value = [], onChange } }) => (
-            <EditBandsButton
-              value={value}
-              onChange={onChange}
-              error={errors.bands}
-            />
+            <EditBandsButton value={value} onChange={onChange} error={errors.bands} />
           )}
         />
         <Controller
@@ -248,10 +248,12 @@ export function Form({ close, isNew }: { isNew?: boolean; close: () => void }) {
               name="location_id"
               value={value}
               onValueChange={onChange}
-              items={locations?.data.map(item => ({
-                id: item.id,
-                name: `${item.name}, ${item.city}`,
-              })) ?? []}
+              items={
+                locations?.data.map(item => ({
+                  id: item.id,
+                  name: `${item.name}, ${item.city}`,
+                })) ?? []
+              }
               searchable
               searchQuery={locationsSearchQuery}
               setSearchQuery={setLocationsSearchQuery}
