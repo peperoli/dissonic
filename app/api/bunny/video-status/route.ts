@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from 'node:crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
+import { Database } from '@/types/supabase'
 
 function validateWebhookSignature(
   rawBody: string,
@@ -36,6 +37,8 @@ type CallbackData = {
   Status: number
 }
 
+type VideoStatus = Database['public']['Enums']['video_status']
+
 export async function POST(request: NextRequest) {
   const signatureSecret = process.env.BUNNY_STREAM_READ_API_KEY
 
@@ -54,39 +57,26 @@ export async function POST(request: NextRequest) {
   }
 
   const data = JSON.parse(rawBody) as CallbackData
-  console.log('Received Bunny.net webhook:', data)
+  const statusMap: Record<number, VideoStatus> = {
+    0: 'queued',
+    1: 'processing',
+    2: 'encoding',
+    3: 'finished',
+    4: 'resolution_finished',
+    5: 'failed',
+  }
+  const status = statusMap[data.Status]
 
-  if (data.Status === 1) {
-    const { error } = await supabase
-      .from('memories')
-      .update({ status: 'processing' })
-      .eq('file_id', data.VideoGuid)
-
-    if (error) {
-      console.error('Failed to update memory status:', error)
-    }
+  if (!status) {
+    console.log('Unknown status received from Bunny.net webhook:', data.Status)
+    return NextResponse.json({ ok: true }, { status: 200 })
   }
 
-  if (data.Status === 3) {
-    const { error } = await supabase
-      .from('memories')
-      .update({ status: 'finished' })
-      .eq('file_id', data.VideoGuid)
+  const { error } = await supabase.from('memories').update({ status }).eq('file_id', data.VideoGuid)
 
-    if (error) {
-      console.error('Failed to update memory status:', error)
-    }
-  }
-
-  if (data.Status === 5) {
-    const { error } = await supabase
-      .from('memories')
-      .update({ status: 'failed' })
-      .eq('file_id', data.VideoGuid)
-
-    if (error) {
-      console.error('Failed to update memory status:', error)
-    }
+  if (error) {
+    console.error('Failed to update memory status:', error)
+    return NextResponse.json({ error: 'Failed to update memory status' }, { status: 500 })
   }
 
   return NextResponse.json({ ok: true, data })
