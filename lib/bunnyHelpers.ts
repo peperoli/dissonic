@@ -1,3 +1,10 @@
+export function getBunnyVideoUrl(videoId: string): string {
+  const libraryId = process.env.NEXT_PUBLIC_BUNNY_LIBRARY_ID
+
+  return `https://player.mediadelivery.net/play/${libraryId}/${videoId}`
+}
+
+
 type VideoDetails = {
   length: number
   width: number
