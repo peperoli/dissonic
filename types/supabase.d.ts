@@ -642,6 +642,7 @@ export type Database = {
           file_type: string
           height: number | null
           id: number
+          status: Database["public"]["Enums"]["video_status"] | null
           user_id: string
           width: number | null
         }
@@ -654,6 +655,7 @@ export type Database = {
           file_type: string
           height?: number | null
           id?: number
+          status?: Database["public"]["Enums"]["video_status"] | null
           user_id?: string
           width?: number | null
         }
@@ -666,6 +668,7 @@ export type Database = {
           file_type?: string
           height?: number | null
           id?: number
+          status?: Database["public"]["Enums"]["video_status"] | null
           user_id?: string
           width?: number | null
         }
@@ -1104,6 +1107,13 @@ export type Database = {
       locations_type: "locations"
       resource_status: "complete" | "incomplete_lineup"
       resources: "concerts" | "bands" | "locations"
+      video_status:
+        | "queued"
+        | "processing"
+        | "encoding"
+        | "finished"
+        | "resolution_finished"
+        | "failed"
     }
     CompositeTypes: {
       search_result: {
@@ -1261,6 +1271,14 @@ export const Constants = {
       locations_type: ["locations"],
       resource_status: ["complete", "incomplete_lineup"],
       resources: ["concerts", "bands", "locations"],
+      video_status: [
+        "queued",
+        "processing",
+        "encoding",
+        "finished",
+        "resolution_finished",
+        "failed",
+      ],
     },
   },
 } as const

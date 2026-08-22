@@ -6,13 +6,12 @@ type VideoDetails = {
 }
 
 export async function getBunnyVideoDetails(videoId: string): Promise<VideoDetails> {
+  const libraryId = process.env.NEXT_PUBLIC_BUNNY_LIBRARY_ID
+
   const response = await fetch(
-    `https://video.bunnycdn.com/library/${process.env.NEXT_PUBLIC_BUNNY_LIBRARY_ID}/videos/${videoId}/play`,
+    `https://video.bunnycdn.com/library/${libraryId}/videos/${videoId}/play`,
     {
       method: 'GET',
-      // headers: {
-      //   AccessKey: process.env.NEXT_PUBLIC_STREAM_READ_API_KEY,
-      // },
     }
   )
 

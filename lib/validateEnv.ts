@@ -13,7 +13,7 @@ const envSchema = z.object({
   ALGOLIA_WRITE_API_KEY: z.string().min(1),
   NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY: z.string().min(1),
   BUNNY_STREAM_API_KEY: z.string().min(1),
-  NEXT_PUBLIC_STREAM_READ_API_KEY: z.string().min(1),
+  BUNNY_STREAM_READ_API_KEY: z.string().min(1),
   NEXT_PUBLIC_BUNNY_LIBRARY_ID: z.string().min(1),
 })
 
