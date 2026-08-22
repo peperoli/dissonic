@@ -2,6 +2,7 @@ import { createHmac, timingSafeEqual } from 'node:crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/utils/supabase/admin'
 import { Database } from '@/types/supabase'
+import { getBunnyVideoDetails } from '@/lib/bunnyHelpers'
 
 function validateWebhookSignature(
   rawBody: string,
@@ -87,6 +88,21 @@ export async function POST(request: NextRequest) {
   if (!updatedMemories || updatedMemories.length === 0) {
     console.warn('No memory row matched webhook video guid:', data.VideoGuid)
     return NextResponse.json({ ok: true, reason: 'no_memory_found' }, { status: 202 })
+  }
+
+  if (status === 'finished') {
+    const { thumbnailUrl } = await getBunnyVideoDetails(data.VideoGuid)
+
+    const { error } = await supabase
+      .from('memories')
+      .update({ thumbnail_url: thumbnailUrl })
+      .eq('file_id', data.VideoGuid)
+      .select('id')
+
+    if (error) {
+      console.error('Failed to update memory thumbnail URL:', error)
+      return NextResponse.json({ error: 'Failed to update memory thumbnail URL' }, { status: 500 })
+    }
   }
 
   return NextResponse.json({ ok: true, data })
