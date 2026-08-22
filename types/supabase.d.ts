@@ -643,6 +643,7 @@ export type Database = {
           height: number | null
           id: number
           status: Database["public"]["Enums"]["video_status"] | null
+          thumbnail_url: string | null
           user_id: string
           width: number | null
         }
@@ -656,6 +657,7 @@ export type Database = {
           height?: number | null
           id?: number
           status?: Database["public"]["Enums"]["video_status"] | null
+          thumbnail_url?: string | null
           user_id?: string
           width?: number | null
         }
@@ -669,6 +671,7 @@ export type Database = {
           height?: number | null
           id?: number
           status?: Database["public"]["Enums"]["video_status"] | null
+          thumbnail_url?: string | null
           user_id?: string
           width?: number | null
         }

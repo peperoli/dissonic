@@ -1,9 +1,5 @@
 import { useMemories } from '@/hooks/concerts/useMemories'
-import {
-  getCloudflareImageUrl,
-  getCloudflareThumbnailUrl,
-  getCloudflareVideoUrl,
-} from '@/lib/cloudflareHelpers'
+import { getCloudflareImageUrl, getCloudflareVideoUrl } from '@/lib/cloudflareHelpers'
 import Image from 'next/image'
 import { Dialog, type DialogProps } from '../shared/Dialog'
 import { useTranslations } from 'next-intl'
@@ -18,7 +14,6 @@ import supabase from '@/utils/supabase/client'
 import { VideoPlayer } from '../shared/VideoPlayer'
 import { Button } from '../Button'
 import { useModal } from '../shared/ModalProvider'
-import { getBunnyVideoDetails } from '@/lib/bunnyHelpers'
 
 async function fetchMemoriesCount(concertId: number, fileType?: 'image/' | 'video/') {
   let query = supabase.from('memories').select('id', { count: 'exact' }).eq('concert_id', concertId)
@@ -104,7 +99,7 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
                           height: 300,
                           fit: 'cover',
                         })
-                      : getBunnyVideoDetails(memory.file_id)
+                      : (memory.thumbnail_url ?? '')
                   }
                   alt=""
                   fill
@@ -168,7 +163,7 @@ function Lightbox({
   return (
     <Dialog.Root {...dialogProps}>
       <Dialog.Portal>
-        <Dialog.Content className="backdrop:bg-slate-900 fixed inset-0 z-50 mx-auto max-w-xl overflow-y-auto scroll-smooth bg-slate-900">
+        <Dialog.Content className="fixed inset-0 z-50 mx-auto max-w-xl overflow-y-auto scroll-smooth bg-slate-900 backdrop:bg-slate-900">
           <div className="flex flex-wrap items-center gap-2 p-4">
             <Dialog.Title className="mb-0">{t('memories')}</Dialog.Title>
             <span className="rounded-md bg-slate-300 px-1 text-sm font-bold text-slate-850">
