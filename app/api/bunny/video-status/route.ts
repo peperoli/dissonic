@@ -54,6 +54,7 @@ export async function POST(request: NextRequest) {
   }
 
   const data = JSON.parse(rawBody) as CallbackData
+  console.log('Received Bunny.net webhook:', data)
 
   if (data.Status === 1) {
     const { error } = await supabase
