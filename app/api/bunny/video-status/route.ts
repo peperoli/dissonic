@@ -1,6 +1,6 @@
 import { createHmac, timingSafeEqual } from 'node:crypto'
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { Database } from '@/types/supabase'
 
 function validateWebhookSignature(
@@ -50,13 +50,14 @@ export async function POST(request: NextRequest) {
   const signature = request.headers.get('x-bunnystream-signature')
   const version = request.headers.get('x-bunnystream-signature-version')
   const algorithm = request.headers.get('x-bunnystream-signature-algorithm')
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   if (!validateWebhookSignature(rawBody, signature, version, algorithm, signatureSecret)) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
   }
 
   const data = JSON.parse(rawBody) as CallbackData
+  console.log('Received Bunny.net webhook:', data)
   const statusMap: Record<number, VideoStatus> = {
     0: 'queued',
     1: 'processing',
@@ -69,14 +70,23 @@ export async function POST(request: NextRequest) {
 
   if (!status) {
     console.log('Unknown status received from Bunny.net webhook:', data.Status)
-    return NextResponse.json({ ok: true }, { status: 200 })
+    return NextResponse.json({ ok: true, reason: 'unknown_status' }, { status: 202 })
   }
 
-  const { error } = await supabase.from('memories').update({ status }).eq('file_id', data.VideoGuid)
+  const { data: updatedMemories, error } = await supabase
+    .from('memories')
+    .update({ status })
+    .eq('file_id', data.VideoGuid)
+    .select('id')
 
   if (error) {
     console.error('Failed to update memory status:', error)
     return NextResponse.json({ error: 'Failed to update memory status' }, { status: 500 })
+  }
+
+  if (!updatedMemories || updatedMemories.length === 0) {
+    console.warn('No memory row matched webhook video guid:', data.VideoGuid)
+    return NextResponse.json({ ok: true, reason: 'no_memory_found' }, { status: 202 })
   }
 
   return NextResponse.json({ ok: true, data })

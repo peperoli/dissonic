@@ -62,6 +62,7 @@ async function addLog({
           width: dimensions.width,
           height: dimensions.height,
           duration,
+          status: memoryFileItem.file.type.startsWith('video/') ? 'queued' : null,
         } satisfies TablesInsert<'memories'>
       })
   )
