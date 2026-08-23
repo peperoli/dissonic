@@ -642,7 +642,6 @@ export type Database = {
           file_type: string
           height: number | null
           id: number
-          status: Database["public"]["Enums"]["video_status"] | null
           thumbnail_url: string | null
           user_id: string
           width: number | null
@@ -656,7 +655,6 @@ export type Database = {
           file_type: string
           height?: number | null
           id?: number
-          status?: Database["public"]["Enums"]["video_status"] | null
           thumbnail_url?: string | null
           user_id?: string
           width?: number | null
@@ -670,7 +668,6 @@ export type Database = {
           file_type?: string
           height?: number | null
           id?: number
-          status?: Database["public"]["Enums"]["video_status"] | null
           thumbnail_url?: string | null
           user_id?: string
           width?: number | null
@@ -782,6 +779,45 @@ export type Database = {
           },
           {
             foreignKeyName: "reactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      video_uploads: {
+        Row: {
+          created_at: string
+          id: number
+          status: Database["public"]["Enums"]["video_status"]
+          user_id: string
+          video_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          status?: Database["public"]["Enums"]["video_status"]
+          user_id?: string
+          video_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          status?: Database["public"]["Enums"]["video_status"]
+          user_id?: string
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_uploads_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profile_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "video_uploads_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"

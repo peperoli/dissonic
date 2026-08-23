@@ -75,9 +75,9 @@ export async function POST(request: NextRequest) {
   }
 
   const { data: updatedMemories, error } = await supabase
-    .from('memories')
+    .from('video_uploads')
     .update({ status })
-    .eq('file_id', data.VideoGuid)
+    .eq('video_id', data.VideoGuid)
     .select('id')
 
   if (error) {

@@ -1,6 +1,7 @@
 import { uploadImageCloudflare } from '@/lib/uploadImageCloudflare'
 import { uploadVideoBunny } from '@/lib/uploadVideoBunny'
 import { Tables } from '@/types/supabase'
+import supabase from '@/utils/supabase/client'
 import { ChangeEvent, Dispatch, DragEvent, SetStateAction, useMemo, useState } from 'react'
 
 export type MemoryFileItem = {
@@ -75,6 +76,14 @@ export function useMemoriesControl(
                 )
               },
             })
+
+            const { error } = await supabase.from('video_uploads').insert({
+              video_id: videoId,
+            })
+
+            if (error) {
+              throw error
+            }
 
             setFileItems(prevItems =>
               prevItems.map(item =>

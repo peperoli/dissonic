@@ -15,6 +15,7 @@ import supabase from '@/utils/supabase/client'
 import { VideoPlayer } from '../shared/VideoPlayer'
 import { Button } from '../Button'
 import { useModal } from '../shared/ModalProvider'
+import { useMemoryRealtime } from '@/hooks/concerts/useMemoryRealtime'
 
 async function fetchMemoriesCount(concertId: number, fileType?: 'image/' | 'video/') {
   let query = supabase.from('memories').select('id', { count: 'exact' }).eq('concert_id', concertId)
@@ -50,6 +51,7 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
   const [lightboxIsOpen, setLightboxIsOpen] = useState(false)
   const { push } = useRouter()
   const [, setModal] = useModal()
+  useMemoryRealtime(concertId)
 
   return (
     <>
@@ -141,6 +143,7 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
                       </span>
                     )}
                   </div>
+                  <div className="absolute">{memory.duration}</div>
                   {index === 3 && (memoriesCount ?? 0) > 4 && (
                     <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-900/50 text-xl backdrop-blur-sm">
                       <div className="btn btn-small btn-secondary !bg-slate-900/70">
@@ -238,7 +241,7 @@ function MemoryItem({
     <li
       id={memory.id.toString()}
       onClick={toggleMetadata}
-      className="relative grid flex-none place-content-center rounded-lg bg-slate-700"
+      className="relative grid flex-none place-content-center rounded-lg bg-slate-700 aspect-video"
       style={{
         aspectRatio: memory.width && memory.height ? memory.width / memory.height : undefined,
       }}
@@ -253,7 +256,7 @@ function MemoryItem({
           className="max-h-full rounded-lg object-cover"
         />
       ) : (
-        <VideoPlayer src={getBunnyVideoUrl(memory.file_id)} />
+          <VideoPlayer src={getBunnyVideoUrl(memory.file_id)} />
       )}
       {metadataIsVisible && (
         <div className="absolute inset-0 bottom-auto m-2 flex flex-col items-start gap-1">
