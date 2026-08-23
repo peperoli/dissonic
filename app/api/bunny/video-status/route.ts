@@ -91,11 +91,11 @@ export async function POST(request: NextRequest) {
   }
 
   if (status === 'finished') {
-    const { thumbnailUrl } = await getBunnyVideoDetails(data.VideoGuid)
+    const { length, width, height, thumbnailUrl } = await getBunnyVideoDetails(data.VideoGuid)
 
     const { error } = await supabase
       .from('memories')
-      .update({ thumbnail_url: thumbnailUrl })
+      .update({ duration: length, width, height, thumbnail_url: thumbnailUrl })
       .eq('file_id', data.VideoGuid)
       .select('id')
 

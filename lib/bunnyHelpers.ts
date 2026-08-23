@@ -1,9 +1,11 @@
+export const BUNNY_PULL_ZONE = 'vz-335be0a4-28b'
+export const BUNNY_LIBRARY_ID = '733737'
+
 export function getBunnyVideoUrl(videoId: string): string {
-  const libraryId = process.env.NEXT_PUBLIC_BUNNY_LIBRARY_ID
+  const pullZone = BUNNY_PULL_ZONE
 
-  return `https://player.mediadelivery.net/play/${libraryId}/${videoId}`
+  return `https://${pullZone}.b-cdn.net/${videoId}/playlist.m3u8`
 }
-
 
 type VideoDetails = {
   length: number
@@ -13,7 +15,7 @@ type VideoDetails = {
 }
 
 export async function getBunnyVideoDetails(videoId: string): Promise<VideoDetails> {
-  const libraryId = process.env.NEXT_PUBLIC_BUNNY_LIBRARY_ID
+  const libraryId = BUNNY_LIBRARY_ID
 
   const response = await fetch(
     `https://video.bunnycdn.com/library/${libraryId}/videos/${videoId}/play`,

@@ -1,3 +1,4 @@
+import { BUNNY_LIBRARY_ID } from '@/lib/bunnyHelpers'
 import { type NextRequest, NextResponse } from 'next/server'
 import { createHash } from 'node:crypto'
 
@@ -17,7 +18,6 @@ interface UploadCredentials {
 
 export async function POST(request: NextRequest) {
   const BUNNY_API_KEY = process.env.BUNNY_STREAM_API_KEY
-  const BUNNY_LIBRARY_ID = process.env.NEXT_PUBLIC_BUNNY_LIBRARY_ID
 
   if (!BUNNY_API_KEY || !BUNNY_LIBRARY_ID) {
     return NextResponse.json({ error: 'Bunny Stream not configured' }, { status: 500 })
