@@ -42,7 +42,6 @@ async function addLog({
           file_type: memoryFileItem.file.type,
           band_id: memoryFileItem.bandId,
           concert_id: concertId,
-          status: memoryFileItem.file.type.startsWith('video/') ? 'queued' : null,
         } satisfies TablesInsert<'memories'>
       })
   )
