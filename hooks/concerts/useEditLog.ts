@@ -80,15 +80,24 @@ async function editLog({
   }
 
   if (memoryIdsToDelete.length) {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('memories')
       .delete()
       .eq('concert_id', concertId)
       .in('id', memoryIdsToDelete)
+      .select('file_type, file_id')
 
     if (error) {
       throw error
     }
+
+    await Promise.all(
+      data
+        .filter(memory => memory.file_type.startsWith('video/'))
+        .map(async memory => {
+          await fetch(`/api/bunny/delete-video?videoId=${memory.file_id}`, { method: 'DELETE' })
+        })
+    )
   }
 
   await Promise.all(

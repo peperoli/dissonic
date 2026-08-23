@@ -35,14 +35,31 @@ async function fetchMemories({
     throw error
   }
 
-  return data
+  const memoriesWithStatus = await Promise.all(
+    data.map(async memory => {
+      if (!memory.file_type.startsWith('video/')) {
+        return {  ...memory, status: null }
+      }
+
+      const { data: videoUpload, error } = await supabase
+        .from('video_uploads')
+        .select('status')
+        .eq('video_id', memory.file_id)
+        .maybeSingle()
+
+      if (error) {
+        console.error('Failed to fetch video upload status for memory:', error)
+        return { ...memory, status: 'unknown' }
+      }
+
+      return { ...memory, status: videoUpload?.status ?? null }
+    })
+  )
+
+  return memoriesWithStatus
 }
 
-export function useMemories(fetchOptions: {
-  concertId?: number
-  userId?: string
-  size?: number
-}) {
+export function useMemories(fetchOptions: { concertId?: number; userId?: string; size?: number }) {
   const { concertId, userId, size } = fetchOptions
   return useQuery({
     queryKey: ['memories', concertId, userId, size],

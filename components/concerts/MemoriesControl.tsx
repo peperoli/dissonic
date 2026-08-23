@@ -6,8 +6,9 @@ import { Dispatch, SetStateAction, useRef } from 'react'
 import { Button } from '../Button'
 import { SelectField } from '../forms/SelectField'
 import { MemoryFileItem, useMemoriesControl } from '@/hooks/helpers/useMemoriesControl'
-import { getCloudflareImageUrl, getCloudflareVideoUrl } from '@/lib/cloudflareHelpers'
+import { getCloudflareImageUrl } from '@/lib/cloudflareHelpers'
 import { VideoPlayer } from '../shared/VideoPlayer'
+import { getBunnyVideoUrl } from '@/lib/bunnyHelpers'
 
 export function MemoriesControl({
   label,
@@ -137,7 +138,7 @@ function MemoryItem({
               className="absolute inset-0 size-full rounded-md object-contain"
             />
           ) : fileItem.fileId ? (
-            <VideoPlayer src={getCloudflareVideoUrl(fileItem.fileId)} size="sm" />
+            <VideoPlayer src={getBunnyVideoUrl(fileItem.fileId)} size="sm" />
           ) : null)}
       </div>
       <div className="grid w-full">

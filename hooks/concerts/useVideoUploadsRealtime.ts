@@ -23,11 +23,9 @@ export function useVideoUploadsRealtime(concertId?: number) {
           const videoUpload = payload.new as Tables<'video_uploads'>
           console.log('Video upload updated:', videoUpload)
 
-          if (videoUpload.status === 'finished') {
-            queryClient.invalidateQueries({
-              queryKey: ['memories', concertId],
-            })
-          }
+          queryClient.invalidateQueries({
+            queryKey: ['memories', concertId],
+          })
         }
       )
       .subscribe()

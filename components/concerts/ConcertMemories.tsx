@@ -6,7 +6,7 @@ import { Dialog, type DialogProps } from '../shared/Dialog'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { PlaySquareIcon, PlusIcon, XIcon } from 'lucide-react'
+import { PlayIcon, PlusIcon, XIcon } from 'lucide-react'
 import { Memory } from '@/types/types'
 import { UserItem } from '../shared/UserItem'
 import Link from 'next/link'
@@ -16,6 +16,7 @@ import { VideoPlayer } from '../shared/VideoPlayer'
 import { Button } from '../Button'
 import { useModal } from '../shared/ModalProvider'
 import { useVideoUploadsRealtime } from '@/hooks/concerts/useVideoUploadsRealtime'
+import { SpinnerIcon } from '../layout/SpinnerIcon'
 
 async function fetchMemoriesCount(concertId: number, fileType?: 'image/' | 'video/') {
   let query = supabase.from('memories').select('id', { count: 'exact' }).eq('concert_id', concertId)
@@ -86,6 +87,11 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
         <ul className="grid grid-cols-2 gap-2 md:grid-cols-4">
           {memories?.length ? (
             memories.map((memory, index) => {
+              const isLoading =
+                memory.file_type.startsWith('video/') &&
+                memory.status !== 'resolution_finished' &&
+                memory.status !== 'finished' &&
+                memory.status !== 'failed'
               if (memory.file_type.startsWith('image/')) {
                 return (
                   <li
@@ -128,23 +134,31 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
                   }}
                   className="relative aspect-square rounded-lg bg-slate-700"
                 >
-                  <Image
-                    src={memory.thumbnail_url ?? ''}
-                    alt=""
-                    fill
-                    unoptimized
-                    className="rounded-lg object-cover"
-                  />
-                  <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded bg-slate-900/70 p-1 text-sm">
-                    <PlaySquareIcon className="size-icon" />
-                    {memory.duration && (
-                      <span>
-                        {Math.floor(memory.duration / 60)}:
-                        {(memory.duration % 60).toString().padStart(2, '0')}
-                      </span>
-                    )}
-                  </div>
-                  <div className="absolute">{memory.duration}</div>
+                  {isLoading ? (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center rounded-lg bg-slate-900 text-xl">
+                      <SpinnerIcon className="size-8 animate-spin" />
+                      <span className="text-sm">{t(memory.status)}</span>
+                    </div>
+                  ) : (
+                    <>
+                      <Image
+                        src={memory.thumbnail_url ?? ''}
+                        alt=""
+                        fill
+                        unoptimized
+                        className="rounded-lg object-cover"
+                      />
+                      <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded bg-slate-900/70 p-1 text-sm">
+                        <PlayIcon className="size-icon" />
+                        {memory.duration && (
+                          <span>
+                            {Math.floor(memory.duration / 60)}:
+                            {(memory.duration % 60).toString().padStart(2, '0')}
+                          </span>
+                        )}
+                      </div>
+                    </>
+                  )}
                   {index === 3 && (memoriesCount ?? 0) > 4 && (
                     <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-900/50 text-xl backdrop-blur-sm">
                       <div className="btn btn-small btn-secondary !bg-slate-900/70">
@@ -214,14 +228,18 @@ function Lightbox({
             </Dialog.Close>
           </div>
           <ul className="flex flex-col gap-2 px-2 pb-2">
-            {memories?.map(memory => (
-              <MemoryItem
-                key={memory.id}
-                memory={memory}
-                metadataIsVisible={metadataIsVisible}
-                toggleMetadata={toggleMetadata}
-              />
-            ))}
+            {memories
+              ?.filter(
+                memory => memory.file_type.startsWith('image/') || memory.status === 'finished'
+              )
+              .map(memory => (
+                <MemoryItem
+                  key={memory.id}
+                  memory={memory}
+                  metadataIsVisible={metadataIsVisible}
+                  toggleMetadata={toggleMetadata}
+                />
+              ))}
           </ul>
         </Dialog.Content>
       </Dialog.Portal>
