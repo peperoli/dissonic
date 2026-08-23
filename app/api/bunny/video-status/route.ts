@@ -81,8 +81,8 @@ export async function POST(request: NextRequest) {
       .from('memories')
       .update({
         duration: video.length,
-        width: video.width,
-        height: video.height,
+        width: video.rotation === 0 || video.rotation === 180 ? video.width : video.height,
+        height: video.rotation === 0 || video.rotation === 180 ? video.height : video.width,
         thumbnail_url: thumbnailUrl,
       })
       .eq('file_id', data.VideoGuid)

@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { Dialog, type DialogProps } from '../shared/Dialog'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { PlayIcon, PlusIcon, XIcon } from 'lucide-react'
 import { Memory } from '@/types/types'
 import { UserItem } from '../shared/UserItem'
@@ -17,6 +17,7 @@ import { Button } from '../Button'
 import { useModal } from '../shared/ModalProvider'
 import { useVideoUploadsRealtime } from '@/hooks/concerts/useVideoUploadsRealtime'
 import { SpinnerIcon } from '../layout/SpinnerIcon'
+import { useSession } from '@/hooks/auth/useSession'
 
 async function fetchMemoriesCount(concertId: number, fileType?: 'image/' | 'video/') {
   let query = supabase.from('memories').select('id', { count: 'exact' }).eq('concert_id', concertId)
@@ -35,6 +36,8 @@ async function fetchMemoriesCount(concertId: number, fileType?: 'image/' | 'vide
 }
 
 export function ConcertMemories({ concertId }: { concertId: number }) {
+  const { data: session } = useSession()
+  const pathname = usePathname()
   const { data: memories } = useMemories({ concertId, size: 4 })
   const { data: imageMemoriesCount } = useQuery({
     queryKey: ['image-memories-count', concertId],
@@ -78,7 +81,9 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
           )}
           <Button
             label={t('addMemory')}
-            onClick={() => setModal('edit-log')}
+            onClick={
+              session ? () => setModal('edit-log') : () => push(`/login?redirect=${pathname}`)
+            }
             icon={<PlusIcon className="size-icon" />}
             size="small"
             className="md:ml-auto"
@@ -89,9 +94,9 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
             memories.map((memory, index) => {
               const isLoading =
                 memory.file_type.startsWith('video/') &&
-                memory.status !== 'resolution_finished' &&
-                memory.status !== 'finished' &&
-                memory.status !== 'failed'
+                (memory.status === 'queued' ||
+                  memory.status === 'processing' ||
+                  memory.status === 'encoding')
               if (memory.file_type.startsWith('image/')) {
                 return (
                   <li

@@ -16,6 +16,7 @@ export function getBunnyThumbnailUrl(videoId: string) {
 type VideoDetails = {
   video: {
     length: number
+    rotation: number
     width: number
     height: number
   }
