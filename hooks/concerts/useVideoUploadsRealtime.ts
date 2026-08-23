@@ -3,29 +3,31 @@ import { useQueryClient } from '@tanstack/react-query'
 import supabase from '@/utils/supabase/client'
 import { Tables } from '@/types/supabase'
 
-export function useMemoryRealtime(concertId?: number) {
+export function useVideoUploadsRealtime(concertId?: number) {
   const queryClient = useQueryClient()
 
   useEffect(() => {
     if (!concertId) return
 
     const channel = supabase
-      .channel(`memories:${concertId}`)
+      .channel(`video_uploads:${concertId}`)
       .on(
         'postgres_changes',
         {
           event: 'UPDATE',
           schema: 'public',
-          table: 'memories',
+          table: 'video_uploads',
           filter: `concert_id=eq.${concertId}`,
         },
         payload => {
-          const memory = payload.new as Tables<'memories'>
-          console.log('Memory updated:', memory)
+          const videoUpload = payload.new as Tables<'video_uploads'>
+          console.log('Video upload updated:', videoUpload)
 
-          queryClient.invalidateQueries({
-            queryKey: ['memories', concertId],
-          })
+          if (videoUpload.status === 'finished') {
+            queryClient.invalidateQueries({
+              queryKey: ['memories', concertId],
+            })
+          }
         }
       )
       .subscribe()

@@ -130,6 +130,7 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
         </fieldset>
         <MemoriesControl
           name="memoryFileItems"
+          concertId={concert?.id ?? 0}
           fileItems={memoryFileItems}
           setFileItems={setMemoryFileItems}
           label={t('memories')}

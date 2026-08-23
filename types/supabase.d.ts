@@ -788,6 +788,7 @@ export type Database = {
       }
       video_uploads: {
         Row: {
+          concert_id: number
           created_at: string
           id: number
           status: Database["public"]["Enums"]["video_status"]
@@ -795,6 +796,7 @@ export type Database = {
           video_id: string
         }
         Insert: {
+          concert_id: number
           created_at?: string
           id?: number
           status?: Database["public"]["Enums"]["video_status"]
@@ -802,6 +804,7 @@ export type Database = {
           video_id: string
         }
         Update: {
+          concert_id?: number
           created_at?: string
           id?: number
           status?: Database["public"]["Enums"]["video_status"]
@@ -809,6 +812,20 @@ export type Database = {
           video_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "video_uploads_concert_id_fkey"
+            columns: ["concert_id"]
+            isOneToOne: false
+            referencedRelation: "concerts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "video_uploads_concert_id_fkey"
+            columns: ["concert_id"]
+            isOneToOne: false
+            referencedRelation: "concerts_full"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "video_uploads_user_id_fkey"
             columns: ["user_id"]

@@ -74,6 +74,26 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true, reason: 'unknown_status' }, { status: 202 })
   }
 
+  if (status === 'finished') {
+    const { video, thumbnailUrl } = await getBunnyVideoDetails(data.VideoGuid)
+
+    const { error } = await supabase
+      .from('memories')
+      .update({
+        duration: video.length,
+        width: video.width,
+        height: video.height,
+        thumbnail_url: thumbnailUrl,
+      })
+      .eq('file_id', data.VideoGuid)
+      .select('id')
+
+    if (error) {
+      console.error('Failed to update memory thumbnail URL:', error)
+      return NextResponse.json({ error: 'Failed to update memory thumbnail URL' }, { status: 500 })
+    }
+  }
+
   const { data: updatedMemories, error } = await supabase
     .from('video_uploads')
     .update({ status })
@@ -88,21 +108,6 @@ export async function POST(request: NextRequest) {
   if (!updatedMemories || updatedMemories.length === 0) {
     console.warn('No memory row matched webhook video guid:', data.VideoGuid)
     return NextResponse.json({ ok: true, reason: 'no_memory_found' }, { status: 202 })
-  }
-
-  if (status === 'finished') {
-    const { length, width, height, thumbnailUrl } = await getBunnyVideoDetails(data.VideoGuid)
-
-    const { error } = await supabase
-      .from('memories')
-      .update({ duration: length, width, height, thumbnail_url: thumbnailUrl })
-      .eq('file_id', data.VideoGuid)
-      .select('id')
-
-    if (error) {
-      console.error('Failed to update memory thumbnail URL:', error)
-      return NextResponse.json({ error: 'Failed to update memory thumbnail URL' }, { status: 500 })
-    }
   }
 
   return NextResponse.json({ ok: true, data })

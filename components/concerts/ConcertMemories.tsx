@@ -15,7 +15,7 @@ import supabase from '@/utils/supabase/client'
 import { VideoPlayer } from '../shared/VideoPlayer'
 import { Button } from '../Button'
 import { useModal } from '../shared/ModalProvider'
-import { useMemoryRealtime } from '@/hooks/concerts/useMemoryRealtime'
+import { useVideoUploadsRealtime } from '@/hooks/concerts/useVideoUploadsRealtime'
 
 async function fetchMemoriesCount(concertId: number, fileType?: 'image/' | 'video/') {
   let query = supabase.from('memories').select('id', { count: 'exact' }).eq('concert_id', concertId)
@@ -51,7 +51,8 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
   const [lightboxIsOpen, setLightboxIsOpen] = useState(false)
   const { push } = useRouter()
   const [, setModal] = useModal()
-  useMemoryRealtime(concertId)
+
+  useVideoUploadsRealtime(concertId)
 
   return (
     <>
@@ -241,7 +242,7 @@ function MemoryItem({
     <li
       id={memory.id.toString()}
       onClick={toggleMetadata}
-      className="relative grid flex-none place-content-center rounded-lg bg-slate-700 aspect-video"
+      className="relative grid aspect-video flex-none place-content-center rounded-lg bg-slate-700"
       style={{
         aspectRatio: memory.width && memory.height ? memory.width / memory.height : undefined,
       }}
@@ -256,7 +257,7 @@ function MemoryItem({
           className="max-h-full rounded-lg object-cover"
         />
       ) : (
-          <VideoPlayer src={getBunnyVideoUrl(memory.file_id)} />
+        <VideoPlayer src={getBunnyVideoUrl(memory.file_id)} />
       )}
       {metadataIsVisible && (
         <div className="absolute inset-0 bottom-auto m-2 flex flex-col items-start gap-1">

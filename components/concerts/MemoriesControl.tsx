@@ -12,6 +12,7 @@ import { VideoPlayer } from '../shared/VideoPlayer'
 export function MemoriesControl({
   label,
   name,
+  concertId,
   fileItems,
   setFileItems,
   acceptedFileTypes,
@@ -19,12 +20,13 @@ export function MemoriesControl({
 }: {
   label: string
   name: string
+  concertId: number
   fileItems: MemoryFileItem[]
   setFileItems: Dispatch<SetStateAction<MemoryFileItem[]>>
   acceptedFileTypes?: string[]
   bands: Band[]
 }) {
-  const { isDragActive, onDrag, onDrop, onChange } = useMemoriesControl(fileItems, setFileItems, {
+  const { isDragActive, onDrag, onDrop, onChange } = useMemoriesControl(concertId,fileItems, setFileItems, {
     prefix: 'concert-memories',
     acceptedFileTypes,
   })

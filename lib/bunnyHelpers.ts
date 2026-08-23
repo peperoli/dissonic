@@ -8,9 +8,11 @@ export function getBunnyVideoUrl(videoId: string): string {
 }
 
 type VideoDetails = {
-  length: number
-  width: number
-  height: number
+  video: {
+    length: number
+    width: number
+    height: number
+  }
   thumbnailUrl: string
 }
 
@@ -31,4 +33,10 @@ export async function getBunnyVideoDetails(videoId: string): Promise<VideoDetail
   }
 
   return await response.json()
+}
+
+export function getBunnyThumbnailUrl(videoId: string) {
+  const pullZone = BUNNY_PULL_ZONE
+
+  return `https://${pullZone}.b-cdn.net/${videoId}/thumbnails/thumbnail.jpg`
 }

@@ -18,6 +18,7 @@ export type MemoryFileItem = {
 }
 
 export function useMemoriesControl(
+  concertId: number,
   fileItems: MemoryFileItem[],
   setFileItems: Dispatch<SetStateAction<MemoryFileItem[]>>,
   options: { prefix?: string; acceptedFileTypes?: string[] }
@@ -79,6 +80,7 @@ export function useMemoriesControl(
 
             const { error } = await supabase.from('video_uploads').insert({
               video_id: videoId,
+              concert_id: concertId,
             })
 
             if (error) {
