@@ -68,7 +68,7 @@ export const Comments = () => {
           <Button
             label={t('login')}
             onClick={() => push(`/login?redirect=${pathname}`)}
-            appearance="primary"
+            size="small"
           />
         </>
       )}

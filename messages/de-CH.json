@@ -238,6 +238,8 @@
   },
   "Memories": {
     "memories": "Erinnerungen",
+    "loginToViewAndShareMemories": "Melde dich an, um Erinnerungen zu sehen und teilen.",
+    "login": "Anmelden",
     "nImages": "{count, plural, =1 {ein Bild} other {# Bilder}}",
     "nVideos": "{count, plural, =1 {ein Video} other {# Videos}}",
     "noMemoriesYet": "Noch keine Erinnerungen vorhanden. Füge deine ersten Bilder oder Videos hinzu!",

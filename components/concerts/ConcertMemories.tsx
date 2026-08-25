@@ -58,35 +58,41 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
 
   useVideoUploadsRealtime(concertId)
 
+  if (!session) {
+    return (
+      <section className="rounded-lg bg-slate-800 p-4 md:p-6">
+        <h2>{t('memories')}</h2>
+        <p className="mb-4 text-sm text-slate-300">{t('loginToViewAndShareMemories')}</p>
+        <Button
+          label={t('login')}
+          onClick={() => push(`/login?redirect=${pathname}`)}
+          size="small"
+        />
+      </section>
+    )
+  }
+
   return (
     <>
       <section className="rounded-lg bg-slate-800 p-4 md:p-6">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-          <h2 className="mb-0">
-            {t('memories')}{' '}
-            <span className="rounded-md bg-slate-300 px-1 text-sm font-bold text-slate-850">
-              Beta
-            </span>
-          </h2>
-          {!!imageMemoriesCount && (
+          <div className="flex items-baseline gap-2">
+            <h2 className="mb-0">
+              {t('memories')}{' '}
+              <span className="rounded-md bg-slate-300 px-1 text-sm font-bold text-slate-850">
+                Beta
+              </span>
+            </h2>
             <span className="text-sm text-slate-300">
-              &bull; {t('nImages', { count: imageMemoriesCount })}
+              {!!imageMemoriesCount && <>&bull; {t('nImages', { count: imageMemoriesCount })}</>}
+              {!!videoMemoriesCount && <> &bull; {t('nVideos', { count: videoMemoriesCount })}</>}
             </span>
-          )}
-          {!!videoMemoriesCount && (
-            <span className="text-sm text-slate-300">
-              {' '}
-              &bull; {t('nVideos', { count: videoMemoriesCount })}
-            </span>
-          )}
+          </div>
           <Button
             label={t('addMemory')}
-            onClick={
-              session ? () => setModal('edit-log') : () => push(`/login?redirect=${pathname}`)
-            }
+            onClick={() => setModal('edit-log')}
             icon={<PlusIcon className="size-icon" />}
             size="small"
-            className="md:ml-auto"
           />
         </div>
         <ul className="grid grid-cols-2 gap-2 md:grid-cols-4">

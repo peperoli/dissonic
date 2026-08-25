@@ -194,8 +194,8 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
           </div>
         </header>
         <Lineup concert={concert} />
-        {!isFuture && <ConcertMemories concertId={concert.id} />}
         <ConcertCommunity concert={concert} />
+        {!isFuture && <ConcertMemories concertId={concert.id} />}
         {isFutureOrToday && <ConcertInfo concert={concert} />}
         {concert.bands && <SimpleConcertStats bands={concert.bands} />}
         <div className="rounded-lg bg-slate-800 p-4 md:p-6">
