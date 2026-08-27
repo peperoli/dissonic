@@ -4,7 +4,7 @@ import { getBunnyVideoUrl } from '@/lib/bunnyHelpers'
 import Image from 'next/image'
 import { Dialog, type DialogProps } from '../shared/Dialog'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
+import { useState, WheelEvent } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { PlayIcon, PlusIcon, XIcon } from 'lucide-react'
 import { Memory } from '@/types/types'
@@ -18,6 +18,7 @@ import { useModal } from '../shared/ModalProvider'
 import { useVideoUploadsRealtime } from '@/hooks/concerts/useVideoUploadsRealtime'
 import { SpinnerIcon } from '../layout/SpinnerIcon'
 import { useSession } from '@/hooks/auth/useSession'
+import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 
 async function fetchMemoriesCount(concertId: number, fileType?: 'image/' | 'video/') {
   let query = supabase.from('memories').select('id', { count: 'exact' }).eq('concert_id', concertId)
@@ -209,36 +210,52 @@ function Lightbox({
   const { data: memories } = useMemories({ concertId })
   const [metadataIsVisible, setMetadataIsVisible] = useState(true)
   const t = useTranslations('Memories')
+  const isDesktop = useMediaQuery('(min-width: 768px)')
 
   function toggleMetadata() {
     setMetadataIsVisible(!metadataIsVisible)
   }
 
+  function overrideScroll(event: WheelEvent<HTMLUListElement>) {
+    if (event.deltaY == 0) return
+    event.preventDefault()
+    event.currentTarget.scrollTo({
+      left: event.currentTarget.scrollLeft + event.deltaY * 1.5,
+    })
+  }
+
   return (
     <Dialog.Root {...dialogProps}>
       <Dialog.Portal>
-        <Dialog.Content className="fixed inset-0 z-50 mx-auto max-w-xl overflow-y-auto scroll-smooth bg-slate-900 backdrop:bg-slate-900">
-          <div className="flex flex-wrap items-center gap-2 p-4">
-            <Dialog.Title className="mb-0">{t('memories')}</Dialog.Title>
-            <span className="rounded-md bg-slate-300 px-1 text-sm font-bold text-slate-850">
-              Beta
-            </span>
-            {!!imageMemoriesCount && (
-              <span className="text-sm text-slate-300">
-                &bull; {t('nImages', { count: imageMemoriesCount })}
-              </span>
-            )}
-            {!!videoMemoriesCount && (
-              <span className="text-sm text-slate-300">
-                {' '}
-                &bull; {t('nVideos', { count: videoMemoriesCount })}
-              </span>
-            )}
-            <Dialog.Close className="btn btn-secondary btn-icon ml-auto">
+        <Dialog.Content className="fixed inset-0 z-50 flex-col bg-slate-900 backdrop:bg-slate-900 open:flex">
+          <div className="flex items-center gap-2 p-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <Dialog.Title className="mb-0">{t('memories')}</Dialog.Title>
+                <span className="rounded-md bg-slate-300 px-1 text-sm font-bold text-slate-850">
+                  Beta
+                </span>
+              </div>
+              {!!imageMemoriesCount && (
+                <span className="text-sm text-slate-300">
+                  &bull; {t('nImages', { count: imageMemoriesCount })}
+                </span>
+              )}
+              {!!videoMemoriesCount && (
+                <span className="text-sm text-slate-300">
+                  {' '}
+                  &bull; {t('nVideos', { count: videoMemoriesCount })}
+                </span>
+              )}
+            </div>
+            <Dialog.Close className="btn btn-secondary btn-icon btn-small ml-auto">
               <XIcon className="size-icon" />
             </Dialog.Close>
           </div>
-          <ul className="flex flex-col gap-2 px-2 pb-2">
+          <ul
+            onWheel={isDesktop ? overrideScroll : undefined}
+            className="flex flex-col gap-2 overflow-y-auto px-2 pb-2 md:flex-row md:overflow-x-auto md:overflow-y-hidden"
+          >
             {memories
               ?.filter(
                 memory => memory.file_type.startsWith('image/') || memory.status === 'finished'
@@ -267,23 +284,26 @@ function MemoryItem({
   metadataIsVisible: boolean
   toggleMetadata: () => void
 }) {
+  const isDesktop = useMediaQuery('(min-width: 768px)')
+
   return (
     <li
       id={memory.id.toString()}
       onClick={toggleMetadata}
-      className="relative grid aspect-video flex-none place-content-center rounded-lg bg-slate-700"
+      className="relative grid max-h-[800px] flex-none place-content-center rounded-lg bg-slate-800 md:h-full"
       style={{
         aspectRatio: memory.width && memory.height ? memory.width / memory.height : undefined,
       }}
     >
       {memory.file_type.startsWith('image/') ? (
-        <Image
-          src={getCloudflareImageUrl(memory.file_id, { width: 800 })}
+        <img
+          src={getCloudflareImageUrl(memory.file_id, {
+            width: isDesktop ? undefined : 800,
+            height: isDesktop ? 800 : undefined,
+          })}
+          loading="lazy"
           alt=""
-          width={1000}
-          height={1000}
-          unoptimized
-          className="max-h-full rounded-lg object-cover"
+          className="h-full w-auto flex-none rounded-lg object-cover"
         />
       ) : (
         <VideoPlayer src={getBunnyVideoUrl(memory.file_id)} />
