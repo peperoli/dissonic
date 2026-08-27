@@ -90,7 +90,7 @@ export function Form({ close, isNew }: { isNew?: boolean; close: () => void }) {
   const location = watch('location')
   const [similarConcertsSize, setSimilarConcertsSize] = useState(3)
   const { data: similarConcerts } = useConcerts({
-    enabled: !!(dateStart && bands?.length && location),
+    enabled: !!(isNew && dateStart && bands?.length && location),
     years: dateStart ? [dateStart.year, dateStart.year] : null,
     bands: bands?.map(item => item.id),
     locations: location ? [location.id] : null,

@@ -32,6 +32,8 @@ export type BandFields = {
 export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) => {
   const { id: bandId } = useParams<{ id?: string }>()
   const { data: band } = useBand(bandId ? parseInt(bandId) : null)
+  const locale = useLocale()
+  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
   const {
     register,
     control,
@@ -46,6 +48,12 @@ export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) =
         }
       : {
           ...band,
+          country: band?.country.iso2
+            ? {
+                id: band?.country.id,
+                name: regionNames.of(band.country.iso2) ?? band.country.iso2,
+              }
+            : undefined,
           spotify_artist: {
             id: band?.spotify_artist_id,
             images: band?.spotify_artist_images,
@@ -55,7 +63,7 @@ export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) =
   const name = watch('name')
   const [similarBandsSize, setSimilarBandsSize] = useState(3)
   const { data: similarBands } = useSimilarBands({
-    enabled: name.length >= 1,
+    enabled: isNew && name.length >= 1,
     search: name,
     size: similarBandsSize,
   })
@@ -66,10 +74,8 @@ export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) =
   const addBand = useAddBand()
   const editBand = useEditBand()
   const t = useTranslations('BandForm')
-  const locale = useLocale()
   const { status } = isNew ? addBand : editBand
   const isSimilar = !!(dirtyFields.name && similarBands?.count)
-  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
 
   const onSubmit: SubmitHandler<BandFields> = async function (formData) {
     if (isNew) {
@@ -103,10 +109,12 @@ export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) =
             name="country"
             value={value}
             onValueChange={onChange}
-            items={countries?.map(item => ({
-              id: item.id,
-              name: regionNames.of(item.iso2) ?? item.iso2,
-            })) ?? []}
+            items={
+              countries?.map(item => ({
+                id: item.id,
+                name: regionNames.of(item.iso2) ?? item.iso2,
+              })) ?? []
+            }
             searchable
             searchQuery={countriesSearchQuery}
             setSearchQuery={setCountriesSearchQuery}

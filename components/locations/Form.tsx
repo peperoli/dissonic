@@ -61,7 +61,7 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
   const name = watch('name')
   const [similarLocationsSize, setSimilarLocationsSize] = useState(3)
   const { data: similarLocations } = useSimilarLocations({
-    enabled: name.length >= 3,
+    enabled: isNew && name.length >= 3,
     search: name,
     size: similarLocationsSize,
   })
