@@ -49,10 +49,14 @@ async function fetchData(username: string) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  if (!user) {
+    return { profile, user: null, friend: null }
+  }
+
   const { data: friend } = await supabase
     .from('friends')
     .select('*')
-    .or(`sender_id.eq.${user?.id}, receiver_id.eq.${user?.id}`)
+    .or(`sender_id.eq.${user.id}, receiver_id.eq.${user.id}`)
     .or(`sender_id.eq.${profile.id}, receiver_id.eq.${profile.id}`)
     .single()
 
