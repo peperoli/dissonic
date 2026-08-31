@@ -15,7 +15,7 @@ export async function GET(request: Request) {
 
   if (provider !== 'azure' && provider !== 'google') {
     return NextResponse.redirect(
-      `${baseUrl}/api/auth/callback-error?${new URLSearchParams({
+      `${baseUrl}/api/auth/error?${new URLSearchParams({
         error: 'Unsupported provider',
       }).toString()}`
     )
@@ -35,7 +35,7 @@ export async function GET(request: Request) {
   if (error) {
     console.error(error)
     return NextResponse.redirect(
-      `${baseUrl}/api/auth/callback-error?${new URLSearchParams({
+      `${baseUrl}/api/auth/error?${new URLSearchParams({
         error: 'Failed to initiate OAuth sign-in.',
       }).toString()}`
     )
@@ -43,7 +43,7 @@ export async function GET(request: Request) {
 
   if (!data.url) {
     return NextResponse.redirect(
-      `${baseUrl}/api/auth/callback-error?${new URLSearchParams({
+      `${baseUrl}/api/auth/error?${new URLSearchParams({
         error: 'Failed to initiate OAuth sign-in.',
       }).toString()}`
     )

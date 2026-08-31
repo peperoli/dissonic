@@ -27,7 +27,7 @@ export async function GET(request: Request) {
 
   if (error) {
     return NextResponse.redirect(
-      `${baseUrl}/api/auth/callback-error?${new URLSearchParams({
+      `${baseUrl}/api/auth/error?${new URLSearchParams({
         error,
         error_description: errorDescription ?? '',
       }).toString()}`
@@ -36,7 +36,7 @@ export async function GET(request: Request) {
 
   if (!code) {
     return NextResponse.redirect(
-      `${baseUrl}/api/auth/callback-error?${new URLSearchParams({
+      `${baseUrl}/api/auth/error?${new URLSearchParams({
         error: 'No code provided in auth callback.',
       }).toString()}`
     )
@@ -52,7 +52,7 @@ export async function GET(request: Request) {
   if (sessionError) {
     console.error(sessionError)
     return NextResponse.redirect(
-      `${baseUrl}/api/auth/callback-error?${new URLSearchParams({
+      `${baseUrl}/api/auth/error?${new URLSearchParams({
         error: 'Failed to exchange code for session.',
       }).toString()}`
     )
@@ -68,7 +68,7 @@ export async function GET(request: Request) {
     if (profileError) {
       console.error(profileError)
       return NextResponse.redirect(
-        `${baseUrl}/api/auth/callback-error?${new URLSearchParams({
+        `${baseUrl}/api/auth/error?${new URLSearchParams({
           error: 'Failed to lookup user profile.',
         }).toString()}`
       )
@@ -86,7 +86,7 @@ export async function GET(request: Request) {
       if (insertProfileError) {
         console.error(insertProfileError)
         return NextResponse.redirect(
-          `${baseUrl}/api/auth/callback-error?${new URLSearchParams({
+          `${baseUrl}/api/auth/error?${new URLSearchParams({
             error: 'Failed to create user profile.',
           }).toString()}`
         )

@@ -8,6 +8,7 @@ export async function GET(request: NextRequest) {
   const token_hash = searchParams.get('token_hash')
   const type = searchParams.get('type') as EmailOtpType | null
   const next = searchParams.get('next') ?? '/'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
 
   const redirectTo = request.nextUrl.clone()
   redirectTo.pathname = next
@@ -15,8 +16,11 @@ export async function GET(request: NextRequest) {
   redirectTo.searchParams.delete('type')
 
   if (!token_hash || !type) {
-    console.error('Error: Missing token_hash or type')
-    return NextResponse.redirect(new URL('/signup', request.url))
+    return NextResponse.redirect(
+      `${baseUrl}/api/auth/error?${new URLSearchParams({
+        error: 'Missing token_hash or type',
+      }).toString()}`
+    )
   }
 
   const supabase = await createClient()
@@ -27,10 +31,14 @@ export async function GET(request: NextRequest) {
   })
 
   if (error) {
-    console.error(error.message)
-    return NextResponse.redirect(new URL('/signup', request.url))
+    console.error(error)
+    return NextResponse.redirect(
+      `${baseUrl}/api/auth/error?${new URLSearchParams({
+        error: error.message,
+      }).toString()}`
+    )
   }
-  
+
   redirectTo.searchParams.delete('next')
   return NextResponse.redirect(redirectTo)
 }
