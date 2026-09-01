@@ -254,7 +254,7 @@ function Lightbox({
           </div>
           <ul
             onWheel={isDesktop ? overrideScroll : undefined}
-            className="flex flex-col gap-2 overflow-y-auto px-2 pb-2 md:flex-row md:overflow-x-auto md:overflow-y-hidden"
+            className="flex flex-col gap-2 overflow-y-auto px-2 pb-2 md:h-full md:flex-row md:overflow-x-auto md:overflow-y-hidden"
           >
             {memories
               ?.filter(
