@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "crons": [
     {
-      "path": "/api/cloudflare/delete-videos",
+      "path": "/api/bunny/delete-videos",
       "schedule": "0 7 * * *"
     }
   ]

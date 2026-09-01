@@ -642,6 +642,7 @@ export type Database = {
           file_type: string
           height: number | null
           id: number
+          thumbnail_url: string | null
           user_id: string
           width: number | null
         }
@@ -654,6 +655,7 @@ export type Database = {
           file_type: string
           height?: number | null
           id?: number
+          thumbnail_url?: string | null
           user_id?: string
           width?: number | null
         }
@@ -666,6 +668,7 @@ export type Database = {
           file_type?: string
           height?: number | null
           id?: number
+          thumbnail_url?: string | null
           user_id?: string
           width?: number | null
         }
@@ -776,6 +779,62 @@ export type Database = {
           },
           {
             foreignKeyName: "reactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      video_uploads: {
+        Row: {
+          concert_id: number
+          created_at: string
+          id: number
+          status: Database["public"]["Enums"]["video_status"]
+          user_id: string
+          video_id: string
+        }
+        Insert: {
+          concert_id: number
+          created_at?: string
+          id?: number
+          status?: Database["public"]["Enums"]["video_status"]
+          user_id?: string
+          video_id: string
+        }
+        Update: {
+          concert_id?: number
+          created_at?: string
+          id?: number
+          status?: Database["public"]["Enums"]["video_status"]
+          user_id?: string
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_uploads_concert_id_fkey"
+            columns: ["concert_id"]
+            isOneToOne: false
+            referencedRelation: "concerts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "video_uploads_concert_id_fkey"
+            columns: ["concert_id"]
+            isOneToOne: false
+            referencedRelation: "concerts_full"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "video_uploads_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profile_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "video_uploads_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -1104,6 +1163,13 @@ export type Database = {
       locations_type: "locations"
       resource_status: "complete" | "incomplete_lineup"
       resources: "concerts" | "bands" | "locations"
+      video_status:
+        | "queued"
+        | "processing"
+        | "encoding"
+        | "finished"
+        | "resolution_finished"
+        | "failed"
     }
     CompositeTypes: {
       search_result: {
@@ -1261,6 +1327,14 @@ export const Constants = {
       locations_type: ["locations"],
       resource_status: ["complete", "incomplete_lineup"],
       resources: ["concerts", "bands", "locations"],
+      video_status: [
+        "queued",
+        "processing",
+        "encoding",
+        "finished",
+        "resolution_finished",
+        "failed",
+      ],
     },
   },
 } as const

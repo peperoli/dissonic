@@ -4,7 +4,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
 import toast from 'react-hot-toast'
 import { MemoryFileItem } from '../helpers/useMemoriesControl'
-import { getCloudflareVideoDetails } from '@/lib/cloudflareHelpers'
 import { addConcertFanId } from '@/actions/algolia'
 
 async function addLog({
@@ -38,30 +37,11 @@ async function addLog({
     memoryFileItemsToAdd
       .filter(memoryFileItem => memoryFileItem.fileId != null)
       .map(async memoryFileItem => {
-        let dimensions: { width: number | null; height: number | null } = {
-          width: null,
-          height: null,
-        }
-        let duration: number | null = null
-
-        if (memoryFileItem.file.type.startsWith('video/')) {
-          const videoDetails = await getCloudflareVideoDetails(memoryFileItem.fileId!)
-
-          dimensions = {
-            width: videoDetails.input?.width ?? null,
-            height: videoDetails.input?.height ?? null,
-          }
-          duration = videoDetails.duration ? Math.round(videoDetails.duration) : null
-        }
-
         return {
           file_id: memoryFileItem.fileId!,
           file_type: memoryFileItem.file.type,
           band_id: memoryFileItem.bandId,
           concert_id: concertId,
-          width: dimensions.width,
-          height: dimensions.height,
-          duration,
         } satisfies TablesInsert<'memories'>
       })
   )

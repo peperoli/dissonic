@@ -1,15 +1,12 @@
 import { useMemories } from '@/hooks/concerts/useMemories'
-import {
-  getCloudflareImageUrl,
-  getCloudflareThumbnailUrl,
-  getCloudflareVideoUrl,
-} from '@/lib/cloudflareHelpers'
+import { getCloudflareImageUrl } from '@/lib/cloudflareHelpers'
+import { getBunnyThumbnailUrl, getBunnyVideoUrl } from '@/lib/bunnyHelpers'
 import Image from 'next/image'
 import { Dialog, type DialogProps } from '../shared/Dialog'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { PlaySquareIcon, PlusIcon, XIcon } from 'lucide-react'
+import { useState, WheelEvent } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+import { PlayIcon, PlusIcon, XIcon } from 'lucide-react'
 import { Memory } from '@/types/types'
 import { UserItem } from '../shared/UserItem'
 import Link from 'next/link'
@@ -18,6 +15,10 @@ import supabase from '@/utils/supabase/client'
 import { VideoPlayer } from '../shared/VideoPlayer'
 import { Button } from '../Button'
 import { useModal } from '../shared/ModalProvider'
+import { useVideoUploadsRealtime } from '@/hooks/concerts/useVideoUploadsRealtime'
+import { SpinnerIcon } from '../layout/SpinnerIcon'
+import { useSession } from '@/hooks/auth/useSession'
+import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 
 async function fetchMemoriesCount(concertId: number, fileType?: 'image/' | 'video/') {
   let query = supabase.from('memories').select('id', { count: 'exact' }).eq('concert_id', concertId)
@@ -36,6 +37,8 @@ async function fetchMemoriesCount(concertId: number, fileType?: 'image/' | 'vide
 }
 
 export function ConcertMemories({ concertId }: { concertId: number }) {
+  const { data: session } = useSession()
+  const pathname = usePathname()
   const { data: memories } = useMemories({ concertId, size: 4 })
   const { data: imageMemoriesCount } = useQuery({
     queryKey: ['image-memories-count', concertId],
@@ -54,86 +57,130 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
   const { push } = useRouter()
   const [, setModal] = useModal()
 
+  useVideoUploadsRealtime(concertId)
+
+  if (!session) {
+    return (
+      <section className="rounded-lg bg-slate-800 p-4 md:p-6">
+        <h2>{t('memories')}</h2>
+        <p className="mb-4 text-sm text-slate-300">{t('loginToViewAndShareMemories')}</p>
+        <Button
+          label={t('login')}
+          onClick={() => push(`/login?redirect=${pathname}`)}
+          size="small"
+        />
+      </section>
+    )
+  }
+
   return (
     <>
       <section className="rounded-lg bg-slate-800 p-4 md:p-6">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-          <h2 className="mb-0">
-            {t('memories')}{' '}
-            <span className="rounded-md bg-slate-300 px-1 text-sm font-bold text-slate-850">
-              Beta
-            </span>
-          </h2>
-          {!!imageMemoriesCount && (
+          <div className="flex items-baseline gap-2">
+            <h2 className="mb-0">
+              {t('memories')}{' '}
+              <span className="rounded-md bg-slate-300 px-1 text-sm font-bold text-slate-850">
+                Beta
+              </span>
+            </h2>
             <span className="text-sm text-slate-300">
-              &bull; {t('nImages', { count: imageMemoriesCount })}
+              {!!imageMemoriesCount && <>&bull; {t('nImages', { count: imageMemoriesCount })}</>}
+              {!!videoMemoriesCount && <> &bull; {t('nVideos', { count: videoMemoriesCount })}</>}
             </span>
-          )}
-          {!!videoMemoriesCount && (
-            <span className="text-sm text-slate-300">
-              {' '}
-              &bull; {t('nVideos', { count: videoMemoriesCount })}
-            </span>
-          )}
+          </div>
           <Button
             label={t('addMemory')}
             onClick={() => setModal('edit-log')}
             icon={<PlusIcon className="size-icon" />}
             size="small"
-            className="md:ml-auto"
           />
         </div>
         <ul className="grid grid-cols-2 gap-2 md:grid-cols-4">
           {memories?.length ? (
-            memories.map((memory, index) => (
-              <li
-                key={memory.id}
-                role="button"
-                onClick={() => {
-                  setLightboxIsOpen(true)
-                  push(`#${memory.id}`)
-                }}
-                className="relative aspect-square rounded-lg bg-slate-700"
-              >
-                <Image
-                  src={
-                    memory.file_type.startsWith('image/')
-                      ? getCloudflareImageUrl(memory.file_id, {
-                          width: 300,
-                          height: 300,
-                          fit: 'cover',
-                        })
-                      : getCloudflareThumbnailUrl(memory.file_id, {
-                          time: '1s',
-                          width: 300,
-                          height: 300,
-                        })
-                  }
-                  alt=""
-                  fill
-                  unoptimized
-                  className="rounded-lg object-cover"
-                />
-                {memory.file_type.startsWith('video/') && (
-                  <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded bg-slate-900/70 p-1 text-sm">
-                    <PlaySquareIcon className="size-icon" />
-                    {memory.duration && (
-                      <span>
-                        {Math.floor(memory.duration / 60)}:
-                        {(memory.duration % 60).toString().padStart(2, '0')}
-                      </span>
+            memories.map((memory, index) => {
+              const isLoading =
+                memory.file_type.startsWith('video/') &&
+                (memory.status === 'queued' ||
+                  memory.status === 'processing' ||
+                  memory.status === 'encoding')
+              if (memory.file_type.startsWith('image/')) {
+                return (
+                  <li
+                    key={memory.id}
+                    role="button"
+                    onClick={() => {
+                      setLightboxIsOpen(true)
+                      push(`#${memory.id}`)
+                    }}
+                    className="relative aspect-square rounded-lg bg-slate-700"
+                  >
+                    <Image
+                      src={getCloudflareImageUrl(memory.file_id, {
+                        width: 300,
+                        height: 300,
+                        fit: 'cover',
+                      })}
+                      alt=""
+                      fill
+                      unoptimized
+                      className="rounded-lg object-cover"
+                    />
+                    {index === 3 && (memoriesCount ?? 0) > 4 && (
+                      <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-900/50 text-xl backdrop-blur-sm">
+                        <div className="btn btn-small btn-secondary !bg-slate-900/70">
+                          +{(memoriesCount ?? 0) - 4}
+                        </div>
+                      </div>
                     )}
-                  </div>
-                )}
-                {index === 3 && (memoriesCount ?? 0) > 4 && (
-                  <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-900/50 text-xl backdrop-blur-sm">
-                    <div className="btn btn-small btn-secondary !bg-slate-900/70">
-                      +{(memoriesCount ?? 0) - 4}
+                  </li>
+                )
+              }
+              return (
+                <li
+                  key={memory.id}
+                  role="button"
+                  onClick={() => {
+                    setLightboxIsOpen(true)
+                    push(`#${memory.id}`)
+                  }}
+                  className="relative aspect-square rounded-lg bg-slate-700"
+                >
+                  {isLoading ? (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center rounded-lg bg-slate-900 text-xl">
+                      <SpinnerIcon className="size-8 animate-spin" />
+                      <span className="text-sm">{t(memory.status)}</span>
                     </div>
-                  </div>
-                )}
-              </li>
-            ))
+                  ) : (
+                    <>
+                      <Image
+                        src={memory.thumbnail_url ?? getBunnyThumbnailUrl(memory.file_id)}
+                        alt=""
+                        fill
+                        unoptimized
+                        className="rounded-lg object-cover"
+                      />
+                      <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded bg-slate-900/70 p-1 text-sm">
+                        <PlayIcon className="size-icon" />
+                        {memory.duration && (
+                          <span>
+                            {Math.floor(memory.duration / 60)}:
+                            {(memory.duration % 60).toString().padStart(2, '0')}
+                          </span>
+                        )}
+                      </div>
+                    </>
+                  )}
+                  {index === 3 && (memoriesCount ?? 0) > 4 && (
+                    <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-900/50 text-xl backdrop-blur-sm">
+                      <div className="btn btn-small btn-secondary !bg-slate-900/70">
+                        +{(memoriesCount ?? 0) - 4}
+                      </div>
+                    </div>
+                  )}
+                </li>
+              )
+            })
           ) : (
             <p className="col-span-full text-sm text-slate-300">{t('noMemoriesYet')}</p>
           )}
@@ -163,44 +210,64 @@ function Lightbox({
   const { data: memories } = useMemories({ concertId })
   const [metadataIsVisible, setMetadataIsVisible] = useState(true)
   const t = useTranslations('Memories')
+  const isDesktop = useMediaQuery('(min-width: 768px)')
 
   function toggleMetadata() {
     setMetadataIsVisible(!metadataIsVisible)
   }
 
+  function overrideScroll(event: WheelEvent<HTMLUListElement>) {
+    if (event.deltaY == 0) return
+    event.preventDefault()
+    event.currentTarget.scrollTo({
+      left: event.currentTarget.scrollLeft + event.deltaY * 1.5,
+    })
+  }
+
   return (
     <Dialog.Root {...dialogProps}>
       <Dialog.Portal>
-        <Dialog.Content className="backdrop:bg-slate-900 fixed inset-0 z-50 mx-auto max-w-xl overflow-y-auto scroll-smooth bg-slate-900">
-          <div className="flex flex-wrap items-center gap-2 p-4">
-            <Dialog.Title className="mb-0">{t('memories')}</Dialog.Title>
-            <span className="rounded-md bg-slate-300 px-1 text-sm font-bold text-slate-850">
-              Beta
-            </span>
-            {!!imageMemoriesCount && (
-              <span className="text-sm text-slate-300">
-                &bull; {t('nImages', { count: imageMemoriesCount })}
-              </span>
-            )}
-            {!!videoMemoriesCount && (
-              <span className="text-sm text-slate-300">
-                {' '}
-                &bull; {t('nVideos', { count: videoMemoriesCount })}
-              </span>
-            )}
-            <Dialog.Close className="btn btn-secondary btn-icon ml-auto">
+        <Dialog.Content className="fixed inset-0 z-50 flex-col bg-slate-900 backdrop:bg-slate-900 open:flex">
+          <div className="flex items-center gap-2 p-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <Dialog.Title className="mb-0">{t('memories')}</Dialog.Title>
+                <span className="rounded-md bg-slate-300 px-1 text-sm font-bold text-slate-850">
+                  Beta
+                </span>
+              </div>
+              {!!imageMemoriesCount && (
+                <span className="text-sm text-slate-300">
+                  &bull; {t('nImages', { count: imageMemoriesCount })}
+                </span>
+              )}
+              {!!videoMemoriesCount && (
+                <span className="text-sm text-slate-300">
+                  {' '}
+                  &bull; {t('nVideos', { count: videoMemoriesCount })}
+                </span>
+              )}
+            </div>
+            <Dialog.Close className="btn btn-secondary btn-icon btn-small ml-auto">
               <XIcon className="size-icon" />
             </Dialog.Close>
           </div>
-          <ul className="flex flex-col gap-2 px-2 pb-2">
-            {memories?.map(memory => (
-              <MemoryItem
-                key={memory.id}
-                memory={memory}
-                metadataIsVisible={metadataIsVisible}
-                toggleMetadata={toggleMetadata}
-              />
-            ))}
+          <ul
+            onWheel={isDesktop ? overrideScroll : undefined}
+            className="flex flex-col gap-2 overflow-y-auto px-2 pb-2 md:h-full md:flex-row md:overflow-x-auto md:overflow-y-hidden"
+          >
+            {memories
+              ?.filter(
+                memory => memory.file_type.startsWith('image/') || memory.status === 'finished'
+              )
+              .map(memory => (
+                <MemoryItem
+                  key={memory.id}
+                  memory={memory}
+                  metadataIsVisible={metadataIsVisible}
+                  toggleMetadata={toggleMetadata}
+                />
+              ))}
           </ul>
         </Dialog.Content>
       </Dialog.Portal>
@@ -217,26 +284,29 @@ function MemoryItem({
   metadataIsVisible: boolean
   toggleMetadata: () => void
 }) {
+  const isDesktop = useMediaQuery('(min-width: 768px)')
+
   return (
     <li
       id={memory.id.toString()}
       onClick={toggleMetadata}
-      className="relative grid flex-none place-content-center rounded-lg bg-slate-700"
+      className="relative grid max-h-[800px] flex-none place-content-center rounded-lg bg-slate-800 md:h-full"
       style={{
         aspectRatio: memory.width && memory.height ? memory.width / memory.height : undefined,
       }}
     >
       {memory.file_type.startsWith('image/') ? (
-        <Image
-          src={getCloudflareImageUrl(memory.file_id, { width: 800 })}
+        <img
+          src={getCloudflareImageUrl(memory.file_id, {
+            width: isDesktop ? undefined : 800,
+            height: isDesktop ? 800 : undefined,
+          })}
+          loading="lazy"
           alt=""
-          width={1000}
-          height={1000}
-          unoptimized
-          className="max-h-full rounded-lg object-cover"
+          className="h-full w-auto flex-none rounded-lg object-cover"
         />
       ) : (
-        <VideoPlayer src={getCloudflareVideoUrl(memory.file_id)} />
+        <VideoPlayer src={getBunnyVideoUrl(memory.file_id)} />
       )}
       {metadataIsVisible && (
         <div className="absolute inset-0 bottom-auto m-2 flex flex-col items-start gap-1">

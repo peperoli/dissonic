@@ -1,6 +1,7 @@
 import { uploadImageCloudflare } from '@/lib/uploadImageCloudflare'
-import { uploadVideoCloudflare } from '@/lib/uploadVideoCloudflare'
+import { uploadVideoBunny } from '@/lib/uploadVideoBunny'
 import { Tables } from '@/types/supabase'
+import supabase from '@/utils/supabase/client'
 import { ChangeEvent, Dispatch, DragEvent, SetStateAction, useMemo, useState } from 'react'
 
 export type MemoryFileItem = {
@@ -17,6 +18,7 @@ export type MemoryFileItem = {
 }
 
 export function useMemoriesControl(
+  concertId: number,
   fileItems: MemoryFileItem[],
   setFileItems: Dispatch<SetStateAction<MemoryFileItem[]>>,
   options: { prefix?: string; acceptedFileTypes?: string[] }
@@ -64,7 +66,7 @@ export function useMemoriesControl(
               )
             )
           } else if (file.type.startsWith('video/')) {
-            const { videoId } = await uploadVideoCloudflare(file, {
+            const { videoId } = await uploadVideoBunny(file, {
               prefix,
               maxDuration: 60,
               onUploadProgress: progress => {
@@ -75,6 +77,15 @@ export function useMemoriesControl(
                 )
               },
             })
+
+            const { error } = await supabase.from('video_uploads').insert({
+              video_id: videoId,
+              concert_id: concertId,
+            })
+
+            if (error) {
+              throw error
+            }
 
             setFileItems(prevItems =>
               prevItems.map(item =>

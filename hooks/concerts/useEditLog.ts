@@ -4,7 +4,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
 import toast from 'react-hot-toast'
 import { MemoryFileItem } from '../helpers/useMemoriesControl'
-import { getCloudflareVideoDetails } from '@/lib/cloudflareHelpers'
 import { updateConcertFanIds } from '@/actions/algolia'
 
 async function editLog({
@@ -65,30 +64,11 @@ async function editLog({
     memoryFileItemsToAdd
       .filter(memoryFileItem => memoryFileItem.fileId != null)
       .map(async memoryFileItem => {
-        let dimensions: { width: number | null; height: number | null } = {
-          width: null,
-          height: null,
-        }
-        let duration: number | null = null
-
-        if (memoryFileItem.file.type.startsWith('video/')) {
-          const videoDetails = await getCloudflareVideoDetails(memoryFileItem.fileId!)
-
-          dimensions = {
-            width: videoDetails.input?.width ?? null,
-            height: videoDetails.input?.height ?? null,
-          }
-          duration = videoDetails.duration ? Math.round(videoDetails.duration) : null
-        }
-
         return {
           file_id: memoryFileItem.fileId!,
           file_type: memoryFileItem.file.type,
           band_id: memoryFileItem.bandId,
           concert_id: concertId,
-          width: dimensions.width,
-          height: dimensions.height,
-          duration,
         } satisfies TablesInsert<'memories'>
       })
   )
@@ -100,15 +80,32 @@ async function editLog({
   }
 
   if (memoryIdsToDelete.length) {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('memories')
       .delete()
       .eq('concert_id', concertId)
       .in('id', memoryIdsToDelete)
+      .select('file_type, file_id')
 
     if (error) {
       throw error
     }
+
+    await Promise.all(
+      data
+        .filter(memory => memory.file_type.startsWith('video/'))
+        .map(async memory => {
+          const res = await fetch(`/api/bunny/delete-video?videoId=${memory.file_id}`, {
+            method: 'POST',
+          })
+
+          if (!res.ok) {
+            const errorText = await res.text()
+            console.error('Failed to delete video:', errorText)
+            throw new Error('Failed to delete video')
+          }
+        })
+    )
   }
 
   await Promise.all(
