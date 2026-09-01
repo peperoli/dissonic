@@ -19,10 +19,8 @@ export function useVideoUploadsRealtime(concertId?: number) {
           table: 'video_uploads',
           filter: `concert_id=eq.${concertId}`,
         },
-        payload => {
-          const videoUpload = payload.new as Tables<'video_uploads'>
-          console.log('Video upload updated:', videoUpload)
-
+        _payload => {
+          // Invalidate memories query to reflect updated upload status
           queryClient.invalidateQueries({
             queryKey: ['memories', concertId],
           })

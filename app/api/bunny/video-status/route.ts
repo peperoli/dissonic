@@ -29,7 +29,10 @@ function validateWebhookSignature(
     return false
   }
 
-  return timingSafeEqual(Buffer.from(expectedHex, 'utf8'), Buffer.from(signatureHeader, 'utf8'))
+  return timingSafeEqual(
+    Buffer.from(expectedHex, 'hex'),
+    Buffer.from(signatureHeader.toLowerCase(), 'hex')
+  )
 }
 
 type CallbackData = {
@@ -74,9 +77,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true, reason: 'unknown_status' }, { status: 202 })
   }
 
-  if (status === 'finished') {
-    const { video, thumbnailUrl } = await getBunnyVideoDetails(data.VideoGuid)
-
+  if (status === 'finished' || status === 'resolution_finished') {
     const { error } = await supabase
       .from('memories')
       .update({
