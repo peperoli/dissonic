@@ -78,6 +78,8 @@ export async function POST(request: NextRequest) {
   }
 
   if (status === 'finished' || status === 'resolution_finished') {
+    const { video, thumbnailUrl } = await getBunnyVideoDetails(data.VideoGuid)
+
     const { error } = await supabase
       .from('memories')
       .update({
