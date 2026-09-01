@@ -6,6 +6,11 @@ export async function GET() {
   const libraryId = BUNNY_LIBRARY_ID
   const bunnyStreamEndpoint = `https://video.bunnycdn.com/library/${libraryId}/videos`
   const supabase = await createClient()
+  const apiKey = process.env.BUNNY_STREAM_API_KEY
+
+  if (!apiKey) {
+    return NextResponse.json({ error: 'Bunny Stream not configured' }, { status: 500 })
+  }
 
   const { data: memories, error } = await supabase.from('memories').select('file_id')
 
@@ -17,10 +22,14 @@ export async function GET() {
   const listVideosData = await fetch(bunnyStreamEndpoint, {
     method: 'GET',
     headers: {
-      AccessKey: process.env.BUNNY_STREAM_API_KEY,
+      AccessKey: apiKey,
     },
   }).then(res => res.json())
-  console.log('Fetched videos from Bunny Stream:', listVideosData)
+
+  if (!listVideosData || !Array.isArray(listVideosData.items)) {
+    console.error('Unexpected list response:', listVideosData)
+    return NextResponse.json({ error: 'Failed to list videos' }, { status: 502 })
+  }
 
   await Promise.all(
     listVideosData.items.map(async (item: { guid: string }) => {
@@ -29,7 +38,7 @@ export async function GET() {
       const response = await fetch(`${bunnyStreamEndpoint}/${item.guid}`, {
         method: 'DELETE',
         headers: {
-          AccessKey: process.env.BUNNY_STREAM_API_KEY,
+          AccessKey: apiKey,
         },
       })
 

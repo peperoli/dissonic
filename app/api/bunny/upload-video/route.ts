@@ -1,4 +1,5 @@
 import { BUNNY_LIBRARY_ID } from '@/lib/bunnyHelpers'
+import { createClient } from '@/utils/supabase/server'
 import { type NextRequest, NextResponse } from 'next/server'
 import { createHash } from 'node:crypto'
 
@@ -17,23 +18,29 @@ interface UploadCredentials {
 }
 
 export async function POST(request: NextRequest) {
-  const BUNNY_API_KEY = process.env.BUNNY_STREAM_API_KEY
+  const supabase = await createClient()
+  const apiKey = process.env.BUNNY_STREAM_API_KEY
+  const libraryId = BUNNY_LIBRARY_ID
 
-  if (!BUNNY_API_KEY || !BUNNY_LIBRARY_ID) {
-    return NextResponse.json({ error: 'Bunny Stream not configured' }, { status: 500 })
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user || !apiKey) {
+    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
   }
 
   const { title } = (await request.json()) as { title?: string }
 
   // Step 1: Create a video object in Bunny Stream
   const createResponse = await fetch(
-    `https://video.bunnycdn.com/library/${BUNNY_LIBRARY_ID}/videos`,
+    `https://video.bunnycdn.com/library/${libraryId}/videos`,
     {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        AccessKey: BUNNY_API_KEY,
+        AccessKey: apiKey,
       },
       body: JSON.stringify({
         title: title ?? 'Untitled Video',
@@ -53,14 +60,14 @@ export async function POST(request: NextRequest) {
   const expirationTime = Math.floor(Date.now() / 1000) + 86400 // 24 hours
 
   const signature = createHash('sha256')
-    .update(`${BUNNY_LIBRARY_ID}${BUNNY_API_KEY}${expirationTime}${video.guid}`)
+    .update(`${libraryId}${apiKey}${expirationTime}${video.guid}`)
     .digest('hex')
 
   return NextResponse.json({
     videoId: video.guid,
-    libraryId: BUNNY_LIBRARY_ID,
+    libraryId: libraryId,
     expirationTime,
     signature,
-    embedUrl: `https://iframe.mediadelivery.net/embed/${BUNNY_LIBRARY_ID}/${video.guid}`,
+    embedUrl: `https://iframe.mediadelivery.net/embed/${libraryId}/${video.guid}`,
   } satisfies UploadCredentials)
 }

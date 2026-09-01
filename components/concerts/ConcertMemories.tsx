@@ -1,6 +1,6 @@
 import { useMemories } from '@/hooks/concerts/useMemories'
 import { getCloudflareImageUrl } from '@/lib/cloudflareHelpers'
-import { getBunnyVideoUrl } from '@/lib/bunnyHelpers'
+import { getBunnyThumbnailUrl, getBunnyVideoUrl } from '@/lib/bunnyHelpers'
 import Image from 'next/image'
 import { Dialog, type DialogProps } from '../shared/Dialog'
 import { useTranslations } from 'next-intl'
@@ -154,7 +154,7 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
                   ) : (
                     <>
                       <Image
-                        src={memory.thumbnail_url ?? ''}
+                        src={memory.thumbnail_url ?? getBunnyThumbnailUrl(memory.file_id)}
                         alt=""
                         fill
                         unoptimized

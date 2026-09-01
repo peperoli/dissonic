@@ -95,7 +95,15 @@ async function editLog({
       data
         .filter(memory => memory.file_type.startsWith('video/'))
         .map(async memory => {
-          await fetch(`/api/bunny/delete-video?videoId=${memory.file_id}`, { method: 'DELETE' })
+          const res = await fetch(`/api/bunny/delete-video?videoId=${memory.file_id}`, {
+            method: 'POST',
+          })
+
+          if (!res.ok) {
+            const errorText = await res.text()
+            console.error('Failed to delete video:', errorText)
+            throw new Error('Failed to delete video')
+          }
         })
     )
   }
