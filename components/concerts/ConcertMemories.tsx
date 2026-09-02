@@ -118,7 +118,7 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
                       src={getBunnyImageUrl(memory.file_id)}
                       alt=""
                       fill
-                      unoptimized
+                      sizes="300px"
                       className="rounded-lg object-cover"
                     />
                     {index === 3 && (memoriesCount ?? 0) > 4 && (
@@ -152,7 +152,7 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
                         src={memory.thumbnail_url ?? getBunnyThumbnailUrl(memory.file_id)}
                         alt=""
                         fill
-                        unoptimized
+                        sizes="300px"
                         className="rounded-lg object-cover"
                       />
                       <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded bg-slate-900/70 p-1 text-sm">

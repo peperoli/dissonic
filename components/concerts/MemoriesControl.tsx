@@ -8,6 +8,7 @@ import { SelectField } from '../forms/SelectField'
 import { MemoryFileItem, useMemoriesControl } from '@/hooks/helpers/useMemoriesControl'
 import { VideoPlayer } from '../shared/VideoPlayer'
 import { getBunnyImageUrl, getBunnyVideoUrl } from '@/lib/bunnyHelpers'
+import Image from 'next/image'
 
 export function MemoriesControl({
   label,
@@ -119,10 +120,12 @@ function MemoryItem({
     <div className="flex w-full gap-4 text-left">
       <div className="relative grid size-22 flex-none place-content-center rounded-md bg-slate-700">
         {fileItem.file.type.startsWith('image/') && imagePreview && (
-          <img
+          <Image
             src={imagePreview}
             alt=""
-            className="absolute inset-0 size-full rounded-md object-contain"
+            fill
+            sizes="300px"
+            className="rounded-md object-contain"
           />
         )}
         {fileItem.file.type.startsWith('video/') &&
