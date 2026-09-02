@@ -114,12 +114,11 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
                     }}
                     className="relative aspect-square rounded-lg bg-slate-700"
                   >
-                    <Image
-                      src={getBunnyImageUrl(memory.file_id)}
+                    <img
+                      src={getBunnyImageUrl(memory.file_id, { suffix: '-thumbnail' })}
                       alt=""
-                      fill
-                      sizes="300px"
-                      className="rounded-lg object-cover"
+                      loading="lazy"
+                      className="absolute inset-0 size-full rounded-lg object-cover"
                     />
                     {index === 3 && (memoriesCount ?? 0) > 4 && (
                       <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-900/50 text-xl backdrop-blur-sm">
@@ -152,7 +151,7 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
                         src={memory.thumbnail_url ?? getBunnyThumbnailUrl(memory.file_id)}
                         alt=""
                         fill
-                        sizes="300px"
+                        sizes="400px"
                         className="rounded-lg object-cover"
                       />
                       <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded bg-slate-900/70 p-1 text-sm">
@@ -279,6 +278,8 @@ function MemoryItem({
   metadataIsVisible: boolean
   toggleMetadata: () => void
 }) {
+  const isDesktop = useMediaQuery('(min-width: 768px)')
+  
   return (
     <li
       id={memory.id.toString()}
@@ -290,7 +291,7 @@ function MemoryItem({
     >
       {memory.file_type.startsWith('image/') ? (
         <img
-          src={getBunnyImageUrl(memory.file_id)}
+          src={getBunnyImageUrl(memory.file_id, { suffix: isDesktop ? '' : '-mobile' })}
           alt=""
           loading="lazy"
           className="absolute inset-0 size-full rounded-lg object-cover"

@@ -4,6 +4,7 @@ import { uploadVideoBunny } from '@/lib/uploadVideoBunny'
 import { Tables } from '@/types/supabase'
 import supabase from '@/utils/supabase/client'
 import { ChangeEvent, Dispatch, DragEvent, SetStateAction, useMemo, useState } from 'react'
+import { Temporal } from 'temporal-polyfill'
 
 export type MemoryFileItem = {
   id?: Tables<'memories'>['id']
@@ -54,22 +55,45 @@ export function useMemoriesControl(
       files.map(async file => {
         try {
           if (file.type.startsWith('image/')) {
-            const { compressedFile, width, height } = await compressImage(file)
-
-            setFileItems(prevItems =>
-              prevItems.map(item =>
-                item.file?.name === file.name ? { ...item, progress: 50, width, height } : item
-              )
-            )
-
-            const { filename } = await uploadImageBunny(compressedFile)
+            const [full, thumbnail, mobile] = await Promise.all([
+              compressImage(file),
+              compressImage(file, { maxWidth: 400, maxHeight: 400 }),
+              compressImage(file, { maxWidth: 800 }),
+            ])
 
             setFileItems(prevItems =>
               prevItems.map(item =>
                 item.file?.name === file.name
                   ? {
                       ...item,
-                      fileId: filename,
+                      progress: 50,
+                      file_type: full.compressedFile.type,
+                      width: full.width,
+                      height: full.height,
+                    }
+                  : item
+              )
+            )
+
+            const timestamp = Temporal.Now.instant().epochMilliseconds
+            const filenames = await Promise.all([
+              uploadImageBunny(full.compressedFile, { prefix: `${timestamp}-` }),
+              uploadImageBunny(thumbnail.compressedFile, {
+                prefix: `${timestamp}-`,
+                suffix: '-thumbnail',
+              }),
+              uploadImageBunny(mobile.compressedFile, {
+                prefix: `${timestamp}-`,
+                suffix: '-mobile',
+              }),
+            ])
+
+            setFileItems(prevItems =>
+              prevItems.map(item =>
+                item.file?.name === file.name
+                  ? {
+                      ...item,
+                      fileId: filenames[0],
                       isLoading: false,
                       progress: 100,
                       isSuccess: true,

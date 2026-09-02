@@ -1,6 +1,5 @@
 import { BUNNY_STORAGE_ZONE } from '@/lib/bunnyHelpers'
 import { NextRequest, NextResponse } from 'next/server'
-import { Temporal } from 'temporal-polyfill'
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData()
@@ -16,9 +15,8 @@ export async function POST(req: NextRequest) {
   const storageZone = BUNNY_STORAGE_ZONE
   const accessKey = process.env.BUNNY_STORAGE_API_KEY
 
-  const filename = `${Temporal.Now.instant().epochMilliseconds}-${file.name}`
   const host = 'storage.bunnycdn.com'
-  const uploadUrl = `https://${host}/${storageZone}/${filename}`
+  const uploadUrl = `https://${host}/${storageZone}/${file.name}`
 
   const bunnyRes = await fetch(uploadUrl, {
     method: 'PUT',
@@ -35,7 +33,7 @@ export async function POST(req: NextRequest) {
   }
 
   return NextResponse.json({
-    filename,
-    url: `https://${storageZone}.b-cdn.net/${filename}`,
+    filename: file.name,
+    url: `https://${storageZone}.b-cdn.net/${file.name}`,
   })
 }

@@ -1,9 +1,10 @@
-import { Temporal } from 'temporal-polyfill'
-
-export async function uploadImageBunny(file: File) {
-  const imageId = Temporal.Now.instant().epochMilliseconds
-  const fileExtension = file.type.split('/').at(-1)
-  const fileName = `${imageId}.${fileExtension}`
+export async function uploadImageBunny(
+  file: File,
+  options: { prefix?: string; suffix?: string } = {}
+): Promise<string> {
+  const stem = file.name.split('.').slice(0, -1).join('.')
+  const extension = file.type.split('/').at(-1)
+  const fileName = `${options.prefix ?? ''}${stem}${options.suffix ?? ''}.${extension}`
   const formData = new FormData()
   formData.append('file', file, fileName)
 
@@ -21,7 +22,7 @@ export async function uploadImageBunny(file: File) {
     throw new Error(`Failed to upload file: ${file.name}`)
   }
 
-  const { filename, url } = await response.json()
+  const { filename } = await response.json()
 
-  return { filename, url }
+  return filename
 }

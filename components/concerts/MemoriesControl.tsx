@@ -113,19 +113,20 @@ function MemoryItem({
   onRemove: () => void
   bands: Band[]
 }) {
-  const imagePreview = fileItem.preview || (fileItem.fileId && getBunnyImageUrl(fileItem.fileId))
+  const imagePreview =
+    fileItem.preview ||
+    (fileItem.fileId && getBunnyImageUrl(fileItem.fileId, { suffix: '-thumbnail' }))
   const t = useTranslations('MemoriesControl')
 
   return (
     <div className="flex w-full gap-4 text-left">
       <div className="relative grid size-22 flex-none place-content-center rounded-md bg-slate-700">
         {fileItem.file.type.startsWith('image/') && imagePreview && (
-          <Image
+          <img
             src={imagePreview}
             alt=""
-            fill
-            sizes="300px"
-            className="rounded-md object-contain"
+            loading="lazy"
+            className="absolute inset-0 size-full rounded-md object-contain"
           />
         )}
         {fileItem.file.type.startsWith('video/') &&

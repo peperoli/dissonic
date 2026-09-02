@@ -1,13 +1,21 @@
+const DIMENSION_LIMIT = 2500
+
 export function compressImage(
   file: File,
-  maxWidth = 3000,
-  maxHeight = 3000,
-  type = 'image/webp',
-  quality = 0.8
+  options?: {
+    maxWidth?: number
+    maxHeight?: number
+    type?: string
+    quality?: number
+  }
 ): Promise<{ compressedFile: File; width: number; height: number }> {
   return new Promise((resolve, reject) => {
     const img = new Image()
     const reader = new FileReader()
+    const maxWidth = options?.maxWidth ?? DIMENSION_LIMIT
+    const maxHeight = options?.maxHeight ?? DIMENSION_LIMIT
+    const type = options?.type ?? 'image/webp'
+    const quality = options?.quality ?? 0.8
 
     reader.onload = e => {
       if (!e.target?.result || typeof e.target.result !== 'string') {
@@ -29,9 +37,9 @@ export function compressImage(
         return
       }
 
-      const ratio = Math.min(maxWidth / img.width, maxHeight / img.height)
-      canvas.width = img.width * ratio
-      canvas.height = img.height * ratio
+      const ratio = Math.min(maxWidth / img.width, maxHeight / img.height, 1)
+      canvas.width = Math.round(img.width * ratio)
+      canvas.height = Math.round(img.height * ratio)
 
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
 
@@ -42,7 +50,11 @@ export function compressImage(
             return
           }
 
-          const compressedFile = new File([blob], file.name, { type })
+          const stem = file.name.split('.').slice(0, -1).join('.')
+          const extension = type.split('/').at(-1)
+          const fileName = `${stem}.${extension}`
+          const compressedFile = new File([blob], fileName, { type: type })
+
           resolve({ compressedFile, width: canvas.width, height: canvas.height })
         },
         type,
