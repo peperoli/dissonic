@@ -23,6 +23,7 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'saehmgtoacwmofqbbaff.supabase.co' },
       { protocol: 'https', hostname: 'dissonic.ch' },
       { protocol: 'https', hostname: 'concert-memories.b-cdn.net' },
+      { protocol: 'https', hostname: 'vz-335be0a4-28b.b-cdn.net' },
     ],
   },
   redirects: async () => {
