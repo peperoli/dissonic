@@ -1,14 +1,21 @@
-export const BUNNY_PULL_ZONE = 'vz-335be0a4-28b'
+export const BUNNY_STREAM_PULL_ZONE = 'vz-335be0a4-28b'
 export const BUNNY_LIBRARY_ID = '733737'
+export const BUNNY_STORAGE_ZONE = 'concert-memories'
+
+export function getBunnyImageUrl(filename: string): string {
+  const pullZone = BUNNY_STORAGE_ZONE
+
+  return `https://${pullZone}.b-cdn.net/${filename}`
+}
 
 export function getBunnyVideoUrl(videoId: string): string {
-  const pullZone = BUNNY_PULL_ZONE
+  const pullZone = BUNNY_STREAM_PULL_ZONE
 
   return `https://${pullZone}.b-cdn.net/${videoId}/playlist.m3u8`
 }
 
 export function getBunnyThumbnailUrl(videoId: string) {
-  const pullZone = BUNNY_PULL_ZONE
+  const pullZone = BUNNY_STREAM_PULL_ZONE
 
   return `https://${pullZone}.b-cdn.net/${videoId}/thumbnails/thumbnail.jpg`
 }
@@ -41,4 +48,3 @@ export async function getBunnyVideoDetails(videoId: string): Promise<VideoDetail
 
   return await response.json()
 }
-

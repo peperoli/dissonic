@@ -15,6 +15,7 @@ const envSchema = z.object({
   NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY: z.string().min(1),
   BUNNY_STREAM_API_KEY: z.string().min(1),
   BUNNY_STREAM_READ_API_KEY: z.string().min(1),
+  BUNNY_STORAGE_API_KEY: z.string().min(1),
 })
 
 export type EnvSchema = z.infer<typeof envSchema>

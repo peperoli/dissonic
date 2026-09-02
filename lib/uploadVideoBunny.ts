@@ -9,7 +9,6 @@ type UploadCredentials = {
 }
 
 type UploadVideoBunnyOptions = {
-  prefix?: string
   maxDuration?: number
   onUploadProgress?: (progress: number) => void
   signal?: AbortSignal
@@ -18,8 +17,6 @@ type UploadVideoBunnyOptions = {
 const BUNNY_TUS_ENDPOINT = 'https://video.bunnycdn.com/tusupload'
 
 export async function uploadVideoBunny(file: File, options: UploadVideoBunnyOptions) {
-  const fileName = options.prefix ? `${options.prefix}-${file.name}` : file.name
-
   if (file.type !== 'video/mp4') {
     throw new Error(`File type ${file.type} is not accepted. Expected video/mp4.`)
   }
@@ -46,7 +43,7 @@ export async function uploadVideoBunny(file: File, options: UploadVideoBunnyOpti
       chunkSize: 5 * 1024 * 1024,
       retryDelays: [0, 3000, 5000, 10000],
       metadata: {
-        filename: fileName,
+        filename: file.name,
         filetype: file.type,
       },
       headers: {
@@ -64,7 +61,7 @@ export async function uploadVideoBunny(file: File, options: UploadVideoBunnyOpti
         options.onUploadProgress?.(progress)
       },
       onSuccess: () => {
-        resolve({ fileName, videoId: credentials.videoId, videoUrl: credentials.embedUrl })
+        resolve({ fileName: file.name, videoId: credentials.videoId, videoUrl: credentials.embedUrl })
       },
     })
 

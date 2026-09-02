@@ -1,4 +1,5 @@
-import { uploadImageCloudflare } from '@/lib/uploadImageCloudflare'
+import { compressImage } from '@/lib/compressImage'
+import { uploadImageBunny } from '@/lib/uploadImageBunny'
 import { uploadVideoBunny } from '@/lib/uploadVideoBunny'
 import { Tables } from '@/types/supabase'
 import supabase from '@/utils/supabase/client'
@@ -10,6 +11,8 @@ export type MemoryFileItem = {
   bandId: Tables<'memories'>['band_id']
   duration: Tables<'memories'>['duration']
   file: File | { name?: null; type: string; size?: null }
+  width?: number
+  height?: number
   preview?: string | null
   isLoading?: boolean
   progress?: number | null
@@ -20,10 +23,8 @@ export type MemoryFileItem = {
 export function useMemoriesControl(
   concertId: number,
   fileItems: MemoryFileItem[],
-  setFileItems: Dispatch<SetStateAction<MemoryFileItem[]>>,
-  options: { prefix?: string; acceptedFileTypes?: string[] }
+  setFileItems: Dispatch<SetStateAction<MemoryFileItem[]>>
 ) {
-  const { prefix, acceptedFileTypes = [] } = options
   const [dragActive, setDragActive] = useState(false)
 
   const isSuccess = useMemo(
@@ -53,21 +54,31 @@ export function useMemoriesControl(
       files.map(async file => {
         try {
           if (file.type.startsWith('image/')) {
-            const { imageId } = await uploadImageCloudflare(file, {
-              prefix,
-              acceptedFileTypes,
-            })
+            const { compressedFile, width, height } = await compressImage(file)
+
+            setFileItems(prevItems =>
+              prevItems.map(item =>
+                item.file?.name === file.name ? { ...item, progress: 50, width, height } : item
+              )
+            )
+
+            const { filename } = await uploadImageBunny(compressedFile)
 
             setFileItems(prevItems =>
               prevItems.map(item =>
                 item.file?.name === file.name
-                  ? { ...item, fileId: imageId, isLoading: false, progress: 100, isSuccess: true }
+                  ? {
+                      ...item,
+                      fileId: filename,
+                      isLoading: false,
+                      progress: 100,
+                      isSuccess: true,
+                    }
                   : item
               )
             )
           } else if (file.type.startsWith('video/')) {
             const { videoId } = await uploadVideoBunny(file, {
-              prefix,
               maxDuration: 60,
               onUploadProgress: progress => {
                 setFileItems(prevItems =>
@@ -94,6 +105,8 @@ export function useMemoriesControl(
                   : item
               )
             )
+          } else {
+            throw new Error(`Unsupported file type: ${file.type}`)
           }
         } catch (error) {
           console.error(error)

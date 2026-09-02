@@ -6,9 +6,8 @@ import { Dispatch, SetStateAction, useRef } from 'react'
 import { Button } from '../Button'
 import { SelectField } from '../forms/SelectField'
 import { MemoryFileItem, useMemoriesControl } from '@/hooks/helpers/useMemoriesControl'
-import { getCloudflareImageUrl } from '@/lib/cloudflareHelpers'
 import { VideoPlayer } from '../shared/VideoPlayer'
-import { getBunnyVideoUrl } from '@/lib/bunnyHelpers'
+import { getBunnyImageUrl, getBunnyVideoUrl } from '@/lib/bunnyHelpers'
 
 export function MemoriesControl({
   label,
@@ -16,7 +15,6 @@ export function MemoriesControl({
   concertId,
   fileItems,
   setFileItems,
-  acceptedFileTypes,
   bands,
 }: {
   label: string
@@ -24,13 +22,13 @@ export function MemoriesControl({
   concertId: number
   fileItems: MemoryFileItem[]
   setFileItems: Dispatch<SetStateAction<MemoryFileItem[]>>
-  acceptedFileTypes?: string[]
   bands: Band[]
 }) {
-  const { isDragActive, onDrag, onDrop, onChange } = useMemoriesControl(concertId,fileItems, setFileItems, {
-    prefix: 'concert-memories',
-    acceptedFileTypes,
-  })
+  const { isDragActive, onDrag, onDrop, onChange } = useMemoriesControl(
+    concertId,
+    fileItems,
+    setFileItems
+  )
   const ref = useRef(null)
   const t = useTranslations('MemoriesControl')
 
@@ -45,7 +43,7 @@ export function MemoriesControl({
           type="file"
           id={name}
           name={name}
-          accept={acceptedFileTypes?.join(',')}
+          accept="image/*,video/*"
           multiple
           onChange={onChange}
           className="peer sr-only"
@@ -114,8 +112,7 @@ function MemoryItem({
   onRemove: () => void
   bands: Band[]
 }) {
-  const imagePreview =
-    fileItem.preview || (fileItem.fileId && getCloudflareImageUrl(fileItem.fileId, { width: 300 }))
+  const imagePreview = fileItem.preview || (fileItem.fileId && getBunnyImageUrl(fileItem.fileId))
   const t = useTranslations('MemoriesControl')
 
   return (

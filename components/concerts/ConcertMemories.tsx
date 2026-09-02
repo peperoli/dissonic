@@ -1,6 +1,5 @@
 import { useMemories } from '@/hooks/concerts/useMemories'
-import { getCloudflareImageUrl } from '@/lib/cloudflareHelpers'
-import { getBunnyThumbnailUrl, getBunnyVideoUrl } from '@/lib/bunnyHelpers'
+import { getBunnyThumbnailUrl, getBunnyImageUrl, getBunnyVideoUrl } from '@/lib/bunnyHelpers'
 import Image from 'next/image'
 import { Dialog, type DialogProps } from '../shared/Dialog'
 import { useTranslations } from 'next-intl'
@@ -116,11 +115,7 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
                     className="relative aspect-square rounded-lg bg-slate-700"
                   >
                     <Image
-                      src={getCloudflareImageUrl(memory.file_id, {
-                        width: 300,
-                        height: 300,
-                        fit: 'cover',
-                      })}
+                      src={getBunnyImageUrl(memory.file_id)}
                       alt=""
                       fill
                       unoptimized
@@ -284,8 +279,6 @@ function MemoryItem({
   metadataIsVisible: boolean
   toggleMetadata: () => void
 }) {
-  const isDesktop = useMediaQuery('(min-width: 768px)')
-
   return (
     <li
       id={memory.id.toString()}
@@ -297,16 +290,13 @@ function MemoryItem({
     >
       {memory.file_type.startsWith('image/') ? (
         <img
-          src={getCloudflareImageUrl(memory.file_id, {
-            width: isDesktop ? undefined : 800,
-            height: isDesktop ? 800 : undefined,
-          })}
-          loading="lazy"
+          src={getBunnyImageUrl(memory.file_id)}
           alt=""
-          className="h-full w-auto flex-none rounded-lg object-cover"
+          loading="lazy"
+          className="absolute inset-0 size-full rounded-lg object-cover"
         />
       ) : (
-        <VideoPlayer src={getBunnyVideoUrl(memory.file_id)} />
+        <VideoPlayer src={getBunnyVideoUrl(memory.file_id)} loop />
       )}
       {metadataIsVisible && (
         <div className="absolute inset-0 bottom-auto m-2 flex flex-col items-start gap-1">
