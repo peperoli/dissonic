@@ -94,9 +94,8 @@ async function editLog({
     }
 
     await Promise.all(
-      data
-        .filter(memory => memory.file_type.startsWith('video/'))
-        .map(async memory => {
+      data.map(async memory => {
+        if (memory.file_type.startsWith('video/')) {
           const res = await fetch(`/api/bunny/delete-video?videoId=${memory.file_id}`, {
             method: 'POST',
           })
@@ -106,7 +105,18 @@ async function editLog({
             console.error('Failed to delete video:', errorText)
             throw new Error('Failed to delete video')
           }
-        })
+        } else if (memory.file_type.startsWith('image/')) {
+          const res = await fetch(`/api/bunny/delete-image?fileName=${memory.file_id}`, {
+            method: 'POST',
+          })
+
+          if (!res.ok) {
+            const errorText = await res.text()
+            console.error('Failed to delete image:', errorText)
+            throw new Error('Failed to delete image')
+          }
+        }
+      })
     )
   }
 
