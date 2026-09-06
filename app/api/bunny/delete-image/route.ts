@@ -14,9 +14,9 @@ export async function POST(request: NextRequest) {
   const stem = fileName.split('.').slice(0, -1).join('.')
   const extension = fileName.split('.').at(-1)
   const fileNames = [
-    `${stem}.${extension}`,
-    `${stem}-thumbnail.${extension}`,
-    `${stem}-mobile.${extension}`,
+    `full/${stem}.${extension}`,
+    `thumbnail/${stem}.${extension}`,
+    `mobile/${stem}.${extension}`,
   ]
 
   const responses = await Promise.all(

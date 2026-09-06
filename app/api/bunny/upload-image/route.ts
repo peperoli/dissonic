@@ -32,8 +32,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: text }, { status: bunnyRes.status })
   }
 
-  return NextResponse.json({
-    filename: file.name,
-    url: `https://${storageZone}.b-cdn.net/${file.name}`,
-  })
+  return NextResponse.json({ fileName: file.name })
 }

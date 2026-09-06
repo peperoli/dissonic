@@ -8,7 +8,6 @@ import { SelectField } from '../forms/SelectField'
 import { MemoryFileItem, useMemoriesControl } from '@/hooks/helpers/useMemoriesControl'
 import { VideoPlayer } from '../shared/VideoPlayer'
 import { getBunnyImageUrl, getBunnyVideoUrl } from '@/lib/bunnyHelpers'
-import Image from 'next/image'
 
 export function MemoriesControl({
   label,
@@ -115,7 +114,7 @@ function MemoryItem({
 }) {
   const imagePreview =
     fileItem.preview ||
-    (fileItem.fileId && getBunnyImageUrl(fileItem.fileId, { suffix: '-thumbnail' }))
+    (fileItem.fileId && getBunnyImageUrl(fileItem.fileId, { folder: 'thumbnail' }))
   const t = useTranslations('MemoriesControl')
 
   return (

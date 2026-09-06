@@ -115,7 +115,7 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
                     className="relative aspect-square rounded-lg bg-slate-700"
                   >
                     <img
-                      src={getBunnyImageUrl(memory.file_id, { suffix: '-thumbnail' })}
+                      src={getBunnyImageUrl(memory.file_id, { folder: 'thumbnail' })}
                       alt=""
                       loading="lazy"
                       className="absolute inset-0 size-full rounded-lg object-cover"
@@ -291,7 +291,7 @@ function MemoryItem({
     >
       {memory.file_type.startsWith('image/') ? (
         <img
-          src={getBunnyImageUrl(memory.file_id, { suffix: isDesktop ? '' : '-mobile' })}
+          src={getBunnyImageUrl(memory.file_id, { folder: isDesktop ? 'full' : 'mobile' })}
           alt=""
           loading="lazy"
           className="absolute inset-0 size-full rounded-lg object-cover"

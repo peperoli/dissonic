@@ -2,12 +2,12 @@ export const BUNNY_STREAM_PULL_ZONE = 'vz-335be0a4-28b'
 export const BUNNY_LIBRARY_ID = '733737'
 export const BUNNY_STORAGE_ZONE = 'concert-memories'
 
-export function getBunnyImageUrl(filename: string, options?: { suffix?: string }): string {
+export function getBunnyImageUrl(filename: string, options: { folder: 'full' | 'thumbnail' | 'mobile' }): string {
   const pullZone = BUNNY_STORAGE_ZONE
   const stem = filename.split('.').slice(0, -1).join('.')
   const extension = filename.split('.').at(-1)
 
-  return `https://${pullZone}.b-cdn.net/${stem}${options?.suffix ?? ''}.${extension}`
+  return `https://${pullZone}.b-cdn.net/${options?.folder ? `${options.folder}/` : ''}${stem}.${extension}`
 }
 
 export function getBunnyVideoUrl(videoId: string): string {

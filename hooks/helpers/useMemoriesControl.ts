@@ -76,16 +76,10 @@ export function useMemoriesControl(
             )
 
             const timestamp = Temporal.Now.instant().epochMilliseconds
-            const filenames = await Promise.all([
-              uploadImageBunny(full.compressedFile, { prefix: `${timestamp}-` }),
-              uploadImageBunny(thumbnail.compressedFile, {
-                prefix: `${timestamp}-`,
-                suffix: '-thumbnail',
-              }),
-              uploadImageBunny(mobile.compressedFile, {
-                prefix: `${timestamp}-`,
-                suffix: '-mobile',
-              }),
+            const fileNames = await Promise.all([
+              uploadImageBunny(full.compressedFile, { timestamp, folder: 'full' }),
+              uploadImageBunny(thumbnail.compressedFile, { timestamp, folder: 'thumbnail' }),
+              uploadImageBunny(mobile.compressedFile, { timestamp, folder: 'mobile' }),
             ])
 
             setFileItems(prevItems =>
@@ -93,7 +87,7 @@ export function useMemoriesControl(
                 item.file?.name === file.name
                   ? {
                       ...item,
-                      fileId: filenames[0],
+                      fileId: fileNames[0],
                       isLoading: false,
                       progress: 100,
                       isSuccess: true,

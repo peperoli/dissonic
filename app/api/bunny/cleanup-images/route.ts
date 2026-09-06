@@ -36,7 +36,7 @@ export async function GET() {
       !memories.some(
         memory =>
           memory.file_id === item.ObjectName ||
-          memory.file_id === item.ObjectName.replace(/-thumbnail|-mobile/, '')
+          memory.file_id === item.ObjectName.replace(/full\/|thumbnail\/|mobile\//, '')
       )
   )
 
