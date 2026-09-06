@@ -42,6 +42,8 @@ async function addLog({
           file_type: memoryFileItem.file.type,
           band_id: memoryFileItem.bandId,
           concert_id: concertId,
+          width: memoryFileItem.width,
+          height: memoryFileItem.height,
         } satisfies TablesInsert<'memories'>
       })
   )

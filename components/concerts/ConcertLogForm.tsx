@@ -134,7 +134,6 @@ export function ConcertLogForm({ isNew, close }: { isNew?: boolean; close: () =>
           fileItems={memoryFileItems}
           setFileItems={setMemoryFileItems}
           label={t('memories')}
-          acceptedFileTypes={['image/*', 'video/*']}
           bands={concert?.bands || []}
         />
         <div className="sticky bottom-0 z-10 mt-auto flex gap-4 bg-slate-800 py-4 md:static md:z-0 md:justify-end md:pb-0 [&>*]:flex-1">

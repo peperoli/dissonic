@@ -1,8 +1,10 @@
-import { uploadImageCloudflare } from '@/lib/uploadImageCloudflare'
+import { compressImage } from '@/lib/compressImage'
+import { uploadImageBunny } from '@/lib/uploadImageBunny'
 import { uploadVideoBunny } from '@/lib/uploadVideoBunny'
 import { Tables } from '@/types/supabase'
 import supabase from '@/utils/supabase/client'
 import { ChangeEvent, Dispatch, DragEvent, SetStateAction, useMemo, useState } from 'react'
+import { Temporal } from 'temporal-polyfill'
 
 export type MemoryFileItem = {
   id?: Tables<'memories'>['id']
@@ -10,6 +12,8 @@ export type MemoryFileItem = {
   bandId: Tables<'memories'>['band_id']
   duration: Tables<'memories'>['duration']
   file: File | { name?: null; type: string; size?: null }
+  width?: number
+  height?: number
   preview?: string | null
   isLoading?: boolean
   progress?: number | null
@@ -20,10 +24,8 @@ export type MemoryFileItem = {
 export function useMemoriesControl(
   concertId: number,
   fileItems: MemoryFileItem[],
-  setFileItems: Dispatch<SetStateAction<MemoryFileItem[]>>,
-  options: { prefix?: string; acceptedFileTypes?: string[] }
+  setFileItems: Dispatch<SetStateAction<MemoryFileItem[]>>
 ) {
-  const { prefix, acceptedFileTypes = [] } = options
   const [dragActive, setDragActive] = useState(false)
 
   const isSuccess = useMemo(
@@ -53,21 +55,48 @@ export function useMemoriesControl(
       files.map(async file => {
         try {
           if (file.type.startsWith('image/')) {
-            const { imageId } = await uploadImageCloudflare(file, {
-              prefix,
-              acceptedFileTypes,
-            })
+            const [full, thumbnail, mobile] = await Promise.all([
+              compressImage(file),
+              compressImage(file, { maxWidth: 400, maxHeight: 400 }),
+              compressImage(file, { maxWidth: 800 }),
+            ])
 
             setFileItems(prevItems =>
               prevItems.map(item =>
                 item.file?.name === file.name
-                  ? { ...item, fileId: imageId, isLoading: false, progress: 100, isSuccess: true }
+                  ? {
+                      ...item,
+                      progress: 50,
+                      file_type: full.compressedFile.type,
+                      width: full.width,
+                      height: full.height,
+                    }
+                  : item
+              )
+            )
+
+            const timestamp = Temporal.Now.instant().epochMilliseconds
+            const fileNames = await Promise.all([
+              uploadImageBunny(full.compressedFile, { timestamp, folder: 'full' }),
+              uploadImageBunny(thumbnail.compressedFile, { timestamp, folder: 'thumbnail' }),
+              uploadImageBunny(mobile.compressedFile, { timestamp, folder: 'mobile' }),
+            ])
+
+            setFileItems(prevItems =>
+              prevItems.map(item =>
+                item.file?.name === file.name
+                  ? {
+                      ...item,
+                      fileId: fileNames[0],
+                      isLoading: false,
+                      progress: 100,
+                      isSuccess: true,
+                    }
                   : item
               )
             )
           } else if (file.type.startsWith('video/')) {
             const { videoId } = await uploadVideoBunny(file, {
-              prefix,
               maxDuration: 60,
               onUploadProgress: progress => {
                 setFileItems(prevItems =>
@@ -94,6 +123,8 @@ export function useMemoriesControl(
                   : item
               )
             )
+          } else {
+            throw new Error(`Unsupported file type: ${file.type}`)
           }
         } catch (error) {
           console.error(error)

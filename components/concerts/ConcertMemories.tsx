@@ -1,6 +1,5 @@
 import { useMemories } from '@/hooks/concerts/useMemories'
-import { getCloudflareImageUrl } from '@/lib/cloudflareHelpers'
-import { getBunnyThumbnailUrl, getBunnyVideoUrl } from '@/lib/bunnyHelpers'
+import { getBunnyThumbnailUrl, getBunnyImageUrl, getBunnyVideoUrl } from '@/lib/bunnyHelpers'
 import Image from 'next/image'
 import { Dialog, type DialogProps } from '../shared/Dialog'
 import { useTranslations } from 'next-intl'
@@ -115,16 +114,11 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
                     }}
                     className="relative aspect-square rounded-lg bg-slate-700"
                   >
-                    <Image
-                      src={getCloudflareImageUrl(memory.file_id, {
-                        width: 300,
-                        height: 300,
-                        fit: 'cover',
-                      })}
+                    <img
+                      src={getBunnyImageUrl(memory.file_id, { folder: 'thumbnail' })}
                       alt=""
-                      fill
-                      unoptimized
-                      className="rounded-lg object-cover"
+                      loading="lazy"
+                      className="absolute inset-0 size-full rounded-lg object-cover"
                     />
                     {index === 3 && (memoriesCount ?? 0) > 4 && (
                       <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-900/50 text-xl backdrop-blur-sm">
@@ -157,7 +151,7 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
                         src={memory.thumbnail_url ?? getBunnyThumbnailUrl(memory.file_id)}
                         alt=""
                         fill
-                        unoptimized
+                        sizes="400px"
                         className="rounded-lg object-cover"
                       />
                       <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded bg-slate-900/70 p-1 text-sm">
@@ -285,7 +279,7 @@ function MemoryItem({
   toggleMetadata: () => void
 }) {
   const isDesktop = useMediaQuery('(min-width: 768px)')
-
+  
   return (
     <li
       id={memory.id.toString()}
@@ -297,16 +291,13 @@ function MemoryItem({
     >
       {memory.file_type.startsWith('image/') ? (
         <img
-          src={getCloudflareImageUrl(memory.file_id, {
-            width: isDesktop ? undefined : 800,
-            height: isDesktop ? 800 : undefined,
-          })}
-          loading="lazy"
+          src={getBunnyImageUrl(memory.file_id, { folder: isDesktop ? 'full' : 'mobile' })}
           alt=""
-          className="h-full w-auto flex-none rounded-lg object-cover"
+          loading="lazy"
+          className="absolute inset-0 size-full rounded-lg object-cover"
         />
       ) : (
-        <VideoPlayer src={getBunnyVideoUrl(memory.file_id)} />
+        <VideoPlayer src={getBunnyVideoUrl(memory.file_id)} loop />
       )}
       {metadataIsVisible && (
         <div className="absolute inset-0 bottom-auto m-2 flex flex-col items-start gap-1">

@@ -61,7 +61,6 @@ export async function POST(request: NextRequest) {
   }
 
   const data = JSON.parse(rawBody) as CallbackData
-  console.log('Received Bunny.net webhook:', data)
   const statusMap: Record<number, VideoStatus> = {
     0: 'queued',
     1: 'processing',
@@ -73,7 +72,7 @@ export async function POST(request: NextRequest) {
   const status = statusMap[data.Status]
 
   if (!status) {
-    console.log('Unknown status received from Bunny.net webhook:', data.Status)
+    console.error('Unknown status received from Bunny.net webhook:', data.Status)
     return NextResponse.json({ ok: true, reason: 'unknown_status' }, { status: 202 })
   }
 
