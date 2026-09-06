@@ -6,7 +6,7 @@ export async function uploadImageBunny(
   const extension = file.type.split('/').at(-1)
   const fileName = `${options.timestamp ?? stem}.${extension}`
   const formData = new FormData()
-  formData.append('file', file, `${options.folder ? `${options.folder}/` : ''}${fileName}`)
+  formData.append('file', file, `${options.folder}/${fileName}`)
 
   if (!file.type.startsWith('image/')) {
     throw new Error(`File type ${file.type} is not accepted. Expected image/*.`)

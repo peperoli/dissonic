@@ -1,12 +1,18 @@
 import { BUNNY_LIBRARY_ID } from '@/lib/bunnyHelpers'
 import { createClient } from '@/utils/supabase/server'
-import { NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const libraryId = BUNNY_LIBRARY_ID
   const bunnyStreamEndpoint = `https://video.bunnycdn.com/library/${libraryId}/videos`
   const supabase = await createClient()
   const apiKey = process.env.BUNNY_STREAM_API_KEY
+  const authHeader = request.headers.get('authorization')
+  const cronSecret = process.env.CRON_SECRET
+
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+    return new Response('Unauthorized', { status: 401 })
+  }
 
   if (!apiKey) {
     return NextResponse.json({ error: 'Bunny Stream not configured' }, { status: 500 })

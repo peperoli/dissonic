@@ -1,4 +1,5 @@
 import { BUNNY_STORAGE_ZONE } from '@/lib/bunnyHelpers'
+import { createClient } from '@/utils/supabase/server'
 import { type NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
@@ -7,6 +8,8 @@ export async function POST(request: NextRequest) {
   if (!fileName) {
     return NextResponse.json({ error: 'No fileName provided' }, { status: 400 })
   }
+
+  const supabase = await createClient()
 
   const storageZone = BUNNY_STORAGE_ZONE
   const accessKey = process.env.BUNNY_STORAGE_API_KEY
@@ -18,6 +21,14 @@ export async function POST(request: NextRequest) {
     `thumbnail/${stem}.${extension}`,
     `mobile/${stem}.${extension}`,
   ]
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+  }
 
   const responses = await Promise.all(
     fileNames.map(async fileName => {

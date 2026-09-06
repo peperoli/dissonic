@@ -1,4 +1,5 @@
 import { BUNNY_STORAGE_ZONE } from '@/lib/bunnyHelpers'
+import { createClient } from '@/utils/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest) {
@@ -9,6 +10,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'No file provided' }, { status: 400 })
   }
 
+  const supabase = await createClient()
+
   const arrayBuffer = await file.arrayBuffer()
   const buffer = Buffer.from(arrayBuffer)
 
@@ -17,6 +20,14 @@ export async function POST(req: NextRequest) {
 
   const host = 'storage.bunnycdn.com'
   const uploadUrl = `https://${host}/${storageZone}/${file.name}`
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+  }
 
   const bunnyRes = await fetch(uploadUrl, {
     method: 'PUT',

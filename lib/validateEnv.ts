@@ -7,15 +7,13 @@ const envSchema = z.object({
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
   NEXT_PUBLIC_SPOTIFY_CLIENT_ID: z.string().min(1),
   NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET: z.string().min(1),
-  CLOUDFLARE_ACCOUNT_ID: z.string().min(1),
-  CLOUDFLARE_API_TOKEN: z.string().min(1),
-  NEXT_PUBLIC_CLOUDFLARE_ACCOUNT_HASH: z.string().min(1),
   NEXT_PUBLIC_ALGOLIA_APP_ID: z.string().min(1),
   ALGOLIA_WRITE_API_KEY: z.string().min(1),
   NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY: z.string().min(1),
   BUNNY_STREAM_API_KEY: z.string().min(1),
   BUNNY_STREAM_READ_API_KEY: z.string().min(1),
   BUNNY_STORAGE_API_KEY: z.string().min(1),
+  CRON_SECRET: z.string().min(1),
 })
 
 export type EnvSchema = z.infer<typeof envSchema>

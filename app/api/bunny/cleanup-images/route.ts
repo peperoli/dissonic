@@ -1,12 +1,18 @@
 import { BUNNY_STORAGE_ZONE } from '@/lib/bunnyHelpers'
 import { createClient } from '@/utils/supabase/server'
-import { NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const storageZone = BUNNY_STORAGE_ZONE
   const storageEndpoint = `https://storage.bunnycdn.com/${storageZone}/`
   const supabase = await createClient()
   const apiKey = process.env.BUNNY_STORAGE_API_KEY
+  const authHeader = request.headers.get('authorization')
+  const cronSecret = process.env.CRON_SECRET
+
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+    return new Response('Unauthorized', { status: 401 })
+  }
 
   if (!apiKey) {
     return NextResponse.json({ error: 'Bunny Storage not configured' }, { status: 500 })
@@ -36,17 +42,12 @@ export async function GET() {
       !memories.some(
         memory =>
           memory.file_id === item.ObjectName ||
-          memory.file_id === item.ObjectName.replace(/full\/|thumbnail\/|mobile\//, '')
+          memory.file_id === item.ObjectName.replace(/^(full|thumbnail|mobile)\//, '')
       )
   )
 
-  console.log(
-    'List of images from Bunny Storage:',
-    listImagesData.map(item => item.ObjectName)
-  )
-  console.log(
-    'Unused images to delete:',
-    unusedImages.map(item => item.ObjectName)
+  console.info(
+    `Bunny Storage cleanup: ${listImagesData.length} objects listed, ${unusedImages.length} unused objects to delete.`
   )
 
   await Promise.all(
