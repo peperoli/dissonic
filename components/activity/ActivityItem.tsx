@@ -11,44 +11,7 @@ import { CommaSeperatedList } from '../helpers/CommaSeperatedList'
 import { useLocale, useTranslations } from 'next-intl'
 import { getConcertName } from '@/lib/getConcertName'
 import { reactionIcons } from '../concerts/ReactionControl'
-
-const CommentItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
-  const { user, created_at } = activityItem
-  const { data: concert } = useConcert(activityItem.concert?.id ?? null, null, { bandsSize: 1 })
-  const t = useTranslations('ActivityItem')
-  const locale = useLocale()
-  const concertName = getConcertName(concert, locale)
-  return (
-    <div className="rounded-lg bg-slate-800 p-4">
-      <ActivityItemLine
-        user={
-          <Link href={`/users/${user.username}`} className="group/user-item">
-            <UserItem user={user} usernameIsHidden />
-          </Link>
-        }
-        createdAt={created_at}
-      >
-        {t.rich('userCommentedOnConcert', {
-          user: () => (
-            <Link href={`/users/${user.username}`} className="text-white hover:underline">
-              {user.username}
-            </Link>
-          ),
-          concert: () => (
-            <Link href={`/concerts/${concert?.id}`} className="text-white hover:underline">
-              {concertName || `ID: ${concert?.id}`}
-            </Link>
-          ),
-        })}
-      </ActivityItemLine>
-      {activityItem.content && (
-        <div className="ml-16 mt-2 whitespace-pre-line break-words rounded border border-slate-700 p-2 text-sm">
-          {activityItem.content}
-        </div>
-      )}
-    </div>
-  )
-}
+import { getBunnyImageUrl, getBunnyThumbnailUrl } from '@/lib/bunnyHelpers'
 
 const BandSeenItem = ({
   activityItem,
@@ -90,6 +53,142 @@ const BandSeenItem = ({
                 </Link>
               ))}
             </CommaSeperatedList>
+          ),
+          concert: () => (
+            <Link href={`/concerts/${concert?.id}`} className="text-white hover:underline">
+              {concertName || `ID: ${concert?.id}`}
+            </Link>
+          ),
+        })}
+      </ActivityItemLine>
+    </div>
+  )
+}
+
+const MemoryItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
+  const { user, created_at, content } = activityItem
+  const t = useTranslations('ActivityItem')
+  const locale = useLocale()
+  const { data: concert } = useConcert(activityItem.concert?.id ?? null, null, { bandsSize: 1 })
+  const concertName = concert ? getConcertName(concert, locale) : null
+
+  return (
+    <div className="rounded-lg bg-slate-800 p-4">
+      <ActivityItemLine
+        user={
+          <Link href={`/users/${user.username}`} className="group/user-item">
+            <UserItem user={user} usernameIsHidden />
+          </Link>
+        }
+        createdAt={created_at}
+      >
+        {t.rich('userAddedMemoryToConcert', {
+          user: () => (
+            <Link href={`/users/${user.username}`} className="text-white hover:underline">
+              {user.username}
+            </Link>
+          ),
+          concert: () => (
+            <Link href={`/concerts/${concert?.id}`} className="text-white hover:underline">
+              {concertName || `ID: ${concert?.id}`}
+            </Link>
+          ),
+        })}
+      </ActivityItemLine>
+      {content && (
+        <Link
+          href={`/concerts/${concert?.id}#memories`}
+          scroll={false}
+          className="relative ml-14 mt-2 block size-24"
+        >
+          <img
+            src={
+              content.split('.').pop() === 'webp'
+                ? getBunnyImageUrl(content, {
+                    folder: 'thumbnail',
+                  })
+                : getBunnyThumbnailUrl(content)
+            }
+            alt=""
+            loading="lazy"
+            className="absolute inset-0 size-full rounded-lg object-cover"
+          />
+        </Link>
+      )}
+    </div>
+  )
+}
+
+const CommentItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
+  const { user, created_at } = activityItem
+  const { data: concert } = useConcert(activityItem.concert?.id ?? null, null, { bandsSize: 1 })
+  const t = useTranslations('ActivityItem')
+  const locale = useLocale()
+  const concertName = getConcertName(concert, locale)
+  return (
+    <div className="rounded-lg bg-slate-800 p-4">
+      <ActivityItemLine
+        user={
+          <Link href={`/users/${user.username}`} className="group/user-item">
+            <UserItem user={user} usernameIsHidden />
+          </Link>
+        }
+        createdAt={created_at}
+      >
+        {t.rich('userCommentedOnConcert', {
+          user: () => (
+            <Link href={`/users/${user.username}`} className="text-white hover:underline">
+              {user.username}
+            </Link>
+          ),
+          concert: () => (
+            <Link href={`/concerts/${concert?.id}`} className="text-white hover:underline">
+              {concertName || `ID: ${concert?.id}`}
+            </Link>
+          ),
+        })}
+      </ActivityItemLine>
+      {activityItem.content && (
+        <Link
+          href={`/concerts/${concert?.id}#comments`}
+          scroll={false}
+          className="ml-14 mt-2 whitespace-pre-line break-words rounded border border-slate-700 p-2 text-sm"
+        >
+          {activityItem.content}
+        </Link>
+      )}
+    </div>
+  )
+}
+
+const ReactionItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
+  const { user, created_at, receiver, content } = activityItem
+  const t = useTranslations('ActivityItem')
+  const locale = useLocale()
+  const { data: concert } = useConcert(activityItem.concert?.id ?? null, null, { bandsSize: 1 })
+  const concertName = concert ? getConcertName(concert, locale) : null
+
+  return (
+    <div className="rounded-lg bg-slate-800 p-4">
+      <ActivityItemLine
+        user={
+          <Link href={`/users/${user.username}`} className="group/user-item">
+            <UserItem user={user} usernameIsHidden />
+          </Link>
+        }
+        createdAt={created_at}
+      >
+        {t.rich('userReactedWithReactionTypeToCommentersCommentOnConcert', {
+          user: () => (
+            <Link href={`/users/${user.username}`} className="text-white hover:underline">
+              {user.username}
+            </Link>
+          ),
+          reactionType: content ? reactionIcons[content] : null,
+          commenter: () => (
+            <Link href={`/users/${receiver?.username}`} className="text-white hover:underline">
+              {receiver?.username}
+            </Link>
           ),
           concert: () => (
             <Link href={`/concerts/${concert?.id}`} className="text-white hover:underline">
@@ -163,46 +262,6 @@ const ProfileItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
   )
 }
 
-const ReactionItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
-  const { user, created_at, receiver, content } = activityItem
-  const t = useTranslations('ActivityItem')
-  const locale = useLocale()
-  const { data: concert } = useConcert(activityItem.concert?.id ?? null, null, { bandsSize: 1 })
-  const concertName = concert ? getConcertName(concert, locale) : null
-
-  return (
-    <div className="rounded-lg bg-slate-800 p-4">
-      <ActivityItemLine
-        user={
-          <Link href={`/users/${user.username}`} className="group/user-item">
-            <UserItem user={user} usernameIsHidden />
-          </Link>
-        }
-        createdAt={created_at}
-      >
-        {t.rich('userReactedWithReactionTypeToCommentersCommentOnConcert', {
-          user: () => (
-            <Link href={`/users/${user.username}`} className="text-white hover:underline">
-              {user.username}
-            </Link>
-          ),
-          reactionType: content ? reactionIcons[content] : null,
-          commenter: () => (
-            <Link href={`/users/${receiver?.username}`} className="text-white hover:underline">
-              {receiver?.username}
-            </Link>
-          ),
-          concert: () => (
-            <Link href={`/concerts/${concert?.id}`} className="text-white hover:underline">
-              {concertName || `ID: ${concert?.id}`}
-            </Link>
-          ),
-        })}
-      </ActivityItemLine>
-    </div>
-  )
-}
-
 const ActivityItemLine = ({
   createdAt,
   user,
@@ -231,17 +290,20 @@ export const ActivityItem = ({
   activityItem: ActivityItemT
   bands?: Tables<'bands'>[]
 }) => {
-  if (activityItem.type === 'comments') {
-    return <CommentItem activityItem={activityItem} />
-  } else if (activityItem.type === 'j_bands_seen') {
+  if (activityItem.type === 'j_bands_seen') {
     return <BandSeenItem activityItem={activityItem} bands={bands} />
+  } else if (activityItem.type === 'memories') {
+    return <MemoryItem activityItem={activityItem} />
+  } else if (activityItem.type === 'comments') {
+    return <CommentItem activityItem={activityItem} />
+  } else if (activityItem.type === 'reactions') {
+    return <ReactionItem activityItem={activityItem} />
   } else if (activityItem.type === 'friends') {
     return <FriendItem activityItem={activityItem} />
   } else if (activityItem.type === 'profiles') {
     return <ProfileItem activityItem={activityItem} />
-  } else if (activityItem.type === 'reactions') {
-    return <ReactionItem activityItem={activityItem} />
   } else {
-    return <p>Activity with unknown resource type</p>
+    console.warn(`Unknown activity type: ${activityItem.type}`, activityItem)
+    return null
   }
 }

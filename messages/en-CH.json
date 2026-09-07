@@ -695,6 +695,7 @@
     "activityType": "Activity type",
     "all": "All",
     "bandsSeen": "Bands seen",
+    "memories": "Memories",
     "comments": "Comments",
     "reactions": "Reactions",
     "friendActions": "Friend actions",
@@ -705,7 +706,8 @@
     "userSawBandsAtConcert": "<user></user> saw <bands></bands> at concert <concert></concert>",
     "user1AndUser2AreNowFriends": "<user1></user1> and <user2></user2> are now friends",
     "userJoinedDissonic": "<user></user> joined Dissonic",
-    "userReactedWithReactionTypeToCommentersCommentOnConcert": "<user></user> reacted with {reactionType} to <commenter></commenter>’s comment on <concert></concert>"
+    "userReactedWithReactionTypeToCommentersCommentOnConcert": "<user></user> reacted with {reactionType} to <commenter></commenter>’s comment on <concert></concert>",
+    "userAddedMemoryToConcert": "<user></user> added a memory to <concert></concert>"
   },
   "CommaSeperatedList": {
     "and": "and"

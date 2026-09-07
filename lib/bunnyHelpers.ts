@@ -19,7 +19,7 @@ export function getBunnyVideoUrl(videoId: string): string {
 export function getBunnyThumbnailUrl(videoId: string) {
   const pullZone = BUNNY_STREAM_PULL_ZONE
 
-  return `https://${pullZone}.b-cdn.net/${videoId}/thumbnails/thumbnail.jpg`
+  return `https://${pullZone}.b-cdn.net/${videoId}/thumbnail.jpg`
 }
 
 type VideoDetails = {

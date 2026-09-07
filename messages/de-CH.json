@@ -695,6 +695,7 @@
     "activityType": "Aktivitätstyp",
     "all": "Alle",
     "bandsSeen": "Gesehene Bands",
+    "memories": "Erinnerungen",
     "comments": "Kommentare",
     "reactions": "Reaktionen",
     "friendActions": "Freundesaktionen",
@@ -705,7 +706,8 @@
     "userSawBandsAtConcert": "<user></user> sah <bands></bands> am Konzert <concert></concert>",
     "user1AndUser2AreNowFriends": "<user1></user1> und <user2></user2> sind jetzt befreundet",
     "userJoinedDissonic": "<user></user> ist Dissonic beigetreten",
-    "userReactedWithReactionTypeToCommentersCommentOnConcert": "<user></user> reagierte mit {reactionType} auf <commenter></commenter>’s Kommentar zu <concert></concert>"
+    "userReactedWithReactionTypeToCommentersCommentOnConcert": "<user></user> reagierte mit {reactionType} auf <commenter></commenter>’s Kommentar zu <concert></concert>",
+    "userAddedMemoryToConcert": "<user></user> hat eine Erinnerung zu <concert></concert> hinzugefügt"
   },
   "CommaSeperatedList": {
     "and": "und"

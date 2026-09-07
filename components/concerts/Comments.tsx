@@ -32,7 +32,7 @@ export const Comments = () => {
     }
   }, [status])
   return (
-    <>
+    <section id="comments" className="rounded-lg bg-slate-800 p-4 md:p-6">
       <h2>{t('comments')}</h2>
       {session ? (
         <>
@@ -72,6 +72,6 @@ export const Comments = () => {
           />
         </>
       )}
-    </>
+    </section>
   )
 }

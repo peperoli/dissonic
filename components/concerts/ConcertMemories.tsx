@@ -1,6 +1,5 @@
 import { useMemories } from '@/hooks/concerts/useMemories'
 import { getBunnyThumbnailUrl, getBunnyImageUrl, getBunnyVideoUrl } from '@/lib/bunnyHelpers'
-import Image from 'next/image'
 import { Dialog, type DialogProps } from '../shared/Dialog'
 import { useTranslations } from 'next-intl'
 import { useState, WheelEvent } from 'react'
@@ -74,7 +73,7 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
 
   return (
     <>
-      <section className="rounded-lg bg-slate-800 p-4 md:p-6">
+      <section id="memories" className="rounded-lg bg-slate-800 p-4 md:p-6">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
           <div className="flex items-baseline gap-2">
             <h2 className="mb-0">
@@ -103,6 +102,7 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
                 (memory.status === 'queued' ||
                   memory.status === 'processing' ||
                   memory.status === 'encoding')
+
               if (memory.file_type.startsWith('image/')) {
                 return (
                   <li
@@ -130,6 +130,7 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
                   </li>
                 )
               }
+
               return (
                 <li
                   key={memory.id}
@@ -147,12 +148,10 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
                     </div>
                   ) : (
                     <>
-                      <Image
+                      <img
                         src={memory.thumbnail_url ?? getBunnyThumbnailUrl(memory.file_id)}
                         alt=""
-                        fill
-                        sizes="400px"
-                        className="rounded-lg object-cover"
+                        className="absolute inset-0 size-full rounded-lg object-cover"
                       />
                       <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded bg-slate-900/70 p-1 text-sm">
                         <PlayIcon className="size-icon" />
@@ -279,7 +278,7 @@ function MemoryItem({
   toggleMetadata: () => void
 }) {
   const isDesktop = useMediaQuery('(min-width: 768px)')
-  
+
   return (
     <li
       id={memory.id.toString()}
