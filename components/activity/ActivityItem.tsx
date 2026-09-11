@@ -12,6 +12,9 @@ import { useLocale, useTranslations } from 'next-intl'
 import { getConcertName } from '@/lib/getConcertName'
 import { reactionIcons } from '../concerts/ReactionControl'
 import { getBunnyImageUrl, getBunnyThumbnailUrl } from '@/lib/bunnyHelpers'
+import { PlayIcon } from 'lucide-react'
+import { z } from 'zod'
+import { StatusBanner } from '../forms/StatusBanner'
 
 const BandSeenItem = ({
   activityItem,
@@ -65,12 +68,23 @@ const BandSeenItem = ({
   )
 }
 
+const memoryContentSchema = z.object({
+  file_id: z.string().min(1),
+  file_type: z.string().min(1),
+  width: z.number().nullable(),
+  height: z.number().nullable(),
+  duration: z.number().nullable(),
+})
+
 const MemoryItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
-  const { user, created_at, content } = activityItem
+  const { user, created_at } = activityItem
   const t = useTranslations('ActivityItem')
   const locale = useLocale()
   const { data: concert } = useConcert(activityItem.concert?.id ?? null, null, { bandsSize: 1 })
   const concertName = concert ? getConcertName(concert, locale) : null
+  const result = memoryContentSchema.safeParse(activityItem.content)
+  const content = result.success ? result.data : null
+  const isImage = content?.file_type.startsWith('image/')
 
   return (
     <div className="rounded-lg bg-slate-800 p-4">
@@ -95,7 +109,7 @@ const MemoryItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
           ),
         })}
       </ActivityItemLine>
-      {content && (
+      {content ? (
         <Link
           href={`/concerts/${concert?.id}#memories`}
           scroll={false}
@@ -103,17 +117,34 @@ const MemoryItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
         >
           <img
             src={
-              content.split('.').pop() === 'webp'
-                ? getBunnyImageUrl(content, {
+              isImage
+                ? getBunnyImageUrl(content.file_id, {
                     folder: 'thumbnail',
                   })
-                : getBunnyThumbnailUrl(content)
+                : getBunnyThumbnailUrl(content.file_id)
             }
             alt=""
             loading="lazy"
             className="absolute inset-0 size-full rounded-lg object-cover"
           />
+          {!isImage && (
+            <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded bg-slate-900/70 p-1 text-sm">
+              <PlayIcon className="size-icon" />
+              {content.duration && (
+                <span>
+                  {Math.floor(content.duration / 60)}:
+                  {(content.duration % 60).toString().padStart(2, '0')}
+                </span>
+              )}
+            </div>
+          )}
         </Link>
+      ) : (
+        <StatusBanner
+          statusType="error"
+          message={t('errorLoadingMemoryContent')}
+          className="ml-14 mt-2"
+        />
       )}
     </div>
   )
@@ -125,6 +156,9 @@ const CommentItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
   const t = useTranslations('ActivityItem')
   const locale = useLocale()
   const concertName = getConcertName(concert, locale)
+  const result = z.string().nullable().safeParse(activityItem.content)
+  const content = result.success ? result.data : null
+
   return (
     <div className="rounded-lg bg-slate-800 p-4">
       <ActivityItemLine
@@ -148,13 +182,13 @@ const CommentItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
           ),
         })}
       </ActivityItemLine>
-      {activityItem.content && (
+      {content && (
         <Link
           href={`/concerts/${concert?.id}#comments`}
           scroll={false}
           className="ml-14 mt-2 whitespace-pre-line break-words rounded border border-slate-700 p-2 text-sm"
         >
-          {activityItem.content}
+          {content}
         </Link>
       )}
     </div>
@@ -162,11 +196,13 @@ const CommentItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
 }
 
 const ReactionItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
-  const { user, created_at, receiver, content } = activityItem
+  const { user, created_at, receiver } = activityItem
   const t = useTranslations('ActivityItem')
   const locale = useLocale()
   const { data: concert } = useConcert(activityItem.concert?.id ?? null, null, { bandsSize: 1 })
   const concertName = concert ? getConcertName(concert, locale) : null
+  const result = z.string().nullable().safeParse(activityItem.content)
+  const content = result.success ? result.data : null
 
   return (
     <div className="rounded-lg bg-slate-800 p-4">

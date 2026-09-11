@@ -707,7 +707,8 @@
     "user1AndUser2AreNowFriends": "<user1></user1> und <user2></user2> sind jetzt befreundet",
     "userJoinedDissonic": "<user></user> ist Dissonic beigetreten",
     "userReactedWithReactionTypeToCommentersCommentOnConcert": "<user></user> reagierte mit {reactionType} auf <commenter></commenter>’s Kommentar zu <concert></concert>",
-    "userAddedMemoryToConcert": "<user></user> hat eine Erinnerung zu <concert></concert> hinzugefügt"
+    "userAddedMemoryToConcert": "<user></user> hat eine Erinnerung zu <concert></concert> hinzugefügt",
+    "errorLoadingMemoryContent": "Fehler beim Laden des Erinnerungsinhalts"
   },
   "CommaSeperatedList": {
     "and": "und"
