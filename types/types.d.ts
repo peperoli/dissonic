@@ -120,7 +120,6 @@ export type AddReaction = TablesInsert<'reactions'>
 export type EditReaction = TablesUpdate<'reactions'>
 
 export type Band = Tables<'bands'> & {
-  country: Country
   genres: Genre[]
   concerts?: Tables<'concerts'>[] | null
   item_index?: number | null
@@ -150,8 +149,6 @@ export type Location = Tables<'locations'> & {
 export type AddLocation = TablesInsert<'locations'>
 
 export type EditLocation = TablesUpdate<'locations'>
-
-export type Country = { id: number; iso2: string }
 
 export type Profile = Omit<Tables<'profiles'>, 'last_searched'> & {
   friends?: { count: number }[]

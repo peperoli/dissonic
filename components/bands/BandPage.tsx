@@ -141,14 +141,21 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
               {t('altNames')}: {band.alt_names}
             </p>
           )}
-          {band.country && (
-            <div className="mb-2 flex items-center gap-4">
-              <MapPin className="size-icon flex-none text-slate-300" />
-              <Link href={`/bands?countries=${band.country.id}`} className="hover:underline">
-                {regionNames.of(band.country.iso2)}
-              </Link>
-            </div>
-          )}
+          <div className="mb-2 flex items-center gap-4">
+            <MapPin className="size-icon flex-none text-slate-300" />
+            <ul className="flex flex-wrap gap-x-2">
+              {band.countries_iso2.map((country, index) => (
+                <Fragment key={index}>
+                  <li>
+                    <Link href={`/bands?country=${country}`} className="hover:underline">
+                      {regionNames.of(country)}
+                    </Link>
+                  </li>
+                  {index + 1 !== band.countries_iso2?.length && <span>&bull;</span>}
+                </Fragment>
+              ))}
+            </ul>
+          </div>
           {band.genres.length > 0 && (
             <div className="mb-5 flex items-center gap-4">
               <MusicIcon className="size-icon flex-none text-slate-300" />

@@ -17,6 +17,7 @@ export type Database = {
       bands: {
         Row: {
           alt_names: string | null
+          countries_iso2: string[]
           country_id: number
           created_at: string | null
           creator_id: string | null
@@ -29,6 +30,7 @@ export type Database = {
         }
         Insert: {
           alt_names?: string | null
+          countries_iso2: string[]
           country_id: number
           created_at?: string | null
           creator_id?: string | null
@@ -41,6 +43,7 @@ export type Database = {
         }
         Update: {
           alt_names?: string | null
+          countries_iso2?: string[]
           country_id?: number
           created_at?: string | null
           creator_id?: string | null
@@ -962,6 +965,7 @@ export type Database = {
         Args: { user_1_id: string; user_2_id: string }
         Returns: {
           alt_names: string | null
+          countries_iso2: string[]
           country_id: number
           created_at: string | null
           creator_id: string | null
@@ -1022,6 +1026,7 @@ export type Database = {
         Args: { search_string: string }
         Returns: {
           alt_names: string | null
+          countries_iso2: string[]
           country_id: number
           created_at: string | null
           creator_id: string | null

@@ -29,7 +29,7 @@ export async function GET() {
         `id,
         name,
         alt_names,
-        country:countries(id, iso2),
+        countries_iso2,
         genres(id, name),
         spotify_artist_id,
         spotify_artist_images`
@@ -58,11 +58,10 @@ export async function GET() {
     objectID: `${INDEX_NAME}-${band.id}`,
     type: INDEX_NAME,
     ...band,
-    country: {
-      ...band.country,
-      name_de: regionNamesDe.of(band.country.iso2) ?? null,
-      name_en: regionNamesEn.of(band.country.iso2) ?? null,
-    },
+    country_names: band.countries_iso2.map(country => ({
+      de: regionNamesDe.of(country) ?? null,
+      en: regionNamesEn.of(country) ?? null,
+    })),
     genres: band.genres,
   }))
 
@@ -77,14 +76,14 @@ export async function GET() {
         searchableAttributes: [
           'name',
           'alt_names',
-          'country.name_de',
-          'country.name_en',
+          'country_names.de',
+          'country_names.en',
           'genres.name',
         ],
         attributesForFaceting: [
-          'country.id',
-          'searchable(country.name_de)',
-          'searchable(country.name_en)',
+          'countries_iso2',
+          'searchable(country_names.de)',
+          'searchable(country_names.en)',
           'genres.id',
           'searchable(genres.name)',
         ],

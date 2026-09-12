@@ -37,12 +37,11 @@ export type BandRecord = {
   id: number
   name: string
   alt_names: string | null
-  country: {
-    id: number
-    iso2: string
-    name_de: string | null
-    name_en: string | null
-  }
+  countries_iso2: string[]
+  country_names: {
+    de: string | null
+    en: string | null
+  }[]
   genres: {
     id: number
     name: string
