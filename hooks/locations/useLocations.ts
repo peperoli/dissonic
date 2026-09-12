@@ -24,7 +24,7 @@ async function fetchLocations(options?: LocationFetchOptions): Promise<ExtendedR
       ? supabase.rpc('search_locations', { search_string: searchString })
       : supabase.from('locations')
   )
-    .select('*, country:countries(id, iso2)')
+    .select('*')
     .eq('is_archived', false)
     .order('name')
 

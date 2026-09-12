@@ -3,13 +3,13 @@ import { createClient } from '../../../utils/supabase/server'
 import supabase from '../../../utils/supabase/client'
 import { LocationPage } from '@/components/locations/LocationPage'
 import { notFound } from 'next/navigation'
-import { ResolvingMetadata } from 'next'
+import { Metadata, ResolvingMetadata } from 'next'
 import { getAssetUrl } from '@/lib/getAssetUrl'
 
 export async function generateMetadata(
   props: { params: Promise<{ id: string }> },
   parent: ResolvingMetadata
-) {
+): Promise<Metadata> {
   const params = await props.params
   const location = await fetchData(params)
   const imageUrl = location && getAssetUrl('ressources', location.image, location?.updated_at)
@@ -46,7 +46,7 @@ async function fetchData(params: { id: string }) {
 
   const { data, error } = await supabase
     .from('locations')
-    .select('*, country:countries(id, iso2), creator:profiles!locations_creator_id_fkey(*)')
+    .select('*, creator:profiles!locations_creator_id_fkey(*)')
     .eq('id', locationId)
     .single()
 
