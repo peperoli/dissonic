@@ -5,7 +5,7 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { TextField } from '../forms/TextField'
 import { SelectField } from '../forms/SelectField'
 import { useCountries } from '../../hooks/useCountries'
-import { useGenres } from '../../hooks/genres/useGenres'
+import { useSearchGenres } from '../../hooks/genres/useSearchGenres'
 import { useBand } from '@/hooks/bands/useBand'
 import { useParams } from 'next/navigation'
 import { useAddBand } from '@/hooks/bands/useAddBand'
@@ -70,7 +70,7 @@ export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) =
   const [countriesSearchQuery, setCountriesSearchQuery] = useState('')
   const [genresSearchQuery, setGenresSearchQuery] = useState('')
   const { data: countries } = useCountries({ search: countriesSearchQuery })
-  const { data: genres } = useGenres({ search: genresSearchQuery })
+  const { data: genres } = useSearchGenres({ search: genresSearchQuery })
   const addBand = useAddBand()
   const editBand = useEditBand()
   const t = useTranslations('BandForm')
@@ -129,7 +129,7 @@ export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) =
         render={({ field: { value = [], onChange } }) => (
           <SelectField
             name="genres"
-            items={genres ?? []}
+            items={genres?.data ?? []}
             multiple
             values={value}
             onValuesChange={onChange}

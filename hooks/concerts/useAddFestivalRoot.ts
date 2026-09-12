@@ -4,17 +4,24 @@ import { useModal } from '@/components/shared/ModalProvider'
 import { useTranslations } from 'next-intl'
 import toast from 'react-hot-toast'
 import { FestivalRootFields } from '@/components/concerts/FestivalRootForm'
+import { addFestivalRootRecord } from '@/actions/algolia'
 
 const addFestivalRoot = async (formData: FestivalRootFields) => {
-  const { error } = await supabase.from('festival_roots').insert({
-    name: formData.name,
-    default_location_id: formData.default_location.id,
-    website: formData.website,
-  })
+  const { data: newFestivalRoot, error } = await supabase
+    .from('festival_roots')
+    .insert({
+      name: formData.name,
+      default_location_id: formData.default_location.id,
+      website: formData.website,
+    })
+    .select('id, name, default_location:locations(id, name, alt_names, city)')
+    .single()
 
   if (error) {
     throw error
   }
+
+  await addFestivalRootRecord(newFestivalRoot)
 }
 
 export const useAddFestivalRoot = () => {

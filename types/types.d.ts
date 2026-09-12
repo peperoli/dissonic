@@ -30,6 +30,8 @@ export type BandFetchOptions = {
 export type GenreFetchOptions = {
   ids?: number[] | null
   search?: string
+  size?: number
+  page?: number
 }
 
 export type FestivalRootFetchOptions = {

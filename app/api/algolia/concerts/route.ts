@@ -88,6 +88,7 @@ export async function GET() {
           'bands.alt_names',
           'location.name',
           'location.alt_names',
+          'location.city',
           'name',
         ],
         attributesForFaceting: ['date_start_unix', 'bands.id', 'location.id', 'festival_root.id', 'fan_ids'],
