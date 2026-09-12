@@ -1,6 +1,6 @@
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { useConcerts } from '../../hooks/concerts/useConcerts'
-import { useLocations } from '../../hooks/locations/useLocations'
+import { useSearchLocations } from '../../hooks/locations/useSearchLocations'
 import { AddConcert, Band, ListItem, ReorderableListItem } from '../../types/types'
 import { Button } from '../Button'
 import { TextField } from '../forms/TextField'
@@ -98,7 +98,7 @@ export function Form({ close, isNew }: { isNew?: boolean; close: () => void }) {
   })
   const [locationsSearchQuery, setLocationsSearchQuery] = useState('')
   const [festivalRootsSearchQuery, setFestivalRootsSearchQuery] = useState('')
-  const { data: locations } = useLocations({ search: locationsSearchQuery })
+  const { data: locations } = useSearchLocations({ search: locationsSearchQuery })
   const isFestival = watch('is_festival')
   const { data: festivalRoots } = useFestivalRoots({
     enabled: isFestival,

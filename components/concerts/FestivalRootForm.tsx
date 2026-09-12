@@ -1,5 +1,5 @@
 import { Controller, useForm } from 'react-hook-form'
-import { useLocations } from '../../hooks/locations/useLocations'
+import { useSearchLocations } from '../../hooks/locations/useSearchLocations'
 import { Button } from '../Button'
 import { TextField } from '../forms/TextField'
 import { SelectField } from '../forms/SelectField'
@@ -30,7 +30,7 @@ export const FestivalRootForm = ({ close }: { close: () => void }) => {
     size: similarFestivalRootsSize,
   })
   const [locationsSearchQuery, setLocationsSearchQuery] = useState('')
-  const { data: locations } = useLocations({ search: locationsSearchQuery })
+  const { data: locations } = useSearchLocations({ search: locationsSearchQuery })
   const { mutate, status, error } = useAddFestivalRoot()
   const t = useTranslations('FestivalRootForm')
   const isSimilar = !!(formState.dirtyFields.name && similarFestivalRoots?.count)

@@ -1,6 +1,6 @@
 'use server'
 
-import { Json } from '@/types/supabase'
+import { Json, TablesInsert } from '@/types/supabase'
 import type {
   AddBand,
   AddConcert,
@@ -9,7 +9,7 @@ import type {
   EditConcert,
   EditLocation,
 } from '@/types/types'
-import { BandRecord, ConcertRecord, LocationRecord } from '@/types/algolia'
+import { BandRecord, ConcertRecord, FestivalRootRecord, LocationRecord } from '@/types/algolia'
 import { createAlgoliaClient } from '@/utils/algolia/server'
 import { getUnixTimestamp } from '@/lib/date'
 import { AlgoliaIndex } from '@/lib/algolia'
@@ -260,5 +260,32 @@ export async function editLocationRecord(
       updated_at: location.updated_at ?? null,
     } as LocationRecord,
     createIfNotExists: false,
+  })
+}
+
+// Festival roots index functions
+
+export async function addFestivalRootRecord(
+  location: TablesInsert<'festival_roots'> & {
+    id: number
+    default_location?: {
+      id: number
+      name: string
+      alt_names: string | null
+      city: string
+    } | null
+  }
+) {
+  const algolia = await createAlgoliaClient()
+
+  await algolia.saveObject({
+    indexName: AlgoliaIndex.FestivalRoots,
+    body: {
+      objectID: `${AlgoliaIndex.FestivalRoots}-${location.id}`,
+      type: AlgoliaIndex.FestivalRoots,
+      id: location.id,
+      name: location.name,
+      default_location: location.default_location ?? null,
+    } satisfies FestivalRootRecord,
   })
 }

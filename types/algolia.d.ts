@@ -68,3 +68,23 @@ export type LocationRecord = {
   image: string | null
   updated_at: string | null
 }
+
+export type GenreRecord = {
+  objectID: `${AlgoliaIndex.Genres}-${number}`
+  type: AlgoliaIndex.Genres
+  id: number
+  name: string
+}
+
+export type FestivalRootRecord = {
+  objectID: `${AlgoliaIndex.FestivalRoots}-${number}`
+  type: AlgoliaIndex.FestivalRoots
+  id: number
+  name: string
+  default_location: {
+    id: number
+    name: string
+    alt_names: string | null
+    city: string
+  } | null
+}
