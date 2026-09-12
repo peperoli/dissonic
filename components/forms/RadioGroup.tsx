@@ -1,14 +1,19 @@
 import { ListItem } from '@/types/types'
 import clsx from 'clsx'
 
-type RadioGroupProps = {
+type RadioGroupProps<TId extends string | number> = {
   name: string
-  items: ListItem[]
-  value: number | null
-  onValueChange: (value: number) => void
+  items: ListItem<TId>[]
+  value: TId | null
+  onValueChange: (value: TId) => void
 }
 
-export function RadioGroup({ name, items, value, onValueChange }: RadioGroupProps) {
+export function RadioGroup<TId extends string | number>({
+  name,
+  items,
+  value,
+  onValueChange,
+}: RadioGroupProps<TId>) {
   return (
     <ul className="w-full">
       {items.map(item => (

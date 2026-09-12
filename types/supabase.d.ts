@@ -569,7 +569,7 @@ export type Database = {
         Row: {
           alt_names: string | null
           city: string
-          country_id: number
+          country_iso2: string
           created_at: string | null
           creator_id: string | null
           id: number
@@ -583,7 +583,7 @@ export type Database = {
         Insert: {
           alt_names?: string | null
           city: string
-          country_id: number
+          country_iso2: string
           created_at?: string | null
           creator_id?: string | null
           id?: number
@@ -597,7 +597,7 @@ export type Database = {
         Update: {
           alt_names?: string | null
           city?: string
-          country_id?: number
+          country_iso2?: string
           created_at?: string | null
           creator_id?: string | null
           id?: number
@@ -621,13 +621,6 @@ export type Database = {
             columns: ["creator_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "public_locations_country_id_fkey"
-            columns: ["country_id"]
-            isOneToOne: false
-            referencedRelation: "countries"
             referencedColumns: ["id"]
           },
         ]
@@ -963,25 +956,6 @@ export type Database = {
         }
         Relationships: []
       }
-      search_records: {
-        Row: {
-          bands: Database["public"]["Tables"]["bands"]["Row"][] | null
-          city: string | null
-          country: string | null
-          date_end: string | null
-          date_start: string | null
-          festival_root: string | null
-          genres: string[] | null
-          id: number | null
-          image: string | null
-          location: string | null
-          name: string | null
-          search_strings: string[] | null
-          spotify_artist_id: string | null
-          type: string | null
-        }
-        Relationships: []
-      }
     }
     Functions: {
       compare_bands_seen: {
@@ -1129,7 +1103,7 @@ export type Database = {
         Returns: {
           alt_names: string | null
           city: string
-          country_id: number
+          country_iso2: string
           created_at: string | null
           creator_id: string | null
           id: number

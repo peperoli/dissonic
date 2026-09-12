@@ -218,14 +218,11 @@ export async function addLocationRecord(
       alt_names: location.alt_names ?? null,
       zip_code: location.zip_code ?? null,
       city: location.city,
-      country: location.country
-        ? {
-            id: location.country_id,
-            iso2: location.country.iso2,
-            name_de: regionNamesDe.of(location.country.iso2) ?? null,
-            name_en: regionNamesEn.of(location.country.iso2) ?? null,
-          }
-        : null,
+      country_iso2: location.country_iso2,
+      country_names: {
+        de: regionNamesDe.of(location.country_iso2) ?? null,
+        en: regionNamesEn.of(location.country_iso2) ?? null,
+      },
       image: location.image ?? null,
       updated_at: location.updated_at ?? null,
     } satisfies LocationRecord,
@@ -248,12 +245,11 @@ export async function editLocationRecord(
       alt_names: location.alt_names ?? null,
       zip_code: location.zip_code ?? null,
       city: location.city ?? null,
-      country: location.country
+      country_iso2: location.country_iso2 ?? null,
+      country_names: location.country_iso2
         ? {
-            id: location.country_id,
-            iso2: location.country.iso2,
-            name_de: regionNamesDe.of(location.country.iso2) ?? null,
-            name_en: regionNamesEn.of(location.country.iso2) ?? null,
+            de: regionNamesDe.of(location.country_iso2) ?? null,
+            en: regionNamesEn.of(location.country_iso2) ?? null,
           }
         : null,
       image: location.image ?? null,

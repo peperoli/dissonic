@@ -6,9 +6,7 @@ import { useTranslations } from 'next-intl'
 import { editLocationRecord } from '@/actions/algolia'
 import { LocationFields } from '@/components/locations/Form'
 
-const editLocation = async (
-  formData: LocationFields
-) => {
+const editLocation = async (formData: LocationFields) => {
   const locationId = formData.id
 
   if (!locationId) {
@@ -42,22 +40,20 @@ const editLocation = async (
       name: formData.name,
       zip_code: formData.zip_code,
       city: formData.city,
-      country_id: formData.country.id,
+      country_iso2: formData.country.id,
       alt_names: formData.alt_names,
       website: formData.website,
       image: imagePath,
     })
     .eq('id', locationId)
-    .select('*, country:countries(iso2)')
+    .select('*')
     .single()
 
   if (error) {
     throw error
   }
 
-  await Promise.all([
-    editLocationRecord(`locations-${locationId}`, newLocation),
-  ])
+  await Promise.all([editLocationRecord(`locations-${locationId}`, newLocation)])
 
   return { locationId }
 }

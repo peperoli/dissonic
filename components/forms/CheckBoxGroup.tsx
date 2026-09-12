@@ -1,15 +1,20 @@
 import { ListItem } from '@/types/types'
 import clsx from 'clsx'
 
-type CheckBoxGroupProps = {
+type CheckBoxGroupProps<TId extends string | number> = {
   name: string
-  items: ListItem[]
-  values: number[]
-  onValuesChange: (values: number[]) => void
+  items: ListItem<TId>[]
+  values: TId[]
+  onValuesChange: (values: TId[]) => void
 }
 
-export function CheckBoxGroup({ name, items, values, onValuesChange }: CheckBoxGroupProps) {
-  function handleChange(id: number) {
+export function CheckBoxGroup<TId extends string | number>({
+  name,
+  items,
+  values,
+  onValuesChange,
+}: CheckBoxGroupProps<TId>) {
+  function handleChange(id: TId) {
     if (values.includes(id)) {
       onValuesChange(values.filter(item => item !== id))
     } else {

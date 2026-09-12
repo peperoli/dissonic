@@ -24,7 +24,7 @@ export type LocationFields = {
   name: AddLocation['name']
   zip_code: AddLocation['zip_code']
   city: AddLocation['city']
-  country: ListItem
+  country: ListItem<string>
   alt_names: AddLocation['alt_names']
   website: AddLocation['website']
   image: AddLocation['image']
@@ -47,10 +47,10 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
       ? { name: '', zip_code: '', city: '' }
       : {
           ...location,
-          country: location?.country
+          country: location
             ? {
-                id: location.country.id,
-                name: regionNames.of(location.country.iso2) ?? location.country.iso2,
+                id: location.country_iso2,
+                name: regionNames.of(location.country_iso2) ?? location.country_iso2,
               }
             : undefined,
           imageFile: location?.image
@@ -140,13 +140,13 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
         control={control}
         rules={{ required: true }}
         render={({ field: { value = null, onChange } }) => (
-          <SelectField
+          <SelectField<string>
             name="country"
             value={value}
             onValueChange={onChange}
             items={
               countries?.map(item => ({
-                id: item.id,
+                id: item.iso2,
                 name: regionNames.of(item.iso2) ?? item.iso2,
               })) ?? []
             }

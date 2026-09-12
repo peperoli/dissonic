@@ -14,11 +14,11 @@ const addLocation = async (formData: LocationFields) => {
       name: formData.name,
       zip_code: formData.zip_code,
       city: formData.city,
-      country_id: formData.country.id,
+      country_iso2: formData.country.id,
       alt_names: formData.alt_names,
       website: formData.website,
     })
-    .select('*, country:countries(iso2)')
+    .select('*')
     .single()
 
   if (error) {

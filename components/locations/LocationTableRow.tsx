@@ -30,15 +30,13 @@ export function LocationTableRow({ location }: { location: LocationRecord }) {
       <div className="md:hidden">
         <div className="line-clamp-1">{location.name}</div>
         <div className="line-clamp-1 text-sm text-slate-300">
-          {location.city}, {location.country && regionNames.of(location.country.iso2)}
+          {location.city}, {regionNames.of(location.country_iso2)}
         </div>
       </div>
       <div className="hidden w-full items-center gap-4 md:flex">
         <div className="w-1/3">{location.name}</div>
         <div className="w-1/3 text-slate-300">{location.city}</div>
-        <div className="w-1/3 text-slate-300">
-          {location.country && regionNames.of(location.country.iso2)}
-        </div>
+        <div className="w-1/3 text-slate-300">{regionNames.of(location.country_iso2)}</div>
       </div>
     </TableRow>
   )

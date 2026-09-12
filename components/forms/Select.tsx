@@ -7,34 +7,34 @@ import { Loader2 } from 'lucide-react'
 import clsx from 'clsx'
 import { useTranslations } from 'next-intl'
 
-type SingleSelectProps = {
+type SingleSelectProps<TId extends string | number> = {
   multiple?: false
-  value: number | null
-  onValueChange: (value: number) => void
+  value: TId | null
+  onValueChange: (value: TId) => void
 }
 
-type MultiSelectProps = {
+type MultiSelectProps<TId extends string | number> = {
   multiple: true
-  values: number[]
-  onValuesChange: (values: number[]) => void
+  values: TId[]
+  onValuesChange: (values: TId[]) => void
 }
 
-export type SelectProps = {
+export type SelectProps<TId extends string | number = number> = {
   name: string
-  items: ListItem[]
+  items: ListItem<TId>[]
   isLoading?: boolean
   fixedHeight?: boolean
 } & (
   | { searchable?: false }
   | { searchable: true; searchQuery: string; setSearchQuery: (query: string) => void }
 )
-export const Select = ({
+export const Select = <TId extends string | number = number>({
   name,
   items,
   isLoading,
   fixedHeight,
   ...props
-}: SelectProps & (SingleSelectProps | MultiSelectProps)) => {
+}: SelectProps<TId> & (SingleSelectProps<TId> | MultiSelectProps<TId>)) => {
   const searchRef = useRef<HTMLInputElement>(null)
   const t = useTranslations('Select')
 

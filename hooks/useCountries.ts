@@ -12,6 +12,9 @@ const fetchCountries = async (options?: CountryFetchOptions) => {
   if (options?.ids && options.ids.length > 0) {
     query = query.in('id', options.ids)
   }
+  if (options?.iso2 && options.iso2.length > 0) {
+    query = query.in('iso2', options.iso2)
+  }
 
   const { data, error } = await query.order('name_en')
 

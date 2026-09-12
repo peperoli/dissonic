@@ -59,12 +59,11 @@ export type LocationRecord = {
   alt_names: string | null
   zip_code: string | null
   city: string
-  country: {
-    id: number
-    iso2: string
-    name_de: string | null
-    name_en: string | null
-  } | null
+  country_iso2: string
+  country_names: {
+    de: string | null
+    en: string | null
+  }
   image: string | null
   updated_at: string | null
 }

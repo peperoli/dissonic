@@ -143,8 +143,7 @@ export const LocationPage = ({
           {location.city && (
             <div className="mb-5 flex items-center gap-4">
               <MapPin className="size-icon flex-none text-slate-300" />
-              {location.city}
-              {location.country && <>, {regionNames.of(location.country.iso2)}</>}
+              {location.city}, {regionNames.of(location.country_iso2)}
             </div>
           )}
           <div className="flex flex-wrap gap-2">

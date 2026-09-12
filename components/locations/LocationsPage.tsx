@@ -16,7 +16,7 @@ import { useTranslations } from 'next-intl'
 import { LocationTableRow } from './LocationTableRow'
 import { useSearchLocations } from '@/hooks/locations/useSearchLocations'
 import { CountryFilter } from '../bands/CountryFilter'
-import { parseAsArrayOf, parseAsInteger, useQueryState } from 'nuqs'
+import { parseAsArrayOf, parseAsString, useQueryState } from 'nuqs'
 
 export function LocationsPage() {
   const [query, setQuery] = useState('')
@@ -25,7 +25,7 @@ export function LocationsPage() {
   const [currentPage, setCurrentPage] = usePagination()
   const [selectedCountries, setSelectedCountries] = useQueryState(
     'countries',
-    parseAsArrayOf(parseAsInteger)
+    parseAsArrayOf(parseAsString)
   )
   const { data: locations } = useSearchLocations({
     search: debounceQuery,
@@ -71,10 +71,11 @@ export function LocationsPage() {
             query={query}
             setQuery={setQuery}
           />
-          <CountryFilter
+          <CountryFilter<string>
+            idType="iso2"
             values={selectedCountries}
             onSubmit={setSelectedCountries}
-            facetCounts={locations?.facets['country.id'] ?? {}}
+            facetCounts={locations?.facets['country_iso2'] ?? {}}
           />
         </div>
         <div className="flex items-center gap-4">
