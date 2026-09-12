@@ -1,4 +1,4 @@
-import { BUNNY_STORAGE_ZONE } from '@/lib/bunnyHelpers'
+import { BUNNY_IMAGE_VARIANTS, BUNNY_STORAGE_ZONE } from '@/lib/bunnyHelpers'
 import { createClient } from '@/utils/supabase/server'
 import { type NextRequest, NextResponse } from 'next/server'
 
@@ -16,11 +16,7 @@ export async function POST(request: NextRequest) {
 
   const stem = fileName.split('.').slice(0, -1).join('.')
   const extension = fileName.split('.').at(-1)
-  const fileNames = [
-    `full/${stem}.${extension}`,
-    `thumbnail/${stem}.${extension}`,
-    `mobile/${stem}.${extension}`,
-  ]
+  const fileNames = BUNNY_IMAGE_VARIANTS.map(variant => `${variant}/${stem}.${extension}`)
 
   const {
     data: { user },

@@ -1,6 +1,8 @@
+import { BUNNY_IMAGE_VARIANTS } from './bunnyHelpers'
+
 export async function uploadImageBunny(
   file: File,
-  options: { timestamp?: string | number; folder: 'full' | 'thumbnail' | 'mobile' }
+  options: { timestamp?: string | number; folder: (typeof BUNNY_IMAGE_VARIANTS)[number] }
 ): Promise<string> {
   const stem = file.name.split('.').slice(0, -1).join('.')
   const extension = file.type.split('/').at(-1)

@@ -1,4 +1,4 @@
-import { BUNNY_STORAGE_ZONE } from '@/lib/bunnyHelpers'
+import { BUNNY_IMAGE_VARIANTS, BUNNY_STORAGE_ZONE } from '@/lib/bunnyHelpers'
 import { createClient } from '@/utils/supabase/server'
 import { type NextRequest, NextResponse } from 'next/server'
 
@@ -25,12 +25,15 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to fetch memories' }, { status: 500 })
   }
 
-  const listImagesData: { ObjectName: string }[] = await fetch(storageEndpoint, {
-    method: 'GET',
-    headers: {
-      AccessKey: apiKey,
-    },
-  }).then(res => res.json())
+  const listImagesData: { ObjectName: string; IsDirectory: boolean }[] = await fetch(
+    storageEndpoint,
+    {
+      method: 'GET',
+      headers: {
+        AccessKey: apiKey,
+      },
+    }
+  ).then(res => res.json())
 
   if (!listImagesData || !Array.isArray(listImagesData)) {
     console.error('Unexpected list response:', listImagesData)
@@ -39,10 +42,12 @@ export async function GET(request: NextRequest) {
 
   const unusedImages = listImagesData.filter(
     item =>
+      !item.IsDirectory &&
       !memories.some(
         memory =>
           memory.file_id === item.ObjectName ||
-          memory.file_id === item.ObjectName.replace(/^(full|thumbnail|mobile)\//, '')
+          memory.file_id ===
+            item.ObjectName.replace(new RegExp(`^(${BUNNY_IMAGE_VARIANTS.join('|')})/`), '')
       )
   )
 

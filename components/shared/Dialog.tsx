@@ -82,9 +82,11 @@ export function Dialog({
         shouldCloseOnClickOutside,
       }}
     >
-      {typeof children === 'function'
-        ? children({ isOpen, show, close })
-        : children}
+      {isOpen
+        ? typeof children === 'function'
+          ? children({ isOpen, show, close })
+          : children
+        : null}
     </DialogContext.Provider>
   )
 }

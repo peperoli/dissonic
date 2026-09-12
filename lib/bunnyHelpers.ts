@@ -1,8 +1,9 @@
 export const BUNNY_STREAM_PULL_ZONE = 'vz-335be0a4-28b'
 export const BUNNY_LIBRARY_ID = '733737'
 export const BUNNY_STORAGE_ZONE = 'concert-memories'
+export const BUNNY_IMAGE_VARIANTS = ['full', 'thumbnail', 'mobile'] as const
 
-export function getBunnyImageUrl(filename: string, options: { folder: 'full' | 'thumbnail' | 'mobile' }): string {
+export function getBunnyImageUrl(filename: string, options: { folder: typeof BUNNY_IMAGE_VARIANTS[number] }): string {
   const pullZone = BUNNY_STORAGE_ZONE
   const stem = filename.split('.').slice(0, -1).join('.')
   const extension = filename.split('.').at(-1)
