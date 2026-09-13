@@ -87,3 +87,13 @@ export type FestivalRootRecord = {
     city: string
   } | null
 }
+
+export type CountryRecord = {
+  objectID: `${AlgoliaIndex.Countries}-${string}`
+  type: AlgoliaIndex.Countries
+  iso2: string
+  names: {
+    de: string
+    en: string
+  }
+}

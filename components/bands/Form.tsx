@@ -4,7 +4,6 @@ import { SpotifyArtistSelect } from './SpotifyArtistSelect'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { TextField } from '../forms/TextField'
 import { SelectField } from '../forms/SelectField'
-import { useCountries } from '../../hooks/useCountries'
 import { useSearchGenres } from '../../hooks/genres/useSearchGenres'
 import { useBand } from '@/hooks/bands/useBand'
 import { useParams } from 'next/navigation'
@@ -19,6 +18,7 @@ import { useLocale } from 'next-intl'
 import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
 import { useSimilarBands } from '@/hooks/bands/useSimilarBands'
 import { getCountryName } from '@/lib/getCountryName'
+import { useSearchCountries } from '@/hooks/countries/useSearchCountries'
 
 export type BandFields = {
   id: AddBand['id']
@@ -68,7 +68,7 @@ export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) =
   })
   const [countriesSearchQuery, setCountriesSearchQuery] = useState('')
   const [genresSearchQuery, setGenresSearchQuery] = useState('')
-  const { data: countries } = useCountries({ search: countriesSearchQuery })
+  const { data: countries } = useSearchCountries({ search: countriesSearchQuery })
   const { data: genres } = useSearchGenres({ search: genresSearchQuery })
   const addBand = useAddBand()
   const editBand = useEditBand()
@@ -110,7 +110,7 @@ export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) =
             values={value}
             onValuesChange={onChange}
             items={
-              countries?.map(item => ({
+              countries?.data.map(item => ({
                 id: item.iso2,
                 name: getCountryName(item.iso2, locale) ?? item.iso2,
               })) ?? []

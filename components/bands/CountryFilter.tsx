@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { FilterButton } from './../FilterButton'
-import { useCountries } from './../../hooks/useCountries'
 import { Select } from '../forms/Select'
 import { useLocale, useTranslations } from 'next-intl'
 import { getCountryName } from '@/lib/getCountryName'
+import { useSearchCountries } from '@/hooks/countries/useSearchCountries'
 
 const CountryMultiSelect = ({
   selectedOptions,
@@ -15,14 +15,14 @@ const CountryMultiSelect = ({
   facetCounts: Record<string, number>
 }) => {
   const [searchQuery, setSearchQuery] = useState('')
-  const { data: countries, isPending } = useCountries({ search: searchQuery })
+  const { data: countries, isPending } = useSearchCountries({ search: searchQuery })
   const locale = useLocale()
   return (
     <Select<string>
       name="Land"
       items={
         countries
-          ?.map(item => ({
+          ?.data.map(item => ({
             id: item.iso2,
             name: getCountryName(item.iso2, locale) ?? item.iso2,
             count: facetCounts[item.iso2] ?? 0,
@@ -50,7 +50,7 @@ export const CountryFilter = ({
   onSubmit: (value: string[]) => void
   facetCounts: Record<string, number>
 }) => {
-  const { data: countries } = useCountries({ iso2: submittedValues ?? [] })
+  const { data: countries } = useSearchCountries({ iso2: submittedValues ?? [] })
   const [selectedIds, setSelectedIds] = useState(submittedValues ?? [])
   const t = useTranslations('CountryFilter')
   const locale = useLocale()
@@ -61,7 +61,7 @@ export const CountryFilter = ({
   return (
     <FilterButton
       label={t('country')}
-      items={countries?.map(country => ({
+      items={countries?.data.map(country => ({
         id: country.iso2,
         name: getCountryName(country.iso2, locale),
       }))}

@@ -50,7 +50,6 @@ export type LocationFetchOptions = {
 }
 
 export type CountryFetchOptions = {
-  ids?: number[] | null
   iso2?: string[] | null
   search?: string
 }

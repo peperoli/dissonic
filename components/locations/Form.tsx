@@ -4,7 +4,6 @@ import { Button } from '../Button'
 import { TextField } from '../forms/TextField'
 import { useForm, Controller } from 'react-hook-form'
 import { SelectField } from '../forms/SelectField'
-import { useCountries } from '@/hooks/useCountries'
 import { Disclosure } from '../shared/Disclosure'
 import { ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
@@ -19,6 +18,7 @@ import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
 import { useSimilarLocations } from '@/hooks/locations/useSimilarLocations'
 import { ListItem } from '@/types/types'
 import { getCountryName } from '@/lib/getCountryName'
+import { useSearchCountries } from '@/hooks/countries/useSearchCountries'
 
 export type LocationFields = {
   id: AddLocation['id']
@@ -66,7 +66,7 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
     size: similarLocationsSize,
   })
   const [countriesSearchQuery, setCountriesSearchQuery] = useState('')
-  const { data: countries } = useCountries({ search: countriesSearchQuery })
+  const { data: countries } = useSearchCountries({ search: countriesSearchQuery })
   const addLocation = useAddLocation()
   const editLocation = useEditLocation()
   const { status } = isNew ? addLocation : editLocation
@@ -145,7 +145,7 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
             value={value}
             onValueChange={onChange}
             items={
-              countries?.map(item => ({
+              countries?.data.map(item => ({
                 id: item.iso2,
                 name: getCountryName(item.iso2, locale) ?? item.iso2,
               })) ?? []
