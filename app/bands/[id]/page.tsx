@@ -1,5 +1,4 @@
 import { BandPage } from '../../../components/bands/BandPage'
-import { cookies } from 'next/headers'
 import { createClient } from '../../../utils/supabase/server'
 import supabase from '../../../utils/supabase/client'
 import { notFound } from 'next/navigation'
@@ -76,11 +75,9 @@ async function fetchData(params: { id: string }) {
   return data
 }
 
-export default async function Page(props: { params: Promise<{ id: string }> }) {
+export default async function Page(props: PageProps<'/bands/[id]'>) {
   const params = await props.params
   const band = await fetchData(params)
-  const cookieStore = await cookies()
-  return (
-    <BandPage initialBand={band} bandQueryState={cookieStore.get('bandsLastQueryState')?.value} />
-  )
+
+  return <BandPage initialBand={band} />
 }

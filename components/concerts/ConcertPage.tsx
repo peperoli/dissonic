@@ -35,13 +35,13 @@ import { StatusBanner } from '../forms/StatusBanner'
 import { getIcsFile } from '@/lib/getIcsFile'
 import { ConcertMemories } from './ConcertMemories'
 import { Temporal, Intl } from 'temporal-polyfill'
+import cookies from 'js-cookie'
 
 type ConcertPageProps = {
   initialConcert: Concert
-  concertQueryState?: string
 }
 
-export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPageProps) => {
+export const ConcertPage = ({ initialConcert }: ConcertPageProps) => {
   const { data: concert } = useConcert(initialConcert.id, { placeholderData: initialConcert })
   const { data: session } = useSession()
   const { data: spotifyArtist } = useSpotifyArtist(concert?.bands?.[0]?.spotify_artist_id ?? null, {
@@ -53,6 +53,7 @@ export const ConcertPage = ({ initialConcert, concertQueryState }: ConcertPagePr
   const { push } = useRouter()
   const pathname = usePathname()
   const t = useTranslations('ConcertPage')
+  const concertQueryState = cookies.get('concertsLastQueryState')
 
   if (!concert) {
     notFound()

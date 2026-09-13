@@ -3300,6 +3300,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/js-cookie@npm:^3":
+  version: 3.0.6
+  resolution: "@types/js-cookie@npm:3.0.6"
+  checksum: 10c0/173afaf5ea9d86c22395b9d2a00b6adb0006dcfef165d6dcb0395cdc32f5a5dcf9c3c60f97194119963a15849b8f85121e1ae730b03e40bc0c29b84396ba22f9
+  languageName: node
+  linkType: hard
+
 "@types/json-schema@npm:^7.0.15":
   version: 7.0.15
   resolution: "@types/json-schema@npm:7.0.15"
@@ -4783,6 +4790,7 @@ __metadata:
     "@supabase/supabase-js": "npm:^2.105.1"
     "@tanstack/react-query": "npm:^5.69.0"
     "@types/file-saver": "npm:^2.0.7"
+    "@types/js-cookie": "npm:^3"
     "@types/node": "npm:^20.19.1"
     "@types/react": "npm:19.3.0"
     "@types/react-dom": "npm:19.3.0"
@@ -4796,6 +4804,7 @@ __metadata:
     file-saver: "npm:^2.0.5"
     globals: "npm:^17.6.0"
     ics: "npm:^3.8.1"
+    js-cookie: "npm:^3.0.8"
     jwt-decode: "npm:^4.0.0"
     lucide-react: "npm:^0.483.0"
     media-chrome: "npm:^4.13.0"
@@ -7797,6 +7806,13 @@ __metadata:
   version: 3.7.8
   resolution: "js-base64@npm:3.7.8"
   checksum: 10c0/a4452a7e7f32b0ef568a344157efec00c14593bbb1cf0c113f008dddff7ec515b35147af0cd70a7735adb69a2a2bdee921adffea2ea465e2c856ba50d649b11e
+  languageName: node
+  linkType: hard
+
+"js-cookie@npm:^3.0.8":
+  version: 3.0.8
+  resolution: "js-cookie@npm:3.0.8"
+  checksum: 10c0/421912a4a55535bda32b3059835864e1182c3af5b4516df00a060edc1fa5a53d38bb8d5a91d5d305e396206f4fd11e829f17850aa5aa8164118c04d8ebf1ff5d
   languageName: node
   linkType: hard
 

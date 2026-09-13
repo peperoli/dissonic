@@ -31,13 +31,13 @@ import { ShareButton } from '../shared/ShareButton'
 import { useArchiveBand } from '@/hooks/bands/useArchiveBand'
 import { useRestoreBand } from '@/hooks/bands/useRestoreBand'
 import { StatusBanner } from '../forms/StatusBanner'
+import cookies from 'js-cookie'
 
 type BandPageProps = {
   initialBand: Band
-  bandQueryState?: string
 }
 
-export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
+export const BandPage = ({ initialBand }: BandPageProps) => {
   const { data: band } = useBand(initialBand.id, initialBand)
   const { data: spotifyArtist } = useSpotifyArtist(band?.spotify_artist_id ?? null, {
     enabled: !band?.spotify_artist_images,
@@ -51,6 +51,7 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
   const pathname = usePathname()
   const t = useTranslations('BandPage')
   const locale = useLocale()
+  const bandQueryState = cookies.get('bandsLastQueryState')
   const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
   const image =
     (band?.spotify_artist_images as SpotifyArtist['images'])?.[0] || spotifyArtist?.images?.[0]
