@@ -26,7 +26,7 @@ export const RemoveFriendForm = ({ close }: RemoveFriendFormProps) => {
 
   return (
     <div>
-      <p>{t('removeFriendQuestion', { username: profile?.username })}</p>
+      <p>{t('removeFriendQuestion', { username: profile?.username ?? '' })}</p>
       <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:justify-end [&>*]:flex-1">
         <Button label="Abbrechen" onClick={close} />
         <Button

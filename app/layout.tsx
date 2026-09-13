@@ -15,6 +15,7 @@ import resolveConfig from 'tailwindcss/resolveConfig'
 import { content, theme } from '../tailwind.config'
 import { AlertCircleIcon, CheckCircleIcon } from 'lucide-react'
 import { DialogPolyfillLoader } from '@/components/helpers/DialogPolyfillLoader'
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('RootLayout')
@@ -69,7 +70,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html lang={locale} className={`${albertSans.variable} ${firaCode.variable}`}>
       <body className="flex min-h-screen flex-col bg-slate-850 text-white">
         <QueryProvider>
-          <NextIntlClientProvider messages={messages}>
+          <NuqsAdapter>
+            <NextIntlClientProvider messages={messages}>
               <NavBar />
               <div className="md:flex">
                 <Navigation />
@@ -79,23 +81,24 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               <Suspense>
                 <ModalProvider />
               </Suspense>
-            <Toaster
-              toastOptions={{
-                style: {
-                  background: fullConfig.theme.colors.slate['900'],
-                  color: fullConfig.theme.colors.white,
-                },
-                success: {
-                  icon: <CheckCircleIcon className="size-icon flex-none text-venom" />,
-                  duration: 5000,
-                },
-                error: {
-                  icon: <AlertCircleIcon className="size-icon flex-none text-red" />,
-                  duration: 10000,
-                },
-              }}
-            />
-          </NextIntlClientProvider>
+              <Toaster
+                toastOptions={{
+                  style: {
+                    background: fullConfig.theme.colors.slate['900'],
+                    color: fullConfig.theme.colors.white,
+                  },
+                  success: {
+                    icon: <CheckCircleIcon className="size-icon flex-none text-venom" />,
+                    duration: 5000,
+                  },
+                  error: {
+                    icon: <AlertCircleIcon className="size-icon flex-none text-red" />,
+                    duration: 10000,
+                  },
+                }}
+              />
+            </NextIntlClientProvider>
+          </NuqsAdapter>
         </QueryProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
         <DialogPolyfillLoader />

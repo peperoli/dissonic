@@ -13,9 +13,10 @@ const withPWA = createNextPWAPlugin({
   skipWaiting: true,
 })
 
-const withNextIntl = createNextIntlPlugin()
+const withNextIntl = createNextIntlPlugin('./i18n/request.ts')
 
 const nextConfig: NextConfig = {
+  cacheComponents: true,
   reactStrictMode: true,
   images: {
     remotePatterns: [

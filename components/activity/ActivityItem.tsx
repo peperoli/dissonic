@@ -220,7 +220,7 @@ const ReactionItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
               {user.username}
             </Link>
           ),
-          reactionType: content ? reactionIcons[content] : null,
+          reactionType: content ? reactionIcons[content] : '',
           commenter: () => (
             <Link href={`/users/${receiver?.username}`} className="text-white hover:underline">
               {receiver?.username}

@@ -10,7 +10,6 @@ type SearchGlobalFetchOptions = {
 }
 
 function sortByFirstHitRanking(a: SearchResponse, b: SearchResponse) {
-  let diff = 0
   const aRankingInfo = a.hits[0]?._rankingInfo
   const bRankingInfo = b.hits[0]?._rankingInfo
 
@@ -18,13 +17,10 @@ function sortByFirstHitRanking(a: SearchResponse, b: SearchResponse) {
     return 0
   }
 
-  diff = aRankingInfo.nbTypos - bRankingInfo.nbTypos
-
-  if (diff === 0) {
-    diff = aRankingInfo.firstMatchedWord - bRankingInfo.firstMatchedWord
-  }
-
-  return diff
+  return (
+    aRankingInfo.nbTypos - bRankingInfo.nbTypos ||
+    aRankingInfo.firstMatchedWord - bRankingInfo.firstMatchedWord
+  )
 }
 
 async function searchGlobal(options: SearchGlobalFetchOptions) {

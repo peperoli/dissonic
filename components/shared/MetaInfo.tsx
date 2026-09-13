@@ -32,7 +32,7 @@ export const MetaInfo = ({ createdAt, creator, resourceType, resourceId }: MetaI
       {createdAt && creator && (
         <p>
           {t.rich('createdAtDateByUser', {
-            date: createdAtDate,
+            date: createdAtDate ?? '',
             link: chunks => (
               <Link href={`/users/${creator.username}`} className="text-white hover:underline">
                 {chunks}
@@ -42,7 +42,7 @@ export const MetaInfo = ({ createdAt, creator, resourceType, resourceId }: MetaI
           })}
         </p>
       )}
-      {createdAt && !creator && <p>{t('createdAtDate', { date: createdAtDate })}</p>}
+      {createdAt && !creator && <p>{t('createdAtDate', { date: createdAtDate ?? '' })}</p>}
       {!!contributionsCount && (
         <Link
           href={`/contributions?resourceType=${resourceType}&resourceId=${resourceId}`}

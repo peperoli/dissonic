@@ -38,7 +38,7 @@ function ConcertUserItem({
           {t('uHasSeenNBandsAtConcertX', {
             username: profile.username,
             count,
-            concert: getConcertName(concert, locale),
+            concert: getConcertName(concert, locale) ?? '',
           })}
         </DrawerTitle>
       </div>

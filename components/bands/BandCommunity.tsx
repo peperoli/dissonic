@@ -19,7 +19,7 @@ function BandUserItem({ band, profile, count }: { band: Band; profile: Profile; 
     <Drawer
       trigger={
         <DrawerTrigger className="group/user-item text-left">
-          <UserItem user={profile} description={t('nConcerts', { count: concerts?.length })} />
+          <UserItem user={profile} description={t('nConcerts', { count: concerts?.length ?? 0 })} />
         </DrawerTrigger>
       }
     >
@@ -27,7 +27,7 @@ function BandUserItem({ band, profile, count }: { band: Band; profile: Profile; 
         {t('uHasSeenNConcertsWithX', { username: profile.username, count, band: band.name })}
       </DrawerTitle>
       <div className="flex items-center justify-between border-b border-slate-700 pb-4">
-        <UserItem user={profile} description={t('nConcerts', { count: concerts?.length })} />
+        <UserItem user={profile} description={t('nConcerts', { count: concerts?.length ?? 0 })} />
         <Link href={`/users/${encodeURIComponent(profile.username)}`} className="btn btn-secondary btn-small">
           {t('showProfile')}
         </Link>

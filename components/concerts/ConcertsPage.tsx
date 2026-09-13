@@ -194,7 +194,7 @@ export function ConcertsPage({
         </div>
         <div className="flex items-center gap-4">
           <div className="my-1.5 text-sm text-slate-300">
-            {t('nEntries', { count: concerts?.count })}
+            {t('nEntries', { count: concerts?.count ?? 0 })}
           </div>
           {(selectedBands ||
             selectedLocations ||
@@ -270,7 +270,7 @@ export function ConcertsPage({
       )}
       <div className="mt-4 flex flex-col items-center gap-2">
         <p className="text-sm text-slate-300">
-          {t('nOfNEntries', { count: concerts?.data.length, total: concerts?.count })}
+          {t('nOfNEntries', { count: concerts?.data.length ?? 0, total: concerts?.count ?? 0 })}
         </p>
         {concerts?.data.length !== concerts?.count && (
           <Button

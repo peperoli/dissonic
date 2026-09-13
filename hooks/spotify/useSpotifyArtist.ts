@@ -22,7 +22,9 @@ export async function fetchSpotifyArtist(token: string | null, artistId: string 
 
     return data
   } catch (error) {
-    throw new Error(error instanceof Error ? error.message : 'Error fetching Spotify artist')
+    throw new Error('Error fetching Spotify artist', {
+      cause: error,
+    })
   }
 }
 

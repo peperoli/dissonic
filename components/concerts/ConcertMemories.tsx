@@ -144,7 +144,7 @@ export function ConcertMemories({ concertId }: { concertId: number }) {
                   {isLoading ? (
                     <div className="absolute inset-0 flex flex-col items-center justify-center rounded-lg bg-slate-900 text-xl">
                       <SpinnerIcon className="size-8 animate-spin" />
-                      <span className="text-sm">{t(memory.status)}</span>
+                      <span className="text-sm">{t(memory.status ?? '')}</span>
                     </div>
                   ) : (
                     <>

@@ -56,9 +56,9 @@ export const UserItem = ({ profileStat, index }: UserItemProps) => {
           )}
         </div>
         <div className="text-sm text-slate-300">
-          {t('nConcerts', { count: profileStat.concert_count })}
+          {t('nConcerts', { count: profileStat.concert_count ?? 0 })}
           <br />
-          {t('nBands', { count: profileStat.band_count })}
+          {t('nBands', { count: profileStat.band_count ?? 0 })}
           <br />
           {profileStat.created_at && <span>{getRelativeTime(profileStat.created_at, locale)}</span>}
         </div>

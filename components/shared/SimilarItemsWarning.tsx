@@ -28,13 +28,13 @@ export function SimilarItemsWarning({
       <div className="flex items-center gap-4 text-yellow">
         <AlertTriangle className="size-icon flex-none" />
         {itemType === 'concerts' ? (
-          <p>{t('similarConcertsWarning', { count: similarItems.count })}</p>
+          <p>{t('similarConcertsWarning', { count: similarItems.count ?? 0 })}</p>
         ) : itemType === 'bands' ? (
-          <p>{t('similarBandsWarning', { count: similarItems.count })}</p>
+          <p>{t('similarBandsWarning', { count: similarItems.count ?? 0 })}</p>
         ) : itemType === 'locations' ? (
-          <p>{t('similarLocationsWarning', { count: similarItems.count })}</p>
+          <p>{t('similarLocationsWarning', { count: similarItems.count ?? 0 })}</p>
         ) : itemType === 'festivalRoots' ? (
-          <p>{t('similarFestivalRootsWarning', { count: similarItems.count })}</p>
+          <p>{t('similarFestivalRootsWarning', { count: similarItems.count ?? 0 })}</p>
         ) : null}
       </div>
       <ul className="mt-4 grid">
