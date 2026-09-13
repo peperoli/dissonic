@@ -3,34 +3,29 @@ import { FilterButton } from './../FilterButton'
 import { useCountries } from './../../hooks/useCountries'
 import { Select } from '../forms/Select'
 import { useLocale, useTranslations } from 'next-intl'
-import { Country } from '@/types/types'
+import { getCountryName } from '@/lib/getCountryName'
 
-const CountryMultiSelect = <TId extends string | number = number>({
+const CountryMultiSelect = ({
   selectedOptions,
   setSelectedOptions,
   facetCounts,
-  getId,
-  getFacetKey,
 }: {
-  selectedOptions: TId[]
-  setSelectedOptions: (value: TId[]) => void
+  selectedOptions: string[]
+  setSelectedOptions: (value: string[]) => void
   facetCounts: Record<string, number>
-  getId: (country: Country) => TId
-  getFacetKey: (country: Country) => string
 }) => {
   const [searchQuery, setSearchQuery] = useState('')
   const { data: countries, isPending } = useCountries({ search: searchQuery })
   const locale = useLocale()
-  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
   return (
-    <Select<TId>
+    <Select<string>
       name="Land"
       items={
         countries
           ?.map(item => ({
-            id: getId(item),
-            name: regionNames.of(item.iso2) ?? item.iso2,
-            count: facetCounts[getFacetKey(item)] ?? 0,
+            id: item.iso2,
+            name: getCountryName(item.iso2, locale) ?? item.iso2,
+            count: facetCounts[item.iso2] ?? 0,
           }))
           .sort((a, b) => b.count - a.count) ?? []
       }
@@ -46,26 +41,19 @@ const CountryMultiSelect = <TId extends string | number = number>({
   )
 }
 
-export const CountryFilter = <TId extends string | number = number>({
+export const CountryFilter = ({
   values: submittedValues,
   onSubmit,
   facetCounts,
-  idType = 'id',
 }: {
-  values: TId[] | null
-  onSubmit: (value: TId[]) => void
+  values: string[] | null
+  onSubmit: (value: string[]) => void
   facetCounts: Record<string, number>
-  idType?: 'id' | 'iso2'
 }) => {
-  const { data: countries } = useCountries(
-    idType === 'iso2'
-      ? { iso2: submittedValues as string[] | null }
-      : { ids: submittedValues as number[] | null }
-  )
+  const { data: countries } = useCountries({ iso2: submittedValues ?? [] })
   const [selectedIds, setSelectedIds] = useState(submittedValues ?? [])
   const t = useTranslations('CountryFilter')
-  const getCountryId = (country: Country) => (idType === 'iso2' ? country.iso2 : country.id) as TId
-  const getFacetKey = (country: Country) => (idType === 'iso2' ? country.iso2 : String(country.id))
+  const locale = useLocale()
 
   useEffect(() => {
     setSelectedIds(submittedValues ?? [])
@@ -74,8 +62,8 @@ export const CountryFilter = <TId extends string | number = number>({
     <FilterButton
       label={t('country')}
       items={countries?.map(country => ({
-        id: getCountryId(country),
-        name: country.iso2,
+        id: country.iso2,
+        name: getCountryName(country.iso2, locale),
       }))}
       selectedIds={selectedIds}
       submittedValues={submittedValues}
@@ -85,8 +73,6 @@ export const CountryFilter = <TId extends string | number = number>({
         selectedOptions={selectedIds}
         setSelectedOptions={setSelectedIds}
         facetCounts={facetCounts}
-        getId={getCountryId}
-        getFacetKey={getFacetKey}
       />
     </FilterButton>
   )

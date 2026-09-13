@@ -71,8 +71,7 @@ export function LocationsPage() {
             query={query}
             setQuery={setQuery}
           />
-          <CountryFilter<string>
-            idType="iso2"
+          <CountryFilter
             values={selectedCountries}
             onSubmit={setSelectedCountries}
             facetCounts={locations?.facets['country_iso2'] ?? {}}

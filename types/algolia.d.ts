@@ -26,6 +26,7 @@ export type ConcertRecord = {
     name: string
     alt_names: string | null
     city: string
+    country_iso2: string
   }
   name: string | null
   fan_ids: string[]

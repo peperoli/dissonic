@@ -1,5 +1,5 @@
 import { ConcertPage } from '../../../components/concerts/ConcertPage'
-import { Concert, SpotifyArtist } from '../../../types/types'
+import { SpotifyArtist } from '../../../types/types'
 import { cookies } from 'next/headers'
 import { createClient } from '../../../utils/supabase/server'
 import supabase from '../../../utils/supabase/client'
@@ -63,16 +63,15 @@ async function fetchConcert(params: { id: string }) {
     .from('concerts')
     .select(
       `*,
-      festival_root:festival_roots(name),
+      festival_root:festival_roots(id, name),
       location:locations(*),
-      bands:j_concert_bands(*, ...bands(*, country:countries(id, iso2), genres(*))),
+      bands:j_concert_bands(*, ...bands(*, genres(*))),
       bands_seen:j_bands_seen(*),
       creator:profiles!concerts_creator_id_fkey(*)`
     )
     .eq('id', concertId)
     .order('item_index', { referencedTable: 'j_concert_bands', ascending: true })
     .single()
-    .overrideTypes<Concert>()
 
   if (error) {
     if (error.code === 'PGRST116') {

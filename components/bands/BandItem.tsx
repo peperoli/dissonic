@@ -36,7 +36,8 @@ export function BandItem({ band }: { band: Band | BandRecord }) {
       <div className="grid">
         <div className="truncate">{band.name}</div>
         <div className="truncate text-sm text-slate-300">
-          {band.country?.iso2}
+          {/* @ts-expect-error - band.country.iso2 fallback is needed for backward compatibility with lastSearched still saved in session cookies */}
+          {band.countries_iso2?.map(iso2 => iso2).join(' • ') ?? band.country?.iso2}
           {!!band.genres.length && ' | '}
           {band.genres?.map(item => item.name).join(' • ')}
         </div>

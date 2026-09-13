@@ -18,11 +18,12 @@ import { useTranslations } from 'use-intl'
 import { useLocale } from 'next-intl'
 import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
 import { useSimilarBands } from '@/hooks/bands/useSimilarBands'
+import { getCountryName } from '@/lib/getCountryName'
 
 export type BandFields = {
   id: AddBand['id']
   name: AddBand['name']
-  country: ListItem
+  country: ListItem<string>
   genres: ListItem[]
   spotify_artist: SpotifyArtist | null
   alt_names: AddBand['alt_names']
@@ -33,7 +34,6 @@ export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) =
   const { id: bandId } = useParams<{ id?: string }>()
   const { data: band } = useBand(bandId ? parseInt(bandId) : null)
   const locale = useLocale()
-  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
   const {
     register,
     control,
@@ -48,10 +48,10 @@ export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) =
         }
       : {
           ...band,
-          country: band?.country.iso2
+          country: band?.countries_iso2?.[0]
             ? {
-                id: band?.country.id,
-                name: regionNames.of(band.country.iso2) ?? band.country.iso2,
+                id: band.countries_iso2[0],
+                name: getCountryName(band.countries_iso2[0], locale) ?? band.countries_iso2[0],
               }
             : undefined,
           spotify_artist: {
@@ -105,14 +105,14 @@ export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) =
         control={control}
         rules={{ required: true }}
         render={({ field: { value = null, onChange } }) => (
-          <SelectField
+          <SelectField<string>
             name="country"
             value={value}
             onValueChange={onChange}
             items={
               countries?.map(item => ({
-                id: item.id,
-                name: regionNames.of(item.iso2) ?? item.iso2,
+                id: item.iso2,
+                name: getCountryName(item.iso2, locale) ?? item.iso2,
               })) ?? []
             }
             searchable

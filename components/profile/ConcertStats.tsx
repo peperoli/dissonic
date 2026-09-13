@@ -22,7 +22,7 @@ async function fetchBandsSeen(profileId?: string) {
   for (let page = 1; page <= maxPage; page++) {
     let query = supabase
       .from('j_bands_seen')
-      .select('*, band:bands(*, country:countries(id, iso2), genres(*))')
+      .select('*, band:bands(*, genres(*))')
       .range((page - 1) * perPage, page * perPage - 1)
 
     if (profileId) {

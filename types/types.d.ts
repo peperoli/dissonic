@@ -20,7 +20,7 @@ export type ConcertFetchOptions = {
 
 export type BandFetchOptions = {
   ids?: number[] | null
-  countries?: number[] | null
+  countries?: string[] | null
   genres?: number[] | null
   search?: string
   size?: number
@@ -127,7 +127,6 @@ export type Band = Tables<'bands'> & {
 }
 
 export type AddBand = TablesInsert<'bands'> & {
-  country: Country
   genres: Genre[]
 }
 

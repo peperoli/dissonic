@@ -31,6 +31,7 @@ import { ShareButton } from '../shared/ShareButton'
 import { useArchiveBand } from '@/hooks/bands/useArchiveBand'
 import { useRestoreBand } from '@/hooks/bands/useRestoreBand'
 import { StatusBanner } from '../forms/StatusBanner'
+import { getCountryName } from '@/lib/getCountryName'
 
 type BandPageProps = {
   initialBand: Band
@@ -54,7 +55,6 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
   const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
   const image =
     (band?.spotify_artist_images as SpotifyArtist['images'])?.[0] || spotifyArtist?.images?.[0]
-  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
 
   if (!band) {
     notFound()
@@ -148,7 +148,7 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
                 <Fragment key={index}>
                   <li>
                     <Link href={`/bands?country=${country}`} className="hover:underline">
-                      {regionNames.of(country)}
+                      {getCountryName(country, locale)}
                     </Link>
                   </li>
                   {index + 1 !== band.countries_iso2?.length && <span>&bull;</span>}

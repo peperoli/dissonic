@@ -26,7 +26,7 @@ const addConcert = async (formData: ConcertFields) => {
     .select(
       `*,
       festival_root:festival_roots(id, name),
-      location:locations(*, name, alt_names, city, country:countries(iso2))`
+      location:locations(id, name, alt_names, city, country_iso2)`
     )
     .single()
 

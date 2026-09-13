@@ -18,7 +18,6 @@ export type Database = {
         Row: {
           alt_names: string | null
           countries_iso2: string[]
-          country_id: number
           created_at: string | null
           creator_id: string | null
           id: number
@@ -31,7 +30,6 @@ export type Database = {
         Insert: {
           alt_names?: string | null
           countries_iso2: string[]
-          country_id: number
           created_at?: string | null
           creator_id?: string | null
           id?: number
@@ -44,7 +42,6 @@ export type Database = {
         Update: {
           alt_names?: string | null
           countries_iso2?: string[]
-          country_id?: number
           created_at?: string | null
           creator_id?: string | null
           id?: number
@@ -55,13 +52,6 @@ export type Database = {
           youtube_url?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "bands_country_id_fkey"
-            columns: ["country_id"]
-            isOneToOne: false
-            referencedRelation: "countries"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "bands_creator_id_fkey"
             columns: ["creator_id"]
@@ -966,7 +956,6 @@ export type Database = {
         Returns: {
           alt_names: string | null
           countries_iso2: string[]
-          country_id: number
           created_at: string | null
           creator_id: string | null
           id: number
@@ -1027,7 +1016,6 @@ export type Database = {
         Returns: {
           alt_names: string | null
           countries_iso2: string[]
-          country_id: number
           created_at: string | null
           creator_id: string | null
           id: number

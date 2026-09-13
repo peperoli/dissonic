@@ -6,11 +6,11 @@ import { MapPinIcon } from 'lucide-react'
 import { useLocale } from 'next-intl'
 import { getAssetUrl } from '@/lib/getAssetUrl'
 import { LocationRecord } from '@/types/algolia'
+import { getCountryName } from '@/lib/getCountryName'
 
 export function LocationTableRow({ location }: { location: LocationRecord }) {
   const locale = useLocale()
   const imageUrl = getAssetUrl('ressources', location.image, location.updated_at)
-  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
   return (
     <TableRow href={`/locations/${location.id}`}>
       <div className="relative flex size-11 flex-shrink-0 items-center justify-center rounded-lg bg-slate-750 md:size-12">
@@ -30,13 +30,13 @@ export function LocationTableRow({ location }: { location: LocationRecord }) {
       <div className="md:hidden">
         <div className="line-clamp-1">{location.name}</div>
         <div className="line-clamp-1 text-sm text-slate-300">
-          {location.city}, {regionNames.of(location.country_iso2)}
+          {location.city}, {getCountryName(location.country_iso2, locale)}
         </div>
       </div>
       <div className="hidden w-full items-center gap-4 md:flex">
         <div className="w-1/3">{location.name}</div>
         <div className="w-1/3 text-slate-300">{location.city}</div>
-        <div className="w-1/3 text-slate-300">{regionNames.of(location.country_iso2)}</div>
+        <div className="w-1/3 text-slate-300">{getCountryName(location.country_iso2, locale)}</div>
       </div>
     </TableRow>
   )

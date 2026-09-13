@@ -18,6 +18,7 @@ import { getAssetUrl } from '@/lib/getAssetUrl'
 import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
 import { useSimilarLocations } from '@/hooks/locations/useSimilarLocations'
 import { ListItem } from '@/types/types'
+import { getCountryName } from '@/lib/getCountryName'
 
 export type LocationFields = {
   id: AddLocation['id']
@@ -35,7 +36,6 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
   const { id: locationId } = useParams<{ id?: string }>()
   const { data: location } = useLocation(locationId ? parseInt(locationId) : null)
   const locale = useLocale()
-  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
   const {
     register,
     control,
@@ -50,7 +50,7 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
           country: location
             ? {
                 id: location.country_iso2,
-                name: regionNames.of(location.country_iso2) ?? location.country_iso2,
+                name: getCountryName(location.country_iso2, locale) ?? location.country_iso2,
               }
             : undefined,
           imageFile: location?.image
@@ -147,7 +147,7 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
             items={
               countries?.map(item => ({
                 id: item.iso2,
-                name: regionNames.of(item.iso2) ?? item.iso2,
+                name: getCountryName(item.iso2, locale) ?? item.iso2,
               })) ?? []
             }
             searchable

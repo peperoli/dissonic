@@ -11,7 +11,6 @@ const fetchBand = async (bandId: number | null): Promise<Band> => {
     .from('bands')
     .select(
       `*,
-      country:countries(id, iso2),
       genres(*),
       concerts!j_concert_bands(*),
       creator:profiles!bands_creator_id_fkey(*)`

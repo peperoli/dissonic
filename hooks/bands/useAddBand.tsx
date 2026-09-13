@@ -12,13 +12,13 @@ const addBand = async (formData: BandFields) => {
     .from('bands')
     .insert({
       name: formData.name,
-      country_id: formData.country.id,
+      countries_iso2: [formData.country.id],
       spotify_artist_id: formData.spotify_artist?.id,
       spotify_artist_images: formData.spotify_artist?.images ?? null,
       alt_names: formData.alt_names,
       youtube_url: formData.youtube_url,
     })
-    .select('*, country:countries(id, iso2)')
+    .select('*')
     .single()
 
   if (bandError) {

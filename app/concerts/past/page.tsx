@@ -66,7 +66,7 @@ async function fetchData({ userView }: { userView: string }) {
     .order('item_index', { referencedTable: 'j_concert_bands', ascending: true })
     .limit(25)
     .limit(5, { referencedTable: 'j_concert_bands' })
-    .overrideTypes<Concert[]>()
+    .overrideTypes<Concert[], { merge: false }>()
 
   if (error) {
     throw error
