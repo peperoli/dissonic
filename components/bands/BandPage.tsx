@@ -147,7 +147,7 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
               {band.countries_iso2.map((country, index) => (
                 <Fragment key={index}>
                   <li>
-                    <Link href={`/bands?country=${country}`} className="hover:underline">
+                    <Link href={`/bands?countries=${country}`} className="hover:underline">
                       {getCountryName(country, locale)}
                     </Link>
                   </li>

@@ -31,7 +31,7 @@ async function searchBands(options: BandFetchOptions | undefined) {
     data: response.hits,
     count: response.nbHits ?? null,
     facets: response.facets as {
-      'countries_iso2': Record<number, number>
+      'countries_iso2': Record<string, number>
       'genres.id': Record<number, number>
     },
   }

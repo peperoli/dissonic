@@ -78,8 +78,8 @@ export async function GET() {
           'alt_names',
           'zip_code',
           'city',
-          'country.name_de',
-          'country.name_en',
+          'country_names.de',
+          'country_names.en',
         ],
         attributesForFaceting: [
           'country_iso2',
