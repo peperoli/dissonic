@@ -12,7 +12,7 @@ import { StatusBanner } from '../forms/StatusBanner'
 import { CountryFilter } from './CountryFilter'
 import { GenreFilter } from './GenreFilter'
 import { BandTableRow } from './BandTableRow'
-import { parseAsArrayOf, parseAsInteger, useQueryState } from 'nuqs'
+import { parseAsArrayOf, parseAsInteger, parseAsString, useQueryState } from 'nuqs'
 import { useModal } from '../shared/ModalProvider'
 import { Plus, RotateCcw } from 'lucide-react'
 import { SpeedDial } from '../layout/SpeedDial'
@@ -25,7 +25,7 @@ export function BandsPage() {
   const [currentPage, setCurrentPage] = usePagination()
   const [selectedCountries, setSelectedCountries] = useQueryState(
     'countries',
-    parseAsArrayOf(parseAsInteger)
+    parseAsArrayOf(parseAsString)
   )
   const [selectedGenres, setSelectedGenres] = useQueryState(
     'genres',
@@ -88,7 +88,7 @@ export function BandsPage() {
           <CountryFilter
             values={selectedCountries}
             onSubmit={setSelectedCountries}
-            facetCounts={bands?.facets['country.id'] ?? {}}
+            facetCounts={bands?.facets['countries_iso2'] ?? {}}
           />
           <GenreFilter
             values={selectedGenres}

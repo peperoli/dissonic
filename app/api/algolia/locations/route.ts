@@ -31,7 +31,7 @@ export async function GET() {
         alt_names,
         zip_code,
         city,
-        country:countries(id, iso2),
+        country_iso2,
         image,
         updated_at`
       )
@@ -59,13 +59,10 @@ export async function GET() {
     objectID: `${INDEX_NAME}-${location.id}`,
     type: INDEX_NAME,
     ...location,
-    country: location.country
-      ? {
-          ...location.country,
-          name_de: regionNamesDe.of(location.country.iso2) ?? null,
-          name_en: regionNamesEn.of(location.country.iso2) ?? null,
-        }
-      : null,
+    country_names: {
+      de: regionNamesDe.of(location.country_iso2) ?? null,
+      en: regionNamesEn.of(location.country_iso2) ?? null,
+    },
   }))
 
   try {
@@ -81,13 +78,13 @@ export async function GET() {
           'alt_names',
           'zip_code',
           'city',
-          'country.name_de',
-          'country.name_en',
+          'country_names.de',
+          'country_names.en',
         ],
         attributesForFaceting: [
-          'country.id',
-          'searchable(country.name_de)',
-          'searchable(country.name_en)',
+          'country_iso2',
+          'searchable(country_names.de)',
+          'searchable(country_names.en)',
         ],
         customRanking: ['asc(name)'],
         decompoundedAttributes: { de: ['name', 'alt_names'] },

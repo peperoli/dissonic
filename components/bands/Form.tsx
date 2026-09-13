@@ -4,7 +4,6 @@ import { SpotifyArtistSelect } from './SpotifyArtistSelect'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { TextField } from '../forms/TextField'
 import { SelectField } from '../forms/SelectField'
-import { useCountries } from '../../hooks/useCountries'
 import { useSearchGenres } from '../../hooks/genres/useSearchGenres'
 import { useBand } from '@/hooks/bands/useBand'
 import { useParams } from 'next/navigation'
@@ -18,11 +17,13 @@ import { useTranslations } from 'use-intl'
 import { useLocale } from 'next-intl'
 import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
 import { useSimilarBands } from '@/hooks/bands/useSimilarBands'
+import { getCountryName } from '@/lib/getCountryName'
+import { useSearchCountries } from '@/hooks/countries/useSearchCountries'
 
 export type BandFields = {
   id: AddBand['id']
   name: AddBand['name']
-  country: ListItem
+  countries: ListItem<string>[]
   genres: ListItem[]
   spotify_artist: SpotifyArtist | null
   alt_names: AddBand['alt_names']
@@ -33,7 +34,6 @@ export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) =
   const { id: bandId } = useParams<{ id?: string }>()
   const { data: band } = useBand(bandId ? parseInt(bandId) : null)
   const locale = useLocale()
-  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
   const {
     register,
     control,
@@ -48,12 +48,11 @@ export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) =
         }
       : {
           ...band,
-          country: band?.country.iso2
-            ? {
-                id: band?.country.id,
-                name: regionNames.of(band.country.iso2) ?? band.country.iso2,
-              }
-            : undefined,
+          countries:
+            band?.countries_iso2.map(countryIso2 => ({
+              id: countryIso2,
+              name: getCountryName(countryIso2, locale) ?? countryIso2,
+            })) || [],
           spotify_artist: {
             id: band?.spotify_artist_id,
             images: band?.spotify_artist_images,
@@ -69,7 +68,7 @@ export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) =
   })
   const [countriesSearchQuery, setCountriesSearchQuery] = useState('')
   const [genresSearchQuery, setGenresSearchQuery] = useState('')
-  const { data: countries } = useCountries({ search: countriesSearchQuery })
+  const { data: countries } = useSearchCountries({ search: countriesSearchQuery })
   const { data: genres } = useSearchGenres({ search: genresSearchQuery })
   const addBand = useAddBand()
   const editBand = useEditBand()
@@ -101,24 +100,25 @@ export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) =
         />
       )}
       <Controller
-        name="country"
+        name="countries"
         control={control}
         rules={{ required: true }}
-        render={({ field: { value = null, onChange } }) => (
-          <SelectField
-            name="country"
-            value={value}
-            onValueChange={onChange}
+        render={({ field: { value = [], onChange } }) => (
+          <SelectField<string>
+            name="countries"
+            multiple={true}
+            values={value}
+            onValuesChange={onChange}
             items={
-              countries?.map(item => ({
-                id: item.id,
-                name: regionNames.of(item.iso2) ?? item.iso2,
+              countries?.data.map(item => ({
+                id: item.iso2,
+                name: getCountryName(item.iso2, locale) ?? item.iso2,
               })) ?? []
             }
             searchable
             searchQuery={countriesSearchQuery}
             setSearchQuery={setCountriesSearchQuery}
-            error={errors.country}
+            error={errors.countries}
             label={t('country')}
           />
         )}

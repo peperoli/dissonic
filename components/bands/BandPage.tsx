@@ -31,6 +31,7 @@ import { ShareButton } from '../shared/ShareButton'
 import { useArchiveBand } from '@/hooks/bands/useArchiveBand'
 import { useRestoreBand } from '@/hooks/bands/useRestoreBand'
 import { StatusBanner } from '../forms/StatusBanner'
+import { getCountryName } from '@/lib/getCountryName'
 
 type BandPageProps = {
   initialBand: Band
@@ -54,7 +55,6 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
   const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
   const image =
     (band?.spotify_artist_images as SpotifyArtist['images'])?.[0] || spotifyArtist?.images?.[0]
-  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
 
   if (!band) {
     notFound()
@@ -141,14 +141,21 @@ export const BandPage = ({ initialBand, bandQueryState }: BandPageProps) => {
               {t('altNames')}: {band.alt_names}
             </p>
           )}
-          {band.country && (
-            <div className="mb-2 flex items-center gap-4">
-              <MapPin className="size-icon flex-none text-slate-300" />
-              <Link href={`/bands?countries=${band.country.id}`} className="hover:underline">
-                {regionNames.of(band.country.iso2)}
-              </Link>
-            </div>
-          )}
+          <div className="mb-2 flex items-center gap-4">
+            <MapPin className="size-icon flex-none text-slate-300" />
+            <ul className="flex flex-wrap gap-x-2">
+              {band.countries_iso2.map((country, index) => (
+                <Fragment key={index}>
+                  <li>
+                    <Link href={`/bands?countries=${country}`} className="hover:underline">
+                      {getCountryName(country, locale)}
+                    </Link>
+                  </li>
+                  {index + 1 !== band.countries_iso2?.length && <span>&bull;</span>}
+                </Fragment>
+              ))}
+            </ul>
+          </div>
           {band.genres.length > 0 && (
             <div className="mb-5 flex items-center gap-4">
               <MusicIcon className="size-icon flex-none text-slate-300" />

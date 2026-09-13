@@ -1,31 +1,31 @@
 import { useEffect, useState } from 'react'
 import { FilterButton } from './../FilterButton'
-import { useCountries } from './../../hooks/useCountries'
 import { Select } from '../forms/Select'
 import { useLocale, useTranslations } from 'next-intl'
+import { getCountryName } from '@/lib/getCountryName'
+import { useSearchCountries } from '@/hooks/countries/useSearchCountries'
 
 const CountryMultiSelect = ({
   selectedOptions,
   setSelectedOptions,
   facetCounts,
 }: {
-  selectedOptions: number[]
-  setSelectedOptions: (value: number[]) => void
-  facetCounts: Record<number, number>
+  selectedOptions: string[]
+  setSelectedOptions: (value: string[]) => void
+  facetCounts: Record<string, number>
 }) => {
   const [searchQuery, setSearchQuery] = useState('')
-  const { data: countries, isPending } = useCountries({ search: searchQuery })
+  const { data: countries, isPending } = useSearchCountries({ search: searchQuery })
   const locale = useLocale()
-  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
   return (
-    <Select
+    <Select<string>
       name="Land"
       items={
         countries
-          ?.map(item => ({
-            id: item.id,
-            name: regionNames.of(item.iso2) ?? item.iso2,
-            count: facetCounts[item.id] ?? 0,
+          ?.data.map(item => ({
+            id: item.iso2,
+            name: getCountryName(item.iso2, locale) ?? item.iso2,
+            count: facetCounts[item.iso2] ?? 0,
           }))
           .sort((a, b) => b.count - a.count) ?? []
       }
@@ -46,13 +46,14 @@ export const CountryFilter = ({
   onSubmit,
   facetCounts,
 }: {
-  values: number[] | null
-  onSubmit: (value: number[]) => void
-  facetCounts: Record<number, number>
+  values: string[] | null
+  onSubmit: (value: string[]) => void
+  facetCounts: Record<string, number>
 }) => {
-  const { data: countries } = useCountries({ ids: submittedValues })
+  const { data: countries } = useSearchCountries({ iso2: submittedValues ?? [] })
   const [selectedIds, setSelectedIds] = useState(submittedValues ?? [])
   const t = useTranslations('CountryFilter')
+  const locale = useLocale()
 
   useEffect(() => {
     setSelectedIds(submittedValues ?? [])
@@ -60,9 +61,9 @@ export const CountryFilter = ({
   return (
     <FilterButton
       label={t('country')}
-      items={countries?.map(country => ({
-        id: country.id,
-        name: country.iso2,
+      items={countries?.data.map(country => ({
+        id: country.iso2,
+        name: getCountryName(country.iso2, locale),
       }))}
       selectedIds={selectedIds}
       submittedValues={submittedValues}

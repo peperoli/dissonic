@@ -8,7 +8,7 @@ async function searchBands(options: BandFetchOptions | undefined) {
   const filters: string[] = []
 
   if (options?.countries && options.countries.length > 0) {
-    filters.push(options.countries.map(country => `country.id:${country}`).join(' OR '))
+    filters.push(options.countries.map(country => `countries_iso2:${country}`).join(' OR '))
   }
 
   if (options?.genres && options.genres.length > 0) {
@@ -21,7 +21,7 @@ async function searchBands(options: BandFetchOptions | undefined) {
       query: options?.search,
       hitsPerPage: options?.size ?? 25,
       filters: filters.map(filter => `(${filter})`).join(' AND '),
-      facets: ['country.id', 'genres.id'],
+      facets: ['countries_iso2', 'genres.id'],
       page: (options?.page || 1) - 1,
       maxValuesPerFacet: 1000,
     },
@@ -31,8 +31,8 @@ async function searchBands(options: BandFetchOptions | undefined) {
     data: response.hits,
     count: response.nbHits ?? null,
     facets: response.facets as {
+      'countries_iso2': Record<string, number>
       'genres.id': Record<number, number>
-      'country.id': Record<number, number>
     },
   }
 }

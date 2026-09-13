@@ -32,7 +32,7 @@ async function fetchData({
     .overlaps('user_id', [profile.id])
     .order('created_at', { ascending: false })
     .limit(searchParams.size ? parseInt(searchParams.size) : 50)
-    .overrideTypes<ActivityItemT[]>()
+    .overrideTypes<ActivityItemT[], { merge: false }>()
 
   if (error) {
     throw error

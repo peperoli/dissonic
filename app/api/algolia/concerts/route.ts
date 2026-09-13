@@ -33,7 +33,7 @@ export async function GET() {
         date_end,
         bands:j_concert_bands(item_index, ...bands(id, name, alt_names, spotify_artist_id, spotify_artist_images)),
         bands_seen:j_bands_seen(user_id),
-        location:locations(id, name, alt_names, city),
+        location:locations(id, name, alt_names, city, country_iso2),
         name`
       )
       .neq('is_archived', true)

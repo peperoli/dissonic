@@ -8,7 +8,7 @@ async function searchLocations(options: LocationFetchOptions | undefined) {
   const filters: string[] = []
 
   if (options?.countries && options.countries.length > 0) {
-    filters.push(options.countries.map(country => `country.id:${country}`).join(' OR '))
+    filters.push(options.countries.map(country => `country_iso2:${country}`).join(' OR '))
   }
 
   const response = await algolia.searchSingleIndex<LocationRecord>({
@@ -17,7 +17,7 @@ async function searchLocations(options: LocationFetchOptions | undefined) {
       query: options?.search,
       hitsPerPage: options?.size ?? 25,
       filters: filters.map(filter => `(${filter})`).join(' AND '),
-      facets: ['country.id'],
+      facets: ['country_iso2'],
       page: (options?.page || 1) - 1,
       maxValuesPerFacet: 1000,
     },
@@ -27,12 +27,14 @@ async function searchLocations(options: LocationFetchOptions | undefined) {
     data: response.hits,
     count: response.nbHits ?? null,
     facets: response.facets as {
-      'country.id': Record<number, number>
+      country_iso2: Record<string, number>
     },
   }
 }
 
-export function useSearchLocations(options: LocationFetchOptions & Pick<QueryOptions<unknown>, 'enabled'>) {
+export function useSearchLocations(
+  options: LocationFetchOptions & Pick<QueryOptions<unknown>, 'enabled'>
+) {
   const { enabled, ...fetchOptions } = options
 
   return useQuery({

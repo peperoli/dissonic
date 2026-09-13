@@ -39,7 +39,13 @@ export async function addConcertRecord(
       spotify_artist_id: string | null
       spotify_artist_images: Json | null
     }[]
-    location: { id: number; name: string; alt_names: string | null; city: string }
+    location: {
+      id: number
+      name: string
+      alt_names: string | null
+      city: string
+      country_iso2: string
+    }
   }
 ) {
   const algolia = await createAlgoliaClient()
@@ -82,7 +88,13 @@ export async function editConcertRecord(
       spotify_artist_id: string | null
       spotify_artist_images: Json | null
     }[]
-    location: { id: number; name: string; alt_names: string | null; city: string }
+    location: {
+      id: number
+      name: string
+      alt_names: string | null
+      city: string
+      country_iso2: string
+    }
     fan_ids?: { value: string; _operation: string }
   }
 ) {
@@ -141,9 +153,7 @@ export async function updateConcertFanIds(objectID: ConcertRecord['objectID'], f
 
 // Band index functions
 
-export async function addBandRecord(
-  record: AddBand & { id: number; country?: { iso2: string } | null }
-) {
+export async function addBandRecord(record: AddBand & { id: number }) {
   const algolia = await createAlgoliaClient()
   const regionNamesDe = new Intl.DisplayNames('de', { type: 'region' })
   const regionNamesEn = new Intl.DisplayNames('en', { type: 'region' })
@@ -156,12 +166,11 @@ export async function addBandRecord(
       id: record.id,
       name: record.name,
       alt_names: record.alt_names ?? null,
-      country: {
-        id: record.country_id,
-        iso2: record.country.iso2,
-        name_de: regionNamesDe.of(record.country.iso2) ?? null,
-        name_en: regionNamesEn.of(record.country.iso2) ?? null,
-      },
+      countries_iso2: record.countries_iso2,
+      country_names: record.countries_iso2.map(iso2 => ({
+        de: regionNamesDe.of(iso2) ?? null,
+        en: regionNamesEn.of(iso2) ?? null,
+      })),
       genres: record.genres,
       spotify_artist_id: record.spotify_artist_id ?? null,
       spotify_artist_images: record.spotify_artist_images ?? null,
@@ -171,7 +180,7 @@ export async function addBandRecord(
 
 export async function editBandRecord(
   objectID: BandRecord['objectID'],
-  record: EditBand & { id: number; country?: { iso2: string } | null }
+  record: EditBand & { id: number }
 ) {
   const algolia = await createAlgoliaClient()
   const regionNamesDe = new Intl.DisplayNames('de', { type: 'region' })
@@ -183,13 +192,12 @@ export async function editBandRecord(
     attributesToUpdate: {
       name: record.name ?? null,
       alt_names: record.alt_names ?? null,
-      country: record.country
-        ? {
-            id: record.country_id,
-            iso2: record.country.iso2,
-            name_de: regionNamesDe.of(record.country.iso2) ?? null,
-            name_en: regionNamesEn.of(record.country.iso2) ?? null,
-          }
+      countries_iso2: record.countries_iso2 ?? null,
+      country_names: record.countries_iso2
+        ? record.countries_iso2.map(iso2 => ({
+            de: regionNamesDe.of(iso2) ?? null,
+            en: regionNamesEn.of(iso2) ?? null,
+          }))
         : null,
       genres: record.genres,
       spotify_artist_id: record.spotify_artist_id ?? null,
@@ -218,14 +226,11 @@ export async function addLocationRecord(
       alt_names: location.alt_names ?? null,
       zip_code: location.zip_code ?? null,
       city: location.city,
-      country: location.country
-        ? {
-            id: location.country_id,
-            iso2: location.country.iso2,
-            name_de: regionNamesDe.of(location.country.iso2) ?? null,
-            name_en: regionNamesEn.of(location.country.iso2) ?? null,
-          }
-        : null,
+      country_iso2: location.country_iso2,
+      country_names: {
+        de: regionNamesDe.of(location.country_iso2) ?? null,
+        en: regionNamesEn.of(location.country_iso2) ?? null,
+      },
       image: location.image ?? null,
       updated_at: location.updated_at ?? null,
     } satisfies LocationRecord,
@@ -248,12 +253,11 @@ export async function editLocationRecord(
       alt_names: location.alt_names ?? null,
       zip_code: location.zip_code ?? null,
       city: location.city ?? null,
-      country: location.country
+      country_iso2: location.country_iso2 ?? null,
+      country_names: location.country_iso2
         ? {
-            id: location.country_id,
-            iso2: location.country.iso2,
-            name_de: regionNamesDe.of(location.country.iso2) ?? null,
-            name_en: regionNamesEn.of(location.country.iso2) ?? null,
+            de: regionNamesDe.of(location.country_iso2) ?? null,
+            en: regionNamesEn.of(location.country_iso2) ?? null,
           }
         : null,
       image: location.image ?? null,

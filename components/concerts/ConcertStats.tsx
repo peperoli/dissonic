@@ -7,10 +7,11 @@ import { Button } from '../Button'
 import { Chip } from '../Chip'
 import { ToggleSwitch } from '../forms/ToggleSwitch'
 import { useLocale, useTranslations } from 'next-intl'
+import { getCountryName } from '@/lib/getCountryName'
 
-type BarProps = {
+type BarProps<IdT extends number | string> = {
   item: {
-    id: number
+    id: IdT
     name: string
     count: number
   }
@@ -18,7 +19,11 @@ type BarProps = {
   bgColor?: 'venom' | 'blue'
 }
 
-const Bar = ({ item, highestCount, bgColor = 'venom' }: BarProps) => {
+const Bar = <IdT extends number | string = number>({
+  item,
+  highestCount,
+  bgColor = 'venom',
+}: BarProps<IdT>) => {
   return (
     <li key={item.id} className="group grid w-full grid-cols-2 items-center gap-2">
       <div className="truncate leading-tight">{item.name}</div>
@@ -55,14 +60,13 @@ export const ConcertStats = ({ bands, uniqueBands }: ConcertStatsProps) => {
       : bands.map(band => band.genres).flat(1)
   const countries =
     hasUniqueBands && !showAll
-      ? uniqueBands.map(band => band.country).filter(country => !!country)
-      : bands.map(band => band.country).filter(country => !!country)
-  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
+      ? uniqueBands.flatMap(band => band.countries_iso2)
+      : bands.flatMap(band => band.countries_iso2)
   const genreCounts = getCounts(genres).sort((a, b) => b.count - a.count)
   const countryCounts = getCounts(
-    countries.map(country => ({
-      name: regionNames.of(country.iso2) || country.iso2,
-      ...country,
+    countries.map(countryIso2 => ({
+      id: countryIso2,
+      name: getCountryName(countryIso2, locale) ?? countryIso2,
     }))
   ).sort((a, b) => b.count - a.count)
 
@@ -95,7 +99,7 @@ export const ConcertStats = ({ bands, uniqueBands }: ConcertStatsProps) => {
           {countryCounts.slice(0, visibleItems).map(item => {
             if (countryCounts.length >= 3) {
               return (
-                <Bar
+                <Bar<string>
                   item={item}
                   highestCount={countryCounts[0].count}
                   bgColor="blue"
@@ -129,13 +133,12 @@ export const SimpleConcertStats = ({ bands }: { bands: Band[] }) => {
   const t = useTranslations('ConcertStats')
   const locale = useLocale()
   const genres = bands.map(band => band.genres).flat(1)
-  const countries = bands.map(band => band.country).filter(country => !!country)
-  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
+  const countries = bands.flatMap(band => band.countries_iso2)
   const genreCounts = getCounts(genres).sort((a, b) => b.count - a.count)
   const countryCounts = getCounts(
-    countries.map(country => ({
-      name: regionNames.of(country.iso2) || country.iso2,
-      ...country,
+    countries.map(countryIso2 => ({
+      id: countryIso2,
+      name: getCountryName(countryIso2, locale) || countryIso2,
     }))
   ).sort((a, b) => b.count - a.count)
 
@@ -145,7 +148,7 @@ export const SimpleConcertStats = ({ bands }: { bands: Band[] }) => {
 
   return (
     <section className="rounded-lg bg-slate-800 p-4 md:p-6">
-      <div className="grid md:grid-cols-2 gap-4 md:gap-6">
+      <div className="grid gap-4 md:grid-cols-2 md:gap-6">
         <div>
           <h2>{t('genres')}</h2>
           <ul ref={animationParent} className="flex flex-wrap gap-2">

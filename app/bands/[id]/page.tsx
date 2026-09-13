@@ -58,7 +58,6 @@ async function fetchData(params: { id: string }) {
     .from('bands')
     .select(
       `*,
-      country:countries(id, iso2),
       genres(*),
       creator:profiles!bands_creator_id_fkey(*)`
     )

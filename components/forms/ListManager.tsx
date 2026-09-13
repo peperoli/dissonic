@@ -360,7 +360,7 @@ function BandItem({ band }: { band: ReorderableListItem<Band> | BandRecord }) {
       <div className="grid w-full">
         <div className="truncate">{band.name}</div>
         <div className="truncate text-sm text-slate-300">
-          {band.country?.iso2}
+          {band.countries_iso2.join(' • ')}
           {!!band.genres.length && ' | '}
           {band.genres?.map(item => item.name).join(' • ')}
         </div>

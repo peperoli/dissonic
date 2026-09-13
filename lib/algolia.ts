@@ -4,4 +4,5 @@ export const enum AlgoliaIndex {
   Locations = 'locations',
   Genres = 'genres',
   FestivalRoots = 'festival_roots',
+  Countries = 'countries',
 }

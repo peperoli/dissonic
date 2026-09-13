@@ -26,6 +26,7 @@ export type ConcertRecord = {
     name: string
     alt_names: string | null
     city: string
+    country_iso2: string
   }
   name: string | null
   fan_ids: string[]
@@ -37,12 +38,11 @@ export type BandRecord = {
   id: number
   name: string
   alt_names: string | null
-  country: {
-    id: number
-    iso2: string
-    name_de: string | null
-    name_en: string | null
-  }
+  countries_iso2: string[]
+  country_names: {
+    de: string | null
+    en: string | null
+  }[]
   genres: {
     id: number
     name: string
@@ -59,12 +59,11 @@ export type LocationRecord = {
   alt_names: string | null
   zip_code: string | null
   city: string
-  country: {
-    id: number
-    iso2: string
-    name_de: string | null
-    name_en: string | null
-  } | null
+  country_iso2: string
+  country_names: {
+    de: string | null
+    en: string | null
+  }
   image: string | null
   updated_at: string | null
 }
@@ -87,4 +86,14 @@ export type FestivalRootRecord = {
     alt_names: string | null
     city: string
   } | null
+}
+
+export type CountryRecord = {
+  objectID: `${AlgoliaIndex.Countries}-${string}`
+  type: AlgoliaIndex.Countries
+  iso2: string
+  names: {
+    de: string
+    en: string
+  }
 }

@@ -420,6 +420,7 @@
   },
   "BandForm": {
     "name": "Name",
+    "multipleCountries": "Multiple countries (international band)",
     "country": "Country",
     "genres": "Genres",
     "altNames": "Alternative names",

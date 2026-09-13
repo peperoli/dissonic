@@ -21,6 +21,7 @@ import { useRestoreLocation } from '@/hooks/locations/useRestoreLocation'
 import { StatusBanner } from '../forms/StatusBanner'
 import Image from 'next/image'
 import { getAssetUrl } from '@/lib/getAssetUrl'
+import { getCountryName } from '@/lib/getCountryName'
 
 type LocationPageProps = {
   location: Location
@@ -43,7 +44,6 @@ export const LocationPage = ({
   const locale = useLocale()
   const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
   const imageUrl = location && getAssetUrl('ressources', location.image, location?.updated_at)
-  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
   const mapSearchQuery = encodeURIComponent(
     [location?.name, location?.zip_code, location?.city].join(' ')
   )
@@ -143,8 +143,7 @@ export const LocationPage = ({
           {location.city && (
             <div className="mb-5 flex items-center gap-4">
               <MapPin className="size-icon flex-none text-slate-300" />
-              {location.city}
-              {location.country && <>, {regionNames.of(location.country.iso2)}</>}
+              {location.city}, {getCountryName(location.country_iso2, locale)}
             </div>
           )}
           <div className="flex flex-wrap gap-2">

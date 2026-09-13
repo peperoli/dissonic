@@ -10,27 +10,33 @@ import { useTranslations } from 'next-intl'
 import { ListItem } from '@/types/types'
 import { Popover } from '../shared/Popover'
 
-type SingleSelectProps = {
+type SingleSelectProps<TId extends string | number> = {
   multiple?: false
-  value: ListItem | null
-  onValueChange: (value: ListItem | null) => void
+  value: ListItem<TId> | null
+  onValueChange: (value: ListItem<TId> | null) => void
 }
 
-type MultiSelectProps = {
+type MultiSelectProps<TId extends string | number> = {
   multiple: true
-  values: ListItem[]
-  onValuesChange: (values: ListItem[]) => void
+  values: ListItem<TId>[]
+  onValuesChange: (values: ListItem<TId>[]) => void
 }
 
-type SelectFieldProps = {
+type SelectFieldProps<TId extends string | number> = {
   label: string
   error?: Merge<FieldError, unknown>
   isClearable?: boolean
-  items: ListItem[]
-} & SelectProps &
-  (SingleSelectProps | MultiSelectProps)
+  items: ListItem<TId>[]
+} & SelectProps<TId> &
+  (SingleSelectProps<TId> | MultiSelectProps<TId>)
 
-export function SelectField({ label, items, error, isClearable, ...props }: SelectFieldProps) {
+export function SelectField<TId extends string | number = number>({
+  label,
+  items,
+  error,
+  isClearable,
+  ...props
+}: SelectFieldProps<TId>) {
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const t = useTranslations('SelectField')
   const OverlayRoot = isDesktop ? Popover.Root : Dialog.Root
@@ -113,9 +119,11 @@ export function SelectField({ label, items, error, isClearable, ...props }: Sele
                 {...props}
                 multiple
                 values={props.values.map(value => value.id)}
-                onValuesChange={(values: number[]) => {
+                onValuesChange={values => {
                   const byId = new Map([...props.values, ...items].map(item => [item.id, item]))
-                  props.onValuesChange(values.map(id => byId.get(id)).filter(Boolean) as ListItem[])
+                  props.onValuesChange(
+                    values.map(id => byId.get(id)).filter(Boolean) as ListItem<TId>[]
+                  )
                 }}
               />
             ) : (
@@ -136,7 +144,13 @@ export function SelectField({ label, items, error, isClearable, ...props }: Sele
   )
 }
 
-function AutoClose({ value, close }: { value: ListItem | null; close: () => void }) {
+function AutoClose<TId extends string | number>({
+  value,
+  close,
+}: {
+  value: ListItem<TId> | null
+  close: () => void
+}) {
   useEffect(() => {
     close()
   }, [value?.id])

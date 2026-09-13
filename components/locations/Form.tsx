@@ -4,7 +4,6 @@ import { Button } from '../Button'
 import { TextField } from '../forms/TextField'
 import { useForm, Controller } from 'react-hook-form'
 import { SelectField } from '../forms/SelectField'
-import { useCountries } from '@/hooks/useCountries'
 import { Disclosure } from '../shared/Disclosure'
 import { ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
@@ -18,13 +17,15 @@ import { getAssetUrl } from '@/lib/getAssetUrl'
 import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
 import { useSimilarLocations } from '@/hooks/locations/useSimilarLocations'
 import { ListItem } from '@/types/types'
+import { getCountryName } from '@/lib/getCountryName'
+import { useSearchCountries } from '@/hooks/countries/useSearchCountries'
 
 export type LocationFields = {
   id: AddLocation['id']
   name: AddLocation['name']
   zip_code: AddLocation['zip_code']
   city: AddLocation['city']
-  country: ListItem
+  country: ListItem<string>
   alt_names: AddLocation['alt_names']
   website: AddLocation['website']
   image: AddLocation['image']
@@ -35,7 +36,6 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
   const { id: locationId } = useParams<{ id?: string }>()
   const { data: location } = useLocation(locationId ? parseInt(locationId) : null)
   const locale = useLocale()
-  const regionNames = new Intl.DisplayNames(locale, { type: 'region' })
   const {
     register,
     control,
@@ -47,10 +47,10 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
       ? { name: '', zip_code: '', city: '' }
       : {
           ...location,
-          country: location?.country
+          country: location
             ? {
-                id: location.country.id,
-                name: regionNames.of(location.country.iso2) ?? location.country.iso2,
+                id: location.country_iso2,
+                name: getCountryName(location.country_iso2, locale) ?? location.country_iso2,
               }
             : undefined,
           imageFile: location?.image
@@ -66,7 +66,7 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
     size: similarLocationsSize,
   })
   const [countriesSearchQuery, setCountriesSearchQuery] = useState('')
-  const { data: countries } = useCountries({ search: countriesSearchQuery })
+  const { data: countries } = useSearchCountries({ search: countriesSearchQuery })
   const addLocation = useAddLocation()
   const editLocation = useEditLocation()
   const { status } = isNew ? addLocation : editLocation
@@ -140,14 +140,14 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
         control={control}
         rules={{ required: true }}
         render={({ field: { value = null, onChange } }) => (
-          <SelectField
+          <SelectField<string>
             name="country"
             value={value}
             onValueChange={onChange}
             items={
-              countries?.map(item => ({
-                id: item.id,
-                name: regionNames.of(item.iso2) ?? item.iso2,
+              countries?.data.map(item => ({
+                id: item.iso2,
+                name: getCountryName(item.iso2, locale) ?? item.iso2,
               })) ?? []
             }
             searchable

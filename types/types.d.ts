@@ -20,7 +20,7 @@ export type ConcertFetchOptions = {
 
 export type BandFetchOptions = {
   ids?: number[] | null
-  countries?: number[] | null
+  countries?: string[] | null
   genres?: number[] | null
   search?: string
   size?: number
@@ -44,13 +44,13 @@ export type FestivalRootFetchOptions = {
 export type LocationFetchOptions = {
   ids?: number[] | null
   search?: string
-  countries?: number[] | null
+  countries?: string[] | null
   size?: number
   page?: number
 }
 
 export type CountryFetchOptions = {
-  ids?: number[] | null
+  iso2?: string[] | null
   search?: string
 }
 
@@ -119,7 +119,6 @@ export type AddReaction = TablesInsert<'reactions'>
 export type EditReaction = TablesUpdate<'reactions'>
 
 export type Band = Tables<'bands'> & {
-  country: Country
   genres: Genre[]
   concerts?: Tables<'concerts'>[] | null
   item_index?: number | null
@@ -127,7 +126,6 @@ export type Band = Tables<'bands'> & {
 }
 
 export type AddBand = TablesInsert<'bands'> & {
-  country: Country
   genres: Genre[]
 }
 
@@ -143,15 +141,12 @@ export type BandSeen = Tables<'j_bands_seen'> & {
 export type Genre = Tables<'genres'>
 
 export type Location = Tables<'locations'> & {
-  country?: Country | null
   creator?: { username: string } | null
 }
 
 export type AddLocation = TablesInsert<'locations'>
 
 export type EditLocation = TablesUpdate<'locations'>
-
-export type Country = { id: number; iso2: string }
 
 export type Profile = Omit<Tables<'profiles'>, 'last_searched'> & {
   friends?: { count: number }[]
@@ -168,8 +163,8 @@ export type Friend = Tables<'friends'> & {
 
 export type AddFriend = TablesInsert<'friends'>
 
-export type ListItem<IdType = number> = {
-  id: IdType
+export type ListItem<TId extends string | number = number> = {
+  id: TId
   name: string
   count?: number
 }

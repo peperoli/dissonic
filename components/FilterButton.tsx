@@ -9,24 +9,20 @@ import { Popover } from './shared/Popover'
 import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 import { useTranslations } from 'next-intl'
 
-type MultiSelectProps = {
-  type?: 'multiselect' | 'range'
-  selectedIds: number[]
-  submittedValues: number[] | null
-  onSubmit: (value: number[]) => void
-}
-
-type SingleSelectProps = { type?: 'singleselect'; selectedId: number | null }
-
-type FilterButtonProps = {
+type FilterButtonProps<TId extends string | number> = {
   label: string
-  items?: ListItem[]
+  items?: ListItem<TId>[]
   size?: 'md' | 'sm'
   appearance?: 'secondary' | 'tertiary'
   children: ReactNode
-} & (MultiSelectProps | SingleSelectProps)
+  type?: 'multiselect' | 'range' | 'singleselect'
+  selectedIds?: TId[]
+  submittedValues?: TId[] | null
+  onSubmit?: (value: TId[]) => void
+  selectedId?: TId | null
+}
 
-export const FilterButton = ({
+export const FilterButton = <TId extends string | number = number>({
   label,
   type = 'multiselect',
   items,
@@ -34,11 +30,11 @@ export const FilterButton = ({
   appearance = 'secondary',
   children,
   ...props
-}: FilterButtonProps) => {
+}: FilterButtonProps<TId>) => {
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const t = useTranslations('FilterButton')
-  const count = ('submittedValues' in props && props.submittedValues?.length) || 0
-  const hasValues = count > 0 || ('selectedId' in props && props !== null)
+  const count = props.submittedValues?.length || 0
+  const hasValues = count > 0 || (props.selectedId !== undefined && props.selectedId !== null)
 
   function triggerButton({ isOpen }: { isOpen?: boolean }) {
     return (
@@ -54,31 +50,28 @@ export const FilterButton = ({
       >
         <div className="flex w-full">
           {hasValues ? <span className="text-slate-300">{label}:&nbsp;</span> : label}
-          {type === 'range' && count > 0 && 'submittedValues' in props && props.submittedValues && (
+          {type === 'range' && count > 0 && props.submittedValues && (
             <div>
-              {Math.min(...props.submittedValues)}&thinsp;&ndash;&thinsp;
-              {Math.max(...props.submittedValues)}
+              {Math.min(...props.submittedValues.map(Number))}&thinsp;&ndash;&thinsp;
+              {Math.max(...props.submittedValues.map(Number))}
             </div>
           )}
-          {type === 'multiselect' &&
-            count > 0 &&
-            'submittedValues' in props &&
-            props.submittedValues && (
-              <TruncatedList
-                renderTruncator={({ hiddenItemsCount }) => <div>+{hiddenItemsCount}</div>}
-                className="flex w-full items-center overflow-auto"
-              >
-                {items
-                  ?.filter(item => props.submittedValues?.includes(item.id))
-                  .map((item, index) => (
-                    <span key={item.id}>
-                      {item.name}
-                      {index + 1 < count && <>,&nbsp;</>}
-                    </span>
-                  ))}
-              </TruncatedList>
-            )}
-          {type === 'singleselect' && 'selectedId' in props && (
+          {type === 'multiselect' && count > 0 && props.submittedValues && (
+            <TruncatedList
+              renderTruncator={({ hiddenItemsCount }) => <div>+{hiddenItemsCount}</div>}
+              className="flex w-full items-center overflow-auto"
+            >
+              {items
+                ?.filter(item => props.submittedValues?.includes(item.id))
+                .map((item, index) => (
+                  <span key={item.id}>
+                    {item.name}
+                    {index + 1 < count && <>,&nbsp;</>}
+                  </span>
+                ))}
+            </TruncatedList>
+          )}
+          {type === 'singleselect' && props.selectedId !== undefined && (
             <div>{items?.find(item => item.id === props.selectedId)?.name}</div>
           )}
         </div>
@@ -88,10 +81,10 @@ export const FilterButton = ({
   }
 
   const submitButton =
-    'onSubmit' in props ? (
+    props.onSubmit && props.selectedIds ? (
       <Button
         onClick={() => {
-          props.onSubmit(props.selectedIds)
+          props.onSubmit?.(props.selectedIds ?? [])
         }}
         label={t('save')}
         appearance="primary"

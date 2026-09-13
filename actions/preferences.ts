@@ -18,7 +18,7 @@ export async function setConcertsRangePreference(range: 'past' | 'future') {
 
 export async function saveLastQueryState(
   resource: 'concerts' | 'bands',
-  queryStates: Record<string, string | number | number[] | boolean | null | undefined>
+  queryStates: Record<string, string | number | string[] | number[] | boolean | null | undefined>
 ) {
   const cookieStore = await cookies()
   const searchParams = new URLSearchParams(

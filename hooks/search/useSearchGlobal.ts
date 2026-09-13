@@ -15,7 +15,7 @@ function sortByFirstHitRanking(a: SearchResponse, b: SearchResponse) {
   const bRankingInfo = b.hits[0]?._rankingInfo
 
   if (!aRankingInfo || !bRankingInfo) {
-    return 0
+    return diff
   }
 
   diff = aRankingInfo.nbTypos - bRankingInfo.nbTypos

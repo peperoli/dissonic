@@ -16,7 +16,7 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
   }
 
   if (options?.countries && options.countries.length > 0) {
-    countQuery = countQuery.in('country_id', options.countries)
+    countQuery = countQuery.overlaps('countries_iso2', options.countries)
   }
 
   if (options?.genres && options.genres.length > 0) {
@@ -43,7 +43,7 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
     }
 
     if (options?.countries && options.countries.length > 0) {
-      filterQuery = filterQuery.in('country_id', options.countries)
+      filterQuery = filterQuery.overlaps('countries_iso2', options.countries)
     }
 
     if (options?.genres && options.genres.length > 0) {
@@ -67,7 +67,7 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
 
   let query = supabase
     .from('bands')
-    .select('*, country:countries(id, iso2), genres(*)')
+    .select('*, genres(*)')
     .in('id', filteredBandIds)
     .order('name')
 
