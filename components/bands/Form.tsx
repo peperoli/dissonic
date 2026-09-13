@@ -23,7 +23,7 @@ import { getCountryName } from '@/lib/getCountryName'
 export type BandFields = {
   id: AddBand['id']
   name: AddBand['name']
-  country: ListItem<string>
+  countries: ListItem<string>[]
   genres: ListItem[]
   spotify_artist: SpotifyArtist | null
   alt_names: AddBand['alt_names']
@@ -48,12 +48,11 @@ export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) =
         }
       : {
           ...band,
-          country: band?.countries_iso2?.[0]
-            ? {
-                id: band.countries_iso2[0],
-                name: getCountryName(band.countries_iso2[0], locale) ?? band.countries_iso2[0],
-              }
-            : undefined,
+          countries:
+            band?.countries_iso2.map(countryIso2 => ({
+              id: countryIso2,
+              name: getCountryName(countryIso2, locale) ?? countryIso2,
+            })) || [],
           spotify_artist: {
             id: band?.spotify_artist_id,
             images: band?.spotify_artist_images,
@@ -101,14 +100,15 @@ export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) =
         />
       )}
       <Controller
-        name="country"
+        name="countries"
         control={control}
         rules={{ required: true }}
-        render={({ field: { value = null, onChange } }) => (
+        render={({ field: { value = [], onChange } }) => (
           <SelectField<string>
-            name="country"
-            value={value}
-            onValueChange={onChange}
+            name="countries"
+            multiple={true}
+            values={value}
+            onValuesChange={onChange}
             items={
               countries?.map(item => ({
                 id: item.iso2,
@@ -118,7 +118,7 @@ export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) =
             searchable
             searchQuery={countriesSearchQuery}
             setSearchQuery={setCountriesSearchQuery}
-            error={errors.country}
+            error={errors.countries}
             label={t('country')}
           />
         )}

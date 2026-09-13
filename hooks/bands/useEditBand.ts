@@ -27,7 +27,7 @@ const editBand = async (formData: BandFields) => {
     .from('bands')
     .update({
       name: formData.name,
-      countries_iso2: [formData.country.id],
+      countries_iso2: formData.countries.map(country => country.id),
       spotify_artist_id: formData.spotify_artist?.id,
       spotify_artist_images: formData.spotify_artist?.images ?? null,
       alt_names: formData.alt_names,
