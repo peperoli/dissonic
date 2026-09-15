@@ -8,24 +8,28 @@ type FestivalRootSelectProps = {
   values: number[]
   onValuesChange: (value: number[]) => void
   facetCounts: Record<number, number>
+  enabled: boolean
 }
 
-const FestivalRootSelect = ({ facetCounts, ...props }: FestivalRootSelectProps) => {
+const FestivalRootSelect = ({ facetCounts, enabled, ...props }: FestivalRootSelectProps) => {
   const [searchQuery, setSearchQuery] = useState('')
   const { data: festivalRoots, isPending } = useFestivalRoots({
     search: searchQuery,
     sort: { sort_by: 'name', sort_asc: true },
+    enabled,
   })
   return (
     <Select
       name="festivalRoot"
-      items={festivalRoots?.data
-        .map(item => ({
-          id: item.id,
-          name: item.name,
-          count: facetCounts[item.id] ?? 0,
-        }))
-        .sort((a, b) => b.count - a.count) ?? []}
+      items={
+        festivalRoots?.data
+          .map(item => ({
+            id: item.id,
+            name: item.name,
+            count: facetCounts[item.id] ?? 0,
+          }))
+          .sort((a, b) => b.count - a.count) ?? []
+      }
       searchable
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
@@ -48,7 +52,10 @@ export const FestivalRootFilter = ({
   onSubmit,
   facetCounts,
 }: FestivalRootFilterProps) => {
-  const { data: festivalRoots } = useFestivalRoots({ ids: submittedValues })
+  const { data: festivalRoots } = useFestivalRoots({
+    ids: submittedValues,
+    enabled: !!submittedValues?.length,
+  })
   const [selectedIds, setSelectedIds] = useState<number[]>(submittedValues ?? [])
   const t = useTranslations('FestivalRootFilter')
 
@@ -63,11 +70,14 @@ export const FestivalRootFilter = ({
       submittedValues={submittedValues}
       onSubmit={onSubmit}
     >
-      <FestivalRootSelect
-        values={selectedIds}
-        onValuesChange={setSelectedIds}
-        facetCounts={facetCounts}
-      />
+      {({ isOpen }) => (
+        <FestivalRootSelect
+          values={selectedIds}
+          onValuesChange={setSelectedIds}
+          facetCounts={facetCounts}
+          enabled={isOpen}
+        />
+      )}
     </FilterButton>
   )
 }

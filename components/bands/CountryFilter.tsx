@@ -9,20 +9,22 @@ const CountryMultiSelect = ({
   selectedOptions,
   setSelectedOptions,
   facetCounts,
+  enabled,
 }: {
   selectedOptions: string[]
   setSelectedOptions: (value: string[]) => void
   facetCounts: Record<string, number>
+  enabled: boolean
 }) => {
   const [searchQuery, setSearchQuery] = useState('')
-  const { data: countries, isPending } = useSearchCountries({ search: searchQuery })
+  const { data: countries, isPending } = useSearchCountries({ search: searchQuery, enabled })
   const locale = useLocale()
   return (
     <Select<string>
       name="Land"
       items={
-        countries
-          ?.data.map(item => ({
+        countries?.data
+          .map(item => ({
             id: item.iso2,
             name: getCountryName(item.iso2, locale) ?? item.iso2,
             count: facetCounts[item.iso2] ?? 0,
@@ -50,7 +52,10 @@ export const CountryFilter = ({
   onSubmit: (value: string[]) => void
   facetCounts: Record<string, number>
 }) => {
-  const { data: countries } = useSearchCountries({ iso2: submittedValues ?? [] })
+  const { data: countries } = useSearchCountries({
+    iso2: submittedValues,
+    enabled: !!submittedValues?.length,
+  })
   const [selectedIds, setSelectedIds] = useState(submittedValues ?? [])
   const t = useTranslations('CountryFilter')
   const locale = useLocale()
@@ -69,11 +74,14 @@ export const CountryFilter = ({
       submittedValues={submittedValues}
       onSubmit={onSubmit}
     >
-      <CountryMultiSelect
-        selectedOptions={selectedIds}
-        setSelectedOptions={setSelectedIds}
-        facetCounts={facetCounts}
-      />
+      {({ isOpen }) => (
+        <CountryMultiSelect
+          selectedOptions={selectedIds}
+          setSelectedOptions={setSelectedIds}
+          facetCounts={facetCounts}
+          enabled={isOpen}
+        />
+      )}
     </FilterButton>
   )
 }

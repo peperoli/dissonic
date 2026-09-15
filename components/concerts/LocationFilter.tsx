@@ -8,21 +8,24 @@ type LocationMultiSelectProps = {
   values: number[]
   onValuesChange: (value: number[]) => void
   facetCounts: Record<number, number>
+  enabled: boolean
 }
 
-const LocationMultiSelect = ({ facetCounts, ...props }: LocationMultiSelectProps) => {
+const LocationMultiSelect = ({ facetCounts, enabled, ...props }: LocationMultiSelectProps) => {
   const [searchQuery, setSearchQuery] = useState('')
-  const { data: locations, isPending } = useLocations({ search: searchQuery })
+  const { data: locations, isPending } = useLocations({ search: searchQuery, enabled })
   return (
     <Select
       name="location"
-      items={locations?.data
-        .map(item => ({
-          id: item.id,
-          name: `${item.name}, ${item.city}`,
-          count: facetCounts[item.id] ?? 0,
-        }))
-        .sort((a, b) => b.count - a.count) ?? []}
+      items={
+        locations?.data
+          .map(item => ({
+            id: item.id,
+            name: `${item.name}, ${item.city}`,
+            count: facetCounts[item.id] ?? 0,
+          }))
+          .sort((a, b) => b.count - a.count) ?? []
+      }
       searchable
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
@@ -45,7 +48,10 @@ export const LocationFilter = ({
   onSubmit,
   facetCounts,
 }: LocationFilterProps) => {
-  const { data: locations } = useLocations({ ids: submittedValues })
+  const { data: locations } = useLocations({
+    ids: submittedValues,
+    enabled: !!submittedValues?.length,
+  })
   const [selectedIds, setSelectedIds] = useState(submittedValues ?? [])
   const t = useTranslations('LocationFilter')
 
@@ -60,11 +66,14 @@ export const LocationFilter = ({
       submittedValues={submittedValues}
       onSubmit={onSubmit}
     >
-      <LocationMultiSelect
-        values={selectedIds}
-        onValuesChange={setSelectedIds}
-        facetCounts={facetCounts}
-      />
+      {({ isOpen }) => (
+        <LocationMultiSelect
+          values={selectedIds}
+          onValuesChange={setSelectedIds}
+          facetCounts={facetCounts}
+          enabled={isOpen}
+        />
+      )}
     </FilterButton>
   )
 }

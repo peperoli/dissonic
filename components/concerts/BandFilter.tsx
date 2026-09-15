@@ -8,21 +8,24 @@ type BandMultiSelectProps = {
   values: number[]
   onValuesChange: (value: number[]) => void
   facetCounts: Record<number, number>
+  enabled: boolean
 }
 
-const BandMultiSelect = ({ facetCounts, ...props }: BandMultiSelectProps) => {
+const BandMultiSelect = ({ facetCounts, enabled, ...props }: BandMultiSelectProps) => {
   const [searchQuery, setSearchQuery] = useState('')
-  const { data: bands, isPending } = useBands({ search: searchQuery })
+  const { data: bands, isPending } = useBands({ search: searchQuery, enabled })
   return (
     <Select
       name="band"
-      items={bands?.data
-        .map(band => ({
-          id: band.id,
-          name: band.name,
-          count: facetCounts[band.id] ?? 0,
-        }))
-        .sort((a, b) => b.count - a.count) ?? []}
+      items={
+        bands?.data
+          .map(band => ({
+            id: band.id,
+            name: band.name,
+            count: facetCounts[band.id] ?? 0,
+          }))
+          .sort((a, b) => b.count - a.count) ?? []
+      }
       searchable
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
@@ -41,7 +44,7 @@ type BandFilterProps = {
 }
 
 export const BandFilter = ({ values: submittedValues, onSubmit, facetCounts }: BandFilterProps) => {
-  const { data: bands } = useBands({ ids: submittedValues })
+  const { data: bands } = useBands({ ids: submittedValues, enabled: !!submittedValues?.length })
   const [selectedIds, setSelectedIds] = useState<number[]>(submittedValues ?? [])
   const t = useTranslations('BandFilter')
 
@@ -56,11 +59,14 @@ export const BandFilter = ({ values: submittedValues, onSubmit, facetCounts }: B
       submittedValues={submittedValues}
       onSubmit={onSubmit}
     >
-      <BandMultiSelect
-        values={selectedIds}
-        onValuesChange={setSelectedIds}
-        facetCounts={facetCounts}
-      />
+      {({ isOpen }) => (
+        <BandMultiSelect
+          values={selectedIds}
+          onValuesChange={setSelectedIds}
+          facetCounts={facetCounts}
+          enabled={isOpen}
+        />
+      )}
     </FilterButton>
   )
 }

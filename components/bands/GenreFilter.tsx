@@ -8,23 +8,27 @@ const GenreMultiSelect = ({
   selectedOptions,
   setSelectedOptions,
   facetCounts,
+  enabled,
 }: {
   selectedOptions: number[]
   setSelectedOptions: (value: number[]) => void
   facetCounts: Record<number, number>
+  enabled: boolean
 }) => {
   const [searchQuery, setSearchQuery] = useState('')
-  const { data: genres, isPending } = useGenres({ search: searchQuery })
+  const { data: genres, isPending } = useGenres({ search: searchQuery, enabled })
   return (
     <Select
       name="Genre"
-      items={genres
-        ?.map(item => ({
-          id: item.id,
-          name: item.name,
-          count: facetCounts[item.id] ?? 0,
-        }))
-        .sort((a, b) => b.count - a.count) ?? []}
+      items={
+        genres
+          ?.map(item => ({
+            id: item.id,
+            name: item.name,
+            count: facetCounts[item.id] ?? 0,
+          }))
+          .sort((a, b) => b.count - a.count) ?? []
+      }
       searchable
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
@@ -46,7 +50,7 @@ export const GenreFilter = ({
   onSubmit: (value: number[]) => void
   facetCounts: Record<number, number>
 }) => {
-  const { data: genres } = useGenres({ ids: submittedValues })
+  const { data: genres } = useGenres({ ids: submittedValues, enabled: !!submittedValues?.length })
   const [selectedIds, setSelectedIds] = useState(submittedValues ?? [])
   const t = useTranslations('GenreFilter')
 
@@ -61,11 +65,14 @@ export const GenreFilter = ({
       submittedValues={submittedValues}
       onSubmit={onSubmit}
     >
-      <GenreMultiSelect
-        selectedOptions={selectedIds}
-        setSelectedOptions={setSelectedIds}
-        facetCounts={facetCounts}
-      />
+      {({ isOpen }) => (
+        <GenreMultiSelect
+          selectedOptions={selectedIds}
+          setSelectedOptions={setSelectedIds}
+          facetCounts={facetCounts}
+          enabled={isOpen}
+        />
+      )}
     </FilterButton>
   )
 }

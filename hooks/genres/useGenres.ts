@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query'
-import { Genre, GenreFetchOptions } from '../../types/types'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { Genre, GenreFetchOptions, QueryOptions } from '../../types/types'
 import supabase from '../../utils/supabase/client'
 
 const fetchGenres = async (options?: GenreFetchOptions): Promise<Genre[]> => {
@@ -25,9 +25,13 @@ const fetchGenres = async (options?: GenreFetchOptions): Promise<Genre[]> => {
   return data
 }
 
-export const useGenres = (options?: GenreFetchOptions) => {
+export const useGenres = (options: GenreFetchOptions & QueryOptions<Genre[]> = {}) => {
+  const { placeholderData, enabled, ...fetchOptions } = options
+
   return useQuery({
-    queryKey: ['genres', JSON.stringify(options)],
-    queryFn: () => fetchGenres(options),
+    queryKey: ['genres', JSON.stringify(fetchOptions)],
+    queryFn: () => fetchGenres(fetchOptions),
+    placeholderData: previousData => keepPreviousData(previousData || placeholderData),
+    enabled,
   })
 }

@@ -14,7 +14,7 @@ type FilterButtonProps<TId extends string | number> = {
   items?: ListItem<TId>[]
   size?: 'md' | 'sm'
   appearance?: 'secondary' | 'tertiary'
-  children: ReactNode
+  children: ReactNode | ((args: { isOpen: boolean }) => ReactNode)
   type?: 'multiselect' | 'range' | 'singleselect'
   selectedIds?: TId[]
   submittedValues?: TId[] | null
@@ -92,6 +92,10 @@ export const FilterButton = <TId extends string | number = number>({
       />
     ) : null
 
+  function renderChildren(isOpen: boolean) {
+    return typeof children === 'function' ? children({ isOpen }) : children
+  }
+
   if (isDesktop) {
     return (
       <Popover.Root>
@@ -99,7 +103,7 @@ export const FilterButton = <TId extends string | number = number>({
           <>
             <Popover.Trigger asChild>{triggerButton({ isOpen })}</Popover.Trigger>
             <Popover.Content className="z-20 mt-1 w-[calc(anchor-size(width)+2rem)] flex-col rounded-lg bg-slate-700 p-4 shadow-xl">
-              {children}
+              {renderChildren(isOpen)}
               <Popover.Close asChild>{submitButton}</Popover.Close>
             </Popover.Content>
           </>
@@ -125,7 +129,7 @@ export const FilterButton = <TId extends string | number = number>({
                   />
                 </Dialog.Close>
               </div>
-              {children}
+              {renderChildren(isOpen)}
               <Dialog.Close asChild>{submitButton}</Dialog.Close>
             </Dialog.Content>
           </Dialog.Portal>

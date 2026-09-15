@@ -11,6 +11,10 @@ const fetchConcertDates = async () => {
   return data
 }
 
-export const useConcertDates = () => {
-  return useQuery({ queryKey: ['concertYears'], queryFn: fetchConcertDates })
+export const useConcertDates = (options: { enabled?: boolean } = {}) => {
+  return useQuery({
+    queryKey: ['concertYears'],
+    queryFn: fetchConcertDates,
+    enabled: options.enabled,
+  })
 }

@@ -9,10 +9,11 @@ import { Temporal } from 'temporal-polyfill'
 type YearsRangeSliderProps = {
   selectedOptions: number[]
   setSelectedOptions: Dispatch<SetStateAction<number[]>>
+  enabled: boolean
 }
 
-const YearsRangeSlider = ({ ...props }: YearsRangeSliderProps) => {
-  const { data: concertDates, isPending } = useConcertDates()
+const YearsRangeSlider = ({ enabled, ...props }: YearsRangeSliderProps) => {
+  const { data: concertDates, isPending } = useConcertDates({ enabled })
   const t = useTranslations('YearsFilter')
   const concertYears = concertDates
     ?.map(item => item.date_start && Temporal.PlainDate.from(item.date_start).year)
@@ -50,7 +51,13 @@ export const YearsFilter = ({ values: submittedValues, onSubmit }: YearsFilterPr
       submittedValues={submittedValues}
       onSubmit={onSubmit}
     >
-      <YearsRangeSlider selectedOptions={selectedOptions} setSelectedOptions={setSelectedOptions} />
+      {({ isOpen }) => (
+        <YearsRangeSlider
+          selectedOptions={selectedOptions}
+          setSelectedOptions={setSelectedOptions}
+          enabled={isOpen}
+        />
+      )}
     </FilterButton>
   )
 }
