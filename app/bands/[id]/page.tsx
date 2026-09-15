@@ -36,14 +36,26 @@ export async function generateMetadata(
   }
 }
 
-export async function generateStaticParams() {
-  const { data: bands, error } = await supabase.from('bands').select('id').eq('is_archived', false)
+export async function generateStaticParams(): Promise<{ id: string }[]> {
+  const { count } = await supabase.from('bands').select('*', { count: 'exact', head: true })
 
-  if (error) {
-    throw error
+  const perPage = 1000
+  const maxPage = count ? Math.ceil(count / perPage) : 1
+  const queries = []
+
+  for (let page = 1; page <= maxPage; page++) {
+    queries.push(await supabase.from('bands').select('id').eq('is_archived', false))
   }
 
-  return bands?.map(band => ({ id: band.id.toString() }))
+  const responses = await Promise.all(queries)
+
+  if (responses.some(({ error }) => error)) {
+    throw responses.find(({ error }) => error)
+  }
+
+  return responses.flatMap(response =>
+    response.data ? response.data.map(band => ({ id: band.id.toString() })) : []
+  )
 }
 
 async function fetchData(params: { id: string }) {
