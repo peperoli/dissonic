@@ -998,6 +998,36 @@ export type Database = {
         }
       }
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
+      get_concerts: {
+        Args: {
+          band_ids?: number[]
+          sort_asc?: boolean
+          sort_by?: string
+          user_ids?: string[]
+        }
+        Returns: {
+          created_at: string
+          creator_id: string | null
+          date_end: string | null
+          date_start: string
+          doors_time: string | null
+          festival_root_id: number | null
+          id: number
+          is_archived: boolean
+          is_festival: boolean
+          location_id: number
+          name: string | null
+          resource_status: Database["public"]["Enums"]["resource_status"] | null
+          show_time: string | null
+          source_link: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "concerts"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       json_matches_schema: {
         Args: { instance: Json; schema: Json }
         Returns: boolean

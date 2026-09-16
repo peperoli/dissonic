@@ -1,15 +1,12 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import type { PostgrestFilterBuilder } from '@supabase/supabase-js'
 import { Concert, ConcertFetchOptions, ExtendedRes, QueryOptions } from '@/types/types'
 import supabase from '@/utils/supabase/client'
 
-const fetchConcerts = async (options?: ConcertFetchOptions) => {
-  let query = supabase.from('concerts_full').select(
-    `id,
-      bands!j_concert_bands(id),
-      bands_seen:j_bands_seen(user_id)`,
-    { count: 'estimated' }
-  )
-
+function applyFilters<TQuery extends PostgrestFilterBuilder<any, any, any, any>>(
+  query: TQuery,
+  options?: ConcertFetchOptions
+) {
   if (options?.locations && options.locations.length > 0) {
     query = query.in('location_id', options.locations)
   }
@@ -36,47 +33,43 @@ const fetchConcerts = async (options?: ConcertFetchOptions) => {
     query = query.in('festival_root_id', options.festivalRoots)
   }
 
-  const { data: initalFilteredConcerts, error: countError } = await query
+  return query.eq('is_archived', false)
+}
+
+async function fetchConcerts(options?: ConcertFetchOptions) {
+  const rpcOptions = {
+    band_ids: options?.bands?.length ? options.bands : undefined,
+    user_ids: options?.bandsSeenUsers?.length ? options.bandsSeenUsers : undefined,
+    sort_by: options?.sort?.sort_by,
+    sort_asc: options?.sort?.sort_asc,
+  }
+
+  const countQuery = supabase.rpc('get_concerts', rpcOptions, { count: 'estimated', head: true })
+
+  const { count, error: countError } = await applyFilters(countQuery, options)
 
   if (countError) {
     throw countError
   }
 
-  let filteredConcerts = initalFilteredConcerts
+  const dataQuery = supabase.rpc('get_concerts', rpcOptions).select(
+    `*,
+      festival_root:festival_roots(id, name),
+      bands:j_concert_bands(item_index, ...bands(*, genres(*))),
+      location:locations(*)`
+  )
 
-  if (options?.bands && options.bands.length > 0) {
-    filteredConcerts = filteredConcerts?.filter(concert =>
-      concert.bands.some(band => options.bands?.includes(band.id))
-    )
-  }
-
-  if (options?.bandsSeenUsers && options.bandsSeenUsers.length > 0) {
-    filteredConcerts = filteredConcerts?.filter(concert =>
-      concert.bands_seen.some(band => options.bandsSeenUsers?.includes(band.user_id))
-    )
-  }
-
-  let filteredQuery = supabase
-    .from('concerts_full')
-    .select('*, bands:j_concert_bands(item_index, ...bands(*, genres(*)))', { count: 'estimated' })
-    .in(
-      'id',
-      filteredConcerts.map(id => id.id)
-    )
-
-  if (options?.sort) {
-    filteredQuery = filteredQuery.order(options.sort.sort_by, { ascending: options.sort.sort_asc })
-  }
+  let query = applyFilters(dataQuery, options)
 
   if (options?.size) {
-    filteredQuery = filteredQuery.limit(options.size)
+    query = query.limit(options.size)
   }
 
   if (options?.bandsSize) {
-    filteredQuery = filteredQuery.limit(options.bandsSize, { referencedTable: 'j_concert_bands' })
+    query = query.limit(options.bandsSize, { referencedTable: 'j_concert_bands' })
   }
 
-  const { data, count, error } = await filteredQuery.order('item_index', {
+  const { data, error } = await query.order('item_index', {
     referencedTable: 'j_concert_bands',
     ascending: true,
   })
@@ -85,7 +78,7 @@ const fetchConcerts = async (options?: ConcertFetchOptions) => {
     throw error
   }
 
-  return { data: data as unknown as Concert[], count }
+  return { data, count }
 }
 
 export const useConcerts = (
@@ -93,7 +86,7 @@ export const useConcerts = (
 ) => {
   const { placeholderData, enabled, ...fetchOptions } = options
   return useQuery({
-    queryKey: ['concerts', JSON.stringify(fetchOptions)],
+    queryKey: ['concerts', fetchOptions],
     queryFn: () => fetchConcerts(fetchOptions),
     enabled: enabled !== false,
     placeholderData: previousData => keepPreviousData(previousData || placeholderData),

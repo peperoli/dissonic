@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import supabase from '@/utils/supabase/client'
-import { Tables } from '@/types/supabase'
 
 export function useVideoUploadsRealtime(concertId?: number) {
   const queryClient = useQueryClient()
@@ -19,7 +18,7 @@ export function useVideoUploadsRealtime(concertId?: number) {
           table: 'video_uploads',
           filter: `concert_id=eq.${concertId}`,
         },
-        _payload => {
+        () => {
           // Invalidate memories query to reflect updated upload status
           queryClient.invalidateQueries({
             queryKey: ['memories', concertId],

@@ -83,8 +83,8 @@ export type QueryOptions<T> = {
 
 export type Concert = Tables<'concerts'> & {
   festival_root: { id: number; name: string } | null
-  location: Location | null
-  bands: Band[]
+  location: Location
+  bands: (Band & { item_index: number | null })[]
   bands_seen?: Tables<'j_bands_seen'>[]
   creator?: { username: string } | null
 }
@@ -121,7 +121,6 @@ export type EditReaction = TablesUpdate<'reactions'>
 export type Band = Tables<'bands'> & {
   genres: Genre[]
   concerts?: Tables<'concerts'>[] | null
-  item_index?: number | null
   creator?: { username: string } | null
 }
 
