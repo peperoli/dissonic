@@ -1,4 +1,3 @@
-import { Concert } from '@/types/types'
 import { createClient } from '@/utils/supabase/server'
 import { ConcertsPage } from '@/components/concerts/ConcertsPage'
 import { Temporal } from 'temporal-polyfill'
@@ -12,14 +11,17 @@ async function fetchData() {
   } = await supabase.auth.getUser()
 
   const { data, count, error } = await supabase
-    .from('concerts_full')
-    .select('*, bands:j_concert_bands(*, ...bands(*, genres(*)))', { count: 'estimated' })
+    .rpc('get_concerts', { sort_asc: true }, { count: 'estimated' })
+    .select(
+      `*,
+      festival_root:festival_roots(id, name),
+      bands:j_concert_bands(item_index, ...bands(*, genres(*))),
+      location:locations(*)`
+    )
     .gte('date_start', tomorrow.toString())
-    .order('date_start', { ascending: true })
     .order('item_index', { referencedTable: 'j_concert_bands', ascending: true })
     .limit(25)
     .limit(5, { referencedTable: 'j_concert_bands' })
-    .overrideTypes<Concert[], { merge: false }>()
 
   if (error) {
     throw error

@@ -1,8 +1,28 @@
 import { cookies } from 'next/headers'
-import { Concert } from '@/types/types'
 import { createClient } from '@/utils/supabase/server'
 import { ConcertsPage } from '@/components/concerts/ConcertsPage'
 import { Temporal } from 'temporal-polyfill'
+import { SupabaseClient } from '@supabase/supabase-js'
+import { Database } from '@/types/supabase'
+
+async function getFriendsIds(supabase: SupabaseClient<Database>, userId: string) {
+  const { data: friends, error: friendsError } = await supabase
+    .from('friends')
+    .select(
+      `*,
+      sender:profiles!friends_sender_id_fkey(*),
+      receiver:profiles!friends_receiver_id_fkey(*)`
+    )
+    .or(`sender_id.eq.${userId}, receiver_id.eq.${userId}`)
+
+  if (friendsError) {
+    throw friendsError
+  }
+
+  return [
+    ...new Set([...friends.map(item => item.sender_id), ...friends.map(item => item.receiver_id)]),
+  ]
+}
 
 async function fetchData({ userView }: { userView: string }) {
   const supabase = await createClient()
@@ -12,61 +32,41 @@ async function fetchData({ userView }: { userView: string }) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const { data: concertIds, error: concertIdsError } = await supabase
-    .from('concerts_full')
-    .select('id, date_start, bands_seen:j_bands_seen(user_id)')
-    .lte('date_start', today.toString())
-
-  if (!concertIds) {
-    throw concertIdsError
-  }
-
-  let filteredConcertIds = concertIds
+  let userIds
 
   if (user) {
     if (userView === 'user') {
-      filteredConcertIds = concertIds.filter(concert =>
-        concert.bands_seen.find(band => band.user_id === user.id)
-      )
+      userIds = [user.id]
     } else if (userView === 'friends') {
-      const { data: friends, error: friendsError } = await supabase
-        .from('friends')
-        .select(
-          `*,
-          sender:profiles!friends_sender_id_fkey(*),
-          receiver:profiles!friends_receiver_id_fkey(*)`
-        )
-        .or(`sender_id.eq.${user.id}, receiver_id.eq.${user.id}`)
-
-      if (friendsError) {
-        throw friendsError
-      }
-
-      const friendIds = [
-        ...new Set([
-          ...friends.map(item => item.sender_id),
-          ...friends.map(item => item.receiver_id),
-        ]),
-      ]
-
-      filteredConcertIds = concertIds.filter(concert =>
-        concert.bands_seen.find(band => friendIds?.includes(band.user_id))
-      )
+      userIds = await getFriendsIds(supabase, user.id)
     }
   }
 
-  const { data, count, error } = await supabase
-    .from('concerts_full')
-    .select('*, bands:j_concert_bands(*, ...bands(*, genres(*)))', { count: 'estimated' })
-    .in(
-      'id',
-      filteredConcertIds.map(concert => concert.id)
+  const rpcOptions = {
+    user_ids: userIds,
+  }
+
+  const { count, error: countError } = await supabase.rpc('get_concerts', rpcOptions, {
+    count: 'estimated',
+    head: true,
+  })
+
+  if (countError) {
+    throw countError
+  }
+
+  const { data, error } = await supabase
+    .rpc('get_concerts', rpcOptions)
+    .select(
+      `*,
+      festival_root:festival_roots(id, name),
+      bands:j_concert_bands(item_index, ...bands(*, genres(*))),
+      location:locations(*)`
     )
-    .order('date_start', { ascending: false })
+    .lte('date_start', today.toString())
     .order('item_index', { referencedTable: 'j_concert_bands', ascending: true })
     .limit(25)
     .limit(5, { referencedTable: 'j_concert_bands' })
-    .overrideTypes<Concert[], { merge: false }>()
 
   if (error) {
     throw error
