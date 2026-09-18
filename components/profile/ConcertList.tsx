@@ -6,6 +6,7 @@ import { Button } from '../Button'
 import { ConcertCard } from '../concerts/ConcertCard'
 import { parseAsInteger, useQueryState } from 'nuqs'
 import { useLocale, useTranslations } from 'next-intl'
+import { useProfiles } from '@/hooks/profiles/useProfiles'
 
 export function ConcertList({
   bandId,
@@ -31,6 +32,10 @@ export function ConcertList({
     size,
     bandsSize: 5,
   })
+  const fanIds = Array.from(
+    new Set(concerts?.data?.flatMap(item => item.bands_seen?.map(b => b.user_id) ?? []))
+  )
+  const { data: profiles } = useProfiles({ ids: fanIds }, fanIds.length > 0)
   const t = useTranslations('ConcertList')
   const locale = useLocale()
 
@@ -51,7 +56,7 @@ export function ConcertList({
               <h3 className="section-headline mb-4">{month}</h3>
               <div className="grid gap-4">
                 {concerts.map(concert => (
-                  <ConcertCard concert={concert} nested={nested} key={concert.id} />
+                  <ConcertCard concert={concert} profiles={profiles} nested={nested} key={concert.id} />
                 ))}
               </div>
             </div>

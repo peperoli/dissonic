@@ -1,5 +1,4 @@
-import { Concert, SpotifyArtist } from '../../types/types'
-import { useProfiles } from '../../hooks/profiles/useProfiles'
+import { Concert, Profile, SpotifyArtist } from '../../types/types'
 import { useSession } from '../../hooks/auth/useSession'
 import clsx from 'clsx'
 import { UserItem } from '../shared/UserItem'
@@ -10,38 +9,23 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { TruncatedList } from 'react-truncate-list'
 import { ConcertDate } from './ConcertDate'
-import { useQuery } from '@tanstack/react-query'
-import supabase from '@/utils/supabase/client'
 import { Temporal } from 'temporal-polyfill'
 
 interface ConcertCardProps {
   concert: Concert
+  profiles: Profile[] | undefined
   nested?: boolean
 }
 
-export const ConcertCard = ({ concert, nested }: ConcertCardProps) => {
-  const { data: allBandsSeen } = useQuery({
-    queryKey: ['bandsSeen', concert.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('j_bands_seen')
-        .select('band_id, user_id')
-        .eq('concert_id', concert.id)
-
-      if (error) {
-        throw error
-      }
-
-      return data
-    },
-  })
-  const fanIds = new Set(allBandsSeen?.map(item => item?.user_id ?? ''))
-  const { data: profiles } = useProfiles({ ids: [...fanIds] }, fanIds.size > 0)
+export const ConcertCard = ({ concert, profiles, nested }: ConcertCardProps) => {
+  const fans = profiles?.filter(profile =>
+    concert.bands_seen?.some(bandSeen => bandSeen?.user_id === profile.id)
+  )
   const { data: session } = useSession()
   const { data: spotifyArtist } = useSpotifyArtist(concert.bands[0]?.spotify_artist_id, {
     enabled: !concert.bands[0]?.spotify_artist_images,
   })
-  const bandsSeen = allBandsSeen?.filter(item => item?.user_id === session?.user.id)
+  const bandsSeen = concert.bands_seen?.filter(item => item?.user_id === session?.user.id)
   const picture =
     (concert.bands[0]?.spotify_artist_images as SpotifyArtist['images'])?.[2] ||
     spotifyArtist?.images?.[2]
@@ -107,14 +91,14 @@ export const ConcertCard = ({ concert, nested }: ConcertCardProps) => {
             {concert.location?.name}, {concert.location?.city}
           </p>
         )}
-        {profiles && (
+        {!!fans?.length && (
           <TruncatedList
             renderTruncator={({ hiddenItemsCount }) => (
               <span className="text-sm text-slate-300">+{hiddenItemsCount}</span>
             )}
             className="mt-1 flex w-full items-center gap-2"
           >
-            {profiles.map(item => (
+            {fans.map(item => (
               <UserItem user={item} size="sm" usernameIsHidden key={item.id} />
             ))}
           </TruncatedList>

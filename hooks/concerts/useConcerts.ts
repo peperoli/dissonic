@@ -56,6 +56,7 @@ async function fetchConcerts(options?: ConcertFetchOptions) {
     `*,
       festival_root:festival_roots(id, name),
       bands:j_concert_bands(item_index, ...bands(*, genres(*))),
+      bands_seen:j_bands_seen(*),
       location:locations(*)`
   )
 
@@ -69,10 +70,12 @@ async function fetchConcerts(options?: ConcertFetchOptions) {
     query = query.limit(options.bandsSize, { referencedTable: 'j_concert_bands' })
   }
 
-  const { data, error } = await query.order('item_index', {
-    referencedTable: 'j_concert_bands',
-    ascending: true,
-  })
+  const { data, error } = await query
+    .order('item_index', {
+      referencedTable: 'j_concert_bands',
+      ascending: true,
+    })
+    .overrideTypes<Concert[], { merge: false }>()
 
   if (error) {
     throw error

@@ -36,6 +36,7 @@ import { groupConcertsByMonth } from '@/lib/groupConcertsByMonth'
 import { ConcertsNav } from '../layout/ConcertsNav'
 import { Temporal } from 'temporal-polyfill'
 import { useConcertsFacets } from '@/hooks/concerts/useConcertsFacets'
+import { useProfiles } from '@/hooks/profiles/useProfiles'
 
 export function ConcertsPage({
   concerts: initialConcerts,
@@ -110,6 +111,10 @@ export function ConcertsPage({
     bandsSeenUsers:
       initialView.range !== 'future' ? (selectedUserId ? [selectedUserId] : getView()) : null,
   })
+  const fanIds = Array.from(
+    new Set(concerts?.data?.flatMap(item => item.bands_seen?.map(b => b.user_id) ?? []))
+  )
+  const { data: profiles } = useProfiles({ ids: fanIds }, fanIds.length > 0)
   const { push } = useRouter()
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const t = useTranslations('HomePage')
@@ -260,12 +265,12 @@ export function ConcertsPage({
                   </h3>
                   <div className="grid gap-4">
                     {concerts.map(concert => (
-                      <ConcertCard concert={concert} key={concert.id} />
+                      <ConcertCard concert={concert} profiles={profiles} key={concert.id} />
                     ))}
                   </div>
                 </div>
               ))
-            : concerts.data.map(concert => <ConcertCard concert={concert} key={concert.id} />)}
+            : concerts.data.map(concert => <ConcertCard concert={concert} profiles={profiles} key={concert.id} />)}
         </section>
       )}
       <div className="mt-4 flex flex-col items-center gap-2">
