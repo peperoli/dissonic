@@ -251,36 +251,6 @@ export type Database = {
         }
         Relationships: []
       }
-      countries: {
-        Row: {
-          continent: Database["public"]["Enums"]["continents"] | null
-          id: number
-          iso2: string
-          iso3: string | null
-          local_name: string | null
-          name_de: string
-          name_en: string | null
-        }
-        Insert: {
-          continent?: Database["public"]["Enums"]["continents"] | null
-          id?: number
-          iso2: string
-          iso3?: string | null
-          local_name?: string | null
-          name_de: string
-          name_en?: string | null
-        }
-        Update: {
-          continent?: Database["public"]["Enums"]["continents"] | null
-          id?: number
-          iso2?: string
-          iso3?: string | null
-          local_name?: string | null
-          name_de?: string
-          name_en?: string | null
-        }
-        Relationships: []
-      }
       festival_roots: {
         Row: {
           created_at: string
@@ -558,6 +528,36 @@ export type Database = {
           },
         ]
       }
+      last_searched: {
+        Row: {
+          last_searched: Json[] | null
+          user_id: string
+        }
+        Insert: {
+          last_searched?: Json[] | null
+          user_id: string
+        }
+        Update: {
+          last_searched?: Json[] | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "last_searched_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profile_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "last_searched_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       locations: {
         Row: {
           alt_names: string | null
@@ -701,7 +701,6 @@ export type Database = {
           avatar_path: string | null
           created_at: string | null
           id: string
-          last_searched: Json[] | null
           role: Database["public"]["Enums"]["app_role"] | null
           updated_at: string | null
           username: string
@@ -710,7 +709,6 @@ export type Database = {
           avatar_path?: string | null
           created_at?: string | null
           id: string
-          last_searched?: Json[] | null
           role?: Database["public"]["Enums"]["app_role"] | null
           updated_at?: string | null
           username: string
@@ -719,7 +717,6 @@ export type Database = {
           avatar_path?: string | null
           created_at?: string | null
           id?: string
-          last_searched?: Json[] | null
           role?: Database["public"]["Enums"]["app_role"] | null
           updated_at?: string | null
           username?: string
@@ -1002,7 +999,7 @@ export type Database = {
         Args: {
           band_ids?: number[]
           sort_asc?: boolean
-          sort_by?: string
+          sort_by?: Database["public"]["Enums"]["concerts_order_by"]
           user_ids?: string[]
         }
         Returns: {
@@ -1058,24 +1055,6 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "bands"
-          isOneToOne: false
-          isSetofReturn: true
-        }
-      }
-      search_countries: {
-        Args: { search_string: string }
-        Returns: {
-          continent: Database["public"]["Enums"]["continents"] | null
-          id: number
-          iso2: string
-          iso3: string | null
-          local_name: string | null
-          name_de: string
-          name_en: string | null
-        }[]
-        SetofOptions: {
-          from: "*"
-          to: "countries"
           isOneToOne: false
           isSetofReturn: true
         }
@@ -1149,6 +1128,7 @@ export type Database = {
     Enums: {
       app_role: "developer" | "moderator"
       bands_type: "bands"
+      concerts_order_by: "date_start" | "bands_count"
       continents:
         | "Africa"
         | "Antarctica"
@@ -1312,6 +1292,7 @@ export const Constants = {
     Enums: {
       app_role: ["developer", "moderator"],
       bands_type: ["bands"],
+      concerts_order_by: ["date_start", "bands_count"],
       continents: [
         "Africa",
         "Antarctica",

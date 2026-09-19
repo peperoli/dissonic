@@ -46,7 +46,7 @@ async function fetchData(params: { id: string }) {
 
   const { data, error } = await supabase
     .from('locations')
-    .select('*, creator:profiles!locations_creator_id_fkey(*)')
+    .select('*, creator:profiles!locations_creator_id_fkey(username)')
     .eq('id', locationId)
     .single()
 

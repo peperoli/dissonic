@@ -9,7 +9,7 @@ async function fetchLocation(id: number | null): Promise<Location> {
   
   const { data, error } = await supabase
     .from('locations')
-    .select('*, creator:profiles!locations_creator_id_fkey(*)')
+    .select('*, creator:profiles!locations_creator_id_fkey(username)')
     .eq('id', id)
     .single()
 

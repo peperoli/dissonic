@@ -8,11 +8,7 @@ import { Database } from '@/types/supabase'
 async function getFriendsIds(supabase: SupabaseClient<Database>, userId: string) {
   const { data: friends, error: friendsError } = await supabase
     .from('friends')
-    .select(
-      `*,
-      sender:profiles!friends_sender_id_fkey(*),
-      receiver:profiles!friends_receiver_id_fkey(*)`
-    )
+    .select('sender_id, receiver_id')
     .or(`sender_id.eq.${userId}, receiver_id.eq.${userId}`)
 
   if (friendsError) {

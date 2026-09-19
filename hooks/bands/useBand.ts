@@ -13,7 +13,7 @@ const fetchBand = async (bandId: number | null): Promise<Band> => {
       `*,
       genres(*),
       concerts!j_concert_bands(*),
-      creator:profiles!bands_creator_id_fkey(*)`
+      creator:profiles!bands_creator_id_fkey(username)`
     )
     .eq('id', bandId)
     .single()

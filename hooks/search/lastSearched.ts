@@ -9,9 +9,9 @@ async function fetchLastSearched(session: Session | null | undefined) {
   if (!session) return
 
   const { data, error } = await supabase
-    .from('profiles')
+    .from('last_searched')
     .select('last_searched')
-    .eq('id', session.user.id)
+    .eq('user_id', session.user.id)
     .single()
 
   if (error) {
@@ -19,7 +19,7 @@ async function fetchLastSearched(session: Session | null | undefined) {
   }
 
   return data.last_searched as SearchResult[]
-} 
+}
 
 export function useLastSearched() {
   const { data: session } = useSession()
@@ -37,9 +37,8 @@ async function saveLastSearched(lastSearched: SearchResult[]) {
   if (!session) return
 
   const { error } = await supabase
-    .from('profiles')
-    .update({ last_searched: lastSearched })
-    .eq('id', session.user.id)
+    .from('last_searched')
+    .upsert({ user_id: session.user.id, last_searched: lastSearched }, { onConflict: 'user_id' })
 
   if (error) {
     throw error
@@ -59,6 +58,6 @@ export function useSaveLastSearched() {
       queryClient.invalidateQueries({
         queryKey: ['lastSearched', session?.user.id],
       })
-    }
+    },
   })
 }

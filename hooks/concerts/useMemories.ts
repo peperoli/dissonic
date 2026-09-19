@@ -12,9 +12,7 @@ async function fetchMemories({
 }) {
   let query = supabase
     .from('memories')
-    .select(
-      '*, band:bands(id, name), profile:profiles(id, username, role, avatar_path, updated_at)'
-    )
+    .select('*, band:bands(id, name), profile:profiles(*)')
     .order('created_at', { ascending: false })
 
   if (concertId) {
@@ -37,7 +35,7 @@ async function fetchMemories({
 
   const memoriesWithStatus = memories.map(memory => ({ ...memory, status: null }))
   const videoIds = memories.filter(m => m.file_type.startsWith('video/')).map(m => m.file_id)
-  
+
   if (videoIds.length > 0) {
     const { data: videoUploads, error } = await supabase
       .from('video_uploads')

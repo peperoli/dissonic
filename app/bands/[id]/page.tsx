@@ -71,7 +71,7 @@ async function fetchData(params: { id: string }) {
     .select(
       `*,
       genres(*),
-      creator:profiles!bands_creator_id_fkey(*)`
+      creator:profiles!bands_creator_id_fkey(username)`
     )
     .eq('id', bandId)
     .single()

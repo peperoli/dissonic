@@ -5,7 +5,7 @@ import supabase from '@/utils/supabase/client'
 const fetchProfiles = async (options?: { ids?: string[] }): Promise<Profile[]> => {
   let query = supabase
     .from('profiles')
-    .select('id, username, role, avatar_path, created_at, updated_at')
+    .select('*')
 
   if (options?.ids && options.ids.length > 0) {
     query = query.in('id', options.ids)

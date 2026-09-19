@@ -147,7 +147,7 @@ export type AddLocation = TablesInsert<'locations'>
 
 export type EditLocation = TablesUpdate<'locations'>
 
-export type Profile = Omit<Tables<'profiles'>, 'last_searched'> & {
+export type Profile = Tables<'profiles'> & {
   friends?: { count: number }[]
 }
 
