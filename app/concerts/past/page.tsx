@@ -2,23 +2,7 @@ import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 import { ConcertsPage } from '@/components/concerts/ConcertsPage'
 import { Temporal } from 'temporal-polyfill'
-import { SupabaseClient } from '@supabase/supabase-js'
-import { Database } from '@/types/supabase'
-
-async function getFriendsIds(supabase: SupabaseClient<Database>, userId: string) {
-  const { data: friends, error: friendsError } = await supabase
-    .from('friends')
-    .select('sender_id, receiver_id')
-    .or(`sender_id.eq.${userId}, receiver_id.eq.${userId}`)
-
-  if (friendsError) {
-    throw friendsError
-  }
-
-  return [
-    ...new Set([...friends.map(item => item.sender_id), ...friends.map(item => item.receiver_id)]),
-  ]
-}
+import { getUserIdsForView } from '@/lib/getUserIdsForView'
 
 async function fetchData({ userView }: { userView: string }) {
   const supabase = await createClient()
@@ -28,18 +12,8 @@ async function fetchData({ userView }: { userView: string }) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  let userIds
-
-  if (user) {
-    if (userView === 'user') {
-      userIds = [user.id]
-    } else if (userView === 'friends') {
-      userIds = await getFriendsIds(supabase, user.id)
-    }
-  }
-
   const rpcOptions = {
-    user_ids: userIds,
+    user_ids: (await getUserIdsForView(supabase, userView)) ?? undefined,
   }
 
   const { count, error: countError } = await supabase.rpc('get_concerts', rpcOptions, {

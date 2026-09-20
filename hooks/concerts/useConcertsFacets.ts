@@ -3,10 +3,12 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { ConcertRecord } from '@/types/algolia'
 import { createAlgoliaClient } from '@/utils/algolia/client'
 import { getUnixTimestamp } from '@/lib/date'
+import supabase from '@/utils/supabase/client'
+import { getUserIdsForView } from '@/lib/getUserIdsForView'
 
 type FetchOptions = Pick<
   ConcertFetchOptions,
-  'bands' | 'locations' | 'dateRange' | 'years' | 'festivalRoots' | 'bandsSeenUsers'
+  'bands' | 'locations' | 'dateRange' | 'years' | 'festivalRoots' | 'userView'
 >
 
 async function fetchConcertsFacets(options: FetchOptions) {
@@ -44,8 +46,10 @@ async function fetchConcertsFacets(options: FetchOptions) {
     )
   }
 
-  if (options?.bandsSeenUsers && options.bandsSeenUsers.length > 0) {
-    filters.push(options.bandsSeenUsers.map(userId => `fan_ids:${userId}`).join(' OR '))
+  const userIds = await getUserIdsForView(supabase, options.userView ?? 'global')
+
+  if (userIds) {
+    filters.push(userIds.map(userId => `fan_ids:${userId}`).join(' OR '))
   }
 
   const response = await algolia.searchSingleIndex<

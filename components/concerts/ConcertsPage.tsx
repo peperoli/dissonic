@@ -12,7 +12,6 @@ import { YearsFilter } from './YearsFilter'
 import { FestivalRootFilter } from './FestivalRootFilter'
 import { usePathname, useRouter } from 'next/navigation'
 import { SegmentedControl } from '../controls/SegmentedControl'
-import { useProfile } from '../../hooks/profiles/useProfile'
 import {
   parseAsArrayOf,
   parseAsBoolean,
@@ -23,7 +22,6 @@ import {
   useQueryStates,
 } from 'nuqs'
 import { RotateCcw } from 'lucide-react'
-import { useFriends } from '@/hooks/profiles/useFriends'
 import { Select } from '../forms/Select'
 import { FilterButton } from '../FilterButton'
 import useMediaQuery from '@/hooks/helpers/useMediaQuery'
@@ -58,14 +56,10 @@ export function ConcertsPage({
     'festivals',
     parseAsArrayOf(parseAsInteger)
   )
-  const [user] = useQueryState('user')
-  const { data: profile } = useProfile(null, user)
-  const selectedUserId = user && profile?.id
   const [view, setView] = useQueryStates({
     range: parseAsString.withDefault(initialView.range),
     userView: parseAsString.withDefault(initialView.userView),
   })
-  const { data: friends } = useFriends({ profileId: currentUser?.id, pending: false })
   const sortBy = ['date_start', 'bands_count'] as const
   const [sort, setSort] = useQueryStates({
     sort_by: parseAsStringLiteral(sortBy).withDefault('date_start'),
@@ -75,19 +69,6 @@ export function ConcertsPage({
   const [, startTransition] = useTransition()
   const today = Temporal.Now.plainDateISO()
   const tomorrow = today.add({ days: 1 })
-
-  function getView() {
-    if (!currentUser) return
-    if (view.userView === 'user') return [currentUser.id]
-    if (view.userView === 'friends' && friends)
-      return [
-        ...new Set([
-          ...friends.map(item => item.sender_id),
-          ...friends.map(item => item.receiver_id),
-        ]),
-      ]
-  }
-
   const pathname = usePathname()
   const { data: concerts, isFetching } = useConcerts({
     placeholderData: initialConcerts,
@@ -96,8 +77,7 @@ export function ConcertsPage({
     dateRange: initialView.range === 'future' ? [tomorrow, null] : [null, today],
     years: selectedYears,
     festivalRoots: selectedFestivalRoots,
-    bandsSeenUsers:
-      initialView.range !== 'future' ? (selectedUserId ? [selectedUserId] : getView()) : null,
+    userView: initialView.range !== 'future' ? view.userView : 'global',
     sort,
     size,
     bandsSize: 5,
@@ -108,8 +88,7 @@ export function ConcertsPage({
     dateRange: initialView.range === 'future' ? [tomorrow, null] : [null, tomorrow],
     years: selectedYears,
     festivalRoots: selectedFestivalRoots,
-    bandsSeenUsers:
-      initialView.range !== 'future' ? (selectedUserId ? [selectedUserId] : getView()) : null,
+    userView: initialView.range !== 'future' ? view.userView : 'global',
   })
   const fanIds = Array.from(
     new Set(concerts?.data?.flatMap(item => item.bands_seen?.map(b => b.user_id) ?? []))
@@ -124,7 +103,6 @@ export function ConcertsPage({
     locations: selectedLocations,
     years: selectedYears,
     festivals: selectedFestivalRoots,
-    user: selectedUserId,
     sort_by: sort.sort_by,
     sort_asc: sort.sort_asc,
   }
@@ -201,11 +179,7 @@ export function ConcertsPage({
           <div className="my-1.5 text-sm text-slate-300">
             {t('nEntries', { count: concerts?.count })}
           </div>
-          {(selectedBands ||
-            selectedLocations ||
-            selectedYears ||
-            selectedFestivalRoots ||
-            selectedUserId) && (
+          {(selectedBands || selectedLocations || selectedYears || selectedFestivalRoots) && (
             <Button
               label={t('reset')}
               onClick={resetAll}
@@ -270,7 +244,9 @@ export function ConcertsPage({
                   </div>
                 </div>
               ))
-            : concerts.data.map(concert => <ConcertCard concert={concert} profiles={profiles} key={concert.id} />)}
+            : concerts.data.map(concert => (
+                <ConcertCard concert={concert} profiles={profiles} key={concert.id} />
+              ))}
         </section>
       )}
       <div className="mt-4 flex flex-col items-center gap-2">

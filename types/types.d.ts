@@ -12,7 +12,8 @@ export type ConcertFetchOptions = {
   dateRange?: [Temporal.PlainDate | null, Temporal.PlainDate | null] | null
   years?: number[] | null
   festivalRoots?: number[] | null
-  bandsSeenUsers?: string[] | null
+  userView?: string
+  userId?: string
   sort?: { sort_by: 'date_start' | 'bands_count'; sort_asc: boolean }
   size?: number
   bandsSize?: number

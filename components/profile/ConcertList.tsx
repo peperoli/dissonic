@@ -27,7 +27,7 @@ export function ConcertList({
   } = useConcerts({
     bands: bandId ? [bandId] : null,
     locations: locationId ? [locationId] : null,
-    bandsSeenUsers: profileId ? [profileId] : null,
+    userId: profileId,
     sort: { sort_by: 'date_start', sort_asc: false },
     size,
     bandsSize: 5,

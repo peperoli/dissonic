@@ -2,6 +2,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import type { PostgrestFilterBuilder } from '@supabase/supabase-js'
 import { Concert, ConcertFetchOptions, ExtendedRes, QueryOptions } from '@/types/types'
 import supabase from '@/utils/supabase/client'
+import { getUserIdsForView } from '@/lib/getUserIdsForView'
 
 function applyFilters<TQuery extends PostgrestFilterBuilder<any, any, any, any>>(
   query: TQuery,
@@ -39,7 +40,9 @@ function applyFilters<TQuery extends PostgrestFilterBuilder<any, any, any, any>>
 async function fetchConcerts(options?: ConcertFetchOptions) {
   const rpcOptions = {
     band_ids: options?.bands?.length ? options.bands : undefined,
-    user_ids: options?.bandsSeenUsers?.length ? options.bandsSeenUsers : undefined,
+    user_ids: options?.userId
+      ? [options.userId]
+      : ((await getUserIdsForView(supabase, options?.userView ?? 'global')) ?? undefined),
     sort_by: options?.sort?.sort_by,
     sort_asc: options?.sort?.sort_asc,
   }
