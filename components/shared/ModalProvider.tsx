@@ -52,9 +52,7 @@ const RemoveFriendForm = dynamic(
   () => import('../profile/RemoveFriendForm').then(mod => mod.RemoveFriendForm),
   { loading: () => <Loader /> }
 )
-const SearchForm = dynamic(() => import('../layout/SearchForm').then(mod => mod.SearchForm), {
-  loading: () => <Loader />,
-})
+import { SearchForm } from '../layout/SearchForm'
 
 export const modalPaths = [
   'add-concert',

@@ -186,7 +186,7 @@ const CommentItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
         <Link
           href={`/concerts/${concert?.id}#comments`}
           scroll={false}
-          className="ml-14 mt-2 whitespace-pre-line break-words rounded border border-slate-700 p-2 text-sm"
+          className="block ml-14 mt-2 whitespace-pre-line break-words rounded border border-slate-700 p-2 text-sm"
         >
           {content}
         </Link>
