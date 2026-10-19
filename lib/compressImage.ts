@@ -5,6 +5,7 @@ export function compressImage(
   options?: {
     maxWidth?: number
     maxHeight?: number
+    crop?: boolean
     type?: string
     quality?: number
   }
@@ -14,6 +15,7 @@ export function compressImage(
     const reader = new FileReader()
     const maxWidth = options?.maxWidth ?? DIMENSION_LIMIT
     const maxHeight = options?.maxHeight ?? DIMENSION_LIMIT
+    const crop = options?.crop ?? false
     const type = options?.type ?? 'image/webp'
     const quality = options?.quality ?? 0.8
 
@@ -37,11 +39,18 @@ export function compressImage(
         return
       }
 
-      const ratio = Math.min(maxWidth / img.width, maxHeight / img.height, 1)
-      canvas.width = Math.round(img.width * ratio)
-      canvas.height = Math.round(img.height * ratio)
-
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+      if (crop) {
+        const x = (img.width - maxWidth) / 2
+        const y = (img.height - maxHeight) / 2
+        canvas.width = maxWidth
+        canvas.height = maxHeight
+        ctx.drawImage(img, x, y, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height)
+      } else {
+        const ratio = Math.min(maxWidth / img.width, maxHeight / img.height, 1)
+        canvas.width = Math.round(img.width * ratio)
+        canvas.height = Math.round(img.height * ratio)
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+      }
 
       ctx.canvas.toBlob(
         blob => {

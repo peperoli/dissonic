@@ -63,9 +63,9 @@ export const Form = ({ close }: FormProps) => {
         rules={{
           validate: {
             fileSize: value =>
-              !(value instanceof File) || value.size < 1024 * 1024 || t('fileSizeError'),
+              !(value instanceof File) || value.size < 20 * 1024 * 1024 || t('fileSizeError', { size: 20 }),
             fileType: value =>
-              !(value instanceof File) || value.type.startsWith('image') || t('fileTypeError'),
+              !(value instanceof File) || value.type.startsWith('image/') || t('fileTypeError'),
           },
         }}
         render={({ field }) => (

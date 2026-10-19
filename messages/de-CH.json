@@ -483,7 +483,7 @@
   "LocationForm": {
     "name": "Name",
     "image": "Bild",
-    "fileSizeError": "Die Datei darf nicht grösser als 1 MB sein.",
+    "fileSizeError": "Die Datei darf nicht grösser als {size} MB sein.",
     "fileTypeError": "Es sind nur Dateien im Format JPEG oder WebP erlaubt.",
     "zipCode": "PLZ",
     "city": "Stadt",
@@ -616,8 +616,8 @@
   },
   "ProfileForm": {
     "profilePicture": "Profilbild",
-    "fileSizeError": "Die Datei darf nicht grösser als 1 MB sein.",
-    "fileTypeError": "Es sind nur Bilddateien erlaubt.",
+    "fileSizeError": "Die Datei darf nicht grösser als {size} MB sein.",
+    "fileTypeError": "Die Datei muss ein Bild sein.",
     "username": "Benutzername",
     "usernameTakenError": "Dieser Benutzername ist bereits vergeben. Probiere, kreativ zu sein.",
     "cancel": "Abbrechen",
