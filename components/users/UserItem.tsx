@@ -1,3 +1,5 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
 import { ProfileStat } from '@/app/users/page'
@@ -6,6 +8,7 @@ import { CrownIcon, UserIcon } from 'lucide-react'
 import { getAssetUrl } from '@/lib/getAssetUrl'
 import { useLocale, useTranslations } from 'next-intl'
 import clsx from 'clsx'
+import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 
 type UserItemProps = {
   profileStat: ProfileStat
@@ -15,20 +18,33 @@ type UserItemProps = {
 export const UserItem = ({ profileStat, index }: UserItemProps) => {
   const t = useTranslations('UserItem')
   const locale = useLocale()
+  const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
   const avatarUrl = getAssetUrl('avatars', profileStat.avatar_path, profileStat.updated_at)
 
   return (
     <Link href={`/users/${encodeURIComponent(profileStat.username!)}`} className="block">
       <div className="relative grid aspect-square place-content-center rounded-full bg-blue">
         {avatarUrl ? (
-          <Image
-            src={avatarUrl}
-            alt={`${profileStat.username}'s Avatar`}
-            sizes="300px"
-            fill
-            unoptimized
-            className="rounded-full object-cover"
-          />
+          profileStat.avatar_path?.split('.').pop() === 'mp4' ? (
+            <video
+              playsInline
+              autoPlay={!prefersReducedMotion}
+              muted
+              loop
+              className="absolute inset-0 size-full rounded-full object-cover"
+            >
+              <source src={avatarUrl} type="video/mp4" />
+            </video>
+          ) : (
+            <Image
+              src={avatarUrl}
+              alt={`${profileStat.username}'s Avatar`}
+              sizes="300px"
+              fill
+              unoptimized
+              className="rounded-full object-cover"
+            />
+          )
         ) : (
           <UserIcon className="size-12 text-slate-850 md:size-16" />
         )}

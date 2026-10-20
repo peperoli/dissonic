@@ -5,31 +5,17 @@ import { useTranslations } from 'next-intl'
 import toast from 'react-hot-toast'
 import { compressImage } from '@/lib/compressImage'
 import { Temporal } from 'temporal-polyfill'
-import { FFmpeg } from '@ffmpeg/ffmpeg'
-import { fetchFile } from '@ffmpeg/util'
-
-async function convertGifToMp4(file: File): Promise<File> {
-  const ffmpeg = new FFmpeg()
-
-  await ffmpeg.load()
-  await ffmpeg.writeFile(file.name, await fetchFile(file))
-  await ffmpeg.exec(['-f', 'gif', '-i', file.name, 'output.mp4'])
-  const data = await ffmpeg.readFile('output.mp4')
-  
-  if (typeof data === 'string') {
-    throw new Error('Failed to convert GIF to MP4')
-  }
-
-  const mp4File = new File([data satisfies ArrayBuffer], 'output.mp4', { type: 'video/mp4' })
-
-  return mp4File
-}
+import { compressGif } from '@/lib/compressGif'
 
 async function uploadAvatar(file: File) {
   let compressedFile: File
 
   if (file.type === 'image/gif') {
-    compressedFile = await convertGifToMp4(file)
+    compressedFile = await compressGif(file, {
+      maxWidth: 1000,
+      maxHeight: 1000,
+      crop: true,
+    })
   } else {
     const { compressedFile: compressedImage } = await compressImage(file, {
       type: 'image/webp',

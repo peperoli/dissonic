@@ -1,3 +1,5 @@
+'use client'
+
 import React, { ReactElement } from 'react'
 import { Profile } from '../../types/types'
 import Image from 'next/image'
@@ -6,6 +8,7 @@ import clsx from 'clsx'
 import { getAssetUrl } from '@/lib/getAssetUrl'
 import { Tooltip } from './Tooltip'
 import { useTranslations } from 'next-intl'
+import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 
 type UserItemProps = {
   user: Pick<Profile, 'id' | 'username' | 'avatar_path' | 'updated_at' | 'role'>
@@ -23,6 +26,7 @@ export const UserItem = ({
   avatarRight = false,
 }: UserItemProps) => {
   const t = useTranslations('UserItem')
+  const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
   const avatarUrl = getAssetUrl('avatars', user.avatar_path, user.updated_at)
   const ConditionalTag = size === 'lg' ? 'h1' : 'div'
 
@@ -36,14 +40,26 @@ export const UserItem = ({
       )}
     >
       {avatarUrl ? (
-        <Image
-          src={avatarUrl}
-          alt={user.username}
-          sizes="200px"
-          fill
-          unoptimized
-          className="rounded-full object-cover"
-        />
+        user.avatar_path?.split('.').pop() === 'mp4' ? (
+          <video
+            playsInline
+            autoPlay={!prefersReducedMotion}
+            muted
+            loop
+            className="absolute inset-0 size-full rounded-full object-cover"
+          >
+            <source src={avatarUrl} type="video/mp4" />
+          </video>
+        ) : (
+          <Image
+            src={avatarUrl}
+            alt={user.username}
+            sizes="200px"
+            fill
+            unoptimized
+            className="rounded-full object-cover"
+          />
+        )
       ) : (
         <User
           className={clsx(
