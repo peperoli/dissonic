@@ -4,14 +4,42 @@ import supabase from '@/utils/supabase/client'
 import { useTranslations } from 'next-intl'
 import toast from 'react-hot-toast'
 import { compressImage } from '@/lib/compressImage'
+import { Temporal } from 'temporal-polyfill'
+import { FFmpeg } from '@ffmpeg/ffmpeg'
+import { fetchFile } from '@ffmpeg/util'
+
+async function convertGifToMp4(file: File): Promise<File> {
+  const ffmpeg = new FFmpeg()
+
+  await ffmpeg.load()
+  await ffmpeg.writeFile(file.name, await fetchFile(file))
+  await ffmpeg.exec(['-f', 'gif', '-i', file.name, 'output.mp4'])
+  const data = await ffmpeg.readFile('output.mp4')
+  
+  if (typeof data === 'string') {
+    throw new Error('Failed to convert GIF to MP4')
+  }
+
+  const mp4File = new File([data satisfies ArrayBuffer], 'output.mp4', { type: 'video/mp4' })
+
+  return mp4File
+}
 
 async function uploadAvatar(file: File) {
-  const { compressedFile } = await compressImage(file, {
-    type: file.type === 'image/gif' ? 'image/gif' : 'image/webp',
-    maxWidth: 1000,
-    maxHeight: 1000,
-    crop: true,
-  })
+  let compressedFile: File
+
+  if (file.type === 'image/gif') {
+    compressedFile = await convertGifToMp4(file)
+  } else {
+    const { compressedFile: compressedImage } = await compressImage(file, {
+      type: 'image/webp',
+      maxWidth: 1000,
+      maxHeight: 1000,
+      crop: true,
+    })
+
+    compressedFile = compressedImage
+  }
 
   const timestamp = Temporal.Now.instant().epochMilliseconds
   const fileName = `${timestamp}.${compressedFile.type.split('/').at(-1)}`
