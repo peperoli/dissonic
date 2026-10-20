@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 import toast from 'react-hot-toast'
 import { compressImage } from '@/lib/compressImage'
 
-async function uploadAvatar(file: File, profileId: string) {
+async function uploadAvatar(file: File) {
   const { compressedFile } = await compressImage(file, {
     type: file.type === 'image/gif' ? 'image/gif' : 'image/webp',
     maxWidth: 1000,
@@ -13,11 +13,12 @@ async function uploadAvatar(file: File, profileId: string) {
     crop: true,
   })
 
-  const fileName = `${profileId}.${compressedFile.type.split('/').at(-1)}`
+  const timestamp = Temporal.Now.instant().epochMilliseconds
+  const fileName = `${timestamp}.${compressedFile.type.split('/').at(-1)}`
 
   const { data, error: avatarError } = await supabase.storage
     .from('avatars')
-    .upload(fileName, compressedFile, { upsert: true })
+    .upload(fileName, compressedFile)
 
   if (avatarError) {
     throw avatarError
@@ -33,7 +34,7 @@ const editProfile = async (formData: EditProfile & { avatarFile: File | string |
 
   const avatarPath =
     formData.avatarFile instanceof File
-      ? await uploadAvatar(formData.avatarFile, formData.id)
+      ? await uploadAvatar(formData.avatarFile)
       : formData.avatarFile
 
   const { data, error } = await supabase
