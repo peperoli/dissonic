@@ -8,6 +8,10 @@
     {
       "path": "/api/bunny/cleanup-videos",
       "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/supabase/cleanup-images",
+      "schedule": "0 8 * * *"
     }
   ]
 }
