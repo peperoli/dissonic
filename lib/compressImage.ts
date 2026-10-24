@@ -41,13 +41,12 @@ export function compressImage(
 
       if (crop) {
         const shortestSide = Math.min(img.width, img.height)
-        const cropWidth = Math.min(shortestSide, maxWidth)
-        const cropHeight = Math.min(shortestSide, maxHeight)
-        const x = (img.width - cropWidth) / 2
-        const y = (img.height - cropHeight) / 2
-        canvas.width = cropWidth
-        canvas.height = cropHeight
-        ctx.drawImage(img, x, y, cropWidth, cropHeight, 0, 0, canvas.width, canvas.height)
+        const ratio = Math.min(maxWidth / shortestSide, maxHeight / shortestSide, 1)
+        const x = (img.width - shortestSide) / 2
+        const y = (img.height - shortestSide) / 2
+        canvas.width = Math.round(shortestSide * ratio)
+        canvas.height = Math.round(shortestSide * ratio)
+        ctx.drawImage(img, x, y, shortestSide, shortestSide, 0, 0, canvas.width, canvas.height)
       } else {
         const ratio = Math.min(maxWidth / img.width, maxHeight / img.height, 1)
         canvas.width = Math.round(img.width * ratio)
