@@ -104,7 +104,9 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
         rules={{
           validate: {
             fileSize: value =>
-              !(value instanceof File) || value.size < 1024 * 1024 || t('fileSizeError'),
+              !(value instanceof File) ||
+              value.size < 1024 * 1024 ||
+              t('fileSizeError', { size: 1 }),
             fileType: value =>
               !(value instanceof File) || fileTypes.includes(value.type) || t('fileTypeError'),
           },

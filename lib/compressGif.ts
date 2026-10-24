@@ -28,9 +28,14 @@ export async function compressGif(
   await ffmpeg.load()
   await ffmpeg.writeFile(file.name, await fetchFile(file))
   const shortestSide = Math.min(width, height)
-  const cropWidth = Math.min(shortestSide, maxWidth)
-  const cropHeight = Math.min(shortestSide, maxHeight)
-  const outputOptions = crop ? ['-vf', `crop=${cropWidth}:${cropHeight}`] : []
+  const ratio = Math.min(maxWidth / shortestSide, maxHeight / shortestSide, 1)
+  const outputSize = Math.max(2, Math.floor((shortestSide * ratio) / 2) * 2)
+  const outputOptions = [
+    '-vf',
+    crop
+      ? `crop=${shortestSide}:${shortestSide}:exact=1,scale=${outputSize}:${outputSize}`
+      : 'pad=ceil(iw/2)*2:ceil(ih/2)*2',
+  ]
 
   await ffmpeg.exec([
     '-f',
@@ -47,6 +52,7 @@ export async function compressGif(
     'output.mp4',
   ])
   const data = await ffmpeg.readFile('output.mp4')
+  ffmpeg.terminate()
 
   if (typeof data === 'string') {
     throw new Error('Failed to convert GIF to MP4')

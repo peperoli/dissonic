@@ -46,10 +46,19 @@ const editProfile = async (formData: EditProfile & { avatarFile: File | string |
     throw new Error('Profile ID is required')
   }
 
-  const avatarPath =
-    formData.avatarFile instanceof File
-      ? await uploadAvatar(formData.avatarFile)
-      : formData.avatarFile
+  let avatarPath: string | null | undefined
+
+  if (formData.avatarFile instanceof File) {
+    avatarPath = await uploadAvatar(formData.avatarFile)
+  }
+
+  if (typeof formData.avatarFile === 'string') {
+    avatarPath = undefined
+  }
+
+  if (formData.avatarFile === null) {
+    avatarPath = null
+  }
 
   const { data, error } = await supabase
     .from('profiles')

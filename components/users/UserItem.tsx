@@ -9,6 +9,7 @@ import { getAssetUrl } from '@/lib/getAssetUrl'
 import { useLocale, useTranslations } from 'next-intl'
 import clsx from 'clsx'
 import useMediaQuery from '@/hooks/helpers/useMediaQuery'
+import { useEffect, useRef } from 'react'
 
 type UserItemProps = {
   profileStat: ProfileStat
@@ -19,7 +20,16 @@ export const UserItem = ({ profileStat, index }: UserItemProps) => {
   const t = useTranslations('UserItem')
   const locale = useLocale()
   const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
+  const videoRef = useRef<HTMLVideoElement>(null)
   const avatarUrl = getAssetUrl('avatars', profileStat.avatar_path, profileStat.updated_at)
+
+  useEffect(() => {
+    if (!prefersReducedMotion && videoRef.current) {
+      videoRef.current.play()
+    } else {
+      videoRef.current?.pause()
+    }
+  }, [prefersReducedMotion])
 
   return (
     <Link href={`/users/${encodeURIComponent(profileStat.username!)}`} className="block">
@@ -27,8 +37,8 @@ export const UserItem = ({ profileStat, index }: UserItemProps) => {
         {avatarUrl ? (
           profileStat.avatar_path?.split('.').pop() === 'mp4' ? (
             <video
+              ref={videoRef}
               playsInline
-              autoPlay={!prefersReducedMotion}
               muted
               loop
               className="absolute inset-0 size-full rounded-full object-cover"

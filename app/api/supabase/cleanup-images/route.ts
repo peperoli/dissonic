@@ -1,5 +1,8 @@
+import { Tables } from '@/types/supabase'
 import { createClient } from '@/utils/supabase/server'
 import { NextResponse } from 'next/server'
+import type { FileObject } from '@supabase/storage-js'
+import { Temporal } from 'temporal-polyfill'
 
 export async function GET(request: Request) {
   const cronSecret = process.env.CRON_SECRET
@@ -9,15 +12,15 @@ export async function GET(request: Request) {
 
   const supabase = await createClient()
 
-  const profiles: { avatar_path: string | null }[] = []
-  const pageSize = 1000
+  const profiles: Pick<Tables<'profiles'>, 'avatar_path'>[] = []
+  const PAGE_SIZE = 1000
 
-  for (let offset = 0; ; offset += pageSize) {
+  for (let offset = 0; ; offset += PAGE_SIZE) {
     const { data: page, error: profilesError } = await supabase
       .from('profiles')
       .select('avatar_path')
       .order('id')
-      .range(offset, offset + pageSize - 1)
+      .range(offset, offset + PAGE_SIZE - 1)
 
     if (profilesError) {
       console.error('Error fetching profiles:', profilesError)
@@ -25,15 +28,15 @@ export async function GET(request: Request) {
     }
 
     profiles.push(...page)
-    if (page.length < pageSize) break
+    if (page.length < PAGE_SIZE) break
   }
 
-  const data: { name: string }[] = []
-  const storagePageSize = 100
+  const data: FileObject[] = []
+  const STORAGE_PAGE_SIZE = 100
 
-  for (let offset = 0; ; offset += storagePageSize) {
+  for (let offset = 0; ; offset += STORAGE_PAGE_SIZE) {
     const { data: page, error } = await supabase.storage.from('avatars').list('', {
-      limit: storagePageSize,
+      limit: STORAGE_PAGE_SIZE,
       offset,
       sortBy: { column: 'name', order: 'asc' },
     })
@@ -44,12 +47,21 @@ export async function GET(request: Request) {
     }
 
     data.push(...page)
-    if (page.length < storagePageSize) break
+    if (page.length < STORAGE_PAGE_SIZE) break
   }
 
-  const unusedAvatars = data.filter(
-    file => !profiles.some(profile => profile.avatar_path === file.name)
-  )
+  const unusedAvatars = data
+    .filter(file => !profiles.some(profile => profile.avatar_path === file.name))
+    .filter(file => {
+      if (!file.created_at) return false
+
+      return (
+        Temporal.Instant.compare(
+          Temporal.Instant.from(file.created_at),
+          Temporal.Now.instant().subtract({ minutes: 1 })
+        ) < 0
+      )
+    })
 
   await Promise.all(
     unusedAvatars.map(async file => {
