@@ -24,12 +24,16 @@ export const UserItem = ({ profileStat, index }: UserItemProps) => {
   const avatarUrl = getAssetUrl('avatars', profileStat.avatar_path, profileStat.updated_at)
 
   useEffect(() => {
-    if (!prefersReducedMotion && videoRef.current) {
-      videoRef.current.play()
+    const video = videoRef.current
+    if (!video) return
+
+    video.load()
+    if (!prefersReducedMotion) {
+      video.play().catch(console.error)
     } else {
-      videoRef.current?.pause()
+      video.pause()
     }
-  }, [prefersReducedMotion])
+  }, [prefersReducedMotion, avatarUrl])
 
   return (
     <Link href={`/users/${encodeURIComponent(profileStat.username!)}`} className="block">

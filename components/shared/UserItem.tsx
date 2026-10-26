@@ -32,12 +32,16 @@ export const UserItem = ({
   const ConditionalTag = size === 'lg' ? 'h1' : 'div'
 
   useEffect(() => {
-    if (!prefersReducedMotion && videoRef.current) {
-      videoRef.current.play()
+    const video = videoRef.current
+    if (!video) return
+
+    video.load()
+    if (!prefersReducedMotion) {
+      video.play().catch(console.error)
     } else {
-      videoRef.current?.pause()
+      video.pause()
     }
-  }, [prefersReducedMotion])
+  }, [prefersReducedMotion, avatarUrl])
 
   const avatar = (
     <div

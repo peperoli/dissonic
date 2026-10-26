@@ -23,7 +23,6 @@ export const FileInput = ({ label, name, value, onChange, error, ...props }: Fil
     value instanceof File
       ? value.type.split('/').pop()
       : value && new URL(value)?.pathname.split('.').pop()
-      console.log('fileType', fileType)
 
   const handleDrag = function (event: DragEvent<HTMLDivElement>) {
     event.preventDefault()
@@ -77,18 +76,18 @@ export const FileInput = ({ label, name, value, onChange, error, ...props }: Fil
         >
           <div className="relative grid aspect-square w-24 place-content-center rounded-lg bg-slate-850">
             {fileUrl ? (
-              fileType === 'mp4' ? (
-                <video
-                  playsInline
-                  autoPlay
-                  muted
-                  loop
-                  className="absolute inset-0 size-full rounded-lg object-cover"
-                >
-                  <source src={fileUrl} type="video/mp4" />
-                </video>
-              ) : (
-                <>
+              <>
+                {fileType === 'mp4' ? (
+                  <video
+                    playsInline
+                    autoPlay
+                    muted
+                    loop
+                    className="absolute inset-0 size-full rounded-lg object-cover"
+                  >
+                    <source src={fileUrl} type="video/mp4" />
+                  </video>
+                ) : (
                   <Image
                     src={fileUrl}
                     alt={''}
@@ -97,17 +96,17 @@ export const FileInput = ({ label, name, value, onChange, error, ...props }: Fil
                     unoptimized
                     className="rounded-md"
                   />
-                  <div className="absolute -right-2 -top-2 rounded-lg shadow-lg">
-                    <Button
-                      onClick={() => onChange(null)}
-                      icon={<X className="size-icon" />}
-                      label={t('remove')}
-                      contentType="icon"
-                      size="small"
-                    />
-                  </div>
-                </>
-              )
+                )}
+                <div className="absolute -right-2 -top-2 rounded-lg shadow-lg">
+                  <Button
+                    onClick={() => onChange(null)}
+                    icon={<X className="size-icon" />}
+                    label={t('remove')}
+                    contentType="icon"
+                    size="small"
+                  />
+                </div>
+              </>
             ) : (
               <UploadIcon
                 className={clsx('size-8 text-slate-300', dragActive && 'pointer-events-none')}
