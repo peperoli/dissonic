@@ -483,7 +483,7 @@
   "LocationForm": {
     "name": "Name",
     "image": "Image",
-    "fileSizeError": "The file size must not exceed 1 MB.",
+    "fileSizeError": "The file size must not exceed {size} MB.",
     "fileTypeError": "The file type must be JPEG or WebP.",
     "zipCode": "ZIP Code",
     "city": "City",
@@ -616,8 +616,8 @@
   },
   "ProfileForm": {
     "profilePicture": "Profile picture",
-    "fileSizeError": "The file size must not exceed 1 MB.",
-    "fileTypeError": "Only image files are permitted.",
+    "fileSizeError": "The file size must not exceed {size} MB.",
+    "fileTypeError": "The file type must be an image.",
     "username": "Username",
     "usernameTakenError": "This username is already taken. Try being creative.",
     "cancel": "Cancel",

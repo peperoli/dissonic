@@ -19,6 +19,10 @@ export const FileInput = ({ label, name, value, onChange, error, ...props }: Fil
   const [dragActive, setDragActive] = useState(false)
   const t = useTranslations('FileInput')
   const fileUrl = value instanceof File ? URL.createObjectURL(value) : value
+  const fileType =
+    value instanceof File
+      ? value.type.split('/').pop()
+      : value && new URL(value)?.pathname.split('.').pop()
 
   const handleDrag = function (event: DragEvent<HTMLDivElement>) {
     event.preventDefault()
@@ -73,14 +77,26 @@ export const FileInput = ({ label, name, value, onChange, error, ...props }: Fil
           <div className="relative grid aspect-square w-24 place-content-center rounded-lg bg-slate-850">
             {fileUrl ? (
               <>
-                <Image
-                  src={fileUrl}
-                  alt={''}
-                  layout="fill"
-                  objectFit="cover"
-                  unoptimized
-                  className="rounded-md"
-                />
+                {fileType === 'mp4' ? (
+                  <video
+                    playsInline
+                    autoPlay
+                    muted
+                    loop
+                    className="absolute inset-0 size-full rounded-lg object-cover"
+                  >
+                    <source src={fileUrl} type="video/mp4" />
+                  </video>
+                ) : (
+                  <Image
+                    src={fileUrl}
+                    alt={''}
+                    layout="fill"
+                    objectFit="cover"
+                    unoptimized
+                    className="rounded-md"
+                  />
+                )}
                 <div className="absolute -right-2 -top-2 rounded-lg shadow-lg">
                   <Button
                     onClick={() => onChange(null)}
