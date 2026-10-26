@@ -1,5 +1,5 @@
 import { Tables } from '@/types/supabase'
-import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { NextResponse } from 'next/server'
 import type { FileObject } from '@supabase/storage-js'
 import { Temporal } from 'temporal-polyfill'
@@ -10,7 +10,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   const profiles: Pick<Tables<'profiles'>, 'avatar_path'>[] = []
   const PAGE_SIZE = 1000
