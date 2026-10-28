@@ -16,7 +16,8 @@ async function searchCountries(options: CountryFetchOptions | undefined) {
     indexName: AlgoliaIndex.Countries,
     searchParams: {
       query: options?.search,
-      hitsPerPage: 1000,
+      hitsPerPage: options?.size ?? 25,
+      filters: filters.map(filter => `(${filter})`).join(' AND '),
     },
   })
 

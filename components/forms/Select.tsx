@@ -23,6 +23,7 @@ export type SelectProps<TId extends string | number = number> = {
   name: string
   items: ListItem<TId>[]
   isLoading?: boolean
+  onScrollToEnd?: () => void
   fixedHeight?: boolean
 } & (
   | { searchable?: false }
@@ -32,10 +33,12 @@ export const Select = <TId extends string | number = number>({
   name,
   items,
   isLoading,
+  onScrollToEnd,
   fixedHeight,
   ...props
 }: SelectProps<TId> & (SingleSelectProps<TId> | MultiSelectProps<TId>)) => {
   const searchRef = useRef<HTMLInputElement>(null)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
   const t = useTranslations('Select')
 
   useEffect(() => {
@@ -43,6 +46,28 @@ export const Select = <TId extends string | number = number>({
       searchRef.current.select()
     }
   }, ['values' in props && props.values?.length])
+
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current
+    if (!scrollContainer) return
+
+    function handleScroll() {
+      if (!scrollContainer || !onScrollToEnd) return
+
+      const scrollPosition = Math.round(scrollContainer.scrollTop + scrollContainer.clientHeight)
+      const containerHeight = scrollContainer.scrollHeight
+
+      if (scrollPosition >= containerHeight) {
+        onScrollToEnd()
+      }
+    }
+
+    scrollContainer.addEventListener('scroll', handleScroll)
+
+    return () => {
+      scrollContainer.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
 
   return (
     <>
@@ -55,6 +80,7 @@ export const Select = <TId extends string | number = number>({
         />
       )}
       <div
+        ref={scrollContainerRef}
         className={clsx(
           'size-full overflow-auto',
           props.searchable && 'pt-2',

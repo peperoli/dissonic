@@ -3,30 +3,18 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { getPagination } from '@/lib/getPagination'
 import { ExtendedRes, Location, LocationFetchOptions, QueryOptions } from '@/types/types'
 
-async function fetchLocations(options?: LocationFetchOptions): Promise<ExtendedRes<Location[]>> {
+type FetchOptions = Pick<LocationFetchOptions, 'ids' | 'page' | 'size'>
+
+async function fetchLocations(options?: FetchOptions): Promise<ExtendedRes<Location[]>> {
   const [from, to] = getPagination(options?.page, options?.size)
-  const searchString = options?.search && options.search.length > 1 ? options.search : null
 
-  let countQuery = (
-    searchString
-      ? supabase.rpc(
-          'search_locations',
-          { search_string: searchString },
-          { count: 'estimated', head: true }
-        )
-      : supabase.from('locations').select('*', { count: 'estimated', head: true })
-  )
+  let countQuery = supabase
+    .from('locations')
+    .select('*', { count: 'estimated', head: true })
     .eq('is_archived', false)
     .order('name')
 
-  let dataQuery = (
-    searchString
-      ? supabase.rpc('search_locations', { search_string: searchString })
-      : supabase.from('locations')
-  )
-    .select('*')
-    .eq('is_archived', false)
-    .order('name')
+  let dataQuery = supabase.from('locations').select('*').eq('is_archived', false).order('name')
 
   if (options?.ids && options.ids.length > 0) {
     countQuery = countQuery.in('id', options.ids)
@@ -50,7 +38,7 @@ async function fetchLocations(options?: LocationFetchOptions): Promise<ExtendedR
 }
 
 export const useLocations = (
-  options: LocationFetchOptions & QueryOptions<ExtendedRes<Location[]>> = {}
+  options: FetchOptions & QueryOptions<ExtendedRes<Location[]>> = {}
 ) => {
   const { placeholderData, enabled, ...fetchOptions } = options
   return useQuery({

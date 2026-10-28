@@ -3,8 +3,6 @@ import { Button } from '../Button'
 import { SpotifyArtistSelect } from './SpotifyArtistSelect'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { TextField } from '../forms/TextField'
-import { SelectField } from '../forms/SelectField'
-import { useSearchGenres } from '../../hooks/genres/useSearchGenres'
 import { useBand } from '@/hooks/bands/useBand'
 import { useParams } from 'next/navigation'
 import { useAddBand } from '@/hooks/bands/useAddBand'
@@ -18,7 +16,8 @@ import { useLocale } from 'next-intl'
 import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
 import { useSimilarBands } from '@/hooks/bands/useSimilarBands'
 import { getCountryName } from '@/lib/getCountryName'
-import { useSearchCountries } from '@/hooks/countries/useSearchCountries'
+import { CountriesSelectField } from './CountriesSelectField'
+import { GenresSelectField } from './GenresSelectField'
 
 export type BandFields = {
   id: AddBand['id']
@@ -66,10 +65,6 @@ export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) =
     search: name,
     size: similarBandsSize,
   })
-  const [countriesSearchQuery, setCountriesSearchQuery] = useState('')
-  const [genresSearchQuery, setGenresSearchQuery] = useState('')
-  const { data: countries } = useSearchCountries({ search: countriesSearchQuery })
-  const { data: genres } = useSearchGenres({ search: genresSearchQuery })
   const addBand = useAddBand()
   const editBand = useEditBand()
   const t = useTranslations('BandForm')
@@ -99,47 +94,8 @@ export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) =
           setSimilarItemsSize={setSimilarBandsSize}
         />
       )}
-      <Controller
-        name="countries"
-        control={control}
-        rules={{ required: true }}
-        render={({ field: { value = [], onChange } }) => (
-          <SelectField<string>
-            name="countries"
-            multiple={true}
-            values={value}
-            onValuesChange={onChange}
-            items={
-              countries?.data.map(item => ({
-                id: item.iso2,
-                name: getCountryName(item.iso2, locale) ?? item.iso2,
-              })) ?? []
-            }
-            searchable
-            searchQuery={countriesSearchQuery}
-            setSearchQuery={setCountriesSearchQuery}
-            error={errors.countries}
-            label={t('country')}
-          />
-        )}
-      />
-      <Controller
-        name="genres"
-        control={control}
-        render={({ field: { value = [], onChange } }) => (
-          <SelectField
-            name="genres"
-            items={genres?.data ?? []}
-            multiple
-            values={value}
-            onValuesChange={onChange}
-            searchable
-            searchQuery={genresSearchQuery}
-            setSearchQuery={setGenresSearchQuery}
-            label={t('genres')}
-          />
-        )}
-      />
+      <CountriesSelectField control={control} label={t('country')} error={errors.countries} />
+      <GenresSelectField control={control} label={t('genres')} error={errors.genres} />
       <Controller
         name="spotify_artist"
         control={control}
