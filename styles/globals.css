@@ -1,5 +1,6 @@
 @import 'buttons.css';
 @import 'forms.css';
+@import 'maps.css';
 
 @tailwind base;
 @tailwind components;

@@ -18,6 +18,7 @@ import { useSearchLocations } from '@/hooks/locations/useSearchLocations'
 import { CountryFilter } from '../bands/CountryFilter'
 import { parseAsArrayOf, parseAsString, useQueryState } from 'nuqs'
 import { AlgoliaIndex } from '@/lib/algolia'
+import { LocationsMap } from './LocationsMap'
 
 export function LocationsPage() {
   const [query, setQuery] = useState('')
@@ -65,6 +66,7 @@ export function LocationsPage() {
           className="hidden md:block"
         />
       </div>
+      <LocationsMap />
       <Table>
         <div className="scrollbar-hidden -mx-4 flex gap-2 overflow-x-auto px-4 md:grid md:grid-cols-3 md:gap-4 md:overflow-visible">
           <SearchField

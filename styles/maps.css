@@ -1,0 +1,15 @@
+@tailwind components;
+
+@layer components {
+  .location-popup .maplibregl-popup-content {
+    @apply flex items-start gap-2 rounded-lg bg-slate-800 p-2 text-base;
+  }
+
+  .location-popup .maplibregl-popup-tip {
+    @apply border-t-slate-800;
+  }
+
+  .location-popup .maplibregl-popup-close-button {
+    @apply static;
+  }
+}
