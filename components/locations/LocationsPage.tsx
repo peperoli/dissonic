@@ -12,11 +12,12 @@ import { useSession } from '../../hooks/auth/useSession'
 import { useModal } from '../shared/ModalProvider'
 import { StatusBanner } from '../forms/StatusBanner'
 import { SpeedDial } from '../layout/SpeedDial'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { LocationTableRow } from './LocationTableRow'
 import { useSearchLocations } from '@/hooks/locations/useSearchLocations'
 import { CountryFilter } from '../bands/CountryFilter'
 import { parseAsArrayOf, parseAsString, useQueryState } from 'nuqs'
+import { AlgoliaIndex } from '@/lib/algolia'
 
 export function LocationsPage() {
   const [query, setQuery] = useState('')
@@ -38,6 +39,7 @@ export function LocationsPage() {
   const { push } = useRouter()
   const pathname = usePathname()
   const t = useTranslations('LocationsPage')
+  const locale = useLocale()
 
   function resetAll() {
     push(pathname, { scroll: false })
@@ -72,9 +74,10 @@ export function LocationsPage() {
             setQuery={setQuery}
           />
           <CountryFilter
+            indexName={AlgoliaIndex.Locations}
+            facetName={`country_facet.${locale.split('-')[0]}`}
             values={selectedCountries}
             onSubmit={setSelectedCountries}
-            facetCounts={locations?.facets['country_iso2'] ?? {}}
           />
         </div>
         <div className="flex items-center gap-4">

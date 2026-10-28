@@ -57,6 +57,9 @@ export async function addConcertRecord(
       type: AlgoliaIndex.Concerts,
       id: concert.id,
       festival_root: concert.festival_root,
+      festival_root_facet: concert.festival_root
+        ? `${concert.festival_root.id}||${concert.festival_root.name}`
+        : null,
       date_start: concert.date_start,
       date_start_unix: getUnixTimestamp(concert.date_start),
       date_end: concert.date_end ?? null,
@@ -68,8 +71,10 @@ export async function addConcertRecord(
         spotify_artist_id: index === 0 ? band.spotify_artist_id : null,
         spotify_artist_images: index === 0 ? band.spotify_artist_images : null,
       })),
+      bands_facet: concert.bands.map(band => `${band.id}||${band.name}` as const),
       bands_count: concert.bands.length,
       location: concert.location,
+      location_facet: `${concert.location.id}||${concert.location.name}, ${concert.location.city}`,
       name: concert.name ?? null,
       fan_ids: [],
     } satisfies ConcertRecord,
@@ -105,6 +110,9 @@ export async function editConcertRecord(
     objectID,
     attributesToUpdate: {
       festival_root: concert.festival_root,
+      festival_root_facet: concert.festival_root
+        ? `${concert.festival_root.id}||${concert.festival_root.name}`
+        : null,
       date_start: concert.date_start ?? null,
       date_start_unix: concert.date_start ? getUnixTimestamp(concert.date_start) : null,
       date_end: concert.date_end ?? null,
@@ -116,8 +124,10 @@ export async function editConcertRecord(
         spotify_artist_id: index === 0 ? band.spotify_artist_id : null,
         spotify_artist_images: index === 0 ? band.spotify_artist_images : null,
       })),
+      bands_facet: concert.bands.map(band => `${band.id}||${band.name}` as const),
       bands_count: concert.bands.length,
       location: concert.location,
+      location_facet: `${concert.location.id}||${concert.location.name}, ${concert.location.city}`,
       name: concert.name ?? null,
     } as ConcertRecord,
     createIfNotExists: false,
@@ -167,11 +177,12 @@ export async function addBandRecord(record: AddBand & { id: number }) {
       name: record.name,
       alt_names: record.alt_names ?? null,
       countries_iso2: record.countries_iso2,
-      country_names: record.countries_iso2.map(iso2 => ({
-        de: regionNamesDe.of(iso2) ?? null,
-        en: regionNamesEn.of(iso2) ?? null,
+      countries_facet: record.countries_iso2.map(iso2 => ({
+        de: `${iso2}||${regionNamesDe.of(iso2)}`,
+        en: `${iso2}||${regionNamesEn.of(iso2)}`,
       })),
       genres: record.genres,
+      genres_facet: record.genres.map(genre => `${genre.id}||${genre.name}` as const),
       spotify_artist_id: record.spotify_artist_id ?? null,
       spotify_artist_images: record.spotify_artist_images ?? null,
     } satisfies BandRecord,
@@ -193,13 +204,14 @@ export async function editBandRecord(
       name: record.name ?? null,
       alt_names: record.alt_names ?? null,
       countries_iso2: record.countries_iso2 ?? null,
-      country_names: record.countries_iso2
+      countries_facet: record.countries_iso2
         ? record.countries_iso2.map(iso2 => ({
-            de: regionNamesDe.of(iso2) ?? null,
-            en: regionNamesEn.of(iso2) ?? null,
+            de: `${iso2}||${regionNamesDe.of(iso2)}`,
+            en: `${iso2}||${regionNamesEn.of(iso2)}`,
           }))
         : null,
       genres: record.genres,
+      genres_facet: record.genres.map(genre => `${genre.id}||${genre.name}` as const),
       spotify_artist_id: record.spotify_artist_id ?? null,
       spotify_artist_images: record.spotify_artist_images ?? null,
     } as BandRecord,
@@ -227,9 +239,9 @@ export async function addLocationRecord(
       zip_code: location.zip_code ?? null,
       city: location.city,
       country_iso2: location.country_iso2,
-      country_names: {
-        de: regionNamesDe.of(location.country_iso2) ?? null,
-        en: regionNamesEn.of(location.country_iso2) ?? null,
+      country_facet: {
+        de: `${location.country_iso2}||${regionNamesDe.of(location.country_iso2)}`,
+        en: `${location.country_iso2}||${regionNamesEn.of(location.country_iso2)}`,
       },
       image: location.image ?? null,
       updated_at: location.updated_at ?? null,
@@ -254,10 +266,10 @@ export async function editLocationRecord(
       zip_code: location.zip_code ?? null,
       city: location.city ?? null,
       country_iso2: location.country_iso2 ?? null,
-      country_names: location.country_iso2
+      country_facet: location.country_iso2
         ? {
-            de: regionNamesDe.of(location.country_iso2) ?? null,
-            en: regionNamesEn.of(location.country_iso2) ?? null,
+            de: `${location.country_iso2}||${regionNamesDe.of(location.country_iso2)}`,
+            en: `${location.country_iso2}||${regionNamesEn.of(location.country_iso2)}`,
           }
         : null,
       image: location.image ?? null,

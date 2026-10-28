@@ -6,3 +6,9 @@ export const enum AlgoliaIndex {
   FestivalRoots = 'festival_roots',
   Countries = 'countries',
 }
+
+export function parseFacetValue(facetValue: string) {
+  const [id, name] = facetValue.split('||')
+
+  return { id: parseInt(id), name }
+}

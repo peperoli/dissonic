@@ -59,6 +59,9 @@ export async function GET() {
     objectID: `${INDEX_NAME}-${concert.id}`,
     type: INDEX_NAME,
     ...concert,
+    festival_root_facet: concert.festival_root
+      ? `${concert.festival_root.id}||${concert.festival_root.name}`
+      : null,
     date_start_unix: getUnixTimestamp(concert.date_start),
     date_end_unix: concert.date_end ? getUnixTimestamp(concert.date_end) : null,
     bands: concert.bands.map((band, index) => ({
@@ -68,7 +71,9 @@ export async function GET() {
       spotify_artist_id: index === 0 ? band.spotify_artist_id : null,
       spotify_artist_images: index === 0 ? band.spotify_artist_images : null,
     })),
+    bands_facet: concert.bands.map(band => `${band.id}||${band.name}` as const),
     bands_count: concert.bands.length,
+    location_facet: `${concert.location.id}||${concert.location.name}, ${concert.location.city}`,
     fan_ids: [...new Set(concert.bands_seen.map(bandSeen => bandSeen.user_id))],
   }))
 
@@ -91,7 +96,16 @@ export async function GET() {
           'location.city',
           'name',
         ],
-        attributesForFaceting: ['date_start_unix', 'bands.id', 'location.id', 'festival_root.id', 'fan_ids'],
+        attributesForFaceting: [
+          'festival_root.id',
+          'searchable(festival_root_facet)',
+          'date_start_unix',
+          'bands.id',
+          'searchable(bands_facet)',
+          'location.id',
+          'searchable(location_facet)',
+          'fan_ids',
+        ],
         customRanking: ['desc(date_start_unix)'],
         replicas: ['date_start_unix_asc', 'bands_count_desc', 'bands_count_asc'],
       },

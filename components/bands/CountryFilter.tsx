@@ -4,31 +4,43 @@ import { Select } from '../forms/Select'
 import { useLocale, useTranslations } from 'next-intl'
 import { getCountryName } from '@/lib/getCountryName'
 import { useSearchCountries } from '@/hooks/countries/useSearchCountries'
+import { useSearchFacet } from '@/hooks/search/useSearchFacet'
+import { AlgoliaIndex } from '@/lib/algolia'
+
+type IndexName = AlgoliaIndex.Bands | AlgoliaIndex.Locations
+type FacetName = `countries_facet.${string}` | `country_facet.${string}`
 
 const CountryMultiSelect = ({
+  indexName,
+  facetName,
   selectedOptions,
   setSelectedOptions,
-  facetCounts,
   enabled,
 }: {
+  indexName: IndexName
+  facetName: FacetName
   selectedOptions: string[]
   setSelectedOptions: (value: string[]) => void
-  facetCounts: Record<string, number>
   enabled: boolean
 }) => {
   const [searchQuery, setSearchQuery] = useState('')
-  const { data: countries, isPending } = useSearchCountries({ search: searchQuery, enabled })
-  const locale = useLocale()
+  const { data: countries, isPending } = useSearchFacet(indexName, facetName, {
+    search: searchQuery,
+    enabled,
+  })
   return (
     <Select<string>
       name="Land"
       items={
-        countries?.data
-          .map(item => ({
-            id: item.iso2,
-            name: getCountryName(item.iso2, locale) ?? item.iso2,
-            count: facetCounts[item.iso2] ?? 0,
-          }))
+        countries
+          ?.map(item => {
+            const [iso2, name] = item.value.split('||')
+            return {
+              id: iso2,
+              name: name,
+              count: item.count,
+            }
+          })
           .sort((a, b) => b.count - a.count) ?? []
       }
       searchable
@@ -44,13 +56,15 @@ const CountryMultiSelect = ({
 }
 
 export const CountryFilter = ({
+  indexName,
+  facetName,
   values: submittedValues,
   onSubmit,
-  facetCounts,
 }: {
+  indexName: IndexName
+  facetName: FacetName
   values: string[] | null
   onSubmit: (value: string[]) => void
-  facetCounts: Record<string, number>
 }) => {
   const { data: countries } = useSearchCountries({
     iso2: submittedValues,
@@ -76,9 +90,10 @@ export const CountryFilter = ({
     >
       {({ isOpen }) => (
         <CountryMultiSelect
+          indexName={indexName}
+          facetName={facetName}
           selectedOptions={selectedIds}
           setSelectedOptions={setSelectedIds}
-          facetCounts={facetCounts}
           enabled={isOpen}
         />
       )}

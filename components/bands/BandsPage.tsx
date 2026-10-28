@@ -16,9 +16,10 @@ import { parseAsArrayOf, parseAsInteger, parseAsString, useQueryState } from 'nu
 import { useModal } from '../shared/ModalProvider'
 import { Plus, RotateCcw } from 'lucide-react'
 import { SpeedDial } from '../layout/SpeedDial'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { saveLastQueryState } from '@/actions/preferences'
 import { useSearchBands } from '@/hooks/bands/useSearchBands'
+import { AlgoliaIndex } from '@/lib/algolia'
 
 export function BandsPage() {
   const perPage = 25
@@ -45,6 +46,7 @@ export function BandsPage() {
   const { push } = useRouter()
   const pathname = usePathname()
   const t = useTranslations('BandsPage')
+  const locale = useLocale()
   const queryStates = {
     countries: selectedCountries,
     genres: selectedGenres,
@@ -86,15 +88,12 @@ export function BandsPage() {
             setQuery={setQuery}
           />
           <CountryFilter
+            indexName={AlgoliaIndex.Bands}
+            facetName={`countries_facet.${locale.split('-')[0]}`}
             values={selectedCountries}
             onSubmit={setSelectedCountries}
-            facetCounts={bands?.facets['countries_iso2'] ?? {}}
           />
-          <GenreFilter
-            values={selectedGenres}
-            onSubmit={setSelectedGenres}
-            facetCounts={bands?.facets['genres.id'] ?? {}}
-          />
+          <GenreFilter values={selectedGenres} onSubmit={setSelectedGenres} />
         </div>
         <div className="flex items-center gap-4">
           <div className="my-4 text-sm text-slate-300">

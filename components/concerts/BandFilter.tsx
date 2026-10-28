@@ -1,28 +1,32 @@
 import { useEffect, useState } from 'react'
 import { FilterButton } from './../FilterButton'
-import { useBands } from './../../hooks/bands/useBands'
+import { useBands } from '@/hooks/bands/useBands'
 import { Select } from '../forms/Select'
 import { useTranslations } from 'next-intl'
+import { useSearchFacet } from '@/hooks/search/useSearchFacet'
+import { AlgoliaIndex, parseFacetValue } from '@/lib/algolia'
 
 type BandMultiSelectProps = {
   values: number[]
   onValuesChange: (value: number[]) => void
-  facetCounts: Record<number, number>
   enabled: boolean
 }
 
-const BandMultiSelect = ({ facetCounts, enabled, ...props }: BandMultiSelectProps) => {
+const BandMultiSelect = ({ enabled, ...props }: BandMultiSelectProps) => {
   const [searchQuery, setSearchQuery] = useState('')
-  const { data: bands, isPending } = useBands({ search: searchQuery, enabled })
+  const { data: bands, isPending } = useSearchFacet(AlgoliaIndex.Concerts, 'bands_facet', {
+    search: searchQuery,
+    enabled,
+  })
   return (
     <Select
       name="band"
       items={
-        bands?.data
-          .map(band => ({
-            id: band.id,
-            name: band.name,
-            count: facetCounts[band.id] ?? 0,
+        bands
+          ?.map(item => ({
+            id: parseFacetValue(item.value).id,
+            name: parseFacetValue(item.value).name,
+            count: item.count,
           }))
           .sort((a, b) => b.count - a.count) ?? []
       }
@@ -40,11 +44,13 @@ const BandMultiSelect = ({ facetCounts, enabled, ...props }: BandMultiSelectProp
 type BandFilterProps = {
   values: number[] | null
   onSubmit: (value: number[]) => void
-  facetCounts: Record<number, number>
 }
 
-export const BandFilter = ({ values: submittedValues, onSubmit, facetCounts }: BandFilterProps) => {
-  const { data: bands } = useBands({ ids: submittedValues, enabled: !!submittedValues?.length })
+export const BandFilter = ({ values: submittedValues, onSubmit }: BandFilterProps) => {
+  const { data: bands } = useBands({
+    ids: submittedValues,
+    enabled: !!submittedValues?.length,
+  })
   const [selectedIds, setSelectedIds] = useState<number[]>(submittedValues ?? [])
   const t = useTranslations('BandFilter')
 
@@ -60,12 +66,7 @@ export const BandFilter = ({ values: submittedValues, onSubmit, facetCounts }: B
       onSubmit={onSubmit}
     >
       {({ isOpen }) => (
-        <BandMultiSelect
-          values={selectedIds}
-          onValuesChange={setSelectedIds}
-          facetCounts={facetCounts}
-          enabled={isOpen}
-        />
+        <BandMultiSelect values={selectedIds} onValuesChange={setSelectedIds} enabled={isOpen} />
       )}
     </FilterButton>
   )

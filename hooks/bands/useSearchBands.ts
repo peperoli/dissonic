@@ -14,7 +14,7 @@ async function searchBands(
   }
 
   if (options?.genres && options.genres.length > 0) {
-    filters.push(options.genres.map(genre => `genres.name:"${genre}"`).join(' OR '))
+    filters.push(options.genres.map(genre => `genres.id:"${genre}"`).join(' OR '))
   }
 
   const { results } = await algolia.searchForHits<BandRecord>([

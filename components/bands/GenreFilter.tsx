@@ -1,31 +1,34 @@
 import { useEffect, useState } from 'react'
 import { FilterButton } from './../FilterButton'
-import { useGenres } from '../../hooks/genres/useGenres'
 import { Select } from '../forms/Select'
 import { useTranslations } from 'next-intl'
+import { useGenres } from '@/hooks/genres/useGenres'
+import { AlgoliaIndex, parseFacetValue } from '@/lib/algolia'
+import { useSearchFacet } from '@/hooks/search/useSearchFacet'
 
 const GenreMultiSelect = ({
   selectedOptions,
   setSelectedOptions,
-  facetCounts,
   enabled,
 }: {
   selectedOptions: number[]
   setSelectedOptions: (value: number[]) => void
-  facetCounts: Record<number, number>
   enabled: boolean
 }) => {
   const [searchQuery, setSearchQuery] = useState('')
-  const { data: genres, isPending } = useGenres({ search: searchQuery, enabled })
+  const { data: genres, isPending } = useSearchFacet(AlgoliaIndex.Bands, 'genres_facet', {
+    search: searchQuery,
+    enabled,
+  })
   return (
     <Select
       name="Genre"
       items={
         genres
           ?.map(item => ({
-            id: item.id,
-            name: item.name,
-            count: facetCounts[item.id] ?? 0,
+            id: parseFacetValue(item.value).id,
+            name: parseFacetValue(item.value).name,
+            count: item.count,
           }))
           .sort((a, b) => b.count - a.count) ?? []
       }
@@ -44,11 +47,9 @@ const GenreMultiSelect = ({
 export const GenreFilter = ({
   values: submittedValues,
   onSubmit,
-  facetCounts,
 }: {
   values: number[] | null
   onSubmit: (value: number[]) => void
-  facetCounts: Record<number, number>
 }) => {
   const { data: genres } = useGenres({ ids: submittedValues, enabled: !!submittedValues?.length })
   const [selectedIds, setSelectedIds] = useState(submittedValues ?? [])
@@ -69,7 +70,6 @@ export const GenreFilter = ({
         <GenreMultiSelect
           selectedOptions={selectedIds}
           setSelectedOptions={setSelectedIds}
-          facetCounts={facetCounts}
           enabled={isOpen}
         />
       )}

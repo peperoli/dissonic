@@ -3,26 +3,30 @@ import { FilterButton } from './../FilterButton'
 import { useLocations } from './../../hooks/locations/useLocations'
 import { Select } from '../forms/Select'
 import { useTranslations } from 'next-intl'
+import { useSearchFacet } from '@/hooks/search/useSearchFacet'
+import { AlgoliaIndex, parseFacetValue } from '@/lib/algolia'
 
 type LocationMultiSelectProps = {
   values: number[]
   onValuesChange: (value: number[]) => void
-  facetCounts: Record<number, number>
   enabled: boolean
 }
 
-const LocationMultiSelect = ({ facetCounts, enabled, ...props }: LocationMultiSelectProps) => {
+const LocationMultiSelect = ({ enabled, ...props }: LocationMultiSelectProps) => {
   const [searchQuery, setSearchQuery] = useState('')
-  const { data: locations, isPending } = useLocations({ search: searchQuery, enabled })
+  const { data: locations, isPending } = useSearchFacet(AlgoliaIndex.Concerts, 'location_facet', {
+    search: searchQuery,
+    enabled,
+  })
   return (
     <Select
       name="location"
       items={
-        locations?.data
-          .map(item => ({
-            id: item.id,
-            name: `${item.name}, ${item.city}`,
-            count: facetCounts[item.id] ?? 0,
+        locations
+          ?.map(item => ({
+            id: parseFacetValue(item.value).id,
+            name: parseFacetValue(item.value).name,
+            count: item.count,
           }))
           .sort((a, b) => b.count - a.count) ?? []
       }
@@ -40,14 +44,9 @@ const LocationMultiSelect = ({ facetCounts, enabled, ...props }: LocationMultiSe
 type LocationFilterProps = {
   values: number[] | null
   onSubmit: (value: number[]) => void
-  facetCounts: Record<number, number>
 }
 
-export const LocationFilter = ({
-  values: submittedValues,
-  onSubmit,
-  facetCounts,
-}: LocationFilterProps) => {
+export const LocationFilter = ({ values: submittedValues, onSubmit }: LocationFilterProps) => {
   const { data: locations } = useLocations({
     ids: submittedValues,
     enabled: !!submittedValues?.length,
@@ -70,7 +69,6 @@ export const LocationFilter = ({
         <LocationMultiSelect
           values={selectedIds}
           onValuesChange={setSelectedIds}
-          facetCounts={facetCounts}
           enabled={isOpen}
         />
       )}

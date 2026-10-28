@@ -58,11 +58,11 @@ export async function GET() {
     objectID: `${INDEX_NAME}-${band.id}`,
     type: INDEX_NAME,
     ...band,
-    country_names: band.countries_iso2.map(country => ({
-      de: regionNamesDe.of(country) ?? null,
-      en: regionNamesEn.of(country) ?? null,
+    countries_facet: band.countries_iso2.map(iso2 => ({
+      de: `${iso2}||${regionNamesDe.of(iso2)}`,
+      en: `${iso2}||${regionNamesEn.of(iso2)}`,
     })),
-    genres: band.genres,
+    genres_facet: band.genres.map(genre => `${genre.id}||${genre.name}` as const),
   }))
 
   try {
@@ -76,16 +76,16 @@ export async function GET() {
         searchableAttributes: [
           'name',
           'alt_names',
-          'country_names.de',
-          'country_names.en',
-          'genres.name',
+          'countries_facet.de',
+          'countries_facet.en',
+          'genres_facet',
         ],
         attributesForFaceting: [
           'countries_iso2',
-          'searchable(country_names.de)',
-          'searchable(country_names.en)',
+          'searchable(countries_facet.de)',
+          'searchable(countries_facet.en)',
           'genres.id',
-          'searchable(genres.name)',
+          'searchable(genres_facet)',
         ],
         customRanking: ['asc(name)'],
       },
