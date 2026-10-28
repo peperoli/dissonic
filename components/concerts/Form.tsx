@@ -24,6 +24,7 @@ import { isValidDate } from '@/lib/date'
 import { useLocation } from '@/hooks/locations/useLocation'
 import { LocationSelectField } from './LocationSelectField'
 import { FestivalRootSelectField } from './FestivalRootSelectField'
+import { FestivalRootRecord } from '@/types/algolia'
 
 export type ConcertFields = {
   id: AddConcert['id']
@@ -98,17 +99,14 @@ export function Form({ close, isNew }: { isNew?: boolean; close: () => void }) {
   const isFestival = watch('is_festival')
   const t = useTranslations('ConcertForm')
   const { data: session } = useSession()
-  const festivalRoot = watch('festival_root')
+  const festivalRoot = watch('festival_root') as FestivalRootRecord | null
   const isSimilar = !!(isNew && similarConcerts?.count)
   const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
   const resourceStatusItems = [
     { value: 'complete', label: t('complete') },
     { value: 'incomplete_lineup', label: t('incompleteLineup') },
   ]
-  const defaultLocationId =
-    festivalRoot && 'default_location_id' in festivalRoot
-      ? (festivalRoot.default_location_id as number)
-      : null
+  const defaultLocationId = festivalRoot?.default_location?.id ?? null
   const { data: defaultLocation } = useLocation(defaultLocationId, null, !!festivalRoot)
 
   useEffect(() => {
@@ -217,7 +215,12 @@ export function Form({ close, isNew }: { isNew?: boolean; close: () => void }) {
             <EditBandsButton value={value} onChange={onChange} error={errors.bands} />
           )}
         />
-        <LocationSelectField name="location" control={control} label={t('location')} error={errors.location} />
+        <LocationSelectField
+          name="location"
+          control={control}
+          label={t('location')}
+          error={errors.location}
+        />
         {!isFestival && (
           <TextField
             {...register('name')}
