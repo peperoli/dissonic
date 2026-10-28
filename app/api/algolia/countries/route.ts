@@ -44,6 +44,7 @@ export async function GET() {
       indexName: INDEX_NAME,
       indexSettings: {
         searchableAttributes: ['names.de', 'names.en'],
+        attributesForFaceting: ['iso2'],
         customRanking: ['asc(names.en)'],
       },
     })

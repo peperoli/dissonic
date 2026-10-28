@@ -17,7 +17,6 @@ async function searchLocations(options: LocationFetchOptions | undefined) {
       query: options?.search,
       hitsPerPage: options?.size ?? 25,
       filters: filters.map(filter => `(${filter})`).join(' AND '),
-      facets: ['country_iso2'],
       page: (options?.page || 1) - 1,
       maxValuesPerFacet: 1000,
     },
@@ -26,9 +25,6 @@ async function searchLocations(options: LocationFetchOptions | undefined) {
   return {
     data: response.hits,
     count: response.nbHits ?? null,
-    facets: response.facets as {
-      country_iso2: Record<string, number>
-    },
   }
 }
 

@@ -17,45 +17,19 @@ async function searchBands(
     filters.push(options.genres.map(genre => `genres.id:"${genre}"`).join(' OR '))
   }
 
-  const { results } = await algolia.searchForHits<BandRecord>([
-    {
-      indexName: 'bands',
-      params: {
-        query: options?.search,
-        hitsPerPage: options?.size ?? 25,
-        filters: filters.map(filter => `(${filter})`).join(' AND '),
-        facets: ['countries_iso2', 'genres.name'],
-        page: (options?.page || 1) - 1,
-        maxValuesPerFacet: 1000,
-      },
+  const response = await algolia.searchSingleIndex<BandRecord>({
+    indexName: 'bands',
+    searchParams: {
+      query: options?.search,
+      hitsPerPage: options?.size ?? 25,
+      filters: filters.map(filter => `(${filter})`).join(' AND '),
+      page: (options?.page || 1) - 1,
     },
-    {
-      indexName: 'bands',
-      params: {
-        query: options?.search,
-        facets: ['countries_iso2'],
-        hitsPerPage: 0,
-        analytics: false,
-      },
-    },
-    {
-      indexName: 'bands',
-      params: {
-        query: options?.search,
-        facets: ['genres.name'],
-        hitsPerPage: 0,
-        analytics: false,
-      },
-    },
-  ])
+  })
 
   return {
-    data: results[0].hits,
-    count: results[0].nbHits ?? null,
-    facets: {
-      countries: results[1].facets?.countries_iso2 ?? {},
-      genres: results[2].facets?.['genres.name'] ?? {},
-    },
+    data: response.hits,
+    count: response.nbHits ?? null,
   }
 }
 

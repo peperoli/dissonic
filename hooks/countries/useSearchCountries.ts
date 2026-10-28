@@ -9,7 +9,7 @@ async function searchCountries(options: CountryFetchOptions | undefined) {
   const filters: string[] = []
 
   if (options?.iso2 && options.iso2.length > 0) {
-    filters.push(options.iso2.map(iso2 => `country_iso2:${iso2}`).join(' OR '))
+    filters.push(options.iso2.map(iso2 => `iso2:${iso2}`).join(' OR '))
   }
 
   const response = await algolia.searchSingleIndex<CountryRecord>({

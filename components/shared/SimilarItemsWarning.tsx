@@ -46,7 +46,7 @@ export function SimilarItemsWarning({
               <BandItem band={item} />
             ) : 'type' in item && item.type === 'locations' ? (
               <LocationItem location={item} />
-            ) : 'default_location_id' in item ? (
+            ) : 'type' in item && item.type === 'festival_roots' ? (
               <FestivalRootItem festivalRoot={item} />
             ) : null}
           </li>
