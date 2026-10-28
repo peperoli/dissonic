@@ -9,6 +9,7 @@ export type ConcertRecord = {
     id: number
     name: string
   } | null
+  festival_root_facet: `${number}||${string}` | null
   date_start: string
   date_start_unix?: number
   date_end: string | null
@@ -20,6 +21,7 @@ export type ConcertRecord = {
     spotify_artist_id: string | null
     spotify_artist_images: Json | null
   }[]
+  bands_facet: `${number}||${string}`[]
   bands_count: number
   location: {
     id: number
@@ -28,6 +30,7 @@ export type ConcertRecord = {
     city: string
     country_iso2: string
   }
+  location_facet: `${number}||${string}`
   name: string | null
   fan_ids: string[]
 }
@@ -39,14 +42,15 @@ export type BandRecord = {
   name: string
   alt_names: string | null
   countries_iso2: string[]
-  country_names: {
-    de: string | null
-    en: string | null
+  countries_facet: {
+    de: `${string}||${string}`
+    en: `${string}||${string}`
   }[]
   genres: {
     id: number
     name: string
   }[]
+  genres_facet: `${number}||${string}`[]
   spotify_artist_id: string | null
   spotify_artist_images: Json | null
 }
@@ -60,9 +64,9 @@ export type LocationRecord = {
   zip_code: string | null
   city: string
   country_iso2: string
-  country_names: {
-    de: string | null
-    en: string | null
+  country_facet: {
+    de: `${string}||${string}`
+    en: `${string}||${string}`
   }
   image: string | null
   updated_at: string | null

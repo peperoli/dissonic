@@ -2,16 +2,12 @@ import supabase from '@/utils/supabase/client'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { ExtendedRes, FestivalRoot, FestivalRootFetchOptions, QueryOptions } from '@/types/types'
 
-async function fetchFestivalRoots(
-  options?: FestivalRootFetchOptions
-): Promise<ExtendedRes<FestivalRoot[]>> {
-  const searchString = options?.search && options.search.length > 1 ? options.search : null
+type FetchOptions = Pick<FestivalRootFetchOptions, 'ids' | 'sort' | 'size'>
 
-  let query = searchString
-    ? supabase.rpc('search_festival_roots', { search_string: searchString }, { count: 'estimated' })
-    : supabase.from('festival_roots').select('*, default_location:locations(*)', {
-        count: 'estimated',
-      })
+async function fetchFestivalRoots(options?: FetchOptions): Promise<ExtendedRes<FestivalRoot[]>> {
+  let query = supabase.from('festival_roots').select('*, default_location:locations(*)', {
+    count: 'estimated',
+  })
 
   if (options?.ids && options.ids.length > 0) {
     query = query.in('id', options.ids)
@@ -34,9 +30,7 @@ async function fetchFestivalRoots(
   return { data, count }
 }
 
-export const useFestivalRoots = (
-  options: FestivalRootFetchOptions & QueryOptions<FestivalRoot[]> = {}
-) => {
+export const useFestivalRoots = (options: FetchOptions & QueryOptions<FestivalRoot[]> = {}) => {
   const { placeholderData, enabled, ...fetchOptions } = options
   return useQuery({
     queryKey: ['festivalRoots', JSON.stringify(fetchOptions)],

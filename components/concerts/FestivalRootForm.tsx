@@ -1,16 +1,15 @@
-import { Controller, useForm } from 'react-hook-form'
-import { useSearchLocations } from '../../hooks/locations/useSearchLocations'
+import { useForm } from 'react-hook-form'
 import { Button } from '../Button'
 import { TextField } from '../forms/TextField'
-import { SelectField } from '../forms/SelectField'
 import { useAddFestivalRoot } from '@/hooks/concerts/useAddFestivalRoot'
 import { StatusBanner } from '../forms/StatusBanner'
 import { getErrorMessage } from '@/lib/getErrorMessage'
-import { useFestivalRoots } from '@/hooks/concerts/useFestivalRoots'
 import { useState } from 'react'
 import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
 import { useTranslations } from 'next-intl'
 import { FestivalRoot, ListItem } from '@/types/types'
+import { useSearchFestivalRoots } from '@/hooks/festival-roots/useSearchFestivalRoots'
+import { LocationSelectField } from './LocationSelectField'
 
 export type FestivalRootFields = {
   name: FestivalRoot['name']
@@ -24,13 +23,11 @@ export const FestivalRootForm = ({ close }: { close: () => void }) => {
   })
   const name = watch('name')
   const [similarFestivalRootsSize, setSimilarFestivalRootsSize] = useState(3)
-  const { data: similarFestivalRoots } = useFestivalRoots({
+  const { data: similarFestivalRoots } = useSearchFestivalRoots({
     enabled: name.length >= 3,
     search: name,
     size: similarFestivalRootsSize,
   })
-  const [locationsSearchQuery, setLocationsSearchQuery] = useState('')
-  const { data: locations } = useSearchLocations({ search: locationsSearchQuery })
   const { mutate, status, error } = useAddFestivalRoot()
   const t = useTranslations('FestivalRootForm')
   const isSimilar = !!(formState.dirtyFields.name && similarFestivalRoots?.count)
@@ -56,26 +53,11 @@ export const FestivalRootForm = ({ close }: { close: () => void }) => {
           setSimilarItemsSize={setSimilarFestivalRootsSize}
         />
       )}
-      <Controller
+      <LocationSelectField
         name="default_location"
         control={control}
-        rules={{ required: true }}
-        render={({ field: { value = null, onChange } }) => (
-          <SelectField
-            name="default_location"
-            items={locations?.data.map(item => ({
-              id: item.id,
-              name: `${item.name}, ${item.city}`,
-            })) ?? []}
-            searchable
-            searchQuery={locationsSearchQuery}
-            setSearchQuery={setLocationsSearchQuery}
-            value={value}
-            onValueChange={onChange}
-            error={formState.errors.default_location}
-            label={t('defaultLocation')}
-          />
-        )}
+        label={t('defaultLocation')}
+        error={formState.errors.default_location}
       />
       <TextField
         {...register('website')}

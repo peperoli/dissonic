@@ -33,7 +33,6 @@ import { saveLastQueryState, setViewPreference } from '@/actions/preferences'
 import { groupConcertsByMonth } from '@/lib/groupConcertsByMonth'
 import { ConcertsNav } from '../layout/ConcertsNav'
 import { Temporal } from 'temporal-polyfill'
-import { useConcertsFacets } from '@/hooks/concerts/useConcertsFacets'
 import { useProfiles } from '@/hooks/profiles/useProfiles'
 
 export function ConcertsPage({
@@ -81,14 +80,6 @@ export function ConcertsPage({
     sort,
     size,
     bandsSize: 5,
-  })
-  const { data: concertsFacets } = useConcertsFacets({
-    bands: selectedBands,
-    locations: selectedLocations,
-    dateRange: initialView.range === 'future' ? [tomorrow, null] : [null, tomorrow],
-    years: selectedYears,
-    festivalRoots: selectedFestivalRoots,
-    userView: initialView.range !== 'future' ? view.userView : 'global',
   })
   const fanIds = Array.from(
     new Set(concerts?.data?.flatMap(item => item.bands_seen?.map(b => b.user_id) ?? []))
@@ -158,22 +149,10 @@ export function ConcertsPage({
       <ConcertsNav />
       <section className="-mx-4 grid gap-4 bg-radial-gradient from-blue/20 p-5 md:mx-auto md:rounded-2xl">
         <div className="scrollbar-hidden -mx-4 flex gap-2 overflow-x-auto px-4 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible">
-          <BandFilter
-            values={selectedBands}
-            onSubmit={setSelectedBands}
-            facetCounts={concertsFacets?.['bands.id'] ?? {}}
-          />
-          <LocationFilter
-            values={selectedLocations}
-            onSubmit={setSelectedLocations}
-            facetCounts={concertsFacets?.['location.id'] ?? {}}
-          />
+          <BandFilter values={selectedBands} onSubmit={setSelectedBands} />
+          <LocationFilter values={selectedLocations} onSubmit={setSelectedLocations} />
           <YearsFilter values={selectedYears} onSubmit={setSelectedYears} />
-          <FestivalRootFilter
-            values={selectedFestivalRoots}
-            onSubmit={setSelectedFestivalRoots}
-            facetCounts={concertsFacets?.['festival_root.id'] ?? {}}
-          />
+          <FestivalRootFilter values={selectedFestivalRoots} onSubmit={setSelectedFestivalRoots} />
         </div>
         <div className="flex items-center gap-4">
           <div className="my-1.5 text-sm text-slate-300">

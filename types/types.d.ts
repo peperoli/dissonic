@@ -53,6 +53,7 @@ export type LocationFetchOptions = {
 export type CountryFetchOptions = {
   iso2?: string[] | null
   search?: string
+  size?: number
 }
 
 export type ActivityFetchOptions = {

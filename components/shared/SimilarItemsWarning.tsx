@@ -6,7 +6,7 @@ import { Concert, ExtendedRes, FestivalRoot } from '@/types/types'
 import { BandItem } from '../bands/BandItem'
 import { ConcertItem } from '../concerts/ConcertItem'
 import { LocationItem } from '../locations/LocationItem'
-import { BandRecord, LocationRecord } from '@/types/algolia'
+import { BandRecord, FestivalRootRecord, LocationRecord } from '@/types/algolia'
 
 export function SimilarItemsWarning({
   itemType,
@@ -20,7 +20,7 @@ export function SimilarItemsWarning({
   | { itemType: 'concerts'; similarItems: ExtendedRes<Concert[]> }
   | { itemType: 'bands'; similarItems: ExtendedRes<BandRecord[]> }
   | { itemType: 'locations'; similarItems: ExtendedRes<LocationRecord[]> }
-  | { itemType: 'festivalRoots'; similarItems: ExtendedRes<FestivalRoot[]> }
+  | { itemType: 'festivalRoots'; similarItems: ExtendedRes<FestivalRootRecord[]> }
 )) {
   const t = useTranslations('SimilarItemsWarning')
   return (
@@ -46,7 +46,7 @@ export function SimilarItemsWarning({
               <BandItem band={item} />
             ) : 'type' in item && item.type === 'locations' ? (
               <LocationItem location={item} />
-            ) : 'default_location_id' in item ? (
+            ) : 'type' in item && item.type === 'festival_roots' ? (
               <FestivalRootItem festivalRoot={item} />
             ) : null}
           </li>
@@ -67,7 +67,7 @@ export function SimilarItemsWarning({
   )
 }
 
-function FestivalRootItem({ festivalRoot }: { festivalRoot: FestivalRoot }) {
+function FestivalRootItem({ festivalRoot }: { festivalRoot: FestivalRoot | FestivalRootRecord }) {
   return (
     <div className="flex gap-4 rounded-lg p-2 text-left">
       <div className="relative grid h-11 w-11 flex-none place-content-center rounded-lg bg-slate-750">

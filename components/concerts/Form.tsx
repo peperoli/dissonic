@@ -1,13 +1,10 @@
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { useConcerts } from '../../hooks/concerts/useConcerts'
-import { useSearchLocations } from '../../hooks/locations/useSearchLocations'
 import { AddConcert, Band, ListItem, ReorderableListItem } from '../../types/types'
 import { Button } from '../Button'
 import { TextField } from '../forms/TextField'
 import { EditBandsButton } from './EditBandsButton'
-import { SelectField } from '../forms/SelectField'
 import { SegmentedControl } from '../controls/SegmentedControl'
-import { useFestivalRoots } from '@/hooks/concerts/useFestivalRoots'
 import { useEffect, useState } from 'react'
 import { ChevronDownIcon, Plus } from 'lucide-react'
 import { Modal } from '../Modal'
@@ -25,6 +22,9 @@ import clsx from 'clsx'
 import { RadioButton } from '../forms/RadioGroup'
 import { isValidDate } from '@/lib/date'
 import { useLocation } from '@/hooks/locations/useLocation'
+import { LocationSelectField } from './LocationSelectField'
+import { FestivalRootSelectField } from './FestivalRootSelectField'
+import { FestivalRootRecord } from '@/types/algolia'
 
 export type ConcertFields = {
   id: AddConcert['id']
@@ -96,28 +96,17 @@ export function Form({ close, isNew }: { isNew?: boolean; close: () => void }) {
     locations: location ? [location.id] : null,
     size: similarConcertsSize,
   })
-  const [locationsSearchQuery, setLocationsSearchQuery] = useState('')
-  const [festivalRootsSearchQuery, setFestivalRootsSearchQuery] = useState('')
-  const { data: locations } = useSearchLocations({ search: locationsSearchQuery })
   const isFestival = watch('is_festival')
-  const { data: festivalRoots } = useFestivalRoots({
-    enabled: isFestival,
-    search: festivalRootsSearchQuery,
-    sort: { sort_by: 'name', sort_asc: true },
-  })
   const t = useTranslations('ConcertForm')
   const { data: session } = useSession()
-  const festivalRoot = watch('festival_root')
+  const festivalRoot = watch('festival_root') as FestivalRootRecord | null
   const isSimilar = !!(isNew && similarConcerts?.count)
   const isMod = session?.user_role === 'developer' || session?.user_role === 'moderator'
   const resourceStatusItems = [
     { value: 'complete', label: t('complete') },
     { value: 'incomplete_lineup', label: t('incompleteLineup') },
   ]
-  const defaultLocationId =
-    festivalRoot && 'default_location_id' in festivalRoot
-      ? (festivalRoot.default_location_id as number)
-      : null
+  const defaultLocationId = festivalRoot?.default_location?.id ?? null
   const { data: defaultLocation } = useLocation(defaultLocationId, null, !!festivalRoot)
 
   useEffect(() => {
@@ -183,23 +172,10 @@ export function Form({ close, isNew }: { isNew?: boolean; close: () => void }) {
         />
         {isFestival === true && (
           <>
-            <Controller
-              name="festival_root"
+            <FestivalRootSelectField
               control={control}
-              rules={{ required: true }}
-              render={({ field: { value = null, onChange } }) => (
-                <SelectField
-                  name="festival_root"
-                  items={festivalRoots?.data ?? []}
-                  value={value}
-                  onValueChange={onChange}
-                  searchable
-                  searchQuery={festivalRootsSearchQuery}
-                  setSearchQuery={setFestivalRootsSearchQuery}
-                  error={errors.festival_root}
-                  label={t('festivalRoot')}
-                />
-              )}
+              label={t('festivalRoot')}
+              error={errors.festival_root}
             />
             <div className="flex items-center">
               <p className="text-slate-300">{t('festivalRootMissing')}</p>
@@ -239,28 +215,11 @@ export function Form({ close, isNew }: { isNew?: boolean; close: () => void }) {
             <EditBandsButton value={value} onChange={onChange} error={errors.bands} />
           )}
         />
-        <Controller
+        <LocationSelectField
           name="location"
           control={control}
-          rules={{ required: true }}
-          render={({ field: { value, onChange } }) => (
-            <SelectField
-              name="location_id"
-              value={value}
-              onValueChange={onChange}
-              items={
-                locations?.data.map(item => ({
-                  id: item.id,
-                  name: `${item.name}, ${item.city}`,
-                })) ?? []
-              }
-              searchable
-              searchQuery={locationsSearchQuery}
-              setSearchQuery={setLocationsSearchQuery}
-              error={errors.location}
-              label={t('location')}
-            />
-          )}
+          label={t('location')}
+          error={errors.location}
         />
         {!isFestival && (
           <TextField

@@ -3,7 +3,9 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { BandRecord } from '@/types/algolia'
 import { createAlgoliaClient } from '@/utils/algolia/client'
 
-async function searchBands(options: BandFetchOptions | undefined) {
+async function searchBands(
+  options: Pick<BandFetchOptions, 'search' | 'countries' | 'genres' | 'size' | 'page'> | undefined
+) {
   const algolia = createAlgoliaClient()
   const filters: string[] = []
 
@@ -12,7 +14,7 @@ async function searchBands(options: BandFetchOptions | undefined) {
   }
 
   if (options?.genres && options.genres.length > 0) {
-    filters.push(options.genres.map(genre => `genres.id:${genre}`).join(' OR '))
+    filters.push(options.genres.map(genre => `genres.id:"${genre}"`).join(' OR '))
   }
 
   const response = await algolia.searchSingleIndex<BandRecord>({
@@ -21,19 +23,13 @@ async function searchBands(options: BandFetchOptions | undefined) {
       query: options?.search,
       hitsPerPage: options?.size ?? 25,
       filters: filters.map(filter => `(${filter})`).join(' AND '),
-      facets: ['countries_iso2', 'genres.id'],
       page: (options?.page || 1) - 1,
-      maxValuesPerFacet: 1000,
     },
   })
 
   return {
     data: response.hits,
     count: response.nbHits ?? null,
-    facets: response.facets as {
-      'countries_iso2': Record<string, number>
-      'genres.id': Record<number, number>
-    },
   }
 }
 

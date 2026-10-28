@@ -3,13 +3,14 @@ import { Band, ExtendedRes, BandFetchOptions, QueryOptions } from '@/types/types
 import { getPagination } from '@/lib/getPagination'
 import supabase from '@/utils/supabase/client'
 
-const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[]>> => {
+const fetchBands = async (
+  options?: Omit<BandFetchOptions, 'search'>
+): Promise<ExtendedRes<Band[]>> => {
   const [from, to] = getPagination(options?.page, options?.size)
-  const searchString = options?.search && options.search.length > 1 ? options.search : null
 
-  let countQuery = searchString
-    ? supabase.rpc('search_bands', { search_string: searchString }, { count: 'exact', head: true })
-    : supabase.from('bands').select('id, genres!inner(id)', { count: 'exact', head: true })
+  let countQuery = supabase
+    .from('bands')
+    .select('id, genres!inner(id)', { count: 'exact', head: true })
 
   if (options?.ids && options.ids.length > 0) {
     countQuery = countQuery.in('id', options.ids)
@@ -30,11 +31,9 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
   const filterQueries = []
 
   for (let page = 1; page <= maxPage; page++) {
-    let filterQuery = (
-      searchString
-        ? supabase.rpc('search_bands', { search_string: searchString })
-        : supabase.from('bands').select('id, genres!inner(id)')
-    )
+    let filterQuery = supabase
+      .from('bands')
+      .select('id, genres!inner(id)')
       .eq('is_archived', false)
       .range((page - 1) * ROWS_PER_PAGE, page * ROWS_PER_PAGE - 1)
 
@@ -65,11 +64,7 @@ const fetchBands = async (options?: BandFetchOptions): Promise<ExtendedRes<Band[
     .filter(band => band !== null)
     .map(band => band.id)
 
-  let query = supabase
-    .from('bands')
-    .select('*, genres(*)')
-    .in('id', filteredBandIds)
-    .order('name')
+  let query = supabase.from('bands').select('*, genres(*)').in('id', filteredBandIds).order('name')
 
   if (options?.page || options?.size) {
     query = query.range(from, to)

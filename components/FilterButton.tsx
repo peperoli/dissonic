@@ -62,8 +62,7 @@ export const FilterButton = <TId extends string | number = number>({
               className="flex w-full items-center overflow-auto"
             >
               {items
-                ?.filter(item => props.submittedValues?.includes(item.id))
-                .map((item, index) => (
+                ?.map((item, index) => (
                   <span key={item.id}>
                     {item.name}
                     {index + 1 < count && <>,&nbsp;</>}
