@@ -9,6 +9,7 @@ import {
   SetStateAction,
   useContext,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
 } from 'react'
@@ -22,6 +23,7 @@ const PopoverContext = createContext<{
   setOpen: Dispatch<SetStateAction<boolean>>
   show: () => void
   close: () => void
+  shouldCloseOnClickOutside?: boolean
 } | null>(null)
 
 function usePopoverContext() {
@@ -35,14 +37,22 @@ function usePopoverContext() {
 }
 
 export function Popover({
+  isOpen: controlledIsOpen,
+  setOpen: controlledSetOpen,
+  shouldCloseOnClickOutside = true,
   children,
 }: {
+  isOpen?: boolean
+  setOpen?: Dispatch<SetStateAction<boolean>>
+  shouldCloseOnClickOutside?: boolean
   children:
     | ((args: { isOpen: boolean; show: () => void; close: () => void }) => ReactNode)
     | ReactNode
 }) {
   const popoverRef = useRef<HTMLDialogElement>(null)
-  const [isOpen, setOpen] = useState(false)
+  const [internalOpen, internalSetOpen] = useState(false)
+  const isOpen = controlledIsOpen ?? internalOpen
+  const setOpen = controlledSetOpen ?? internalSetOpen
   const id = useId()
 
   function show() {
@@ -53,6 +63,14 @@ export function Popover({
     popoverRef.current?.close()
   }
 
+  // useLayoutEffect(() => {
+  //   if (popoverRef.current?.open && !isOpen) {
+  //     close()
+  //   } else if (!popoverRef.current?.open && isOpen) {
+  //     show()
+  //   }
+  // }, [isOpen])
+
   return (
     <PopoverContext.Provider
       value={{
@@ -62,6 +80,7 @@ export function Popover({
         setOpen,
         show,
         close,
+        shouldCloseOnClickOutside,
       }}
     >
       {typeof children === 'function' ? children({ isOpen, show, close }) : children}
@@ -95,12 +114,13 @@ function PopoverContent({
   side?: 'top' | 'right' | 'bottom' | 'left'
   children: ((params: { close: () => void }) => ReactNode) | ReactNode
 }) {
-  const { popoverRef, id, close, setOpen } = usePopoverContext()
+  const { popoverRef, id, close, isOpen, setOpen, shouldCloseOnClickOutside } = usePopoverContext()
 
   return (
     <dialog
       ref={popoverRef}
-      closedby="any"
+      closedby={shouldCloseOnClickOutside ? 'any' : 'closerequest'}
+      // open={isOpen}
       onToggle={event => setOpen(event.currentTarget.open)}
       style={{ positionAnchor: `--${id}`, positionArea: side, positionTryFallbacks: 'flip-block' }}
       {...props}

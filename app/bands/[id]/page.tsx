@@ -17,9 +17,9 @@ export async function generateMetadata(
 
   try {
     const spotifyToken = await fetchSpotifyToken()
-    const spotifyArtist = await fetchSpotifyArtist(spotifyToken, band.spotify_artist_id)
     const artistImage =
-      (band.spotify_artist_images as SpotifyArtist['images'])?.[0] || spotifyArtist?.images?.[0]
+      (band.spotify_artist_images as SpotifyArtist['images'])?.[0] ||
+      (await fetchSpotifyArtist(spotifyToken, band.spotify_artist_id))?.images?.[0]
     const parentImages = (await parent).openGraph?.images || []
 
     return {

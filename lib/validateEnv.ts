@@ -19,6 +19,8 @@ const envSchema = z.object({
   BUNNY_STREAM_API_KEY: z.string().min(1),
   BUNNY_STREAM_READ_API_KEY: z.string().min(1),
   BUNNY_STORAGE_API_KEY: z.string().min(1),
+  // Geoapify
+  NEXT_PUBLIC_GEOAPIFY_API_KEY: z.string().min(1),
 })
 
 export type EnvSchema = z.infer<typeof envSchema>

@@ -565,12 +565,14 @@ export type Database = {
           country_iso2: string
           created_at: string | null
           creator_id: string | null
+          house_number: string | null
           id: number
           image: string | null
           is_archived: boolean
           latitude: number | null
           longitude: number | null
           name: string
+          street: string | null
           updated_at: string | null
           website: string | null
           zip_code: string | null
@@ -581,12 +583,14 @@ export type Database = {
           country_iso2: string
           created_at?: string | null
           creator_id?: string | null
+          house_number?: string | null
           id?: number
           image?: string | null
           is_archived?: boolean
           latitude?: number | null
           longitude?: number | null
           name: string
+          street?: string | null
           updated_at?: string | null
           website?: string | null
           zip_code?: string | null
@@ -597,12 +601,14 @@ export type Database = {
           country_iso2?: string
           created_at?: string | null
           creator_id?: string | null
+          house_number?: string | null
           id?: number
           image?: string | null
           is_archived?: boolean
           latitude?: number | null
           longitude?: number | null
           name?: string
+          street?: string | null
           updated_at?: string | null
           website?: string | null
           zip_code?: string | null
@@ -1114,12 +1120,14 @@ export type Database = {
           country_iso2: string
           created_at: string | null
           creator_id: string | null
+          house_number: string | null
           id: number
           image: string | null
           is_archived: boolean
           latitude: number | null
           longitude: number | null
           name: string
+          street: string | null
           updated_at: string | null
           website: string | null
           zip_code: string | null

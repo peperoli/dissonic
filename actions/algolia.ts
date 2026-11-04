@@ -236,6 +236,7 @@ export async function addLocationRecord(
       id: location.id,
       name: location.name,
       alt_names: location.alt_names ?? null,
+      street: location.street ?? null,
       zip_code: location.zip_code ?? null,
       city: location.city,
       country_iso2: location.country_iso2,
@@ -263,6 +264,7 @@ export async function editLocationRecord(
     attributesToUpdate: {
       name: location.name ?? null,
       alt_names: location.alt_names ?? null,
+      street: location.street ?? null,
       zip_code: location.zip_code ?? null,
       city: location.city ?? null,
       country_iso2: location.country_iso2 ?? null,

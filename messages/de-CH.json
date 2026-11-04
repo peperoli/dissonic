@@ -323,6 +323,9 @@
     "pleaseSelectAnOption": "Bitte wähle eine Option aus.",
     "save": "Speichern"
   },
+  "AutocompleteField": {
+    "noResultsFound": "Keine Resultate gefunden."
+  },
   "EditBandsButton": {
     "choose": "Wählen ...",
     "pleaseSelectAtLeastOneBand": "Bitte wähle mindestens eine Band aus."
@@ -485,6 +488,7 @@
     "image": "Bild",
     "fileSizeError": "Die Datei darf nicht grösser als {size} MB sein.",
     "fileTypeError": "Es sind nur Dateien im Format JPEG oder WebP erlaubt.",
+    "street": "Strasse und Hausnummer",
     "zipCode": "PLZ",
     "city": "Stadt",
     "country": "Land",

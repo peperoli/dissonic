@@ -18,10 +18,16 @@ import { useSimilarLocations } from '@/hooks/locations/useSimilarLocations'
 import { ListItem } from '@/types/types'
 import { getCountryName } from '@/lib/getCountryName'
 import { CountrySelectField } from './CountrySelectField'
+import { useAutocompleteAddress } from '@/hooks/locations/useAutocompleteAddress'
+import { useDebounce } from '@/hooks/helpers/useDebounce'
+import { AutocompleteField } from '../forms/AutocompleteField'
+import { GeoapifyFeature } from '@/types/geoapify'
 
 export type LocationFields = {
   id: AddLocation['id']
   name: AddLocation['name']
+  street: AddLocation['street']
+  house_number: AddLocation['house_number']
   zip_code: AddLocation['zip_code']
   city: AddLocation['city']
   country: ListItem<string>
@@ -39,6 +45,7 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
     register,
     control,
     watch,
+    setValue,
     handleSubmit,
     formState: { dirtyFields, errors },
   } = useForm<LocationFields>({
@@ -64,6 +71,8 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
     search: name,
     size: similarLocationsSize,
   })
+  const debouncedName = useDebounce(name, 200)
+  const { data: suggestedAddresses, isFetching } = useAutocompleteAddress(debouncedName)
   const addLocation = useAddLocation()
   const editLocation = useEditLocation()
   const { status } = isNew ? addLocation : editLocation
@@ -79,13 +88,36 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
     }
   }
 
+  function onAutocomplete(value: ListItem<string> | null) {
+    if (!value) return
+    const { address } = value as ListItem<string> & { address: GeoapifyFeature['properties'] }
+    setValue('name', value.name)
+    setValue('street', address.street)
+    setValue('house_number', address.housenumber)
+    setValue('zip_code', address.postcode)
+    setValue('city', address.city)
+    setValue('country', {
+      id: address.country_code,
+      name: getCountryName(address.country_code, locale),
+    })
+  }
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-      <TextField
+      <AutocompleteField<string>
         {...register('name', { required: true })}
+        items={
+          suggestedAddresses?.map(feature => ({
+            id: feature.properties.place_id,
+            name: feature.properties.name,
+            address: feature.properties,
+          })) ?? []
+        }
+        onAutocomplete={onAutocomplete}
         error={errors.name}
         label={t('name')}
-        placeholder="Hallenstadion"
+        placeholder="Coq d'Or"
+        isLoading={isFetching}
       />
       {isSimilar && (
         <SimilarItemsWarning
@@ -117,11 +149,17 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
           />
         )}
       />
+      <TextField
+        {...register('street')}
+        label={t('street') + ' (optional)'}
+        placeholder="Tannwaldstrasse 48"
+        grouped="start"
+      />
       <div className="grid grid-cols-3">
         <TextField
           {...register('zip_code')}
           label={t('zipCode') + ' (optional)'}
-          placeholder="3000"
+          placeholder="4600"
           grouped="start"
         />
         <div className="col-span-2">
@@ -129,7 +167,7 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
             {...register('city', { required: true })}
             error={errors.city}
             label={t('city')}
-            placeholder="Zürich"
+            placeholder="Olten"
             grouped="end"
           />
         </div>

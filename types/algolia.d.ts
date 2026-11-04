@@ -60,6 +60,7 @@ export type LocationRecord = {
   id: number
   type: AlgoliaIndex.Locations
   name: string
+  street: string | null
   alt_names: string | null
   zip_code: string | null
   city: string

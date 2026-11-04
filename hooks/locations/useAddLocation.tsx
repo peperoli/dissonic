@@ -12,6 +12,7 @@ const addLocation = async (formData: LocationFields) => {
     .from('locations')
     .insert({
       name: formData.name,
+      street: formData.street,
       zip_code: formData.zip_code,
       city: formData.city,
       country_iso2: formData.country.id,
