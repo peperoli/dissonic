@@ -1,21 +1,21 @@
 import clsx from 'clsx'
 import { LucideIcon } from 'lucide-react'
 
-export type SegmentedControlProps = {
-  options: { value: string; label: string; icon?: LucideIcon; count?: number }[]
-  value: string
-  onValueChange: (value: string) => void
-  iconOnly?: boolean
-}
-
 export function SegmentedControl({
   options,
   value,
   onValueChange,
   iconOnly,
-}: SegmentedControlProps) {
+  className,
+}: {
+  options: { value: string; label: string; icon?: LucideIcon; count?: number }[]
+  value: string
+  onValueChange: (value: string) => void
+  iconOnly?: boolean
+  className?: string
+}) {
   return (
-    <div className="overflow-x-auto rounded-lg bg-slate-750 md:w-fit">
+    <div className={clsx('overflow-x-auto rounded-lg bg-slate-750 md:w-fit', className)}>
       <div className="flex w-full p-1 md:w-fit">
         {options.map(option => (
           <button

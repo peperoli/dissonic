@@ -565,7 +565,6 @@ export type Database = {
           country_iso2: string
           created_at: string | null
           creator_id: string | null
-          house_number: string | null
           id: number
           image: string | null
           is_archived: boolean
@@ -583,7 +582,6 @@ export type Database = {
           country_iso2: string
           created_at?: string | null
           creator_id?: string | null
-          house_number?: string | null
           id?: number
           image?: string | null
           is_archived?: boolean
@@ -601,7 +599,6 @@ export type Database = {
           country_iso2?: string
           created_at?: string | null
           creator_id?: string | null
-          house_number?: string | null
           id?: number
           image?: string | null
           is_archived?: boolean
@@ -1120,7 +1117,6 @@ export type Database = {
           country_iso2: string
           created_at: string | null
           creator_id: string | null
-          house_number: string | null
           id: number
           image: string | null
           is_archived: boolean

@@ -244,6 +244,8 @@ export async function addLocationRecord(
         de: `${location.country_iso2}||${regionNamesDe.of(location.country_iso2)}`,
         en: `${location.country_iso2}||${regionNamesEn.of(location.country_iso2)}`,
       },
+      latitude: location.latitude ?? null,
+      longitude: location.longitude ?? null,
       image: location.image ?? null,
       updated_at: location.updated_at ?? null,
     } satisfies LocationRecord,
@@ -274,6 +276,8 @@ export async function editLocationRecord(
             en: `${location.country_iso2}||${regionNamesEn.of(location.country_iso2)}`,
           }
         : null,
+      latitude: location.latitude ?? null,
+      longitude: location.longitude ?? null,
       image: location.image ?? null,
       updated_at: location.updated_at ?? null,
     } as LocationRecord,

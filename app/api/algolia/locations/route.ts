@@ -33,6 +33,8 @@ export async function GET() {
         zip_code,
         city,
         country_iso2,
+        latitude,
+        longitude,
         image,
         updated_at`
       )

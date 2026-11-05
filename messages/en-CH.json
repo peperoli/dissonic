@@ -455,6 +455,8 @@
   "LocationsPage": {
     "locations": "Locations",
     "addLocation": "Add location",
+    "map": "Map",
+    "list": "List",
     "searchLocation": "Search location ...",
     "nEntries": "{count, plural, =1 {# entry} other {# entries}}",
     "reset": "Reset",

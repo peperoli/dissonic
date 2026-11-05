@@ -19,7 +19,6 @@ export async function GET() {
         apiKey,
         name: location.name,
         ...(location.street && { street: location.street }),
-        ...(location.house_number && { housenumber: location.house_number }),
         ...(location.zip_code && { postcode: location.zip_code }),
         city: location.city,
         countrycodes: location.country_iso2.toLowerCase(),

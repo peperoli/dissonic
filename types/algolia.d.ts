@@ -69,6 +69,8 @@ export type LocationRecord = {
     de: `${string}||${string}`
     en: `${string}||${string}`
   }
+  latitude: number | null
+  longitude: number | null
   image: string | null
   updated_at: string | null
 }

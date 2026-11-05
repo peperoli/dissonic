@@ -1,56 +1,45 @@
 'use client'
 
-import { PlusIcon, RotateCcwIcon } from 'lucide-react'
-import { Table } from '../Table'
-import { useEffect, useState } from 'react'
-import { SearchField } from '../forms/SearchField'
+import { ListIcon, MapIcon, PlusIcon } from 'lucide-react'
 import { Button } from '../Button'
 import { useDebounce } from '../../hooks/helpers/useDebounce'
-import { Pagination, usePagination } from '../layout/Pagination'
+import { usePagination } from '../layout/Pagination'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '../../hooks/auth/useSession'
 import { useModal } from '../shared/ModalProvider'
-import { StatusBanner } from '../forms/StatusBanner'
 import { SpeedDial } from '../layout/SpeedDial'
-import { useLocale, useTranslations } from 'next-intl'
-import { LocationTableRow } from './LocationTableRow'
+import { useTranslations } from 'next-intl'
 import { useSearchLocations } from '@/hooks/locations/useSearchLocations'
-import { CountryFilter } from '../bands/CountryFilter'
-import { parseAsArrayOf, parseAsString, useQueryState } from 'nuqs'
-import { AlgoliaIndex } from '@/lib/algolia'
+import { parseAsArrayOf, parseAsString, parseAsStringLiteral, useQueryState } from 'nuqs'
 import { LocationsMap } from './LocationsMap'
+import { SegmentedControl } from '../controls/SegmentedControl'
+import { LocationsTable } from './LocationsTable'
 
 export function LocationsPage() {
-  const [query, setQuery] = useState('')
+  const views = ['map', 'list'] as const
+  const [view, setView] = useQueryState('view', parseAsStringLiteral(views).withDefault('list'))
+  const [query] = useQueryState('q', parseAsString.withDefault(''))
   const debounceQuery = useDebounce(query, 200)
   const perPage = 25
-  const [currentPage, setCurrentPage] = usePagination()
-  const [selectedCountries, setSelectedCountries] = useQueryState(
-    'countries',
-    parseAsArrayOf(parseAsString)
+  const [currentPage] = usePagination()
+  const [selectedCountries] = useQueryState('countries', parseAsArrayOf(parseAsString))
+  const { data: locations } = useSearchLocations(
+    view === 'map'
+      ? {
+          size: 1000,
+        }
+      : {
+          search: debounceQuery,
+          countries: selectedCountries,
+          page: currentPage,
+          size: perPage,
+        }
   )
-  const { data: locations } = useSearchLocations({
-    search: debounceQuery,
-    countries: selectedCountries,
-    page: currentPage,
-    size: perPage,
-  })
   const [, setModal] = useModal()
   const { data: session } = useSession()
   const { push } = useRouter()
   const pathname = usePathname()
   const t = useTranslations('LocationsPage')
-  const locale = useLocale()
-
-  function resetAll() {
-    push(pathname, { scroll: false })
-  }
-
-  useEffect(() => {
-    if (query || selectedCountries) {
-      setCurrentPage(1)
-    }
-  }, [query, selectedCountries])
 
   return (
     <main className="container-fluid">
@@ -66,45 +55,20 @@ export function LocationsPage() {
           className="hidden md:block"
         />
       </div>
-      <LocationsMap />
-      <Table>
-        <div className="scrollbar-hidden -mx-4 flex gap-2 overflow-x-auto px-4 md:grid md:grid-cols-3 md:gap-4 md:overflow-visible">
-          <SearchField
-            name="searchLocations"
-            placeholder={t('searchLocation')}
-            query={query}
-            setQuery={setQuery}
-          />
-          <CountryFilter
-            indexName={AlgoliaIndex.Locations}
-            facetName={`country_facet.${locale.split('-')[0]}`}
-            values={selectedCountries}
-            onSubmit={setSelectedCountries}
-          />
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="my-4 text-sm text-slate-300">
-            {t('nEntries', { count: locations?.count ?? 0 })}
-          </div>
-          {selectedCountries && (
-            <Button
-              label={t('reset')}
-              onClick={resetAll}
-              icon={<RotateCcwIcon className="size-icon text-slate-300" />}
-              size="small"
-              appearance="tertiary"
-            />
-          )}
-        </div>{' '}
-        {locations?.count === 0 ? (
-          <StatusBanner statusType="info" message={t('noEntriesFound')} />
-        ) : (
-          locations?.data.map(location => (
-            <LocationTableRow key={location.id} location={location} />
-          ))
-        )}
-        <Pagination entriesCount={locations?.count ?? 0} perPage={perPage} />
-      </Table>
+      <SegmentedControl
+        options={[
+          { label: t('list'), value: 'list', icon: ListIcon },
+          { label: t('map'), value: 'map', icon: MapIcon },
+        ]}
+        value={view}
+        onValueChange={setView as (value: string) => void}
+        className="mb-6"
+      />
+      {view === 'map' ? (
+        <LocationsMap locations={locations} />
+      ) : (
+        <LocationsTable locations={locations} />
+      )}
       <SpeedDial />
     </main>
   )

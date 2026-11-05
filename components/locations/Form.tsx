@@ -27,7 +27,6 @@ export type LocationFields = {
   id: AddLocation['id']
   name: AddLocation['name']
   street: AddLocation['street']
-  house_number: AddLocation['house_number']
   zip_code: AddLocation['zip_code']
   city: AddLocation['city']
   country: ListItem<string>
@@ -92,8 +91,7 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
     if (!value) return
     const { address } = value as ListItem<string> & { address: GeoapifyFeature['properties'] }
     setValue('name', value.name)
-    setValue('street', address.street)
-    setValue('house_number', address.housenumber)
+    setValue('street', `${address.street} ${address.housenumber}`.trim())
     setValue('zip_code', address.postcode)
     setValue('city', address.city)
     setValue('country', {
@@ -153,7 +151,6 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
         {...register('street')}
         label={t('street') + ' (optional)'}
         placeholder="Tannwaldstrasse 48"
-        grouped="start"
       />
       <div className="grid grid-cols-3">
         <TextField

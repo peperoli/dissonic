@@ -458,6 +458,8 @@
   "LocationsPage": {
     "locations": "Lokale",
     "addLocation": "Lokal hinzufügen",
+    "map": "Karte",
+    "list": "Liste",
     "searchLocation": "Lokal suchen ...",
     "nEntries": "{count, plural, =1 {# Eintrag} other {# Einträge}}",
     "reset": "Zurücksetzen",
