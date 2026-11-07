@@ -5,6 +5,7 @@
     @apply relative flex w-full flex-col items-start;
 
     input[type='text'],
+    input[type='number'],
     input[type='date'],
     input[type='time'],
     input[type='email'],
@@ -43,7 +44,7 @@
       }
     }
 
-    select {
+    select, input[type='number'] {
       @apply appearance-none;
     }
 

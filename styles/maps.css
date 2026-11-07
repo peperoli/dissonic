@@ -12,4 +12,8 @@
   .location-popup .maplibregl-popup-close-button {
     @apply static;
   }
+
+  .style-flipper-control .map-style.active {
+    @apply border-2 border-slate-800;
+  }
 }

@@ -44,6 +44,8 @@ const editLocation = async (formData: LocationFields) => {
       country_iso2: formData.country.id,
       alt_names: formData.alt_names,
       website: formData.website,
+      latitude: formData.latitude,
+      longitude: formData.longitude,
       image: imagePath,
     })
     .eq('id', locationId)

@@ -2,7 +2,7 @@ import { useAddLocation } from '../../hooks/locations/useAddLocation'
 import { AddLocation } from '../../types/types'
 import { Button } from '../Button'
 import { TextField } from '../forms/TextField'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, Controller, UseFormWatch, UseFormSetValue } from 'react-hook-form'
 import { Disclosure } from '../shared/Disclosure'
 import { ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
@@ -22,18 +22,35 @@ import { useAutocompleteAddress } from '@/hooks/locations/useAutocompleteAddress
 import { useDebounce } from '@/hooks/helpers/useDebounce'
 import { AutocompleteField } from '../forms/AutocompleteField'
 import { GeoapifyFeature } from '@/types/geoapify'
+import { getLocationCoordinates } from '@/hooks/locations/useLocationCoordinates'
+import toast from 'react-hot-toast'
+import { useCallback } from 'react'
+import {
+  GeolocateControl,
+  Map as MapGL,
+  Marker,
+  NavigationControl,
+  type MarkerDragEvent,
+} from 'react-map-gl/maplibre'
+import 'maplibre-gl/dist/maplibre-gl.css'
+import { setWorkerUrl } from 'maplibre-gl'
+import { MapStyleControl, MapStyleName, mapStyles } from './MapStyleControl'
+
+setWorkerUrl('https://unpkg.com/maplibre-gl@6.16.0/dist/maplibre-gl-worker.mjs')
 
 export type LocationFields = {
   id: AddLocation['id']
   name: AddLocation['name']
+  image: AddLocation['image']
+  imageFile: File | string | null
   street: AddLocation['street']
   zip_code: AddLocation['zip_code']
   city: AddLocation['city']
   country: ListItem<string>
   alt_names: AddLocation['alt_names']
   website: AddLocation['website']
-  image: AddLocation['image']
-  imageFile: File | string | null
+  latitude: AddLocation['latitude']
+  longitude: AddLocation['longitude']
 }
 
 export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) => {
@@ -98,6 +115,8 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
       id: address.country_code,
       name: getCountryName(address.country_code, locale),
     })
+    setValue('latitude', address.lat)
+    setValue('longitude', address.lon)
   }
 
   return (
@@ -170,15 +189,7 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
         </div>
       </div>
       <CountrySelectField control={control} label={t('country')} error={errors.country} />
-      <Disclosure.Root>
-        <Disclosure.Content className="grid gap-6">
-          <TextField {...register('alt_names')} label={`${t('altNames')} ${t('optional')}`} />
-          <TextField
-            {...register('website')}
-            label={`${t('website')} ${t('optional')}`}
-            placeholder="https://hallenstadion.ch/"
-          />
-        </Disclosure.Content>
+      <Disclosure.Root isOpen>
         <Disclosure.Trigger className="btn btn-small btn-tertiary">
           {({ isOpen }) => (
             <>
@@ -187,6 +198,40 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
             </>
           )}
         </Disclosure.Trigger>
+        <Disclosure.Content className="mt-6 grid gap-6">
+          <TextField {...register('alt_names')} label={`${t('altNames')} ${t('optional')}`} />
+          <TextField
+            {...register('website')}
+            label={`${t('website')} ${t('optional')}`}
+            placeholder="https://hallenstadion.ch/"
+          />
+          <FindCoordinatesButton watch={watch} setValue={setValue} />
+          <div className="grid grid-cols-2">
+            <TextField
+              {...register('latitude', { valueAsNumber: true })}
+              type="number"
+              step="any"
+              error={errors.latitude}
+              label={t('latitude') + ' (optional)'}
+              placeholder="46.58411"
+              grouped="start"
+            />
+            <TextField
+              {...register('longitude', { valueAsNumber: true })}
+              type="number"
+              step="any"
+              error={errors.longitude}
+              label={t('longitude') + ' (optional)'}
+              placeholder="7.08241"
+              grouped="end"
+            />
+          </div>
+          <MapPreview
+            latitude={watch('latitude')}
+            longitude={watch('longitude')}
+            setValue={setValue}
+          />
+        </Disclosure.Content>
       </Disclosure.Root>
       <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:justify-end [&>*]:flex-1">
         <Button onClick={close} label={t('cancel')} />
@@ -198,5 +243,109 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
         />
       </div>
     </form>
+  )
+}
+
+function FindCoordinatesButton({
+  watch,
+  setValue,
+}: {
+  watch: UseFormWatch<LocationFields>
+  setValue: UseFormSetValue<LocationFields>
+}) {
+  const [isLoading, setLoading] = useState(false)
+  const t = useTranslations('LocationForm')
+
+  async function findCoordinates() {
+    try {
+      setLoading(true)
+      const { latitude, longitude } = await getLocationCoordinates({
+        name: watch('name'),
+        street: watch('street'),
+        zip_code: watch('zip_code'),
+        city: watch('city'),
+        country_iso2: watch('country')?.id ?? '',
+      })
+      setValue('latitude', latitude)
+      setValue('longitude', longitude)
+      toast.success(<div className="flex items-center gap-3">{t('coordinatesUpdated')}</div>)
+    } catch (error) {
+      console.error('Error finding coordinates:', error)
+      toast.error(t('coordinatesUpdateFailed'))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return <Button onClick={findCoordinates} label={t('findCoordinates')} loading={isLoading} />
+}
+
+function MapPreview({
+  latitude,
+  longitude,
+  setValue,
+}: {
+  latitude: number | null | undefined
+  longitude: number | null | undefined
+  setValue: UseFormSetValue<LocationFields>
+}) {
+  const [currentMapStyle, setCurrentMapStyle] = useState<MapStyleName>('streetsDark')
+  const onMarkerDrag = useCallback((event: MarkerDragEvent) => {
+    setValue('latitude', event.lngLat.lat)
+    setValue('longitude', event.lngLat.lng)
+  }, [])
+
+  return (
+    <MapGL
+      initialViewState={{
+        latitude: latitude ?? 46.58411,
+        longitude: longitude ?? 7.08241,
+        zoom: 16,
+      }}
+      mapStyle={mapStyles[currentMapStyle].url}
+      style={{ width: '100%', height: 300, borderRadius: '1rem' }}
+    >
+      <MapStyleControl
+        position="top-left"
+        currentMapStyle={currentMapStyle}
+        switchStyle={setCurrentMapStyle}
+      />
+      <NavigationControl />
+      <GeolocateControl />
+      {latitude && longitude && (
+        <Marker
+          longitude={longitude}
+          latitude={latitude}
+          anchor="bottom"
+          draggable
+          onDrag={onMarkerDrag}
+        >
+          <Pin />
+        </Marker>
+      )}
+    </MapGL>
+  )
+}
+
+function Pin() {
+  return (
+    <svg width="36" height="44" viewBox="0 0 72 88" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M38.5454 85.0625C46.4231 78.3326 69.8824 56.5421 69.8824 35.619C69.8824 26.728 66.3127 18.201 59.9585 11.9141C53.6043 5.62718 44.9862 2.09521 36 2.09521C27.0139 2.09521 18.3958 5.62718 12.0416 11.9141C5.68741 18.201 2.11768 26.728 2.11768 35.619C2.11768 56.5421 25.577 78.3326 33.4546 85.0625C34.1885 85.6085 35.0818 85.9037 36 85.9037C36.9182 85.9037 37.8116 85.6085 38.5454 85.0625Z"
+        fill="#99F162"
+        strokeWidth="4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        stroke="#1F282E"
+      />
+      <path
+        d="M36.0001 48.1905C43.0173 48.1905 48.706 42.562 48.706 35.619C48.706 28.676 43.0173 23.0476 36.0001 23.0476C28.9828 23.0476 23.2942 28.676 23.2942 35.619C23.2942 42.562 28.9828 48.1905 36.0001 48.1905Z"
+        fill="#1F282E"
+        strokeWidth="4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        stroke="#1F282E"
+      />
+    </svg>
   )
 }

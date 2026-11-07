@@ -12,7 +12,7 @@ type TextFieldProps = {
   placeholder?: string
   error?: FieldError
   autoComplete?: 'on' | 'off'
-  step?: number
+  step?: string | number
   grouped?: 'start' | 'end'
 }
 

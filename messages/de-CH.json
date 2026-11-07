@@ -465,6 +465,10 @@
     "reset": "Zurücksetzen",
     "noEntriesFound": "Keine Einträge gefunden."
   },
+  "MapStyleControl": {
+    "streets": "Strassen",
+    "satellite": "Satellit"
+  },
   "LocationPage": {
     "locations": "Lokale",
     "edit": "Bearbeiten",
@@ -496,6 +500,11 @@
     "country": "Land",
     "altNames": "Alternative Namen",
     "website": "Website",
+    "findCoordinates": "Koordinaten finden",
+    "coordinatesUpdated": "Koordinaten aktualisiert",
+    "coordinatesUpdateFailed": "Aktualisierung der Koordinaten fehlgeschlagen",
+    "latitude": "Breitengrad",
+    "longitude": "Längengrad",
     "optional": "(optional)",
     "showMore": "Mehr anzeigen",
     "showLess": "Weniger anzeigen",

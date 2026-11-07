@@ -13,6 +13,7 @@ import Link from 'next/link'
 import { useRef, useState } from 'react'
 import {
   FullscreenControl,
+  GeolocateControl,
   Layer,
   Map as MapGL,
   MapLayerMouseEvent,
@@ -21,13 +22,15 @@ import {
   Source,
   type LayerProps,
 } from 'react-map-gl/maplibre'
+import mapMarker from '../../public/maps/map-marker.svg'
+import { MapStyleControl, MapStyleName, mapStyles } from './MapStyleControl'
 
 setWorkerUrl('https://unpkg.com/maplibre-gl@6.16.0/dist/maplibre-gl-worker.mjs')
 
 const SOURCE_ID = 'locations'
 const POINT_IMAGE_ID = 'location-marker'
 const STEPS = [10, 25, 100]
-const POINT_IMAGE_URL = '/map-marker.svg'
+const POINT_IMAGE_URL = mapMarker.src
 
 function loadMapImage(url: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -55,6 +58,8 @@ export const clusterLayer = {
       STEPS[2],
       '#75C8F0',
     ],
+    'circle-stroke-width': 2,
+    'circle-stroke-color': '#1F282E',
     'circle-radius': ['step', ['get', 'point_count'], 16, STEPS[0], 20, STEPS[1], 24, STEPS[2], 32],
   },
 } satisfies LayerProps
@@ -93,22 +98,25 @@ export function LocationsMap({
   locations?: { data: LocationRecord[]; count: number | null }
 }) {
   const mapRef = useRef<MapRef>(null)
+  const [currentMapStyle, setCurrentMapStyle] = useState<MapStyleName>('streetsDark')
   const [popupInfo, setPopupInfo] = useState<LocationRecord | null>(null)
   const isDesktop = useMediaQuery('(min-width: 768px)')
 
   const geojson = {
     type: 'FeatureCollection' as const,
-    features: locations?.data.map(location => ({
-      type: 'Feature' as const,
-      properties: {
-        id: location.id,
-        name: location.name,
-      },
-      geometry: {
-        type: 'Point' as const,
-        coordinates: [location.longitude, location.latitude],
-      },
-    })),
+    features: locations?.data
+      .filter(location => location.latitude !== null && location.longitude !== null)
+      .map(location => ({
+        type: 'Feature' as const,
+        properties: {
+          id: location.id,
+          name: location.name,
+        },
+        geometry: {
+          type: 'Point' as const,
+          coordinates: [location.longitude, location.latitude],
+        },
+      })),
   }
 
   const onClick = async (event: MapLayerMouseEvent) => {
@@ -152,7 +160,7 @@ export function LocationsMap({
       initialViewState={{
         latitude: 46.8,
         longitude: 8.2,
-        zoom: 6,
+        zoom: isDesktop ? 6.5 : 6,
       }}
       onLoad={async event => {
         const map = event.target
@@ -165,10 +173,16 @@ export function LocationsMap({
       reuseMaps
       onClick={onClick}
       style={{ width: '100%', height: isDesktop ? 600 : 400, borderRadius: '1rem' }}
-      mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
+      mapStyle={mapStyles[currentMapStyle].url}
     >
       <FullscreenControl position="top-right" />
       <NavigationControl position="top-right" />
+      <GeolocateControl position="top-right" />
+      <MapStyleControl
+        position="top-left"
+        currentMapStyle={currentMapStyle}
+        switchStyle={styleName => setCurrentMapStyle(styleName)}
+      />
       <Source
         id={SOURCE_ID}
         type="geojson"

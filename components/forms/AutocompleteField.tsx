@@ -26,7 +26,6 @@ type AutocompleteFieldProps<TId extends string | number> = {
   name: string
   onChange?: ChangeEventHandler<HTMLInputElement>
   onBlur?: FocusEventHandler<HTMLInputElement>
-  onFocus?: FocusEventHandler<HTMLInputElement>
   label: string
   placeholder?: string
   error?: Merge<FieldError, unknown>
@@ -53,9 +52,8 @@ export function AutocompleteField<TId extends string | number = number>({
   error,
   onAutocomplete,
   isLoading,
-  onChange,
   onBlur,
-  onFocus,
+  ...props
 }: AutocompleteFieldProps<TId>) {
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const t = useTranslations('AutocompleteField')
@@ -89,8 +87,7 @@ export function AutocompleteField<TId extends string | number = number>({
               name={name}
               type="text"
               autoComplete="off"
-              onFocus={event => {
-                onFocus?.(event)
+              onFocus={() => {
                 openingRef.current = true
                 if (!isOpen) show()
                 requestAnimationFrame(() => {
@@ -106,9 +103,9 @@ export function AutocompleteField<TId extends string | number = number>({
                   if (document.activeElement !== inputRef.current) close()
                 })
               }}
-              onChange={onChange}
               data-1p-ignore
               className={clsx(error ? 'border-yellow' : 'border-slate-500')}
+              {...props}
             />
             <label htmlFor={name}>{label}</label>
             {isLoading && (
