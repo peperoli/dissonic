@@ -305,8 +305,6 @@
     "removeTicketLink": "Remove ticket link",
     "name": "Name",
     "optional": "(optional)",
-    "showMore": "Show more",
-    "showLess": "Show less",
     "resourceStatus": "Resource status",
     "complete": "Complete",
     "incompleteLineup": "Incomplete lineup",
@@ -322,6 +320,9 @@
     "choose": "Choose ...",
     "pleaseSelectAnOption": "Please select an option.",
     "save": "Save"
+  },
+  "AutocompleteField": {
+    "noResultsFound": "No results found."
   },
   "EditBandsButton": {
     "choose": "Choose ...",
@@ -349,6 +350,9 @@
     "similarFestivalRootsWarning": "{count, plural, =1 {There is already a similar festival series:} other {There are already # similar festival series:}}",
     "showAll": "Show all",
     "showLess": "Show less"
+  },
+  "FurtherDetailsDisclosure": {
+    "furtherDetails": "Further details"
   },
   "useAddConcert": {
     "concertAdded": "Concert added",
@@ -426,8 +430,6 @@
     "altNames": "Alternative names",
     "youtubeChannel": "YouTube channel",
     "optional": "(optional)",
-    "showMore": "Show more",
-    "showLess": "Show less",
     "cancel": "Cancel",
     "save": "Save"
   },
@@ -462,6 +464,10 @@
     "reset": "Reset",
     "noEntriesFound": "No entries found."
   },
+  "MapStyleControl": {
+    "streets": "Streets",
+    "satellite": "Satellite"
+  },
   "LocationPage": {
     "locations": "Locations",
     "edit": "Edit",
@@ -492,6 +498,7 @@
     "city": "Locality",
     "altNames": "Alternative names",
     "website": "Website",
+    "coordinates": "Coordinates",
     "findCoordinates": "Find coordinates",
     "coordinatesUpdated": "Coordinates updated",
     "coordinatesUpdateFailed": "Failed to update coordinates",
@@ -499,8 +506,6 @@
     "longitude": "Longitude",
     "optional": "(optional)",
     "country": "Country",
-    "showMore": "Show more",
-    "showLess": "Show less",
     "cancel": "Cancel",
     "save": "Save"
   },

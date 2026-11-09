@@ -3,9 +3,6 @@ import { AddLocation } from '../../types/types'
 import { Button } from '../Button'
 import { TextField } from '../forms/TextField'
 import { useForm, Controller, UseFormWatch, UseFormSetValue } from 'react-hook-form'
-import { Disclosure } from '../shared/Disclosure'
-import { ChevronDown } from 'lucide-react'
-import clsx from 'clsx'
 import { useState } from 'react'
 import { useParams } from 'next/navigation'
 import { useLocation } from '@/hooks/locations/useLocation'
@@ -35,6 +32,7 @@ import {
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { setWorkerUrl } from 'maplibre-gl'
 import { MapStyleControl, MapStyleName, mapStyles } from './MapStyleControl'
+import { FurtherDetailsDisclosure } from '../forms/FurtherDetailsDisclosure'
 
 setWorkerUrl('https://unpkg.com/maplibre-gl@6.16.0/dist/maplibre-gl-worker.mjs')
 
@@ -189,50 +187,41 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
         </div>
       </div>
       <CountrySelectField control={control} label={t('country')} error={errors.country} />
-      <Disclosure.Root isOpen>
-        <Disclosure.Trigger className="btn btn-small btn-tertiary">
-          {({ isOpen }) => (
-            <>
-              {isOpen ? t('showLess') : t('showMore')}
-              <ChevronDown className={clsx('size-icon', isOpen && 'rotate-180')} />
-            </>
-          )}
-        </Disclosure.Trigger>
-        <Disclosure.Content className="mt-6 grid gap-6">
-          <TextField {...register('alt_names')} label={`${t('altNames')} ${t('optional')}`} />
+      <hr className="border-slate-700" />
+      <FurtherDetailsDisclosure labels={[t('altNames'), t('website'), t('coordinates')]}>
+        <TextField {...register('alt_names')} label={`${t('altNames')} ${t('optional')}`} />
+        <TextField
+          {...register('website')}
+          label={`${t('website')} ${t('optional')}`}
+          placeholder="https://hallenstadion.ch/"
+        />
+        <FindCoordinatesButton watch={watch} setValue={setValue} />
+        <div className="grid grid-cols-2">
           <TextField
-            {...register('website')}
-            label={`${t('website')} ${t('optional')}`}
-            placeholder="https://hallenstadion.ch/"
+            {...register('latitude', { valueAsNumber: true })}
+            type="number"
+            step="any"
+            error={errors.latitude}
+            label={t('latitude') + ' (optional)'}
+            placeholder="46.58411"
+            grouped="start"
           />
-          <FindCoordinatesButton watch={watch} setValue={setValue} />
-          <div className="grid grid-cols-2">
-            <TextField
-              {...register('latitude', { valueAsNumber: true })}
-              type="number"
-              step="any"
-              error={errors.latitude}
-              label={t('latitude') + ' (optional)'}
-              placeholder="46.58411"
-              grouped="start"
-            />
-            <TextField
-              {...register('longitude', { valueAsNumber: true })}
-              type="number"
-              step="any"
-              error={errors.longitude}
-              label={t('longitude') + ' (optional)'}
-              placeholder="7.08241"
-              grouped="end"
-            />
-          </div>
-          <MapPreview
-            latitude={watch('latitude')}
-            longitude={watch('longitude')}
-            setValue={setValue}
+          <TextField
+            {...register('longitude', { valueAsNumber: true })}
+            type="number"
+            step="any"
+            error={errors.longitude}
+            label={t('longitude') + ' (optional)'}
+            placeholder="7.08241"
+            grouped="end"
           />
-        </Disclosure.Content>
-      </Disclosure.Root>
+        </div>
+        <MapPreview
+          latitude={watch('latitude')}
+          longitude={watch('longitude')}
+          setValue={setValue}
+        />
+      </FurtherDetailsDisclosure>
       <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:justify-end [&>*]:flex-1">
         <Button onClick={close} label={t('cancel')} />
         <Button

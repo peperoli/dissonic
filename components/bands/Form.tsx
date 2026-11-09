@@ -7,10 +7,7 @@ import { useBand } from '@/hooks/bands/useBand'
 import { useParams } from 'next/navigation'
 import { useAddBand } from '@/hooks/bands/useAddBand'
 import { useEditBand } from '@/hooks/bands/useEditBand'
-import { ChevronDown } from 'lucide-react'
-import { Disclosure } from '../shared/Disclosure'
 import { useState } from 'react'
-import clsx from 'clsx'
 import { useTranslations } from 'use-intl'
 import { useLocale } from 'next-intl'
 import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
@@ -18,6 +15,7 @@ import { useSimilarBands } from '@/hooks/bands/useSimilarBands'
 import { getCountryName } from '@/lib/getCountryName'
 import { CountriesSelectField } from './CountriesSelectField'
 import { GenresSelectField } from './GenresSelectField'
+import { FurtherDetailsDisclosure } from '../forms/FurtherDetailsDisclosure'
 
 export type BandFields = {
   id: AddBand['id']
@@ -103,24 +101,15 @@ export const Form = ({ isNew, close }: { isNew?: boolean; close: () => void }) =
           <SpotifyArtistSelect bandName={watch('name')} value={value} onChange={onChange} />
         )}
       />
-      <Disclosure.Root>
-        <Disclosure.Content className="mt-3 grid gap-6">
-          <TextField {...register('alt_names')} label={`${t('altNames')} ${t('optional')}`} />
-          <TextField
-            {...register('youtube_url')}
-            label={`${t('youtubeChannel')} ${t('optional')}`}
-            placeholder="https://youtube.com/channel/UC4BSeEq7XNtihGqI309vhYg"
-          />
-        </Disclosure.Content>
-        <Disclosure.Trigger className="btn btn-small btn-tertiary">
-          {({ isOpen }) => (
-            <>
-              {isOpen ? t('showLess') : t('showMore')}
-              <ChevronDown className={clsx('size-icon', isOpen && 'rotate-180')} />
-            </>
-          )}
-        </Disclosure.Trigger>
-      </Disclosure.Root>
+      <hr className="border-slate-700" />
+      <FurtherDetailsDisclosure labels={[t('altNames'), t('youtubeChannel')]}>
+        <TextField {...register('alt_names')} label={`${t('altNames')} ${t('optional')}`} />
+        <TextField
+          {...register('youtube_url')}
+          label={`${t('youtubeChannel')} ${t('optional')}`}
+          placeholder="https://youtube.com/channel/UC4BSeEq7XNtihGqI309vhYg"
+        />
+      </FurtherDetailsDisclosure>
       <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:static md:z-0 md:justify-end md:pb-0 [&>*]:flex-1">
         <Button onClick={close} label={t('cancel')} />
         <Button

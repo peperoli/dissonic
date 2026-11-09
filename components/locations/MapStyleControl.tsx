@@ -38,12 +38,14 @@ export function MapStyleControl({
   useControl(
     () => {
       const container = document.createElement('div')
-      container.className = 'maplibregl-ctrl rounded flex gap-2 bg-white text-slate-850 p-1'
+      container.className =
+        'maplibregl-ctrl bg-white shadow-sm rounded divide-y divide-[#ddd] text-slate-850 font-bold'
       const styleImages = new Map<MapStyleName, HTMLImageElement>()
 
       function syncSelectedStyle(styleName: MapStyleName) {
         styleImages.forEach((img, imageStyleName) => {
           img.classList.toggle('border-venom', imageStyleName === styleName)
+          img.classList.toggle('border-transparent', imageStyleName !== styleName)
         })
       }
 
@@ -52,7 +54,7 @@ export function MapStyleControl({
       styleEntries.forEach(([styleName, styleData]) => {
         const button = document.createElement('button')
         button.type = 'button'
-        button.className = clsx('flex items-center gap-1 h-auto map-style', styleName)
+        button.className = clsx('!flex items-center gap-1 !pr-1 !w-auto map-style', styleName)
         button.setAttribute('aria-label', `Switch to ${t(styleData.label)} style`)
         button.title = `Switch to ${styleName} style`
 
@@ -60,9 +62,9 @@ export function MapStyleControl({
         const img = document.createElement('img')
         img.src = styleData.image
         img.alt = styleName
-        img.style.width = '1.5rem'
-        img.style.height = '1.5rem'
-        img.className = 'border-2 rounded-sm'
+        img.width = 29
+        img.height = 29
+        img.className = 'block border-2 rounded'
         styleImages.set(styleName, img)
         button.appendChild(img)
 
