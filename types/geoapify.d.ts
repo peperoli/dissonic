@@ -29,7 +29,15 @@ export type GeoapifyFeature = {
     lon: number
     lat: number
     state_code: string
-    result_type: 'country' | 'state' | 'city' | 'postcode' | 'street' | 'amenity' | 'locality'
+    result_type:
+      | 'country'
+      | 'state'
+      | 'city'
+      | 'postcode'
+      | 'street'
+      | 'amenity'
+      | 'locality'
+      | 'building'
     formatted: string
     address_line1: string
     address_line2: string

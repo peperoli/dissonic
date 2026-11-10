@@ -9,7 +9,6 @@ import {
   SetStateAction,
   useContext,
   useId,
-  useLayoutEffect,
   useRef,
   useState,
 } from 'react'
@@ -18,7 +17,7 @@ import { Portal } from '../helpers/Portal'
 
 const PopoverContext = createContext<{
   id: string
-  popoverRef: RefObject<HTMLDialogElement | null>
+  popoverRef: RefObject<HTMLDivElement | null>
   isOpen: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
   show: () => void
@@ -37,39 +36,25 @@ function usePopoverContext() {
 }
 
 export function Popover({
-  isOpen: controlledIsOpen,
-  setOpen: controlledSetOpen,
   shouldCloseOnClickOutside = true,
   children,
 }: {
-  isOpen?: boolean
-  setOpen?: Dispatch<SetStateAction<boolean>>
   shouldCloseOnClickOutside?: boolean
   children:
     | ((args: { isOpen: boolean; show: () => void; close: () => void }) => ReactNode)
     | ReactNode
 }) {
-  const popoverRef = useRef<HTMLDialogElement>(null)
-  const [internalOpen, internalSetOpen] = useState(false)
-  const isOpen = controlledIsOpen ?? internalOpen
-  const setOpen = controlledSetOpen ?? internalSetOpen
+  const popoverRef = useRef<HTMLDivElement>(null)
+  const [isOpen, setOpen] = useState(false)
   const id = useId()
 
   function show() {
-    popoverRef.current?.show()
+    popoverRef.current?.showPopover()
   }
 
   function close() {
-    popoverRef.current?.close()
+    popoverRef.current?.hidePopover()
   }
-
-  // useLayoutEffect(() => {
-  //   if (popoverRef.current?.open && !isOpen) {
-  //     close()
-  //   } else if (!popoverRef.current?.open && isOpen) {
-  //     show()
-  //   }
-  // }, [isOpen])
 
   return (
     <PopoverContext.Provider
@@ -110,23 +95,22 @@ function PopoverContent({
   side = 'bottom',
   children,
   ...props
-}: Omit<HTMLAttributes<HTMLDialogElement>, 'children'> & {
+}: Omit<HTMLAttributes<HTMLDivElement>, 'children'> & {
   side?: 'top' | 'right' | 'bottom' | 'left'
   children: ((params: { close: () => void }) => ReactNode) | ReactNode
 }) {
-  const { popoverRef, id, close, isOpen, setOpen, shouldCloseOnClickOutside } = usePopoverContext()
+  const { popoverRef, id, close, setOpen, shouldCloseOnClickOutside } = usePopoverContext()
 
   return (
-    <dialog
+    <div
       ref={popoverRef}
-      closedby={shouldCloseOnClickOutside ? 'any' : 'closerequest'}
-      // open={isOpen}
-      onToggle={event => setOpen(event.currentTarget.open)}
+      popover={shouldCloseOnClickOutside ? 'auto' : 'manual'}
+      onToggle={event => setOpen(event.newState === 'open')}
       style={{ positionAnchor: `--${id}`, positionArea: side, positionTryFallbacks: 'flip-block' }}
       {...props}
     >
       {typeof children === 'function' ? children({ close }) : children}
-    </dialog>
+    </div>
   )
 }
 

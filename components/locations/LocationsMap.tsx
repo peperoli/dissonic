@@ -104,19 +104,20 @@ export function LocationsMap({
 
   const geojson = {
     type: 'FeatureCollection' as const,
-    features: locations?.data
-      .filter(location => location.latitude !== null && location.longitude !== null)
-      .map(location => ({
-        type: 'Feature' as const,
-        properties: {
-          id: location.id,
-          name: location.name,
-        },
-        geometry: {
-          type: 'Point' as const,
-          coordinates: [location.longitude, location.latitude],
-        },
-      })),
+    features:
+      locations?.data
+        .filter(location => location.latitude !== null && location.longitude !== null)
+        .map(location => ({
+          type: 'Feature' as const,
+          properties: {
+            id: location.id,
+            name: location.name,
+          },
+          geometry: {
+            type: 'Point' as const,
+            coordinates: [location.longitude, location.latitude],
+          },
+        })) ?? [],
   }
 
   const onClick = async (event: MapLayerMouseEvent) => {

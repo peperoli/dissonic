@@ -13,8 +13,6 @@ import {
   BirdIcon,
   LucideIcon,
 } from 'lucide-react'
-import { Dialog } from '../shared/Dialog'
-import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 import { useLocale, useTranslations } from 'next-intl'
 import { ListItem } from '@/types/types'
 import { Popover } from '../shared/Popover'
@@ -26,6 +24,7 @@ type AutocompleteFieldProps<TId extends string | number> = {
   name: string
   onChange?: ChangeEventHandler<HTMLInputElement>
   onBlur?: FocusEventHandler<HTMLInputElement>
+  onFocus?: FocusEventHandler<HTMLInputElement>
   label: string
   placeholder?: string
   error?: Merge<FieldError, unknown>
@@ -42,6 +41,7 @@ const resultTypeIcons = {
   street: RoadIcon,
   amenity: BuildingIcon,
   locality: MapPinIcon,
+  building: BuildingIcon,
 } satisfies Record<GeoapifyFeature['properties']['result_type'], LucideIcon>
 
 export function AutocompleteField<TId extends string | number = number>({
@@ -53,15 +53,12 @@ export function AutocompleteField<TId extends string | number = number>({
   onAutocomplete,
   isLoading,
   onBlur,
+  onFocus,
   ...props
 }: AutocompleteFieldProps<TId>) {
-  const isDesktop = useMediaQuery('(min-width: 768px)')
   const t = useTranslations('AutocompleteField')
-  const OverlayRoot = isDesktop ? Popover.Root : Dialog.Root
-  const OverlayTrigger = isDesktop ? Popover.Trigger : Dialog.Trigger
-  const OverlayContent = isDesktop ? Popover.Content : Dialog.Content
   const inputRef = useRef<HTMLInputElement>(null)
-  const openingRef = useRef(false)
+  const focusRegionRef = useRef<HTMLDivElement>(null)
 
   const setInputRef = useCallback(
     (element: HTMLInputElement | null) => {
@@ -77,9 +74,14 @@ export function AutocompleteField<TId extends string | number = number>({
   )
 
   return (
-    <OverlayRoot shouldCloseOnClickOutside={false}>
+    <Popover.Root shouldCloseOnClickOutside={false}>
       {({ isOpen, show, close }) => (
-        <>
+        <div
+          ref={focusRegionRef}
+          onKeyDown={event => {
+            if (event.key === 'Escape') close()
+          }}
+        >
           <div className="form-control">
             <input
               ref={setInputRef}
@@ -87,20 +89,14 @@ export function AutocompleteField<TId extends string | number = number>({
               name={name}
               type="text"
               autoComplete="off"
-              onFocus={() => {
-                openingRef.current = true
+              onFocus={event => {
+                onFocus?.(event)
                 if (!isOpen) show()
-                requestAnimationFrame(() => {
-                  inputRef.current?.focus()
-                  openingRef.current = false
-                })
               }}
               onBlur={event => {
                 onBlur?.(event)
-                if (openingRef.current) return
-
                 requestAnimationFrame(() => {
-                  if (document.activeElement !== inputRef.current) close()
+                  if (!focusRegionRef.current?.contains(document.activeElement)) close()
                 })
               }}
               data-1p-ignore
@@ -111,35 +107,40 @@ export function AutocompleteField<TId extends string | number = number>({
             {isLoading && (
               <Loader2 className="pointer-events-none absolute right-[.9rem] top-[.9rem] size-icon animate-spin" />
             )}
-            <OverlayTrigger inert className="w-full" />
+            <Popover.Trigger inert className="w-full" />
           </div>
           {error && <div className="mt-1 text-sm text-yellow">{t('pleaseSelectAnOption')}</div>}
-          <OverlayContent className="inset-0 z-20 flex-col overflow-hidden bg-slate-700 p-4 shadow-xl open:flex md:inset-auto md:mt-1 md:w-anchor-width md:rounded-lg">
-            <Dialog.Title className="sr-only">{label}</Dialog.Title>
-            <div className="size-full overflow-auto">
-              {isLoading ? (
-                <div className="grid h-full w-full place-content-center p-4">
-                  <Loader2 className="size-icon animate-spin" />
-                </div>
-              ) : items.length > 0 ? (
-                <ul className="w-full">
-                  {items.map(item => (
-                    <ResultItem
-                      key={item.id}
-                      item={item}
-                      close={close}
-                      onAutocomplete={onAutocomplete}
-                    />
-                  ))}
-                </ul>
-              ) : (
-                <div className="p-2 text-slate-300">{t('noResultsFound')}</div>
-              )}
-            </div>
-          </OverlayContent>
-        </>
+          <Popover.Content
+            onFocus={show}
+            onBlur={() => {
+              requestAnimationFrame(() => {
+                if (!focusRegionRef.current?.contains(document.activeElement)) close()
+              })
+            }}
+            className="inset-0 z-20 w-anchor-width flex-col bg-slate-700 p-4 shadow-xl open:flex md:inset-auto md:mt-1 md:rounded-lg"
+          >
+            {isLoading ? (
+              <div className="grid h-full w-full place-content-center p-4">
+                <Loader2 className="size-icon animate-spin" />
+              </div>
+            ) : items.length > 0 ? (
+              <ul className="w-full">
+                {items.map(item => (
+                  <ResultItem
+                    key={item.id}
+                    item={item}
+                    close={close}
+                    onAutocomplete={onAutocomplete}
+                  />
+                ))}
+              </ul>
+            ) : (
+              <div className="p-2 text-slate-300">{t('noResultsFound')}</div>
+            )}
+          </Popover.Content>
+        </div>
       )}
-    </OverlayRoot>
+    </Popover.Root>
   )
 }
 
@@ -161,7 +162,7 @@ function ResultItem<TId extends string | number = number>({
   const addressParts = [
     [address.street, address.housenumber].filter(Boolean).join(' '),
     [address.postcode, address.city].filter(Boolean).join(' '),
-    getCountryName(address.country_code, locale),
+    getCountryName(address.country_code.toUpperCase(), locale),
   ]
   const Icon = resultTypeIcons[address.result_type] ?? BirdIcon
 
@@ -169,11 +170,11 @@ function ResultItem<TId extends string | number = number>({
     <li key={item.id}>
       <button
         type="button"
+        role="option"
         onClick={() => {
           onAutocomplete(item)
           close()
         }}
-        onMouseDown={event => event.preventDefault()}
         className="flex w-full items-center gap-3 rounded px-2 py-1.5 text-left hover:bg-slate-600"
       >
         <Icon className="size-icon text-slate-300" />

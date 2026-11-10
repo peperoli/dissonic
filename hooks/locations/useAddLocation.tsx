@@ -18,8 +18,14 @@ const addLocation = async (formData: LocationFields) => {
       country_iso2: formData.country.id,
       alt_names: formData.alt_names,
       website: formData.website,
-      latitude: formData.latitude ? Math.round(formData.latitude * 100_000) / 100_000 : null,
-      longitude: formData.longitude ? Math.round(formData.longitude * 100_000) / 100_000 : null,
+      latitude:
+        typeof formData.latitude === 'number'
+          ? Math.round(formData.latitude * 100_000) / 100_000
+          : null,
+      longitude:
+        typeof formData.longitude === 'number'
+          ? Math.round(formData.longitude * 100_000) / 100_000
+          : null,
     })
     .select('*')
     .single()

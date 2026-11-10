@@ -1,5 +1,4 @@
 import { GeoapifyResponse } from '@/types/geoapify'
-import { useQuery } from '@tanstack/react-query'
 
 type Address = {
   street?: string | null
@@ -29,20 +28,14 @@ export async function getLocationCoordinates(location: { name: string } & Addres
   }
 
   const data: GeoapifyResponse = await response.json()
+  const coordinates = data.features[0]?.geometry.coordinates
+
+  if (!coordinates) {
+    throw new Error('No coordinates found for this location')
+  }
 
   return {
-    latitude: data.features[0]?.geometry.coordinates[1],
-    longitude: data.features[0]?.geometry.coordinates[0],
+    latitude: coordinates[1],
+    longitude: coordinates[0],
   }
-}
-
-export function useLocationCoordinates(
-  location: {
-    name: string
-  } & Address
-) {
-  return useQuery({
-    queryKey: ['location-coordinates', location],
-    queryFn: () => getLocationCoordinates(location),
-  })
 }

@@ -3,7 +3,7 @@ import { AddLocation } from '../../types/types'
 import { Button } from '../Button'
 import { TextField } from '../forms/TextField'
 import { useForm, Controller, UseFormWatch, UseFormSetValue } from 'react-hook-form'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { useLocation } from '@/hooks/locations/useLocation'
 import { useEditLocation } from '@/hooks/locations/useEditLocation'
@@ -19,12 +19,13 @@ import { useAutocompleteAddress } from '@/hooks/locations/useAutocompleteAddress
 import { useDebounce } from '@/hooks/helpers/useDebounce'
 import { AutocompleteField } from '../forms/AutocompleteField'
 import { GeoapifyFeature } from '@/types/geoapify'
-import { getLocationCoordinates } from '@/hooks/locations/useLocationCoordinates'
+import { getLocationCoordinates } from '@/lib/getLocationCoordinates'
 import toast from 'react-hot-toast'
 import { useCallback } from 'react'
 import {
   GeolocateControl,
   Map as MapGL,
+  MapRef,
   Marker,
   NavigationControl,
   type MarkerDragEvent,
@@ -86,7 +87,11 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
     size: similarLocationsSize,
   })
   const debouncedName = useDebounce(name, 200)
-  const { data: suggestedAddresses, isFetching } = useAutocompleteAddress(debouncedName)
+  const street = watch('street')
+  const debouncedStreet = useDebounce(street, 200)
+  const { data: suggestedAddresses, isFetching } = useAutocompleteAddress(
+    debouncedName + ' ' + debouncedStreet
+  )
   const addLocation = useAddLocation()
   const editLocation = useEditLocation()
   const { status } = isNew ? addLocation : editLocation
@@ -105,34 +110,26 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
   function onAutocomplete(value: ListItem<string> | null) {
     if (!value) return
     const { address } = value as ListItem<string> & { address: GeoapifyFeature['properties'] }
-    setValue('name', value.name)
-    setValue('street', `${address.street} ${address.housenumber}`.trim())
+    setValue('street', [address.street, address.housenumber].filter(Boolean).join(' '))
     setValue('zip_code', address.postcode)
     setValue('city', address.city)
     setValue('country', {
       id: address.country_code,
-      name: getCountryName(address.country_code, locale),
+      name: getCountryName(address.country_code.toUpperCase(), locale),
     })
-    setValue('latitude', address.lat)
-    setValue('longitude', address.lon)
+    if (address.lat && address.lon) {
+      setValue('latitude', address.lat)
+      setValue('longitude', address.lon)
+    }
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-      <AutocompleteField<string>
+      <TextField
         {...register('name', { required: true })}
-        items={
-          suggestedAddresses?.map(feature => ({
-            id: feature.properties.place_id,
-            name: feature.properties.name,
-            address: feature.properties,
-          })) ?? []
-        }
-        onAutocomplete={onAutocomplete}
         error={errors.name}
         label={t('name')}
-        placeholder="Coq d'Or"
-        isLoading={isFetching}
+        placeholder="Hallenstadion"
       />
       {isSimilar && (
         <SimilarItemsWarning
@@ -164,11 +161,22 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
           />
         )}
       />
-      <TextField
-        {...register('street')}
+      <AutocompleteField<string>
+        {...register('street', { required: true })}
+        items={
+          suggestedAddresses?.map(feature => ({
+            id: feature.properties.place_id,
+            name: feature.properties.name,
+            address: feature.properties,
+          })) ?? []
+        }
+        onAutocomplete={onAutocomplete}
+        error={errors.street}
         label={t('street') + ' (optional)'}
         placeholder="Tannwaldstrasse 48"
+        isLoading={isFetching}
       />
+
       <div className="grid grid-cols-3">
         <TextField
           {...register('zip_code')}
@@ -278,14 +286,25 @@ function MapPreview({
   longitude: number | null | undefined
   setValue: UseFormSetValue<LocationFields>
 }) {
+  const mapRef = useRef<MapRef>(null)
   const [currentMapStyle, setCurrentMapStyle] = useState<MapStyleName>('streetsDark')
   const onMarkerDrag = useCallback((event: MarkerDragEvent) => {
     setValue('latitude', event.lngLat.lat)
     setValue('longitude', event.lngLat.lng)
   }, [])
 
+  useEffect(() => {
+    if (latitude && longitude) {
+      mapRef.current?.easeTo({
+        center: [longitude, latitude],
+        duration: 500,
+      })
+    }
+  }, [latitude, longitude])
+
   return (
     <MapGL
+      ref={mapRef}
       initialViewState={{
         latitude: latitude ?? 46.58411,
         longitude: longitude ?? 7.08241,
