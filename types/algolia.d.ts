@@ -60,6 +60,7 @@ export type LocationRecord = {
   id: number
   type: AlgoliaIndex.Locations
   name: string
+  street: string | null
   alt_names: string | null
   zip_code: string | null
   city: string
@@ -68,6 +69,8 @@ export type LocationRecord = {
     de: `${string}||${string}`
     en: `${string}||${string}`
   }
+  latitude: number | null
+  longitude: number | null
   image: string | null
   updated_at: string | null
 }

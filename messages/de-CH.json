@@ -305,8 +305,6 @@
     "removeTicketLink": "Ticket-Link entfernen",
     "name": "Name",
     "optional": "(optional)",
-    "showMore": "Mehr anzeigen",
-    "showLess": "Weniger anzeigen",
     "resourceStatus": "Resourcenstatus",
     "complete": "Vollständig",
     "incompleteLineup": "Unvollständiges Lineup",
@@ -322,6 +320,9 @@
     "choose": "Wählen ...",
     "pleaseSelectAnOption": "Bitte wähle eine Option aus.",
     "save": "Speichern"
+  },
+  "AutocompleteField": {
+    "noResultsFound": "Keine Resultate gefunden."
   },
   "EditBandsButton": {
     "choose": "Wählen ...",
@@ -349,6 +350,9 @@
     "similarFestivalRootsWarning": "{count, plural, =1 {Es existiert bereits eine ähnliche Festival-Serie:} other {Es existieren bereits # ähnliche Festival-Serien:}}",
     "showAll": "Alle anzeigen",
     "showLess": "Weniger anzeigen"
+  },
+  "FurtherDetailsDisclosure": {
+    "furtherDetails": "Weitere Details"
   },
   "useAddConcert": {
     "concertAdded": "Konzert hinzugefügt",
@@ -426,8 +430,6 @@
     "altNames": "Alternative Namen",
     "youtubeChannel": "YouTube-Channel",
     "optional": "(optional)",
-    "showMore": "Mehr anzeigen",
-    "showLess": "Weniger anzeigen",
     "cancel": "Abbrechen",
     "save": "Speichern"
   },
@@ -455,10 +457,16 @@
   "LocationsPage": {
     "locations": "Lokale",
     "addLocation": "Lokal hinzufügen",
+    "map": "Karte",
+    "list": "Liste",
     "searchLocation": "Lokal suchen ...",
     "nEntries": "{count, plural, =1 {# Eintrag} other {# Einträge}}",
     "reset": "Zurücksetzen",
     "noEntriesFound": "Keine Einträge gefunden."
+  },
+  "MapStyleControl": {
+    "streets": "Strassen",
+    "satellite": "Satellit"
   },
   "LocationPage": {
     "locations": "Lokale",
@@ -485,14 +493,19 @@
     "image": "Bild",
     "fileSizeError": "Die Datei darf nicht grösser als {size} MB sein.",
     "fileTypeError": "Es sind nur Dateien im Format JPEG oder WebP erlaubt.",
+    "street": "Strasse und Hausnummer",
     "zipCode": "PLZ",
     "city": "Stadt",
     "country": "Land",
     "altNames": "Alternative Namen",
     "website": "Website",
+    "coordinates": "Koordinaten",
+    "findCoordinates": "Koordinaten finden",
+    "coordinatesUpdated": "Koordinaten aktualisiert",
+    "coordinatesUpdateFailed": "Aktualisierung der Koordinaten fehlgeschlagen",
+    "latitude": "Breitengrad",
+    "longitude": "Längengrad",
     "optional": "(optional)",
-    "showMore": "Mehr anzeigen",
-    "showLess": "Weniger anzeigen",
     "cancel": "Abbrechen",
     "save": "Speichern"
   },

@@ -29,9 +29,12 @@ export async function GET() {
         `id,
         name,
         alt_names,
+        street,
         zip_code,
         city,
         country_iso2,
+        latitude,
+        longitude,
         image,
         updated_at`
       )

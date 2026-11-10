@@ -6,7 +6,7 @@ import { TextField } from '../forms/TextField'
 import { EditBandsButton } from './EditBandsButton'
 import { SegmentedControl } from '../controls/SegmentedControl'
 import { useEffect, useState } from 'react'
-import { ChevronDownIcon, Plus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { Modal } from '../Modal'
 import { FestivalRootForm } from './FestivalRootForm'
 import { useAddConcert } from '@/hooks/concerts/useAddConcert'
@@ -17,14 +17,13 @@ import { useTranslations } from 'next-intl'
 import { Temporal } from 'temporal-polyfill'
 import { SimilarItemsWarning } from '../shared/SimilarItemsWarning'
 import { useSession } from '@/hooks/auth/useSession'
-import { Disclosure } from '../shared/Disclosure'
-import clsx from 'clsx'
 import { RadioButton } from '../forms/RadioGroup'
 import { isValidDate } from '@/lib/date'
 import { useLocation } from '@/hooks/locations/useLocation'
 import { LocationSelectField } from './LocationSelectField'
 import { FestivalRootSelectField } from './FestivalRootSelectField'
 import { FestivalRootRecord } from '@/types/algolia'
+import { FurtherDetailsDisclosure } from '../forms/FurtherDetailsDisclosure'
 
 export type ConcertFields = {
   id: AddConcert['id']
@@ -84,8 +83,6 @@ export function Form({ close, isNew }: { isNew?: boolean; close: () => void }) {
   const dateStart = isValidDate(watch('date_start'))
     ? Temporal.PlainDate.from(watch('date_start'))
     : null
-  const isFutureOrToday =
-    !!dateStart && Temporal.PlainDate.compare(dateStart, Temporal.Now.plainDateISO()) >= 0
   const bands = watch('bands')
   const location = watch('location')
   const [similarConcertsSize, setSimilarConcertsSize] = useState(3)
@@ -121,36 +118,6 @@ export function Form({ close, isNew }: { isNew?: boolean; close: () => void }) {
     } else {
       editConcert.mutate(formData)
     }
-  }
-
-  function FutureConcertFields() {
-    return (
-      <>
-        <div className="flex">
-          <TextField
-            type="time"
-            {...register('doors_time')}
-            step={300}
-            label={`${t('doorsTime')} ${t('optional')}`}
-            placeholder="18:30"
-            grouped="start"
-          />
-          <TextField
-            type="time"
-            {...register('show_time')}
-            step={300}
-            label={`${t('showTime')} ${t('optional')}`}
-            placeholder="19:00"
-            grouped="end"
-          />
-        </div>
-        <TextField
-          {...register('source_link')}
-          label={`${t('sourceLink')} ${t('optional')}`}
-          placeholder="https://example.com"
-        />
-      </>
-    )
   }
 
   return (
@@ -236,23 +203,31 @@ export function Form({ close, isNew }: { isNew?: boolean; close: () => void }) {
             setSimilarItemsSize={setSimilarConcertsSize}
           />
         )}
-        {isFutureOrToday ? (
-          <FutureConcertFields />
-        ) : (
-          <Disclosure.Root>
-            <Disclosure.Trigger className="btn btn-small btn-tertiary">
-              {({ isOpen }) => (
-                <>
-                  {isOpen ? t('showLess') : t('showMore')}
-                  <ChevronDownIcon className={clsx('size-icon', isOpen && 'rotate-180')} />
-                </>
-              )}
-            </Disclosure.Trigger>
-            <Disclosure.Content className="mt-3 grid gap-6">
-              <FutureConcertFields />
-            </Disclosure.Content>
-          </Disclosure.Root>
-        )}
+        <FurtherDetailsDisclosure labels={[t('doorsTime'), t('showTime'), t('sourceLink')]}>
+          <div className="flex">
+            <TextField
+              type="time"
+              {...register('doors_time')}
+              step={300}
+              label={`${t('doorsTime')} ${t('optional')}`}
+              placeholder="18:30"
+              grouped="start"
+            />
+            <TextField
+              type="time"
+              {...register('show_time')}
+              step={300}
+              label={`${t('showTime')} ${t('optional')}`}
+              placeholder="19:00"
+              grouped="end"
+            />
+          </div>
+          <TextField
+            {...register('source_link')}
+            label={`${t('sourceLink')} ${t('optional')}`}
+            placeholder="https://example.com"
+          />{' '}
+        </FurtherDetailsDisclosure>
         {isMod && (
           <Controller
             name="resource_status"

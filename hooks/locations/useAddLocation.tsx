@@ -12,11 +12,20 @@ const addLocation = async (formData: LocationFields) => {
     .from('locations')
     .insert({
       name: formData.name,
+      street: formData.street,
       zip_code: formData.zip_code,
       city: formData.city,
       country_iso2: formData.country.id,
       alt_names: formData.alt_names,
       website: formData.website,
+      latitude:
+        typeof formData.latitude === 'number'
+          ? Math.round(formData.latitude * 100_000) / 100_000
+          : null,
+      longitude:
+        typeof formData.longitude === 'number'
+          ? Math.round(formData.longitude * 100_000) / 100_000
+          : null,
     })
     .select('*')
     .single()
