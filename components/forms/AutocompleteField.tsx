@@ -79,7 +79,11 @@ export function AutocompleteField<TId extends string | number = number>({
         <div
           ref={focusRegionRef}
           onKeyDown={event => {
-            if (event.key === 'Escape') close()
+            if (event.key === 'Escape' && isOpen) {
+              event.preventDefault()
+              event.stopPropagation()
+              close()
+            }
           }}
         >
           <div className="form-control">
@@ -117,7 +121,7 @@ export function AutocompleteField<TId extends string | number = number>({
                 if (!focusRegionRef.current?.contains(document.activeElement)) close()
               })
             }}
-            className="inset-0 z-20 w-anchor-width flex-col bg-slate-700 p-4 shadow-xl open:flex md:inset-auto md:mt-1 md:rounded-lg"
+            className="inset-0 z-20 w-anchor-width bg-slate-700 p-4 shadow-xl md:inset-auto md:mt-1 md:rounded-lg"
           >
             {isLoading ? (
               <div className="grid h-full w-full place-content-center p-4">

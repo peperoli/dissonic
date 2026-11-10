@@ -90,7 +90,7 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
   const street = watch('street')
   const debouncedStreet = useDebounce(street, 200)
   const { data: suggestedAddresses, isFetching } = useAutocompleteAddress(
-    debouncedName + ' ' + debouncedStreet
+    [debouncedName, debouncedStreet].filter(Boolean).join(', ')
   )
   const addLocation = useAddLocation()
   const editLocation = useEditLocation()
@@ -117,10 +117,8 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
       id: address.country_code,
       name: getCountryName(address.country_code.toUpperCase(), locale),
     })
-    if (address.lat && address.lon) {
-      setValue('latitude', address.lat)
-      setValue('longitude', address.lon)
-    }
+    setValue('latitude', address.lat)
+    setValue('longitude', address.lon)
   }
 
   return (
@@ -162,7 +160,7 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
         )}
       />
       <AutocompleteField<string>
-        {...register('street', { required: true })}
+        {...register('street')}
         items={
           suggestedAddresses?.map(feature => ({
             id: feature.properties.place_id,
@@ -294,7 +292,7 @@ function MapPreview({
   }, [])
 
   useEffect(() => {
-    if (latitude && longitude) {
+    if (latitude != null && longitude != null) {
       mapRef.current?.easeTo({
         center: [longitude, latitude],
         duration: 500,
@@ -320,7 +318,7 @@ function MapPreview({
       />
       <NavigationControl />
       <GeolocateControl />
-      {latitude && longitude && (
+      {latitude != null && longitude != null && (
         <Marker
           longitude={longitude}
           latitude={latitude}

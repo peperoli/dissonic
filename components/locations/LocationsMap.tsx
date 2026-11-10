@@ -202,7 +202,7 @@ export function LocationsMap({
 }
 
 function LocationPopup({ location, onClose }: { location: LocationRecord; onClose: () => void }) {
-  if (!location.latitude || !location.longitude) return null
+  if (location.latitude === null || location.longitude === null) return null
 
   const imageUrl = location.image && getAssetUrl('ressources', location.image, location?.updated_at)
   const locale = useLocale()

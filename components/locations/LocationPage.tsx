@@ -143,8 +143,16 @@ export const LocationPage = ({
           {location.city && (
             <div className="mb-5 flex items-center gap-4">
               <MapPin className="size-icon flex-none text-slate-300" />
-              {location.street && <>{location.street}<br/></>}
-              {`${location.zip_code ?? ''} ${location.city}`.trim()}, {getCountryName(location.country_iso2, locale)}
+              <p>
+                {location.street && (
+                  <>
+                    {location.street}
+                    <br />
+                  </>
+                )}
+                {`${location.zip_code ?? ''} ${location.city}`.trim()},{' '}
+                {getCountryName(location.country_iso2, locale)}
+              </p>
             </div>
           )}
           <div className="flex flex-wrap gap-2">
