@@ -5,12 +5,12 @@ This is a hobby project made entirely with open source software like [Supabase](
 Can't remember what concerts you visited or which bands you saw there?
 Then this may be a useful website for you. As a Dissonic user you can do the following:
 
-- Enter and update concerts, bands and locations
-- See who else was there
 - View your concert history and statistics
 - Mark bands you have seen live
-- Comment on concerts and respond to comments
+- See who else was there
+- Upload memories and write comments about concerts
+- Enter and update concerts, bands and locations
 
-Disclaimer: As of now, the website is only available in german.
+Dissonic is available in German and English.
 
 Interested? [Get started here](https://dissonic.ch/signup)
