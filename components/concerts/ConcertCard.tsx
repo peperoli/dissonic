@@ -1,3 +1,5 @@
+'use client'
+
 import { Concert, Profile, SpotifyArtist } from '../../types/types'
 import { useSession } from '../../hooks/auth/useSession'
 import clsx from 'clsx'
@@ -11,13 +13,17 @@ import { TruncatedList } from 'react-truncate-list'
 import { ConcertDate } from './ConcertDate'
 import { Temporal } from 'temporal-polyfill'
 
-interface ConcertCardProps {
+export function ConcertCard({
+  concert,
+  profiles,
+  orientation = 'horizontal',
+  nested,
+}: {
   concert: Concert
   profiles: Profile[] | undefined
+  orientation?: 'horizontal' | 'vertical'
   nested?: boolean
-}
-
-export const ConcertCard = ({ concert, profiles, nested }: ConcertCardProps) => {
+}) {
   const fans = profiles?.filter(profile =>
     concert.bands_seen?.some(bandSeen => bandSeen?.user_id === profile.id)
   )
@@ -27,8 +33,9 @@ export const ConcertCard = ({ concert, profiles, nested }: ConcertCardProps) => 
   })
   const bandsSeen = concert.bands_seen?.filter(item => item?.user_id === session?.user.id)
   const picture =
-    (concert.bands[0]?.spotify_artist_images as SpotifyArtist['images'])?.[2] ||
-    spotifyArtist?.images?.[2]
+    (concert.bands[0]?.spotify_artist_images as SpotifyArtist['images'])?.[
+      orientation === 'horizontal' ? 2 : 1
+    ] || spotifyArtist?.images?.[orientation === 'horizontal' ? 2 : 1]
   const dateStart = Temporal.PlainDate.from(concert.date_start)
   const dateEnd = concert.date_end ? Temporal.PlainDate.from(concert.date_end) : null
 
@@ -36,19 +43,24 @@ export const ConcertCard = ({ concert, profiles, nested }: ConcertCardProps) => 
     <Link
       href={`/concerts/${concert.id}`}
       className={clsx(
-        'group flex gap-4 rounded-2xl p-4 hover:cursor-pointer',
+        'group flex gap-2 rounded-2xl',
+        orientation === 'horizontal' ? 'flex-row p-4' : 'flex-col p-4',
         nested ? 'bg-slate-750' : 'bg-slate-800'
       )}
     >
-      <div className="grid size-22 flex-none place-content-center rounded-lg bg-slate-700">
+      <div
+        className={clsx(
+          'relative grid flex-none place-content-center rounded-lg bg-slate-700',
+          orientation === 'horizontal' ? 'size-22' : 'size-36'
+        )}
+      >
         {picture ? (
           <Image
             src={picture.url}
             alt={concert.bands[0].name}
-            width={150}
-            height={150}
+            fill
             unoptimized
-            className="size-22 rounded-lg object-cover"
+            className="rounded-lg object-cover"
           />
         ) : (
           <CalendarIcon className="size-8 text-slate-300" />
@@ -71,7 +83,7 @@ export const ConcertCard = ({ concert, profiles, nested }: ConcertCardProps) => 
             </span>
           </p>
         )}
-        <p className="h2 mb-0 truncate">
+        <p className={clsx('mb-0 truncate', orientation === 'horizontal' ? 'h2' : 'font-bold')}>
           {concert.bands?.map((band, index) => (
             <Fragment key={band.id}>
               {index !== 0 && <span className="text-slate-300"> &bull; </span>}

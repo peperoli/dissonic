@@ -15,6 +15,7 @@ import { getBunnyImageUrl, getBunnyThumbnailUrl } from '@/lib/bunnyHelpers'
 import { PlayIcon } from 'lucide-react'
 import { z } from 'zod'
 import { StatusBanner } from '../forms/StatusBanner'
+import useMediaQuery from '@/hooks/helpers/useMediaQuery'
 
 const BandSeenItem = ({
   activityItem,
@@ -27,13 +28,15 @@ const BandSeenItem = ({
   const t = useTranslations('ActivityItem')
   const locale = useLocale()
   const { data: concert } = useConcert(activityItem.concert?.id ?? null, null, { bandsSize: 1 })
+  const isDesktop = useMediaQuery('(min-width: 768px)')
   const concertName = getConcertName(concert, locale)
+
   return (
     <div className="rounded-lg bg-slate-800 p-4">
       <ActivityItemLine
         user={
           <Link href={`/users/${user.username}`} className="group/user-item">
-            <UserItem user={user} usernameIsHidden />
+            <UserItem user={user} usernameIsHidden={isDesktop} size={isDesktop ? 'md' : 'sm'} />
           </Link>
         }
         createdAt={created_at}
@@ -81,6 +84,7 @@ const MemoryItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
   const t = useTranslations('ActivityItem')
   const locale = useLocale()
   const { data: concert } = useConcert(activityItem.concert?.id ?? null, null, { bandsSize: 1 })
+  const isDesktop = useMediaQuery('(min-width: 768px)')
   const concertName = concert ? getConcertName(concert, locale) : null
   const result = memoryContentSchema.safeParse(activityItem.content)
   const content = result.success ? result.data : null
@@ -91,7 +95,7 @@ const MemoryItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
       <ActivityItemLine
         user={
           <Link href={`/users/${user.username}`} className="group/user-item">
-            <UserItem user={user} usernameIsHidden />
+            <UserItem user={user} usernameIsHidden={isDesktop} size={isDesktop ? 'md' : 'sm'} />
           </Link>
         }
         createdAt={created_at}
@@ -113,7 +117,7 @@ const MemoryItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
         <Link
           href={`/concerts/${concert?.id}#memories`}
           scroll={false}
-          className="relative ml-14 mt-2 block size-24"
+          className="relative mt-2 block size-24 md:ml-14"
         >
           <img
             src={
@@ -155,6 +159,7 @@ const CommentItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
   const { data: concert } = useConcert(activityItem.concert?.id ?? null, null, { bandsSize: 1 })
   const t = useTranslations('ActivityItem')
   const locale = useLocale()
+  const isDesktop = useMediaQuery('(min-width: 768px)')
   const concertName = getConcertName(concert, locale)
   const result = z.string().nullable().safeParse(activityItem.content)
   const content = result.success ? result.data : null
@@ -164,7 +169,7 @@ const CommentItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
       <ActivityItemLine
         user={
           <Link href={`/users/${user.username}`} className="group/user-item">
-            <UserItem user={user} usernameIsHidden />
+            <UserItem user={user} usernameIsHidden={isDesktop} size={isDesktop ? 'md' : 'sm'} />
           </Link>
         }
         createdAt={created_at}
@@ -186,7 +191,7 @@ const CommentItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
         <Link
           href={`/concerts/${concert?.id}#comments`}
           scroll={false}
-          className="block ml-14 mt-2 whitespace-pre-line break-words rounded border border-slate-700 p-2 text-sm"
+          className="mt-2 block whitespace-pre-line break-words rounded border border-slate-700 p-2 text-sm md:ml-14"
         >
           {content}
         </Link>
@@ -200,6 +205,7 @@ const ReactionItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
   const t = useTranslations('ActivityItem')
   const locale = useLocale()
   const { data: concert } = useConcert(activityItem.concert?.id ?? null, null, { bandsSize: 1 })
+  const isDesktop = useMediaQuery('(min-width: 768px)')
   const concertName = concert ? getConcertName(concert, locale) : null
   const result = z.string().nullable().safeParse(activityItem.content)
   const content = result.success ? result.data : null
@@ -209,7 +215,7 @@ const ReactionItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
       <ActivityItemLine
         user={
           <Link href={`/users/${user.username}`} className="group/user-item">
-            <UserItem user={user} usernameIsHidden />
+            <UserItem user={user} usernameIsHidden={isDesktop} size={isDesktop ? 'md' : 'sm'} />
           </Link>
         }
         createdAt={created_at}
@@ -240,16 +246,18 @@ const ReactionItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
 const FriendItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
   const { user, receiver, created_at } = activityItem
   const t = useTranslations('ActivityItem')
+  const isDesktop = useMediaQuery('(min-width: 768px)')
+
   return (
     <div className="rounded-lg bg-slate-800 p-4">
       <ActivityItemLine
         user={
-          <div className="flex">
+          <div className="flex gap-1">
             {[user, receiver]
               .filter(user => !!user)
               .map(user => (
                 <Link key={user.id} href={`/users/${user.username}`} className="group/user-item">
-                  <UserItem user={user} usernameIsHidden />
+                  <UserItem user={user} usernameIsHidden size={isDesktop ? 'md' : 'sm'} />
                 </Link>
               ))}
           </div>
@@ -276,12 +284,14 @@ const FriendItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
 const ProfileItem = ({ activityItem }: { activityItem: ActivityItemT }) => {
   const { user, created_at } = activityItem
   const t = useTranslations('ActivityItem')
+  const isDesktop = useMediaQuery('(min-width: 768px)')
+
   return (
     <div className="rounded-lg bg-slate-800 p-4">
       <ActivityItemLine
         user={
           <Link href={`/users/${user.username}`} className="group/user-item">
-            <UserItem user={user} usernameIsHidden />
+            <UserItem user={user} usernameIsHidden={isDesktop} size={isDesktop ? 'md' : 'sm'} />
           </Link>
         }
         createdAt={created_at}
@@ -308,14 +318,18 @@ const ActivityItemLine = ({
   children: ReactNode
 }) => {
   const locale = useLocale()
+
   return (
-    <div className="flex gap-4 text-sm md:items-center">
-      {user}
-      <div className="flex flex-wrap gap-x-1 text-slate-300">{children}</div>
-      <div className="ml-auto whitespace-nowrap text-slate-300">
-        {getRelativeTime(createdAt, locale)}
+    <>
+      <div className="flex gap-4 text-sm md:items-center">
+        {user}
+        <div className="hidden flex-wrap gap-x-1 text-slate-300 md:flex">{children}</div>
+        <div className="ml-auto whitespace-nowrap text-slate-300">
+          {getRelativeTime(createdAt, locale)}
+        </div>
       </div>
-    </div>
+      <div className="mt-2 text-sm text-slate-300 md:hidden">{children}</div>
+    </>
   )
 }
 

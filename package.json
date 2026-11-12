@@ -34,7 +34,6 @@
     "jwt-decode": "^4.0.0",
     "lucide-react": "^1.68.0",
     "maplibre-gl": "^6.16.0",
-    "maplibre-gl-style-flipper": "^1.0.9",
     "media-chrome": "^4.13.0",
     "motion": "^12.38.0",
     "next": "^15.5.9",

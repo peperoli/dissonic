@@ -87,7 +87,7 @@ export function ConcertsPage({
   const { data: profiles } = useProfiles({ ids: fanIds }, fanIds.length > 0)
   const { push } = useRouter()
   const isDesktop = useMediaQuery('(min-width: 768px)')
-  const t = useTranslations('HomePage')
+  const t = useTranslations('ConcertsPage')
   const locale = useLocale()
   const queryStates = {
     bands: selectedBands,

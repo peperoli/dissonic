@@ -64,7 +64,15 @@ const fetchBands = async (
     .filter(band => band !== null)
     .map(band => band.id)
 
-  let query = supabase.from('bands').select('*, genres(*)').in('id', filteredBandIds).order('name')
+  let query = supabase.from('bands').select('*, genres(*)').in('id', filteredBandIds)
+
+  if (options?.sort) {
+    query = query
+      .not(options.sort.sort_by, 'is', null)
+      .order(options.sort.sort_by, { ascending: options.sort.sort_asc })
+  } else {
+    query = query.order('name', { ascending: true })
+  }
 
   if (options?.page || options?.size) {
     query = query.range(from, to)
@@ -82,7 +90,7 @@ const fetchBands = async (
 export const useBands = (options: BandFetchOptions & QueryOptions<ExtendedRes<Band[]>> = {}) => {
   const { placeholderData, enabled, ...fetchOptions } = options
   return useQuery({
-    queryKey: ['bands', JSON.stringify(fetchOptions)],
+    queryKey: ['bands', fetchOptions],
     queryFn: () => fetchBands(fetchOptions),
     placeholderData: previousData => keepPreviousData(previousData || placeholderData),
     enabled: enabled !== false,

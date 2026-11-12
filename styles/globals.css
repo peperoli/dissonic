@@ -111,9 +111,10 @@
 @layer utilities {
   .scrollbar-hidden {
     scrollbar-width: none;
-    &::-webkit-scrollbar {
-      display: none;
-    }
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
   }
 
   .text-vertical {

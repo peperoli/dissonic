@@ -9,15 +9,11 @@ export const CommaSeperatedList = ({ children }: { children?: ReactNode[] }) => 
   return (
     <>
       {children?.slice(0, visibleChildren).map((child, index) => (
-        <div key={index}>
+        <span key={index}>
           {child}
           {index + 1 !== children.length &&
-            (index + 2 === children.length ? (
-              <span>&nbsp;{t('and')}</span>
-            ) : (
-              <span>,</span>
-            ))}
-        </div>
+            (index + 2 === children.length ? <span>&nbsp;{t('and')} </span> : <span>, </span>)}
+        </span>
       ))}
       {children?.length && children.length > visibleChildren && (
         <button

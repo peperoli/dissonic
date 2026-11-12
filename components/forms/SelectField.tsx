@@ -111,7 +111,7 @@ export function SelectField<TId extends string | number = number>({
             )}
           </div>
           {error && <div className="mt-1 text-sm text-yellow">{t('pleaseSelectAnOption')}</div>}
-          <OverlayContent className="inset-0 z-20 overflow-hidden bg-slate-700 p-4 shadow-xl md:inset-auto md:mt-1 md:w-anchor-width md:rounded-lg">
+          <OverlayContent className="inset-0 z-20 overflow-hidden bg-slate-700 p-4 shadow-xl md:inset-auto md:mt-1 md:w-anchor-width md:rounded-lg [&:popover-open]:grid">
             <Dialog.Title className="sr-only">{label}</Dialog.Title>
             {props.multiple ? (
               <Select

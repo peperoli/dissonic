@@ -29,11 +29,6 @@ const nextConfig: NextConfig = {
   redirects: async () => {
     return [
       {
-        source: '/',
-        permanent: true,
-        destination: '/concerts',
-      },
-      {
         source: '/concerts',
         has: [
           {

@@ -12,8 +12,8 @@ export function getConcertName(concert: Concert | undefined, locale: string) {
   if (concert.festival_root) {
     return `${concert.festival_root.name} ${Temporal.PlainDate.from(concert.date_start).year}`
   } else if (concert.name) {
-    return `${concert.name} | ${date}`
+    return `${concert.name} • ${date}`
   } else {
-    return `${concert.bands?.map(band => band.name).join(', ')} | ${concert.location?.name} | ${date}`
+    return `${concert.bands?.map(band => band.name).join(', ')} • ${concert.location?.name} • ${date}`
   }
 }

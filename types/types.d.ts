@@ -14,7 +14,7 @@ export type ConcertFetchOptions = {
   festivalRoots?: number[] | null
   userView?: string
   userId?: string
-  sort?: { sort_by: 'date_start' | 'bands_count'; sort_asc: boolean }
+  sort?: { sort_by: 'date_start' | 'bands_count' | 'created_at'; sort_asc: boolean }
   size?: number
   bandsSize?: number
 }
@@ -24,6 +24,7 @@ export type BandFetchOptions = {
   countries?: string[] | null
   genres?: number[] | null
   search?: string
+  sort?: { sort_by: 'created_at'; sort_asc: boolean }
   size?: number
   page?: number
 }
@@ -46,6 +47,7 @@ export type LocationFetchOptions = {
   ids?: number[] | null
   search?: string
   countries?: string[] | null
+  sort?: { sort_by: 'created_at'; sort_asc: boolean }
   size?: number
   page?: number
 }

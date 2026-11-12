@@ -22,7 +22,7 @@ export function SegmentedControl({
             type="button"
             onClick={() => onValueChange(option.value)}
             className={clsx(
-              'flex min-w-12 shrink-0 grow items-center justify-center gap-1 whitespace-nowrap rounded-md px-2 py-1 md:w-fit md:flex-none',
+              'flex min-w-12 shrink-0 grow items-center justify-center gap-2 whitespace-nowrap rounded-lg px-2 py-1 md:w-fit md:flex-none',
               option.value === value
                 ? 'bg-gradient-to-r from-blue/20 to-venom/20 text-white shadow-lg'
                 : 'text-slate-300'

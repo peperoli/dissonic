@@ -145,6 +145,22 @@
     "future": "Zukünftige"
   },
   "HomePage": {
+    "home": "Startseite",
+    "recentConcerts": "Aktuelle Konzerte",
+    "showAll": "Mehr anzeigen",
+    "past": "Bis heute",
+    "future": "Zukünftige",
+    "latestActivity": "Neueste Aktivität",
+    "recentlyAdded": "Kürzlich hinzugefügt",
+    "concerts": "Konzerte",
+    "bands": "Bands",
+    "locations": "Lokale"
+  },
+  "Carousel": {
+    "previousSlide": "Vorherige Folie",
+    "nextSlide": "Nächste Folie"
+  },
+  "ConcertsPage": {
     "concerts": "Konzerte",
     "addConcert": "Konzerte hinzufügen",
     "nEntries": "{count} Einträge",

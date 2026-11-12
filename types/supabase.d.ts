@@ -1034,6 +1034,14 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      get_recent_activities: {
+        Args: { user_ids?: string[] }
+        Returns: {
+          activities: Database["public"]["Views"]["activities"]["Row"][]
+          created_at: string
+          user_id: string
+        }[]
+      }
       json_matches_schema: {
         Args: { instance: Json; schema: Json }
         Returns: boolean
@@ -1140,7 +1148,7 @@ export type Database = {
     Enums: {
       app_role: "developer" | "moderator"
       bands_type: "bands"
-      concerts_order_by: "date_start" | "bands_count"
+      concerts_order_by: "date_start" | "bands_count" | "created_at"
       continents:
         | "Africa"
         | "Antarctica"
@@ -1304,7 +1312,7 @@ export const Constants = {
     Enums: {
       app_role: ["developer", "moderator"],
       bands_type: ["bands"],
-      concerts_order_by: ["date_start", "bands_count"],
+      concerts_order_by: ["date_start", "bands_count", "created_at"],
       continents: [
         "Africa",
         "Antarctica",

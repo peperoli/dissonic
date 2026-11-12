@@ -145,6 +145,22 @@
     "future": "Future"
   },
   "HomePage": {
+    "home": "Home",
+    "recentConcerts": "Recent concerts",
+    "showAll": "Show all",
+    "past": "Until today",
+    "future": "Future",
+    "latestActivity": "Latest activity",
+    "recentlyAdded": "Recently added",
+    "concerts": "Concerts",
+    "bands": "Bands",
+    "locations": "Locations"
+  },
+  "Carousel": {
+    "previousSlide": "Previous slide",
+    "nextSlide": "Next slide"
+  },
+  "ConcertsPage": {
     "concerts": "Concerts",
     "addConcert": "Add concert",
     "nEntries": "{count} entries",

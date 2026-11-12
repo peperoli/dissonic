@@ -98,7 +98,7 @@ export default async function ActivityPage(props: {
     <main className="container">
       <h1>{t('activity')}</h1>
       <div className="grid gap-6">
-        <div className="flex flex-col gap-4 md:flex-row">
+        <div className="scrollbar-hidden -mx-4 flex gap-2 overflow-x-auto px-4 md:gap-4 md:overflow-visible *:shrink-0">
           {!searchParams.user && <ViewFilter />}
           <ActivityTypeFilter />
         </div>

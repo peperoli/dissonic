@@ -6,7 +6,7 @@ import { Temporal } from 'temporal-polyfill'
 export const ActivityGroup = ({
   timeGroup,
 }: {
-  timeGroup: { time: Temporal.PlainTime; userId: string | null; items: ActivityItemT[] }
+  timeGroup: { time: Temporal.PlainTime; items: ActivityItemT[] }
 }) => {
   const bands = timeGroup.items
     .filter(item => item.type === 'j_bands_seen' && !!item.band)
