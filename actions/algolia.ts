@@ -13,6 +13,7 @@ import { BandRecord, ConcertRecord, FestivalRootRecord, LocationRecord } from '@
 import { createAlgoliaClient } from '@/utils/algolia/server'
 import { getUnixTimestamp } from '@/lib/date'
 import { AlgoliaIndex } from '@/lib/algolia'
+import { parseCoordinates } from '@/lib/parseCoordinates'
 
 export async function deleteSearchRecord(
   indexName: `${AlgoliaIndex}`,
@@ -227,6 +228,7 @@ export async function addLocationRecord(
   const algolia = await createAlgoliaClient()
   const regionNamesDe = new Intl.DisplayNames('de', { type: 'region' })
   const regionNamesEn = new Intl.DisplayNames('en', { type: 'region' })
+  const coordinates = parseCoordinates(location)
 
   await algolia.saveObject({
     indexName: AlgoliaIndex.Locations,
@@ -244,8 +246,8 @@ export async function addLocationRecord(
         de: `${location.country_iso2}||${regionNamesDe.of(location.country_iso2)}`,
         en: `${location.country_iso2}||${regionNamesEn.of(location.country_iso2)}`,
       },
-      latitude: location.latitude ?? null,
-      longitude: location.longitude ?? null,
+      latitude: coordinates ? coordinates.latitude : null,
+      longitude: coordinates ? coordinates.longitude : null,
       image: location.image ?? null,
       updated_at: location.updated_at ?? null,
     } satisfies LocationRecord,
@@ -259,6 +261,7 @@ export async function editLocationRecord(
   const algolia = await createAlgoliaClient()
   const regionNamesDe = new Intl.DisplayNames('de', { type: 'region' })
   const regionNamesEn = new Intl.DisplayNames('en', { type: 'region' })
+  const coordinates = parseCoordinates(location)
 
   await algolia.partialUpdateObject({
     indexName: AlgoliaIndex.Locations,
@@ -276,8 +279,8 @@ export async function editLocationRecord(
             en: `${location.country_iso2}||${regionNamesEn.of(location.country_iso2)}`,
           }
         : null,
-      latitude: location.latitude ?? null,
-      longitude: location.longitude ?? null,
+      latitude: coordinates ? coordinates.latitude : null,
+      longitude: coordinates ? coordinates.longitude : null,
       image: location.image ?? null,
       updated_at: location.updated_at ?? null,
     } as LocationRecord,

@@ -34,6 +34,7 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import { setWorkerUrl } from 'maplibre-gl'
 import { MapStyleControl, MapStyleName, mapStyles } from './MapStyleControl'
 import { FurtherDetailsDisclosure } from '../forms/FurtherDetailsDisclosure'
+import { parseCoordinates } from '@/lib/parseCoordinates'
 
 setWorkerUrl('https://unpkg.com/maplibre-gl@6.16.0/dist/maplibre-gl-worker.mjs')
 
@@ -92,6 +93,10 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
   const { data: suggestedAddresses, isFetching } = useAutocompleteAddress(
     [debouncedName, debouncedStreet].filter(Boolean).join(', ')
   )
+  const coordinates = parseCoordinates({
+    latitude: watch('latitude'),
+    longitude: watch('longitude'),
+  })
   const addLocation = useAddLocation()
   const editLocation = useEditLocation()
   const { status } = isNew ? addLocation : editLocation
@@ -222,11 +227,7 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
             grouped="end"
           />
         </div>
-        <MapPreview
-          latitude={watch('latitude')}
-          longitude={watch('longitude')}
-          setValue={setValue}
-        />
+        <MapPreview coordinates={coordinates} setValue={setValue} />
       </FurtherDetailsDisclosure>
       <div className="sticky bottom-0 z-10 flex gap-4 bg-slate-800 py-4 md:justify-end [&>*]:flex-1">
         <Button onClick={close} label={t('cancel')} />
@@ -276,12 +277,10 @@ function FindCoordinatesButton({
 }
 
 function MapPreview({
-  latitude,
-  longitude,
+  coordinates,
   setValue,
 }: {
-  latitude: number | null | undefined
-  longitude: number | null | undefined
+  coordinates: { latitude: number; longitude: number } | null
   setValue: UseFormSetValue<LocationFields>
 }) {
   const mapRef = useRef<MapRef>(null)
@@ -292,20 +291,20 @@ function MapPreview({
   }, [])
 
   useEffect(() => {
-    if (latitude != null && longitude != null) {
+    if (coordinates) {
       mapRef.current?.easeTo({
-        center: [longitude, latitude],
+        center: [coordinates.longitude, coordinates.latitude],
         duration: 500,
       })
     }
-  }, [latitude, longitude])
+  }, [coordinates?.latitude, coordinates?.longitude])
 
   return (
     <MapGL
       ref={mapRef}
       initialViewState={{
-        latitude: latitude ?? 46.58411,
-        longitude: longitude ?? 7.08241,
+        latitude: coordinates ? coordinates.latitude : 46.58411,
+        longitude: coordinates ? coordinates.longitude : 7.08241,
         zoom: 16,
       }}
       mapStyle={mapStyles[currentMapStyle].url}
@@ -318,10 +317,10 @@ function MapPreview({
       />
       <NavigationControl />
       <GeolocateControl />
-      {latitude != null && longitude != null && (
+      {coordinates && (
         <Marker
-          longitude={longitude}
-          latitude={latitude}
+          longitude={coordinates.longitude}
+          latitude={coordinates.latitude}
           anchor="bottom"
           draggable
           onDrag={onMarkerDrag}

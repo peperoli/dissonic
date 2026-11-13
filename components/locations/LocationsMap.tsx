@@ -24,6 +24,7 @@ import {
 } from 'react-map-gl/maplibre'
 import mapMarker from '../../public/maps/map-marker.svg'
 import { MapStyleControl, MapStyleName, mapStyles } from './MapStyleControl'
+import { parseCoordinates } from '@/lib/parseCoordinates'
 
 setWorkerUrl('https://unpkg.com/maplibre-gl@6.16.0/dist/maplibre-gl-worker.mjs')
 
@@ -106,7 +107,7 @@ export function LocationsMap({
     type: 'FeatureCollection' as const,
     features:
       locations?.data
-        .filter(location => location.latitude !== null && location.longitude !== null)
+        .filter(location => parseCoordinates(location))
         .map(location => ({
           type: 'Feature' as const,
           properties: {
@@ -202,7 +203,9 @@ export function LocationsMap({
 }
 
 function LocationPopup({ location, onClose }: { location: LocationRecord; onClose: () => void }) {
-  if (location.latitude === null || location.longitude === null) return null
+  const coordinates = parseCoordinates(location)
+  
+  if (!coordinates) return null
 
   const imageUrl = location.image && getAssetUrl('ressources', location.image, location?.updated_at)
   const locale = useLocale()
