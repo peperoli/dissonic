@@ -119,8 +119,8 @@ export const Form = ({ close, isNew }: { close: () => void; isNew?: boolean }) =
     setValue('zip_code', address.postcode)
     setValue('city', address.city)
     setValue('country', {
-      id: address.country_code,
-      name: getCountryName(address.country_code.toUpperCase(), locale),
+      id: address.country_code.toUpperCase(),
+      name: getCountryName(address.country_code, locale),
     })
     setValue('latitude', address.lat)
     setValue('longitude', address.lon)

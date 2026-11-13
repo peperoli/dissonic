@@ -166,7 +166,7 @@ function ResultItem<TId extends string | number = number>({
   const addressParts = [
     [address.street, address.housenumber].filter(Boolean).join(' '),
     [address.postcode, address.city].filter(Boolean).join(' '),
-    getCountryName(address.country_code.toUpperCase(), locale),
+    getCountryName(address.country_code, locale),
   ]
   const Icon = resultTypeIcons[address.result_type] ?? BirdIcon
 

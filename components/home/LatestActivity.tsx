@@ -57,16 +57,12 @@ export async function LatestActivity() {
 
   return (
     <section className="mt-8">
-      <div className="mb-3 flex items-center justify-between gap-4">
+      <Link href="/activity" className="mb-3 flex items-center justify-between gap-4">
         <h2 className="mb-0">{t('latestActivity')}</h2>
-        <Link
-          href="/activity"
-          aria-label={t('showAll')}
-          className="btn btn-icon btn-small btn-tertiary"
-        >
+        <div aria-label={t('showAll')} className="btn btn-icon btn-small btn-tertiary">
           <ArrowRightIcon className="size-icon" />
-        </Link>
-      </div>
+        </div>
+      </Link>
       <ul className="space-y-2">
         {activities?.map(timeGroup => (
           <ActivityGroup

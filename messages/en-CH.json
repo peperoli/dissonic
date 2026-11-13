@@ -22,11 +22,13 @@
     "login": "Login"
   },
   "Navigation": {
+    "home": "Home",
     "concerts": "Concerts",
     "bands": "Bands",
     "locations": "Locations",
     "activity": "Activity",
-    "fans": "Fans"
+    "fans": "Fans",
+    "more": "More"
   },
   "SearchForm": {
     "all": "All",

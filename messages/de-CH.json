@@ -22,11 +22,13 @@
     "login": "Anmelden"
   },
   "Navigation": {
+    "home": "Startseite",
     "concerts": "Konzerte",
     "bands": "Bands",
     "locations": "Lokale",
     "activity": "Aktivität",
-    "fans": "Fans"
+    "fans": "Fans",
+    "more": "Mehr"
   },
   "SearchForm": {
     "all": "Alle",

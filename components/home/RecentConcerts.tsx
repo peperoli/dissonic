@@ -33,12 +33,12 @@ export function RecentConcerts({
 
   return (
     <section>
-      <div className="mb-3 flex items-center justify-between gap-4">
+      <Link href="/concerts" className="mb-3 flex items-center justify-between gap-4">
         <h2 className="mb-0">{t('recentConcerts')}</h2>
-        <Link href="/concerts" aria-label={t('showAll')} className="btn btn-icon btn-small btn-tertiary">
+        <div aria-label={t('showAll')} className="btn btn-icon btn-small btn-tertiary">
           <ArrowRightIcon className="size-icon" />
-        </Link>
-      </div>
+        </div>
+      </Link>
       <SegmentedControl
         options={[
           { value: 'past', label: t('past') },
