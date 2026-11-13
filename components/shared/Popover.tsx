@@ -78,16 +78,11 @@ function PopoverTrigger({
   ...props
 }: HTMLAttributes<HTMLButtonElement> &
   ({ asChild?: false } | { asChild: true; children: ReactNode })) {
-  const { id, isOpen, show, close } = usePopoverContext()
+  const { id } = usePopoverContext()
   const Composition = asChild ? ButtonSlot : 'button'
 
   return (
-    <Composition
-      type="button"
-      onClick={isOpen ? close : show}
-      style={{ anchorName: `--${id}` }}
-      {...props}
-    />
+    <Composition type="button" popoverTarget={id} style={{ anchorName: `--${id}` }} {...props} />
   )
 }
 
@@ -103,6 +98,7 @@ function PopoverContent({
 
   return (
     <div
+      id={id}
       ref={popoverRef}
       popover={shouldCloseOnClickOutside ? 'auto' : 'manual'}
       onToggle={event => setOpen(event.newState === 'open')}
